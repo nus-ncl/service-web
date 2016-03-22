@@ -15,6 +15,12 @@ public class simpleClient {
             ApiInfoStub.VersionDescription r = resp.get_return();
             System.out.println("Version: " + r.getVersion());
             System.out.println("PatchLevel: " + r.getPatchLevel());
+            
+            if (r.isKeyIDSpecified()) {
+                System.out.println("Keyid: " + r.getKeyID());
+            } else {
+                System.out.println("No Keyid");
+            }
 
         } catch (AxisFault e) {
             // TODO Auto-generated catch block
