@@ -1,0 +1,1250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://api.testbed.deterlab.net/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://api.testbed.deterlab/net/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://api.testbed.deterlab/net/">
+    <wsdl:documentation>Projects</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://api.testbed.deterlab.net/xsd">
+            <xs:element name="ProjectsDeterFault">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="DeterFault" nillable="true" type="ns:DeterFault"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="DeterFault">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="detailMessage" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="errorCode" type="xs:int"/>
+                    <xs:element minOccurs="0" name="errorMessage" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="setOwner">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="uid" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setOwnerResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="createProjectAttribute">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="optional" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="access" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="format" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="formatdescription" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="order" type="xs:int"/>
+                        <xs:element minOccurs="0" name="length" type="xs:int"/>
+                        <xs:element minOccurs="0" name="def" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="createProjectAttributeResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="modifyProjectAttribute">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="optional" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="access" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="format" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="formatdescription" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="order" type="xs:int"/>
+                        <xs:element minOccurs="0" name="length" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="modifyProjectAttributeResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeProjectAttribute">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeProjectAttributeResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="createProject">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="owner" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="profile" nillable="true" type="ns:Attribute"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ApiObject">
+                <xs:sequence/>
+            </xs:complexType>
+            <xs:complexType name="Attribute">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="access" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="dataType" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="format" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="formatDescription" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="lengthHint" type="xs:int"/>
+                            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="optional" type="xs:boolean"/>
+                            <xs:element minOccurs="0" name="orderingHint" type="xs:int"/>
+                            <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="createProjectResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeProject">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeProjectResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getProjectProfile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getProjectProfileResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ns:Profile"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="Profile">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="attributes" nillable="true" type="ns:Attribute"/>
+                            <xs:element minOccurs="0" name="id" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="changeProjectProfile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="changes" nillable="true" type="ns:ChangeAttribute"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ChangeAttribute">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="delete" type="xs:boolean"/>
+                            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="changeProjectProfileResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ns:ChangeResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ChangeResult">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="success" type="xs:boolean"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="joinProject">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="uid" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="urlPrefix" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="joinProjectResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="joinProjectConfirm">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="challengeId" type="xs:long"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="perms" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="joinProjectConfirmResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="viewProjects">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="uid" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="regex" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="viewProjectsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ns:ProjectDescription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ProjectDescription">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="approved" type="xs:boolean"/>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="members" nillable="true" type="ns:Member"/>
+                            <xs:element minOccurs="0" name="owner" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="projectId" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:complexType name="Member">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="permissions" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="uid" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="approveProject">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="approved" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="approveProjectResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addUsers">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="uids" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="perms" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="urlPrefix" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addUsersResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ns:ChangeResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getValidPermissions">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getValidPermissionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getProfileDescription">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getProfileDescriptionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ns:Profile"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addUserConfirm">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="challengeId" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addUserConfirmResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addUsersNoConfirm">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="uids" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="perms" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addUsersNoConfirmResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ns:ChangeResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="changePermissions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="uids" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="perms" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="changePermissionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ns:ChangeResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeUsers">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="projectid" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="uids" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeUsersResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ns:ChangeResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="approveProjectRequest">
+        <wsdl:part name="parameters" element="ns:approveProject"/>
+    </wsdl:message>
+    <wsdl:message name="approveProjectResponse">
+        <wsdl:part name="parameters" element="ns:approveProjectResponse"/>
+    </wsdl:message>
+    <wsdl:message name="ProjectsDeterFault">
+        <wsdl:part name="parameters" element="ns:ProjectsDeterFault"/>
+    </wsdl:message>
+    <wsdl:message name="createProjectAttributeRequest">
+        <wsdl:part name="parameters" element="ns:createProjectAttribute"/>
+    </wsdl:message>
+    <wsdl:message name="createProjectAttributeResponse">
+        <wsdl:part name="parameters" element="ns:createProjectAttributeResponse"/>
+    </wsdl:message>
+    <wsdl:message name="addUsersNoConfirmRequest">
+        <wsdl:part name="parameters" element="ns:addUsersNoConfirm"/>
+    </wsdl:message>
+    <wsdl:message name="addUsersNoConfirmResponse">
+        <wsdl:part name="parameters" element="ns:addUsersNoConfirmResponse"/>
+    </wsdl:message>
+    <wsdl:message name="removeProjectRequest">
+        <wsdl:part name="parameters" element="ns:removeProject"/>
+    </wsdl:message>
+    <wsdl:message name="removeProjectResponse">
+        <wsdl:part name="parameters" element="ns:removeProjectResponse"/>
+    </wsdl:message>
+    <wsdl:message name="removeProjectAttributeRequest">
+        <wsdl:part name="parameters" element="ns:removeProjectAttribute"/>
+    </wsdl:message>
+    <wsdl:message name="removeProjectAttributeResponse">
+        <wsdl:part name="parameters" element="ns:removeProjectAttributeResponse"/>
+    </wsdl:message>
+    <wsdl:message name="createProjectRequest">
+        <wsdl:part name="parameters" element="ns:createProject"/>
+    </wsdl:message>
+    <wsdl:message name="createProjectResponse">
+        <wsdl:part name="parameters" element="ns:createProjectResponse"/>
+    </wsdl:message>
+    <wsdl:message name="joinProjectRequest">
+        <wsdl:part name="parameters" element="ns:joinProject"/>
+    </wsdl:message>
+    <wsdl:message name="joinProjectResponse">
+        <wsdl:part name="parameters" element="ns:joinProjectResponse"/>
+    </wsdl:message>
+    <wsdl:message name="addUserConfirmRequest">
+        <wsdl:part name="parameters" element="ns:addUserConfirm"/>
+    </wsdl:message>
+    <wsdl:message name="addUserConfirmResponse">
+        <wsdl:part name="parameters" element="ns:addUserConfirmResponse"/>
+    </wsdl:message>
+    <wsdl:message name="setOwnerRequest">
+        <wsdl:part name="parameters" element="ns:setOwner"/>
+    </wsdl:message>
+    <wsdl:message name="setOwnerResponse">
+        <wsdl:part name="parameters" element="ns:setOwnerResponse"/>
+    </wsdl:message>
+    <wsdl:message name="addUsersRequest">
+        <wsdl:part name="parameters" element="ns:addUsers"/>
+    </wsdl:message>
+    <wsdl:message name="addUsersResponse">
+        <wsdl:part name="parameters" element="ns:addUsersResponse"/>
+    </wsdl:message>
+    <wsdl:message name="changeProjectProfileRequest">
+        <wsdl:part name="parameters" element="ns:changeProjectProfile"/>
+    </wsdl:message>
+    <wsdl:message name="changeProjectProfileResponse">
+        <wsdl:part name="parameters" element="ns:changeProjectProfileResponse"/>
+    </wsdl:message>
+    <wsdl:message name="viewProjectsRequest">
+        <wsdl:part name="parameters" element="ns:viewProjects"/>
+    </wsdl:message>
+    <wsdl:message name="viewProjectsResponse">
+        <wsdl:part name="parameters" element="ns:viewProjectsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getProjectProfileRequest">
+        <wsdl:part name="parameters" element="ns:getProjectProfile"/>
+    </wsdl:message>
+    <wsdl:message name="getProjectProfileResponse">
+        <wsdl:part name="parameters" element="ns:getProjectProfileResponse"/>
+    </wsdl:message>
+    <wsdl:message name="removeUsersRequest">
+        <wsdl:part name="parameters" element="ns:removeUsers"/>
+    </wsdl:message>
+    <wsdl:message name="removeUsersResponse">
+        <wsdl:part name="parameters" element="ns:removeUsersResponse"/>
+    </wsdl:message>
+    <wsdl:message name="modifyProjectAttributeRequest">
+        <wsdl:part name="parameters" element="ns:modifyProjectAttribute"/>
+    </wsdl:message>
+    <wsdl:message name="modifyProjectAttributeResponse">
+        <wsdl:part name="parameters" element="ns:modifyProjectAttributeResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getValidPermissionsRequest">
+        <wsdl:part name="parameters" element="ns:getValidPermissions"/>
+    </wsdl:message>
+    <wsdl:message name="getValidPermissionsResponse">
+        <wsdl:part name="parameters" element="ns:getValidPermissionsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="changePermissionsRequest">
+        <wsdl:part name="parameters" element="ns:changePermissions"/>
+    </wsdl:message>
+    <wsdl:message name="changePermissionsResponse">
+        <wsdl:part name="parameters" element="ns:changePermissionsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getProfileDescriptionRequest">
+        <wsdl:part name="parameters" element="ns:getProfileDescription"/>
+    </wsdl:message>
+    <wsdl:message name="getProfileDescriptionResponse">
+        <wsdl:part name="parameters" element="ns:getProfileDescriptionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="joinProjectConfirmRequest">
+        <wsdl:part name="parameters" element="ns:joinProjectConfirm"/>
+    </wsdl:message>
+    <wsdl:message name="joinProjectConfirmResponse">
+        <wsdl:part name="parameters" element="ns:joinProjectConfirmResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="ProjectsPortType">
+        <wsdl:operation name="approveProject">
+            <wsdl:input message="tns:approveProjectRequest" wsaw:Action="urn:approveProject"/>
+            <wsdl:output message="tns:approveProjectResponse" wsaw:Action="urn:approveProjectResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:approveProjectProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="createProjectAttribute">
+            <wsdl:input message="tns:createProjectAttributeRequest" wsaw:Action="urn:createProjectAttribute"/>
+            <wsdl:output message="tns:createProjectAttributeResponse" wsaw:Action="urn:createProjectAttributeResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:createProjectAttributeProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="addUsersNoConfirm">
+            <wsdl:input message="tns:addUsersNoConfirmRequest" wsaw:Action="urn:addUsersNoConfirm"/>
+            <wsdl:output message="tns:addUsersNoConfirmResponse" wsaw:Action="urn:addUsersNoConfirmResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:addUsersNoConfirmProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="removeProject">
+            <wsdl:input message="tns:removeProjectRequest" wsaw:Action="urn:removeProject"/>
+            <wsdl:output message="tns:removeProjectResponse" wsaw:Action="urn:removeProjectResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:removeProjectProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="removeProjectAttribute">
+            <wsdl:input message="tns:removeProjectAttributeRequest" wsaw:Action="urn:removeProjectAttribute"/>
+            <wsdl:output message="tns:removeProjectAttributeResponse" wsaw:Action="urn:removeProjectAttributeResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:removeProjectAttributeProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="createProject">
+            <wsdl:input message="tns:createProjectRequest" wsaw:Action="urn:createProject"/>
+            <wsdl:output message="tns:createProjectResponse" wsaw:Action="urn:createProjectResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:createProjectProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="joinProject">
+            <wsdl:input message="tns:joinProjectRequest" wsaw:Action="urn:joinProject"/>
+            <wsdl:output message="tns:joinProjectResponse" wsaw:Action="urn:joinProjectResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:joinProjectProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="addUserConfirm">
+            <wsdl:input message="tns:addUserConfirmRequest" wsaw:Action="urn:addUserConfirm"/>
+            <wsdl:output message="tns:addUserConfirmResponse" wsaw:Action="urn:addUserConfirmResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:addUserConfirmProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="setOwner">
+            <wsdl:input message="tns:setOwnerRequest" wsaw:Action="urn:setOwner"/>
+            <wsdl:output message="tns:setOwnerResponse" wsaw:Action="urn:setOwnerResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:setOwnerProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="addUsers">
+            <wsdl:input message="tns:addUsersRequest" wsaw:Action="urn:addUsers"/>
+            <wsdl:output message="tns:addUsersResponse" wsaw:Action="urn:addUsersResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:addUsersProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="changeProjectProfile">
+            <wsdl:input message="tns:changeProjectProfileRequest" wsaw:Action="urn:changeProjectProfile"/>
+            <wsdl:output message="tns:changeProjectProfileResponse" wsaw:Action="urn:changeProjectProfileResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:changeProjectProfileProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="viewProjects">
+            <wsdl:input message="tns:viewProjectsRequest" wsaw:Action="urn:viewProjects"/>
+            <wsdl:output message="tns:viewProjectsResponse" wsaw:Action="urn:viewProjectsResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:viewProjectsProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="getProjectProfile">
+            <wsdl:input message="tns:getProjectProfileRequest" wsaw:Action="urn:getProjectProfile"/>
+            <wsdl:output message="tns:getProjectProfileResponse" wsaw:Action="urn:getProjectProfileResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:getProjectProfileProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="removeUsers">
+            <wsdl:input message="tns:removeUsersRequest" wsaw:Action="urn:removeUsers"/>
+            <wsdl:output message="tns:removeUsersResponse" wsaw:Action="urn:removeUsersResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:removeUsersProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="modifyProjectAttribute">
+            <wsdl:input message="tns:modifyProjectAttributeRequest" wsaw:Action="urn:modifyProjectAttribute"/>
+            <wsdl:output message="tns:modifyProjectAttributeResponse" wsaw:Action="urn:modifyProjectAttributeResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:modifyProjectAttributeProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="getValidPermissions">
+            <wsdl:input message="tns:getValidPermissionsRequest" wsaw:Action="urn:getValidPermissions"/>
+            <wsdl:output message="tns:getValidPermissionsResponse" wsaw:Action="urn:getValidPermissionsResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:getValidPermissionsProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="changePermissions">
+            <wsdl:input message="tns:changePermissionsRequest" wsaw:Action="urn:changePermissions"/>
+            <wsdl:output message="tns:changePermissionsResponse" wsaw:Action="urn:changePermissionsResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:changePermissionsProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="getProfileDescription">
+            <wsdl:input message="tns:getProfileDescriptionRequest" wsaw:Action="urn:getProfileDescription"/>
+            <wsdl:output message="tns:getProfileDescriptionResponse" wsaw:Action="urn:getProfileDescriptionResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:getProfileDescriptionProjectsDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="joinProjectConfirm">
+            <wsdl:input message="tns:joinProjectConfirmRequest" wsaw:Action="urn:joinProjectConfirm"/>
+            <wsdl:output message="tns:joinProjectConfirmResponse" wsaw:Action="urn:joinProjectConfirmResponse"/>
+            <wsdl:fault message="tns:ProjectsDeterFault" name="ProjectsDeterFault" wsaw:Action="urn:joinProjectConfirmProjectsDeterFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ProjectsSoap11Binding" type="tns:ProjectsPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="approveProject">
+            <soap:operation soapAction="urn:approveProject" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="createProjectAttribute">
+            <soap:operation soapAction="urn:createProjectAttribute" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addUsersNoConfirm">
+            <soap:operation soapAction="urn:addUsersNoConfirm" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeProject">
+            <soap:operation soapAction="urn:removeProject" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeProjectAttribute">
+            <soap:operation soapAction="urn:removeProjectAttribute" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="createProject">
+            <soap:operation soapAction="urn:createProject" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="joinProject">
+            <soap:operation soapAction="urn:joinProject" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addUserConfirm">
+            <soap:operation soapAction="urn:addUserConfirm" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setOwner">
+            <soap:operation soapAction="urn:setOwner" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addUsers">
+            <soap:operation soapAction="urn:addUsers" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="changeProjectProfile">
+            <soap:operation soapAction="urn:changeProjectProfile" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="viewProjects">
+            <soap:operation soapAction="urn:viewProjects" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getProjectProfile">
+            <soap:operation soapAction="urn:getProjectProfile" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeUsers">
+            <soap:operation soapAction="urn:removeUsers" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="modifyProjectAttribute">
+            <soap:operation soapAction="urn:modifyProjectAttribute" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getValidPermissions">
+            <soap:operation soapAction="urn:getValidPermissions" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="changePermissions">
+            <soap:operation soapAction="urn:changePermissions" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getProfileDescription">
+            <soap:operation soapAction="urn:getProfileDescription" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="joinProjectConfirm">
+            <soap:operation soapAction="urn:joinProjectConfirm" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ProjectsSoap12Binding" type="tns:ProjectsPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="approveProject">
+            <soap12:operation soapAction="urn:approveProject" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="createProjectAttribute">
+            <soap12:operation soapAction="urn:createProjectAttribute" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addUsersNoConfirm">
+            <soap12:operation soapAction="urn:addUsersNoConfirm" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeProject">
+            <soap12:operation soapAction="urn:removeProject" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeProjectAttribute">
+            <soap12:operation soapAction="urn:removeProjectAttribute" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="createProject">
+            <soap12:operation soapAction="urn:createProject" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="joinProject">
+            <soap12:operation soapAction="urn:joinProject" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addUserConfirm">
+            <soap12:operation soapAction="urn:addUserConfirm" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setOwner">
+            <soap12:operation soapAction="urn:setOwner" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addUsers">
+            <soap12:operation soapAction="urn:addUsers" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="changeProjectProfile">
+            <soap12:operation soapAction="urn:changeProjectProfile" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="viewProjects">
+            <soap12:operation soapAction="urn:viewProjects" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getProjectProfile">
+            <soap12:operation soapAction="urn:getProjectProfile" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="removeUsers">
+            <soap12:operation soapAction="urn:removeUsers" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="modifyProjectAttribute">
+            <soap12:operation soapAction="urn:modifyProjectAttribute" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getValidPermissions">
+            <soap12:operation soapAction="urn:getValidPermissions" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="changePermissions">
+            <soap12:operation soapAction="urn:changePermissions" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getProfileDescription">
+            <soap12:operation soapAction="urn:getProfileDescription" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="joinProjectConfirm">
+            <soap12:operation soapAction="urn:joinProjectConfirm" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ProjectsDeterFault">
+                <soap12:fault use="literal" name="ProjectsDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ProjectsHttpBinding" type="tns:ProjectsPortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="approveProject">
+            <http:operation location="approveProject"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="createProjectAttribute">
+            <http:operation location="createProjectAttribute"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="addUsersNoConfirm">
+            <http:operation location="addUsersNoConfirm"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="removeProject">
+            <http:operation location="removeProject"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="removeProjectAttribute">
+            <http:operation location="removeProjectAttribute"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="createProject">
+            <http:operation location="createProject"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="joinProject">
+            <http:operation location="joinProject"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="addUserConfirm">
+            <http:operation location="addUserConfirm"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setOwner">
+            <http:operation location="setOwner"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="addUsers">
+            <http:operation location="addUsers"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="changeProjectProfile">
+            <http:operation location="changeProjectProfile"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="viewProjects">
+            <http:operation location="viewProjects"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getProjectProfile">
+            <http:operation location="getProjectProfile"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="removeUsers">
+            <http:operation location="removeUsers"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="modifyProjectAttribute">
+            <http:operation location="modifyProjectAttribute"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getValidPermissions">
+            <http:operation location="getValidPermissions"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="changePermissions">
+            <http:operation location="changePermissions"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getProfileDescription">
+            <http:operation location="getProfileDescription"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="joinProjectConfirm">
+            <http:operation location="joinProjectConfirm"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Projects">
+        <wsdl:port name="ProjectsHttpsSoap11Endpoint" binding="tns:ProjectsSoap11Binding">
+            <soap:address location="https://192.168.56.103:52323/axis2/services/Projects.ProjectsHttpsSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="ProjectsHttpsSoap12Endpoint" binding="tns:ProjectsSoap12Binding">
+            <soap12:address location="https://192.168.56.103:52323/axis2/services/Projects.ProjectsHttpsSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="ProjectsHttpsEndpoint" binding="tns:ProjectsHttpBinding">
+            <http:address location="https://192.168.56.103:52323/axis2/services/Projects.ProjectsHttpsEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

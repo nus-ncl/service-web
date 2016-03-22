@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://api.testbed.deterlab.net/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://api.testbed.deterlab/net/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://api.testbed.deterlab/net/">
+    <wsdl:documentation>Resources</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://api.testbed.deterlab.net/xsd">
+            <xs:element name="ResourcesDeterFault">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="DeterFault" nillable="true" type="ns:DeterFault"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="DeterFault">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="detailMessage" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="errorCode" type="xs:int"/>
+                    <xs:element minOccurs="0" name="errorMessage" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="removeResource">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeResourceResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="createResource">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="persist" type="xs:boolean"/>
+                        <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="data" nillable="true" type="xs:base64Binary"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="facets" nillable="true" type="ns:ResourceFacet"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="tags" nillable="true" type="ns:ResourceTag"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="accessLists" nillable="true" type="ns:AccessMember"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ApiObject">
+                <xs:sequence/>
+            </xs:complexType>
+            <xs:complexType name="ResourceFacet">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="tags" nillable="true" type="ns:ResourceTag"/>
+                            <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="units" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="value" type="xs:double"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:complexType name="ResourceTag">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="value" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:complexType name="AccessMember">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="circleId" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="permissions" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="createResourceResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="changeResourceACL">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="acl" nillable="true" type="ns:AccessMember"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="changeResourceACLResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ns:ChangeResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ChangeResult">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="success" type="xs:boolean"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="viewResources">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="uid" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="regex" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="realization" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="persist" type="xs:boolean"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="tags" nillable="true" type="ns:ResourceTag"/>
+                        <xs:element minOccurs="0" name="offset" type="xs:int"/>
+                        <xs:element minOccurs="0" name="count" type="xs:int"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="viewResourcesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ns:ResourceDescription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ResourceDescription">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="ACL" nillable="true" type="ns:AccessMember"/>
+                            <xs:element minOccurs="0" name="data" nillable="true" type="xs:base64Binary"/>
+                            <xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="facets" nillable="true" type="ns:ResourceFacet"/>
+                            <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="perms" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="persist" type="xs:boolean"/>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="tags" nillable="true" type="ns:ResourceTag"/>
+                            <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="getValidPermissions">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getValidPermissionsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="removeResourceRequest">
+        <wsdl:part name="parameters" element="ns:removeResource"/>
+    </wsdl:message>
+    <wsdl:message name="removeResourceResponse">
+        <wsdl:part name="parameters" element="ns:removeResourceResponse"/>
+    </wsdl:message>
+    <wsdl:message name="ResourcesDeterFault">
+        <wsdl:part name="parameters" element="ns:ResourcesDeterFault"/>
+    </wsdl:message>
+    <wsdl:message name="createResourceRequest">
+        <wsdl:part name="parameters" element="ns:createResource"/>
+    </wsdl:message>
+    <wsdl:message name="createResourceResponse">
+        <wsdl:part name="parameters" element="ns:createResourceResponse"/>
+    </wsdl:message>
+    <wsdl:message name="changeResourceACLRequest">
+        <wsdl:part name="parameters" element="ns:changeResourceACL"/>
+    </wsdl:message>
+    <wsdl:message name="changeResourceACLResponse">
+        <wsdl:part name="parameters" element="ns:changeResourceACLResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getValidPermissionsRequest">
+        <wsdl:part name="parameters" element="ns:getValidPermissions"/>
+    </wsdl:message>
+    <wsdl:message name="getValidPermissionsResponse">
+        <wsdl:part name="parameters" element="ns:getValidPermissionsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="viewResourcesRequest">
+        <wsdl:part name="parameters" element="ns:viewResources"/>
+    </wsdl:message>
+    <wsdl:message name="viewResourcesResponse">
+        <wsdl:part name="parameters" element="ns:viewResourcesResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="ResourcesPortType">
+        <wsdl:operation name="removeResource">
+            <wsdl:input message="tns:removeResourceRequest" wsaw:Action="urn:removeResource"/>
+            <wsdl:output message="tns:removeResourceResponse" wsaw:Action="urn:removeResourceResponse"/>
+            <wsdl:fault message="tns:ResourcesDeterFault" name="ResourcesDeterFault" wsaw:Action="urn:removeResourceResourcesDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="createResource">
+            <wsdl:input message="tns:createResourceRequest" wsaw:Action="urn:createResource"/>
+            <wsdl:output message="tns:createResourceResponse" wsaw:Action="urn:createResourceResponse"/>
+            <wsdl:fault message="tns:ResourcesDeterFault" name="ResourcesDeterFault" wsaw:Action="urn:createResourceResourcesDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="changeResourceACL">
+            <wsdl:input message="tns:changeResourceACLRequest" wsaw:Action="urn:changeResourceACL"/>
+            <wsdl:output message="tns:changeResourceACLResponse" wsaw:Action="urn:changeResourceACLResponse"/>
+            <wsdl:fault message="tns:ResourcesDeterFault" name="ResourcesDeterFault" wsaw:Action="urn:changeResourceACLResourcesDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="getValidPermissions">
+            <wsdl:input message="tns:getValidPermissionsRequest" wsaw:Action="urn:getValidPermissions"/>
+            <wsdl:output message="tns:getValidPermissionsResponse" wsaw:Action="urn:getValidPermissionsResponse"/>
+            <wsdl:fault message="tns:ResourcesDeterFault" name="ResourcesDeterFault" wsaw:Action="urn:getValidPermissionsResourcesDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="viewResources">
+            <wsdl:input message="tns:viewResourcesRequest" wsaw:Action="urn:viewResources"/>
+            <wsdl:output message="tns:viewResourcesResponse" wsaw:Action="urn:viewResourcesResponse"/>
+            <wsdl:fault message="tns:ResourcesDeterFault" name="ResourcesDeterFault" wsaw:Action="urn:viewResourcesResourcesDeterFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ResourcesSoap11Binding" type="tns:ResourcesPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="removeResource">
+            <soap:operation soapAction="urn:removeResource" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="createResource">
+            <soap:operation soapAction="urn:createResource" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="changeResourceACL">
+            <soap:operation soapAction="urn:changeResourceACL" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getValidPermissions">
+            <soap:operation soapAction="urn:getValidPermissions" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="viewResources">
+            <soap:operation soapAction="urn:viewResources" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ResourcesSoap12Binding" type="tns:ResourcesPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="removeResource">
+            <soap12:operation soapAction="urn:removeResource" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap12:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="createResource">
+            <soap12:operation soapAction="urn:createResource" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap12:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="changeResourceACL">
+            <soap12:operation soapAction="urn:changeResourceACL" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap12:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getValidPermissions">
+            <soap12:operation soapAction="urn:getValidPermissions" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap12:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="viewResources">
+            <soap12:operation soapAction="urn:viewResources" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ResourcesDeterFault">
+                <soap12:fault use="literal" name="ResourcesDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ResourcesHttpBinding" type="tns:ResourcesPortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="removeResource">
+            <http:operation location="removeResource"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="createResource">
+            <http:operation location="createResource"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="changeResourceACL">
+            <http:operation location="changeResourceACL"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getValidPermissions">
+            <http:operation location="getValidPermissions"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="viewResources">
+            <http:operation location="viewResources"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Resources">
+        <wsdl:port name="ResourcesHttpsSoap11Endpoint" binding="tns:ResourcesSoap11Binding">
+            <soap:address location="https://192.168.56.103:52323/axis2/services/Resources.ResourcesHttpsSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="ResourcesHttpsSoap12Endpoint" binding="tns:ResourcesSoap12Binding">
+            <soap12:address location="https://192.168.56.103:52323/axis2/services/Resources.ResourcesHttpsSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="ResourcesHttpsEndpoint" binding="tns:ResourcesHttpBinding">
+            <http:address location="https://192.168.56.103:52323/axis2/services/Resources.ResourcesHttpsEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

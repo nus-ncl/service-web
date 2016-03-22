@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://api.testbed.deterlab.net/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://api.testbed.deterlab.net/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://api.testbed.deterlab.net/">
+    <wsdl:documentation>Admin</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://api.testbed.deterlab.net/xsd">
+            <xs:element name="AdminDeterFault">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="DeterFault" nillable="true" type="ns:DeterFault"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="DeterFault">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="detailMessage" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="errorCode" type="xs:int"/>
+                    <xs:element minOccurs="0" name="errorMessage" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="bootstrap">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="bootstrapResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ns:BootstrapUser"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ApiObject">
+                <xs:sequence/>
+            </xs:complexType>
+            <xs:complexType name="BootstrapUser">
+                <xs:complexContent>
+                    <xs:extension base="ns:ApiObject">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="password" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="uid" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="addPermission">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="object" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="addPermissionResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="resetAccessControl">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="resetAccessControlResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="clearCredentialCache">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="clearCredentialCacheResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="resetAccessControlRequest">
+        <wsdl:part name="parameters" element="ns:resetAccessControl"/>
+    </wsdl:message>
+    <wsdl:message name="resetAccessControlResponse">
+        <wsdl:part name="parameters" element="ns:resetAccessControlResponse"/>
+    </wsdl:message>
+    <wsdl:message name="AdminDeterFault">
+        <wsdl:part name="parameters" element="ns:AdminDeterFault"/>
+    </wsdl:message>
+    <wsdl:message name="clearCredentialCacheRequest">
+        <wsdl:part name="parameters" element="ns:clearCredentialCache"/>
+    </wsdl:message>
+    <wsdl:message name="clearCredentialCacheResponse">
+        <wsdl:part name="parameters" element="ns:clearCredentialCacheResponse"/>
+    </wsdl:message>
+    <wsdl:message name="addPermissionRequest">
+        <wsdl:part name="parameters" element="ns:addPermission"/>
+    </wsdl:message>
+    <wsdl:message name="addPermissionResponse">
+        <wsdl:part name="parameters" element="ns:addPermissionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="bootstrapRequest">
+        <wsdl:part name="parameters" element="ns:bootstrap"/>
+    </wsdl:message>
+    <wsdl:message name="bootstrapResponse">
+        <wsdl:part name="parameters" element="ns:bootstrapResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="AdminPortType">
+        <wsdl:operation name="resetAccessControl">
+            <wsdl:input message="tns:resetAccessControlRequest" wsaw:Action="urn:resetAccessControl"/>
+            <wsdl:output message="tns:resetAccessControlResponse" wsaw:Action="urn:resetAccessControlResponse"/>
+            <wsdl:fault message="tns:AdminDeterFault" name="AdminDeterFault" wsaw:Action="urn:resetAccessControlAdminDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="clearCredentialCache">
+            <wsdl:input message="tns:clearCredentialCacheRequest" wsaw:Action="urn:clearCredentialCache"/>
+            <wsdl:output message="tns:clearCredentialCacheResponse" wsaw:Action="urn:clearCredentialCacheResponse"/>
+            <wsdl:fault message="tns:AdminDeterFault" name="AdminDeterFault" wsaw:Action="urn:clearCredentialCacheAdminDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="addPermission">
+            <wsdl:input message="tns:addPermissionRequest" wsaw:Action="urn:addPermission"/>
+            <wsdl:output message="tns:addPermissionResponse" wsaw:Action="urn:addPermissionResponse"/>
+            <wsdl:fault message="tns:AdminDeterFault" name="AdminDeterFault" wsaw:Action="urn:addPermissionAdminDeterFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="bootstrap">
+            <wsdl:input message="tns:bootstrapRequest" wsaw:Action="urn:bootstrap"/>
+            <wsdl:output message="tns:bootstrapResponse" wsaw:Action="urn:bootstrapResponse"/>
+            <wsdl:fault message="tns:AdminDeterFault" name="AdminDeterFault" wsaw:Action="urn:bootstrapAdminDeterFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="AdminSoap11Binding" type="tns:AdminPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="resetAccessControl">
+            <soap:operation soapAction="urn:resetAccessControl" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AdminDeterFault">
+                <soap:fault use="literal" name="AdminDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="clearCredentialCache">
+            <soap:operation soapAction="urn:clearCredentialCache" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AdminDeterFault">
+                <soap:fault use="literal" name="AdminDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addPermission">
+            <soap:operation soapAction="urn:addPermission" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AdminDeterFault">
+                <soap:fault use="literal" name="AdminDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="bootstrap">
+            <soap:operation soapAction="urn:bootstrap" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AdminDeterFault">
+                <soap:fault use="literal" name="AdminDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="AdminSoap12Binding" type="tns:AdminPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="resetAccessControl">
+            <soap12:operation soapAction="urn:resetAccessControl" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AdminDeterFault">
+                <soap12:fault use="literal" name="AdminDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="clearCredentialCache">
+            <soap12:operation soapAction="urn:clearCredentialCache" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AdminDeterFault">
+                <soap12:fault use="literal" name="AdminDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="addPermission">
+            <soap12:operation soapAction="urn:addPermission" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AdminDeterFault">
+                <soap12:fault use="literal" name="AdminDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="bootstrap">
+            <soap12:operation soapAction="urn:bootstrap" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="AdminDeterFault">
+                <soap12:fault use="literal" name="AdminDeterFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="AdminHttpBinding" type="tns:AdminPortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="resetAccessControl">
+            <http:operation location="resetAccessControl"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="clearCredentialCache">
+            <http:operation location="clearCredentialCache"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="addPermission">
+            <http:operation location="addPermission"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="bootstrap">
+            <http:operation location="bootstrap"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Admin">
+        <wsdl:port name="AdminHttpsSoap11Endpoint" binding="tns:AdminSoap11Binding">
+            <soap:address location="https://192.168.56.103:52323/axis2/services/Admin.AdminHttpsSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="AdminHttpsSoap12Endpoint" binding="tns:AdminSoap12Binding">
+            <soap12:address location="https://192.168.56.103:52323/axis2/services/Admin.AdminHttpsSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="AdminHttpsEndpoint" binding="tns:AdminHttpBinding">
+            <http:address location="https://192.168.56.103:52323/axis2/services/Admin.AdminHttpsEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
