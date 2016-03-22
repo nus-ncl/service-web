@@ -5,10 +5,13 @@ import org.apache.axis2.AxisFault;
 import net.deterlab.testbed.api.*;
 
 public class simpleClient {
+    
+    private static String SPI_HOST_IP = "192.168.56.103";
+    private static String SPI_HOST_PORT = "52323";
 
     public static void main(String[] args) {        
         try {
-            ApiInfoStub myStub = new ApiInfoStub("https://192.168.56.103:52323/axis2/services/ApiInfo");
+            ApiInfoStub myStub = new ApiInfoStub("https://" + SPI_HOST_IP + ":" + SPI_HOST_PORT +  "/axis2/services/ApiInfo");
             ApiInfoStub.GetVersion req = new ApiInfoStub.GetVersion();
             ApiInfoStub.GetVersionResponse resp = myStub.getVersion(req);
 
