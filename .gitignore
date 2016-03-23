@@ -1,4 +1,16 @@
+# Java artifacts
+*.class
+
+# Gradle artifacts
+build
+.gradle/
+
+# Eclipse artifacts
+bin
 .classpath
-bin/*
-.settings
-.settings/*
+.project
+.settings/
+
+# Idea artifacts
+.idea/
+*.iml
