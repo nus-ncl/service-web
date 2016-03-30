@@ -1,3 +1,4 @@
+package main.java;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,6 +47,7 @@ public class simpleClient {
     
     public static void main(String[] args) {        
         try {
+            /**
             UsersStub myUsersStub = new UsersStub(SPI_HOST_ADDR + "/axis2/services/Users");
             UsersStub.CreateUserNoConfirm createReq = new UsersStub.CreateUserNoConfirm();
             
@@ -61,8 +63,10 @@ public class simpleClient {
             createReq.setHashtype("clear");
             createReq.setClearpassword("password");
             createReq.setProfile(profile);
+            
             // need to set profile param here
             UsersStub.CreateUserNoConfirmResponse createResp = myUsersStub.createUserNoConfirm(createReq);
+            */
             
             /**
             UsersStub.CreateUserAttribute createAttributeReq = new UsersStub.CreateUserAttribute();
@@ -111,9 +115,6 @@ public class simpleClient {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (RemoteException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (UsersDeterFault e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

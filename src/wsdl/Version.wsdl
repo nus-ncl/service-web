@@ -88,23 +88,14 @@
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="Version">
-        <wsdl:port name="VersionHttpSoap11Endpoint" binding="ns:VersionSoap11Binding">
-            <soap:address location=""/>
-        </wsdl:port>
         <wsdl:port name="VersionHttpsSoap11Endpoint" binding="ns:VersionSoap11Binding">
             <soap:address location="https://192.168.56.103:52323/axis2/services/Version.VersionHttpsSoap11Endpoint/"/>
         </wsdl:port>
         <wsdl:port name="VersionHttpsSoap12Endpoint" binding="ns:VersionSoap12Binding">
             <soap12:address location="https://192.168.56.103:52323/axis2/services/Version.VersionHttpsSoap12Endpoint/"/>
         </wsdl:port>
-        <wsdl:port name="VersionHttpSoap12Endpoint" binding="ns:VersionSoap12Binding">
-            <soap12:address location=""/>
-        </wsdl:port>
         <wsdl:port name="VersionHttpsEndpoint" binding="ns:VersionHttpBinding">
             <http:address location="https://192.168.56.103:52323/axis2/services/Version.VersionHttpsEndpoint/"/>
-        </wsdl:port>
-        <wsdl:port name="VersionHttpEndpoint" binding="ns:VersionHttpBinding">
-            <http:address location=""/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
