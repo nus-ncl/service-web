@@ -38,6 +38,16 @@ public class JavaSpiBinder {
         return r.getKeyID();
     }
     
+    public String getPatchLevel() throws Exception {
+        ApiInfoStub myStub = new ApiInfoStub(SPI_HOST_ADDR + "/axis2/services/ApiInfo");
+        ApiInfoStub.GetVersion req = new ApiInfoStub.GetVersion();
+        ApiInfoStub.GetVersionResponse resp = myStub.getVersion(req);
+
+        ApiInfoStub.VersionDescription r = resp.get_return();
+        
+        return r.getPatchLevel();
+    }
+    
     public Identity login(String uid, String password) throws Exception {
         Identity i = null;
         UsersStub stub = new UsersStub(SPI_HOST_ADDR + "/axis2/services/Users");
