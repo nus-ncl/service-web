@@ -1,3 +1,4 @@
+package sg.ncl;
 
 
 import java.util.Scanner;
@@ -10,7 +11,7 @@ import java.util.StringTokenizer;
 
 public class CommandLine {
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         System.out.print("Enter a command: ");
         String userInput;
         

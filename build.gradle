@@ -29,12 +29,19 @@ sourceSets {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+// for fixing conflict with axis2-kernel and spring boot
+configurations {
+    all*.exclude group: '', module: 'servlet-api'
+}
+
 dependencies {
-    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    // compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile 'org.springframework.boot:spring-boot-starter-web'
+    // compile 'org.springframework.boot:spring-boot-starter-actuator'
     compile 'org.apache.axis2:axis2-kernel:1.7.1'
     compile 'org.apache.axis2:axis2-adb:1.7.1'
     compile files('lib/jabac-1.5.jar')
+    testCompile("junit:junit")
 }
 
 // tag::wrapper[]

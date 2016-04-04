@@ -1,3 +1,4 @@
+package sg.ncl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
