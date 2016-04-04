@@ -5,6 +5,11 @@ import java.util.StringTokenizer;
 
 import main.java.JavaSpiBinder;
 
+/**
+ * This is a command line interface to communicate with the java SPI binder
+ * @author yeoteye
+ */
+
 public class CommandLine {
 
     public static void main(String[] args) {
@@ -14,7 +19,8 @@ public class CommandLine {
         Scanner scanIn = new Scanner(System.in);
         userInput = scanIn.nextLine();
         
-        JavaSpiBinder myJavaBinder = new JavaSpiBinder("192.168.56.103", "52323");
+        // JavaSpiBinder myJavaBinder = new JavaSpiBinder("192.168.56.103", "52323");
+        DummyJavaSpiBinder myJavaBinder = new DummyJavaSpiBinder();
         
         try {
             if (userInput.equalsIgnoreCase("getversion")) 
