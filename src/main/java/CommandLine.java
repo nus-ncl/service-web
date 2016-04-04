@@ -1,9 +1,7 @@
-package main.java;
+
 
 import java.util.Scanner;
 import java.util.StringTokenizer;
-
-import main.java.JavaSpiBinder;
 
 /**
  * This is a command line interface to communicate with the java SPI binder
@@ -26,8 +24,8 @@ public class CommandLine {
             if (userInput.equalsIgnoreCase("getversion")) 
             {
                 System.out.println(myJavaBinder.getVersion());
-            } 
-            else if (userInput.equalsIgnoreCase("getkeyid")) 
+            }
+            else if (userInput.equalsIgnoreCase("getkeyid"))
             {
                 System.out.println(myJavaBinder.getKeyID());
             } 

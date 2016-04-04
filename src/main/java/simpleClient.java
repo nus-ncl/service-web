@@ -1,4 +1,4 @@
-package main.java;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
@@ -51,7 +51,7 @@ public class simpleClient {
         }
     }
     
-    public static void main(String[] args) {
+    public static void mainDemo(String[] args) {
         try {    
             /**
             UsersStub myUsersStub = new UsersStub(SPI_HOST_ADDR + "/axis2/services/Users");

@@ -1,14 +1,41 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE")
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'application'
+apply plugin: 'spring-boot'
 
 repositories {
-    mavenCentral()
+    jcenter()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir 'src/gen/java'
+        }
+    }
 }
 
 // tag::dependencies[]
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.apache.axis2:axis2-kernel:1.7.1'
+    compile 'org.apache.axis2:axis2-adb:1.7.1'
+    compile files('lib/jabac-1.5.jar')
+}
 
 // tag::wrapper[]
 task wrapper(type: Wrapper) {
@@ -16,15 +43,3 @@ task wrapper(type: Wrapper) {
     distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
 // end::wrapper[]
-
-sourceSets {
-    main {
-        java { srcDir 'src' }
-        resources { srcDir 'resources' }
-    }
-}
-
-dependencies {
-    compile 'org.apache.axis2:axis2-java2wsdl:1.7.1'
-    compile 'org.apache.axis2:axis2-kernel:1.7.1'
-}
