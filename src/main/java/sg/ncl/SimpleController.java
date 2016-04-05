@@ -19,4 +19,9 @@ public class SimpleController {
     public String signup() {
         return "signup";
     }
+    
+    @RequestMapping("/passwordReset")
+    public String passwordReset() {
+        return "passwordreset";
+    }
 }
