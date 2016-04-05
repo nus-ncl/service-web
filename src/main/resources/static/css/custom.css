@@ -13,14 +13,14 @@
 .login-panel {
 	padding: 10px;
 	margin-top: 50px;
-	border-radius: 0px;
+	border-radius: 10px;
 	background: rgba(255, 255, 255, 0.6)!important;
 }
 
 .login-panel .panel-heading {
-  color: #fff !important;
-  background-color: #73c20e !important;
-  font-size: 30px;
-  text-align: center;
-  padding: 20px;
+	color: #fff !important;
+	background-color: #73c20e !important;
+	font-size: 40px;
+	text-align: center;
+	padding: 20px;
 }
