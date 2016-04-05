@@ -6,13 +6,21 @@
 
 // general
 .bg-1 {
-	background-color:  #759ebe;
+	background-color: #759ebe;
 }
 
 // login page
 .login-panel {
-  padding: 10px;
-  margin-top: 50px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.6)!important;
+	padding: 10px;
+	margin-top: 50px;
+	border-radius: 0px;
+	background: rgba(255, 255, 255, 0.6)!important;
+}
+
+.login-panel .panel-heading {
+  color: #fff !important;
+  background-color: #73c20e !important;
+  font-size: 30px;
+  text-align: center;
+  padding: 20px;
 }
