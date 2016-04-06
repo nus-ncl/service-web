@@ -4,12 +4,12 @@
     date: April 05 2016
 */
 
-// general
-.bg-1 {
-	background-color: #759ebe;
+/* general */
+.mybg {
+	background-color: #759ebe; !important;
 }
 
-// login page
+/* login page */
 #login-dp {
     min-width: 250px;
     overflow:hidden;
@@ -26,4 +26,8 @@
 	margin-top: 10px;
 	margin-left: 10px;
 	margin-right: 10px;
+}
+
+.helloworld {
+	color: red;
 }
