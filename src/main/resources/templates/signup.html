@@ -9,8 +9,92 @@
         <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{js/jquery-1.12.2.min.js}"></script>
         <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
     </head>
-    <body>
+    <body class="mybg">
         <div th:replace="fragments/login_navigation :: loginnav"></div>
-        <h1>Sign Up</h1>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+		        <div class="panel panel-default registration-panel">
+		            <div class="panel-heading"><h3>Registration</h3></div> <!-- panel-heading -->
+		
+		            <!-- progressbar -->
+		            <ul id="progressbar">
+		                 <li class="active">Create Your Account</li>
+		                 <li>Your Personal Details</li>
+		                 <li>Almost There</li>
+		                 <li>Last Step</li>
+		            </ul>
+		            
+		            <div class="panel-body">
+		                 <form action="#" method="post" role="form" id="msform">
+		                     <fieldset id="step1" class="first current">
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="inputEmail" placeholder="Email" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="password" class="form-control" id="inputPassword" placeholder="Password" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" name=""/>
+		                         </div>
+		                         <button type="button" class="btn btn-default btn-next">Next</button>
+		                         <a href="#" class="pull-right">Have an account? Sign in here!</a>
+		                     </fieldset>
+		                     <fieldset id="step2">
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="firstName" placeholder="First Name" name=""/>
+		                             <input type="text" class="form-control" id="lastName" placeholder="Last Name" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="phone" placeholder="Phone" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="jobTitle" placeholder="Job Title" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="institution" placeholder="Institution/Employer" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="institutionAbbrev" placeholder="Institution Abbreviation" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="institutionWeb" placeholder="Institution Web Site" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="address1" placeholder="Address 1" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="address2" placeholder="Address 2" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <select class="form-control">
+		                                <option value="singapore">Singapore</option>
+		                                <option value="2">Country 2</option>
+		                                <option value="3">Country 3</option>
+		                                <option value="4">Country 4</option>
+		                            </select>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="state" placeholder="State/Province" name=""/>
+		                         </div>
+		                         <div class="form-group">
+		                             <input type="text" class="form-control" id="institutionAbbrev" placeholder="ZIP/Postal Code" name=""/>
+		                         </div>
+		                     </fieldset>
+		                     <fieldset id="step3"></fieldset>
+		                     <fieldset id="step4" class="last"></fieldset>
+		                 </form>
+		            </div> <!-- panel-body -->
+		            
+		            <div class="panel-footer">
+		                 <p>aaaa</p>
+		            </div> <!-- panel-footer -->
+		        </div> <!-- registration-panel -->
+                </div> <!-- col -->
+                <div class="col-sm-1"></div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+        
     </body>
 </html>

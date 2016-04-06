@@ -6,14 +6,15 @@
 
 /* general */
 .mybg {
-	background-color: #759ebe; !important;
+	background-color: #44b0d3;
 }
 
 /* login page */
 #login-dp {
+	border-radius: 10px;
     min-width: 250px;
     overflow:hidden;
-    background-color:rgba(255,255,255,.8);
+    background-color:rgba(255,255,255, 1.0) !important;
 }
 
 #login-dp .form-group {
@@ -28,6 +29,79 @@
 	margin-right: 10px;
 }
 
-.helloworld {
-	color: red;
+/* register form */
+#step2, #step3 {
+    display: none;
+}
+
+.registration-panel {
+	 padding: 10px;
+	 margin-top: 50px;
+	 border-radius: 10px;
+	 background: rgba(255, 255, 255, 0.8)!important;
+}
+
+.registration-panel .panel-heading {
+	 background: none;
+	 margin-bottom: 10px;
+	 text-align: center;
+	 color: #777;
+}
+
+/*progressbar*/
+#progressbar {
+	 margin-top: 20px;
+	 margin-bottom: 30px;
+	 overflow: hidden;
+	 /*CSS counters to number the steps*/
+	 counter-reset: step;
+}
+
+#progressbar li {
+	 list-style-type: none;
+	 color: #777;
+	 text-align: center;
+	 text-transform: uppercase;
+	 font-size: 13px;
+	 width: 25%; /* change width if there are more tabs, eg, 4 tabs = 100% divide 4 */
+	 float: left;
+	 position: relative;
+}
+
+#progressbar li:before {
+	 text-align: center;
+	 content: counter(step);
+	 counter-increment: step;
+	 width: 30px;
+	 line-height: 30px;
+	 display: block;
+	 font-size: 11px;
+	 color: #333;
+	 background: white;
+	 border-radius: 3px;
+	 margin: 0 auto 5px auto;
+}
+  
+/*progressbar connectors*/
+#progressbar li:after {
+	 content: '';
+	 width: 100%;
+	 height: 2px;
+	 background: white;
+	 position: absolute;
+	 left: -50%;
+	 top: 14px;
+	 z-index: -1; /*put it behind the numbers*/
+}
+
+#progressbar li:first-child:after {
+	 /*connector not needed before the first step*/
+	 content: none;
+}
+
+/*marking active/completed steps green*/
+/*The number of the step and the connector before it = green*/
+#progressbar li.active:before, #progressbar li.active:after {
+	 background: #27AE60;
+	 color: white;
 }
