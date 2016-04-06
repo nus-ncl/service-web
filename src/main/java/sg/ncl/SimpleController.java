@@ -20,8 +20,8 @@ public class SimpleController {
         return "signup";
     }
     
-    @RequestMapping("/passwordReset")
-    public String passwordReset() {
+    @RequestMapping("/passwordreset")
+    public String passwordreset() {
         return "passwordreset";
     }
 }
