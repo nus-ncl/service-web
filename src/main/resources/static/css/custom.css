@@ -10,17 +10,17 @@
 }
 
 // login page
-.login-panel {
-	padding: 10px;
-	margin-top: 50px;
-	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.6)!important;
+#login-dp {
+    min-width: 250px;
+    overflow:hidden;
+    background-color:rgba(255,255,255,.8);
 }
 
-.login-panel .panel-heading {
-	color: #fff !important;
-	background-color: #73c20e !important;
-	font-size: 40px;
-	text-align: center;
-	padding: 20px;
+#login-dp .form-group {
+	padding: 10px;
+    margin-bottom: 10px;
+}
+
+.login-menu {
+	width: 300px;
 }

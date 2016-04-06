@@ -11,3 +11,4 @@ Development of official NCL UI
 
 ## Notes
 1. Set spring.thymeleaf.cache=false to allow thymeleaf template to be refresh via browser without rebooting entire web app
+    - use gradle tasks - bootRun
