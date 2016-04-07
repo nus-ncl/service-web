@@ -20,7 +20,7 @@ public class SimpleController {
     @RequestMapping(value="/", method=RequestMethod.POST)
     public String loginSubmit(@ModelAttribute LoginForm loginForm, Model model) throws Exception {
         model.addAttribute("loginForm", loginForm);
-        return "dashboard";
+        return "redirect:/dashboard";
     }
     
     @RequestMapping("/signup")
@@ -36,5 +36,10 @@ public class SimpleController {
     @RequestMapping("/dashboard")
     public String dashboard() {
         return "dashboard";
+    }
+    
+    @RequestMapping(value="/logout", method=RequestMethod.GET)
+    public String logout() {
+        return "redirect:/";
     }
 }
