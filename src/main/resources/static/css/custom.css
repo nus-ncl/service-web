@@ -45,21 +45,21 @@
 	padding: 60px 50px;
 }
 
-.bg-grey {
-    background-color: #f6f6f6;
+.bg-alternate {
+    background-color: #474e5d;
 }
 
 .carousel-control.right, .carousel-control.left {
     background-image: none;
-    color: #ee1f31;
+    color: #ea5361;
 }
 
 .carousel-indicators li {
-    border-color: #ee1f31;
+    border-color: #ea5361;
 }
 
 .carousel-indicators li.active {
-    background-color: #ee1f31;
+    background-color: #ea5361;
 }
 
 .item h4 {
@@ -81,10 +81,14 @@
     margin-bottom: 30px;
 }
 
+#services {
+	color: #ffffff;
+}
+
 #services h2 {
     font-size: 24px;
     text-transform: uppercase;
-    color: #303030;
+    /* color: #303030; */
     font-weight: 600;
     margin-bottom: 30px;
 }
@@ -92,13 +96,13 @@
 #services h4 {
 	font-size: 19px;
 	line-height: 1.375em;
-	color: #303030;
+	/* color: #303030; */
 	font-weight: 400;
 	margin-bottom: 30px;
 }
 
 .services-logo {
-	color: #ee1f31;
+	color: #ea5361;
 	font-size: 50px;
 }
 
