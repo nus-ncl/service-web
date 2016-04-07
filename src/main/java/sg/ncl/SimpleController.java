@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class SimpleController {
     
-    DummyJavaSpiBinder myJavaBinder = new DummyJavaSpiBinder();
+    JavaSpiBinder myJavaBinder = new JavaSpiBinder("192.168.56.103", "52323");
+    // DummyJavaSpiBinder myJavaBinder = new DummyJavaSpiBinder();
     
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String index(Model model) throws Exception {
@@ -24,12 +25,15 @@ public class SimpleController {
     }
     
     @RequestMapping("/signup")
-    public String signup() {
+    public String signup(Model model) {
+        // forms has to be added for other views, because the loginForm also exists on those pages
+        model.addAttribute("loginForm", new LoginForm());
         return "signup";
     }
     
     @RequestMapping("/passwordreset")
-    public String passwordreset() {
+    public String passwordreset(Model model) {
+        model.addAttribute("loginForm", new LoginForm());
         return "passwordreset";
     }
     
