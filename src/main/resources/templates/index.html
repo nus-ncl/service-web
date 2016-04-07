@@ -11,14 +11,64 @@
     </head>
     <body class="mybg">
 		<!-- for importing the navigation template -->
-		<div th:replace="fragments/login_navigation :: loginnav"></div>
-		<div class="container">
+		<div th:replace="fragments/login_navigation :: loginnav">&nbsp;</div>
+		<div class="container-fluid bg-1 text-center">
+		    <img src="../static/images/logo.jpg" th:src="@{images/logo.jpg}" alt="logo" class="img-circle img-responsive center-block" title="NCL" />
+		</div> <!-- container -->
+		<div id="services" class="container-fluid bg-2 bg-grey text-center">
+		    <h2>SERVICES</h2>
+		    <h4>What we offer</h4>
 		    <div class="row">
-		        <div class="col-sm-12">
-		          <h1 style="text-align: center;">Welcome to NCL</h1>
-		          <img src="../static/images/logo.jpg" th:src="@{images/logo.jpg}" alt="logo" class="img-circle img-responsive center-block" title="NCL" />
-		    </div>
-		</div> <!-- row -->
-		</div> <!-- container -->  
+		      <div class="col-sm-4">
+		          <i class="fa fa-cloud services-logo"></i>
+		          <h4>VIRTUALIZATION</h4>
+		          <p>Lorem ipsum dolor sit amet..</p>
+		      </div> <!-- col -->
+              <div class="col-sm-4">
+                  <i class="fa fa-cog services-logo"></i>
+                  <h4>AUTOMATION</h4>
+                  <p>Lorem ipsum dolor sit amet..</p>
+              </div> <!-- col -->
+              <div class="col-sm-4">
+                  <i class="fa fa-puzzle-piece services-logo"></i>
+                  <h4>RESEARCH</h4>
+                  <p>Lorem ipsum dolor sit amet..</p>
+              </div> <!-- col -->
+		    </div> <!-- row -->
+		</div> <!-- container -->
+		<div id="customers" class="container-fluid bg-3 text-center">
+		    <h2>WHAT OUR CUSTOMERS SAY</h2>
+		    <div id="myCarousel" class="carousel slide text-center" data-ride="carousel">
+		          <!-- indicators -->
+		          <ol class="carousel-indicators">
+		              <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+		              <li data-target="#myCarousel" data-slide-to="1"></li>
+		              <li data-target="#myCarousel" data-slide-to="2"></li>
+		          </ol>
+		          
+		          <!-- wrapper for slides -->
+		          <div class="carousel-inner" role="listbox">
+                      <div class="item active">
+                          <h4>"The beef is real !"<br/><span style="font-style:normal;">Dr. Rang Charng Guo, Director, LCN</span></h4>
+                      </div>
+		              <div class="item">
+		                  <h4>"This is the best !"<br/><span style="font-style:normal;">John Doe, Vice President, ACME</span></h4>
+		              </div>
+                      <div class="item">
+                          <h4>"One word... WOW !"<br/><span style="font-style:normal;">Stan Lee, User, ABC</span></h4>
+                      </div>
+		          </div> <!-- carousel-inner -->
+		          
+		          <!-- Left and right controls -->
+		          <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+		              <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+		              <span class="sr-only">Previous</span>
+		          </a>
+                  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                      <span class="sr-only">Next</span>
+                  </a>
+		    </div> <!-- carousel -->
+		</div> <!-- container -->
     </body>
 </html>

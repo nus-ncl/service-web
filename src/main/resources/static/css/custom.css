@@ -6,7 +6,80 @@
 
 /* general */
 .mybg {
-	background-color: #44b0d3;
+	background-color: #ffffff;
+}
+
+.login-navbar {
+	margin-bottom: 0;
+	z-index: 9999;
+	border: 0;
+	font-size: 12px !important;
+	line-height: 1.42857143 !important;
+	letter-spacing: 4px;
+	border-radius: 0;
+	font-family: Montserrat, sans-serif;
+}
+
+/* index page */
+.bg-1, .bg-2, .bg-3 {
+	padding: 60px 50px;
+}
+
+.bg-grey {
+    background-color: #f6f6f6;
+}
+
+.carousel-control.right, .carousel-control.left {
+    background-image: none;
+    color: #ee1f31;
+}
+
+.carousel-indicators li {
+    border-color: #ee1f31;
+}
+
+.carousel-indicators li.active {
+    background-color: #ee1f31;
+}
+
+.item h4 {
+    font-size: 19px;
+    line-height: 1.375em;
+    font-weight: 400;
+    font-style: italic;
+    margin: 70px 0;
+}
+.item span {
+    font-style: normal;
+}
+
+#customers h2 {
+    font-size: 24px;
+    text-transform: uppercase;
+    color: #303030;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+#services h2 {
+    font-size: 24px;
+    text-transform: uppercase;
+    color: #303030;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+#services h4 {
+	font-size: 19px;
+	line-height: 1.375em;
+	color: #303030;
+	font-weight: 400;
+	margin-bottom: 30px;
+}
+
+.services-logo {
+	color: #ee1f31;
+	font-size: 50px;
 }
 
 /* login page */
