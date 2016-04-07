@@ -9,6 +9,26 @@
 	background-color: #ffffff;
 }
 
+.dashboard-navbar {
+    background-color: #474e5d !important;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    letter-spacing: 2px;
+    font-size: 12px !important;
+}
+
+.dashboard-navbar > li > a {
+  color: #fff !important;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.dashboard-navbar li a:hover, .dashboard-navbar li.active a {
+  color: #039be5 !important;
+  background-color: #fff !important;
+}
+
 .login-navbar {
 	margin-bottom: 0;
 	z-index: 9999;

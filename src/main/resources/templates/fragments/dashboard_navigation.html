@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories</title>
+        <title>National Cybersecurity Laboratories - Dashboard</title>
         <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" media="screen"/>
         <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{css/font-awesome/css/font-awesome.min.css}"/>
         <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{css/custom.css}"/>
@@ -12,7 +12,7 @@
     </head>
   <body>
       <!-- give a fragment name so that we can import from other html files -->
-	  <nav class="navbar navbar-default login-navbar" th:fragment="loginnav">
+	  <nav class="navbar navbar-default dashboard-navbar" th:fragment="dashboardnav">
 	      <div class="container-fluid">
 	        <div class="navbar-header">
 	           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -20,46 +20,25 @@
 	            <span class="icon-bar"></span>
 	            <span class="icon-bar"></span>
 	           </button>
-	          <a class="navbar-brand" href="/index" th:href="@{/}" title="NCL"><img class="img-circle img-responsive" src="../static/images/logo_20.png" th:src="@{images/logo_20.png}" alt="NCL"/></a>
+	          <a class="navbar-brand" href="/dashboard" th:href="@{/dashboard}" title="NCL"><img class="img-circle img-responsive" src="../static/images/logo_20.png" th:src="@{images/logo_20.png}" alt="NCL"/></a>
 	        </div>
 	        <div class="collapse navbar-collapse" id="myNavbar">
-	            <ul class="nav navbar-nav navbar-right">
-	              <li class="dropdown">
-	                <a href="#" class="dropdown-toggle" data-toggle="dropdown">LOGIN <span class="caret"></span></a>
-	                    <ul id="login-dp" class="dropdown-menu">
-	                        <li>
-	                            <div class="row">
-	                                <div class="col-sm-12 login-menu">
-	                                   <form method="post" action="#" th:action="@{/}" th:object="${loginForm}" role="form">
-	                                       <fieldset>
-	                                           <div class="form-group">
-	                                               <input type="text" class="form-control" id="inputEmail" placeholder="Email" name="" th:field="*{email}" />
-	                                           </div>
-	                                           <div class="form-group">
-	                                               <input type="password" class="form-control" id="inputPassword" placeholder="Password" name="" th:field="*{password}" />
-	                                           </div>
-	                                           <div class="form-group">
-	                                               <label>
-	                                                   <input type="checkbox" name="" /> Remember me
-	                                               </label>
-	                                           </div>
-	                                           <div class="form-group">
-	                                               <button type="submit" class="btn btn-primary">Sign in</button>
-	                                           </div>
-	                                           <div class="form-group">
-	                                               <p><a href="passwordreset" th:href="@{/passwordreset}">Forget Password?</a></p>
-	                                           </div>
-	                                       </fieldset>
-	                                   </form>
-	                                </div> <!-- col -->
-	                            </div> <!-- row -->
-	                        </li>
-	                    </ul>
-	              </li>
-	              <li><a href="signup" th:href="@{/signup}">SIGN UP</a></li>
-	            </ul>
+	           <ul class="nav navbar-nav dashboard-navbar">
+	               <li><a href="#"><i class="fa fa-leaf"></i> Team</a></li>
+	               <li><a href="#"><i class="fa fa-tasks"></i> Experiment</a></li>
+	               <li><a href="#"><i class="fa fa-umbrella"></i> Help</a></li>
+	           </ul>
+	           <ul class="nav navbar-nav navbar-right dashboard-navbar">
+	               <li class="dropdown">
+	                   <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg"></i> <span class="caret"></span></a>
+	                   <ul class="dropdown-menu">
+	                       <li><a href="#">Edit Account Settings</a></li>
+	                       <li><a href="#"><i class="fa fa-sign-out"></i> Sign Out</a></li>
+	                   </ul>
+	               </li>
+	           </ul>
 	       </div> <!-- /.navbar-collapse -->
 	      </div> <!-- /.container-fluid -->
-	    </nav>
+	 </nav>
   </body>
 </html>

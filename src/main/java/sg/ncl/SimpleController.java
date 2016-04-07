@@ -32,4 +32,9 @@ public class SimpleController {
     public String passwordreset() {
         return "passwordreset";
     }
+    
+    @RequestMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
 }
