@@ -46,4 +46,9 @@ public class SimpleController {
     public String logout() {
         return "redirect:/";
     }
+    
+    @RequestMapping("/teams")
+    public String teams() {
+        return "teams";
+    }
 }

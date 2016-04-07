@@ -13,9 +13,28 @@
     <body class="mybg">
         <!-- for importing the navigation template -->
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
-        <div class="container-fluid bg-1 text-center">
+        <div class="container">
             <div class="row">
                 <h1>Dashboard</h1>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3>Overview</h3>
+                    </div> <!-- panel heading -->
+                    <div class="panel-body">
+                        <div class="col-sm-4">
+                            <h4>Team</h4>
+                            <p>99</p>
+                        </div> <!-- col -->
+                        <div class="col-sm-4">
+                            <h4>Experiments</h4>
+                            <p>999</p>
+                        </div> <!-- col -->
+                        <div class="col-sm-4">
+                            <h4>Total Running Time</h4>
+                            <p>999 hours</p>
+                        </div> <!-- col -->
+                    </div> <!-- panel body -->
+                </div> <!-- panel -->
             </div>
         </div> <!-- container -->
     </body>
