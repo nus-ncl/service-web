@@ -103,15 +103,16 @@
 }
 
 /* register form */
-#step2, #step3 {
+#step2, #step3, #step4 {
     display: none;
 }
 
 .registration-panel {
 	 padding: 10px;
 	 margin-top: 50px;
+	 border-color: #00c1d7;
 	 border-radius: 10px;
-	 background: rgba(255, 255, 255, 0.8)!important;
+	 background-color:rgba(255,255,255, 0.8) !important;
 }
 
 .registration-panel .panel-heading {
@@ -136,7 +137,7 @@
 	 text-align: center;
 	 text-transform: uppercase;
 	 font-size: 13px;
-	 width: 25%; /* change width if there are more tabs, eg, 4 tabs = 100% divide 4 */
+	 width: 33.33%; /* change width if there are more tabs, eg, 4 tabs = 100% divide 4 */
 	 float: left;
 	 position: relative;
 }
