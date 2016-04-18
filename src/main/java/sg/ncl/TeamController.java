@@ -35,4 +35,20 @@ public class TeamController {
         }
         return "The team name not available";
     }
+    
+    @RequestMapping(value = "/team/all", method = RequestMethod.GET, headers="Accept=application/json")
+    public List<Team> getAllTeams() {
+        return myTeamsList;
+    }
+    
+    @RequestMapping(value = "/seedTeam")
+    public List<Team> seedTeam() {
+        Team team1 = new Team(counter.incrementAndGet(), "hybridcloud", "this is a desc", "www.nus.edu.sg", "research", true);
+        Team team2 = new Team(counter.incrementAndGet(), "demo", "this is a desc", "www.nus.edu.sg", "research", true);
+        Team team3 = new Team(counter.incrementAndGet(), "demo2", "this is a desc", "www.nus.edu.sg", "research", true);
+        myTeamsList.add(team1);
+        myTeamsList.add(team2);
+        myTeamsList.add(team3);
+        return myTeamsList;
+    }
 }
