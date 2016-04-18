@@ -48,4 +48,29 @@ public class MainController {
     public String teams() {
         return "teams";
     }
+    
+    @RequestMapping("/team_application_submitted")
+    public String teamAppSubmit() {
+        return "team_application_submitted";
+    }
+    
+    @RequestMapping("/join_application_submitted")
+    public String joinTeamAppSubmit() {
+        return "join_team_application_submitted";
+    }
+    
+    @RequestMapping("/email_not_validated")
+    public String emailNotValidated() {
+        return "email_not_validated";
+    }
+    
+    @RequestMapping("/team_application_under_review")
+    public String teamAppUnderReview() {
+        return "team_application_under_review";
+    }
+    
+    @RequestMapping("/join_application_awaiting_approval")
+    public String joinTeamAppAwaitingApproval() {
+        return "join_team_application_awaiting_approval";
+    }
 }
