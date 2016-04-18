@@ -30,7 +30,7 @@ public class CommandLine {
             {
                 System.out.println(myJavaBinder.getKeyID());
             } 
-            else if (userInput.startsWith("login")) 
+            else if (userInput.startsWith("login"))
             {
                 String username;
                 String password;

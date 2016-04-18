@@ -12,10 +12,8 @@ import net.deterlab.abac.Identity;
 public class JavaSpiBinder {
     
     private String SPI_HOST_ADDR;
-    private Utility myUtility;
     
     public JavaSpiBinder(String hostIP, String hostPort) {
-        myUtility = new Utility();
         this.SPI_HOST_ADDR = "https://" + hostIP + ":" + hostPort;
     }
     
@@ -52,7 +50,6 @@ public class JavaSpiBinder {
     public Identity login(String uid, String password) throws Exception {
         Identity i = null;
         UsersStub stub = new UsersStub(SPI_HOST_ADDR + "/axis2/services/Users");
-        i = myUtility.login(stub, uid, password);
         return i;
     }
 }

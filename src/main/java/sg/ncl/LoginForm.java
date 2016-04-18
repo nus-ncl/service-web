@@ -4,6 +4,9 @@ public class LoginForm {
     private String EMAIL;
     private String PASSWORD;
     
+    public LoginForm() {
+    }
+    
     public String getEmail() {
         return EMAIL;
     }

@@ -7,10 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class SimpleController {
-    
-    JavaSpiBinder myJavaBinder = new JavaSpiBinder("192.168.56.103", "52323");
-    // DummyJavaSpiBinder myJavaBinder = new DummyJavaSpiBinder();
+public class MainController {
     
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String index(Model model) throws Exception {
