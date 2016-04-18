@@ -84,6 +84,6 @@ public class Team {
                 ", description=" + description +
                 ", website=" + website +
                 ", organizationType=" + organizationType +
-                ", isApproved=" + isApproved;
+                ", isApproved=" + isApproved + "}";
     }
 }
