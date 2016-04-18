@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Email Not Validated</title>
+        <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" media="screen"/>
+        <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{css/font-awesome/css/font-awesome.min.css}"/>
+        <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{css/custom.css}"/>
+        <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{js/jquery-1.12.2.min.js}"></script>
+        <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
+        <script type="text/javascript" src="static/js/custom.js" th:src="@{js/custom.js}"></script>
+    </head>
+    <body class="mybg">
+        <div th:replace="fragments/login_navigation :: loginnav"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <h3>Your email has not been validated.</h3>
+                    <p>Your email &lt;abc@example.com&gt; has not been validated.</p>
+                    <p>Please check your email for a verification link. You may need to check your spam folder or unblock <a href="mailto:no-reply@ncl.sg">no-reply@ncl.sg</a>.</p>
+                    <p>If you did not receive a validation email, please click <a href="#">#here</a> to resend the email verification.</p>
+                </div> <!-- col -->
+                <div class="col-md-1"></div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </body>
+</html>
