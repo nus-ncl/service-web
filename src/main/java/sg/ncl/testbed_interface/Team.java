@@ -75,4 +75,15 @@ public class Team {
     public void setIsApproved(boolean isApproved) {
         this.isApproved = isApproved;
     }
+    
+    @Override
+    public String toString() {
+        return "Team {" + 
+                "id=" + id +
+                ", name=" + name +
+                ", description=" + description +
+                ", website=" + website +
+                ", organizationType=" + organizationType +
+                ", isApproved=" + isApproved;
+    }
 }
