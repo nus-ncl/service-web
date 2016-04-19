@@ -14,8 +14,8 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-                <h2 class="text-primary">You are currently in the following teams</h2>
-                <div class="panel panel-primary">
+                <h2 class="team-heading team-heading-current-team">You are currently in the following teams</h2>
+                <div class="panel panel-primary team-panel team-panel-current-team">
                     <div class="panel-body">
                         <table class="table table-responsive">
                             <thead>
@@ -30,12 +30,17 @@
                                 <td th:text="${team.description}">Description</td>
                                 <td th:text="${team.members}">Members <span th:text="${team.membersAwaitingApproval}">Awaiting Approval</span></td>
                                 <td th:text="${team.experimentsCount}">Experiments</td>
+                                <td></td>
                             </tr>
                         </table>
                     </div> <!-- panel body -->
+                    <div class="panel-footer">
+                        <a href="#" class="btn btn-default"><i class="fa fa-plus"></i> Apply a New Team</a>
+                        <a href="#" class="btn btn-default"><i class="fa fa-plus"></i> Join Team</a>
+                    </div>
                 </div> <!-- panel primary -->
-                <h2 class="text-success">The following teams are requesting your participation</h2>
-                    <div class="panel panel-success">
+                <h2 class="text-success team-heading team-heading-request-participation">The following teams are requesting your participation</h2>
+                    <div class="panel panel-default team-panel team-panel-request-participation">
 	                    <div class="panel-body">
 	                        <table class="table table-responsive">
 	                            <thead>
@@ -53,8 +58,8 @@
 	                        </table>
 	                    </div> <!-- panel body -->
                     </div> <!-- panel -->
-                <h2>Teams that are public</h2>
-                    <div class="panel panel-default">
+                <h2 class="team-heading">Teams that are public</h2>
+                    <div class="panel panel-default team-panel">
 	                    <div class="panel-body">
 	                        <table class="table table-responsive">
 	                            <thead>
@@ -69,6 +74,23 @@
 	                            </tr>
 	                        </table>
 	                    </div> <!-- panel body -->
+                    </div> <!-- panel -->
+                <h2 class="team-heading-join-request team-heading">Teams the user requested to join</h2>
+                    <div class="panel panel-default team-panel">
+                        <div class="panel-body">
+                            <table class="table table-responsive">
+                                <thead>
+                                    <th>Team</th>
+                                    <th>Description</th>
+                                    <th>Institution</th>
+                                </thead>
+                                <tr th:each="team : ${joinRequestList}">
+                                   <td th:text="${team.name + '-' + team.id}">Name-Id</td>
+                                   <td th:text="${team.description}">Description</td>
+                                   <td th:text="${team.institution}">institution</td>
+                                </tr>
+                            </table>
+                        </div> <!-- panel body -->
                     </div> <!-- panel -->
             </div> <!-- row -->
         </div> <!-- container -->  

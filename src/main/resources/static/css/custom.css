@@ -198,3 +198,28 @@
 	 background: #27AE60;
 	 color: white;
 }
+
+/* teams */
+.team-heading-current-team {
+	color: #039be5;
+}
+
+.team-panel-current-team {
+	border-color: #039be5;
+}
+
+.team-heading-request-participation {
+	color: #73c20e;
+}
+
+.team-panel-request-participation {
+	border-color: #73c20e;
+}
+
+.team-heading-join-request {
+	color: #fca44b;
+}
+
+.team-panel {
+	margin-bottom: 100px;
+}

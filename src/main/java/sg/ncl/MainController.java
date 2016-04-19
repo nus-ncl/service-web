@@ -51,6 +51,7 @@ public class MainController {
         model.addAttribute("teamList", teamManager.getTeamList());
         model.addAttribute("publicTeamList", teamManager.getPublicTeamList());
         model.addAttribute("invitedToParticipateList", teamManager.getInvitedParticipateList());
+        model.addAttribute("joinRequestList", teamManager.getJoinRequestList());
         return "teams";
     }
     

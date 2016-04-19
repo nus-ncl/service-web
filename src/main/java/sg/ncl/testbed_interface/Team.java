@@ -5,6 +5,7 @@ package sg.ncl.testbed_interface;
  * Team model
  * @author yeoteye
  * Note: set and get naming must be equivalent to variables, eg. name > setName > getName cannot be setNameX
+ * 
  */
 public class Team {
     

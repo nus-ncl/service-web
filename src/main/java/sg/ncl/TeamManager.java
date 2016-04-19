@@ -9,6 +9,7 @@ public class TeamManager {
     
     private static List<Team> teamList;
     private static List<Team> invitedToParticipateList;
+    private static List<Team> joinRequestTeamList;
     
     static {
         Team team1 = new Team();
@@ -70,6 +71,22 @@ public class TeamManager {
         
         invitedToParticipateList = new ArrayList<Team>();
         invitedToParticipateList.add(team4);
+        
+        Team team5 = new Team();
+        team5.setId(114);
+        team5.setName("Nessus");
+        team5.setDescription("this is a simple desc");
+        team5.setWebsite("http://www.ntu.edu.sg");
+        team5.setOrganizationType("academia");
+        team5.setMembers(10);
+        team5.setMembersAwaitingApproval(2);
+        team5.setInstitution("NTU");
+        team5.setIsApproved(true);
+        team5.setIsPublic(true);
+        team5.setExperimentsCount(99);
+        
+        joinRequestTeamList = new ArrayList<Team>();
+        joinRequestTeamList.add(team5);
     }
     
     public List<Team> getTeamList() {
@@ -86,7 +103,19 @@ public class TeamManager {
         return publicTeamList;
     }
     
+    /**
+     * 
+     * @return list of team information which the user has been invited to join
+     */
     public List<Team> getInvitedParticipateList() {
         return invitedToParticipateList;
+    }
+    
+    /**
+     * 
+     * @return list of team information which the user has requested to join
+     */
+    public List<Team> getJoinRequestList() {
+        return joinRequestTeamList;
     }
 }
