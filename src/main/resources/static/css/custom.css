@@ -220,6 +220,10 @@
 	color: #fca44b;
 }
 
+.team-panel-join-request {
+	border-color: #fca44b;
+}
+
 .team-panel {
 	margin-bottom: 100px;
 }
