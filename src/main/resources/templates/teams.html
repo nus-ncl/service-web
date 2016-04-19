@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Password Reset</title>
+        <title>National Cybersecurity Laboratories - Teams</title>
         <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" media="screen"/>
         <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{css/font-awesome/css/font-awesome.min.css}"/>
         <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{css/custom.css}"/>
@@ -23,12 +23,13 @@
                                 <th>Description</th>
                                 <th>Members</th>
                                 <th>Experiments</th>
+                                <th>Actions</th>
                             </thead>
-                            <tr>
-                                <td>hybridcloud-110</td>
-                                <td>team desc here</td>
-                                <td>10 <a href="#" title="You have 2 members waiting for your approval"><span class="badge">2</span></a></td>
-                                <td>999</td>
+                            <tr th:each="team : ${teamList}">
+                                <td th:text="${team.name + '-' + team.id}">Name-Id</td>
+                                <td th:text="${team.description}">Description</td>
+                                <td th:text="${team.members}">Members <span th:text="${team.membersAwaitingApproval}">Awaiting Approval</span></td>
+                                <td th:text="${team.experimentsCount}">Experiments</td>
                             </tr>
                         </table>
                     </div> <!-- panel body -->
@@ -41,21 +42,18 @@
 	                                <th>Team</th>
 	                                <th>Description</th>
 	                                <th>Institution</th>
+	                                <th>Actions</th>
 	                            </thead>
-	                            <tr>
-	                                <td>aries</td>
-	                                <td>simulate large scale network attack on critical infrastructure to test incident response team</td>
-	                                <td>NTU</td>
+	                            <tr th:each="team : ${invitedToParticipateList}">
+	                                <td th:text="${team.name + '-' + team.id}">Name-Id</td>
+	                                <td th:text="${team.description}">Description</td>
+	                                <td th:text="${team.institution}">Institution</td>
+	                                <td><a href="#" title="Accept" class="btn btn-default"><i class="fa fa-check-circle-o fa-lg"></i> #Accept</a><a href="#" title="Accept" class="btn btn-default"><i class="fa fa-times-circle-o fa-lg"></i> #Ignore</a></td>
 	                            </tr>
-                                <tr>
-                                    <td>taurus</td>
-                                    <td>bittorrent p2p simulation</td>
-                                    <td>NTU</td>
-                                </tr>
 	                        </table>
 	                    </div> <!-- panel body -->
                     </div> <!-- panel -->
-                <h2>Other Team (Public)</h2>
+                <h2>Teams that are public</h2>
                     <div class="panel panel-default">
 	                    <div class="panel-body">
 	                        <table class="table table-responsive">
@@ -64,10 +62,10 @@
 	                                <th>Description</th>
 	                                <th>Institution</th>
 	                            </thead>
-	                            <tr>
-	                                <td>Incident Response</td>
-	                                <td>simulate large scale network attack on critical infrastructure to test incident response team</td>
-	                                <td>NTU</td>
+	                            <tr th:each="team : ${publicTeamList}">
+	                               <td th:text="${team.name + '-' + team.id}">Name-Id</td>
+	                               <td th:text="${team.description}">Description</td>
+	                               <td th:text="${team.institution}">institution</td>
 	                            </tr>
 	                        </table>
 	                    </div> <!-- panel body -->

@@ -20,7 +20,7 @@ public class TeamController {
     
     @RequestMapping("/team")
     public Team addTeam(@RequestParam(value="name") String name) {
-        Team myTeam = new Team(counter.incrementAndGet(), name, "this is a desc", "www.nus.edu.sg", "research", true);
+        Team myTeam = new Team(counter.incrementAndGet(), name, "this is a desc", "www.nus.edu.sg", "research", "NUS", true, false, 0, 0, 0);
         myTeamsList.add(myTeam);
         return myTeam;
     }
@@ -43,9 +43,9 @@ public class TeamController {
     
     @RequestMapping(value = "/seedTeam")
     public List<Team> seedTeam() {
-        Team team1 = new Team(counter.incrementAndGet(), "hybridcloud", "this is a desc", "www.nus.edu.sg", "research", true);
-        Team team2 = new Team(counter.incrementAndGet(), "demo", "this is a desc", "www.nus.edu.sg", "research", true);
-        Team team3 = new Team(counter.incrementAndGet(), "demo2", "this is a desc", "www.nus.edu.sg", "research", true);
+        Team team1 = new Team(counter.incrementAndGet(), "hybridcloud", "this is a desc", "www.nus.edu.sg", "research", "NUS", true, false, 0, 0, 0);
+        Team team2 = new Team(counter.incrementAndGet(), "demo", "this is a desc", "www.nus.edu.sg", "research", "NUS", true, false, 0, 0, 0);
+        Team team3 = new Team(counter.incrementAndGet(), "demo2", "this is a desc", "www.nus.edu.sg", "research", "NUS", true, false, 0, 0, 0);
         myTeamsList.add(team1);
         myTeamsList.add(team2);
         myTeamsList.add(team3);
