@@ -5,10 +5,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 
 @Controller
 public class MainController {
     
+    private final String host = "http://localhost:8080/";
     private TeamManager teamManager = new TeamManager();
     
     @RequestMapping(value="/", method=RequestMethod.GET)
@@ -52,6 +54,10 @@ public class MainController {
         model.addAttribute("publicTeamList", teamManager.getPublicTeamList());
         model.addAttribute("invitedToParticipateList", teamManager.getInvitedParticipateList());
         model.addAttribute("joinRequestList", teamManager.getJoinRequestList());
+        // REST Client Code
+        // final String uri = host + "teams/?";
+        // RestTemplate restTemplate = new RestTemplate();
+        // TeamsList result = restTemplate.getForObject(uri, TeamsList.class);
         return "teams";
     }
     
