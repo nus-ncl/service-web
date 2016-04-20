@@ -14,7 +14,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-                <h2 class="team-heading team-heading-current-team">You are currently in the following teams</h2>
+                <h2 class="team-heading team-heading-current-team">Teams that you are in</h2>
                 <div class="panel panel-primary team-panel team-panel-current-team">
                     <div class="panel-body">
                         <table class="table table-responsive">
@@ -35,11 +35,11 @@
                         </table>
                     </div> <!-- panel body -->
                     <div class="panel-footer">
-                        <a href="#" class="btn btn-default"><i class="fa fa-plus"></i> Apply a New Team</a>
-                        <a href="#" class="btn btn-default"><i class="fa fa-plus"></i> Join Team</a>
+                        <a href="#" class="btn btn-primary"><i class="fa fa-plus"></i> Apply a New Team</a>
+                        <a href="#" class="btn btn-primary"><i class="fa fa-plus"></i> Join Team</a>
                     </div>
                 </div> <!-- panel primary -->
-                <h2 class="text-success team-heading team-heading-request-participation">The following teams are requesting your participation</h2>
+                <h2 class="text-success team-heading team-heading-request-participation">Teams that are requesting your participation</h2>
                     <div class="panel panel-default team-panel team-panel-request-participation">
 	                    <div class="panel-body">
 	                        <table class="table table-responsive">
@@ -53,7 +53,7 @@
 	                                <td th:text="${team.name + '-' + team.id}">Name-Id</td>
 	                                <td th:text="${team.description}">Description</td>
 	                                <td th:text="${team.institution}">Institution</td>
-	                                <td><a href="#" title="Accept" class="btn btn-default"><i class="fa fa-check-circle-o fa-lg"></i> #Accept</a><a href="#" title="Accept" class="btn btn-default"><i class="fa fa-times-circle-o fa-lg"></i> #Ignore</a></td>
+	                                <td><a href="#" title="Accept" class="btn btn-success"><i class="fa fa-check-circle-o fa-lg"></i> #Accept</a><a href="#" title="Accept" class="btn btn-warning"><i class="fa fa-times-circle-o fa-lg"></i> #Ignore</a></td>
 	                            </tr>
 	                        </table>
 	                    </div> <!-- panel body -->
@@ -70,12 +70,12 @@
 	                            <tr th:each="team : ${publicTeamList}">
 	                               <td th:text="${team.name + '-' + team.id}">Name-Id</td>
 	                               <td th:text="${team.description}">Description</td>
-	                               <td th:text="${team.institution}">institution</td>
+	                               <td th:text="${team.institution}">Institution</td>
 	                            </tr>
 	                        </table>
 	                    </div> <!-- panel body -->
                     </div> <!-- panel -->
-                <h2 class="team-heading-join-request team-heading">Teams the user requested to join</h2>
+                <h2 class="team-heading-join-request team-heading">Teams that you requested to join</h2>
                     <div class="panel panel-default team-panel team-panel-join-request">
                         <div class="panel-body">
                             <table class="table table-responsive">
@@ -83,11 +83,13 @@
                                     <th>Team</th>
                                     <th>Description</th>
                                     <th>Institution</th>
+                                    <th>Actions</th>
                                 </thead>
                                 <tr th:each="team : ${joinRequestList}">
                                    <td th:text="${team.name + '-' + team.id}">Name-Id</td>
                                    <td th:text="${team.description}">Description</td>
-                                   <td th:text="${team.institution}">institution</td>
+                                   <td th:text="${team.institution}">Institution</td>
+                                   <td><a href="#" class="btn btn-danger"><i class="fa fa-minus-circle"></i> #Withdrawn</a></td>
                                 </tr>
                             </table>
                         </div> <!-- panel body -->
