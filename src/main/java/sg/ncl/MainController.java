@@ -1,7 +1,11 @@
 package sg.ncl;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,6 +75,14 @@ public class MainController {
     public String teamPageJoinTeam(Model model) {
         model.addAttribute("teamPageJoinTeamForm", new TeamPageJoinTeamForm());
         return "team_page_join_team";
+    }
+    
+    @RequestMapping(value="/join_team", method=RequestMethod.POST)
+    public String checkJoinTeamInfo(@Valid TeamPageJoinTeamForm teamPageJoinForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "team_page_join_team";
+        }
+        return "redirect:/join_application_submitted";
     }
     
     /**
