@@ -24,6 +24,7 @@ public class TeamManager {
         team1.setIsApproved(true);
         team1.setIsPublic(true);
         team1.setExperimentsCount(99);
+        team1.setTeamOwnerId(200);
         
         Team team2 = new Team();
         team2.setId(111);
@@ -37,6 +38,7 @@ public class TeamManager {
         team2.setIsApproved(true);
         team2.setIsPublic(true);
         team2.setExperimentsCount(99);
+        team1.setTeamOwnerId(200);
         
         Team team3 = new Team();
         team3.setId(112);
@@ -50,6 +52,7 @@ public class TeamManager {
         team3.setIsApproved(true);
         team3.setIsPublic(false);
         team3.setExperimentsCount(99);
+        team1.setTeamOwnerId(201);
         
         teamList = new ArrayList<Team>();
         teamList.add(team1);
@@ -68,6 +71,7 @@ public class TeamManager {
         team4.setIsApproved(true);
         team4.setIsPublic(false);
         team4.setExperimentsCount(99);
+        team1.setTeamOwnerId(202);
         
         invitedToParticipateList = new ArrayList<Team>();
         invitedToParticipateList.add(team4);
@@ -84,6 +88,7 @@ public class TeamManager {
         team5.setIsApproved(true);
         team5.setIsPublic(true);
         team5.setExperimentsCount(99);
+        team1.setTeamOwnerId(203);
         
         joinRequestTeamList = new ArrayList<Team>();
         joinRequestTeamList.add(team5);

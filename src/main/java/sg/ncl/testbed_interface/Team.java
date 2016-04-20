@@ -20,12 +20,13 @@ public class Team {
     private int members;
     private int membersAwaitingApproval;
     private int experimentsCount;
+    private int teamOwnerId;
     
     
     public Team() {
     }
     
-    public Team(long id, String name, String description, String website, String organizationType, String institution, boolean isApproved, boolean isPublic, int members, int membersAwaitingApproval, int experimentsCount) {
+    public Team(long id, String name, String description, String website, String organizationType, String institution, boolean isApproved, boolean isPublic, int members, int membersAwaitingApproval, int experimentsCount, int teamOwnerId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -37,6 +38,7 @@ public class Team {
         this.members = members;
         this.membersAwaitingApproval = membersAwaitingApproval;
         this.experimentsCount = experimentsCount;
+        this.teamOwnerId = teamOwnerId;
     }
     
     public long getId() {
@@ -125,6 +127,14 @@ public class Team {
     
     public void setExperimentsCount(int experimentsCount) {
         this.experimentsCount = experimentsCount;
+    }
+    
+    public int getTeamOwnerId() {
+        return teamOwnerId;
+    }
+    
+    public void setTeamOwnerId(int teamOwnerId) {
+        this.teamOwnerId = teamOwnerId;
     }
     
     @Override
