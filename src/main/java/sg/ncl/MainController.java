@@ -1,20 +1,25 @@
 package sg.ncl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 
 import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
+import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
 
 @Controller
 public class MainController {
+    
+    private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
     
     private final String host = "http://localhost:8080/";
     private TeamManager teamManager = new TeamManager();
@@ -54,10 +59,8 @@ public class MainController {
         return "redirect:/";
     }
     
-    /**
-     * Teams Page
-     */
-
+    //--------------------------Teams Page--------------------------
+    
     @RequestMapping("/teams")
     public String teams(Model model) {
         model.addAttribute("teamList", teamManager.getTeamList());
@@ -70,6 +73,27 @@ public class MainController {
         // TeamsList result = restTemplate.getForObject(uri, TeamsList.class);
         return "teams";
     }
+    
+    //--------------------------Apply for New Team Page--------------------------
+    
+    @RequestMapping(value="/apply_team", method=RequestMethod.GET)
+    public String teamPageApplyTeam(Model model) {
+        model.addAttribute("teamPageApplyTeamForm", new TeamPageApplyTeamForm());
+        return "team_page_apply_team";
+    }
+    
+    @RequestMapping(value="/apply_team", method=RequestMethod.POST)
+    public String checkApplyTeamInfo(@Valid TeamPageApplyTeamForm teamPageApplyTeamForm, BindingResult bindingResult) {
+       if (bindingResult.hasErrors()) {
+           return "team_page_apply_team";
+       }
+       // log data to ensure data has been parsed
+       LOGGER.log(Level.INFO, "--------Apply for new team info---------");
+       LOGGER.log(Level.INFO, teamPageApplyTeamForm.toString());
+       return "redirect:/team_application_submitted";
+    }
+    
+    //--------------------------Join Team Page--------------------------
     
     @RequestMapping(value="/join_team",  method=RequestMethod.GET)
     public String teamPageJoinTeam(Model model) {
@@ -85,9 +109,7 @@ public class MainController {
         return "redirect:/join_application_submitted";
     }
     
-    /**
-     * Static Sign Up Status Page
-     */
+    //--------------------------Static pages for sign up--------------------------
     
     @RequestMapping("/team_application_submitted")
     public String teamAppSubmit() {
