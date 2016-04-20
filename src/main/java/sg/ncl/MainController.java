@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 
+import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
+
 @Controller
 public class MainController {
     
@@ -48,6 +50,10 @@ public class MainController {
         return "redirect:/";
     }
     
+    /**
+     * Teams Page
+     */
+
     @RequestMapping("/teams")
     public String teams(Model model) {
         model.addAttribute("teamList", teamManager.getTeamList());
@@ -60,6 +66,16 @@ public class MainController {
         // TeamsList result = restTemplate.getForObject(uri, TeamsList.class);
         return "teams";
     }
+    
+    @RequestMapping(value="/join_team",  method=RequestMethod.GET)
+    public String teamPageJoinTeam(Model model) {
+        model.addAttribute("teamPageJoinTeamForm", new TeamPageJoinTeamForm());
+        return "team_page_join_team";
+    }
+    
+    /**
+     * Static Sign Up Status Page
+     */
     
     @RequestMapping("/team_application_submitted")
     public String teamAppSubmit() {
