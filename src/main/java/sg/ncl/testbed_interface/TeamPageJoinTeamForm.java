@@ -19,4 +19,9 @@ public class TeamPageJoinTeamForm {
     public void setTeamName(String name) {
         this.teamName = name;
     }
+    
+    @Override
+    public String toString() {
+        return "\n" + "Team name requesting to join: " + teamName + "\n";
+    }
 }

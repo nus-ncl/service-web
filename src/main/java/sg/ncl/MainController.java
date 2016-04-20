@@ -106,6 +106,9 @@ public class MainController {
         if (bindingResult.hasErrors()) {
             return "team_page_join_team";
         }
+        // log data to ensure data has been parsed
+        LOGGER.log(Level.INFO, "--------Join team---------");
+        LOGGER.log(Level.INFO, teamPageJoinForm.toString());
         return "redirect:/join_application_submitted";
     }
     
