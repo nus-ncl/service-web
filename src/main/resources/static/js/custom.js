@@ -28,4 +28,8 @@ $(document).ready(function() {
             //de-activate current step on progressbar
             $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
     });
+    
+    //-----------------experiment page---------------------
+    // tooltip hover
+    $('[data-toggle="tooltip"]').tooltip(); 
 });
