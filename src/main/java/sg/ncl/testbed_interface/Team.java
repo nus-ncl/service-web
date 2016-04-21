@@ -23,7 +23,7 @@ public class Team {
     private int membersAwaitingApproval;
     private int experimentsCount;
     private int teamOwnerId;
-    private HashMap<Integer, String> membersMap = new HashMap(); /* Members hash table containing uid and team position, e.g. 110 - member */
+    private HashMap<Integer, String> membersMap = new HashMap<Integer, String>(); /* Members hash table containing uid and team position, e.g. 110 - member */
     
     public Team() {
     }
