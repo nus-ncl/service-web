@@ -17,6 +17,14 @@ import sg.ncl.testbed_interface.LoginForm;
 import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
 import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
 
+/**
+ * 
+ * Spring Controller
+ * Direct the views to appropriate locations and invoke the respective REST API
+ * @author yeoteye
+ * 
+ */
+
 @Controller
 public class MainController {
     
@@ -34,7 +42,16 @@ public class MainController {
     @RequestMapping(value="/", method=RequestMethod.POST)
     public String loginSubmit(@ModelAttribute LoginForm loginForm, Model model) throws Exception {
         model.addAttribute("loginForm", loginForm);
-        return "redirect:/dashboard";
+        // following is to test if form fields can be retrieved via user input
+        // pretend as though this is a server side validation
+        String expectedEmail = "johndoe@nus.edu.sg";
+        String expectedPassword = "password";
+        if (loginForm.getEmail().equals(expectedEmail) && loginForm.getPassword().equals(expectedPassword)) {
+            return "redirect:/dashboard";
+        } else {
+            loginForm.setErrorMsg("Invalid email/password.");
+            return "index";
+        }
     }
     
     @RequestMapping("/signup")

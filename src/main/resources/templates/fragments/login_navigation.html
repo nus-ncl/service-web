@@ -33,11 +33,12 @@
 	                                   <!-- th:object="${loginForm}" -->
 	                                   <form method="post" action="#" th:action="@{/}" th:object="${loginForm}" role="form">
 	                                       <fieldset>
+	                                           <div class="form-group text-danger" th:if="${loginForm.errorMsg != null}" th:text="${loginForm.errorMsg}">Invalid email/password.</div>
 	                                           <div class="form-group">
-	                                               <input type="text" class="form-control" id="inputEmail" placeholder="Email" name="" />
+	                                               <input type="text" class="form-control" placeholder="Email" th:field="*{email}"/>
 	                                           </div>
 	                                           <div class="form-group">
-	                                               <input type="password" class="form-control" id="inputPassword" placeholder="Password" name="" />
+	                                               <input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>
 	                                           </div>
 	                                           <div class="form-group">
 	                                               <label>
