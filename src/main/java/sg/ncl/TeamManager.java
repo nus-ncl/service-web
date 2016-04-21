@@ -47,9 +47,9 @@ public class TeamManager {
         team2.setIsApproved(true);
         team2.setIsPublic(true);
         team2.setExperimentsCount(99);
-        team1.setTeamOwnerId(200);
-        team1.addMembers(201, "owner");
-        team1.addMembers(200, "member");
+        team2.setTeamOwnerId(200);
+        team2.addMembers(200, "owner");
+        team2.addMembers(201, "member");
         
         Team team3 = new Team();
         team3.setId(112);
@@ -63,14 +63,9 @@ public class TeamManager {
         team3.setIsApproved(true);
         team3.setIsPublic(false);
         team3.setExperimentsCount(99);
-        team1.setTeamOwnerId(201);
-        team1.addMembers(200, "owner");
-        team1.addMembers(201, "member");
-        
-        teamMap = new HashMap<Integer, Team>();
-        teamMap.put(110, team1);
-        teamMap.put(111, team2);
-        teamMap.put(112, team3);
+        team3.setTeamOwnerId(201);
+        team3.addMembers(201, "owner");
+        team3.addMembers(200, "member");
         
         Team team4 = new Team();
         team4.setId(113);
@@ -84,7 +79,8 @@ public class TeamManager {
         team4.setIsApproved(true);
         team4.setIsPublic(false);
         team4.setExperimentsCount(99);
-        team1.setTeamOwnerId(202);
+        team4.setTeamOwnerId(202);
+        team4.addMembers(202, "owner");
         
         invitedToParticipateList = new ArrayList<Team>();
         invitedToParticipateList.add(team4);
@@ -101,10 +97,19 @@ public class TeamManager {
         team5.setIsApproved(true);
         team5.setIsPublic(true);
         team5.setExperimentsCount(99);
-        team1.setTeamOwnerId(203);
+        team5.setTeamOwnerId(203);
+        team5.addMembers(203, "owner");
         
         joinRequestTeamList = new ArrayList<Team>();
         joinRequestTeamList.add(team5);
+        
+        // add to global team map
+        teamMap = new HashMap<Integer, Team>();
+        teamMap.put(110, team1);
+        teamMap.put(111, team2);
+        teamMap.put(112, team3);
+        teamMap.put(113, team4);
+        teamMap.put(114, team5);
     }
     
     public HashMap<Integer, Team> getPublicTeamMap() {
@@ -137,5 +142,24 @@ public class TeamManager {
 
     public HashMap<Integer, Team> getTeamMap() {
         return teamMap;
+    }
+    
+    /**
+     * @return list of team information by userid
+     */
+    public HashMap<Integer, Team> getTeamMap(int userId) {
+        HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            
+            HashMap<Integer, String> membersMap = currTeam.getMembersMap();
+            for (Map.Entry<Integer, String> membersEntry : membersMap.entrySet()) {
+                if (membersEntry.getKey() == userId) {
+                    rv.put(currTeamId, currTeam);
+                }
+            }
+        }
+        return rv;
     }
 }
