@@ -1,7 +1,11 @@
 package sg.ncl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import sg.ncl.testbed_interface.Team;
 
@@ -10,6 +14,10 @@ public class TeamManager {
     private static List<Team> teamList;
     private static List<Team> invitedToParticipateList;
     private static List<Team> joinRequestTeamList;
+    
+    private static HashMap<Integer, Team> teamMap; /* teamId, team */
+    private static HashMap<Integer, Team> invitedToParticipateMap;
+    private static HashMap<Integer, Team> joinRequestTeamMap;
     
     static {
         Team team1 = new Team();
@@ -25,6 +33,8 @@ public class TeamManager {
         team1.setIsPublic(true);
         team1.setExperimentsCount(99);
         team1.setTeamOwnerId(200);
+        team1.addMembers(200, "owner");
+        team1.addMembers(201, "member");
         
         Team team2 = new Team();
         team2.setId(111);
@@ -39,6 +49,8 @@ public class TeamManager {
         team2.setIsPublic(true);
         team2.setExperimentsCount(99);
         team1.setTeamOwnerId(200);
+        team1.addMembers(201, "owner");
+        team1.addMembers(200, "member");
         
         Team team3 = new Team();
         team3.setId(112);
@@ -53,11 +65,17 @@ public class TeamManager {
         team3.setIsPublic(false);
         team3.setExperimentsCount(99);
         team1.setTeamOwnerId(201);
+        team1.addMembers(200, "owner");
+        team1.addMembers(201, "member");
         
         teamList = new ArrayList<Team>();
         teamList.add(team1);
         teamList.add(team2);
         teamList.add(team3);
+        teamMap = new HashMap<Integer, Team>();
+        teamMap.put(110, team1);
+        teamMap.put(111, team2);
+        teamMap.put(112, team3);
         
         Team team4 = new Team();
         team4.setId(113);
@@ -108,6 +126,18 @@ public class TeamManager {
         return publicTeamList;
     }
     
+    public HashMap<Integer, Team> getPublicTeamMap() {
+        HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            if (currTeam.getIsPublic()) {
+                rv.put(currTeamId, currTeam);
+            }
+        }
+        return rv;
+    }
+    
     /**
      * 
      * @return list of team information which the user has been invited to join
@@ -122,5 +152,9 @@ public class TeamManager {
      */
     public List<Team> getJoinRequestList() {
         return joinRequestTeamList;
+    }
+
+    public HashMap<Integer, Team> getTeamMap() {
+        return teamMap;
     }
 }

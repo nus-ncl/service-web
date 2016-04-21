@@ -1,5 +1,7 @@
 package sg.ncl.testbed_interface;
 
+import java.util.HashMap;
+
 /**
  * 
  * Team model
@@ -21,7 +23,7 @@ public class Team {
     private int membersAwaitingApproval;
     private int experimentsCount;
     private int teamOwnerId;
-    
+    private HashMap<Integer, String> membersMap = new HashMap(); /* Members hash table containing uid and team position, e.g. 110 - member */
     
     public Team() {
     }
@@ -137,6 +139,7 @@ public class Team {
         this.teamOwnerId = teamOwnerId;
     }
     
+    /**
     @Override
     public String toString() {
         return "Team {" + 
@@ -146,5 +149,17 @@ public class Team {
                 ", website=" + website +
                 ", organizationType=" + organizationType +
                 ", isApproved=" + isApproved + "}";
+    }*/
+
+    public HashMap<Integer, String> getMembersMap() {
+        return membersMap;
+    }
+
+    public void setMembersMap(HashMap<Integer, String> membersMap) {
+        this.membersMap = membersMap;
+    }
+    
+    public void addMembers(Integer userId, String position) {
+        membersMap.put(userId, position);
     }
 }

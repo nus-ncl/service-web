@@ -25,11 +25,8 @@
                                 <th>Experiments</th>
                                 <th>Actions</th>
                             </thead>
-                            <tr th:each="team : ${teamList}">
-                                <td th:text="${team.name + '-' + team.id}">Name-Id</td>
-                                <td th:text="${team.description}">Description</td>
-                                <td th:text="${team.members}">Members <span th:text="${team.membersAwaitingApproval}">Awaiting Approval</span></td>
-                                <td th:text="${team.experimentsCount}">Experiments</td>
+                            <tr th:each="teamEntry : ${teamMap}">
+                                <td th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</td>
                                 <td></td>
                             </tr>
                         </table>
@@ -67,10 +64,10 @@
 	                                <th>Description</th>
 	                                <th>Institution</th>
 	                            </thead>
-	                            <tr th:each="team : ${publicTeamList}">
-	                               <td th:text="${team.name + '-' + team.id}">Name-Id</td>
-	                               <td th:text="${team.description}">Description</td>
-	                               <td th:text="${team.institution}">Institution</td>
+	                            <tr th:each="teamEntry : ${publicTeamMap}">
+	                               <td th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</td>
+	                               <td th:text="${teamEntry.value.description}">Description</td>
+	                               <td th:text="${teamEntry.value.institution}">Institution</td>
 	                            </tr>
 	                        </table>
 	                    </div> <!-- panel body -->

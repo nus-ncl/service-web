@@ -20,8 +20,8 @@ import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
 public class MainController {
     
     private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
-    
     private final String host = "http://localhost:8080/";
+    private final int CURRENT_LOGGED_IN_USER_ID = 200;
     private TeamManager teamManager = new TeamManager();
     
     @RequestMapping(value="/", method=RequestMethod.GET)
@@ -63,8 +63,10 @@ public class MainController {
     
     @RequestMapping("/teams")
     public String teams(Model model) {
+        model.addAttribute("teamMap", teamManager.getTeamMap());
         model.addAttribute("teamList", teamManager.getTeamList());
         model.addAttribute("publicTeamList", teamManager.getPublicTeamList());
+        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
         model.addAttribute("invitedToParticipateList", teamManager.getInvitedParticipateList());
         model.addAttribute("joinRequestList", teamManager.getJoinRequestList());
         // REST Client Code
