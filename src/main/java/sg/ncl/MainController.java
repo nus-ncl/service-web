@@ -31,7 +31,8 @@ public class MainController {
     private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
     private final String host = "http://localhost:8080/";
     private final int CURRENT_LOGGED_IN_USER_ID = 200;
-    private TeamManager teamManager = new TeamManager();
+    private TeamManager teamManager = TeamManager.getInstance();
+    private ExperimentManager experimentManager = new ExperimentManager();
     
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String index(Model model) throws Exception {
@@ -133,6 +134,14 @@ public class MainController {
         LOGGER.log(Level.INFO, "--------Join team---------");
         LOGGER.log(Level.INFO, teamPageJoinForm.toString());
         return "redirect:/join_application_submitted";
+    }
+    
+    //--------------------------Experiment Page--------------------------
+    
+    @RequestMapping(value="/experiments", method=RequestMethod.GET)
+    public String experiments(Model model) {
+        model.addAttribute("experimentMap", experimentManager.getExperimentMap());
+        return "experiments";
     }
     
     //--------------------------Static pages for sign up--------------------------

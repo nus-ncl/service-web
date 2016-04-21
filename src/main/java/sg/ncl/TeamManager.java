@@ -12,11 +12,12 @@ import sg.ncl.testbed_interface.Team;
 public class TeamManager {
     
     /* teamId, team */
-    private static HashMap<Integer, Team> teamMap;
-    private static HashMap<Integer, Team> invitedToParticipateMap;
-    private static HashMap<Integer, Team> joinRequestTeamMap;
+    private static TeamManager TEAM_MANAGER_SINGLETON = new TeamManager();
+    private HashMap<Integer, Team> teamMap;
+    private HashMap<Integer, Team> invitedToParticipateMap;
+    private HashMap<Integer, Team> joinRequestTeamMap;
     
-    static {
+    private TeamManager() {
         Team team1 = new Team();
         team1.setId(110);
         team1.setName("hybridcloud");
@@ -52,7 +53,7 @@ public class TeamManager {
         Team team3 = new Team();
         team3.setId(112);
         team3.setName("myPrivateProject");
-        team3.setDescription("this is a simple desc");
+        team3.setDescription("this project is not supposed to show up on public");
         team3.setWebsite("http://www.nus.edu.sg");
         team3.setOrganizationType("academia");
         team3.setMembers(10);
@@ -109,6 +110,10 @@ public class TeamManager {
         joinRequestTeamMap.put(114, team5);
     }
     
+    public static TeamManager getInstance() {
+        return TEAM_MANAGER_SINGLETON;
+    }
+    
     public HashMap<Integer, Team> getPublicTeamMap() {
         HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
         for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
@@ -149,7 +154,7 @@ public class TeamManager {
     }
 
     public void setInvitedToParticipateMap(HashMap<Integer, Team> invitedToParticipateMap) {
-        TeamManager.invitedToParticipateMap = invitedToParticipateMap;
+        this.invitedToParticipateMap = invitedToParticipateMap;
     }
 
     public HashMap<Integer, Team> getJoinRequestTeamMap() {
@@ -157,6 +162,6 @@ public class TeamManager {
     }
 
     public void setJoinRequestTeamMap(HashMap<Integer, Team> joinRequestTeamMap) {
-        TeamManager.joinRequestTeamMap = joinRequestTeamMap;
+        this.joinRequestTeamMap = joinRequestTeamMap;
     }
 }
