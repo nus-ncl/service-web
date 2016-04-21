@@ -65,8 +65,8 @@ public class MainController {
     public String teams(Model model) {
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateList", teamManager.getInvitedParticipateList());
-        model.addAttribute("joinRequestList", teamManager.getJoinRequestList());
+        model.addAttribute("invitedToParticipateMap", teamManager.getInvitedToParticipateMap());
+        model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
         // REST Client Code
         // final String uri = host + "teams/?";
         // RestTemplate restTemplate = new RestTemplate();

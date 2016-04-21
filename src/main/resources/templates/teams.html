@@ -49,10 +49,10 @@
 	                                <th>Institution</th>
 	                                <th>Actions</th>
 	                            </thead>
-	                            <tr th:each="team : ${invitedToParticipateList}">
-	                                <td th:text="${team.name + '-' + team.id}">Name-Id</td>
-	                                <td th:text="${team.description}">Description</td>
-	                                <td th:text="${team.institution}">Institution</td>
+	                            <tr th:each="teamEntry : ${invitedToParticipateMap}">
+	                                <td th:text="${teamEntry.value.name + '-' + teamEntry.value.id}">Name-Id</td>
+	                                <td th:text="${teamEntry.value.description}">Description</td>
+	                                <td th:text="${teamEntry.value.institution}">Institution</td>
 	                                <td><a href="#" title="Accept" class="btn btn-success"><i class="fa fa-check-circle-o fa-lg"></i> #Accept</a><a href="#" title="Accept" class="btn btn-warning"><i class="fa fa-times-circle-o fa-lg"></i> #Ignore</a></td>
 	                            </tr>
 	                        </table>
@@ -85,10 +85,10 @@
                                     <th>Institution</th>
                                     <th>Actions</th>
                                 </thead>
-                                <tr th:each="team : ${joinRequestList}">
-                                   <td th:text="${team.name + '-' + team.id}">Name-Id</td>
-                                   <td th:text="${team.description}">Description</td>
-                                   <td th:text="${team.institution}">Institution</td>
+                                <tr th:each="teamEntry : ${joinRequestMap}">
+                                   <td th:text="${teamEntry.value.name + '-' + teamEntry.value.id}">Name-Id</td>
+                                   <td th:text="${teamEntry.value.description}">Description</td>
+                                   <td th:text="${teamEntry.value.institution}">Institution</td>
                                    <td><a href="#" class="btn btn-danger"><i class="fa fa-minus-circle"></i> #Withdrawn</a></td>
                                 </tr>
                             </table>

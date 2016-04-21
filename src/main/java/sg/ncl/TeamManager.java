@@ -11,10 +11,8 @@ import sg.ncl.testbed_interface.Team;
 
 public class TeamManager {
     
-    private static List<Team> invitedToParticipateList;
-    private static List<Team> joinRequestTeamList;
-    
-    private static HashMap<Integer, Team> teamMap; /* teamId, team */
+    /* teamId, team */
+    private static HashMap<Integer, Team> teamMap;
     private static HashMap<Integer, Team> invitedToParticipateMap;
     private static HashMap<Integer, Team> joinRequestTeamMap;
     
@@ -82,9 +80,6 @@ public class TeamManager {
         team4.setTeamOwnerId(202);
         team4.addMembers(202, "owner");
         
-        invitedToParticipateList = new ArrayList<Team>();
-        invitedToParticipateList.add(team4);
-        
         Team team5 = new Team();
         team5.setId(114);
         team5.setName("Nessus");
@@ -100,9 +95,6 @@ public class TeamManager {
         team5.setTeamOwnerId(203);
         team5.addMembers(203, "owner");
         
-        joinRequestTeamList = new ArrayList<Team>();
-        joinRequestTeamList.add(team5);
-        
         // add to global team map
         teamMap = new HashMap<Integer, Team>();
         teamMap.put(110, team1);
@@ -110,6 +102,11 @@ public class TeamManager {
         teamMap.put(112, team3);
         teamMap.put(113, team4);
         teamMap.put(114, team5);
+        
+        invitedToParticipateMap = new HashMap<Integer, Team>();
+        invitedToParticipateMap.put(113, team4);
+        joinRequestTeamMap = new HashMap<Integer, Team>();
+        joinRequestTeamMap.put(114, team5);
     }
     
     public HashMap<Integer, Team> getPublicTeamMap() {
@@ -122,22 +119,6 @@ public class TeamManager {
             }
         }
         return rv;
-    }
-    
-    /**
-     * 
-     * @return list of team information which the user has been invited to join
-     */
-    public List<Team> getInvitedParticipateList() {
-        return invitedToParticipateList;
-    }
-    
-    /**
-     * 
-     * @return list of team information which the user has requested to join
-     */
-    public List<Team> getJoinRequestList() {
-        return joinRequestTeamList;
     }
 
     public HashMap<Integer, Team> getTeamMap() {
@@ -161,5 +142,21 @@ public class TeamManager {
             }
         }
         return rv;
+    }
+
+    public HashMap<Integer, Team> getInvitedToParticipateMap() {
+        return invitedToParticipateMap;
+    }
+
+    public void setInvitedToParticipateMap(HashMap<Integer, Team> invitedToParticipateMap) {
+        TeamManager.invitedToParticipateMap = invitedToParticipateMap;
+    }
+
+    public HashMap<Integer, Team> getJoinRequestTeamMap() {
+        return joinRequestTeamMap;
+    }
+
+    public void setJoinRequestTeamMap(HashMap<Integer, Team> joinRequestTeamMap) {
+        TeamManager.joinRequestTeamMap = joinRequestTeamMap;
     }
 }
