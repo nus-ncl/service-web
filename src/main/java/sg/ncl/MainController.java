@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 
+import sg.ncl.testbed_interface.LoginForm;
 import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
 import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
 
@@ -91,6 +92,11 @@ public class MainController {
        LOGGER.log(Level.INFO, "--------Apply for new team info---------");
        LOGGER.log(Level.INFO, teamPageApplyTeamForm.toString());
        return "redirect:/team_application_submitted";
+    }
+    
+    @RequestMapping(value="/team_owner_policy", method=RequestMethod.GET)
+    public String teamOwnerPolicy() {
+        return "team_owner_policy";
     }
     
     //--------------------------Join Team Page--------------------------

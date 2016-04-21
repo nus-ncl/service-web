@@ -1,4 +1,4 @@
-package sg.ncl;
+package sg.ncl.testbed_interface;
 
 public class LoginForm {
     private String EMAIL;
