@@ -27,6 +27,9 @@
                             </thead>
                             <tr th:each="teamEntry : ${teamMap}">
                                 <td th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</td>
+                                <td th:text="${teamEntry.value.description}">Description</td>
+                                <td th:text="${teamEntry.value.members}">Members</td>
+                                <td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>
                                 <td></td>
                             </tr>
                         </table>

@@ -64,8 +64,6 @@ public class MainController {
     @RequestMapping("/teams")
     public String teams(Model model) {
         model.addAttribute("teamMap", teamManager.getTeamMap());
-        model.addAttribute("teamList", teamManager.getTeamList());
-        model.addAttribute("publicTeamList", teamManager.getPublicTeamList());
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
         model.addAttribute("invitedToParticipateList", teamManager.getInvitedParticipateList());
         model.addAttribute("joinRequestList", teamManager.getJoinRequestList());

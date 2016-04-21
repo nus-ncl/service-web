@@ -11,7 +11,6 @@ import sg.ncl.testbed_interface.Team;
 
 public class TeamManager {
     
-    private static List<Team> teamList;
     private static List<Team> invitedToParticipateList;
     private static List<Team> joinRequestTeamList;
     
@@ -68,10 +67,6 @@ public class TeamManager {
         team1.addMembers(200, "owner");
         team1.addMembers(201, "member");
         
-        teamList = new ArrayList<Team>();
-        teamList.add(team1);
-        teamList.add(team2);
-        teamList.add(team3);
         teamMap = new HashMap<Integer, Team>();
         teamMap.put(110, team1);
         teamMap.put(111, team2);
@@ -110,20 +105,6 @@ public class TeamManager {
         
         joinRequestTeamList = new ArrayList<Team>();
         joinRequestTeamList.add(team5);
-    }
-    
-    public List<Team> getTeamList() {
-        return teamList;
-    }
-    
-    public List<Team> getPublicTeamList() {
-        List<Team> publicTeamList = new ArrayList<Team>();
-        for (Team currTeam : teamList) {
-            if (currTeam.getIsPublic() == true) {
-                publicTeamList.add(currTeam);
-            }
-        }
-        return publicTeamList;
     }
     
     public HashMap<Integer, Team> getPublicTeamMap() {
