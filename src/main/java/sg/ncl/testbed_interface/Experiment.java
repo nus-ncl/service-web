@@ -68,7 +68,7 @@ public class Experiment {
         this.experimentOwnerId = experimentOwnerId;
     }
     
-    public long getTeamId() {
+    public int getTeamId() {
         return teamId;
     }
     
