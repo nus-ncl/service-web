@@ -32,78 +32,25 @@
                         -->
                         
                         <div class="panel-body">
-                            <form action="" method="post" role="form" id="msform">
-                                <fieldset id="step1" class="first current">
-                                    <h2>Step 1/4</h2>
-                                    <h3>Create Your Account</h3>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="inputEmail" placeholder="Email" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="password" class="form-control" id="inputPassword" placeholder="Password" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" name=""/>
-									</div>
-                                    <button type="button" class="btn btn-default btn-next">Next</button>
-                                </fieldset> <!-- create account -->
-                                <fieldset id="step2">
-                                    <h2>Step 2/4</h2>
-                                    <h3>Your Personal Details</h3>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="firstName" placeholder="First Name" name=""/>
-									    <input type="text" class="form-control" id="lastName" placeholder="Last Name" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="phone" placeholder="Phone" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="jobTitle" placeholder="Job Title" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="institution" placeholder="Institution/Employer" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="institutionAbbrev" placeholder="Institution Abbreviation" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="institutionWeb" placeholder="Institution Web Site" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="address1" placeholder="Address 1" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="address2" placeholder="Address 2" name=""/>
-									</div>
-									<div class="form-group">
-									    <select class="form-control">
-									       <option value="singapore">Singapore</option>
-									       <option value="2">Country 2</option>
-									       <option value="3">Country 3</option>
-									       <option value="4">Country 4</option>
-									   </select>
-									</div>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="state" placeholder="State/Province" name=""/>
-									</div>
-									<div class="form-group">
-									    <input type="text" class="form-control" id="institutionAbbrev" placeholder="ZIP/Postal Code" name=""/>
-									</div>
-                                    <button type="button" class="btn btn-default btn-prev">Previous</button>
-                                    <button type="button" class="btn btn-default btn-next">Next</button>
-                                </fieldset> <!-- personal details -->
-                                <fieldset id="step3">
-                                    <h2>Step 3/4</h2>
-                                    <h3>Almost there</h3>
-                                    <button type="button" class="btn btn-default btn-prev">Previous</button>
-                                    <button type="button" class="btn btn-default btn-next">Next</button>
-                                </fieldset> <!-- almost there -->
-                                <fieldset id="step4" class="last">
-                                    <h2>Step 4/4</h2>
-                                    <h3>Last Step</h3>
-                                    <button type="button" class="btn btn-default btn-prev">Previous</button>
-                                    <button type="button" class="btn btn-success">Submit</button>
-                                </fieldset> <!-- last step -->
+                            <form action="#" th:action="@{/signup}" method="post" role="form" th:object="${signUpAccountDetailsForm}">
+                                <fieldset>
+	                                <h3>Create Your Account</h3>
+	                                <div class="form-group" th:classappend="${#fields.hasErrors('email')}? 'has-error'">
+	                                    <input type="text" class="form-control" placeholder="Email" th:field="*{email}"/>
+	                                    <span class="help-block" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</span>
+	                                </div>
+	                                <div class="form-group text-danger" th:if="${signUpAccountDetailsForm != null and signUpAccountDetailsForm.errorMsg != null}" th:text="${signUpAccountDetailsForm.errorMsg}">Passwords do not match</div>
+	                                <div class="form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error'">
+	                                    <input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>
+	                                    <span class="help-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</span>
+	                                </div>
+	                                <div class="form-group">
+	                                    <input type="password" class="form-control" placeholder="Confirm Password" th:field="*{confirmPassword}"/>
+	                                </div>
+	                                <div class="form-group">
+	                                    <button type="submit" class="btn btn-primary">Next</button>
+	                                </div>
+                                </fieldset>
                             </form>
                         </div> <!-- panel-body -->
                         

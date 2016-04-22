@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 
 import sg.ncl.testbed_interface.LoginForm;
+import sg.ncl.testbed_interface.SignUpAccountDetailsForm;
+import sg.ncl.testbed_interface.SignUpPersonalDetailsForm;
 import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
 import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
 
@@ -28,6 +30,7 @@ import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
 @Controller
 public class MainController {
     
+    private final int ERROR_NO_SUCH_USER_ID = 0;
     private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
     private final String host = "http://localhost:8080/";
     private final int CURRENT_LOGGED_IN_USER_ID = 200;
@@ -43,18 +46,17 @@ public class MainController {
     
     @RequestMapping(value="/", method=RequestMethod.POST)
     public String loginSubmit(@ModelAttribute LoginForm loginForm, Model model) throws Exception {
-        model.addAttribute("loginForm", loginForm);
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
-        if (userManager.validateLoginDetails(loginForm.getEmail(), loginForm.getPassword()) == false) {
+        if (userManager.validateLoginDetails(loginForm.getLoginEmail(), loginForm.getLoginPassword()) == false) {
             // case1: invalid login
             loginForm.setErrorMsg("Invalid email/password.");
             return "index";
-        } else if (userManager.isEmailVerified(loginForm.getEmail()) == false) {
+        } else if (userManager.isEmailVerified(loginForm.getLoginEmail()) == false) {
             // case2: email address not validated
-            model.addAttribute("emailAddress", loginForm.getEmail());
+            model.addAttribute("emailAddress", loginForm.getLoginEmail());
             return "email_not_validated";
-        } else if (teamManager.checkTeamValidation(userManager.getUserId(loginForm.getEmail())) == false) {
+        } else if (teamManager.checkTeamValidation(userManager.getUserId(loginForm.getLoginEmail())) == false) {
             // case3: team approval under review
             // email address is supposed to be valid here
             return "team_application_under_review";
@@ -62,13 +64,6 @@ public class MainController {
             // all validated
             return "redirect:/dashboard";
         }
-    }
-    
-    @RequestMapping("/signup")
-    public String signup(Model model) {
-        // forms has to be added for other views, because the loginForm also exists on those pages
-        model.addAttribute("loginForm", new LoginForm());
-        return "signup";
     }
     
     @RequestMapping("/passwordreset")
@@ -85,6 +80,28 @@ public class MainController {
     @RequestMapping(value="/logout", method=RequestMethod.GET)
     public String logout() {
         return "redirect:/";
+    }
+    
+    //--------------------------Sign Up Page--------------------------
+    
+    @RequestMapping("/signup")
+    public String signup(Model model) {
+        // forms has to be added for other views, because the loginForm also exists on those pages
+        model.addAttribute("loginForm", new LoginForm());
+        model.addAttribute("signUpAccountDetailsForm", new SignUpAccountDetailsForm());
+        return "signup";
+    }
+    
+    @RequestMapping(value="/signup", method=RequestMethod.POST)
+    public String validateSignUpForms(@ModelAttribute LoginForm loginForm, @Valid SignUpAccountDetailsForm signUpAccountDetailsForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "signup";
+        } else if (userManager.getUserId(signUpAccountDetailsForm.getEmail()) != ERROR_NO_SUCH_USER_ID) {
+            signUpAccountDetailsForm.setErrorMsg("Email is already in use");
+        } else if (signUpAccountDetailsForm.isPasswordMatch() == false) {
+            signUpAccountDetailsForm.setErrorMsg("Passwords do not match");
+        }
+        return "signup";
     }
     
     //--------------------------Teams Page--------------------------
