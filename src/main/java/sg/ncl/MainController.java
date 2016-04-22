@@ -53,6 +53,11 @@ public class MainController {
             loginForm.setErrorMsg("Invalid email/password.");
             return "index";
         }
+        // add three other cases
+        // email not validated
+        // team not validated
+        // email validated, team not validated
+        // email validated, team
     }
     
     @RequestMapping("/signup")
