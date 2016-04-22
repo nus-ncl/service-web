@@ -1,28 +1,28 @@
 package sg.ncl.testbed_interface;
 
 public class LoginForm {
-    private String email;
+    private String loginEmail;
     // not supposed to be in clear text but for modelling purpose
-    private String password;
+    private String loginPassword;
     private String errorMsg = null;
     
     public LoginForm() {
     }
     
-    public String getEmail() {
-        return email;
+    public String getLoginEmail() {
+        return loginEmail;
     }
     
-    public String getPassword() {
-        return password;
+    public String getLoginPassword() {
+        return loginPassword;
     }
     
-    public void setEmail(String email) {
-        this.email = email;
+    public void setLoginEmail(String email) {
+        this.loginEmail = email;
     }
     
-    public void setPassword(String password) {
-        this.password = password;
+    public void setLoginPassword(String password) {
+        this.loginPassword = password;
     }
 
     public String getErrorMsg() {
