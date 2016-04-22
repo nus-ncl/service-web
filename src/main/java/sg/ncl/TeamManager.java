@@ -93,8 +93,23 @@ public class TeamManager {
         team5.setIsApproved(true);
         team5.setIsPublic(true);
         team5.setExperimentsCount(99);
-        team5.setTeamOwnerId(203);
-        team5.addMembers(203, "owner");
+        team5.setTeamOwnerId(202);
+        team5.addMembers(202, "owner");
+        
+        Team team6 = new Team();
+        team6.setId(115);
+        team6.setName("Dave Private Project");
+        team6.setDescription("this is a simple desc");
+        team6.setWebsite("http://www.ntu.edu.sg");
+        team6.setOrganizationType("academia");
+        team6.setMembers(10);
+        team6.setMembersAwaitingApproval(0);
+        team6.setInstitution("NTU");
+        team6.setIsApproved(false);
+        team6.setIsPublic(false);
+        team6.setExperimentsCount(99);
+        team6.setTeamOwnerId(203);
+        team6.addMembers(203, "owner");
         
         // add to global team map
         teamMap = new HashMap<Integer, Team>();
@@ -103,6 +118,7 @@ public class TeamManager {
         teamMap.put(112, team3);
         teamMap.put(113, team4);
         teamMap.put(114, team5);
+        teamMap.put(115, team6);
         
         invitedToParticipateMap = new HashMap<Integer, Team>();
         invitedToParticipateMap.put(113, team4);
@@ -171,7 +187,7 @@ public class TeamManager {
     /**
      * Check to ensure if user is in only one team and that team must be validated
      * @param userId
-     * @return
+     * @return true if at least one team is approved, false otherwise
      */
     public boolean checkTeamValidation(int userId) {
         int teamApprovedCount = 0;

@@ -46,32 +46,22 @@ public class MainController {
         model.addAttribute("loginForm", loginForm);
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
-        // case1: invalid login
-        /**
         if (userManager.validateLoginDetails(loginForm.getEmail(), loginForm.getPassword()) == false) {
+            // case1: invalid login
             loginForm.setErrorMsg("Invalid email/password.");
             return "index";
         } else if (userManager.isEmailVerified(loginForm.getEmail()) == false) {
-            return "email_not_validated";
-        } else if (teamManager.checkTeamValidation(userManager.getUserId(loginForm.getEmail()))) {
-            return "team_application_under_review";
-        } else {
-            return "redirect:/dashboard";
-        }
-        */
-        if (userManager.validateLoginDetails(loginForm.getEmail(), loginForm.getPassword()) == false) {
-            loginForm.setErrorMsg("Invalid email/password.");
-            return "index";
-        } else if (userManager.isEmailVerified(loginForm.getEmail()) == false) {
+            // case2: email address not validated
             model.addAttribute("emailAddress", loginForm.getEmail());
             return "email_not_validated";
+        } else if (teamManager.checkTeamValidation(userManager.getUserId(loginForm.getEmail())) == false) {
+            // case3: team approval under review
+            // email address is supposed to be valid here
+            return "team_application_under_review";
         } else {
+            // all validated
             return "redirect:/dashboard";
         }
-        // add three other cases
-        // team not validated
-        // email validated, team not validated
-        // email validated, team
     }
     
     @RequestMapping("/signup")
