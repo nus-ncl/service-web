@@ -1,18 +1,19 @@
 package sg.ncl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import sg.ncl.testbed_interface.Team;
 import sg.ncl.testbed_interface.User;
 
 public class UserManager {
     
+    private final int ERROR_NO_SUCH_USER_ID = 0;
+    private static UserManager USER_MANAGER_SINGLETON = null;
     /* userid, User */
     private static HashMap<Integer, User> usersMap = new HashMap<Integer, User>();
     
-    static {
+    private UserManager() {
         User johnDoe = new User();
         johnDoe.setUserId(200);
         johnDoe.setRole("normal");
@@ -32,7 +33,7 @@ public class UserManager {
         User bob = new User();
         bob.setUserId(201);
         bob.setRole("normal");
-        bob.setEmail("bobby@nus.edu.sg");
+        bob.setEmail("bob@nus.edu.sg");
         bob.setPassword("password");
         bob.setJobTitle("Research Bob");
         bob.setInstitution("National University of Singapore");
@@ -64,9 +65,9 @@ public class UserManager {
         User dave = new User();
         dave.setUserId(203);
         dave.setRole("admin");
-        dave.setEmail("charlie@nus.edu.sg");
+        dave.setEmail("dave@nus.edu.sg");
         dave.setPassword("password");
-        dave.setJobTitle("Research Charlie");
+        dave.setJobTitle("Research Dave");
         dave.setInstitution("National University of Singapore");
         dave.setInstitutionAbbreviation("NUS");
         dave.setWebsite("http://www.nus.edu.sg");
@@ -77,13 +78,70 @@ public class UserManager {
         dave.setPostalCode("600123");
         dave.setEmailVerified(true);
         
+        User eve = new User();
+        eve.setUserId(204);
+        eve.setRole("normal");
+        eve.setEmail("eve@nus.edu.sg");
+        eve.setPassword("password");
+        eve.setJobTitle("Research Eve");
+        eve.setInstitution("National University of Singapore");
+        eve.setInstitutionAbbreviation("NUS");
+        eve.setWebsite("http://www.nus.edu.sg");
+        eve.setAddress1("Boon Lay Drive 222");
+        eve.setCountry("Singapore");
+        eve.setCity("Singapore");
+        eve.setProvince("SG");
+        eve.setPostalCode("600123");
+        eve.setEmailVerified(false);
+        
         usersMap.put(johnDoe.getUserId(), johnDoe); // 200
         usersMap.put(bob.getUserId(), bob);         // 201
         usersMap.put(charlie.getUserId(), charlie); // 202
         usersMap.put(dave.getUserId(), dave);       // 203
+        usersMap.put(eve.getUserId(), eve);         // 204 
+    }
+    
+    public static UserManager getInstance() {
+        if (USER_MANAGER_SINGLETON == null) {
+            USER_MANAGER_SINGLETON = new UserManager();
+        }
+        return USER_MANAGER_SINGLETON;
     }
     
     public HashMap<Integer, User> getUserMap() {
         return usersMap;
+    }
+    
+    public boolean validateLoginDetails(String email, String password) {
+        for (Map.Entry<Integer, User> entry : usersMap.entrySet()) {
+            User currUser = entry.getValue();
+            if (currUser.getEmail().equals(email) && currUser.getPassword().equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean isEmailVerified(String email) {
+        for (Map.Entry<Integer, User> entry : usersMap.entrySet()) {
+            User currUser = entry.getValue();
+            if (currUser.getEmail().equals(email) && currUser.isEmailVerified()) {
+                return true;
+            } else if (currUser.getEmail().equals(email) && !currUser.isEmailVerified()) {
+                return false;
+            }
+        }
+        return false;
+    }
+    
+    // get a userid from email address
+    public int getUserId(String email) {
+        for (Map.Entry<Integer, User> entry : usersMap.entrySet()) {
+            User currUser = entry.getValue();
+            if (currUser.getEmail().equals(email)) {
+                return currUser.getUserId();
+            }
+        }
+        return ERROR_NO_SUCH_USER_ID;
     }
 }

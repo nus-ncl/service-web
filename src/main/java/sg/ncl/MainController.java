@@ -32,6 +32,7 @@ public class MainController {
     private final String host = "http://localhost:8080/";
     private final int CURRENT_LOGGED_IN_USER_ID = 200;
     private TeamManager teamManager = TeamManager.getInstance();
+    private UserManager userManager = UserManager.getInstance();
     private ExperimentManager experimentManager = new ExperimentManager();
     
     @RequestMapping(value="/", method=RequestMethod.GET)
@@ -45,16 +46,29 @@ public class MainController {
         model.addAttribute("loginForm", loginForm);
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
-        String expectedEmail = "johndoe@nus.edu.sg";
-        String expectedPassword = "password";
-        if (loginForm.getEmail().equals(expectedEmail) && loginForm.getPassword().equals(expectedPassword)) {
-            return "redirect:/dashboard";
-        } else {
+        // case1: invalid login
+        /**
+        if (userManager.validateLoginDetails(loginForm.getEmail(), loginForm.getPassword()) == false) {
             loginForm.setErrorMsg("Invalid email/password.");
             return "index";
+        } else if (userManager.isEmailVerified(loginForm.getEmail()) == false) {
+            return "email_not_validated";
+        } else if (teamManager.checkTeamValidation(userManager.getUserId(loginForm.getEmail()))) {
+            return "team_application_under_review";
+        } else {
+            return "redirect:/dashboard";
+        }
+        */
+        if (userManager.validateLoginDetails(loginForm.getEmail(), loginForm.getPassword()) == false) {
+            loginForm.setErrorMsg("Invalid email/password.");
+            return "index";
+        } else if (userManager.isEmailVerified(loginForm.getEmail()) == false) {
+            model.addAttribute("emailAddress", loginForm.getEmail());
+            return "email_not_validated";
+        } else {
+            return "redirect:/dashboard";
         }
         // add three other cases
-        // email not validated
         // team not validated
         // email validated, team not validated
         // email validated, team

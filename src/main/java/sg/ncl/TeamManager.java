@@ -12,7 +12,7 @@ import sg.ncl.testbed_interface.Team;
 public class TeamManager {
     
     /* teamId, team */
-    private static TeamManager TEAM_MANAGER_SINGLETON = new TeamManager();
+    private static TeamManager TEAM_MANAGER_SINGLETON = null;
     private HashMap<Integer, Team> teamMap;
     private HashMap<Integer, Team> invitedToParticipateMap;
     private HashMap<Integer, Team> joinRequestTeamMap;
@@ -111,6 +111,9 @@ public class TeamManager {
     }
     
     public static TeamManager getInstance() {
+        if (TEAM_MANAGER_SINGLETON == null) {
+            TEAM_MANAGER_SINGLETON = new TeamManager();
+        }
         return TEAM_MANAGER_SINGLETON;
     }
     
@@ -163,5 +166,31 @@ public class TeamManager {
 
     public void setJoinRequestTeamMap(HashMap<Integer, Team> joinRequestTeamMap) {
         this.joinRequestTeamMap = joinRequestTeamMap;
+    }
+    
+    /**
+     * Check to ensure if user is in only one team and that team must be validated
+     * @param userId
+     * @return
+     */
+    public boolean checkTeamValidation(int userId) {
+        int teamApprovedCount = 0;
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            Team currTeam = entry.getValue();
+            
+            // check team is validated
+            HashMap<Integer, String> membersMap = currTeam.getMembersMap();
+            for (Map.Entry<Integer, String> membersEntry : membersMap.entrySet()) {
+                if (membersEntry.getKey() == userId && currTeam.getIsApproved()) {
+                    teamApprovedCount++;
+                }
+            }
+        }
+        
+        if (teamApprovedCount <= 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
