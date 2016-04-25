@@ -28,7 +28,7 @@
                             </thead>
                             <tr th:each="teamEntry : ${teamMap}">
                                 <td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><span class="glyphicon glyphicon-king" data-toggle="tooltip" data-placement="bottom" title="You are the owner of this team"></span></td>
-                                <td th:unless="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"></td>
+                                <td th:unless="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
                                 <td th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</td>
                                 <td th:text="${teamEntry.value.description}">Description</td>
                                 <td th:text="${teamEntry.value.members}">Members</td>
