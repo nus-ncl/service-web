@@ -161,13 +161,13 @@ public class MainController {
     
     //--------------------------Join Team Page--------------------------
     
-    @RequestMapping(value="/join_team",  method=RequestMethod.GET)
+    @RequestMapping(value="/teams/join_team",  method=RequestMethod.GET)
     public String teamPageJoinTeam(Model model) {
         model.addAttribute("teamPageJoinTeamForm", new TeamPageJoinTeamForm());
         return "team_page_join_team";
     }
     
-    @RequestMapping(value="/join_team", method=RequestMethod.POST)
+    @RequestMapping(value="/teams/join_team", method=RequestMethod.POST)
     public String checkJoinTeamInfo(@Valid TeamPageJoinTeamForm teamPageJoinForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "team_page_join_team";
