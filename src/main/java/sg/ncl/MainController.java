@@ -136,13 +136,13 @@ public class MainController {
     
     //--------------------------Apply for New Team Page--------------------------
     
-    @RequestMapping(value="/apply_team", method=RequestMethod.GET)
+    @RequestMapping(value="/teams/apply_team", method=RequestMethod.GET)
     public String teamPageApplyTeam(Model model) {
         model.addAttribute("teamPageApplyTeamForm", new TeamPageApplyTeamForm());
         return "team_page_apply_team";
     }
     
-    @RequestMapping(value="/apply_team", method=RequestMethod.POST)
+    @RequestMapping(value="/teams/apply_team", method=RequestMethod.POST)
     public String checkApplyTeamInfo(@Valid TeamPageApplyTeamForm teamPageApplyTeamForm, BindingResult bindingResult) {
        if (bindingResult.hasErrors()) {
            return "team_page_apply_team";
@@ -150,10 +150,10 @@ public class MainController {
        // log data to ensure data has been parsed
        LOGGER.log(Level.INFO, "--------Apply for new team info---------");
        LOGGER.log(Level.INFO, teamPageApplyTeamForm.toString());
-       return "redirect:/team_application_submitted";
+       return "redirect:/teams/team_application_submitted";
     }
     
-    @RequestMapping(value="/team_owner_policy", method=RequestMethod.GET)
+    @RequestMapping(value="/teams/team_owner_policy", method=RequestMethod.GET)
     public String teamOwnerPolicy() {
         return "team_owner_policy";
     }
@@ -185,6 +185,12 @@ public class MainController {
         return "experiments";
     }
     
+    //--------------------------Static pages for teams--------------------------
+    @RequestMapping("/teams/team_application_submitted")
+    public String teamAppSubmitFromTeamsPage() {
+        return "team_page_application_submitted";
+    }
+    
     //--------------------------Static pages for sign up--------------------------
     
     @RequestMapping("/team_application_submitted")
@@ -211,4 +217,5 @@ public class MainController {
     public String joinTeamAppAwaitingApproval() {
         return "join_team_application_awaiting_approval";
     }
+    
 }
