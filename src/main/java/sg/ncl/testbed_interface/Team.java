@@ -162,4 +162,12 @@ public class Team {
     public void addMembers(Integer userId, String position) {
         membersMap.put(userId, position);
     }
+    
+    public boolean isUserTeamOwner(int userId) {
+        if (userId == teamOwnerId) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

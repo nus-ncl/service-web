@@ -19,6 +19,7 @@
                     <div class="panel-body">
                         <table class="table table-responsive">
                             <thead>
+                                <th></th>
                                 <th th:text="#{team.table.header.team}">Team</th>
                                 <th th:text="#{team.table.header.description}">Description</th>
                                 <th th:text="#{team.table.header.members}">Members</th>
@@ -26,6 +27,8 @@
                                 <th th:text="#{team.table.header.actions}">Actions</th>
                             </thead>
                             <tr th:each="teamEntry : ${teamMap}">
+                                <td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><span class="glyphicon glyphicon-king" data-toggle="tooltip" data-placement="bottom" title="You are the owner of this team"></span></td>
+                                <td th:unless="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"></td>
                                 <td th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</td>
                                 <td th:text="${teamEntry.value.description}">Description</td>
                                 <td th:text="${teamEntry.value.members}">Members</td>
