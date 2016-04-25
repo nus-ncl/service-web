@@ -38,6 +38,8 @@ public class MainController {
     private UserManager userManager = UserManager.getInstance();
     private ExperimentManager experimentManager = new ExperimentManager();
     
+    private static SignUpAccountDetailsForm signupAccountDetailsForm = new SignUpAccountDetailsForm();
+    
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String index(Model model) throws Exception {
         model.addAttribute("loginForm", new LoginForm());
@@ -84,25 +86,38 @@ public class MainController {
     
     //--------------------------Sign Up Page--------------------------
     
-    @RequestMapping("/signup")
+    @RequestMapping(value="/signup", method=RequestMethod.GET)
     public String signup(Model model) {
         // forms has to be added for other views, because the loginForm also exists on those pages
         model.addAttribute("loginForm", new LoginForm());
-        model.addAttribute("signUpAccountDetailsForm", new SignUpAccountDetailsForm());
+        model.addAttribute("signUpAccountDetailsForm", signupAccountDetailsForm);
         return "signup";
     }
     
     @RequestMapping(value="/signup", method=RequestMethod.POST)
-    public String validateSignUpForms(@ModelAttribute LoginForm loginForm, @Valid SignUpAccountDetailsForm signUpAccountDetailsForm, BindingResult bindingResult) {
+    public String validateSignUpForms(@ModelAttribute LoginForm loginForm, @ModelAttribute @Valid SignUpAccountDetailsForm signupAccountDetailsForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "signup";
-        } else if (userManager.getUserId(signUpAccountDetailsForm.getEmail()) != ERROR_NO_SUCH_USER_ID) {
-            signUpAccountDetailsForm.setErrorMsg("Email is already in use");
-        } else if (signUpAccountDetailsForm.isPasswordMatch() == false) {
-            signUpAccountDetailsForm.setErrorMsg("Passwords do not match");
+        } else if (userManager.getUserId(signupAccountDetailsForm.getEmail()) != ERROR_NO_SUCH_USER_ID) {
+            signupAccountDetailsForm.setErrorMsg("Email is already in use");
+            return "signup";
+        } else if (signupAccountDetailsForm.isPasswordMatch() == false) {
+            signupAccountDetailsForm.setErrorMsg("Passwords do not match");
+            return "signup";
+        } else {
+            return "redirect:/signup/personal_details";
         }
-        return "signup";
     }
+    
+    @RequestMapping(value="/signup/personal_details", method=RequestMethod.GET)
+    public String signupTest(@ModelAttribute SignUpAccountDetailsForm signupAccountDetailsForm, Model model) {
+        // forms has to be added for other views, because the loginForm also exists on those pages
+        model.addAttribute("loginForm", new LoginForm());
+        model.addAttribute("signUpPersonalDetailsForm", new SignUpPersonalDetailsForm());
+        System.out.println(signupAccountDetailsForm.getEmail());
+        return "signup_personal";
+    }
+    
     
     //--------------------------Teams Page--------------------------
     
