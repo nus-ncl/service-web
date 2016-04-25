@@ -174,7 +174,7 @@ public class MainController {
         // log data to ensure data has been parsed
         LOGGER.log(Level.INFO, "--------Join team---------");
         LOGGER.log(Level.INFO, teamPageJoinForm.toString());
-        return "redirect:/join_application_submitted";
+        return "redirect:/teams/join_application_submitted";
     }
     
     //--------------------------Experiment Page--------------------------
@@ -189,6 +189,11 @@ public class MainController {
     @RequestMapping("/teams/team_application_submitted")
     public String teamAppSubmitFromTeamsPage() {
         return "team_page_application_submitted";
+    }
+    
+    @RequestMapping("/teams/join_application_submitted")
+    public String teamAppJoinFromTeamsPage() {
+        return "team_page_join_application_submitted";
     }
     
     //--------------------------Static pages for sign up--------------------------
