@@ -33,7 +33,7 @@
                                 <td th:text="${teamEntry.value.description}">Description</td>
                                 <td th:text="${teamEntry.value.members}">Members</td>
                                 <td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>
-                                <td></td>
+                                <td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>
                             </tr>
                         </table>
                     </div> <!-- panel body -->
