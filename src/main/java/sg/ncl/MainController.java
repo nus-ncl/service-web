@@ -150,6 +150,38 @@ public class MainController {
         return "teams";
     }
     
+    @RequestMapping("/accept_participation/{teamId}")
+    public String acceptParticipationRequest(@PathVariable Integer teamId, Model model) {
+        // get user's participation request list
+        // add this user id to the requested list
+        // remove participation request
+        teamManager.addParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.ignoreParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        
+        // load the other models to the view
+        model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
+        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
+        model.addAttribute("invitedToParticipateMap", teamManager.getInvitedToParticipateMap());
+        model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
+        return "redirect:/teams";
+    }
+    
+    @RequestMapping("/ignore_participation/{teamId}")
+    public String ignoreParticipationRequest(@PathVariable Integer teamId, Model model) {
+        // get user's participation request list
+        // remove this user id from the requested list
+        teamManager.ignoreParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        
+        // load the other models to the view
+        model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
+        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
+        model.addAttribute("invitedToParticipateMap", teamManager.getInvitedToParticipateMap());
+        model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
+        return "redirect:/teams";
+    }
+    
     @RequestMapping("/withdrawn/{teamId}")
     public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model) {
         // get user team request

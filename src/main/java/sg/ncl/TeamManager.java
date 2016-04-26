@@ -211,7 +211,29 @@ public class TeamManager {
     }
     
     public void removeUserJoinRequest(int userId, int teamId) {
-        // should check if userId indeed make a join request
+        // TODO check if userId indeed make a join request
         joinRequestTeamMap.remove(teamId);
+    }
+    
+    public void addParticipationRequest(int userId, int teamId) {
+        // TODO check if userId indeed have a participation request
+        // add as member
+        // update team
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            if (currTeamId == teamId) {
+                currTeam.addMembers(userId, "member");
+                int existingMemberCount = currTeam.getMembers();
+                currTeam.setMembers(existingMemberCount+1);
+                teamMap.put(currTeamId, currTeam);
+                return;
+            }
+        }
+    }
+    
+    public void ignoreParticipationRequest(int userId, int teamId) {
+        // TODO check if userId indeed have a participation request
+        invitedToParticipateMap.remove(teamId);
     }
 }
