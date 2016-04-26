@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Edit Account Details</title>
+        <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" media="screen"/>
+        <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{css/font-awesome/css/font-awesome.min.css}"/>
+        <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{css/custom.css}"/>
+        <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{js/jquery-1.12.2.min.js}"></script>
+        <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
+        <script type="text/javascript" src="static/js/custom.js" th:src="@{js/custom.js}"></script>
+    </head>
+    <body class="mybg">
+        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+        <div class="container">
+            <div class="row">
+                <form  method="post" action="#" th:action="@{/account_settings}" th:object="${currentUser}" role="form">
+                    <fieldset>
+                        <h2>Account Info</h2>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="text" class="form-control" id="inputEmail" name="" th:field="*{email}"/>
+                        </div>
+                        <!--  
+                        <h2>Personal Info</h2>
+                        <div class="form-group">
+                            <label for="name">Full Name:</label>
+                            <input type="text" class="form-control" th:field="*{name}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobTitle">Job Title:</label>
+                            <input type="text" class="form-control" th:field="*{jobTitle}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="institution">Institution/Employee:</label>
+                            <input type="text" class="form-control" th:field="*{institution}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="institutionAbbreviation">Institution Abbreviation:</label>
+                            <input type="text" class="form-control" th:field="*{institutionAbbreviation}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="website">Institution Website:</label>
+                            <input type="text" class="form-control" th:field="*{website}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="address1">Address 1:</label>
+                            <input type="text" class="form-control" th:field="*{address1}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="address2">Address 2:</label>
+                            <input type="text" class="form-control" th:field="*{address2}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country:</label>
+                            <input type="text" class="form-control" th:field="*{country}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City:</label>
+                            <input type="text" class="form-control" th:field="*{city}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="province">State/Province:</label>
+                            <input type="text" class="form-control" th:field="*{province}"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="postalCode">Postal Code:</label>
+                            <input type="text" class="form-control" th:field="*{postalCode}"/>
+                        </div>
+                        -->
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">Save</button>
+                            <a href="#" th:href="@{/dashboard}" class="btn btn-danger">Cancel</a>
+                        </div>
+                    </fieldset>
+                </form>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </body>
+</html>

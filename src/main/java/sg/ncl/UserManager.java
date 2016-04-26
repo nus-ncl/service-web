@@ -17,6 +17,7 @@ public class UserManager {
         User johnDoe = new User();
         johnDoe.setUserId(200);
         johnDoe.setRole("normal");
+        johnDoe.setName("John Doe");
         johnDoe.setEmail("johndoe@nus.edu.sg");
         johnDoe.setPassword("password");
         johnDoe.setJobTitle("Research Assistant");
@@ -33,6 +34,7 @@ public class UserManager {
         User bob = new User();
         bob.setUserId(201);
         bob.setRole("normal");
+        bob.setName("Bob");
         bob.setEmail("bob@nus.edu.sg");
         bob.setPassword("password");
         bob.setJobTitle("Research Bob");
@@ -49,6 +51,7 @@ public class UserManager {
         User charlie = new User();
         charlie.setUserId(202);
         charlie.setRole("admin");
+        charlie.setName("Charlie");
         charlie.setEmail("charlie@nus.edu.sg");
         charlie.setPassword("password");
         charlie.setJobTitle("Research Charlie");
@@ -65,6 +68,7 @@ public class UserManager {
         User dave = new User();
         dave.setUserId(203);
         dave.setRole("admin");
+        dave.setName("Dave");
         dave.setEmail("dave@nus.edu.sg");
         dave.setPassword("password");
         dave.setJobTitle("Research Dave");
@@ -81,6 +85,7 @@ public class UserManager {
         User eve = new User();
         eve.setUserId(204);
         eve.setRole("normal");
+        eve.setName("Eve");
         eve.setEmail("eve@nus.edu.sg");
         eve.setPassword("password");
         eve.setJobTitle("Research Eve");
@@ -143,5 +148,17 @@ public class UserManager {
             }
         }
         return ERROR_NO_SUCH_USER_ID;
+    }
+    
+    public User getUserById(int userId) {
+        User rv = null;
+        for (Map.Entry<Integer, User> entry : usersMap.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                rv = entry.getValue();
+                return rv;
+            }
+        }
+        return rv;
     }
 }
