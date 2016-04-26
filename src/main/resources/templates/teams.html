@@ -14,6 +14,12 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
+                <div th:if="${infoMsg != null}">
+                    <div class="alert alert-info fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>Info!</strong> <span th:text="${infoMsg}"></span>
+                    </div>
+                </div>
                 <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2><a data-toggle="collapse" href="#collapse1"><i class="fa fa-caret-square-o-down fa-lg"></i></a>
                 <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team">
                     <div class="panel-body">

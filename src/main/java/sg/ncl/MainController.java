@@ -138,6 +138,7 @@ public class MainController {
     
     @RequestMapping("/teams")
     public String teams(Model model) {
+        model.addAttribute("infoMsg", teamManager.getInfoMsg());
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
@@ -157,8 +158,11 @@ public class MainController {
         // remove participation request
         teamManager.addParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
         teamManager.ignoreParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        // must get team name
+        teamManager.setInfoMsg("You have just joined a team!");
         
         // load the other models to the view
+        model.addAttribute("infoMsg", teamManager.getInfoMsg());
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
@@ -172,6 +176,7 @@ public class MainController {
         // get user's participation request list
         // remove this user id from the requested list
         teamManager.ignoreParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.setInfoMsg("You have just ignored a team-request!");
         
         // load the other models to the view
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
@@ -187,8 +192,10 @@ public class MainController {
         // get user team request
         // remove this user id from the user's request list
         teamManager.removeUserJoinRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.setInfoMsg("You have withdrawn your join request");
         
         // load the other models to the view
+        model.addAttribute("infoMsg", teamManager.getInfoMsg());
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());

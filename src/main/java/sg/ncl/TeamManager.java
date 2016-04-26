@@ -16,6 +16,7 @@ public class TeamManager {
     private HashMap<Integer, Team> teamMap;
     private HashMap<Integer, Team> invitedToParticipateMap;
     private HashMap<Integer, Team> joinRequestTeamMap;
+    private String infoMsg = null;
     
     private TeamManager() {
         Team team1 = new Team();
@@ -235,5 +236,13 @@ public class TeamManager {
     public void ignoreParticipationRequest(int userId, int teamId) {
         // TODO check if userId indeed have a participation request
         invitedToParticipateMap.remove(teamId);
+    }
+    
+    public void setInfoMsg(String msg) {
+        infoMsg = msg;
+    }
+    
+    public String getInfoMsg() {
+        return infoMsg;
     }
 }
