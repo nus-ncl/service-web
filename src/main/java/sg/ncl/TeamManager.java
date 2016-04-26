@@ -209,4 +209,9 @@ public class TeamManager {
             return true;
         }
     }
+    
+    public void removeUserJoinRequest(int userId, int teamId) {
+        // should check if userId indeed make a join request
+        joinRequestTeamMap.remove(teamId);
+    }
 }

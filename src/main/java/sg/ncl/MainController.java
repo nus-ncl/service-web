@@ -9,14 +9,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import sg.ncl.testbed_interface.LoginForm;
 import sg.ncl.testbed_interface.SignUpAccountDetailsForm;
 import sg.ncl.testbed_interface.SignUpPersonalDetailsForm;
 import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
+import sg.ncl.testbed_interface.User;
 import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
 
 /**
@@ -118,6 +121,18 @@ public class MainController {
         return "signup_personal";
     }
     
+    //--------------------------Account Settings Page--------------------------
+    @RequestMapping(value="/account_settings", method=RequestMethod.GET)
+    public String accountDetails(Model model) {
+        model.addAttribute("currentUser", userManager.getUserById(CURRENT_LOGGED_IN_USER_ID));
+        return "account_settings";
+    }
+    
+    @RequestMapping(value="/account_settings", method=RequestMethod.POST)
+    public String editAccountDetails(@ModelAttribute User currentUser) {
+        System.out.println(currentUser.getEmail());
+        return "account_settings";
+    }
     
     //--------------------------Teams Page--------------------------
     
@@ -133,6 +148,21 @@ public class MainController {
         // RestTemplate restTemplate = new RestTemplate();
         // TeamsList result = restTemplate.getForObject(uri, TeamsList.class);
         return "teams";
+    }
+    
+    @RequestMapping("/withdrawn/{teamId}")
+    public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model) {
+        // get user team request
+        // remove this user id from the user's request list
+        teamManager.removeUserJoinRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        
+        // load the other models to the view
+        model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
+        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
+        model.addAttribute("invitedToParticipateMap", teamManager.getInvitedToParticipateMap());
+        model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
+        return "redirect:/teams";
     }
     
     //--------------------------Apply for New Team Page--------------------------

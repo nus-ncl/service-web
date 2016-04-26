@@ -64,7 +64,10 @@
                 <h2 class="team-heading-join-request team-heading" th:text="#{team.heading.requestJoin}">text heading from .properties</h2>
                     <div class="panel panel-default team-panel team-panel-join-request">
                         <div class="panel-body">
-                            <table class="table table-responsive">
+                            <div th:if="${joinRequestMap.isEmpty()}">
+                                <p>You have not requested to join any teams yet.</p>
+                            </div>
+                            <table class="table table-responsive" th:if="not ${joinRequestMap.isEmpty()}">
                                 <thead>
                                     <th th:text="#{team.table.header.team}">Team</th>
                                     <th th:text="#{team.table.header.description}">Description</th>
@@ -75,7 +78,7 @@
                                    <td th:text="${teamEntry.value.name + '-' + teamEntry.value.id}">Name-Id</td>
                                    <td th:text="${teamEntry.value.description}">Description</td>
                                    <td th:text="${teamEntry.value.institution}">Institution</td>
-                                   <td><a href="#" class="btn btn-danger"><i class="fa fa-minus-circle"></i> #Withdrawn</a></td>
+                                   <td><a href="#" class="btn btn-danger" th:href="@{/withdrawn/{teamId}(teamId=${teamEntry.value.id})}"><i class="fa fa-minus-circle"></i> Withdrawn</a></td>
                                 </tr>
                             </table>
                         </div> <!-- panel body -->
