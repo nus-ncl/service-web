@@ -62,6 +62,23 @@
                     </div>
                     <div id="members" class="tab-pane fade">
                         <h3>Members</h3>
+                        <table class="table table-responsive">
+                            <thead>
+                                <th th:text="#{team.members.name}">Name</th>
+                                <th th:text="#{team.members.permission}">Permission</th>
+                                <th th:text="#{team.members.actions}"></th>
+                            </thead>
+                            <tr th:each="membersEntry : ${membersMap}">
+                                <td th:text="${userManager.getNameByUserId(membersEntry.key)}">Name</td>
+                                <td th:text="${membersEntry.value}">Permission</td>
+                                <!-- team member -->
+                                <td th:if="${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">
+                                    <a href="#" th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.getId()}, userId=${membersEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash"></i></a>
+                                </td>
+                                <!-- team owner cannot remove own account -->
+                                <td th:if="not ${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">---</td>
+                            </tr>
+                        </table>
                     </div>
                     <div id="experiments" class="tab-pane fade">
                         <h3>Experiments</h3>

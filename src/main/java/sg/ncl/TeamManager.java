@@ -268,4 +268,14 @@ public class TeamManager {
         }
         return rv;
     }
+    
+    public void removeMembers(int userId, int teamId) {
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            if (currTeamId == teamId) {
+                currTeam.removeMembers(userId);
+            }
+        }
+    }
 }

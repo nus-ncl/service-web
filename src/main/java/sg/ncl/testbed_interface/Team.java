@@ -159,8 +159,12 @@ public class Team {
         this.membersMap = membersMap;
     }
     
-    public void addMembers(Integer userId, String position) {
+    public void addMembers(int userId, String position) {
         membersMap.put(userId, position);
+    }
+    
+    public void removeMembers(int userId) {
+        membersMap.remove(userId);
     }
     
     public boolean isUserTeamOwner(int userId) {

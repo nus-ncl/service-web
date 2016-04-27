@@ -151,13 +151,6 @@ public class MainController {
         return "teams";
     }
     
-    @RequestMapping("/team_profile/{teamId}")
-    public String teamProfile(@PathVariable Integer teamId, Model model) {
-        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
-        model.addAttribute("userManager", userManager);
-        return "team_profile";
-    }
-    
     @RequestMapping("/accept_participation/{teamId}")
     public String acceptParticipationRequest(@PathVariable Integer teamId, Model model) {
         // get user's participation request list
@@ -212,6 +205,27 @@ public class MainController {
         model.addAttribute("invitedToParticipateMap", teamManager.getInvitedToParticipateMap());
         model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
         return "redirect:/teams";
+    }
+    
+    //--------------------------Team Profile Page--------------------------
+    
+    @RequestMapping("/team_profile/{teamId}")
+    public String teamProfile(@PathVariable Integer teamId, Model model) {
+        model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
+        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
+        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
+        model.addAttribute("userManager", userManager);
+        return "team_profile";
+    }
+    
+    @RequestMapping("/remove_member/{teamId}/{userId}")
+    public String removeMember(@PathVariable Integer teamId, @PathVariable Integer userId, Model model) {
+        // TODO check if user is indeed in the team
+        // TODO what happens to active experiments of the user?
+        // remove member from the team
+        // reduce the team count
+        teamManager.removeMembers(userId, teamId);
+        return "redirect:/team_profile/{teamId}";
     }
     
     //--------------------------Apply for New Team Page--------------------------
