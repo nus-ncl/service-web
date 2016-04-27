@@ -276,8 +276,17 @@ public class MainController {
     
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
     public String experiments(Model model) {
-        model.addAttribute("experimentMap", experimentManager.getExperimentMap());
+        model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         return "experiments";
+    }
+    
+    @RequestMapping("/remove_experiment/{expId}")
+    public String removeExperiment(@PathVariable Integer expId, Model model) {
+        // remove experiment
+        // TODO check userid is indeed the experiment owner or team owner
+        // ensure experiment is stopped first
+        model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        return "redirect:/experiments";
     }
     
     //--------------------------Static pages for teams--------------------------
