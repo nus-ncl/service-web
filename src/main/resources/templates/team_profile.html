@@ -14,7 +14,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-                <h2>Team: <span th:text="${team.getName()}"></span></h2>
+                <h2>Team: <span th:text="${team.name}"></span></h2>
                 <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
                     <li class="active"><a data-toggle="pill" href="#profile">Profile</a></li>
                     <li><a data-toggle="pill" href="#members">Members</a></li>
@@ -26,24 +26,24 @@
                         <table class="table table-responsive">
                             <tr>
                                 <td><strong th:text="#{team.profile.id}">ID</strong></td>
-                                <td th:text="${team.getId()}">ID</td>
+                                <td th:text="${team.id}">ID</td>
                             </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.organizationType}">Organization Type</strong></td>
-                                <td th:text="${team.getOrganizationType()}">Organization Type</td>
+                                <td th:text="${team.organizationType}">Organization Type</td>
                             </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.status}">Status</strong></td>
-                                <td th:if="${team.getIsApproved()}" th:text="Approved">Status</td>
-                                <td th:if="not ${team.getIsApproved()}" th:text="Under Review">Status</td>
+                                <td th:if="${team.isApproved}" th:text="Approved">Status</td>
+                                <td th:if="not ${team.isApproved}" th:text="Under Review">Status</td>
                             </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.name}">Name</strong></td>
-                                <td th:text="${team.getName()}">Name</td>
+                                <td th:text="${team.name}">Name</td>
                             </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.description}">Description</strong></td>
-                                <td th:text="${team.getDescription()}">Description</td>
+                                <td th:text="${team.description}">Description</td>
                             </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.owner}">Team Owner</strong></td>
@@ -51,12 +51,12 @@
                             </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.website}">Website</strong></td>
-                                <td th:text="${team.getWebsite()}">Website</td>
+                                <td th:text="${team.website}">Website</td>
                             </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.visibility}">Listed Visibility</strong></td>
 	                            <td th:if="${team.getIsPublic()}" th:text="Public">Listed Visibility</td>
-	                            <td th:if="not ${team.getIsPublic()}" th:text="Private">Listed Visibility</td>
+	                            <td th:if="not ${team.isPublic}" th:text="Private">Listed Visibility</td>
                             </tr>
                         </table>
                     </div>
@@ -73,7 +73,7 @@
                                 <td th:text="${membersEntry.value}">Permission</td>
                                 <!-- team member -->
                                 <td th:if="${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">
-                                    <a href="#" th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.getId()}, userId=${membersEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash"></i></a>
+                                    <a href="#" th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.id}, userId=${membersEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash"></i></a>
                                 </td>
                                 <!-- team owner cannot remove own account -->
                                 <td th:if="not ${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">---</td>
@@ -92,11 +92,11 @@
                                 <th th:text="#{team.experiment.idleHours}">Hours Idle</th>
                             </thead>
                             <tr th:each="teamExpEntry : ${teamExpMap}">
-                                <td th:text="${teamExpEntry.value.getName()}">Experiment</td>
-                                <td th:text="${teamExpEntry.value.getDescription()}">Description</td>
+                                <td th:text="${teamExpEntry.value.name}">Experiment</td>
+                                <td th:text="${teamExpEntry.value.description}">Description</td>
                                 <td></td>
-                                <td th:text="${teamExpEntry.value.getNodesCount()}">Nodes Allocated</td>
-                                <td th:text="${teamExpEntry.value.getHoursIdle()}">Hours Idle</td>
+                                <td th:text="${teamExpEntry.value.nodesCount}">Nodes Allocated</td>
+                                <td th:text="${teamExpEntry.value.hoursIdle}">Hours Idle</td>
                             </tr>
                         </table>
                     </div>
