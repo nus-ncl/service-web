@@ -161,4 +161,16 @@ public class UserManager {
         }
         return rv;
     }
+    
+    public String getNameByUserId(int userId) {
+        String rv = null;
+        for (Map.Entry<Integer, User> entry : usersMap.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                rv = entry.getValue().getName();
+                return rv;
+            }
+        }
+        return rv;
+    }
 }

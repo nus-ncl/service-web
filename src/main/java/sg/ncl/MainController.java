@@ -151,6 +151,13 @@ public class MainController {
         return "teams";
     }
     
+    @RequestMapping("/team_profile/{teamId}")
+    public String teamProfile(@PathVariable Integer teamId, Model model) {
+        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
+        model.addAttribute("userManager", userManager);
+        return "team_profile";
+    }
+    
     @RequestMapping("/accept_participation/{teamId}")
     public String acceptParticipationRequest(@PathVariable Integer teamId, Model model) {
         // get user's participation request list

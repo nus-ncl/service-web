@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Team Profile</title>
+        <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{~/css/bootstrap.min.css}" media="screen"/>
+        <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{~/css/font-awesome/css/font-awesome.min.css}"/>
+        <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{~/css/custom.css}"/>
+        <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{~/js/jquery-1.12.2.min.js}"></script>
+        <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" src="static/js/custom.js" th:src="@{~/js/custom.js}"></script>
+    </head>
+    <body class="mybg">
+        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+        <div class="container">
+            <div class="row">
+                <h2>Team: <span th:text="${team.getName()}"></span></h2>
+                <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
+                    <li class="active"><a data-toggle="pill" href="#profile">Profile</a></li>
+                    <li><a data-toggle="pill" href="#members">Members</a></li>
+                    <li><a data-toggle="pill" href="#experiments">Experiments</a></li>
+                </ul>
+                <div class="tab-content col-sm-10">
+                    <div id="profile" class="tab-pane fade in active">
+                        <h3>Profile</h3>
+                        <table class="table table-responsive">
+                            <tr>
+                                <td><strong th:text="#{team.profile.id}">ID</strong></td>
+                                <td th:text="${team.getId()}">ID</td>
+                            </tr>
+                            <tr>
+                                <td><strong th:text="#{team.profile.organizationType}">Organization Type</strong></td>
+                                <td th:text="${team.getOrganizationType()}">Organization Type</td>
+                            </tr>
+                            <tr>
+                                <td><strong th:text="#{team.profile.status}">Status</strong></td>
+                                <td th:if="${team.getIsApproved()}" th:text="Approved">Status</td>
+                                <td th:if="not ${team.getIsApproved()}" th:text="Under Review">Status</td>
+                            </tr>
+                            <tr>
+                                <td><strong th:text="#{team.profile.name}">Name</strong></td>
+                                <td th:text="${team.getName()}">Name</td>
+                            </tr>
+                            <tr>
+                                <td><strong th:text="#{team.profile.description}">Description</strong></td>
+                                <td th:text="${team.getDescription()}">Description</td>
+                            </tr>
+                            <tr>
+                                <td><strong th:text="#{team.profile.owner}">Team Owner</strong></td>
+                                <td th:text="${userManager.getNameByUserId(team.getTeamOwnerId())}">Team Owner</td>
+                            </tr>
+                            <tr>
+                                <td><strong th:text="#{team.profile.website}">Website</strong></td>
+                                <td th:text="${team.getWebsite()}">Website</td>
+                            </tr>
+                            <tr>
+                                <td><strong th:text="#{team.profile.visibility}">Listed Visibility</strong></td>
+	                            <td th:if="${team.getIsPublic()}" th:text="Public">Listed Visibility</td>
+	                            <td th:if="not ${team.getIsPublic()}" th:text="Private">Listed Visibility</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="members" class="tab-pane fade">
+                        <h3>Members</h3>
+                    </div>
+                    <div id="experiments" class="tab-pane fade">
+                        <h3>Experiments</h3>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </body>
+</html>

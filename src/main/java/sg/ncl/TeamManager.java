@@ -256,4 +256,16 @@ public class TeamManager {
         }
         return "";
     }
+    
+    public Team getTeamByTeamId(int teamId) {
+        Team rv = null;
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            rv = entry.getValue();
+            if (currTeamId == teamId) {
+                return rv;
+            }
+        }
+        return rv;
+    }
 }
