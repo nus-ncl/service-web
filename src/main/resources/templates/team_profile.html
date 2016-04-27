@@ -83,7 +83,7 @@
                     <div id="experiments" class="tab-pane fade">
                         <h3>Experiments</h3>
                         <p>This page contains all the experiments running for this team.</p>
-                        <table class="table table-responsive">
+                        <table class="table table-responsive" th:if="not ${teamExpMap.isEmpty()}">
                             <thead>
                                 <th th:text="#{team.experiment.name}">Experiment</th>
                                 <th th:text="#{team.experiment.description}">Description</th>
