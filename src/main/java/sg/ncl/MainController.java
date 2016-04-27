@@ -285,7 +285,15 @@ public class MainController {
         // remove experiment
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
+        experimentManager.removeExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
         model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        return "redirect:/experiments";
+    }
+    
+    @RequestMapping("/start_experiment/{expId}")
+    public String startExperiment(@PathVariable Integer expId, Model model) {
+        // start experiment
+        // ensure experiment is stopped first before starting
         return "redirect:/experiments";
     }
     
