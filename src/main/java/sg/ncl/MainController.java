@@ -159,7 +159,8 @@ public class MainController {
         teamManager.addParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
         teamManager.ignoreParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
         // must get team name
-        teamManager.setInfoMsg("You have just joined a team!");
+        String teamName = teamManager.getTeamNameByTeamId(teamId);
+        teamManager.setInfoMsg("You have just joined Team " + teamName + " !");
         
         // load the other models to the view
         model.addAttribute("infoMsg", teamManager.getInfoMsg());
@@ -175,8 +176,9 @@ public class MainController {
     public String ignoreParticipationRequest(@PathVariable Integer teamId, Model model) {
         // get user's participation request list
         // remove this user id from the requested list
+        String teamName = teamManager.getTeamNameByTeamId(teamId);
         teamManager.ignoreParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
-        teamManager.setInfoMsg("You have just ignored a team-request!");
+        teamManager.setInfoMsg("You have just ignored a team request from Team " + teamName + " !");
         
         // load the other models to the view
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
@@ -191,8 +193,9 @@ public class MainController {
     public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model) {
         // get user team request
         // remove this user id from the user's request list
+        String teamName = teamManager.getTeamNameByTeamId(teamId);
         teamManager.removeUserJoinRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
-        teamManager.setInfoMsg("You have withdrawn your join request");
+        teamManager.setInfoMsg("You have withdrawn your join request for Team " + teamName);
         
         // load the other models to the view
         model.addAttribute("infoMsg", teamManager.getInfoMsg());

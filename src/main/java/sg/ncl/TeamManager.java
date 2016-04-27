@@ -245,4 +245,15 @@ public class TeamManager {
     public String getInfoMsg() {
         return infoMsg;
     }
+    
+    public String getTeamNameByTeamId(int teamId) {
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            if (currTeamId == teamId) {
+                return currTeam.getName();
+            }
+        }
+        return "";
+    }
 }
