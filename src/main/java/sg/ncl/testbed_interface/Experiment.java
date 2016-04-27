@@ -22,6 +22,7 @@ public class Experiment {
     private String scenarioFileName;
     private int nodesCount;
     private int hoursRunning;
+    private int hoursIdle;
     private String status; // READY, ALLOCATING, ERROR
     
     public Experiment() {
@@ -112,5 +113,13 @@ public class Experiment {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getHoursIdle() {
+        return hoursIdle;
+    }
+
+    public void setHoursIdle(int hoursIdle) {
+        this.hoursIdle = hoursIdle;
     }
 }

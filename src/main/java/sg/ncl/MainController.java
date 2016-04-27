@@ -215,6 +215,7 @@ public class MainController {
         model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
         model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
         model.addAttribute("userManager", userManager);
+        model.addAttribute("teamExpMap", experimentManager.getTeamExperimentsMap(teamId));
         return "team_profile";
     }
     

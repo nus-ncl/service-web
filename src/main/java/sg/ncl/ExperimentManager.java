@@ -1,8 +1,10 @@
 package sg.ncl;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import sg.ncl.testbed_interface.Experiment;
+import sg.ncl.testbed_interface.Team;
 
 public class ExperimentManager {
     
@@ -28,6 +30,8 @@ public class ExperimentManager {
         exp01.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
         exp01.setStatus(EXPERIMENT_STATUS_STOP);
         exp01.setTeamId(110);
+        exp01.setNodesCount(7);
+        exp01.setHoursIdle(2);
         
         Experiment exp02 = new Experiment();
         exp02.setExperimentId(51);
@@ -36,6 +40,8 @@ public class ExperimentManager {
         exp02.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
         exp02.setStatus(EXPERIMENT_STATUS_STOP);
         exp02.setTeamId(111);
+        exp02.setNodesCount(7);
+        exp02.setHoursIdle(2);
         
         Experiment exp03 = new Experiment();
         exp03.setExperimentId(52);
@@ -44,6 +50,8 @@ public class ExperimentManager {
         exp03.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
         exp03.setStatus(EXPERIMENT_STATUS_STOP);
         exp03.setTeamId(112);
+        exp03.setNodesCount(7);
+        exp03.setHoursIdle(2);
         
         experimentMap.put(exp01.getExperimentId(), exp01);
         experimentMap.put(exp02.getExperimentId(), exp02);
@@ -52,6 +60,18 @@ public class ExperimentManager {
     
     public HashMap<Integer, Experiment> getExperimentMap() {
         return experimentMap;
+    }
+    
+    public HashMap<Integer, Experiment> getTeamExperimentsMap(int teamId) {
+        HashMap<Integer, Experiment> teamExpMap = new HashMap<Integer, Experiment>();
+        for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
+            int expId = entry.getKey();
+            Experiment currExp = entry.getValue();
+            if (teamId == currExp.getTeamId()) {
+                teamExpMap.put(expId, currExp);
+            }
+        }
+        return teamExpMap;
     }
 
 }
