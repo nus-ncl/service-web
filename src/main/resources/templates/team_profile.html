@@ -95,7 +95,7 @@
                             <tr th:each="teamExpEntry : ${teamExpMap}">
                                 <td th:text="${teamExpEntry.value.name}">Experiment</td>
                                 <td th:text="${teamExpEntry.value.description}">Description</td>
-                                <td></td>
+                                <td th:text="${teamExpEntry.value.status}">Status</td>
                                 <td th:text="${teamExpEntry.value.nodesCount}">Nodes Allocated</td>
                                 <td th:text="${teamExpEntry.value.hoursIdle}">Hours Idle</td>
                             </tr>
