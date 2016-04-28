@@ -294,6 +294,17 @@ public class MainController {
     public String startExperiment(@PathVariable Integer expId, Model model) {
         // start experiment
         // ensure experiment is stopped first before starting
+        experimentManager.startExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
+        model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        return "redirect:/experiments";
+    }
+    
+    @RequestMapping("/stop_experiment/{expId}")
+    public String stopExperiment(@PathVariable Integer expId, Model model) {
+        // stop experiment
+        // ensure experiment is in ready mode before stopping
+        experimentManager.stopExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
+        model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/experiments";
     }
     

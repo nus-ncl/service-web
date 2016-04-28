@@ -95,8 +95,33 @@ public class ExperimentManager {
             int currExpId = entry.getKey();
             Experiment currExp = entry.getValue();
             // TODO need to include a check if user is the team owner
-            if (currExpId == expId && currExp.getExperimentOwnerId() == userId) {
+            if (currExpId == expId && currExp.getExperimentOwnerId() == userId && currExp.getStatus() == EXPERIMENT_STATUS_STOP) {
                 experimentMap.remove(expId);
+                return;
+            }
+        }
+    }
+    
+    public void startExperiment(int userId, int expId) {
+        // need to check if user have rights to start the experiment
+        for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
+            int currExpId = entry.getKey();
+            Experiment currExp = entry.getValue();
+            if (currExpId == expId && currExp.getStatus() == EXPERIMENT_STATUS_STOP) {
+                // suppose to be allocating
+                // then when nodes are configured and allocated fully, set to active
+                currExp.setStatus(EXPERIMENT_STATUS_READY);
+                return;
+            }
+        }
+    }
+    
+    public void stopExperiment(int userId, int expId) {
+        for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
+            int currExpId = entry.getKey();
+            Experiment currExp = entry.getValue();
+            if (currExpId == expId && currExp.getStatus() == EXPERIMENT_STATUS_READY) {
+                currExp.setStatus(EXPERIMENT_STATUS_STOP);
                 return;
             }
         }

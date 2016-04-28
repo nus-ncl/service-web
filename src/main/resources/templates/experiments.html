@@ -37,11 +37,13 @@
                                 <td th:text="${expEntry.value.status}">Status</td>
                                 <td>
                                     <span th:if="${expEntry.value.status == 'STOPPED'}">
-                                        <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>
-                                        <a href="#" th:href="@{/start_experiment/{expId}(expId=${expEntry.key})}" class="btn btn-primary"><i class="fa fa-play"></i></a>
+                                        <a href="#" th:href="@{/start_experiment/{expId}(expId=${expEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>
                                     </span>
                                     <span th:if="${expEntry.value.status == 'READY'}">
-                                        <a href="#" th:href="@{/stop_experiment/{expId}(expId=${expEntry.key})}" class="btn btn-primary"><i class="fa fa-pause"></i></a>
+                                        <a href="#" th:href="@{/stop_experiment/{expId}(expId=${expEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-pause"></i></a>
+                                    </span>
+                                    <span th:if="${expEntry.value.status == 'STOPPED'}">
+                                        <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>
                                     </span>
                                 </td>
                             </tr>
