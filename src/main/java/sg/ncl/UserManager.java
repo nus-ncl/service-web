@@ -103,7 +103,7 @@ public class UserManager {
         usersMap.put(bob.getUserId(), bob);         // 201
         usersMap.put(charlie.getUserId(), charlie); // 202
         usersMap.put(dave.getUserId(), dave);       // 203
-        usersMap.put(eve.getUserId(), eve);         // 204 
+        usersMap.put(eve.getUserId(), eve);         // 204
     }
     
     public static UserManager getInstance() {

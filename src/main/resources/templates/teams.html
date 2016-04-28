@@ -37,7 +37,7 @@
                                 <td th:unless="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
                                 <td><a href="#" th:href="@{/team_profile/{teamId}(teamId=${teamEntry.key})}"><span th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</span></a></td>
                                 <td th:text="${teamEntry.value.description}">Description</td>
-                                <td th:text="${teamEntry.value.members}">Members</td>
+                                <td><span th:text="${teamEntry.value.members}">Members</span> <a href="#" data-toggle="tooltip" data-placement="bottom" title="You have pending approvals"><span th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}" th:text="${teamEntry.value.membersAwaitingApproval}" class="badge">Members Awaiting Approval</span></a></td>
                                 <td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>
                                 <td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>
                                 <td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">---</td>
@@ -52,21 +52,21 @@
                 <h2 class="text-success team-heading team-heading-request-participation" th:text="#{team.heading.requestParticipation}">text heading from .properties</h2>
                     <div class="panel panel-default team-panel team-panel-request-participation">
 	                    <div class="panel-body">
-                            <div th:if="${invitedToParticipateMap.isEmpty()}">
+                            <div th:if="${#lists.isEmpty(invitedToParticipateMap2)}">
                                 <p>You have not been invited to participate in any teams yet.</p>
                             </div>
-	                        <table class="table table-responsive" th:if="not ${invitedToParticipateMap.isEmpty()}">
+	                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(invitedToParticipateMap2)}">
 	                            <thead>
 	                                <th th:text="#{team.table.header.team}">Team</th>
 	                                <th th:text="#{team.table.header.description}">Description</th>
 	                                <th th:text="#{team.table.header.institution}">Institution</th>
 	                                <th th:text="#{team.table.header.actions}">Actions</th>
 	                            </thead>
-	                            <tr th:each="teamEntry : ${invitedToParticipateMap}">
-	                                <td th:text="${teamEntry.value.name + '-' + teamEntry.value.id}">Name-Id</td>
-	                                <td th:text="${teamEntry.value.description}">Description</td>
-	                                <td th:text="${teamEntry.value.institution}">Institution</td>
-	                                <td><a href="#" title="Accept" class="btn btn-success" th:href="@{/accept_participation/{teamId}(teamId=${teamEntry.value.id})}"><i class="fa fa-check-circle-o fa-lg"></i> #Accept</a><a href="#" title="Ignore" class="btn btn-warning" th:href="@{/ignore_participation/{teamId}(teamId=${teamEntry.value.id})}"><i class="fa fa-times-circle-o fa-lg"></i> #Ignore</a></td>
+	                            <tr th:each="teamEntry : ${invitedToParticipateMap2}">
+	                                <td th:text="${teamEntry.name + '-' + teamEntry.id}">Name-Id</td>
+	                                <td th:text="${teamEntry.description}">Description</td>
+	                                <td th:text="${teamEntry.institution}">Institution</td>
+	                                <td><a href="#" title="Accept" class="btn btn-success" th:href="@{/accept_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-check-circle-o fa-lg"></i> #Accept</a><a href="#" title="Ignore" class="btn btn-warning" th:href="@{/ignore_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-times-circle-o fa-lg"></i> #Ignore</a></td>
 	                            </tr>
 	                        </table>
 	                    </div> <!-- panel body -->

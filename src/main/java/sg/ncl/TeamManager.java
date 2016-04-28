@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,6 +18,8 @@ public class TeamManager {
     private HashMap<Integer, Team> invitedToParticipateMap;
     private HashMap<Integer, Team> joinRequestTeamMap;
     private String infoMsg = null;
+    
+    private HashMap<Integer, List<Team>> invitedToParticipateMap2; /* userId, arraylists of team */
     
     private TeamManager() {
         Team team1 = new Team();
@@ -125,6 +128,11 @@ public class TeamManager {
         invitedToParticipateMap.put(113, team4);
         joinRequestTeamMap = new HashMap<Integer, Team>();
         joinRequestTeamMap.put(114, team5);
+        
+        invitedToParticipateMap2 = new HashMap<Integer, List<Team>>();
+        List<Team> invitedTeamList = new ArrayList<Team>();
+        invitedTeamList.add(team4);
+        invitedToParticipateMap2.put(200, invitedTeamList);
     }
     
     public static TeamManager getInstance() {
@@ -233,11 +241,13 @@ public class TeamManager {
         }
     }
     
+    /*
+     * Obsolete by list implementation
     public void ignoreParticipationRequest(int userId, int teamId) {
         // TODO check if userId indeed have a participation request
         invitedToParticipateMap.remove(teamId);
     }
-    
+    */
     public void setInfoMsg(String msg) {
         infoMsg = msg;
     }
@@ -275,6 +285,33 @@ public class TeamManager {
             Team currTeam = entry.getValue();
             if (currTeamId == teamId) {
                 currTeam.removeMembers(userId);
+            }
+        }
+    }
+
+    public List<Team> getInvitedToParticipateMap2(int userId) {
+        List<Team> rv = null;
+        for (Map.Entry<Integer, List<Team>> entry : invitedToParticipateMap2.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                rv = entry.getValue();
+                return rv;
+            }
+        }
+        return rv;
+    }
+    
+    public void ignoreParticipationRequest2(int userId, int teamId) {
+        for (Map.Entry<Integer, List<Team>> entry : invitedToParticipateMap2.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                List<Team> invitedToParticipateTeamList = entry.getValue();
+                for (ListIterator<Team> iter = invitedToParticipateTeamList.listIterator(); iter.hasNext();) {
+                    Team currTeam = iter.next();
+                    if (currTeam.getId() == teamId) {
+                        iter.remove();
+                    }
+                }
             }
         }
     }

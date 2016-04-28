@@ -67,6 +67,8 @@ public class MainController {
             return "team_application_under_review";
         } else {
             // all validated
+            // set login
+            // CURRENT_LOGGED_IN_USER_ID = userManager.getUserId(loginForm.getLoginEmail());
             return "redirect:/dashboard";
         }
     }
@@ -142,8 +144,8 @@ public class MainController {
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap", teamManager.getInvitedToParticipateMap());
         model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
+        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
         // REST Client Code
         // final String uri = host + "teams/?";
         // RestTemplate restTemplate = new RestTemplate();
@@ -157,7 +159,7 @@ public class MainController {
         // add this user id to the requested list
         // remove participation request
         teamManager.addParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
-        teamManager.ignoreParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.ignoreParticipationRequest2(CURRENT_LOGGED_IN_USER_ID, teamId);
         // must get team name
         String teamName = teamManager.getTeamNameByTeamId(teamId);
         teamManager.setInfoMsg("You have just joined Team " + teamName + " !");
@@ -167,8 +169,8 @@ public class MainController {
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap", teamManager.getInvitedToParticipateMap());
         model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
+        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/teams";
     }
     
@@ -177,15 +179,15 @@ public class MainController {
         // get user's participation request list
         // remove this user id from the requested list
         String teamName = teamManager.getTeamNameByTeamId(teamId);
-        teamManager.ignoreParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.ignoreParticipationRequest2(CURRENT_LOGGED_IN_USER_ID, teamId);
         teamManager.setInfoMsg("You have just ignored a team request from Team " + teamName + " !");
         
         // load the other models to the view
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap", teamManager.getInvitedToParticipateMap());
         model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
+        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/teams";
     }
     
