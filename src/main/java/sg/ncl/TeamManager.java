@@ -203,6 +203,36 @@ public class TeamManager {
         }
     }
     
+    public void addJoinRequestTeamMap2(int userId, int teamId) {
+        System.out.println(teamId);
+        if (joinRequestMap2.containsKey(userId)) {
+            // ensure user is not already in the team or have submitted the application
+            for (Map.Entry<Integer, List<Team>> entry : joinRequestMap2.entrySet()) {
+                int currUserId = entry.getKey();
+                if (currUserId == userId) {
+                    List<Team> currJoinTeamList = entry.getValue();
+                    for (ListIterator<Team> iter = currJoinTeamList.listIterator(); iter.hasNext();) {
+                        Team currTeam = iter.next();
+                        if (currTeam.getId() == teamId) {
+                            return;
+                        }
+                    }
+                    // have existing join request but have not submitted before
+                    currJoinTeamList.add(TEAM_MANAGER_SINGLETON.getTeamByTeamId(teamId));
+                }
+            }
+        } else {
+            // first time user make join request
+            // add to user join team list
+            // get team obj from teamName
+            // put to map
+            List<Team> myJoinRequestList = new ArrayList<Team>();
+            Team joinRequestTeam = TEAM_MANAGER_SINGLETON.getTeamByTeamId(teamId);
+            myJoinRequestList.add(joinRequestTeam);
+            joinRequestMap2.put(userId, myJoinRequestList);
+        }
+    }
+    
     public List<Team> getJoinRequestTeamMap2(int userId) {
         List<Team> rv = null;
         for (Map.Entry<Integer, List<Team>> entry : joinRequestMap2.entrySet()) {
@@ -230,7 +260,7 @@ public class TeamManager {
         }
     }
     
-    public void addParticipationRequest(int userId, int teamId) {
+    public void acceptParticipationRequest(int userId, int teamId) {
         // TODO check if userId indeed have a participation request
         // add as member
         // update team
@@ -263,6 +293,17 @@ public class TeamManager {
         return infoMsg;
     }
     
+    public int getTeamIdByTeamName(String teamName) {
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            if (currTeam.getName().equalsIgnoreCase(teamName)) {
+                return currTeamId;
+            }
+        }
+        return 0;
+    }
+    
     public String getTeamNameByTeamId(int teamId) {
         for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
             int currTeamId = entry.getKey();
@@ -280,6 +321,17 @@ public class TeamManager {
             int currTeamId = entry.getKey();
             rv = entry.getValue();
             if (currTeamId == teamId) {
+                return rv;
+            }
+        }
+        return rv;
+    }
+    
+    public Team getTeamByTeamName(String teamName) {
+        Team rv = null;
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            rv = entry.getValue();
+            if (rv.getName().equals(teamName)) {
                 return rv;
             }
         }

@@ -159,7 +159,7 @@ public class MainController {
         // get user's participation request list
         // add this user id to the requested list
         // remove participation request
-        teamManager.addParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.acceptParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
         teamManager.ignoreParticipationRequest2(CURRENT_LOGGED_IN_USER_ID, teamId);
         // must get team name
         String teamName = teamManager.getTeamNameByTeamId(teamId);
@@ -272,6 +272,12 @@ public class MainController {
         // log data to ensure data has been parsed
         LOGGER.log(Level.INFO, "--------Join team---------");
         LOGGER.log(Level.INFO, teamPageJoinForm.toString());
+        
+        // perform join team request here
+        // add to user join team list
+        // ensure user is not already in the team or have submitted the application
+        teamManager.addJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID, teamManager.getTeamIdByTeamName(teamPageJoinForm.getTeamName()));
+        
         return "redirect:/teams/join_application_submitted";
     }
     
