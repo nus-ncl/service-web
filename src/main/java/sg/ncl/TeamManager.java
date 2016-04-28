@@ -204,7 +204,6 @@ public class TeamManager {
     }
     
     public void addJoinRequestTeamMap2(int userId, int teamId) {
-        System.out.println(teamId);
         if (joinRequestMap2.containsKey(userId)) {
             // ensure user is not already in the team or have submitted the application
             for (Map.Entry<Integer, List<Team>> entry : joinRequestMap2.entrySet()) {
@@ -344,6 +343,36 @@ public class TeamManager {
             Team currTeam = entry.getValue();
             if (currTeamId == teamId) {
                 currTeam.removeMembers(userId);
+            }
+        }
+    }
+    
+    public void addInvitedToParticipateMap(int userId, int teamId) {
+        if (invitedToParticipateMap2.containsKey(userId)) {
+            // ensure user is not already in the team or have already been invited
+            for (Map.Entry<Integer, List<Team>> entry : invitedToParticipateMap2.entrySet()) {
+                int currUserId = entry.getKey();
+                if (currUserId == userId) {
+                    List<Team> currInviteList = entry.getValue();
+                    for (ListIterator<Team> iter = currInviteList.listIterator(); iter.hasNext();) {
+                        Team currTeam = iter.next();
+                        if (currTeam.getId() == teamId && currTeam.isUserInTeam(userId)) {
+                            return;
+                        }
+                    }
+                    currInviteList.add(TEAM_MANAGER_SINGLETON.getTeamByTeamId(teamId));
+                }
+            }
+        } else {
+            // first time user is invited
+            // add to user invited list
+            // get team obj from teamName
+            // put to map
+            List<Team> myInvitedList = new ArrayList<Team>();
+            Team inviteToThisTeam = TEAM_MANAGER_SINGLETON.getTeamByTeamId(teamId);
+            if (inviteToThisTeam.isUserInTeam(userId) == false) {
+                myInvitedList.add(inviteToThisTeam);
+                invitedToParticipateMap2.put(userId, myInvitedList);
             }
         }
     }

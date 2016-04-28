@@ -174,4 +174,11 @@ public class Team {
             return false;
         }
     }
+    
+    public boolean isUserInTeam(int userId) {
+        if (membersMap.containsKey(userId)) {
+            return true;
+        }
+        return false;
+    }
 }

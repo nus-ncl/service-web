@@ -140,7 +140,7 @@ public class UserManager {
     }
     
     // get a userid from email address
-    public int getUserId(String email) {
+    public int getUserIdByEmail(String email) {
         for (Map.Entry<Integer, User> entry : usersMap.entrySet()) {
             User currUser = entry.getValue();
             if (currUser.getEmail().equals(email)) {

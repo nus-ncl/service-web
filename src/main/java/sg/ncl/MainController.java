@@ -21,6 +21,7 @@ import sg.ncl.testbed_interface.SignUpPersonalDetailsForm;
 import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
 import sg.ncl.testbed_interface.User;
 import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
+import sg.ncl.testbed_interface.TeamPageInviteMemberForm;
 
 /**
  * 
@@ -61,14 +62,14 @@ public class MainController {
             // case2: email address not validated
             model.addAttribute("emailAddress", loginForm.getLoginEmail());
             return "email_not_validated";
-        } else if (teamManager.checkTeamValidation(userManager.getUserId(loginForm.getLoginEmail())) == false) {
+        } else if (teamManager.checkTeamValidation(userManager.getUserIdByEmail(loginForm.getLoginEmail())) == false) {
             // case3: team approval under review
             // email address is supposed to be valid here
             return "team_application_under_review";
         } else {
             // all validated
             // set login
-            CURRENT_LOGGED_IN_USER_ID = userManager.getUserId(loginForm.getLoginEmail());
+            CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
             return "redirect:/dashboard";
         }
     }
@@ -104,7 +105,7 @@ public class MainController {
     public String validateSignUpForms(@ModelAttribute LoginForm loginForm, @ModelAttribute @Valid SignUpAccountDetailsForm signupAccountDetailsForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "signup";
-        } else if (userManager.getUserId(signupAccountDetailsForm.getEmail()) != ERROR_NO_SUCH_USER_ID) {
+        } else if (userManager.getUserIdByEmail(signupAccountDetailsForm.getEmail()) != ERROR_NO_SUCH_USER_ID) {
             signupAccountDetailsForm.setErrorMsg("Email is already in use");
             return "signup";
         } else if (signupAccountDetailsForm.isPasswordMatch() == false) {
@@ -165,13 +166,6 @@ public class MainController {
         String teamName = teamManager.getTeamNameByTeamId(teamId);
         teamManager.setInfoMsg("You have just joined Team " + teamName + " !");
         
-        // load the other models to the view
-        model.addAttribute("infoMsg", teamManager.getInfoMsg());
-        model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
-        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/teams";
     }
     
@@ -183,16 +177,10 @@ public class MainController {
         teamManager.ignoreParticipationRequest2(CURRENT_LOGGED_IN_USER_ID, teamId);
         teamManager.setInfoMsg("You have just ignored a team request from Team " + teamName + " !");
         
-        // load the other models to the view
-        model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
-        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/teams";
     }
     
-    @RequestMapping("/withdrawn/{teamId}")
+    @RequestMapping("/withdraw/{teamId}")
     public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model) {
         // get user team request
         // remove this user id from the user's request list
@@ -200,13 +188,21 @@ public class MainController {
         teamManager.removeUserJoinRequest2(CURRENT_LOGGED_IN_USER_ID, teamId);
         teamManager.setInfoMsg("You have withdrawn your join request for Team " + teamName);
         
-        // load the other models to the view
-        model.addAttribute("infoMsg", teamManager.getInfoMsg());
-        model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
-        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID));
+        return "redirect:/teams";
+    }
+    
+    @RequestMapping(value="/teams/invite_members/{teamId}", method=RequestMethod.GET)
+    public String inviteMember(@PathVariable Integer teamId, Model model) {
+        model.addAttribute("teamIdVar", teamId);
+        model.addAttribute("teamPageInviteMemberForm", new TeamPageInviteMemberForm());
+        return "team_page_invite_members";
+    }
+    
+    @RequestMapping(value="/teams/invite_members/{teamId}", method=RequestMethod.POST)
+    public String sendInvitation(@PathVariable Integer teamId, @ModelAttribute TeamPageInviteMemberForm teamPageInviteMemberForm,Model model) {
+        int userId = userManager.getUserIdByEmail(teamPageInviteMemberForm.getInviteUserEmail());
+        System.out.println(userId);
+        teamManager.addInvitedToParticipateMap(userId, teamId);
         return "redirect:/teams";
     }
     

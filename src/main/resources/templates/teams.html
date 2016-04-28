@@ -39,7 +39,7 @@
                                 <td th:text="${teamEntry.value.description}">Description</td>
                                 <td><span th:text="${teamEntry.value.members}">Members</span> <a href="#" data-toggle="tooltip" data-placement="bottom" title="You have pending approvals"><span th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}" th:text="${teamEntry.value.membersAwaitingApproval}" class="badge">Members Awaiting Approval</span></a></td>
                                 <td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>
-                                <td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>
+                                <td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" th:href="@{/teams/invite_members/{teamId}(teamId=${teamEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>
                                 <td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">---</td>
                             </tr>
                         </table>
@@ -88,7 +88,7 @@
                                    <td th:text="${teamEntry.name + '-' + teamEntry.id}">Name-Id</td>
                                    <td th:text="${teamEntry.description}">Description</td>
                                    <td th:text="${teamEntry.institution}">Institution</td>
-                                   <td><a href="#" class="btn btn-danger" th:href="@{/withdrawn/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-minus-circle"></i> Withdrawn</a></td>
+                                   <td><a href="#" class="btn btn-danger" th:href="@{/withdraw/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-minus-circle"></i> Withdraw</a></td>
                                 </tr>
                             </table>
                         </div> <!-- panel body -->
