@@ -15,11 +15,11 @@ public class TeamManager {
     /* teamId, team */
     private static TeamManager TEAM_MANAGER_SINGLETON = null;
     private HashMap<Integer, Team> teamMap;
-    private HashMap<Integer, Team> invitedToParticipateMap;
-    private HashMap<Integer, Team> joinRequestTeamMap;
     private String infoMsg = null;
     
     private HashMap<Integer, List<Team>> invitedToParticipateMap2; /* userId, arraylists of team */
+    private HashMap<Integer, List<Team>> joinRequestMap2; /* userId, arraylists of team */
+    
     
     private TeamManager() {
         Team team1 = new Team();
@@ -124,10 +124,10 @@ public class TeamManager {
         teamMap.put(114, team5);
         teamMap.put(115, team6);
         
-        invitedToParticipateMap = new HashMap<Integer, Team>();
-        invitedToParticipateMap.put(113, team4);
-        joinRequestTeamMap = new HashMap<Integer, Team>();
-        joinRequestTeamMap.put(114, team5);
+        joinRequestMap2 = new HashMap<Integer, List<Team>>();
+        List<Team> joinRequestTeamList = new ArrayList<Team>();
+        joinRequestTeamList.add(team5);
+        joinRequestMap2.put(200, joinRequestTeamList);
         
         invitedToParticipateMap2 = new HashMap<Integer, List<Team>>();
         List<Team> invitedTeamList = new ArrayList<Team>();
@@ -176,22 +176,6 @@ public class TeamManager {
         }
         return rv;
     }
-
-    public HashMap<Integer, Team> getInvitedToParticipateMap() {
-        return invitedToParticipateMap;
-    }
-
-    public void setInvitedToParticipateMap(HashMap<Integer, Team> invitedToParticipateMap) {
-        this.invitedToParticipateMap = invitedToParticipateMap;
-    }
-
-    public HashMap<Integer, Team> getJoinRequestTeamMap() {
-        return joinRequestTeamMap;
-    }
-
-    public void setJoinRequestTeamMap(HashMap<Integer, Team> joinRequestTeamMap) {
-        this.joinRequestTeamMap = joinRequestTeamMap;
-    }
     
     /**
      * Check to ensure if user is in only one team and that team must be validated
@@ -219,9 +203,31 @@ public class TeamManager {
         }
     }
     
-    public void removeUserJoinRequest(int userId, int teamId) {
-        // TODO check if userId indeed make a join request
-        joinRequestTeamMap.remove(teamId);
+    public List<Team> getJoinRequestTeamMap2(int userId) {
+        List<Team> rv = null;
+        for (Map.Entry<Integer, List<Team>> entry : joinRequestMap2.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                rv = entry.getValue();
+                return rv;
+            }
+        }
+        return rv;
+    }
+    
+    public void removeUserJoinRequest2(int userId, int teamId) {
+        for (Map.Entry<Integer, List<Team>> entry : joinRequestMap2.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                List<Team> joinTeamList = entry.getValue();
+                for (ListIterator<Team> iter = joinTeamList.listIterator(); iter.hasNext();) {
+                    Team currTeam = iter.next();
+                    if (currTeam.getId() == teamId) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
     }
     
     public void addParticipationRequest(int userId, int teamId) {
@@ -248,6 +254,7 @@ public class TeamManager {
         invitedToParticipateMap.remove(teamId);
     }
     */
+    
     public void setInfoMsg(String msg) {
         infoMsg = msg;
     }

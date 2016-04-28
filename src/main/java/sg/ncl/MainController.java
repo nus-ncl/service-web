@@ -36,7 +36,7 @@ public class MainController {
     private final int ERROR_NO_SUCH_USER_ID = 0;
     private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
     private final String host = "http://localhost:8080/";
-    private final int CURRENT_LOGGED_IN_USER_ID = 200;
+    private int CURRENT_LOGGED_IN_USER_ID = 200;
     private TeamManager teamManager = TeamManager.getInstance();
     private UserManager userManager = UserManager.getInstance();
     private ExperimentManager experimentManager = new ExperimentManager();
@@ -68,7 +68,7 @@ public class MainController {
         } else {
             // all validated
             // set login
-            // CURRENT_LOGGED_IN_USER_ID = userManager.getUserId(loginForm.getLoginEmail());
+            CURRENT_LOGGED_IN_USER_ID = userManager.getUserId(loginForm.getLoginEmail());
             return "redirect:/dashboard";
         }
     }
@@ -86,6 +86,7 @@ public class MainController {
     
     @RequestMapping(value="/logout", method=RequestMethod.GET)
     public String logout() {
+        CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
         return "redirect:/";
     }
     
@@ -144,8 +145,8 @@ public class MainController {
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
         model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID));
         // REST Client Code
         // final String uri = host + "teams/?";
         // RestTemplate restTemplate = new RestTemplate();
@@ -169,8 +170,8 @@ public class MainController {
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
         model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/teams";
     }
     
@@ -186,8 +187,8 @@ public class MainController {
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
         model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/teams";
     }
     
@@ -196,7 +197,7 @@ public class MainController {
         // get user team request
         // remove this user id from the user's request list
         String teamName = teamManager.getTeamNameByTeamId(teamId);
-        teamManager.removeUserJoinRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.removeUserJoinRequest2(CURRENT_LOGGED_IN_USER_ID, teamId);
         teamManager.setInfoMsg("You have withdrawn your join request for Team " + teamName);
         
         // load the other models to the view
@@ -204,8 +205,8 @@ public class MainController {
         model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap", teamManager.getInvitedToParticipateMap());
-        model.addAttribute("joinRequestMap", teamManager.getJoinRequestTeamMap());
+        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/teams";
     }
     

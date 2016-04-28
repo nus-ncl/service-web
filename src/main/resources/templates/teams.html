@@ -74,21 +74,21 @@
                 <h2 class="team-heading-join-request team-heading" th:text="#{team.heading.requestJoin}">text heading from .properties</h2>
                     <div class="panel panel-default team-panel team-panel-join-request">
                         <div class="panel-body">
-                            <div th:if="${joinRequestMap.isEmpty()}">
+                            <div th:if="${#lists.isEmpty(joinRequestMap2)}">
                                 <p>You have not requested to join any teams yet.</p>
                             </div>
-                            <table class="table table-responsive" th:if="not ${joinRequestMap.isEmpty()}">
+                            <table class="table table-responsive" th:if="not ${#lists.isEmpty(joinRequestMap2)}">
                                 <thead>
                                     <th th:text="#{team.table.header.team}">Team</th>
                                     <th th:text="#{team.table.header.description}">Description</th>
                                     <th th:text="#{team.table.header.institution}">Institution</th>
                                     <th th:text="#{team.table.header.actions}">Actions</th>
                                 </thead>
-                                <tr th:each="teamEntry : ${joinRequestMap}">
-                                   <td th:text="${teamEntry.value.name + '-' + teamEntry.value.id}">Name-Id</td>
-                                   <td th:text="${teamEntry.value.description}">Description</td>
-                                   <td th:text="${teamEntry.value.institution}">Institution</td>
-                                   <td><a href="#" class="btn btn-danger" th:href="@{/withdrawn/{teamId}(teamId=${teamEntry.value.id})}"><i class="fa fa-minus-circle"></i> Withdrawn</a></td>
+                                <tr th:each="teamEntry : ${joinRequestMap2}">
+                                   <td th:text="${teamEntry.name + '-' + teamEntry.id}">Name-Id</td>
+                                   <td th:text="${teamEntry.description}">Description</td>
+                                   <td th:text="${teamEntry.institution}">Institution</td>
+                                   <td><a href="#" class="btn btn-danger" th:href="@{/withdrawn/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-minus-circle"></i> Withdrawn</a></td>
                                 </tr>
                             </table>
                         </div> <!-- panel body -->
