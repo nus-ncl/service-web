@@ -31,5 +31,17 @@ $(document).ready(function() {
     
     //-----------------experiment page---------------------
     // tooltip hover
-    $('[data-toggle="tooltip"]').tooltip(); 
+    $('[data-toggle="tooltip"]').tooltip();
+    
+    //-----------------team page-----------------
+    // withdraw
+    $('#confirm-withdraw').on('click', '.withdraw-ok', function(e) {
+    	var $modalDiv = $(e.delegateTarget);
+    	var teamName = $(this).data('teamName');
+    });
+    $('#confirm-withdraw').on('show.bs.modal', function(e) {
+    	var data = $(e.relatedTarget).data();
+    	$('.teamName', this).text(data.teamName);
+    	$('.withdraw-ok', this).data('teamName', data.teamName);
+    });
 });
