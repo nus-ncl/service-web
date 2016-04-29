@@ -37,7 +37,7 @@
                                 <td th:unless="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
                                 <td><a href="#" th:href="@{/team_profile/{teamId}(teamId=${teamEntry.key})}"><span th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</span></a></td>
                                 <td th:text="${teamEntry.value.description}">Description</td>
-                                <td><span th:text="${teamEntry.value.members}">Members</span> <a href="#" data-toggle="tooltip" data-placement="bottom" title="You have pending approvals"><span th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}" th:text="${teamEntry.value.membersAwaitingApproval}" class="badge">Members Awaiting Approval</span></a></td>
+                                <td><span th:text="${teamEntry.value.members}">Members</span> <a href="#" th:href="@{/teams/members_approval/{teamId}(teamId=${teamEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="You have pending approvals"><span th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}" th:text="${teamEntry.value.membersAwaitingApproval}" class="badge badge-danger">Members Awaiting Approval</span></a></td>
                                 <td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>
                                 <td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" th:href="@{/teams/invite_members/{teamId}(teamId=${teamEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>
                                 <td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">---</td>
@@ -66,7 +66,7 @@
 	                                <td th:text="${teamEntry.name + '-' + teamEntry.id}">Name-Id</td>
 	                                <td th:text="${teamEntry.description}">Description</td>
 	                                <td th:text="${teamEntry.institution}">Institution</td>
-	                                <td><a href="#" title="Accept" class="btn btn-success" th:href="@{/accept_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-check-circle-o fa-lg"></i> #Accept</a><a href="#" title="Ignore" class="btn btn-warning" th:href="@{/ignore_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-times-circle-o fa-lg"></i> #Ignore</a></td>
+	                                <td><a href="#" title="Accept" class="btn btn-success" th:href="@{/accept_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a><a href="#" title="Ignore" class="btn btn-warning" th:href="@{/ignore_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-times-circle-o fa-lg"></i> Ignore</a></td>
 	                            </tr>
 	                        </table>
 	                    </div> <!-- panel body -->

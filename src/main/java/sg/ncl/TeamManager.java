@@ -2,13 +2,12 @@ package sg.ncl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import sg.ncl.testbed_interface.Team;
+import sg.ncl.testbed_interface.User;
 
 public class TeamManager {
     
@@ -28,8 +27,6 @@ public class TeamManager {
         team1.setDescription("this is a simple desc");
         team1.setWebsite("http://www.nus.edu.sg");
         team1.setOrganizationType("academia");
-        team1.setMembers(10);
-        team1.setMembersAwaitingApproval(2);
         team1.setInstitution("NUS");
         team1.setIsApproved(true);
         team1.setIsPublic(true);
@@ -44,8 +41,6 @@ public class TeamManager {
         team2.setDescription("this is a simple desc");
         team2.setWebsite("http://www.nus.edu.sg");
         team2.setOrganizationType("academia");
-        team2.setMembers(10);
-        team2.setMembersAwaitingApproval(2);
         team2.setInstitution("NUS");
         team2.setIsApproved(true);
         team2.setIsPublic(true);
@@ -60,8 +55,6 @@ public class TeamManager {
         team3.setDescription("this project is not supposed to show up on public");
         team3.setWebsite("http://www.nus.edu.sg");
         team3.setOrganizationType("academia");
-        team3.setMembers(10);
-        team3.setMembersAwaitingApproval(2);
         team3.setInstitution("NUS");
         team3.setIsApproved(true);
         team3.setIsPublic(false);
@@ -76,8 +69,6 @@ public class TeamManager {
         team4.setDescription("simulate large scale network attack on critical infrastructure to test incident response team");
         team4.setWebsite("http://www.ntu.edu.sg");
         team4.setOrganizationType("academia");
-        team4.setMembers(10);
-        team4.setMembersAwaitingApproval(2);
         team4.setInstitution("NTU");
         team4.setIsApproved(true);
         team4.setIsPublic(false);
@@ -91,8 +82,6 @@ public class TeamManager {
         team5.setDescription("this is a simple desc");
         team5.setWebsite("http://www.ntu.edu.sg");
         team5.setOrganizationType("academia");
-        team5.setMembers(10);
-        team5.setMembersAwaitingApproval(2);
         team5.setInstitution("NTU");
         team5.setIsApproved(true);
         team5.setIsPublic(true);
@@ -106,8 +95,6 @@ public class TeamManager {
         team6.setDescription("this is a simple desc");
         team6.setWebsite("http://www.ntu.edu.sg");
         team6.setOrganizationType("academia");
-        team6.setMembers(10);
-        team6.setMembersAwaitingApproval(0);
         team6.setInstitution("NTU");
         team6.setIsApproved(false);
         team6.setIsPublic(false);
@@ -203,7 +190,7 @@ public class TeamManager {
         }
     }
     
-    public void addJoinRequestTeamMap2(int userId, int teamId) {
+    public void addJoinRequestTeamMap2(int userId, int teamId, User requestIssuer) {
         if (joinRequestMap2.containsKey(userId)) {
             // ensure user is not already in the team or have submitted the application
             for (Map.Entry<Integer, List<Team>> entry : joinRequestMap2.entrySet()) {
@@ -216,8 +203,10 @@ public class TeamManager {
                             return;
                         }
                     }
+                    Team toBeAddedTeam = TEAM_MANAGER_SINGLETON.getTeamByTeamId(teamId);
                     // have existing join request but have not submitted before
-                    currJoinTeamList.add(TEAM_MANAGER_SINGLETON.getTeamByTeamId(teamId));
+                    currJoinTeamList.add(toBeAddedTeam);
+                    toBeAddedTeam.addUserToJoinRequestMap(userId, requestIssuer);
                 }
             }
         } else {
@@ -226,9 +215,10 @@ public class TeamManager {
             // get team obj from teamName
             // put to map
             List<Team> myJoinRequestList = new ArrayList<Team>();
-            Team joinRequestTeam = TEAM_MANAGER_SINGLETON.getTeamByTeamId(teamId);
-            myJoinRequestList.add(joinRequestTeam);
+            Team toBeAddedTeam = TEAM_MANAGER_SINGLETON.getTeamByTeamId(teamId);
+            myJoinRequestList.add(toBeAddedTeam);
             joinRequestMap2.put(userId, myJoinRequestList);
+            toBeAddedTeam.addUserToJoinRequestMap(userId, requestIssuer);
         }
     }
     
@@ -259,6 +249,27 @@ public class TeamManager {
         }
     }
     
+    public void acceptJoinRequest(int userId, int teamId) {
+        // reduce member approval
+        
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            if (currTeamId == teamId) {
+                // remove join request from team side
+                currTeam.removeUserFromJoinRequestMap(userId);
+                
+                // add userid to members map
+                currTeam.addMembers(userId, "member");
+                teamMap.put(currTeamId, currTeam);
+                return;
+            }
+        }
+        
+        // also need to remove join request from user side
+        removeUserJoinRequest2(userId, teamId);
+    }
+    
     public void acceptParticipationRequest(int userId, int teamId) {
         // TODO check if userId indeed have a participation request
         // add as member
@@ -268,8 +279,6 @@ public class TeamManager {
             Team currTeam = entry.getValue();
             if (currTeamId == teamId) {
                 currTeam.addMembers(userId, "member");
-                int existingMemberCount = currTeam.getMembers();
-                currTeam.setMembers(existingMemberCount+1);
                 teamMap.put(currTeamId, currTeam);
                 return;
             }

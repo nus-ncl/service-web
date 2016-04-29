@@ -206,6 +206,18 @@ public class MainController {
         return "redirect:/teams";
     }
     
+    @RequestMapping(value="/teams/members_approval/{teamId}", method=RequestMethod.GET)
+    public String membersApproval(@PathVariable Integer teamId, Model model) {
+        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
+        return "team_page_approve_members";
+    }
+    
+    @RequestMapping(value="/teams/members_approval/accept/{teamId}/{userId}", method=RequestMethod.GET)
+    public String acceptJoinRequest(@PathVariable Integer teamId, @PathVariable Integer userId) {
+        teamManager.acceptJoinRequest(userId, teamId);
+        return "redirect:/teams";
+    }
+    
     //--------------------------Team Profile Page--------------------------
     
     @RequestMapping("/team_profile/{teamId}")
@@ -272,7 +284,9 @@ public class MainController {
         // perform join team request here
         // add to user join team list
         // ensure user is not already in the team or have submitted the application
-        teamManager.addJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID, teamManager.getTeamIdByTeamName(teamPageJoinForm.getTeamName()));
+        // add to team join request map also for members approval function
+        User currentUser = userManager.getUserById(CURRENT_LOGGED_IN_USER_ID);
+        teamManager.addJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID, teamManager.getTeamIdByTeamName(teamPageJoinForm.getTeamName()), currentUser);
         
         return "redirect:/teams/join_application_submitted";
     }

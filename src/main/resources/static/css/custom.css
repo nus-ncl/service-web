@@ -227,3 +227,7 @@
 .team-panel {
 	margin-bottom: 100px;
 }
+
+.badge-danger {
+	background-color: #dd4b39;
+}

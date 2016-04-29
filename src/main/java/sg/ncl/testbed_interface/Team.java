@@ -19,11 +19,12 @@ public class Team {
     private String institution;
     private boolean isApproved;
     private boolean isPublic;
-    private int members;
-    private int membersAwaitingApproval;
+    private int members = 0;
+    private int membersAwaitingApproval = 0;
     private int experimentsCount;
     private int teamOwnerId;
     private HashMap<Integer, String> membersMap = new HashMap<Integer, String>(); /* Members hash table containing uid and team position, e.g. 110 - member */
+    private HashMap<Integer, User> joinRequestMap = new HashMap<Integer, User>(); /* Join request from users per team, userId - User */
     
     public Team() {
     }
@@ -160,10 +161,15 @@ public class Team {
     }
     
     public void addMembers(int userId, String position) {
+        members++;
+        if (membersAwaitingApproval > 0) {
+            membersAwaitingApproval--;
+        }
         membersMap.put(userId, position);
     }
     
     public void removeMembers(int userId) {
+        members--;
         membersMap.remove(userId);
     }
     
@@ -180,5 +186,28 @@ public class Team {
             return true;
         }
         return false;
+    }
+
+    public HashMap<Integer, User> getJoinRequestMap() {
+        return joinRequestMap;
+    }
+
+    public void setJoinRequestMap(HashMap<Integer, User> joinRequestMap) {
+        this.joinRequestMap = joinRequestMap;
+    }
+    
+    public void addUserToJoinRequestMap(int userId, User requestIssuer) {
+        if (joinRequestMap.containsKey(userId)) {
+            // user has already issue a join request before
+            return;
+        } else {
+            // user first time issue a join request
+            joinRequestMap.put(userId, requestIssuer);
+            membersAwaitingApproval++;
+        }
+    }
+    
+    public void removeUserFromJoinRequestMap(int userId) {
+        joinRequestMap.remove(userId);
     }
 }
