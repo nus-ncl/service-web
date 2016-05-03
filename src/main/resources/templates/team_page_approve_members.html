@@ -33,7 +33,7 @@
                                 <td>TBD</td>
                                 <td>
                                     <a href="#" title="Accept" class="btn btn-success" th:href="@{/teams/members_approval/accept/{teamId}/{userId}(teamId=${team.id}, userId=${joinRequestEntry.key})}"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a>
-                                    <a href="#" title="Reject" class="btn btn-danger" th:href="@{/}"><i class="fa fa-times-circle-o fa-lg"></i> #Reject</a>
+                                    <a href="#" title="Reject" class="btn btn-danger" th:href="@{/teams/members_approval/reject/{teamId}/{userId}(teamId=${team.id}, userId=${joinRequestEntry.key})}"><i class="fa fa-times-circle-o fa-lg"></i> #Reject</a>
                                </td>
                             </tr>
                         </table>
