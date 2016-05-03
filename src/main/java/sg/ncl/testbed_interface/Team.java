@@ -1,6 +1,9 @@
 package sg.ncl.testbed_interface;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 /**
  * 
@@ -25,6 +28,7 @@ public class Team {
     private int teamOwnerId;
     private HashMap<Integer, String> membersMap = new HashMap<Integer, String>(); /* Members hash table containing uid and team position, e.g. 110 - member */
     private HashMap<Integer, User> joinRequestMap = new HashMap<Integer, User>(); /* Join request from users per team, userId - User */
+    private HashMap<Integer, String> joinRequestDateOfApplication = new HashMap<Integer, String>(); /*Users' join request date of application, userId - Date, e.g. 110 - DD-MM-YYYY */
     
     public Team() {
     }
@@ -204,6 +208,9 @@ public class Team {
             // user first time issue a join request
             joinRequestMap.put(userId, requestIssuer);
             membersAwaitingApproval++;
+            
+            // add the date of application
+            addUserJoinRequestDateOfApplication(userId);
         }
     }
     
@@ -211,6 +218,30 @@ public class Team {
         if (joinRequestMap.containsKey(userId)) {
             joinRequestMap.remove(userId);
             membersAwaitingApproval--;
+            
+            // remove the date of application
+            removeUserJoinRequestDateOfApplication(userId);
+        }
+    }
+    
+    public void addUserJoinRequestDateOfApplication(int userId) {
+        // TODO by right should retrieve time and date from server and not client side
+        Date dNow = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("dd-MMM-yyyy");
+        ft.setTimeZone(TimeZone.getTimeZone("GMT+0800"));
+        String dateOfApplicationStr = ft.format(dNow).toString();
+        joinRequestDateOfApplication.put(userId, dateOfApplicationStr);
+    }
+    
+    public void removeUserJoinRequestDateOfApplication(int userId) {
+        joinRequestDateOfApplication.remove(userId);
+    }
+    
+    public String getUserJoinRequestDate(int userId) {
+        if (joinRequestDateOfApplication.containsKey(userId) == false) {
+            return null;
+        } else {
+            return joinRequestDateOfApplication.get(userId);
         }
     }
 }
