@@ -37,7 +37,7 @@ public class MainController {
     private final int ERROR_NO_SUCH_USER_ID = 0;
     private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
     private final String host = "http://localhost:8080/";
-    private int CURRENT_LOGGED_IN_USER_ID = 200;
+    private int CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
     private TeamManager teamManager = TeamManager.getInstance();
     private UserManager userManager = UserManager.getInstance();
     private ExperimentManager experimentManager = new ExperimentManager();
@@ -201,7 +201,6 @@ public class MainController {
     @RequestMapping(value="/teams/invite_members/{teamId}", method=RequestMethod.POST)
     public String sendInvitation(@PathVariable Integer teamId, @ModelAttribute TeamPageInviteMemberForm teamPageInviteMemberForm,Model model) {
         int userId = userManager.getUserIdByEmail(teamPageInviteMemberForm.getInviteUserEmail());
-        System.out.println(userId);
         teamManager.addInvitedToParticipateMap(userId, teamId);
         return "redirect:/teams";
     }
@@ -215,13 +214,13 @@ public class MainController {
     @RequestMapping("/teams/members_approval/accept/{teamId}/{userId}")
     public String acceptJoinRequest(@PathVariable Integer teamId, @PathVariable Integer userId) {
         teamManager.acceptJoinRequest(userId, teamId);
-        return "redirect:/teams";
+        return "redirect:/teams/members_approval/{teamId}";
     }
     
     @RequestMapping("/teams/members_approval/reject/{teamId}/{userId}")
     public String rejectJoinRequest(@PathVariable Integer teamId, @PathVariable Integer userId) {
         teamManager.rejectJoinRequest(userId, teamId);
-        return "redirect:/teams";
+        return "redirect:/teams/members_approval/{teamId}";
     }
     
     //--------------------------Team Profile Page--------------------------

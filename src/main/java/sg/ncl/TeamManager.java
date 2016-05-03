@@ -112,14 +112,18 @@ public class TeamManager {
         teamMap.put(115, team6);
         
         joinRequestMap2 = new HashMap<Integer, List<Team>>();
+        /*
         List<Team> joinRequestTeamList = new ArrayList<Team>();
         joinRequestTeamList.add(team5);
         joinRequestMap2.put(200, joinRequestTeamList);
+        */
         
         invitedToParticipateMap2 = new HashMap<Integer, List<Team>>();
+        /*
         List<Team> invitedTeamList = new ArrayList<Team>();
         invitedTeamList.add(team4);
         invitedToParticipateMap2.put(200, invitedTeamList);
+        */
     }
     
     public static TeamManager getInstance() {
