@@ -273,7 +273,7 @@ public class MainController {
     }
     
     @RequestMapping(value="/teams/join_team", method=RequestMethod.POST)
-    public String checkJoinTeamInfo(@Valid TeamPageJoinTeamForm teamPageJoinForm, BindingResult bindingResult) {
+    public String checkJoinTeamInfo(@Valid TeamPageJoinTeamForm teamPageJoinForm, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "team_page_join_team";
         }
@@ -286,9 +286,9 @@ public class MainController {
         // ensure user is not already in the team or have submitted the application
         // add to team join request map also for members approval function
         User currentUser = userManager.getUserById(CURRENT_LOGGED_IN_USER_ID);
-        teamManager.addJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID, teamManager.getTeamIdByTeamName(teamPageJoinForm.getTeamName()), currentUser);
-        
-        return "redirect:/teams/join_application_submitted";
+        int teamId = teamManager.getTeamIdByTeamName(teamPageJoinForm.getTeamName());
+        teamManager.addJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID, teamId, currentUser);
+        return "redirect:/teams/join_application_submitted/" + teamId;
     }
     
     //--------------------------Experiment Page--------------------------
@@ -333,8 +333,10 @@ public class MainController {
         return "team_page_application_submitted";
     }
     
-    @RequestMapping("/teams/join_application_submitted")
-    public String teamAppJoinFromTeamsPage() {
+    @RequestMapping("/teams/join_application_submitted/{teamId}")
+    public String teamAppJoinFromTeamsPage(@PathVariable Integer teamId, Model model) {
+        int teamOwnerId = teamManager.getTeamByTeamId(teamId).getTeamOwnerId();
+        model.addAttribute("teamOwner", userManager.getUserById(teamOwnerId));
         return "team_page_join_application_submitted";
     }
     
