@@ -212,9 +212,15 @@ public class MainController {
         return "team_page_approve_members";
     }
     
-    @RequestMapping(value="/teams/members_approval/accept/{teamId}/{userId}", method=RequestMethod.GET)
+    @RequestMapping("/teams/members_approval/accept/{teamId}/{userId}")
     public String acceptJoinRequest(@PathVariable Integer teamId, @PathVariable Integer userId) {
         teamManager.acceptJoinRequest(userId, teamId);
+        return "redirect:/teams";
+    }
+    
+    @RequestMapping("/teams/members_approval/reject/{teamId}/{userId}")
+    public String rejectJoinRequest(@PathVariable Integer teamId, @PathVariable Integer userId) {
+        teamManager.rejectJoinRequest(userId, teamId);
         return "redirect:/teams";
     }
     

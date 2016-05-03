@@ -208,6 +208,9 @@ public class Team {
     }
     
     public void removeUserFromJoinRequestMap(int userId) {
-        joinRequestMap.remove(userId);
+        if (joinRequestMap.containsKey(userId)) {
+            joinRequestMap.remove(userId);
+            membersAwaitingApproval--;
+        }
     }
 }

@@ -249,6 +249,7 @@ public class TeamManager {
         }
     }
     
+    // team owner's accept join request
     public void acceptJoinRequest(int userId, int teamId) {
         // reduce member approval
         
@@ -262,12 +263,33 @@ public class TeamManager {
                 // add userid to members map
                 currTeam.addMembers(userId, "member");
                 teamMap.put(currTeamId, currTeam);
+                
+                // also need to remove join request from user side
+                removeUserJoinRequest2(userId, teamId);
                 return;
             }
         }
+    }
+    
+    // team owner's reject join request
+    public void rejectJoinRequest(int userId, int teamId) {
+        // reduce member approval
         
-        // also need to remove join request from user side
-        removeUserJoinRequest2(userId, teamId);
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            if (currTeamId == teamId) {
+                // remove join request from team side
+                currTeam.removeUserFromJoinRequestMap(userId);
+                
+                // need to put back to map to make the changes
+                teamMap.put(currTeamId, currTeam);
+                
+                // also need to remove join request from user side
+                removeUserJoinRequest2(userId, teamId);
+                return;
+            }
+        }
     }
     
     public void acceptParticipationRequest(int userId, int teamId) {
