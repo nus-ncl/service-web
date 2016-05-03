@@ -71,7 +71,7 @@
                             <tr th:each="membersEntry : ${membersMap}">
                                 <td th:text="${userManager.getNameByUserId(membersEntry.key)}">Name</td>
                                 <td th:text="${membersEntry.value}">Permission</td>
-                                <!-- team member -->
+                                <!-- user has privilege to remove team member -->
                                 <td th:if="${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">
                                     <a href="#" th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.id}, userId=${membersEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash"></i></a>
                                 </td>
