@@ -99,11 +99,29 @@ public class UserManager {
         eve.setPostalCode("600123");
         eve.setEmailVerified(false);
         
-        usersMap.put(johnDoe.getUserId(), johnDoe); // 200
-        usersMap.put(bob.getUserId(), bob);         // 201
-        usersMap.put(charlie.getUserId(), charlie); // 202
-        usersMap.put(dave.getUserId(), dave);       // 203
-        usersMap.put(eve.getUserId(), eve);         // 204
+        User noProject = new User();
+        noProject.setUserId(205);
+        noProject.setRole("normal");
+        noProject.setName("No Project");
+        noProject.setEmail("noproject@nus.edu.sg");
+        noProject.setPassword("password");
+        noProject.setJobTitle("Research No Project");
+        noProject.setInstitution("National University of Singapore");
+        noProject.setInstitutionAbbreviation("NUS");
+        noProject.setWebsite("http://www.nus.edu.sg");
+        noProject.setAddress1("Boon Lay Drive 222");
+        noProject.setCountry("Singapore");
+        noProject.setCity("Singapore");
+        noProject.setProvince("SG");
+        noProject.setPostalCode("600123");
+        noProject.setEmailVerified(true);
+        
+        usersMap.put(johnDoe.getUserId(), johnDoe); 	// 200
+        usersMap.put(bob.getUserId(), bob);         	// 201
+        usersMap.put(charlie.getUserId(), charlie); 	// 202
+        usersMap.put(dave.getUserId(), dave);       	// 203
+        usersMap.put(eve.getUserId(), eve);         	// 204
+        usersMap.put(noProject.getUserId(), noProject); // 205
     }
     
     public static UserManager getInstance() {

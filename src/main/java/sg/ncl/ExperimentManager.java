@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 
 import sg.ncl.testbed_interface.Experiment;
 
@@ -216,5 +217,67 @@ public class ExperimentManager {
             }
         }
     }
-
+    
+    public void addExperiment(int userId, Experiment toBeAddedExp) {
+    	// experiment must be set to stop first
+    	
+    	// TODO randomly set a exp id for now
+    	int expId = generateRandomExpId();
+    	toBeAddedExp.setExperimentId(expId);
+    	toBeAddedExp.setExperimentOwnerId(userId);
+    	toBeAddedExp.setStatus(EXPERIMENT_STATUS_STOP);
+    	
+    	if (experimentMap2.containsKey(userId)) {
+    		// user has an existing record
+    		// update user's record
+            for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
+                int currUserId = entry.getKey();
+                if (currUserId == userId) {
+                    List<Experiment> currExpList = entry.getValue();
+                    currExpList.add(toBeAddedExp);
+                    experimentMap2.put(userId, currExpList);
+                }
+            }
+    	} else {
+    		// user has not created experiment before
+            List<Experiment> experimentList = new ArrayList<Experiment>();
+            experimentList.add(toBeAddedExp);
+            experimentMap2.put(userId, experimentList);
+    	}
+    }
+    
+    public int generateRandomExpId() {
+    	Random rn = new Random();
+    	int expId = rn.nextInt();
+    	while (isExpIdExists(expId)) {
+    		expId = rn.nextInt();
+    	}
+    	return expId;
+    }
+    
+    public boolean isExpIdExists(int expId) {
+        for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
+            List<Experiment> currExpList = entry.getValue();
+            for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
+                Experiment currExp = iter.next();
+                if (currExp.getExperimentId() == expId) {
+                	return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public Experiment getExperimentByExpId(int expId) {
+        for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
+            List<Experiment> currExpList = entry.getValue();
+            for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
+                Experiment currExp = iter.next();
+                if (currExp.getExperimentId() == expId) {
+                	return currExp;
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -12,6 +12,7 @@ import sg.ncl.testbed_interface.User;
 public class TeamManager {
     
     /* teamId, team */
+	private final int NO_EXP_COUNT = 0;
     private static TeamManager TEAM_MANAGER_SINGLETON = null;
     private HashMap<Integer, Team> teamMap;
     private String infoMsg = null;
@@ -30,7 +31,7 @@ public class TeamManager {
         team1.setInstitution("NUS");
         team1.setIsApproved(true);
         team1.setIsPublic(true);
-        team1.setExperimentsCount(99);
+        team1.setExperimentsCount(1);
         team1.setTeamOwnerId(200);
         team1.addMembers(200, "owner");
         team1.addMembers(201, "member");
@@ -44,7 +45,7 @@ public class TeamManager {
         team2.setInstitution("NUS");
         team2.setIsApproved(true);
         team2.setIsPublic(true);
-        team2.setExperimentsCount(99);
+        team2.setExperimentsCount(1);
         team2.setTeamOwnerId(200);
         team2.addMembers(200, "owner");
         team2.addMembers(201, "member");
@@ -58,7 +59,7 @@ public class TeamManager {
         team3.setInstitution("NUS");
         team3.setIsApproved(true);
         team3.setIsPublic(false);
-        team3.setExperimentsCount(99);
+        team3.setExperimentsCount(1);
         team3.setTeamOwnerId(201);
         team3.addMembers(201, "owner");
         team3.addMembers(200, "member");
@@ -72,7 +73,7 @@ public class TeamManager {
         team4.setInstitution("NTU");
         team4.setIsApproved(true);
         team4.setIsPublic(false);
-        team4.setExperimentsCount(99);
+        team4.setExperimentsCount(NO_EXP_COUNT);
         team4.setTeamOwnerId(202);
         team4.addMembers(202, "owner");
         
@@ -85,7 +86,7 @@ public class TeamManager {
         team5.setInstitution("NTU");
         team5.setIsApproved(true);
         team5.setIsPublic(true);
-        team5.setExperimentsCount(99);
+        team5.setExperimentsCount(NO_EXP_COUNT);
         team5.setTeamOwnerId(202);
         team5.addMembers(202, "owner");
         
@@ -98,7 +99,7 @@ public class TeamManager {
         team6.setInstitution("NTU");
         team6.setIsApproved(false);
         team6.setIsPublic(false);
-        team6.setExperimentsCount(99);
+        team6.setExperimentsCount(NO_EXP_COUNT);
         team6.setTeamOwnerId(203);
         team6.addMembers(203, "owner");
         
@@ -437,5 +438,15 @@ public class TeamManager {
                 }
             }
         }
+    }
+    
+    public void incrementExperimentCount(int teamId) {
+    	Team teamToAddExpCount = teamMap.get(teamId);
+    	teamToAddExpCount.setExperimentsCount(teamToAddExpCount.getExperimentsCount()+1);
+    }
+    
+    public void decrementExperimentCount(int teamId) {
+    	Team teamToAddExpCount = teamMap.get(teamId);
+    	teamToAddExpCount.setExperimentsCount(teamToAddExpCount.getExperimentsCount()-1);
     }
 }

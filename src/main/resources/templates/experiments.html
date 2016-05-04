@@ -20,8 +20,8 @@
                     <p>You do not have any experiments running yet.</p>
                 </div>
                 <!-- user has some experiments -->
-                <div class="panel panel-primary team-panel team-panel-current-team" th:if="not ${#lists.isEmpty(experimentList)}">
-                    <div class="panel-body">
+                <div class="panel panel-primary team-panel team-panel-current-team">
+                    <div class="panel-body" th:if="not ${#lists.isEmpty(experimentList)}">
                         <table class="table table-responsive">
                             <thead>
                                 <th th:text="#{experiment.table.header.experiment}">Experiment</th>

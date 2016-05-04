@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import sg.ncl.testbed_interface.Experiment;
-import sg.ncl.testbed_interface.ExperimentForm;
 import sg.ncl.testbed_interface.LoginForm;
 import sg.ncl.testbed_interface.SignUpAccountDetailsForm;
 import sg.ncl.testbed_interface.SignUpPersonalDetailsForm;
@@ -318,10 +317,12 @@ public class MainController {
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
     public String validateExperiment(@ModelAttribute Experiment experiment, Model model) {
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
-        System.out.println(experiment.getTeamId());
-        System.out.println(experiment.getName());
-        System.out.println(experiment.getDescription());
-        return "experiment_page_create_experiment";
+        // add current experiment to experiment manager
+        experimentManager.addExperiment(CURRENT_LOGGED_IN_USER_ID, experiment);
+        
+        // increase exp count to be display on Teams page
+        teamManager.incrementExperimentCount(experiment.getTeamId());
+        return "redirect:/experiments";
     }
     
     @RequestMapping("/remove_experiment/{expId}")
@@ -329,9 +330,13 @@ public class MainController {
         // remove experiment
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
+    	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
         experimentManager.removeExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
         // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        
+        // decrease exp count to be display on Teams page
+        teamManager.decrementExperimentCount(teamId);
         return "redirect:/experiments";
     }
     
