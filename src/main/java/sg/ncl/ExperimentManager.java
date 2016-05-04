@@ -1,22 +1,27 @@
 package sg.ncl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import sg.ncl.testbed_interface.Experiment;
-import sg.ncl.testbed_interface.Team;
 
 public class ExperimentManager {
     
     // experimentId, experiment
     private final int CURRENT_LOGGED_IN_USER;
+    private static ExperimentManager EXPERIMENT_MANAGER_SINGLETON = null;
     private static HashMap<Integer, Experiment> experimentMap;
     private String EXPERIMENT_STATUS_READY;
     private String EXPERIMENT_STATUS_ALLOCATING;
     private String EXPERIMENT_STATUS_ERROR;
     private String EXPERIMENT_STATUS_STOP;
     
-    public ExperimentManager() {
+    private HashMap<Integer, List<Experiment>> experimentMap2; /* userId, arraylist of experiments */
+    
+    private ExperimentManager() {
         CURRENT_LOGGED_IN_USER = 200;
         experimentMap = new HashMap<Integer, Experiment>();
         EXPERIMENT_STATUS_READY = "READY";
@@ -60,6 +65,20 @@ public class ExperimentManager {
         experimentMap.put(exp01.getExperimentId(), exp01);
         experimentMap.put(exp02.getExperimentId(), exp02);
         experimentMap.put(exp03.getExperimentId(), exp03);
+        
+        experimentMap2 = new HashMap<Integer, List<Experiment>>();
+        List<Experiment> experimentList = new ArrayList<Experiment>();
+        experimentList.add(exp01);
+        experimentList.add(exp02);
+        experimentList.add(exp03);
+        experimentMap2.put(CURRENT_LOGGED_IN_USER, experimentList);
+    }
+    
+    public static ExperimentManager getInstance() {
+        if (EXPERIMENT_MANAGER_SINGLETON == null) {
+            EXPERIMENT_MANAGER_SINGLETON = new ExperimentManager();
+        }
+        return EXPERIMENT_MANAGER_SINGLETON;
     }
     
     public HashMap<Integer, Experiment> getExperimentMap() {
@@ -78,8 +97,16 @@ public class ExperimentManager {
         return expMap;
     }
     
+    public List<Experiment> getExperimentListByExperimentOwner(int userId) {
+        if (experimentMap2.containsKey(userId)) {
+            return experimentMap2.get(userId);
+        } else {
+            return null;
+        }
+    }
+    
     public HashMap<Integer, Experiment> getTeamExperimentsMap(int teamId) {
-        HashMap<Integer, Experiment> teamExpMap = new HashMap<Integer, Experiment>();
+        /*
         for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
             int expId = entry.getKey();
             Experiment currExp = entry.getValue();
@@ -87,10 +114,26 @@ public class ExperimentManager {
                 teamExpMap.put(expId, currExp);
             }
         }
+        */
+        
+        // for list implementation of experiment manager
+        // expid, exp
+        HashMap<Integer, Experiment> teamExpMap = new HashMap<Integer, Experiment>();
+        
+        for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
+            List<Experiment> currExpList = entry.getValue();
+            for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
+                Experiment currExp = iter.next();
+                if (currExp.getTeamId() == teamId) {
+                    teamExpMap.put(currExp.getExperimentId(), currExp);
+                }
+            }
+        }
         return teamExpMap;
     }
     
     public void removeExperiment(int userId, int expId) {
+        /*
         for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
             int currExpId = entry.getKey();
             Experiment currExp = entry.getValue();
@@ -100,9 +143,24 @@ public class ExperimentManager {
                 return;
             }
         }
+        */
+        // for list version
+        for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                List<Experiment> currExpList = entry.getValue();
+                for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
+                    Experiment currExp = iter.next();
+                    if (currExp.getExperimentId() == expId) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
     }
     
     public void startExperiment(int userId, int expId) {
+        /*
         // need to check if user have rights to start the experiment
         for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
             int currExpId = entry.getKey();
@@ -114,15 +172,47 @@ public class ExperimentManager {
                 return;
             }
         }
+        */
+        
+        // for list version
+        // need to check if user have rights to start the experiment
+        for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                List<Experiment> currExpList = entry.getValue();
+                for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
+                    Experiment currExp = iter.next();
+                    if (currExp.getExperimentId() == expId && currExp.getStatus().equals(EXPERIMENT_STATUS_STOP)) {
+                        currExp.setStatus(EXPERIMENT_STATUS_READY);
+                    }
+                }
+            }
+        }
     }
     
     public void stopExperiment(int userId, int expId) {
+        /*
         for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
             int currExpId = entry.getKey();
             Experiment currExp = entry.getValue();
             if (currExpId == expId && currExp.getStatus().equals(EXPERIMENT_STATUS_READY)) {
                 currExp.setStatus(EXPERIMENT_STATUS_STOP);
                 return;
+            }
+        }
+        */
+        
+        // for list version
+        for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                List<Experiment> currExpList = entry.getValue();
+                for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
+                    Experiment currExp = iter.next();
+                    if (currExp.getExperimentId() == expId && currExp.getStatus().equals(EXPERIMENT_STATUS_READY)) {
+                        currExp.setStatus(EXPERIMENT_STATUS_STOP);
+                    }
+                }
             }
         }
     }

@@ -16,11 +16,11 @@
             <div class="row">
                 <h2>Experiments</h2>
                 <!-- user has no experiments -->
-                <div th:if="${experimentMap.isEmpty()}">
+                <div th:if="${#lists.isEmpty(experimentList)}">
                     <p>You do not have any experiments running yet.</p>
                 </div>
                 <!-- user has some experiments -->
-                <div class="panel panel-primary team-panel team-panel-current-team" th:if="not ${experimentMap.isEmpty()}">
+                <div class="panel panel-primary team-panel team-panel-current-team" th:if="not ${#lists.isEmpty(experimentList)}">
                     <div class="panel-body">
                         <table class="table table-responsive">
                             <thead>
@@ -30,27 +30,27 @@
                                 <th th:text="#{experiment.table.header.status}">Status</th>
                                 <th th:text="#{experiment.table.header.actions}">Actions</th>
                             </thead>
-                            <tr th:each="expEntry : ${experimentMap}">
-                                <td th:text="${expEntry.value.name}">Name</td>
-                                <td th:text="${expEntry.value.getTeamName(expEntry.value.getTeamId())}">Team</td>
-                                <td th:text="${expEntry.value.description}">Description</td>
-                                <td th:text="${expEntry.value.status}">Status</td>
+                            <tr th:each="expEntry : ${experimentList}">
+                                <td th:text="${expEntry.name}">Name</td>
+                                <td th:text="${teamManager.getTeamNameByTeamId(expEntry.teamId)}">Team</td>
+                                <td th:text="${expEntry.description}">Description</td>
+                                <td th:text="${expEntry.status}">Status</td>
                                 <td>
-                                    <span th:if="${expEntry.value.status == 'STOPPED'}">
-                                        <a href="#" th:href="@{/start_experiment/{expId}(expId=${expEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>
+                                    <span th:if="${expEntry.status == 'STOPPED'}">
+                                        <a href="#" th:href="@{/start_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>
                                     </span>
-                                    <span th:if="${expEntry.value.status == 'READY'}">
-                                        <a href="#" th:href="@{/stop_experiment/{expId}(expId=${expEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop"></i></a>
+                                    <span th:if="${expEntry.status == 'READY'}">
+                                        <a href="#" th:href="@{/stop_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop"></i></a>
                                     </span>
-                                    <span th:if="${expEntry.value.status == 'STOPPED'}">
-                                        <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>
+                                    <span th:if="${expEntry.status == 'STOPPED'}">
+                                        <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>
                                     </span>
                                 </td>
                             </tr>
                         </table>
                     </div> <!-- panel body -->
                     <div class="panel-footer">
-                        <a href="#" th:href="@{/experiments}" class="btn btn-primary"><i class="fa fa-plus"></i> Create Experiment</a>
+                        <a href="#" th:href="@{/experiments/create}" class="btn btn-primary"><i class="fa fa-plus"></i> Create Experiment</a>
                     </div>
                 </div> <!-- panel primary -->
             </div> <!-- row -->

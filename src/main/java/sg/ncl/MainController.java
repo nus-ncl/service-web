@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import sg.ncl.testbed_interface.Experiment;
+import sg.ncl.testbed_interface.ExperimentForm;
 import sg.ncl.testbed_interface.LoginForm;
 import sg.ncl.testbed_interface.SignUpAccountDetailsForm;
 import sg.ncl.testbed_interface.SignUpPersonalDetailsForm;
@@ -40,7 +42,7 @@ public class MainController {
     private int CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
     private TeamManager teamManager = TeamManager.getInstance();
     private UserManager userManager = UserManager.getInstance();
-    private ExperimentManager experimentManager = new ExperimentManager();
+    private ExperimentManager experimentManager = ExperimentManager.getInstance();
     
     private static SignUpAccountDetailsForm signupAccountDetailsForm = new SignUpAccountDetailsForm();
     
@@ -300,8 +302,26 @@ public class MainController {
     
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
     public String experiments(Model model) {
-        model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("teamManager", teamManager);
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         return "experiments";
+    }
+    
+    @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
+    public String createExperiment(Model model) {
+        model.addAttribute("experiment", new Experiment());
+        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
+        return "experiment_page_create_experiment";
+    }
+    
+    @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
+    public String validateExperiment(@ModelAttribute Experiment experiment, Model model) {
+        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
+        System.out.println(experiment.getTeamId());
+        System.out.println(experiment.getName());
+        System.out.println(experiment.getDescription());
+        return "experiment_page_create_experiment";
     }
     
     @RequestMapping("/remove_experiment/{expId}")
@@ -310,7 +330,8 @@ public class MainController {
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
         experimentManager.removeExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
-        model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/experiments";
     }
     
@@ -319,7 +340,8 @@ public class MainController {
         // start experiment
         // ensure experiment is stopped first before starting
         experimentManager.startExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
-        model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/experiments";
     }
     
@@ -328,7 +350,8 @@ public class MainController {
         // stop experiment
         // ensure experiment is in ready mode before stopping
         experimentManager.stopExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
-        model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/experiments";
     }
     
