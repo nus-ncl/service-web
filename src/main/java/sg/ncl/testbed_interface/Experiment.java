@@ -1,8 +1,5 @@
 package sg.ncl.testbed_interface;
 
-import java.util.HashMap;
-
-import sg.ncl.TeamManager;
 
 /**
  * 
@@ -11,8 +8,6 @@ import sg.ncl.TeamManager;
  * 
  */
 public class Experiment {
-    
-    private static TeamManager TEAM_MANAGER_SINGLETON = TeamManager.getInstance();
     
     private int experimentId;
     private String name;
@@ -61,7 +56,7 @@ public class Experiment {
         this.description = description;
     }
     
-    public long getExperimentOwnerId() {
+    public int getExperimentOwnerId() {
         return experimentOwnerId;
     }
     
@@ -75,12 +70,6 @@ public class Experiment {
     
     public void setTeamId(int teamId) {
         this.teamId = teamId;
-    }
-    
-    public String getTeamName(int teamId) {
-        HashMap<Integer, Team> teamMap = TEAM_MANAGER_SINGLETON.getTeamMap();
-        Team myTeam = teamMap.get(teamId);
-        return myTeam.getName();
     }
     
     public String getScenarioFileName() {
