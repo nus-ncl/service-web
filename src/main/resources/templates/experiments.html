@@ -27,6 +27,7 @@
                                 <th th:text="#{experiment.table.header.experiment}">Experiment</th>
                                 <th th:text="#{experiment.table.header.team}">Team</th>
                                 <th th:text="#{experiment.table.header.description}">Description</th>
+                                <th th:text="#{experiment.table.header.configuration}">Configuration</th>
                                 <th th:text="#{experiment.table.header.status}">Status</th>
                                 <th th:text="#{experiment.table.header.actions}">Actions</th>
                             </thead>
@@ -34,6 +35,7 @@
                                 <td th:text="${expEntry.name}">Name</td>
                                 <td th:text="${teamManager.getTeamNameByTeamId(expEntry.teamId)}">Team</td>
                                 <td th:text="${expEntry.description}">Description</td>
+                                <td th:text="${expEntry.scenarioContents}">ScenarioContents</td>
                                 <td th:text="${expEntry.status}">Status</td>
                                 <td>
                                     <span th:if="${expEntry.status == 'STOPPED'}">
@@ -54,6 +56,6 @@
                     </div>
                 </div> <!-- panel primary -->
             </div> <!-- row -->
-        </div> <!-- container -->  
+        </div> <!-- container -->
     </body>
 </html>

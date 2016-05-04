@@ -1,5 +1,8 @@
 package sg.ncl;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,6 +45,8 @@ public class MainController {
     private TeamManager teamManager = TeamManager.getInstance();
     private UserManager userManager = UserManager.getInstance();
     private ExperimentManager experimentManager = ExperimentManager.getInstance();
+    
+    private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
     
     private static SignUpAccountDetailsForm signupAccountDetailsForm = new SignUpAccountDetailsForm();
     
@@ -309,7 +314,9 @@ public class MainController {
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
     public String createExperiment(Model model) {
+    	List<String> scenarioFileNameList = getScenarioFileNameList();
         model.addAttribute("experiment", new Experiment());
+        model.addAttribute("scenarioFileNameList", scenarioFileNameList);
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         return "experiment_page_create_experiment";
     }
@@ -319,9 +326,9 @@ public class MainController {
         model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
         // add current experiment to experiment manager
         experimentManager.addExperiment(CURRENT_LOGGED_IN_USER_ID, experiment);
-        
         // increase exp count to be display on Teams page
         teamManager.incrementExperimentCount(experiment.getTeamId());
+        
         return "redirect:/experiments";
     }
     
@@ -400,4 +407,15 @@ public class MainController {
         return "join_team_application_awaiting_approval";
     }
     
+    //--------------------------Get List of scenarios filenames--------------------------
+    private List<String> getScenarioFileNameList() {
+		List<String> scenarioFileNameList = new ArrayList<String>();
+		File[] files = new File(SCENARIOS_DIR_PATH).listFiles();
+		for (File file : files) {
+			if (file.isFile()) {
+				scenarioFileNameList.add(file.getName());
+			}
+		}
+		return scenarioFileNameList;
+    }
 }

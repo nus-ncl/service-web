@@ -19,17 +19,26 @@
                 <form  method="post" action="#" th:action="@{/experiments/create}" th:object="${experiment}" role="form">
                     <fieldset>
                         <div class="form-group">
+                       	 	<label for="teamName">Select team:</label>
                             <select class="form-control" th:field="*{teamId}">
                                 <option th:each="teamOption : ${teamMap}" th:value="${teamOption.key}" th:text="${teamOption.value.name + '-' + teamOption.key}">Team Name</option>
                             </select>
                         </div>
                         <div class="form-group">
+                        	<label for="name">Name:</label>
                             <input type="text" class="form-control" placeholder="Name" th:field="*{name}"/>
                         </div>
                         <div class="form-group">
+                        	<label for="description">Description:</label>
                             <input type="text" class="form-control" placeholder="Description" th:field="*{description}"/>
                         </div>
                         <h3>Experiment Scenario</h3>
+                        <div class="form-group">
+                        	<label for="scenarioName">Select a scenario:</label>
+                        	<select class="form-control" th:field="*{scenarioFileName}">
+                        		<option th:each="scenarioName: ${scenarioFileNameList}" th:value="${scenarioName}" th:text="${scenarioName}"></option>
+                        	</select>
+                        </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-success">Submit</button>
                         </div>

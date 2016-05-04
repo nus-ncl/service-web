@@ -15,6 +15,7 @@ public class Experiment {
     private int experimentOwnerId;
     private int teamId;
     private String scenarioFileName;
+    private String scenarioContents;
     private int nodesCount;
     private int hoursRunning;
     private int hoursIdle;
@@ -111,4 +112,12 @@ public class Experiment {
     public void setHoursIdle(int hoursIdle) {
         this.hoursIdle = hoursIdle;
     }
+
+	public String getScenarioContents() {
+		return scenarioContents;
+	}
+
+	public void setScenarioContents(String scenarioContents) {
+		this.scenarioContents = scenarioContents;
+	}
 }

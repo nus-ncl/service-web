@@ -1,5 +1,7 @@
 package sg.ncl;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ public class ExperimentManager {
     private String EXPERIMENT_STATUS_ERROR;
     private String EXPERIMENT_STATUS_STOP;
     
+    private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios/";
     private HashMap<Integer, List<Experiment>> experimentMap2; /* userId, arraylist of experiments */
     
     private ExperimentManager() {
@@ -40,6 +43,7 @@ public class ExperimentManager {
         exp01.setNodesCount(7);
         exp01.setHoursIdle(2);
         exp01.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
+        exp01.setScenarioFileName("basic.ns");
         
         Experiment exp02 = new Experiment();
         exp02.setExperimentId(51);
@@ -51,6 +55,7 @@ public class ExperimentManager {
         exp02.setNodesCount(7);
         exp02.setHoursIdle(2);
         exp02.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
+        exp02.setScenarioFileName("basic.ns");
         
         Experiment exp03 = new Experiment();
         exp03.setExperimentId(52);
@@ -62,6 +67,7 @@ public class ExperimentManager {
         exp03.setNodesCount(7);
         exp03.setHoursIdle(2);
         exp03.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
+        exp03.setScenarioFileName("basic.ns");
         
         experimentMap.put(exp01.getExperimentId(), exp01);
         experimentMap.put(exp02.getExperimentId(), exp02);
@@ -227,6 +233,11 @@ public class ExperimentManager {
     	toBeAddedExp.setExperimentOwnerId(userId);
     	toBeAddedExp.setStatus(EXPERIMENT_STATUS_STOP);
     	
+    	// set the scenario contents
+    	String scenarioContents = getScenarioContents(toBeAddedExp.getScenarioFileName());
+    	toBeAddedExp.setScenarioContents(scenarioContents);
+    	System.out.println(scenarioContents);
+    	
     	if (experimentMap2.containsKey(userId)) {
     		// user has an existing record
     		// update user's record
@@ -246,7 +257,23 @@ public class ExperimentManager {
     	}
     }
     
-    public int generateRandomExpId() {
+    private String getScenarioContents(String scenarioFileName) {
+    	StringBuilder sb = new StringBuilder();
+    	try(BufferedReader br = new BufferedReader(new FileReader(SCENARIOS_DIR_PATH + scenarioFileName))) {
+    		String line = br.readLine();
+    		
+    		while (line != null) {
+    			sb.append(line);
+    			sb.append(System.lineSeparator());
+    			line = br.readLine();
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return sb.toString();
+	}
+
+	public int generateRandomExpId() {
     	Random rn = new Random();
     	int expId = rn.nextInt();
     	while (isExpIdExists(expId)) {
