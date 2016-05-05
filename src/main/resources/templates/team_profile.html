@@ -105,13 +105,13 @@
                                 <td th:text="${teamExpEntry.value.hoursIdle}">Hours Idle</td>
                                 <td>
                                     <span th:if="${teamExpEntry.value.status == 'STOPPED'}">
-                                        <a href="#" th:href="@{/start_experiment/{expId}(expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>
+                                        <a href="#" th:href="@{/team_profile/{teamId}/start_experiment/{expId}(teamId=${teamExpEntry.value.teamId}, expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>
                                     </span>
                                     <span th:if="${teamExpEntry.value.status == 'READY'}">
-                                        <a href="#" th:href="@{/stop_experiment/{expId}(expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop"></i></a>
+                                        <a href="#" th:href="@{/team_profile/{teamId}/stop_experiment/{expId}(teamId=${teamExpEntry.value.teamId}, expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop"></i></a>
                                     </span>
                                     <span th:if="${teamExpEntry.value.status == 'STOPPED'}">
-                                        <a href="#" th:href="@{/remove_experiment/{expId}(expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>
+                                        <a href="#" th:href="@{/team_profile/{teamId}/remove_experiment/{expId}(teamId=${teamExpEntry.value.teamId}, expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>
                                     </span>
                                 </td>
                             </tr>

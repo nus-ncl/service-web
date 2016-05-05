@@ -314,6 +314,34 @@ public class MainController {
         return "redirect:/team_profile/{teamId}";
     }
     
+    @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
+    public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model) {
+        // start experiment
+        // ensure experiment is stopped first before starting
+        experimentManager.startExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
+    	return "redirect:/team_profile/{teamId}";
+    }
+    
+    @RequestMapping("/team_profile/{teamId}/stop_experiment/{expId}")
+    public String stopExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model) {
+        // stop experiment
+        // ensure experiment is in ready mode before stopping
+        experimentManager.stopExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
+        return "redirect:/team_profile/{teamId}";
+    }
+    
+    @RequestMapping("/team_profile/{teamId}/remove_experiment/{expId}")
+    public String removeExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model) {
+        // remove experiment
+        // TODO check userid is indeed the experiment owner or team owner
+        // ensure experiment is stopped first
+        experimentManager.removeExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        // decrease exp count to be display on Teams page
+        teamManager.decrementExperimentCount(teamId);
+        return "redirect:/team_profile/{teamId}";
+    }
+    
     //--------------------------Apply for New Team Page--------------------------
     
     @RequestMapping(value="/teams/apply_team", method=RequestMethod.GET)
