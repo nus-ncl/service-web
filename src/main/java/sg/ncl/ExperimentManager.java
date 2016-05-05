@@ -44,6 +44,8 @@ public class ExperimentManager {
         exp01.setHoursIdle(2);
         exp01.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
         exp01.setScenarioFileName("basic.ns");
+    	String exp01Config = getScenarioContents(exp01.getScenarioFileName());
+    	exp01.setScenarioContents(exp01Config);
         
         Experiment exp02 = new Experiment();
         exp02.setExperimentId(51);
@@ -56,6 +58,8 @@ public class ExperimentManager {
         exp02.setHoursIdle(2);
         exp02.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
         exp02.setScenarioFileName("basic.ns");
+    	String exp02Config = getScenarioContents(exp01.getScenarioFileName());
+    	exp02.setScenarioContents(exp02Config);
         
         Experiment exp03 = new Experiment();
         exp03.setExperimentId(52);
@@ -68,6 +72,8 @@ public class ExperimentManager {
         exp03.setHoursIdle(2);
         exp03.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
         exp03.setScenarioFileName("basic.ns");
+    	String exp03Config = getScenarioContents(exp01.getScenarioFileName());
+    	exp03.setScenarioContents(exp03Config);
         
         experimentMap.put(exp01.getExperimentId(), exp01);
         experimentMap.put(exp02.getExperimentId(), exp02);
@@ -236,7 +242,6 @@ public class ExperimentManager {
     	// set the scenario contents
     	String scenarioContents = getScenarioContents(toBeAddedExp.getScenarioFileName());
     	toBeAddedExp.setScenarioContents(scenarioContents);
-    	System.out.println(scenarioContents);
     	
     	if (experimentMap2.containsKey(userId)) {
     		// user has an existing record

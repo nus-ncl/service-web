@@ -332,6 +332,15 @@ public class MainController {
         return "redirect:/experiments";
     }
     
+    @RequestMapping("/experiments/configuration/{expId}")
+    public String viewExperimentConfiguration(@PathVariable Integer expId, Model model) {
+    	// get experiment from expid
+    	// retrieve the scenario contents to be displayed
+    	Experiment currExp = experimentManager.getExperimentByExpId(expId);
+    	model.addAttribute("scenarioContents", currExp.getScenarioContents());
+    	return "experiment_scenario_contents";
+    }
+    
     @RequestMapping("/remove_experiment/{expId}")
     public String removeExperiment(@PathVariable Integer expId, Model model) {
         // remove experiment
