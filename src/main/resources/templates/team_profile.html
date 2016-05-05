@@ -91,13 +91,29 @@
                                 <th th:text="#{team.experiment.status}">Status</th>
                                 <th th:text="#{team.experiment.nodesAllocated}">Nodes Allocated</th>
                                 <th th:text="#{team.experiment.idleHours}">Hours Idle</th>
+                                <th>Actions</th>
                             </thead>
                             <tr th:each="teamExpEntry : ${teamExpMap}">
                                 <td th:text="${teamExpEntry.value.name}">Experiment</td>
                                 <td th:text="${teamExpEntry.value.description}">Description</td>
-                                <td th:text="${teamExpEntry.value.status}">Status</td>
+                                <td>
+                                	<span th:if="${teamExpEntry.value.status == 'STOPPED'}" th:classappend="expStatusStop" th:text="${teamExpEntry.value.status}"></span>
+                                	<span th:if="${teamExpEntry.value.status == 'READY'}" th:classappend="expStatusReady" th:text="${teamExpEntry.value.status}"></span>
+                                	<!-- TODO need to cater for ALLOCATING and ERROR -->
+                                </td>
                                 <td th:text="${teamExpEntry.value.nodesCount}">Nodes Allocated</td>
                                 <td th:text="${teamExpEntry.value.hoursIdle}">Hours Idle</td>
+                                <td>
+                                    <span th:if="${teamExpEntry.value.status == 'STOPPED'}">
+                                        <a href="#" th:href="@{/start_experiment/{expId}(expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>
+                                    </span>
+                                    <span th:if="${teamExpEntry.value.status == 'READY'}">
+                                        <a href="#" th:href="@{/stop_experiment/{expId}(expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop"></i></a>
+                                    </span>
+                                    <span th:if="${teamExpEntry.value.status == 'STOPPED'}">
+                                        <a href="#" th:href="@{/remove_experiment/{expId}(expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>
+                                    </span>
+                                </td>
                             </tr>
                         </table>
                     </div>
