@@ -14,14 +14,13 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-                <form  method="post" action="#" th:action="@{/account_settings}" th:object="${currentUser}" role="form">
+                <form  method="post" action="#" th:action="@{/account_settings}" th:object="${editUser}" role="form">
                     <fieldset>
                         <h2>Account Info</h2>
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="text" class="form-control" id="inputEmail" name="" th:field="*{email}"/>
+                            <input type="text" class="form-control" id="inputEmail" th:field="*{email}" readonly="readonly"/>
                         </div>
-                        <!--  
                         <h2>Personal Info</h2>
                         <div class="form-group">
                             <label for="name">Full Name:</label>
@@ -67,7 +66,6 @@
                             <label for="postalCode">Postal Code:</label>
                             <input type="text" class="form-control" th:field="*{postalCode}"/>
                         </div>
-                        -->
                         <div class="form-group">
                             <button type="submit" class="btn btn-success">Save</button>
                             <a href="#" th:href="@{/dashboard}" class="btn btn-danger">Cancel</a>

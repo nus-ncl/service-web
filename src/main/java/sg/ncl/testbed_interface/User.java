@@ -13,16 +13,16 @@ public class User {
     private String name;
     private String password;
     private String role; // normal, admin
-    private String jobTitle;
-    private String institution;
-    private String institutionAbbreviation;
-    private String website;
-    private String address1;
-    private String address2;
-    private String country;
-    private String city;
-    private String province;
-    private String postalCode;
+    private String jobTitle = "";
+    private String institution = "";
+    private String institutionAbbreviation = "";
+    private String website = "";
+    private String address1 = "";
+    private String address2 = "";
+    private String country = "";
+    private String city = "";
+    private String province = "";
+    private String postalCode = "";
     private boolean isEmailVerified;
     
     public User() {
@@ -154,6 +154,121 @@ public class User {
 
     public void setEmailVerified(boolean isEmailVerified) {
         this.isEmailVerified = isEmailVerified;
+    }
+    
+    @Override
+    public String toString() {
+    	return "userId: " + userId + "\n" +
+    			"name: " + name + "\n";
+    }
+    
+    // should not allow user to edit email address
+    public boolean updateEmail(String editedEmail) {
+    	if (email.equals(editedEmail)) {
+    		return false;
+    	} else {
+        	email = editedEmail;
+        	return true;
+    	}
+    }
+    
+    public boolean updateName(String editedName) {
+    	if (name.equals(editedName)) {
+    		return false;
+    	} else {
+    		name = editedName;
+        	return true;
+    	}
+    }
+    
+    public boolean updateJobTitle(String editedJobTitle) {
+    	if (jobTitle.equals(editedJobTitle)) {
+    		return false;
+    	} else {
+    		jobTitle = editedJobTitle;
+        	return true;
+    	}
+    }
+    
+    public boolean updateInstitution(String editedInstitution) {
+    	if (institution.equals(editedInstitution)) {
+    		return false;
+    	} else {
+    		institution = editedInstitution;
+        	return true;
+    	}
+    }
+    
+    public boolean updateInstitutionAbbreviation(String editedInstitutionAbbreviation) {
+    	if (institutionAbbreviation.equals(editedInstitutionAbbreviation)) {
+    		return false;
+    	} else {
+    		institutionAbbreviation = editedInstitutionAbbreviation;
+        	return true;
+    	}
+    }
+    
+    public boolean updateWebsite(String editedWebsite) {
+    	if (website.equals(editedWebsite)) {
+    		return false;
+    	} else {
+    		website = editedWebsite;
+        	return true;
+    	}
+    }
+    
+    public boolean updateAddress1(String editedAddress) {
+    	if (address1.equals(editedAddress)) {
+    		return false;
+    	} else {
+    		address1 = editedAddress;
+        	return true;
+    	}
+    }
+    
+    public boolean updateAddress2(String editedAddress) {
+    	if (address2.equals(editedAddress)) {
+    		return false;
+    	} else {
+    		address2 = editedAddress;
+        	return true;
+    	}
+    }
+    
+    public boolean updateCountry(String editedCountry) {
+    	if (country.equals(editedCountry)) {
+    		return false;
+    	} else {
+    		country = editedCountry;
+        	return true;
+    	}
+    }
+    
+    public boolean updateCity(String editedCity) {
+    	if (city.equals(editedCity)) {
+    		return false;
+    	} else {
+    		city = editedCity;
+        	return true;
+    	}
+    }
+    
+    public boolean updateProvince(String editedProvince) {
+    	if (province.equals(editedProvince)) {
+    		return false;
+    	} else {
+    		province = editedProvince;
+        	return true;
+    	}
+    }
+    
+    public boolean updatePostalCode(String editedPostalCode) {
+    	if (postalCode.equals(editedPostalCode)) {
+    		return false;
+    	} else {
+    		postalCode = editedPostalCode;
+        	return true;
+    	}
     }
     
 }

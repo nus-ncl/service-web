@@ -134,13 +134,29 @@ public class MainController {
     //--------------------------Account Settings Page--------------------------
     @RequestMapping(value="/account_settings", method=RequestMethod.GET)
     public String accountDetails(Model model) {
-        model.addAttribute("currentUser", userManager.getUserById(CURRENT_LOGGED_IN_USER_ID));
+    	User editUser = userManager.getUserById(CURRENT_LOGGED_IN_USER_ID);
+    	model.addAttribute("editUser", editUser);
         return "account_settings";
     }
     
     @RequestMapping(value="/account_settings", method=RequestMethod.POST)
-    public String editAccountDetails(@ModelAttribute User currentUser) {
-        System.out.println(currentUser.getEmail());
+    public String editAccountDetails(@ModelAttribute("editUser") User editUser) {
+    	// Need to be this way to "edit" details
+    	// If not, the form details will overwrite existing user's details
+    	// TODO for email changes need to resend email confirmation
+    	User originalUser = userManager.getUserById(CURRENT_LOGGED_IN_USER_ID);
+    	originalUser.updateName(editUser.getName());
+    	originalUser.updateJobTitle(editUser.getJobTitle());
+    	originalUser.updateInstitution(editUser.getInstitution());
+    	originalUser.updateInstitutionAbbreviation(editUser.getInstitutionAbbreviation());
+    	originalUser.updateWebsite(editUser.getWebsite());
+    	originalUser.updateAddress1(editUser.getAddress1());
+    	originalUser.updateAddress2(editUser.getAddress2());
+    	originalUser.updateCountry(editUser.getCountry());
+    	originalUser.updateCity(editUser.getCity());
+    	originalUser.updateProvince(editUser.getProvince());
+    	originalUser.updatePostalCode(editUser.getPostalCode());
+    	userManager.updateUserDetails(originalUser);
         return "account_settings";
     }
     

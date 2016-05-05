@@ -11,7 +11,7 @@ public class UserManager {
     private final int ERROR_NO_SUCH_USER_ID = 0;
     private static UserManager USER_MANAGER_SINGLETON = null;
     /* userid, User */
-    private static HashMap<Integer, User> usersMap = new HashMap<Integer, User>();
+    private HashMap<Integer, User> usersMap = new HashMap<Integer, User>();
     
     private UserManager() {
         User johnDoe = new User();
@@ -169,7 +169,7 @@ public class UserManager {
     }
     
     public User getUserById(int userId) {
-        User rv = null;
+        User rv = new User();
         for (Map.Entry<Integer, User> entry : usersMap.entrySet()) {
             int currUserId = entry.getKey();
             if (currUserId == userId) {
@@ -190,5 +190,10 @@ public class UserManager {
             }
         }
         return rv;
+    }
+    
+    public void updateUserDetails(User editedUser) {
+    	int currUserId = editedUser.getUserId();
+    	usersMap.put(currUserId, editedUser);
     }
 }
