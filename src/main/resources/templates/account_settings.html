@@ -25,46 +25,57 @@
                         <div class="form-group">
                             <label for="name">Full Name:</label>
                             <input type="text" class="form-control" th:field="*{name}"/>
+                            <span class="account-change-success" th:if="${editName eq 'success'}"><i class="fa fa-check"></i> Name changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="jobTitle">Job Title:</label>
                             <input type="text" class="form-control" th:field="*{jobTitle}"/>
+                            <span class="account-change-success" th:if="${editJobTitle eq 'success'}"><i class="fa fa-check"></i> Job title changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="institution">Institution/Employee:</label>
                             <input type="text" class="form-control" th:field="*{institution}"/>
+                            <span class="account-change-success" th:if="${editInstitution eq 'success'}"><i class="fa fa-check"></i> Institution changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="institutionAbbreviation">Institution Abbreviation:</label>
                             <input type="text" class="form-control" th:field="*{institutionAbbreviation}"/>
+                            <span class="account-change-success" th:if="${editInstitutionAbbreviation eq 'success'}"><i class="fa fa-check"></i> Institution abbreviation changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="website">Institution Website:</label>
                             <input type="text" class="form-control" th:field="*{website}"/>
+                            <span class="account-change-success" th:if="${editWebsite eq 'success'}"><i class="fa fa-check"></i> Website changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="address1">Address 1:</label>
                             <input type="text" class="form-control" th:field="*{address1}"/>
+                            <span class="account-change-success" th:if="${editAddress1 eq 'success'}"><i class="fa fa-check"></i> Address 1 changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="address2">Address 2:</label>
                             <input type="text" class="form-control" th:field="*{address2}"/>
+                            <span class="account-change-success" th:if="${editAddress2 eq 'success'}"><i class="fa fa-check"></i> Address 2 changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="country">Country:</label>
                             <input type="text" class="form-control" th:field="*{country}"/>
+                            <span class="account-change-success" th:if="${editCountry eq 'success'}"><i class="fa fa-check"></i> Country changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="city">City:</label>
                             <input type="text" class="form-control" th:field="*{city}"/>
+                            <span class="account-change-success" th:if="${editCity eq 'success'}"><i class="fa fa-check"></i> City changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="province">State/Province:</label>
                             <input type="text" class="form-control" th:field="*{province}"/>
+                            <span class="account-change-success" th:if="${editProvince eq 'success'}"><i class="fa fa-check"></i> State/province changed success.</span>
                         </div>
                         <div class="form-group">
                             <label for="postalCode">Postal Code:</label>
                             <input type="text" class="form-control" th:field="*{postalCode}"/>
+                            <span class="account-change-success" th:if="${editPostalCode eq 'success'}"><i class="fa fa-check"></i> Postal code changed success.</span>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-success">Save</button>

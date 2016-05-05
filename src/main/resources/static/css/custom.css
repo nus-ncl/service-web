@@ -242,3 +242,9 @@
 	font-weight: bold;
 	color: #73c20e;
 }
+
+/* account details page */
+.account-change-success {
+	font-weight: bold;
+	color: #29a20d;
+}

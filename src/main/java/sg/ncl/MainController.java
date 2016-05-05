@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.testbed_interface.Experiment;
 import sg.ncl.testbed_interface.LoginForm;
@@ -140,24 +141,70 @@ public class MainController {
     }
     
     @RequestMapping(value="/account_settings", method=RequestMethod.POST)
-    public String editAccountDetails(@ModelAttribute("editUser") User editUser) {
+    public String editAccountDetails(@ModelAttribute("editUser") User editUser, final RedirectAttributes redirectAttributes) {
     	// Need to be this way to "edit" details
     	// If not, the form details will overwrite existing user's details
     	// TODO for email changes need to resend email confirmation
     	User originalUser = userManager.getUserById(CURRENT_LOGGED_IN_USER_ID);
-    	originalUser.updateName(editUser.getName());
-    	originalUser.updateJobTitle(editUser.getJobTitle());
-    	originalUser.updateInstitution(editUser.getInstitution());
-    	originalUser.updateInstitutionAbbreviation(editUser.getInstitutionAbbreviation());
-    	originalUser.updateWebsite(editUser.getWebsite());
-    	originalUser.updateAddress1(editUser.getAddress1());
-    	originalUser.updateAddress2(editUser.getAddress2());
-    	originalUser.updateCountry(editUser.getCountry());
-    	originalUser.updateCity(editUser.getCity());
-    	originalUser.updateProvince(editUser.getProvince());
-    	originalUser.updatePostalCode(editUser.getPostalCode());
+    	
+    	String editedName = editUser.getName();
+    	String editedJobTitle = editUser.getJobTitle();
+    	String editedInstitution = editUser.getInstitution();
+    	String editedInstitutionAbbreviation = editUser.getInstitutionAbbreviation();
+    	String editedWebsite = editUser.getWebsite();
+    	String editedAddress1 = editUser.getAddress1();
+    	String editedAddress2 = editUser.getAddress2();
+    	String editedCountry = editUser.getCountry();
+    	String editedCity = editUser.getCity();
+    	String editedProvince = editUser.getProvince();
+    	String editedPostalCode = editUser.getPostalCode();
+    	
+    	if (originalUser.updateName(editedName) == true) {
+        	redirectAttributes.addFlashAttribute("editName", "success");
+    	}
+    	
+    	if (originalUser.updateJobTitle(editedJobTitle) == true) {
+    		redirectAttributes.addFlashAttribute("editJobTitle", "success");
+    	}
+    	
+    	if (originalUser.updateInstitution(editedInstitution) == true) {
+    		redirectAttributes.addFlashAttribute("editInstitution", "success");
+    	}
+    	
+    	if (originalUser.updateInstitutionAbbreviation(editedInstitutionAbbreviation) == true) {
+    		redirectAttributes.addFlashAttribute("editInstitutionAbbreviation", "success");
+    	}
+    	
+    	if (originalUser.updateWebsite(editedWebsite) == true) {
+    		redirectAttributes.addFlashAttribute("editWebsite", "success");
+    	}
+    	
+    	if (originalUser.updateAddress1(editedAddress1) == true) {
+    		redirectAttributes.addFlashAttribute("editAddress1", "success");
+    	}
+    	
+    	if (originalUser.updateAddress2(editedAddress2) == true) {
+    		redirectAttributes.addFlashAttribute("editAddress2", "success");
+    	}
+    	
+    	if (originalUser.updateCountry(editedCountry) == true) {
+    		redirectAttributes.addFlashAttribute("editCountry", "success");
+    	}
+    	
+    	if (originalUser.updateCity(editedCity) == true) {
+    		redirectAttributes.addFlashAttribute("editCity", "success");
+    	}
+    	
+    	if (originalUser.updateProvince(editedProvince) == true) {
+    		redirectAttributes.addFlashAttribute("editProvince", "success");
+    	}
+    	
+    	if (originalUser.updatePostalCode(editedPostalCode) == true) {
+    		redirectAttributes.addFlashAttribute("editPostalCode", "success");
+    	}
+    	
     	userManager.updateUserDetails(originalUser);
-        return "account_settings";
+        return "redirect:/account_settings";
     }
     
     //--------------------------Teams Page--------------------------
