@@ -231,3 +231,14 @@
 .badge-danger {
 	background-color: #dd4b39;
 }
+
+/* experiment page */
+.expStatusStop {
+	font-weight: bold;
+	color: #dd4b39
+}
+
+.expStatusReady {
+	font-weight: bold;
+	color: #73c20e;
+}

@@ -35,8 +35,12 @@
                                 <td th:text="${expEntry.name}">Name</td>
                                 <td th:text="${teamManager.getTeamNameByTeamId(expEntry.teamId)}">Team</td>
                                 <td th:text="${expEntry.description}">Description</td>
-                                <td th:text="${expEntry.scenarioContents}">ScenarioContents</td>
-                                <td th:text="${expEntry.status}">Status</td>
+                                <td><a href="#" th:href="@{/experiments/configuration/{expId}(expId=${expEntry.experimentId})}">View</a></td>
+                                <td>
+                                	<span th:if="${expEntry.status == 'STOPPED'}" th:classappend="expStatusStop" th:text="${expEntry.status}"></span>
+                                	<span th:if="${expEntry.status == 'READY'}" th:classappend="expStatusReady" th:text="${expEntry.status}"></span>
+                                	<!-- TODO need to cater for ALLOCATING and ERROR -->
+                                </td>
                                 <td>
                                     <span th:if="${expEntry.status == 'STOPPED'}">
                                         <a href="#" th:href="@{/start_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>
