@@ -248,3 +248,8 @@
 	font-weight: bold;
 	color: #29a20d;
 }
+
+.password-change-mismatch {
+	font-weight: bold;
+	color: #dd4b39;
+}

@@ -20,6 +20,7 @@ public class UserManager {
         johnDoe.setName("John Doe");
         johnDoe.setEmail("johndoe@nus.edu.sg");
         johnDoe.setPassword("password");
+        johnDoe.setConfirmPassword("password");
         johnDoe.setJobTitle("Research Assistant");
         johnDoe.setInstitution("National University of Singapore");
         johnDoe.setInstitutionAbbreviation("NUS");
@@ -37,6 +38,7 @@ public class UserManager {
         bob.setName("Bob");
         bob.setEmail("bob@nus.edu.sg");
         bob.setPassword("password");
+        bob.setConfirmPassword("password");
         bob.setJobTitle("Research Bob");
         bob.setInstitution("National University of Singapore");
         bob.setInstitutionAbbreviation("NUS");
@@ -54,6 +56,7 @@ public class UserManager {
         charlie.setName("Charlie");
         charlie.setEmail("charlie@nus.edu.sg");
         charlie.setPassword("password");
+        charlie.setConfirmPassword("password");
         charlie.setJobTitle("Research Charlie");
         charlie.setInstitution("National University of Singapore");
         charlie.setInstitutionAbbreviation("NUS");
@@ -71,6 +74,7 @@ public class UserManager {
         dave.setName("Dave");
         dave.setEmail("dave@nus.edu.sg");
         dave.setPassword("password");
+        dave.setConfirmPassword("password");
         dave.setJobTitle("Research Dave");
         dave.setInstitution("National University of Singapore");
         dave.setInstitutionAbbreviation("NUS");
@@ -88,6 +92,7 @@ public class UserManager {
         eve.setName("Eve");
         eve.setEmail("eve@nus.edu.sg");
         eve.setPassword("password");
+        eve.setConfirmPassword("password");
         eve.setJobTitle("Research Eve");
         eve.setInstitution("National University of Singapore");
         eve.setInstitutionAbbreviation("NUS");
@@ -105,6 +110,7 @@ public class UserManager {
         noProject.setName("No Project");
         noProject.setEmail("noproject@nus.edu.sg");
         noProject.setPassword("password");
+        noProject.setConfirmPassword("password");
         noProject.setJobTitle("Research No Project");
         noProject.setInstitution("National University of Singapore");
         noProject.setInstitutionAbbreviation("NUS");

@@ -19,7 +19,21 @@
                         <h2>Account Info</h2>
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="text" class="form-control" id="inputEmail" th:field="*{email}" readonly="readonly"/>
+                            <input type="text" class="form-control" th:field="*{email}" readonly="readonly"/>
+                        </div>
+                        <!-- TODO The page displays empty password for now because it will display the password value in HTML -->
+                        <span class="password-change-mismatch" th:if="${editPassword eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> Password cannot be empty.</span>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" th:field="*{passwodrd}"/>
+                        	<span class="password-change-mismatch" th:if="${editPasswordMismatch eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> Password mismatch.</span>
+                        	<span class="account-change-success" th:if="${editPassword eq 'success'}"><i class="fa fa-check"></i> Password change success.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password:</label>
+                            <input type="password" class="form-control" th:field="*{confirmPassword}"/>
+                            <span class="password-change-mismatch" th:if="${editPasswordMismatch eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> Password mismatch.</span>
+                        	<span class="account-change-success" th:if="${editPassword eq 'success'}"><i class="fa fa-check"></i> Password change success.</span>
                         </div>
                         <h2>Personal Info</h2>
                         <div class="form-group">

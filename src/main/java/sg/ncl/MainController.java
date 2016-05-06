@@ -148,6 +148,8 @@ public class MainController {
     	User originalUser = userManager.getUserById(CURRENT_LOGGED_IN_USER_ID);
     	
     	String editedName = editUser.getName();
+    	String editedPassword = editUser.getPassword();
+    	String editedConfirmPassword = editUser.getConfirmPassword();
     	String editedJobTitle = editUser.getJobTitle();
     	String editedInstitution = editUser.getInstitution();
     	String editedInstitutionAbbreviation = editUser.getInstitutionAbbreviation();
@@ -161,6 +163,14 @@ public class MainController {
     	
     	if (originalUser.updateName(editedName) == true) {
         	redirectAttributes.addFlashAttribute("editName", "success");
+    	}
+    	
+    	if (editedPassword.equals(editedConfirmPassword) == false) {
+    		redirectAttributes.addFlashAttribute("editPasswordMismatch", "unsuccess");
+    	} else if (originalUser.updatePassword(editedPassword) == true) {
+    		redirectAttributes.addFlashAttribute("editPassword", "success");
+    	} else {
+    		redirectAttributes.addFlashAttribute("editPassword", "unsuccess");
     	}
     	
     	if (originalUser.updateJobTitle(editedJobTitle) == true) {

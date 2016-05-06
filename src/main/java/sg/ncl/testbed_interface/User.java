@@ -9,9 +9,10 @@ package sg.ncl.testbed_interface;
 public class User {
     
     private int userId;
-    private String email;
-    private String name;
-    private String password;
+    private String email = "";
+    private String name = "";
+    private String password = "";
+    private String confirmPassword = "";
     private String role; // normal, admin
     private String jobTitle = "";
     private String institution = "";
@@ -59,6 +60,14 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+    
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
     
     public String getRole() {
         return role;
@@ -181,6 +190,16 @@ public class User {
     	}
     }
     
+    public boolean updatePassword(String editedPassword) {
+    	if (password.equals(editedPassword) || editedPassword.isEmpty()) {
+    		return false;
+    	} else {
+    		password = editedPassword;
+    		confirmPassword = editedPassword;
+        	return true;
+    	}
+    }
+    
     public boolean updateJobTitle(String editedJobTitle) {
     	if (jobTitle.equals(editedJobTitle)) {
     		return false;
@@ -271,4 +290,10 @@ public class User {
     	}
     }
     
+    public boolean isPasswordMatch() {
+        if (!password.equals(confirmPassword)) {
+            return false;
+        }
+        return true;
+    }
 }
