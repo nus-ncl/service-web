@@ -4,9 +4,9 @@
  * date: April 06 2016
  */
 
-/* Register Form */
-/* Hide all except first fieldset */
 $(document).ready(function() {
+	/* Register Form */
+	/* Hide all except first fieldset */
     $('.btn-next').click(function() {
 
         current_fs = $(this).parent();
@@ -27,6 +27,39 @@ $(document).ready(function() {
             .prev().show().addClass('current');
             //de-activate current step on progressbar
             $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+    });
+    
+    $('.apply-create-team').click(function() {
+        current_fs = $(this).parent();
+        previous_fs = $(this).parent().prev();
+
+       $('.current').removeClass('current').hide()
+           $('#step4_1').show().addClass('current');
+    });
+    
+    $('.apply-join-team').click(function() {
+        current_fs = $(this).parent();
+        previous_fs = $(this).parent().prev();
+
+       $('.current').removeClass('current').hide()
+           $('#step4_2').show().addClass('current');
+    });
+    
+    $('.btn-prev-selection').click(function() {
+
+        current_fs = $(this).parent();
+         previous_fs = $(this).parent().prev();
+
+        $('.current').removeClass('current').hide()
+            $('#step3').show().addClass('current');
+        
+        // clear fields for Create New Team
+        var teamNameField = document.getElementById('teamName');
+        teamNameField.value = teamNameField.defaultValue;
+        
+        // clear fields for Join Existing Team
+        var joinTeamNameField = document.getElementById('joinTeamName');
+        joinTeamNameField.value = joinTeamNameField.defaultValue;
     });
     
     //-----------------experiment page---------------------

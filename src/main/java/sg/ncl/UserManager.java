@@ -1,8 +1,12 @@
 package sg.ncl;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 
+import sg.ncl.testbed_interface.Experiment;
 import sg.ncl.testbed_interface.Team;
 import sg.ncl.testbed_interface.User;
 
@@ -201,5 +205,20 @@ public class UserManager {
     public void updateUserDetails(User editedUser) {
     	int currUserId = editedUser.getUserId();
     	usersMap.put(currUserId, editedUser);
+    }
+    
+    public void addNewUser(User newUser) {
+    	int userId = generateRandomUserId();
+    	newUser.setUserId(userId);
+    	usersMap.put(userId, newUser);
+    }
+    
+    public int generateRandomUserId() {
+    	Random rn = new Random();
+    	int userId = rn.nextInt();
+    	while (usersMap.containsKey(userId)) {
+    		userId = rn.nextInt();
+    	}
+    	return userId;
     }
 }

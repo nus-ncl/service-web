@@ -14,7 +14,7 @@ import java.util.TimeZone;
  */
 public class Team {
     
-    private long id;
+    private int id;
     private String name;
     private String description;
     private String website;
@@ -33,7 +33,7 @@ public class Team {
     public Team() {
     }
     
-    public Team(long id, String name, String description, String website, String organizationType, String institution, boolean isApproved, boolean isPublic, int members, int membersAwaitingApproval, int experimentsCount, int teamOwnerId) {
+    public Team(int id, String name, String description, String website, String organizationType, String institution, boolean isApproved, boolean isPublic, int members, int membersAwaitingApproval, int experimentsCount, int teamOwnerId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -52,7 +52,7 @@ public class Team {
         return id;
     }
     
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
     
@@ -110,6 +110,16 @@ public class Team {
     
     public void setIsPublic(boolean isPublic) {
         this.isPublic = isPublic;
+    }
+    
+    // the form field returns a string: either public or private
+    // convert this to a boolean format
+    public void setIsPublic(String isPublic) {
+    	if (isPublic.equals("public")) {
+    		setIsPublic(true);
+    	} else {
+    		setIsPublic(false);
+    	}
     }
     
     public int getMembers() {

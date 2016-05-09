@@ -253,3 +253,8 @@
 	font-weight: bold;
 	color: #dd4b39;
 }
+
+/* registration page */
+#step2, #step3, #step4_1, #step4_2 {
+	display: none;
+}

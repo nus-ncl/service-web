@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 
 import sg.ncl.testbed_interface.Team;
 import sg.ncl.testbed_interface.User;
@@ -14,7 +15,7 @@ public class TeamManager {
     /* teamId, team */
 	private final int NO_EXP_COUNT = 0;
     private static TeamManager TEAM_MANAGER_SINGLETON = null;
-    private HashMap<Integer, Team> teamMap;
+    private HashMap<Integer, Team> teamMap; /* teamId - Team */
     private String infoMsg = null;
     
     private HashMap<Integer, List<Team>> invitedToParticipateMap2; /* userId, arraylists of team */
@@ -466,5 +467,20 @@ public class TeamManager {
     public void decrementExperimentCount(int teamId) {
     	Team teamToAddExpCount = teamMap.get(teamId);
     	teamToAddExpCount.setExperimentsCount(teamToAddExpCount.getExperimentsCount()-1);
+    }
+    
+    public void addNewTeam(Team newTeam) {
+    	int teamId = generateRandomTeamId();
+    	newTeam.setId(teamId);
+    	teamMap.put(teamId, newTeam);
+    }
+    
+    public int generateRandomTeamId() {
+    	Random rn = new Random();
+    	int teamId = rn.nextInt();
+    	while (teamMap.containsKey(teamId)) {
+    		teamId = rn.nextInt();
+    	}
+    	return teamId;
     }
 }

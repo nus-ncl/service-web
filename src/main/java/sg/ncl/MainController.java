@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sg.ncl.testbed_interface.Experiment;
 import sg.ncl.testbed_interface.LoginForm;
 import sg.ncl.testbed_interface.SignUpAccountDetailsForm;
+import sg.ncl.testbed_interface.SignUpMergedForm;
 import sg.ncl.testbed_interface.SignUpPersonalDetailsForm;
 import sg.ncl.testbed_interface.Team;
 import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
@@ -64,19 +65,36 @@ public class MainController {
     public String loginSubmit(@ModelAttribute LoginForm loginForm, Model model) throws Exception {
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
-        if (userManager.validateLoginDetails(loginForm.getLoginEmail(), loginForm.getLoginPassword()) == false) {
+    	
+    	String inputEmail = loginForm.getLoginEmail();
+    	int userId = userManager.getUserIdByEmail(inputEmail);
+    	
+        if (userManager.validateLoginDetails(loginForm.getLoginEmail(), loginForm.getLoginPassword()) == false) 
+        {
             // case1: invalid login
             loginForm.setErrorMsg("Invalid email/password.");
-            return "index";
-        } else if (userManager.isEmailVerified(loginForm.getLoginEmail()) == false) {
+            return "redirect:/";
+        } 
+        else if (userManager.isEmailVerified(loginForm.getLoginEmail()) == false) 
+        {
             // case2: email address not validated
             model.addAttribute("emailAddress", loginForm.getLoginEmail());
-            return "email_not_validated";
-        } else if (teamManager.checkTeamValidation(userManager.getUserIdByEmail(loginForm.getLoginEmail())) == false) {
-            // case3: team approval under review
+            return "redirect:/email_not_validated";
+        } 
+        else if (teamManager.getJoinRequestTeamMap2(userId) != null) 
+        {
+        	// case3: user has request to join a team but has not been approved by the team owner
+        	return "redirect:/join_application_awaiting_approval";
+        } 
+        else if (teamManager.checkTeamValidation(userManager.getUserIdByEmail(loginForm.getLoginEmail())) == false)
+        {
+            // case4: since it goes through case3, user must be applying for a team
+        	// team approval under review
             // email address is supposed to be valid here
-            return "team_application_under_review";
-        } else {
+            return "redirect:/team_application_under_review";
+        } 
+        else 
+        {
             // all validated
             // set login
             CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
@@ -133,6 +151,76 @@ public class MainController {
         model.addAttribute("signUpPersonalDetailsForm", new SignUpPersonalDetailsForm());
         System.out.println(signupAccountDetailsForm.getEmail());
         return "signup_personal";
+    }
+    
+    @RequestMapping(value="/signup2", method=RequestMethod.GET)
+    public String signup2(Model model) {
+    	// TODO get each model data and put into relevant ones
+    	model.addAttribute("loginForm", new LoginForm());
+    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    	return "signup2";
+    }
+    
+    @RequestMapping(value="/signup2", method=RequestMethod.POST)
+    public String validateDetails(@ModelAttribute("loginForm") LoginForm loginForm, @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm) {
+    	// TODO get each model data and put into relevant ones
+    	
+    	// add to User model
+    	User newUser = new User();
+    	newUser.setEmail(signUpMergedForm.getEmail());
+    	newUser.setPassword(signUpMergedForm.getPassword());
+    	newUser.setConfirmPassword(signUpMergedForm.getPassword());
+    	newUser.setRole("normal");
+    	newUser.setEmailVerified(true);
+    	newUser.setName(signUpMergedForm.getName());
+    	newUser.setJobTitle(signUpMergedForm.getJobTitle());
+    	newUser.setInstitution(signUpMergedForm.getInstitution());
+    	newUser.setInstitutionAbbreviation(signUpMergedForm.getInstitutionAbbreviation());
+    	newUser.setWebsite(signUpMergedForm.getWebsite());
+    	newUser.setAddress1(signUpMergedForm.getAddress1());
+    	newUser.setAddress2(signUpMergedForm.getAddress2());
+    	newUser.setCountry(signUpMergedForm.getCountry());
+    	newUser.setCity(signUpMergedForm.getCity());
+    	newUser.setProvince(signUpMergedForm.getProvince());
+    	newUser.setPostalCode(signUpMergedForm.getPostalCode());
+    	userManager.addNewUser(newUser);
+    	
+    	int newGeneratedUserId = newUser.getUserId();
+    	
+    	// check if user chose create new team or join existing team by checking team name
+    	String createNewTeamName = signUpMergedForm.getTeamName();
+    	String joinNewTeamName = signUpMergedForm.getJoinTeamName();
+    	
+    	// System.out.println("New team name: " + createNewTeamName);
+    	// System.out.println("Join existing team name: " + joinNewTeamName);
+    	
+    	if (createNewTeamName.isEmpty() == false) {
+    		// System.out.println("apply for new team");
+        	// add to team model
+        	Team newTeam = new Team();
+        	newTeam.setName(createNewTeamName);
+        	newTeam.setDescription(signUpMergedForm.getTeamDescription());
+        	newTeam.setWebsite(signUpMergedForm.getTeamDescription());
+        	newTeam.setOrganizationType(signUpMergedForm.getTeamOrganizationType());
+        	newTeam.setIsPublic(signUpMergedForm.getIsPublic());
+        	newTeam.setTeamOwnerId(newGeneratedUserId);
+        	newTeam.setIsApproved(false);
+        	teamManager.addNewTeam(newTeam);
+        	// redirect to application submitted
+        	return "redirect:/team_application_submitted";
+        	
+    	} else if (joinNewTeamName.isEmpty() == false) {
+    		// System.out.println("join existing new team");
+        	// add user request to join team
+            int teamId = teamManager.getTeamIdByTeamName(joinNewTeamName);
+            teamManager.addJoinRequestTeamMap2(newGeneratedUserId, teamId, userManager.getUserById(newGeneratedUserId));
+            // redirect to join request submitted
+            return "redirect:/join_application_submitted";
+            
+    	} else {
+    		// logic error not suppose to reach here
+    		return "redirect:/signup2";
+    	}
     }
     
     //--------------------------Account Settings Page--------------------------
@@ -227,7 +315,6 @@ public class MainController {
     	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
     	rv = teamManager.getTeamMapByTeamOwner(CURRENT_LOGGED_IN_USER_ID);
     	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
-    	System.out.println(userHasAnyJoinRequest);
     	model.addAttribute("teamMapOwnedByUser", rv);
     	model.addAttribute("userHasAnyJoinRequest", userHasAnyJoinRequest);
     	return "approve_new_user";
@@ -391,7 +478,7 @@ public class MainController {
     @RequestMapping(value="/teams/apply_team", method=RequestMethod.POST)
     public String checkApplyTeamInfo(@Valid TeamPageApplyTeamForm teamPageApplyTeamForm, BindingResult bindingResult) {
        if (bindingResult.hasErrors()) {
-           return "team_page_apply_team";
+           return "redirect:/team_page_apply_team";
        }
        // log data to ensure data has been parsed
        LOGGER.log(Level.INFO, "--------Apply for new team info---------");
@@ -399,7 +486,7 @@ public class MainController {
        return "redirect:/teams/team_application_submitted";
     }
     
-    @RequestMapping(value="/teams/team_owner_policy", method=RequestMethod.GET)
+    @RequestMapping(value="/team_owner_policy", method=RequestMethod.GET)
     public String teamOwnerPolicy() {
         return "team_owner_policy";
     }
@@ -521,27 +608,37 @@ public class MainController {
     //--------------------------Static pages for sign up--------------------------
     
     @RequestMapping("/team_application_submitted")
-    public String teamAppSubmit() {
+    public String teamAppSubmit(Model model) {
+    	model.addAttribute("loginForm", new LoginForm());
+    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
         return "team_application_submitted";
     }
     
     @RequestMapping("/join_application_submitted")
-    public String joinTeamAppSubmit() {
+    public String joinTeamAppSubmit(Model model) {
+    	model.addAttribute("loginForm", new LoginForm());
+    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
         return "join_team_application_submitted";
     }
     
     @RequestMapping("/email_not_validated")
-    public String emailNotValidated() {
+    public String emailNotValidated(Model model) {
+    	model.addAttribute("loginForm", new LoginForm());
+    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
         return "email_not_validated";
     }
     
     @RequestMapping("/team_application_under_review")
-    public String teamAppUnderReview() {
+    public String teamAppUnderReview(Model model) {
+    	model.addAttribute("loginForm", new LoginForm());
+    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
         return "team_application_under_review";
     }
     
     @RequestMapping("/join_application_awaiting_approval")
-    public String joinTeamAppAwaitingApproval() {
+    public String joinTeamAppAwaitingApproval(Model model) {
+    	model.addAttribute("loginForm", new LoginForm());
+    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
         return "join_team_application_awaiting_approval";
     }
     
