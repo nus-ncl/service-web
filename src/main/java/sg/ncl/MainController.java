@@ -2,7 +2,9 @@ package sg.ncl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +25,7 @@ import sg.ncl.testbed_interface.Experiment;
 import sg.ncl.testbed_interface.LoginForm;
 import sg.ncl.testbed_interface.SignUpAccountDetailsForm;
 import sg.ncl.testbed_interface.SignUpPersonalDetailsForm;
+import sg.ncl.testbed_interface.Team;
 import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
 import sg.ncl.testbed_interface.User;
 import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
@@ -215,6 +218,31 @@ public class MainController {
     	
     	userManager.updateUserDetails(originalUser);
         return "redirect:/account_settings";
+    }
+    
+    //--------------------User Side Approve Members Page------------
+    
+    @RequestMapping("/approve_new_user")
+    public String approveNewUser(Model model) {
+    	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
+    	rv = teamManager.getTeamMapByTeamOwner(CURRENT_LOGGED_IN_USER_ID);
+    	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
+    	System.out.println(userHasAnyJoinRequest);
+    	model.addAttribute("teamMapOwnedByUser", rv);
+    	model.addAttribute("userHasAnyJoinRequest", userHasAnyJoinRequest);
+    	return "approve_new_user";
+    }
+    
+    @RequestMapping("/approve_new_user/accept/{teamId}/{userId}")
+    public String userSideAcceptJoinRequest(@PathVariable Integer teamId, @PathVariable Integer userId) {
+        teamManager.acceptJoinRequest(userId, teamId);
+        return "redirect:/approve_new_user";
+    }
+    
+    @RequestMapping("/approve_new_user/reject/{teamId}/{userId}")
+    public String userSideRejectJoinRequest(@PathVariable Integer teamId, @PathVariable Integer userId) {
+        teamManager.rejectJoinRequest(userId, teamId);
+        return "redirect:/approve_new_user";
     }
     
     //--------------------------Teams Page--------------------------
@@ -527,5 +555,20 @@ public class MainController {
 			}
 		}
 		return scenarioFileNameList;
+    }
+    
+    //---Check if user is a team owner and has any join request waiting for approval----
+    private boolean hasAnyJoinRequest(HashMap<Integer, Team> teamMapOwnedByUser) {
+        for (Map.Entry<Integer, Team> entry : teamMapOwnedByUser.entrySet()) {
+            Team currTeam = entry.getValue();
+            if (currTeam.isUserJoinRequestEmpty() == false) {
+            	// at least one team has join user request
+            	return true;
+            }
+        }
+        
+        // loop through all teams but never return a single true
+        // therefore, user's controlled teams has no join request
+        return false;
     }
 }

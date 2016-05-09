@@ -244,4 +244,12 @@ public class Team {
             return joinRequestDateOfApplication.get(userId);
         }
     }
+    
+    public boolean isUserJoinRequestEmpty() {
+    	if (joinRequestMap.isEmpty()) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
 }

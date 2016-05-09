@@ -32,6 +32,8 @@
 	               <li class="dropdown">
 	                   <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg"></i> <span class="caret"></span></a>
 	                   <ul class="dropdown-menu">
+	                   	   <!-- TODO need to check if user is a team owner -->
+	                   	   <li><a href="/approve_new_user" th:href="@{/approve_new_user}">Approve New User</a></li>
 	                       <li><a href="/account_settings" th:href="@{/account_settings}">Edit Account Settings</a></li>
 	                       <li><a href="/logout" th:href="@{/logout}"><i class="fa fa-sign-out"></i> Sign Out</a></li>
 	                   </ul>

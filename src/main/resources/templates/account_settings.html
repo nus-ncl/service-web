@@ -25,7 +25,7 @@
                         <span class="password-change-mismatch" th:if="${editPassword eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> Password cannot be empty.</span>
                         <div class="form-group">
                             <label for="password">Password:</label>
-                            <input type="password" class="form-control" th:field="*{passwodrd}"/>
+                            <input type="password" class="form-control" th:field="*{password}"/>
                         	<span class="password-change-mismatch" th:if="${editPasswordMismatch eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> Password mismatch.</span>
                         	<span class="account-change-success" th:if="${editPassword eq 'success'}"><i class="fa fa-check"></i> Password change success.</span>
                         </div>

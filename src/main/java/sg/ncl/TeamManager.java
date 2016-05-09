@@ -151,7 +151,8 @@ public class TeamManager {
     }
     
     /**
-     * @return list of team information by userid
+     * @return list of team information that contains the user
+     * user can be a member or owner of the team
      */
     public HashMap<Integer, Team> getTeamMap(int userId) {
         HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
@@ -164,6 +165,23 @@ public class TeamManager {
                 if (membersEntry.getKey() == userId) {
                     rv.put(currTeamId, currTeam);
                 }
+            }
+        }
+        return rv;
+    }
+    
+    /**
+     * @return list of team information that contains the user
+     * user must be the owner of the team
+     */
+    public HashMap<Integer, Team> getTeamMapByTeamOwner(int userId) {
+        HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            
+            if (currTeam.getTeamOwnerId() == userId) {
+            	rv.put(currTeamId, currTeam);
             }
         }
         return rv;
