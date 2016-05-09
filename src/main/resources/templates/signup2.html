@@ -22,19 +22,19 @@
                             <h3>Registration</h3>
                         </div> <!-- panel-heading -->
                         
-                        <!-- progressbar -->
-                        <!--  
-                        <ul id="progressbar">
-                            <li class="active">Account Details</li>
-                            <li>Personal Particulars</li>
-                            <li>New Circle</li>
-                        </ul>
-                        -->
-                        
                         <div class="panel-body">
                             <form action="#" th:action="@{/signup2}" method="post" role="form" th:object="${signUpMergedForm}">
                                 <!-- Account Details -->
                                 <fieldset id="step1" class="first current">
+                                
+			                        <!-- progressbar -->
+			                        <ul id="progressbar">
+			                            <li class="active">&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                        </ul>
+			                        
 	                                <h3>Create Your Account</h3>
 	                                <div class="form-group">
 	                                    <input type="text" class="form-control" placeholder="Email" th:field="*{email}"/>
@@ -50,6 +50,15 @@
                                 
                                 <!-- Personal Details -->
                                 <fieldset id="step2">
+                                
+			                        <!-- progressbar -->
+			                        <ul id="progressbar">
+			                            <li>&nbsp;</li>
+			                            <li class="active">&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                        </ul>
+                                
                                 	<h3>Personal Details</h3>
 	                                <div class="form-group">
 	                                    <input type="text" class="form-control" placeholder="Full Name" th:field="*{name}"/>
@@ -90,6 +99,15 @@
                                 
                                 <!-- Select to apply or join existing team -->
                                 <fieldset id="step3">
+                                
+			                        <!-- progressbar -->
+			                        <ul id="progressbar">
+			                            <li>&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                            <li class="active">&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                        </ul>
+			                        
 	                                <div class="form-group">
 	                                	<h4>You need to be a part of a team to use our resources.</h4>
 	                                	<div class="row">
@@ -105,7 +123,16 @@
                                 </fieldset>
                                 
                                 <!-- Apply to Create New Team Details -->
-                                <fieldset id="step4_1">
+                                <fieldset id="step4_1" class="last">
+                                
+			                        <!-- progressbar -->
+			                        <ul id="progressbar">
+			                            <li>&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                            <li class="active">&nbsp;</li>
+			                        </ul>
+			                        
                                 	<h3>Apply to create a new team</h3>
 	                                <div class="form-group">
 	                                    <input type="text" class="form-control" placeholder="Team Name" th:field="*{teamName}"/>
@@ -145,6 +172,15 @@
                                	
                                 <!-- Apply to Join Existing Team Details -->
                                 <fieldset id="step4_2" class="last">
+                                
+			                        <!-- progressbar -->
+			                        <ul id="progressbar">
+			                            <li>&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                            <li>&nbsp;</li>
+			                            <li class="active">&nbsp;</li>
+			                        </ul>
+			                        
                                 	<h3>Apply to join an existing team</h3>
 			                        <div class="form-group">
 			                            <input type="text" class="form-control" placeholder="Team Name to Join" th:field="*{joinTeamName}"/> 
