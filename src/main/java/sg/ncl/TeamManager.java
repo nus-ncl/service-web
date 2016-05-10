@@ -33,6 +33,7 @@ public class TeamManager {
         team1.setIsApproved(true);
         team1.setIsPublic(true);
         team1.setExperimentsCount(1);
+        team1.setCharges(1.50);
         team1.setTeamOwnerId(200);
         team1.addMembers(200, "owner");
         team1.addMembers(201, "member");
@@ -47,6 +48,7 @@ public class TeamManager {
         team2.setIsApproved(true);
         team2.setIsPublic(true);
         team2.setExperimentsCount(1);
+        team2.setCharges(2.50);
         team2.setTeamOwnerId(200);
         team2.addMembers(200, "owner");
         team2.addMembers(201, "member");
@@ -61,6 +63,7 @@ public class TeamManager {
         team3.setIsApproved(true);
         team3.setIsPublic(false);
         team3.setExperimentsCount(1);
+        team3.setCharges(3.50);
         team3.setTeamOwnerId(201);
         team3.addMembers(201, "owner");
         team3.addMembers(200, "member");
@@ -75,6 +78,7 @@ public class TeamManager {
         team4.setIsApproved(true);
         team4.setIsPublic(false);
         team4.setExperimentsCount(NO_EXP_COUNT);
+        team4.setCharges(4.50);
         team4.setTeamOwnerId(202);
         team4.addMembers(202, "owner");
         
@@ -88,6 +92,7 @@ public class TeamManager {
         team5.setIsApproved(true);
         team5.setIsPublic(true);
         team5.setExperimentsCount(NO_EXP_COUNT);
+        team5.setCharges(5.50);
         team5.setTeamOwnerId(202);
         team5.addMembers(202, "owner");
         
@@ -212,6 +217,40 @@ public class TeamManager {
         } else {
             return true;
         }
+    }
+    
+    // returns the number of approved teams that the member is in
+    public int getApprovedTeams(int userId) {
+        int approvedTeamCount = 0;
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            Team currTeam = entry.getValue();
+            
+            // check team is validated
+            HashMap<Integer, String> membersMap = currTeam.getMembersMap();
+            for (Map.Entry<Integer, String> membersEntry : membersMap.entrySet()) {
+                if (membersEntry.getKey() == userId && currTeam.getIsApproved()) {
+                	approvedTeamCount++;
+                }
+            }
+        }
+        return approvedTeamCount;
+    }
+    
+    // returns the number of unapproved teams that the member is in
+    public int getUnApprovedTeams(int userId) {
+        int unApprovedTeamCount = 0;
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            Team currTeam = entry.getValue();
+            
+            // check team is validated
+            HashMap<Integer, String> membersMap = currTeam.getMembersMap();
+            for (Map.Entry<Integer, String> membersEntry : membersMap.entrySet()) {
+                if (membersEntry.getKey() == userId && !currTeam.getIsApproved()) {
+                	unApprovedTeamCount++;
+                }
+            }
+        }
+        return unApprovedTeamCount;
     }
     
     public void addJoinRequestTeamMap2(int userId, int teamId, User requestIssuer) {
@@ -482,5 +521,27 @@ public class TeamManager {
     		teamId = rn.nextInt();
     	}
     	return teamId;
+    }
+    
+    public HashMap<Integer, Team> getTeamsPendingApproval() {
+        HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+        	int currTeamId = entry.getKey();
+            Team currTeam = entry.getValue();
+            if (currTeam.getIsApproved() == false) {
+                rv.put(currTeamId, currTeam);
+            }
+        }
+        return rv;
+    }
+    
+    public void approveTeamApplication(int teamId) {
+    	Team toBeApproved = teamMap.get(teamId);
+    	toBeApproved.setIsApproved(true);
+    	teamMap.put(teamId, toBeApproved);
+    }
+    
+    public void rejectTeamApplication(int teamId) {
+    	teamMap.remove(teamId);
     }
 }

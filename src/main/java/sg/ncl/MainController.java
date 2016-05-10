@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import sg.ncl.testbed_interface.Domain;
 import sg.ncl.testbed_interface.Experiment;
 import sg.ncl.testbed_interface.LoginForm;
 import sg.ncl.testbed_interface.SignUpAccountDetailsForm;
@@ -47,13 +49,14 @@ public class MainController {
     private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
     private final String host = "http://localhost:8080/";
     private int CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
+    private boolean IS_USER_ADMIN = false;
     private TeamManager teamManager = TeamManager.getInstance();
     private UserManager userManager = UserManager.getInstance();
     private ExperimentManager experimentManager = ExperimentManager.getInstance();
+    private DomainManager domainManager = DomainManager.getInstance();
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
     
-    private static SignUpAccountDetailsForm signupAccountDetailsForm = new SignUpAccountDetailsForm();
     
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String index(Model model) throws Exception {
@@ -62,7 +65,7 @@ public class MainController {
     }
     
     @RequestMapping(value="/", method=RequestMethod.POST)
-    public String loginSubmit(@ModelAttribute LoginForm loginForm, Model model) throws Exception {
+    public String loginSubmit(@ModelAttribute LoginForm loginForm, Model model, HttpSession session) throws Exception {
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
     	
@@ -86,7 +89,7 @@ public class MainController {
         	// case3: user has request to join a team but has not been approved by the team owner
         	return "redirect:/join_application_awaiting_approval";
         } 
-        else if (teamManager.checkTeamValidation(userManager.getUserIdByEmail(loginForm.getLoginEmail())) == false)
+        else if (teamManager.getApprovedTeams(userId) == 0 && teamManager.getUnApprovedTeams(userId) > 0)
         {
             // case4: since it goes through case3, user must be applying for a team
         	// team approval under review
@@ -96,8 +99,12 @@ public class MainController {
         else 
         {
             // all validated
+        	// user may have no team at this point due to rejected team application or join request
+        	// must allow user to login so that user can apply again
             // set login
             CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
+            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
+            session.setAttribute("isUserAdmin", IS_USER_ADMIN);
             return "redirect:/dashboard";
         }
     }
@@ -109,49 +116,18 @@ public class MainController {
     }
     
     @RequestMapping("/dashboard")
-    public String dashboard() {
+    public String dashboard(Model model) {
         return "dashboard";
     }
     
     @RequestMapping(value="/logout", method=RequestMethod.GET)
-    public String logout() {
+    public String logout(HttpSession session) {
         CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
+        session.removeAttribute("isUserAdmin");
         return "redirect:/";
     }
     
     //--------------------------Sign Up Page--------------------------
-    
-    @RequestMapping(value="/signup", method=RequestMethod.GET)
-    public String signup(Model model) {
-        // forms has to be added for other views, because the loginForm also exists on those pages
-        model.addAttribute("loginForm", new LoginForm());
-        model.addAttribute("signUpAccountDetailsForm", signupAccountDetailsForm);
-        return "signup";
-    }
-    
-    @RequestMapping(value="/signup", method=RequestMethod.POST)
-    public String validateSignUpForms(@ModelAttribute LoginForm loginForm, @ModelAttribute @Valid SignUpAccountDetailsForm signupAccountDetailsForm, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "signup";
-        } else if (userManager.getUserIdByEmail(signupAccountDetailsForm.getEmail()) != ERROR_NO_SUCH_USER_ID) {
-            signupAccountDetailsForm.setErrorMsg("Email is already in use");
-            return "signup";
-        } else if (signupAccountDetailsForm.isPasswordMatch() == false) {
-            signupAccountDetailsForm.setErrorMsg("Passwords do not match");
-            return "signup";
-        } else {
-            return "redirect:/signup/personal_details";
-        }
-    }
-    
-    @RequestMapping(value="/signup/personal_details", method=RequestMethod.GET)
-    public String signupTest(@ModelAttribute SignUpAccountDetailsForm signupAccountDetailsForm, Model model) {
-        // forms has to be added for other views, because the loginForm also exists on those pages
-        model.addAttribute("loginForm", new LoginForm());
-        model.addAttribute("signUpPersonalDetailsForm", new SignUpPersonalDetailsForm());
-        System.out.println(signupAccountDetailsForm.getEmail());
-        return "signup_personal";
-    }
     
     @RequestMapping(value="/signup2", method=RequestMethod.GET)
     public String signup2(Model model) {
@@ -171,7 +147,7 @@ public class MainController {
     	newUser.setPassword(signUpMergedForm.getPassword());
     	newUser.setConfirmPassword(signUpMergedForm.getPassword());
     	newUser.setRole("normal");
-    	newUser.setEmailVerified(true);
+    	newUser.setEmailVerified(false);
     	newUser.setName(signUpMergedForm.getName());
     	newUser.setJobTitle(signUpMergedForm.getJobTitle());
     	newUser.setInstitution(signUpMergedForm.getInstitution());
@@ -522,7 +498,6 @@ public class MainController {
     
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
     public String experiments(Model model) {
-        // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("teamManager", teamManager);
         model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         return "experiments";
@@ -590,6 +565,56 @@ public class MainController {
         // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/experiments";
+    }
+    
+    //---------------------------------Admin---------------------------------
+    @RequestMapping("/admin")
+    public String admin(Model model) {
+    	model.addAttribute("domain", new Domain());
+    	model.addAttribute("domainTable", domainManager.getDomainTable());
+    	model.addAttribute("usersMap", userManager.getUserMap());
+    	model.addAttribute("teamsMap", teamManager.getTeamMap());
+    	model.addAttribute("teamManager", teamManager);
+    	model.addAttribute("teamsPendingApprovalMap", teamManager.getTeamsPendingApproval());
+    	return "admin";
+    }
+    
+    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
+    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
+    	if (bindingResult.hasErrors()) {
+    		return "redirect:/admin";
+    	} else {
+    		domainManager.addDomains(domain.getDomainName());
+    	}
+    	return "redirect:/admin";
+    }
+    
+    @RequestMapping("/admin/domains/remove/{domainKey}")
+    public String removeDomain(@PathVariable String domainKey) {
+    	domainManager.removeDomains(domainKey);
+    	return "redirect:/admin";
+    }
+    
+    @RequestMapping("/admin/teams/accept/{teamId}")
+    public String approveTeam(@PathVariable Integer teamId) {
+    	// set the approved flag to true
+    	teamManager.approveTeamApplication(teamId);
+    	return "redirect:/admin";
+    }
+    
+    @RequestMapping("/admin/teams/reject/{teamId}")
+    public String rejectTeam(@PathVariable Integer teamId) {
+    	// need to cleanly remove the team application
+    	teamManager.rejectTeamApplication(teamId);
+    	return "redirect:/admin";
+    }
+    
+    @RequestMapping("/admin/users/ban/{userId}")
+    public String banUser(@PathVariable Integer userId) {
+    	// TODO
+    	// perform ban action here
+    	// need to cleanly remove user info from teams, user. etc
+    	return "redirect:/admin";
     }
     
     //--------------------------Static pages for teams--------------------------

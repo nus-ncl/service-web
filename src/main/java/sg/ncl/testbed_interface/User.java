@@ -157,7 +157,7 @@ public class User {
         this.postalCode = postalCode;
     }
 
-    public boolean isEmailVerified() {
+    public boolean getIsEmailVerified() {
         return isEmailVerified;
     }
 

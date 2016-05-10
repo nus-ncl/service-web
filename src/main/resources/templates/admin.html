@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Teams</title>
+        <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" media="screen"/>
+        <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{css/font-awesome/css/font-awesome.min.css}"/>
+        <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{css/custom.css}"/>
+        <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{js/jquery-1.12.2.min.js}"></script>
+        <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
+        <script type="text/javascript" src="static/js/custom.js" th:src="@{js/custom.js}"></script>
+    </head>
+    <body class="mybg">
+        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+        <div class="container">
+            <div class="row">
+            	<h2>Admin Dashboard</h2>
+                <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
+                    <li class="active"><a data-toggle="pill" href="#overview">Overview</a></li>
+                    <li><a data-toggle="pill" href="#domainsManagement">Domains management</a></li>
+                    <li><a data-toggle="pill" href="#teamsManagement">Teams management</a></li>
+                    <li><a data-toggle="pill" href="#usersManagement">Users management</a></li>
+                    <li><a data-toggle="pill" href="#resourcesManagement">Resources management</a></li>
+                </ul>
+                <div class="tab-content col-sm-10">
+                	<div id="overview" class="tab-pane fade in active">
+                		<h3>Overview</h3>
+                	</div> <!-- overview -->
+                	
+                	<div id="domainsManagement" class="tab-pane fade">
+                		<h3>Current Acceptable Domains</h3>
+               			<table class="table table-responsive">
+               				<tr th:each="domainEntry : ${domainTable}">
+               					<td th:text="${domainEntry.value.domainName}"></td>
+               					<td><a href="#" th:href="@{/admin/domains/remove/{domainKey}(domainKey=${domainEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to delete the domain?"><i class="fa fa-trash"></i></a></td>
+               				</tr>
+               			</table>
+						<form method="post" action="#" th:action="@{/admin/domains/add}" th:object="${domain}" role="form">
+							<div class="form-group">
+								<div class="col-xs-7" th:classappend="${#fields.hasErrors('domainName')}? 'has-error'">
+									<span class="help-block" th:if="${#fields.hasErrors('domainName')}" th:errors="*{domainName}">Domain name error</span>
+									<input type="text" class="form-control" placeholder="Type domain here to include to the above list" th:field="*{domainName}"/>
+								</div>
+								<button type="submit" class="btn btn-success"><i class="fa fa-plus"></i> Add</button>
+							</div>
+                		</form>
+                	</div> <!-- domainsManagement -->
+                	
+                	<div id="teamsManagement" class="tab-pane fade">
+                		<h3>Teams Pending for Approval</h3>
+                		<th:block th:if="not ${teamsPendingApprovalMap.isEmpty()}">
+                			<table class="table table-responsive">
+	                            <thead>
+	                                <th th:text="#{admin.teams.header.name}">Team</th>
+	                                <th th:text="#{admin.teams.header.description}">Description</th>
+	                                <th th:text="#{admin.teams.header.institutition}">Institution</th>
+	                                <th th:text="#{admin.teams.header.type}">Type</th>
+	                                <th th:text="#{admin.teams.header.public}">Publicly Listed</th>
+	                                <th><!-- Actions --></th>
+	                            </thead>
+	                            <tr th:each="teamsEntry : ${teamsPendingApprovalMap}">
+	                           		<td th:text="${teamsEntry.value.name}"></td>
+	                           		<td th:text="${teamsEntry.value.description}"></td>
+	                           		<td th:text="${teamsEntry.value.institution}"></td>
+	                           		<td th:text="${teamsEntry.value.organizationType}"></td>
+	                           		<td th:if="not ${teamsEntry.value.isPublic}" th:text="Private">Listed Visibility</td>
+		                            <td th:if="${teamsEntry.value.isPublic}" th:text="Public">Listed Visibility</td>
+		                            <td>
+		                            	<a href="#" title="Accept" class="btn btn-success" th:href="@{/admin/teams/accept/{teamId}(teamId=${teamsEntry.key})}"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a>
+		                            	<a href="#" title="Reject" class="btn btn-danger" th:href="@{/admin/teams/reject/{teamId}(teamId=${teamsEntry.key})}"><i class="fa fa-times-circle-o fa-lg"></i> Reject</a>
+		                            </td>
+	                            </tr>
+	                        </table>
+                		</th:block>
+                		<th:block th:if="${teamsPendingApprovalMap.isEmpty()}">
+                			<p>You have no pending teams for approval/</p>
+                		</th:block>
+                		<h3>Teams in the System</h3>
+                		<th:block th:if="not ${teamsMap.isEmpty()}">
+	               			<table class="table table-responsive">
+		                        <thead>
+		                            <th th:text="#{admin.teams.header.id}">Team ID</th>
+		                            <th th:text="#{admin.teams.header.name}">Team</th>
+		                            <th th:text="#{admin.teams.header.charges}">Charges</th>
+		                        </thead>
+		                        <tr th:each="teamsEntry : ${teamsMap}" th:if="${teamsEntry.value.isApproved}">
+		                       		<td th:text="${teamsEntry.key}"></td>
+		                       		<td th:text="${teamsEntry.value.name}"></td>
+		                       		<td th:text="${teamsEntry.value.charges}"></td>
+		                        </tr>
+		                    </table>
+                		</th:block>
+                		<span th:if="${teamsMap.isEmpty()}">No teams in the system.</span>
+                	</div> <!-- teamsManagement -->
+                	
+                	<div id="usersManagement" class="tab-pane fade">
+                		<h3>Users Management</h3>
+                        <table class="table table-responsive table-striped">
+                            <thead>
+                                <th th:text="#{admin.users.header.name}">Full Name</th>
+                                <th th:text="#{admin.users.header.email}">Email</th>
+                                <th th:text="#{admin.users.header.team}">Team</th>
+                                <th th:text="#{admin.users.header.ban}">Ban</th>
+                            </thead>
+                            <tr th:each="usersEntry : ${usersMap}">
+                                <td th:text="${usersEntry.value.name}">Full Name</td>
+                                <td th:text="${usersEntry.value.email}">Email</td>
+                                <td th:if="${usersEntry.value.isEmailVerified}">
+                                	<span th:if="not ${teamManager.getTeamMap(usersEntry.key).isEmpty()}" th:each="teamsEntry : ${teamManager.getTeamMap(usersEntry.key)}">
+                                		<i class="fa fa-heart-o"></i> <span th:text="${teamsEntry.value.name + '-' + teamsEntry.key}"></span><br/>
+                                	</span>
+                                	<span th:if="${teamManager.getTeamMap(usersEntry.key).isEmpty()}">
+                                		<p><i class="fa fa-exclamation-triangle"></i> user has no team</p>
+                                	</span>
+                                </td>
+                                <td th:if="not ${usersEntry.value.isEmailVerified}">
+                                	<i class="fa fa-exclamation-triangle"></i> email not validated
+                                </td>
+                                <td><a href="#" th:href="@{/admin/users/ban/{userId}(userId=${usersEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="ban this user"><i class="fa fa-ban text-danger"></i></a></td>
+                            </tr>
+                        </table>
+                	</div> <!-- usersManagement -->
+                	
+                	<div id="resourcesManagement" class="tab-pane fade">
+                		<h3>Resources Management</h3>
+                	</div> <!-- resourcesManagement -->
+                	
+                </div> <!-- tab content -->
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </body>
+</html>

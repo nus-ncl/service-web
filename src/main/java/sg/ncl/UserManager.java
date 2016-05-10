@@ -56,7 +56,7 @@ public class UserManager {
         
         User charlie = new User();
         charlie.setUserId(202);
-        charlie.setRole("admin");
+        charlie.setRole("normal");
         charlie.setName("Charlie");
         charlie.setEmail("charlie@nus.edu.sg");
         charlie.setPassword("password");
@@ -74,7 +74,7 @@ public class UserManager {
         
         User dave = new User();
         dave.setUserId(203);
-        dave.setRole("admin");
+        dave.setRole("normal");
         dave.setName("Dave");
         dave.setEmail("dave@nus.edu.sg");
         dave.setPassword("password");
@@ -126,12 +126,31 @@ public class UserManager {
         noProject.setPostalCode("600123");
         noProject.setEmailVerified(true);
         
+        User ncl = new User();
+        ncl.setUserId(206);
+        ncl.setRole("admin");
+        ncl.setName("NCL Admin");
+        ncl.setEmail("ncladmin@ncl.sg");
+        ncl.setPassword("password");
+        ncl.setConfirmPassword("password");
+        ncl.setJobTitle("NCL Admin");
+        ncl.setInstitution("National University of Singapore");
+        ncl.setInstitutionAbbreviation("NUS");
+        ncl.setWebsite("http://www.nus.edu.sg");
+        ncl.setAddress1("Boon Lay Drive 222");
+        ncl.setCountry("Singapore");
+        ncl.setCity("Singapore");
+        ncl.setProvince("SG");
+        ncl.setPostalCode("600123");
+        ncl.setEmailVerified(true);
+        
         usersMap.put(johnDoe.getUserId(), johnDoe); 	// 200
         usersMap.put(bob.getUserId(), bob);         	// 201
         usersMap.put(charlie.getUserId(), charlie); 	// 202
         usersMap.put(dave.getUserId(), dave);       	// 203
         usersMap.put(eve.getUserId(), eve);         	// 204
         usersMap.put(noProject.getUserId(), noProject); // 205
+        usersMap.put(ncl.getUserId(), ncl); 			// 206
     }
     
     public static UserManager getInstance() {
@@ -158,9 +177,9 @@ public class UserManager {
     public boolean isEmailVerified(String email) {
         for (Map.Entry<Integer, User> entry : usersMap.entrySet()) {
             User currUser = entry.getValue();
-            if (currUser.getEmail().equals(email) && currUser.isEmailVerified()) {
+            if (currUser.getEmail().equals(email) && currUser.getIsEmailVerified()) {
                 return true;
-            } else if (currUser.getEmail().equals(email) && !currUser.isEmailVerified()) {
+            } else if (currUser.getEmail().equals(email) && !currUser.getIsEmailVerified()) {
                 return false;
             }
         }
@@ -213,6 +232,10 @@ public class UserManager {
     	usersMap.put(userId, newUser);
     }
     
+    public void removeUser(int userId) {
+    	usersMap.remove(userId);
+    }
+    
     public int generateRandomUserId() {
     	Random rn = new Random();
     	int userId = rn.nextInt();
@@ -220,5 +243,14 @@ public class UserManager {
     		userId = rn.nextInt();
     	}
     	return userId;
+    }
+    
+    public boolean isUserAdmin(int userId) {
+    	User currUser = usersMap.get(userId);
+    	if (currUser.getRole().equals("admin")) {
+    		return true;
+    	} else {
+    		return false;
+    	}
     }
 }

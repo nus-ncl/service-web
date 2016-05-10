@@ -26,6 +26,7 @@ public class Team {
     private int membersAwaitingApproval = 0;
     private int experimentsCount;
     private int teamOwnerId;
+    private double charges = 0.00;
     private HashMap<Integer, String> membersMap = new HashMap<Integer, String>(); /* Members hash table containing uid and team position, e.g. 110 - member */
     private HashMap<Integer, User> joinRequestMap = new HashMap<Integer, User>(); /* Join request from users per team, userId - User */
     private HashMap<Integer, String> joinRequestDateOfApplication = new HashMap<Integer, String>(); /*Users' join request date of application, userId - Date, e.g. 110 - DD-MM-YYYY */
@@ -153,6 +154,14 @@ public class Team {
     public void setTeamOwnerId(int teamOwnerId) {
         this.teamOwnerId = teamOwnerId;
     }
+    
+	public double getCharges() {
+		return charges;
+	}
+
+	public void setCharges(double charges) {
+		this.charges = charges;
+	}
     
     /**
     @Override
