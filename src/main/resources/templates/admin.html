@@ -24,7 +24,57 @@
                 </ul>
                 <div class="tab-content col-sm-10">
                 	<div id="overview" class="tab-pane fade in active">
-                		<h3>Overview</h3>
+                		<div class="row">
+                			<div class="col-sm-6">
+                				<div class="panel panel-primary">
+                					<div class="panel-heading">
+                						<h4>Overview</h4>
+                					</div> <!-- panel heading -->
+                					<div class="panel-body">
+                						<ul>
+                							<li>Total Team: <span th:text="${totalTeamCount}"></span></li>
+                							<li>Total Experiment: <span th:text="${totalExpCount}"></span></li>
+                							<li>Total Members: <span th:text="${totalMemberCount}"></span></li>
+                							<li>Members Awaiting Approval: <span th:text="${totalMemberAwaitingApprovalCount}"></span></li>
+                						</ul>
+                					</div> <!-- panel body -->
+                				</div>
+                			</div> <!-- col-sm-6 -->
+                			<div class="col-sm-6">
+                				<div class="panel panel-primary">
+                					<div class="panel-heading">
+                						<h4>Statistics</h4>
+                					</div> <!-- panel heading -->
+                					<div class="panel-body">
+                						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sed tincidunt ipsum. Nam eget justo ut quam tristique fringilla. Etiam vehicula faucibus lobortis. Ut facilisis ipsum ac dolor consectetur bibendum. Ut rhoncus pellentesque porta. Morbi faucibus dui et elit vulputate interdum. Ut molestie mauris ac risus aliquam maximus. Morbi ut posuere urna, mattis tempor nibh. Pellentesque ac fermentum enim, eu mattis massa. Nam et quam condimentum, consequat quam vitae, blandit turpis.</p>
+                					</div> <!-- panel body -->
+                				</div>
+                			</div> <!-- col-sm-6 -->
+                		</div> <!-- row -->
+                		<div class="row">
+	               			<table class="table table-responsive">
+	                            <thead>
+	                                <th th:text="#{admin.overview.header.experiment}">Experiment</th>
+	                                <th th:text="#{admin.overview.header.team}">Team</th>
+	                                <th th:text="#{admin.overview.header.status}">Status</th>
+	                                <th th:text="#{admin.overview.header.nodesUtilized}">Nodes Utilized</th>
+	                                <th th:text="#{admin.overview.header.hours}">Hours</th>
+	                                <th><!-- Actions --></th>
+	                            </thead>
+	                            <th:block th:each="expList : ${experimentMap}">
+	                            	<th:block th:each="expEntry: ${expList}">
+	                            		<tr th:if="${expEntry.value.status == 'READY'}">
+	                            			<td th:text="${expEntry.value.name}"></td>
+	                            			<td th:text="${teamManager.getTeamNameByTeamId(expEntry.value.teamId)}"></td>
+	                            			<td th:text="${expEntry.value.status}"></td>
+	                            			<td th:text="${expEntry.value.nodesCount}"></td>
+	                            			<td th:text="${expEntry.value.hoursRunning}"></td>
+	                            			<td><a href="#" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alert the experiment starter by sending email"><i class="fa fa-envelope-o"></i></a></td>
+	                            		</tr>
+	                            	</th:block>
+	                            </th:block>
+	               			</table>
+                		</div>
                 	</div> <!-- overview -->
                 	
                 	<div id="domainsManagement" class="tab-pane fade">
@@ -107,16 +157,26 @@
                                 <td th:text="${usersEntry.value.email}">Email</td>
                                 <td th:if="${usersEntry.value.isEmailVerified}">
                                 	<span th:if="not ${teamManager.getTeamMap(usersEntry.key).isEmpty()}" th:each="teamsEntry : ${teamManager.getTeamMap(usersEntry.key)}">
-                                		<i class="fa fa-heart-o"></i> <span th:text="${teamsEntry.value.name + '-' + teamsEntry.key}"></span><br/>
+                                		<i class="fa fa-heart text-primary"></i> <span th:text="${teamsEntry.value.name + '-' + teamsEntry.key}"></span><br/>
                                 	</span>
                                 	<span th:if="${teamManager.getTeamMap(usersEntry.key).isEmpty()}">
-                                		<p><i class="fa fa-exclamation-triangle"></i> user has no team</p>
+                                		<p><i class="fa fa-exclamation-triangle text-warning"></i> user has no team</p>
                                 	</span>
                                 </td>
                                 <td th:if="not ${usersEntry.value.isEmailVerified}">
-                                	<i class="fa fa-exclamation-triangle"></i> email not validated
+                                	<i class="fa fa-exclamation-triangle text-warning"></i> email not validated
                                 </td>
-                                <td><a href="#" th:href="@{/admin/users/ban/{userId}(userId=${usersEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="ban this user"><i class="fa fa-ban text-danger"></i></a></td>
+                                <td th:if="${usersEntry.value.role != 'admin'}">
+                                	<a href="#" th:href="@{/admin/users/ban/{userId}(userId=${usersEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="ban this user">
+                                		<span class="fa-stack fa-lg">
+                                			<i class="fa fa-user fa-stack-1x"></i>
+                                			<i class="fa fa-ban fa-stack-2x text-danger"></i>
+                                		</span>
+                                	</a>
+                                </td>
+                                <td th:if="${usersEntry.value.role == 'admin'}">
+                                	<p>------</p>
+                                </td>
                             </tr>
                         </table>
                 	</div> <!-- usersManagement -->

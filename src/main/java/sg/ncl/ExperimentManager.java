@@ -312,4 +312,14 @@ public class ExperimentManager {
         }
         return null;
     }
+    
+    // for admin overview
+    public int getTotalExpCount() {
+    	int totalExpCount = 0;
+	    for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
+	        List<Experiment> currExpList = entry.getValue();
+	        totalExpCount = totalExpCount + currExpList.size();
+	    }
+	    return totalExpCount;
+    }
 }

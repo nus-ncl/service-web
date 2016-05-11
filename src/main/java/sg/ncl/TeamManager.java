@@ -544,4 +544,27 @@ public class TeamManager {
     public void rejectTeamApplication(int teamId) {
     	teamMap.remove(teamId);
     }
+    
+    //------------------------for admin overview------------------------
+    public int getTotalTeamsCount() {
+    	return teamMap.size();
+    }
+    
+    public int getTotalMembersCount() {
+    	int totalMembers = 0;
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            Team currTeam = entry.getValue();
+            totalMembers = totalMembers + currTeam.getMembers();
+        }
+        return totalMembers;
+    }
+    
+    public int getTotalMembersAwaitingApproval() {
+    	int totalMembersAwaitingApproval = 0;
+        for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
+            Team currTeam = entry.getValue();
+            totalMembersAwaitingApproval = totalMembersAwaitingApproval + currTeam.getMembersAwaitingApproval();
+        }
+        return totalMembersAwaitingApproval;
+    }
 }

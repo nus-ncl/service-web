@@ -576,6 +576,12 @@ public class MainController {
     	model.addAttribute("teamsMap", teamManager.getTeamMap());
     	model.addAttribute("teamManager", teamManager);
     	model.addAttribute("teamsPendingApprovalMap", teamManager.getTeamsPendingApproval());
+    	model.addAttribute("experimentMap", experimentManager.getExperimentMap());
+    	
+    	model.addAttribute("totalTeamCount", teamManager.getTotalTeamsCount());
+    	model.addAttribute("totalExpCount", experimentManager.getTotalExpCount());
+    	model.addAttribute("totalMemberCount", teamManager.getTotalMembersCount());
+    	model.addAttribute("totalMemberAwaitingApprovalCount", teamManager.getTotalMembersAwaitingApproval());
     	return "admin";
     }
     
