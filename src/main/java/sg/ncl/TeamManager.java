@@ -21,6 +21,10 @@ public class TeamManager {
     private HashMap<Integer, List<Team>> invitedToParticipateMap2; /* userId, arraylists of team */
     private HashMap<Integer, List<Team>> joinRequestMap2; /* userId, arraylists of team */
     
+    private final String OWNER_POSITION = "owner";
+    private final String MEMBER_POSITION = "member";
+    private final String PENDING_ACCEPT_INVITATION_POSITION = "pending for acceptance";
+    
     
     private TeamManager() {
         Team team1 = new Team();
@@ -35,8 +39,8 @@ public class TeamManager {
         team1.setExperimentsCount(1);
         team1.setCharges(1.50);
         team1.setTeamOwnerId(200);
-        team1.addMembers(200, "owner");
-        team1.addMembers(201, "member");
+        team1.addMembers(200, OWNER_POSITION);
+        team1.addMembers(201, MEMBER_POSITION);
         
         Team team2 = new Team();
         team2.setId(111);
@@ -50,8 +54,8 @@ public class TeamManager {
         team2.setExperimentsCount(1);
         team2.setCharges(2.50);
         team2.setTeamOwnerId(200);
-        team2.addMembers(200, "owner");
-        team2.addMembers(201, "member");
+        team2.addMembers(200, OWNER_POSITION);
+        team2.addMembers(201, MEMBER_POSITION);
         
         Team team3 = new Team();
         team3.setId(112);
@@ -65,8 +69,8 @@ public class TeamManager {
         team3.setExperimentsCount(1);
         team3.setCharges(3.50);
         team3.setTeamOwnerId(201);
-        team3.addMembers(201, "owner");
-        team3.addMembers(200, "member");
+        team3.addMembers(201, OWNER_POSITION);
+        team3.addMembers(200, MEMBER_POSITION);
         
         Team team4 = new Team();
         team4.setId(113);
@@ -80,7 +84,7 @@ public class TeamManager {
         team4.setExperimentsCount(NO_EXP_COUNT);
         team4.setCharges(4.50);
         team4.setTeamOwnerId(202);
-        team4.addMembers(202, "owner");
+        team4.addMembers(202, OWNER_POSITION);
         
         Team team5 = new Team();
         team5.setId(114);
@@ -94,7 +98,7 @@ public class TeamManager {
         team5.setExperimentsCount(NO_EXP_COUNT);
         team5.setCharges(5.50);
         team5.setTeamOwnerId(202);
-        team5.addMembers(202, "owner");
+        team5.addMembers(202, OWNER_POSITION);
         
         Team team6 = new Team();
         team6.setId(115);
@@ -107,7 +111,7 @@ public class TeamManager {
         team6.setIsPublic(false);
         team6.setExperimentsCount(NO_EXP_COUNT);
         team6.setTeamOwnerId(203);
-        team6.addMembers(203, "owner");
+        team6.addMembers(203, OWNER_POSITION);
         
         // add to global team map
         teamMap = new HashMap<Integer, Team>();
@@ -324,7 +328,7 @@ public class TeamManager {
                 currTeam.removeUserFromJoinRequestMap(userId);
                 
                 // add userid to members map
-                currTeam.addMembers(userId, "member");
+                currTeam.addMembers(userId, MEMBER_POSITION);
                 teamMap.put(currTeamId, currTeam);
                 
                 // also need to remove join request from user side
@@ -359,11 +363,12 @@ public class TeamManager {
         // TODO check if userId indeed have a participation request
         // add as member
         // update team
+    	// member position will be overwritten to "member"
         for (Map.Entry<Integer, Team> entry : teamMap.entrySet()) {
             int currTeamId = entry.getKey();
             Team currTeam = entry.getValue();
             if (currTeamId == teamId) {
-                currTeam.addMembers(userId, "member");
+                currTeam.addMembers(userId, MEMBER_POSITION);
                 teamMap.put(currTeamId, currTeam);
                 return;
             }
@@ -455,6 +460,9 @@ public class TeamManager {
                         }
                     }
                     currInviteList.add(TEAM_MANAGER_SINGLETON.getTeamByTeamId(teamId));
+                    
+                    // add to members map to show on team profile page that member is pending
+                    addUserAsPending(userId, teamId);
                 }
             }
         } else {
@@ -467,8 +475,30 @@ public class TeamManager {
             if (inviteToThisTeam.isUserInTeam(userId) == false) {
                 myInvitedList.add(inviteToThisTeam);
                 invitedToParticipateMap2.put(userId, myInvitedList);
+                
+                // add to members map to show on team profile page that member is pending
+                addUserAsPending(userId, teamId);
             }
         }
+    }
+    
+ 	// add to members map to show on team profile page that member is pending
+    // but don't increase the members count
+    public void addUserAsPending(int userId, int teamId) {
+    	Team currTeam = teamMap.get(teamId);
+        HashMap<Integer, String> membersMap = currTeam.getMembersMap();
+        membersMap.put(userId, PENDING_ACCEPT_INVITATION_POSITION);
+        teamMap.put(teamId, currTeam);
+    }
+    
+    // user rejects the team owner invitation
+    // need to remove from the members map
+    // need to remove the info from team profile page
+    public void removeUserPending(int userId, int teamId) {
+    	Team currTeam = teamMap.get(teamId);
+        HashMap<Integer, String> membersMap = currTeam.getMembersMap();
+        membersMap.remove(userId);
+        teamMap.put(teamId, currTeam);
     }
 
     public List<Team> getInvitedToParticipateMap2(int userId) {
@@ -483,6 +513,21 @@ public class TeamManager {
         return rv;
     }
     
+    public void removeParticipationRequest(int userId, int teamId) {
+        for (Map.Entry<Integer, List<Team>> entry : invitedToParticipateMap2.entrySet()) {
+            int currUserId = entry.getKey();
+            if (currUserId == userId) {
+                List<Team> invitedToParticipateTeamList = entry.getValue();
+                for (ListIterator<Team> iter = invitedToParticipateTeamList.listIterator(); iter.hasNext();) {
+                    Team currTeam = iter.next();
+                    if (currTeam.getId() == teamId) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+    }
+    
     public void ignoreParticipationRequest2(int userId, int teamId) {
         for (Map.Entry<Integer, List<Team>> entry : invitedToParticipateMap2.entrySet()) {
             int currUserId = entry.getKey();
@@ -491,6 +536,7 @@ public class TeamManager {
                 for (ListIterator<Team> iter = invitedToParticipateTeamList.listIterator(); iter.hasNext();) {
                     Team currTeam = iter.next();
                     if (currTeam.getId() == teamId) {
+                    	removeUserPending(userId, teamId);
                         iter.remove();
                     }
                 }

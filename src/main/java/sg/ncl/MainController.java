@@ -329,9 +329,10 @@ public class MainController {
     public String acceptParticipationRequest(@PathVariable Integer teamId, Model model) {
         // get user's participation request list
         // add this user id to the requested list
-        // remove participation request
         teamManager.acceptParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
-        teamManager.ignoreParticipationRequest2(CURRENT_LOGGED_IN_USER_ID, teamId);
+        // remove participation request since accepted
+        teamManager.removeParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        
         // must get team name
         String teamName = teamManager.getTeamNameByTeamId(teamId);
         teamManager.setInfoMsg("You have just joined Team " + teamName + " !");
@@ -440,6 +441,20 @@ public class MainController {
         model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         // decrease exp count to be display on Teams page
         teamManager.decrementExperimentCount(teamId);
+        return "redirect:/team_profile/{teamId}";
+    }
+    
+    @RequestMapping(value="/team_profile/invite_user/{teamId}", method=RequestMethod.GET)
+    public String inviteUserFromTeamProfile(@PathVariable Integer teamId, Model model) {
+        model.addAttribute("teamIdVar", teamId);
+        model.addAttribute("teamPageInviteMemberForm", new TeamPageInviteMemberForm());
+        return "team_profile_invite_members";
+    }
+    
+    @RequestMapping(value="/team_profile/invite_user/{teamId}", method=RequestMethod.POST)
+    public String sendInvitationFromTeamProfile(@PathVariable Integer teamId, @ModelAttribute TeamPageInviteMemberForm teamPageInviteMemberForm, Model model) {
+        int userId = userManager.getUserIdByEmail(teamPageInviteMemberForm.getInviteUserEmail());
+        teamManager.addInvitedToParticipateMap(userId, teamId);
         return "redirect:/team_profile/{teamId}";
     }
     

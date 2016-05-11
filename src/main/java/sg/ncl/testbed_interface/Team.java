@@ -27,7 +27,7 @@ public class Team {
     private int experimentsCount;
     private int teamOwnerId;
     private double charges = 0.00;
-    private HashMap<Integer, String> membersMap = new HashMap<Integer, String>(); /* Members hash table containing uid and team position, e.g. 110 - member */
+    private HashMap<Integer, String> membersMap = new HashMap<Integer, String>(); /* Members hash table containing uid and team position, e.g. 110 - owner/member/pending */
     private HashMap<Integer, User> joinRequestMap = new HashMap<Integer, User>(); /* Join request from users per team, userId - User */
     private HashMap<Integer, String> joinRequestDateOfApplication = new HashMap<Integer, String>(); /*Users' join request date of application, userId - Date, e.g. 110 - DD-MM-YYYY */
     

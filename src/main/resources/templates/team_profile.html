@@ -34,8 +34,8 @@
                             </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.status}">Status</strong></td>
-                                <td th:if="${team.isApproved}" th:text="Approved">Status</td>
-                                <td th:if="not ${team.isApproved}" th:text="Under Review">Status</td>
+                                <td th:if="${team.isApproved}">Approved</td>
+                                <td th:if="not ${team.isApproved}">Under Review</td>
                             </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.name}">Name</strong></td>
@@ -76,9 +76,19 @@
                                     <a href="#" th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.id}, userId=${membersEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash"></i></a>
                                 </td>
                                 <!-- team owner cannot remove own account -->
-                                <td th:if="not ${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">---</td>
+                                <td th:if="${not team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">---</td>
+                            	<!-- member cannot resend invitation -->
+                            	<td th:if="${not team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'pending for acceptance'}">---</td>
+                            	<!-- team owner can resend invitation -->
+                            	<td th:if="${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'pending for acceptance'}">
+                            		<a href="#" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alert the experiment starter by sending email"><i class="fa fa-envelope-o"></i></a>
+                            	</td>
                             </tr>
                         </table>
+                        <!-- team owner can only invite users if the team is approved -->
+                        <th:block th:if="${team.isUserTeamOwner(currentLoggedInUserId) and team.isApproved}">
+                        	<a href="#" th:href="@{/team_profile/invite_user/{teamId}(teamId=${team.id})}" class="btn btn-success"><i class="fa fa-plus"></i> Invite User</a>
+                        </th:block>
                     </div>
                     <div id="experiments" class="tab-pane fade">
                         <h3>Experiments</h3>
