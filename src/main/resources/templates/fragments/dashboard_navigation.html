@@ -26,6 +26,7 @@
 	           <ul class="nav navbar-nav dashboard-navbar">
 	               <li><a href="/teams" th:href="@{/teams}"><i class="fa fa-leaf"></i> Team</a></li>
 	               <li><a href="/experiments" th:href="@{/experiments}"><i class="fa fa-tasks"></i> Experiment</a></li>
+	               <li><a href="/data" th:href="@{/data}"><i class="fa fa-database"></i> Data</a></li>
 	               <li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><i class="fa fa-book"></i> Admin</a></li>
 	               <li><a href="#"><i class="fa fa-umbrella"></i> Help</a></li>
 	           </ul>

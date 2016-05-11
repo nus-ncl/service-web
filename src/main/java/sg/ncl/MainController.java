@@ -54,6 +54,7 @@ public class MainController {
     private UserManager userManager = UserManager.getInstance();
     private ExperimentManager experimentManager = ExperimentManager.getInstance();
     private DomainManager domainManager = DomainManager.getInstance();
+    private DatasetManager datasetManager = DatasetManager.getInstance();
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
     
@@ -580,6 +581,19 @@ public class MainController {
         // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
         return "redirect:/experiments";
+    }
+    
+    //---------------------------------Dataset Page--------------------------
+    
+    @RequestMapping("/data")
+    public String data(Model model) {
+    	return "data";
+    }
+    
+    @RequestMapping("/data/public")
+    public String openDataset(Model model) {
+    	model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
+    	return "data_public";
     }
     
     //---------------------------------Admin---------------------------------

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Teams</title>
+        <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" media="screen"/>
+        <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{css/font-awesome/css/font-awesome.min.css}"/>
+        <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{css/custom.css}"/>
+        <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{js/jquery-1.12.2.min.js}"></script>
+        <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
+        <script type="text/javascript" src="static/js/custom.js" th:src="@{js/custom.js}"></script>
+    </head>
+    <body class="mybg">
+        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+        <div class="container">
+            <div class="row">
+            	<h2>You contributed the following datasets</h2>
+                <table class="table table-responsive">
+                    <thead>
+                        <th>
+                        	<span th:text="#{data.header.name}">Name</span>
+                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question"></i>
+                        		<span class="tooltiptext">
+                        			<p>Dataset Name</p>
+                        		</span>
+                        	</a>
+                       	</th>
+                        <th>
+                        	<span th:text="#{data.header.releaseDate}">Release Date</span>
+                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question"></i>
+                        		<span class="tooltiptext">
+                        			<p>The date when the dataset is made</p>
+                        		</span>
+                        	</a>
+                        </th>
+                        <th><!-- Actions --></th>
+                    </thead>
+                </table>
+            	<h2>You have access to the following datasets</h2>
+            	<a href="#" th:href="@{/data/public}">View Public Datasets</a>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </body>
+</html>

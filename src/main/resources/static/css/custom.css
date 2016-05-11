@@ -254,3 +254,35 @@
 #step2, #step3, #step4_1, #step4_2 {
 	display: none;
 }
+
+/* data page question mark mouseover */
+.data-name-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.data-name-tooltip .tooltiptext {
+	opacity: 0.7;
+    visibility: hidden;
+    width: 300px;
+    background-color: black;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 5px 0 0px 5px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.data-name-tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.data-name-tooltip .tooltiptext {
+    width: 300px;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
