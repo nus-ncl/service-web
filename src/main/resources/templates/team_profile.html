@@ -76,6 +76,8 @@
                                     <a href="#" th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.id}, userId=${membersEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash"></i></a>
                                 </td>
                                 <!-- team owner cannot remove own account -->
+                                <td th:if="${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'owner'}">---</td>
+                                <!-- member cannot remove other members' account -->
                                 <td th:if="${not team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">---</td>
                             	<!-- member cannot resend invitation -->
                             	<td th:if="${not team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'pending for acceptance'}">---</td>
