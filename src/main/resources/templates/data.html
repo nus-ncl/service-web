@@ -15,11 +15,11 @@
         <div class="container">
             <div class="row">
             	<h2>You contributed the following datasets</h2>
-                <table class="table table-responsive">
+                <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetOwnedByUserList)}">
                     <thead>
                         <th>
                         	<span th:text="#{data.header.name}">Name</span>
-                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question"></i>
+                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
                         		<span class="tooltiptext">
                         			<p>Dataset Name</p>
                         		</span>
@@ -27,17 +27,56 @@
                        	</th>
                         <th>
                         	<span th:text="#{data.header.releaseDate}">Release Date</span>
-                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question"></i>
+                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
                         		<span class="tooltiptext">
                         			<p>The date when the dataset is made</p>
                         		</span>
                         	</a>
                         </th>
                         <th><!-- Actions --></th>
-                    </thead>
+                   </thead>
+                   <tr th:each="dataset : ${datasetOwnedByUserList}">
+	                   	<td th:text="${dataset.datasetName}"></td>
+	                   	<td th:text="${dataset.releaseDate}"></td>
+	                   	<td>
+	                   		<a href="#" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download">Download</a>
+	                   		<a href="#" th:href="@{/data/edit/{datasetId}(datasetId=${dataset.datasetId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pencil"></i></a>
+	                   		<a href="#" th:href="@{/data/remove_dataset/{datasetId}(datasetId=${dataset.datasetId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to delete this dataset?"><i class="fa fa-trash"></i></a>
+	                   	</td>
+                   </tr>
                 </table>
+                <p th:if="${#lists.isEmpty(datasetOwnedByUserList)}">You have not contributed any datasets yet.</p>
+                
             	<h2>You have access to the following datasets</h2>
-            	<a href="#" th:href="@{/data/public}">View Public Datasets</a>
+               <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetAccessibleByUserList)}">
+                    <thead>
+                        <th>
+                        	<span th:text="#{data.header.name}">Name</span>
+                       	</th>
+                        <th>
+                        	<span th:text="#{data.header.owner}">Owner</span>
+                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                        		<span class="tooltiptext">
+                        			<p>The owner of the dataset</p>
+                        		</span>
+                        	</a>
+                        </th>
+                        <th>
+                        	<span th:text="#{data.header.releaseDate}">Release Date</span>
+                        </th>
+                        <th><!-- Actions --></th>
+                   </thead>
+                   <tr th:each="dataset : ${datasetAccessibleByUserList}">
+	                   	<td th:text="${dataset.datasetName}"></td>
+	                   	<td th:text="${userManager.getNameByUserId(dataset.ownerId)}"></td>
+	                   	<td th:text="${dataset.releaseDate}"></td>
+	                   	<td>
+	                   		<a href="#" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download">Download</a>
+	                 	</td>
+                   </tr>
+                </table>
+            	<p><a href="#" th:href="@{/data/public}"><button type="button" class="btn btn-default"><i class="fa fa-globe"></i> View Public Datasets</button></a></p>
+            	<p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
             </div> <!-- row -->
         </div> <!-- container -->
     </body>

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import sg.ncl.testbed_interface.Dataset;
 import sg.ncl.testbed_interface.Domain;
 import sg.ncl.testbed_interface.Experiment;
 import sg.ncl.testbed_interface.LoginForm;
@@ -41,10 +42,10 @@ import sg.ncl.testbed_interface.TeamPageInviteMemberForm;
  * @author yeoteye
  * 
  */
-
 @Controller
 public class MainController {
     
+	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final int ERROR_NO_SUCH_USER_ID = 0;
     private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
     private final String host = "http://localhost:8080/";
@@ -85,9 +86,11 @@ public class MainController {
             model.addAttribute("emailAddress", loginForm.getLoginEmail());
             return "redirect:/email_not_validated";
         } 
-        else if (teamManager.getJoinRequestTeamMap2(userId) != null) 
+        else if (teamManager.getApprovedTeams(userId) == 0 && teamManager.getJoinRequestTeamMap2(userId) != null) 
         {
-        	// case3: user has request to join a team but has not been approved by the team owner
+        	// case3 
+        	// user is not a team owner nor a team member
+        	// user has request to join a team but has not been approved by the team owner
         	return "redirect:/join_application_awaiting_approval";
         } 
         else if (teamManager.getApprovedTeams(userId) == 0 && teamManager.getUnApprovedTeams(userId) > 0)
@@ -106,6 +109,7 @@ public class MainController {
             CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
             IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
             session.setAttribute("isUserAdmin", IS_USER_ADMIN);
+            session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
             return "redirect:/dashboard";
         }
     }
@@ -125,6 +129,7 @@ public class MainController {
     public String logout(HttpSession session) {
         CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
         session.removeAttribute("isUserAdmin");
+        session.removeAttribute(SESSION_LOGGED_IN_USER_ID);
         return "redirect:/";
     }
     
@@ -202,18 +207,18 @@ public class MainController {
     
     //--------------------------Account Settings Page--------------------------
     @RequestMapping(value="/account_settings", method=RequestMethod.GET)
-    public String accountDetails(Model model) {
-    	User editUser = userManager.getUserById(CURRENT_LOGGED_IN_USER_ID);
+    public String accountDetails(Model model, HttpSession session) {
+    	User editUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
     	model.addAttribute("editUser", editUser);
         return "account_settings";
     }
     
     @RequestMapping(value="/account_settings", method=RequestMethod.POST)
-    public String editAccountDetails(@ModelAttribute("editUser") User editUser, final RedirectAttributes redirectAttributes) {
+    public String editAccountDetails(@ModelAttribute("editUser") User editUser, final RedirectAttributes redirectAttributes, HttpSession session) {
     	// Need to be this way to "edit" details
     	// If not, the form details will overwrite existing user's details
     	// TODO for email changes need to resend email confirmation
-    	User originalUser = userManager.getUserById(CURRENT_LOGGED_IN_USER_ID);
+    	User originalUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
     	
     	String editedName = editUser.getName();
     	String editedPassword = editUser.getPassword();
@@ -288,9 +293,9 @@ public class MainController {
     //--------------------User Side Approve Members Page------------
     
     @RequestMapping("/approve_new_user")
-    public String approveNewUser(Model model) {
+    public String approveNewUser(Model model, HttpSession session) {
     	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
-    	rv = teamManager.getTeamMapByTeamOwner(CURRENT_LOGGED_IN_USER_ID);
+    	rv = teamManager.getTeamMapByTeamOwner(getSessionIdOfLoggedInUser(session));
     	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
     	model.addAttribute("teamMapOwnedByUser", rv);
     	model.addAttribute("userHasAnyJoinRequest", userHasAnyJoinRequest);
@@ -312,13 +317,14 @@ public class MainController {
     //--------------------------Teams Page--------------------------
     
     @RequestMapping("/teams")
-    public String teams(Model model) {
+    public String teams(Model model, HttpSession session) {
+    	int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
         model.addAttribute("infoMsg", teamManager.getInfoMsg());
-        model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
-        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("currentLoggedInUserId", currentLoggedInUserId);
+        model.addAttribute("teamMap", teamManager.getTeamMap(currentLoggedInUserId));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
+        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
         // REST Client Code
         // final String uri = host + "teams/?";
         // RestTemplate restTemplate = new RestTemplate();
@@ -327,12 +333,13 @@ public class MainController {
     }
     
     @RequestMapping("/accept_participation/{teamId}")
-    public String acceptParticipationRequest(@PathVariable Integer teamId, Model model) {
+    public String acceptParticipationRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
+    	int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
         // get user's participation request list
         // add this user id to the requested list
-        teamManager.acceptParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.acceptParticipationRequest(currentLoggedInUserId, teamId);
         // remove participation request since accepted
-        teamManager.removeParticipationRequest(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.removeParticipationRequest(currentLoggedInUserId, teamId);
         
         // must get team name
         String teamName = teamManager.getTeamNameByTeamId(teamId);
@@ -342,22 +349,22 @@ public class MainController {
     }
     
     @RequestMapping("/ignore_participation/{teamId}")
-    public String ignoreParticipationRequest(@PathVariable Integer teamId, Model model) {
+    public String ignoreParticipationRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
         // get user's participation request list
         // remove this user id from the requested list
         String teamName = teamManager.getTeamNameByTeamId(teamId);
-        teamManager.ignoreParticipationRequest2(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.ignoreParticipationRequest2(getSessionIdOfLoggedInUser(session), teamId);
         teamManager.setInfoMsg("You have just ignored a team request from Team " + teamName + " !");
         
         return "redirect:/teams";
     }
     
     @RequestMapping("/withdraw/{teamId}")
-    public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model) {
+    public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
         // get user team request
         // remove this user id from the user's request list
         String teamName = teamManager.getTeamNameByTeamId(teamId);
-        teamManager.removeUserJoinRequest2(CURRENT_LOGGED_IN_USER_ID, teamId);
+        teamManager.removeUserJoinRequest2(getSessionIdOfLoggedInUser(session), teamId);
         teamManager.setInfoMsg("You have withdrawn your join request for Team " + teamName);
         
         return "redirect:/teams";
@@ -398,8 +405,8 @@ public class MainController {
     //--------------------------Team Profile Page--------------------------
     
     @RequestMapping("/team_profile/{teamId}")
-    public String teamProfile(@PathVariable Integer teamId, Model model) {
-        model.addAttribute("currentLoggedInUserId", CURRENT_LOGGED_IN_USER_ID);
+    public String teamProfile(@PathVariable Integer teamId, Model model, HttpSession session) {
+        model.addAttribute("currentLoggedInUserId", getSessionIdOfLoggedInUser(session));
         model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
         model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
         model.addAttribute("userManager", userManager);
@@ -418,28 +425,28 @@ public class MainController {
     }
     
     @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
-    public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model) {
+    public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
         // start experiment
         // ensure experiment is stopped first before starting
-        experimentManager.startExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
+        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
     	return "redirect:/team_profile/{teamId}";
     }
     
     @RequestMapping("/team_profile/{teamId}/stop_experiment/{expId}")
-    public String stopExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model) {
+    public String stopExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
         // stop experiment
         // ensure experiment is in ready mode before stopping
-        experimentManager.stopExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
+        experimentManager.stopExperiment(getSessionIdOfLoggedInUser(session), expId);
         return "redirect:/team_profile/{teamId}";
     }
     
     @RequestMapping("/team_profile/{teamId}/remove_experiment/{expId}")
-    public String removeExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model) {
+    public String removeExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
         // remove experiment
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
-        experimentManager.removeExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId);
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
         // decrease exp count to be display on Teams page
         teamManager.decrementExperimentCount(teamId);
         return "redirect:/team_profile/{teamId}";
@@ -492,7 +499,7 @@ public class MainController {
     }
     
     @RequestMapping(value="/teams/join_team", method=RequestMethod.POST)
-    public String checkJoinTeamInfo(@Valid TeamPageJoinTeamForm teamPageJoinForm, BindingResult bindingResult, Model model) {
+    public String checkJoinTeamInfo(@Valid TeamPageJoinTeamForm teamPageJoinForm, BindingResult bindingResult, Model model, HttpSession session) {
         if (bindingResult.hasErrors()) {
             return "team_page_join_team";
         }
@@ -504,35 +511,35 @@ public class MainController {
         // add to user join team list
         // ensure user is not already in the team or have submitted the application
         // add to team join request map also for members approval function
-        User currentUser = userManager.getUserById(CURRENT_LOGGED_IN_USER_ID);
+        User currentUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
         int teamId = teamManager.getTeamIdByTeamName(teamPageJoinForm.getTeamName());
-        teamManager.addJoinRequestTeamMap2(CURRENT_LOGGED_IN_USER_ID, teamId, currentUser);
+        teamManager.addJoinRequestTeamMap2(getSessionIdOfLoggedInUser(session), teamId, currentUser);
         return "redirect:/teams/join_application_submitted/" + teamId;
     }
     
     //--------------------------Experiment Page--------------------------
     
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
-    public String experiments(Model model) {
+    public String experiments(Model model, HttpSession session) {
         model.addAttribute("teamManager", teamManager);
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
         return "experiments";
     }
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
-    public String createExperiment(Model model) {
+    public String createExperiment(Model model, HttpSession session) {
     	List<String> scenarioFileNameList = getScenarioFileNameList();
         model.addAttribute("experiment", new Experiment());
         model.addAttribute("scenarioFileNameList", scenarioFileNameList);
-        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
+        model.addAttribute("teamMap", teamManager.getTeamMap(getSessionIdOfLoggedInUser(session)));
         return "experiment_page_create_experiment";
     }
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
-    public String validateExperiment(@ModelAttribute Experiment experiment, Model model) {
-        model.addAttribute("teamMap", teamManager.getTeamMap(CURRENT_LOGGED_IN_USER_ID));
+    public String validateExperiment(@ModelAttribute Experiment experiment, Model model, HttpSession session) {
+        model.addAttribute("teamMap", teamManager.getTeamMap(getSessionIdOfLoggedInUser(session)));
         // add current experiment to experiment manager
-        experimentManager.addExperiment(CURRENT_LOGGED_IN_USER_ID, experiment);
+        experimentManager.addExperiment(getSessionIdOfLoggedInUser(session), experiment);
         // increase exp count to be display on Teams page
         teamManager.incrementExperimentCount(experiment.getTeamId());
         
@@ -549,14 +556,13 @@ public class MainController {
     }
     
     @RequestMapping("/remove_experiment/{expId}")
-    public String removeExperiment(@PathVariable Integer expId, Model model) {
+    public String removeExperiment(@PathVariable Integer expId, Model model, HttpSession session) {
         // remove experiment
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
     	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
-        experimentManager.removeExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
-        // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId);
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
         
         // decrease exp count to be display on Teams page
         teamManager.decrementExperimentCount(teamId);
@@ -564,36 +570,112 @@ public class MainController {
     }
     
     @RequestMapping("/start_experiment/{expId}")
-    public String startExperiment(@PathVariable Integer expId, Model model) {
+    public String startExperiment(@PathVariable Integer expId, Model model, HttpSession session) {
         // start experiment
         // ensure experiment is stopped first before starting
-        experimentManager.startExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
-        // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
         return "redirect:/experiments";
     }
     
     @RequestMapping("/stop_experiment/{expId}")
-    public String stopExperiment(@PathVariable Integer expId, Model model) {
+    public String stopExperiment(@PathVariable Integer expId, Model model, HttpSession session) {
         // stop experiment
         // ensure experiment is in ready mode before stopping
-        experimentManager.stopExperiment(CURRENT_LOGGED_IN_USER_ID, expId);
-        // model.addAttribute("experimentMap", experimentManager.getExperimentMapByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(CURRENT_LOGGED_IN_USER_ID));
+        experimentManager.stopExperiment(getSessionIdOfLoggedInUser(session), expId);
+        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
         return "redirect:/experiments";
     }
     
     //---------------------------------Dataset Page--------------------------
     
     @RequestMapping("/data")
-    public String data(Model model) {
+    public String data(Model model, HttpSession session) {
+    	model.addAttribute("datasetOwnedByUserList", datasetManager.getDatasetContributedByUser(getSessionIdOfLoggedInUser(session)));
+    	model.addAttribute("datasetAccessibleByUserList", datasetManager.getDatasetAccessibleByuser(getSessionIdOfLoggedInUser(session)));
+    	model.addAttribute("userManager", userManager);
     	return "data";
+    }
+    
+    @RequestMapping(value="/data/contribute", method=RequestMethod.GET)
+    public String contributeData(Model model) {
+    	model.addAttribute("dataset", new Dataset());
+    	return "contribute_data";
+    }
+    
+    @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
+    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session) {
+    	// TODO
+    	// validation
+    	// get file from user upload to server
+    	datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset);
+    	return "redirect:/data";
+    }
+    
+    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.GET)
+    public String datasetInfo(@PathVariable Integer datasetId, Model model) {
+    	Dataset dataset = datasetManager.getDataset(datasetId);
+    	model.addAttribute("editDataset", dataset);
+    	return "edit_data";
+    }
+    
+    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.POST)
+    public String editDatasetInfo(@PathVariable Integer datasetId, @ModelAttribute("editDataset") Dataset dataset, final RedirectAttributes redirectAttributes) {
+    	Dataset origDataset = datasetManager.getDataset(datasetId);
+    	
+    	String editedDatasetName = dataset.getDatasetName();
+    	String editedDatasetDesc = dataset.getDatasetDescription();
+    	String editedDatasetLicense = dataset.getLicense();
+    	String editedDatasetRestricted = dataset.getIsRestricted();
+    	boolean editedDatasetIsRequiredAuthorization = dataset.getRequireAuthorization();
+    	
+    	if (origDataset.updateName(editedDatasetName) == true) {
+    		redirectAttributes.addFlashAttribute("editName", "success");
+    	}
+    	
+    	if (origDataset.updateDescription(editedDatasetDesc) == true) {
+    		redirectAttributes.addFlashAttribute("editDesc", "success");
+    	}
+    	
+    	if (origDataset.updateLicense(editedDatasetLicense) == true) {
+    		redirectAttributes.addFlashAttribute("editLicense", "success");
+    	}
+    	
+    	if (origDataset.updateRestricted(editedDatasetRestricted) == true) {
+    		redirectAttributes.addFlashAttribute("editRestricted", "success");
+    	}
+    	
+    	if (origDataset.updateAuthorization(editedDatasetIsRequiredAuthorization) == true) {
+    		redirectAttributes.addFlashAttribute("editIsRequiredAuthorization", "success");
+    	}
+    	
+    	datasetManager.updateDatasetDetails(origDataset);
+    	
+    	return "redirect:/data/edit/{datasetId}";
+    }
+    
+    @RequestMapping("/data/remove_dataset/{datasetId}")
+    public String removeDataset(@PathVariable Integer datasetId) {
+    	datasetManager.removeDataset(datasetId);
+    	return "redirect:/data";
     }
     
     @RequestMapping("/data/public")
     public String openDataset(Model model) {
     	model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
+    	model.addAttribute("userManager", userManager);
     	return "data_public";
+    }
+    
+    @RequestMapping("/data/public/request_access/{dataOwnerId}")
+    public String requestAccessForDataset(@PathVariable Integer dataOwnerId, Model model) {
+    	// TODO
+    	// send reuqest to team owner
+    	// show feedback to users
+    	User rv = userManager.getUserById(dataOwnerId);
+    	model.addAttribute("ownerName", rv.getName());
+    	model.addAttribute("ownerEmail", rv.getEmail());
+    	return "data_request_access";
     }
     
     //---------------------------------Admin---------------------------------
@@ -727,5 +809,10 @@ public class MainController {
         // loop through all teams but never return a single true
         // therefore, user's controlled teams has no join request
         return false;
+    }
+    
+    //--------------------------MISC--------------------------
+    public int getSessionIdOfLoggedInUser(HttpSession session) {
+    	return Integer.parseInt(session.getAttribute(SESSION_LOGGED_IN_USER_ID).toString());
     }
 }

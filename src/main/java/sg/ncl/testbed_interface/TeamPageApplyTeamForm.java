@@ -18,7 +18,7 @@ public class TeamPageApplyTeamForm {
     private String teamOrganizationType;
     
     @NotNull(message="Please select one of them")
-    private String isPublic = null;
+    private String isPublic = "public";
     
     @AssertTrue(message="Please read and accept the team owner policy")
     private boolean hasAcceptTeamOwnerPolicy;

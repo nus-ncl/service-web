@@ -1,5 +1,8 @@
 package sg.ncl.testbed_interface;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Dataset {
 	
 	
@@ -9,8 +12,10 @@ public class Dataset {
 	private String license;
 	private int ownerId;
 	private int datasetId;
-	private boolean isRestricted; // dataset visibility: open and restricted
+	private String isRestricted = "open"; // dataset visibility: open and restricted
 	private boolean requireAuthorization; // true: need to request access, false: can just download
+	private Set<Integer> usersAccessSet = new HashSet<Integer>(); // stores a list of userids that have accessed to this dataset including the owner
+	private boolean hasAcceptDataOwnerPolicy;
 	
 	public Dataset() {
 	}
@@ -31,11 +36,11 @@ public class Dataset {
 		this.releaseDate = releaseDate;
 	}
 
-	public boolean getIsRestricted() {
+	public String getIsRestricted() {
 		return isRestricted;
 	}
 
-	public void setIsRestricted(boolean isRestricted) {
+	public void setIsRestricted(String isRestricted) {
 		this.isRestricted = isRestricted;
 	}
 
@@ -77,5 +82,65 @@ public class Dataset {
 
 	public void setRequireAuthorization(boolean requireAuthorization) {
 		this.requireAuthorization = requireAuthorization;
+	}
+	
+	public void addUsersAccess(int userId) {
+		usersAccessSet.add(userId);
+	}
+	
+	public boolean isUserHasAccess(int userId) {
+		if (usersAccessSet.contains(userId)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean getHasAcceptDataOwnerPolicy() {
+		return hasAcceptDataOwnerPolicy;
+	}
+
+	public void setHasAcceptDataOwnerPolicy(boolean hasAcceptDataOwnerPolicy) {
+		this.hasAcceptDataOwnerPolicy = hasAcceptDataOwnerPolicy;
+	}
+	
+	public boolean updateName(String editedName) {
+		if (!datasetName.equals(editedName)) {
+			datasetName = editedName;
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean updateDescription(String editedDesc) {
+		if (!datasetDescription.equals(editedDesc)) {
+			datasetDescription = editedDesc;
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean updateLicense(String editedLicense) {
+		if (!license.equals(editedLicense)) {
+			license = editedLicense;
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean updateRestricted(String editedRestricted) {
+		if (!isRestricted.equals(editedRestricted)) {
+			isRestricted = editedRestricted;
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean updateAuthorization(boolean editedIsRequiredAuthorization) {
+		if (requireAuthorization != editedIsRequiredAuthorization) {
+			requireAuthorization = editedIsRequiredAuthorization;
+			return true;
+		}
+		return false;
 	}
 }

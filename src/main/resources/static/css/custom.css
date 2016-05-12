@@ -281,6 +281,40 @@
 }
 
 .data-name-tooltip .tooltiptext {
+	text-align: center;
+    width: 300px;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
+
+/* license tooltip mouseover */
+.license-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.license-tooltip .tooltiptext {
+	opacity: 0.7;
+    visibility: hidden;
+    width: 300px;
+    background-color: black;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 5px 0 0px 5px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.license-tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.license-tooltip .tooltiptext {
+	padding: 10px;
     width: 300px;
     top: 100%;
     left: 50%;
