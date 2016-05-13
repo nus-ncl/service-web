@@ -62,13 +62,13 @@
 	                                <th><!-- Actions --></th>
 	                            </thead>
 	                            <th:block th:each="expList : ${experimentMap}">
-	                            	<th:block th:each="expEntry: ${expList}">
-	                            		<tr th:if="${expEntry.value.status == 'READY'}">
-	                            			<td th:text="${expEntry.value.name}"></td>
-	                            			<td th:text="${teamManager.getTeamNameByTeamId(expEntry.value.teamId)}"></td>
-	                            			<td th:text="${expEntry.value.status}"></td>
-	                            			<td th:text="${expEntry.value.nodesCount}"></td>
-	                            			<td th:text="${expEntry.value.hoursRunning}"></td>
+	                            	<th:block th:each="expEntry : ${expList.value}">
+	                            		<tr th:if="${expEntry.status == 'READY'}">
+	                            			<td th:text="${expEntry.name}"></td>
+	                            			<td th:text="${teamManager.getTeamNameByTeamId(expEntry.teamId)}"></td>
+	                            			<td th:text="${expEntry.status}"></td>
+	                            			<td th:text="${expEntry.nodesCount}"></td>
+	                            			<td th:text="${expEntry.hoursRunning}"></td>
 	                            			<td><a href="#" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alert the experiment starter by sending email"><i class="fa fa-envelope-o"></i></a></td>
 	                            		</tr>
 	                            	</th:block>
@@ -182,7 +182,76 @@
                 	</div> <!-- usersManagement -->
                 	
                 	<div id="resourcesManagement" class="tab-pane fade">
-                		<h3>Resources Management</h3>
+		               <div class="panel panel-primary">
+		                    <div class="panel-body">
+		                    	<h3>Resources Management</h3>
+		                    	<p>&nbsp;</p>
+								<ul class="nav nav-tabs">
+								  <li class="active"><a data-toggle="tab" href="#nodeStatistics">Node Statistics</a></li>
+								  <li><a data-toggle="tab" href="#datasets">Datasets</a></li>
+								  <li><a data-toggle="tab" href="#experiments">Experiments</a></li>
+								</ul>
+								<div class="tab-content">
+								    <div id="nodeStatistics" class="tab-pane fade in active">
+								      <h4>Node Statistics</h4>
+								      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+								    </div> <!-- nodeStatistics -->
+								    
+								    <div id="datasets" class="tab-pane fade">
+								      <p>&nbsp;</p>
+										<table class="table table-responsive">
+											<thead>
+											    <th th:text="#{data.header.name}">Name</th>
+											    <th th:text="#{data.header.releaseDate}">Release Date</th>
+											    <th th:text="#{data.header.owner}">Owner</th>
+											    <th><!-- Actions --></th>
+											</thead>
+											<th:block th:each="dataEntry : ${datasetMap}">
+												<tr>
+													<td th:text="${dataEntry.value.datasetName}">Name</td>
+													<td th:text="${dataEntry.value.releaseDate}">Release Date</td>
+													<td th:text="${userManager.getNameByUserId(dataEntry.value.ownerId)}">Owner</td>
+													<td>
+														<a href="#" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to permanently delete this dataset?"><i class="fa fa-trash"></i></a>
+													</td>
+												</tr>
+											</th:block>
+										</table>
+										<p><a href="#" th:href="@{/admin/data/contribute}"><button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
+								    </div> <!-- datasets -->
+								    
+								    <div id="experiments" class="tab-pane fade">
+								    	<p>&nbsp;</p>
+										<table class="table table-responsive">
+											<thead>
+											    <th th:text="#{admin.overview.header.experiment}">Experiment</th>
+											    <th th:text="#{admin.overview.header.team}">Team</th>
+											    <th th:text="#{admin.overview.header.status}">Status</th>
+											    <th th:text="#{admin.overview.header.nodesUtilized}">Nodes Utilized</th>
+											    <th th:text="#{admin.overview.header.hours}">Hours</th>
+											    <th><!-- Actions --></th>
+											</thead>
+											<th:block th:each="expList : ${experimentMap}">
+												<th:block th:each="expEntry : ${expList.value}">
+													<tr th:if="${expEntry.status == 'READY'}">
+														<td th:text="${expEntry.name}"></td>
+														<td th:text="${teamManager.getTeamNameByTeamId(expEntry.teamId)}"></td>
+														<td th:text="${expEntry.status}"></td>
+														<td th:text="${expEntry.nodesCount}"></td>
+														<td th:text="${expEntry.hoursRunning}"></td>
+														<td>
+															<a href="#" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alert the experiment starter by sending email"><i class="fa fa-envelope-o"></i></a>
+															<a href="#" th:href="@{/admin/experiments/remove/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to permanently delete the experiment?"><i class="fa fa-trash"></i></a>
+														</td>
+													</tr>
+												</th:block>
+											</th:block>
+										</table>
+								    </div> <!-- experiments -->
+								</div> <!-- tab content -->
+								
+		                    </div> <!-- panel body -->
+		                </div> <!-- panel primary -->
                 	</div> <!-- resourcesManagement -->
                 	
                 </div> <!-- tab content -->

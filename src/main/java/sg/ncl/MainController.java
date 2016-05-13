@@ -67,7 +67,7 @@ public class MainController {
     }
     
     @RequestMapping(value="/", method=RequestMethod.POST)
-    public String loginSubmit(@ModelAttribute LoginForm loginForm, Model model, HttpSession session) throws Exception {
+    public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) throws Exception {
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
     	
@@ -626,7 +626,7 @@ public class MainController {
     	String editedDatasetName = dataset.getDatasetName();
     	String editedDatasetDesc = dataset.getDatasetDescription();
     	String editedDatasetLicense = dataset.getLicense();
-    	String editedDatasetRestricted = dataset.getIsRestricted();
+    	String editedDatasetPublic = dataset.getIsPublic();
     	boolean editedDatasetIsRequiredAuthorization = dataset.getRequireAuthorization();
     	
     	System.out.println(origDataset.getDatasetId());
@@ -644,8 +644,8 @@ public class MainController {
     		redirectAttributes.addFlashAttribute("editLicense", "success");
     	}
     	
-    	if (origDataset.updateRestricted(editedDatasetRestricted) == true) {
-    		redirectAttributes.addFlashAttribute("editRestricted", "success");
+    	if (origDataset.updatePublic(editedDatasetPublic) == true) {
+    		redirectAttributes.addFlashAttribute("editPublic", "success");
     	}
     	
     	if (origDataset.updateAuthorization(editedDatasetIsRequiredAuthorization) == true) {
@@ -690,12 +690,16 @@ public class MainController {
     	model.addAttribute("teamsMap", teamManager.getTeamMap());
     	model.addAttribute("teamManager", teamManager);
     	model.addAttribute("teamsPendingApprovalMap", teamManager.getTeamsPendingApproval());
-    	model.addAttribute("experimentMap", experimentManager.getExperimentMap());
+    	model.addAttribute("experimentMap", experimentManager.getExperimentMap2());
     	
     	model.addAttribute("totalTeamCount", teamManager.getTotalTeamsCount());
     	model.addAttribute("totalExpCount", experimentManager.getTotalExpCount());
     	model.addAttribute("totalMemberCount", teamManager.getTotalMembersCount());
     	model.addAttribute("totalMemberAwaitingApprovalCount", teamManager.getTotalMembersAwaitingApproval());
+    	
+    	model.addAttribute("datasetMap", datasetManager.getDatasetMap());
+    	model.addAttribute("userManager", userManager);
+    	
     	return "admin";
     }
     
@@ -734,6 +738,31 @@ public class MainController {
     	// TODO
     	// perform ban action here
     	// need to cleanly remove user info from teams, user. etc
+    	return "redirect:/admin";
+    }
+    
+    @RequestMapping("/admin/experiments/remove/{expId}")
+    public String adminRemoveExp(@PathVariable Integer expId) {
+    	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
+        experimentManager.adminRemoveExperiment(expId);
+        
+        // decrease exp count to be display on Teams page
+        teamManager.decrementExperimentCount(teamId);
+    	return "redirect:/admin";
+    }
+    
+    @RequestMapping(value="/admin/data/contribute", method=RequestMethod.GET)
+    public String adminContributeDataset(Model model) {
+    	model.addAttribute("dataset", new Dataset());
+    	return "admin_contribute_data";
+    }
+    
+    @RequestMapping(value="/admin/data/contribute", method=RequestMethod.POST)
+    public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session) {
+    	// TODO
+    	// validation
+    	// get file from user upload to server
+    	datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset);
     	return "redirect:/admin";
     }
     
