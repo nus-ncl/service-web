@@ -48,12 +48,12 @@
                         </div>
                         <div class="form-group">
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isRestricted}" th:value="open"/><strong>Open</strong> <em>Anyone can view the dataset.</em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="public"/><strong>Public</strong> <em>Anyone can view the dataset.</em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isRestricted}" th:value="restricted"/><strong>Restricted</strong> <em>Only people explicitly granted permission can access the dataset.</em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="private"/><strong>Private</strong> <em>The dataset is private.</em></label>
                             </div>
-                            <span class="account-change-success" th:if="${editRestricted eq 'success'}"><i class="fa fa-check"></i> License change success.</span>
+                            <span class="account-change-success" th:if="${editPublic eq 'success'}"><i class="fa fa-check"></i> Visibility change success.</span>
                         </div>
                         <div class="form-group">
                         	<span class="account-change-success" th:if="${editIsRequiredAuthorization eq 'success'}"><i class="fa fa-check"></i> Require authorization change success.</span>

@@ -18,8 +18,8 @@ public class DatasetManager {
 	private final String LICENSE_GPL = "gpl";
 	private final String LICENSE_MIT = "mit";
 	private final String LICENSE_BSD = "bsd";
-	private final String VISIBLITY_OPEN = "open";
-	private final String VISIBILITY_RESTRICTED = "restricted";
+	private final String VISIBLITY_PUBLIC = "public";
+	private final String VISIBILITY_PRIVATE = "private";
 	private static DatasetManager DATASET_MANAGER_SINGLETON = null;
 	private HashMap<Integer, Dataset> datasetMap; // datasetID, dataset - holds all the dataset information
 	
@@ -33,7 +33,7 @@ public class DatasetManager {
 		dataset1.setReleaseDate("2016-Mar");
 		dataset1.setOwnerId(206);
 		dataset1.setLicense(LICENSE_GPL);
-		dataset1.setIsRestricted(VISIBLITY_OPEN);
+		dataset1.setIsPublic(VISIBLITY_PUBLIC);
 		dataset1.setRequireAuthorization(false);
 		dataset1.addUsersAccess(dataset1.getOwnerId());
 		dataset1.setDatasetDescription("this is a simple desc");
@@ -44,7 +44,7 @@ public class DatasetManager {
 		dataset2.setReleaseDate("2016-Mar");
 		dataset2.setOwnerId(206);
 		dataset2.setLicense(LICENSE_MIT);
-		dataset2.setIsRestricted(VISIBILITY_RESTRICTED);
+		dataset2.setIsPublic(VISIBILITY_PRIVATE);
 		dataset2.setRequireAuthorization(false);
 		dataset2.addUsersAccess(dataset2.getOwnerId());
 		dataset2.setDatasetDescription("this is a simple desc");
@@ -55,7 +55,7 @@ public class DatasetManager {
 		dataset3.setReleaseDate("2016-Mar");
 		dataset3.setOwnerId(206);
 		dataset3.setLicense(LICENSE_BSD);
-		dataset3.setIsRestricted(VISIBLITY_OPEN);
+		dataset3.setIsPublic(VISIBLITY_PUBLIC);
 		dataset3.setRequireAuthorization(false);
 		dataset3.addUsersAccess(dataset3.getOwnerId());
 		dataset3.setDatasetDescription("this is a simple desc");
@@ -66,7 +66,7 @@ public class DatasetManager {
 		dataset4.setReleaseDate("2016-Mar");
 		dataset4.setOwnerId(200);
 		dataset4.setLicense(LICENSE_MIT);
-		dataset4.setIsRestricted(VISIBLITY_OPEN);
+		dataset4.setIsPublic(VISIBLITY_PUBLIC);
 		dataset4.setRequireAuthorization(true);
 		dataset4.addUsersAccess(dataset4.getOwnerId());
 		dataset4.setDatasetDescription("this is a simple desc");
@@ -142,6 +142,7 @@ public class DatasetManager {
 	
 	public void addDataset(int userId, Dataset dataset) {
 		int datasetId = generateRandomId();
+		dataset.setDatasetId(datasetId);
 		dataset.setOwnerId(userId);
 		dataset.addUsersAccess(userId);
 		dataset.setReleaseDate(getDateOfContribution());

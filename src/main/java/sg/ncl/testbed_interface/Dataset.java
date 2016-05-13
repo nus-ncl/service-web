@@ -12,8 +12,8 @@ public class Dataset {
 	private String license;
 	private int ownerId;
 	private int datasetId;
-	private String isRestricted = "open"; // dataset visibility: open and restricted
-	private boolean requireAuthorization; // true: need to request access, false: can just download
+	private String isPublic = "public"; // dataset visibility: private and public
+	private boolean requireAuthorization; // true: need to request access Restricted, false: can just download Open
 	private Set<Integer> usersAccessSet = new HashSet<Integer>(); // stores a list of userids that have accessed to this dataset including the owner
 	private boolean hasAcceptDataOwnerPolicy;
 	
@@ -36,12 +36,12 @@ public class Dataset {
 		this.releaseDate = releaseDate;
 	}
 
-	public String getIsRestricted() {
-		return isRestricted;
+	public String getIsPublic() {
+		return isPublic;
 	}
 
-	public void setIsRestricted(String isRestricted) {
-		this.isRestricted = isRestricted;
+	public void setIsPublic(String isPublic) {
+		this.isPublic = isPublic;
 	}
 
 	public int getOwnerId() {
@@ -128,9 +128,9 @@ public class Dataset {
 		return false;
 	}
 	
-	public boolean updateRestricted(String editedRestricted) {
-		if (!isRestricted.equals(editedRestricted)) {
-			isRestricted = editedRestricted;
+	public boolean updatePublic(String editedPublic) {
+		if (!isPublic.equals(editedPublic)) {
+			isPublic = editedPublic;
 			return true;
 		}
 		return false;
