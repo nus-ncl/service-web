@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Admin Add Node</title>
+        <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{~/css/bootstrap.min.css}" media="screen"/>
+        <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{~/css/font-awesome/css/font-awesome.min.css}"/>
+        <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{~/css/custom.css}"/>
+        <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{~/js/jquery-1.12.2.min.js}"></script>
+        <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" src="static/js/custom.js" th:src="@{~/js/custom.js}"></script>
+    </head>
+    <body class="mybg">
+        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+        <div class="container">
+            <div class="row">
+                <form  method="post" action="#" th:action="@{/admin/node/add}" th:object="${node}" role="form">
+                    <fieldset>
+                        <h2>Add Node</h2>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Enter Type. eg. Win7-64-aries" th:field="*{nodeType}"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Class" th:field="*{nodeClass}"/>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label><input type="checkbox" th:field="*{isVirtNode}"/> <strong>isvirtnode</strong></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label><input type="checkbox" th:field="*{isSubNode}"/> <strong>issubnode</strong></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminmfs_osid">Adminmfs_osid:</label>
+                            <select class="form-control" th:field="*{adminMfsOSID}">
+                                <option value="emulab-ops-FREEBSD">emulab-ops-FREEBSD</option>
+                            </select>
+                        </div>
+                       <div class="form-group">
+                            <label for="bios">bios_waittime:</label>
+							<input type="text" class="form-control" th:field="*{biosWaitTime}"/>
+                        </div>
+                       <div class="form-group">
+                            <label for="control_interface">control_interface:</label>
+							<input type="text" class="form-control" th:field="*{networkInterface}"/>
+                        </div>
+                       <div class="form-group">
+                            <label for="default_os">default_os:</label>
+							<input type="text" class="form-control" th:field="*{defaultOS}"/>
+                        </div>
+                       <div class="form-group">
+                            <label for="disksize">disksize (GB):</label>
+							<input type="text" class="form-control" th:field="*{diskSize}"/>
+                        </div>
+                       <div class="form-group">
+                            <label for="cpu_freq">cpu_freq (mHz):</label>
+							<input type="text" class="form-control" th:field="*{cpuFreq}"/>
+                        </div>
+                       <div class="form-group">
+                            <label for="memory">memory (MB):</label>
+							<input type="text" class="form-control" th:field="*{memory}"/>
+                        </div>
+                       <div class="form-group">
+                            <label for="processor">processor:</label>
+							<input type="text" class="form-control" th:field="*{processor}"/>
+                        </div>
+                       <div class="form-group">
+                            <label for="virtMachinesPerNode">virtual machines per node:</label>
+							<input type="text" class="form-control" th:field="*{virtMachinesPerNode}"/>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">Add</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </body>
+</html>

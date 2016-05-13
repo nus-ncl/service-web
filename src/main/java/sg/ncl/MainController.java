@@ -26,6 +26,7 @@ import sg.ncl.testbed_interface.Dataset;
 import sg.ncl.testbed_interface.Domain;
 import sg.ncl.testbed_interface.Experiment;
 import sg.ncl.testbed_interface.LoginForm;
+import sg.ncl.testbed_interface.Node;
 import sg.ncl.testbed_interface.SignUpAccountDetailsForm;
 import sg.ncl.testbed_interface.SignUpMergedForm;
 import sg.ncl.testbed_interface.SignUpPersonalDetailsForm;
@@ -56,6 +57,7 @@ public class MainController {
     private ExperimentManager experimentManager = ExperimentManager.getInstance();
     private DomainManager domainManager = DomainManager.getInstance();
     private DatasetManager datasetManager = DatasetManager.getInstance();
+    private NodeManager nodeManager = NodeManager.getInstance();
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
     
@@ -700,6 +702,8 @@ public class MainController {
     	model.addAttribute("datasetMap", datasetManager.getDatasetMap());
     	model.addAttribute("userManager", userManager);
     	
+    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
+    	
     	return "admin";
     }
     
@@ -763,6 +767,20 @@ public class MainController {
     	// validation
     	// get file from user upload to server
     	datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset);
+    	return "redirect:/admin";
+    }
+    
+    @RequestMapping(value="/admin/node/add", method=RequestMethod.GET)
+    public String adminAddNode(Model model) {
+    	model.addAttribute("node", new Node());
+    	return "admin_add_node";
+    }
+    
+    @RequestMapping(value="/admin/node/add", method=RequestMethod.POST)
+    public String adminAddNode(@ModelAttribute("node") Node node) {
+    	// TODO
+    	// validate fields, eg should be integer
+    	nodeManager.addNode(node);
     	return "redirect:/admin";
     }
     

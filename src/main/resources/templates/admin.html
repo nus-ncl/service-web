@@ -191,12 +191,30 @@
 								  <li><a data-toggle="tab" href="#datasets">Datasets</a></li>
 								  <li><a data-toggle="tab" href="#experiments">Experiments</a></li>
 								</ul>
+								
 								<div class="tab-content">
+								    <!-- nodeStatistics -->
 								    <div id="nodeStatistics" class="tab-pane fade in active">
-								      <h4>Node Statistics</h4>
-								      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								    </div> <!-- nodeStatistics -->
+								      <p>&nbsp;</p>
+										<table class="table table-responsive">
+											<thead>
+											    <th th:text="#{admin.nodes.header.name}">Node</th>
+											    <th th:text="#{admin.nodes.header.allocated}">Allocated</th>
+											    <th th:text="#{admin.nodes.header.diskHealth}">Disk Health Status</th>
+											    <th><!-- Actions --></th>
+											</thead>
+											<th:block th:each="nodeEntry : ${nodeMap}">
+												<tr>
+													<td th:text="${nodeEntry.value.nodeType}">Node</td>
+													<td><span th:text="${nodeEntry.value.allocatedCount}">Allocated Count</span>/<span th:text="${nodeEntry.value.virtMachinesPerNode}">Max Count</span></td>
+													<td th:text="${nodeEntry.value.diskHealth}">Disk Health Status</td>
+												</tr>
+											</th:block>
+										</table>
+										<p><a href="#" th:href="@{/admin/node/add}"><button type="button" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Add Node</button></a></p>
+								    </div>
 								    
+								    <!-- datasets -->
 								    <div id="datasets" class="tab-pane fade">
 								      <p>&nbsp;</p>
 										<table class="table table-responsive">
@@ -217,9 +235,10 @@
 												</tr>
 											</th:block>
 										</table>
-										<p><a href="#" th:href="@{/admin/data/contribute}"><button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
-								    </div> <!-- datasets -->
+										<p><a href="#" th:href="@{/admin/data/contribute}"><button type="button" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
+								    </div>
 								    
+								    <!-- experiments -->
 								    <div id="experiments" class="tab-pane fade">
 								    	<p>&nbsp;</p>
 										<table class="table table-responsive">
@@ -247,7 +266,7 @@
 												</th:block>
 											</th:block>
 										</table>
-								    </div> <!-- experiments -->
+								    </div>
 								</div> <!-- tab content -->
 								
 		                    </div> <!-- panel body -->
