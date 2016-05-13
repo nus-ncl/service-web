@@ -14,9 +14,9 @@ import sg.ncl.testbed_interface.Experiment;
 public class ExperimentManager {
     
     // experimentId, experiment
-    private final int CURRENT_LOGGED_IN_USER;
+    private final int JOHN_DOE;
     private static ExperimentManager EXPERIMENT_MANAGER_SINGLETON = null;
-    private static HashMap<Integer, Experiment> experimentMap;
+    
     private String EXPERIMENT_STATUS_READY;
     private String EXPERIMENT_STATUS_ALLOCATING;
     private String EXPERIMENT_STATUS_ERROR;
@@ -26,8 +26,7 @@ public class ExperimentManager {
     private HashMap<Integer, List<Experiment>> experimentMap2; /* userId, arraylist of experiments */
     
     private ExperimentManager() {
-        CURRENT_LOGGED_IN_USER = 200;
-        experimentMap = new HashMap<Integer, Experiment>();
+    	JOHN_DOE = 200;
         EXPERIMENT_STATUS_READY = "READY";
         EXPERIMENT_STATUS_ALLOCATING = "ALLOCATING";
         EXPERIMENT_STATUS_ERROR = "ERROR";
@@ -37,12 +36,12 @@ public class ExperimentManager {
         exp01.setExperimentId(50);
         exp01.setName("clientserver");
         exp01.setDescription("A DDOS scenario");
-        exp01.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
+        exp01.setExperimentOwnerId(JOHN_DOE);
         exp01.setStatus(EXPERIMENT_STATUS_STOP);
         exp01.setTeamId(110);
         exp01.setNodesCount(7);
         exp01.setHoursIdle(2);
-        exp01.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
+        exp01.setExperimentOwnerId(JOHN_DOE);
         exp01.setScenarioFileName("basic.ns");
     	String exp01Config = getScenarioContents(exp01.getScenarioFileName());
     	exp01.setScenarioContents(exp01Config);
@@ -51,12 +50,12 @@ public class ExperimentManager {
         exp02.setExperimentId(51);
         exp02.setName("myexperiment");
         exp02.setDescription("A test experiment");
-        exp02.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
+        exp02.setExperimentOwnerId(JOHN_DOE);
         exp02.setStatus(EXPERIMENT_STATUS_STOP);
         exp02.setTeamId(111);
         exp02.setNodesCount(7);
         exp02.setHoursIdle(2);
-        exp02.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
+        exp02.setExperimentOwnerId(JOHN_DOE);
         exp02.setScenarioFileName("basic.ns");
     	String exp02Config = getScenarioContents(exp01.getScenarioFileName());
     	exp02.setScenarioContents(exp02Config);
@@ -65,26 +64,22 @@ public class ExperimentManager {
         exp03.setExperimentId(52);
         exp03.setName("myexperiment02");
         exp03.setDescription("A test experiment");
-        exp03.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
+        exp03.setExperimentOwnerId(JOHN_DOE);
         exp03.setStatus(EXPERIMENT_STATUS_READY);
         exp03.setTeamId(112);
         exp03.setNodesCount(7);
         exp03.setHoursIdle(2);
-        exp03.setExperimentOwnerId(CURRENT_LOGGED_IN_USER);
+        exp03.setExperimentOwnerId(JOHN_DOE);
         exp03.setScenarioFileName("basic.ns");
     	String exp03Config = getScenarioContents(exp01.getScenarioFileName());
     	exp03.setScenarioContents(exp03Config);
-        
-        experimentMap.put(exp01.getExperimentId(), exp01);
-        experimentMap.put(exp02.getExperimentId(), exp02);
-        experimentMap.put(exp03.getExperimentId(), exp03);
         
         experimentMap2 = new HashMap<Integer, List<Experiment>>();
         List<Experiment> experimentList = new ArrayList<Experiment>();
         experimentList.add(exp01);
         experimentList.add(exp02);
         experimentList.add(exp03);
-        experimentMap2.put(CURRENT_LOGGED_IN_USER, experimentList);
+        experimentMap2.put(JOHN_DOE, experimentList);
     }
     
     public static ExperimentManager getInstance() {
@@ -94,20 +89,8 @@ public class ExperimentManager {
         return EXPERIMENT_MANAGER_SINGLETON;
     }
     
-    public HashMap<Integer, Experiment> getExperimentMap() {
-        return experimentMap;
-    }
-    
-    public HashMap<Integer, Experiment> getExperimentMapByExperimentOwner(int userId) {
-        HashMap<Integer, Experiment> expMap = new HashMap<Integer, Experiment>();
-        for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
-            int expId = entry.getKey();
-            Experiment currExp = entry.getValue();
-            if (currExp.getExperimentOwnerId() == userId) {
-                expMap.put(expId, currExp);
-            }
-        }
-        return expMap;
+    public HashMap<Integer, List<Experiment>> getExperimentMap2() {
+        return experimentMap2;
     }
     
     public List<Experiment> getExperimentListByExperimentOwner(int userId) {
@@ -119,16 +102,6 @@ public class ExperimentManager {
     }
     
     public HashMap<Integer, Experiment> getTeamExperimentsMap(int teamId) {
-        /*
-        for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
-            int expId = entry.getKey();
-            Experiment currExp = entry.getValue();
-            if (currExp.getTeamId() == teamId) {
-                teamExpMap.put(expId, currExp);
-            }
-        }
-        */
-        
         // for list implementation of experiment manager
         // expid, exp
         HashMap<Integer, Experiment> teamExpMap = new HashMap<Integer, Experiment>();
@@ -146,17 +119,6 @@ public class ExperimentManager {
     }
     
     public void removeExperiment(int userId, int expId) {
-        /*
-        for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
-            int currExpId = entry.getKey();
-            Experiment currExp = entry.getValue();
-            // TODO need to include a check if user is the team owner
-            if (currExpId == expId && currExp.getExperimentOwnerId() == userId && currExp.getStatus().equals(EXPERIMENT_STATUS_STOP)) {
-                experimentMap.remove(expId);
-                return;
-            }
-        }
-        */
         // for list version
         for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
             int currUserId = entry.getKey();
@@ -172,21 +134,21 @@ public class ExperimentManager {
         }
     }
     
-    public void startExperiment(int userId, int expId) {
-        /*
-        // need to check if user have rights to start the experiment
-        for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
-            int currExpId = entry.getKey();
-            Experiment currExp = entry.getValue();
-            if (currExpId == expId && currExp.getStatus().equals(EXPERIMENT_STATUS_STOP)) {
-                // suppose to be allocating
-                // then when nodes are configured and allocated fully, set to active
-                currExp.setStatus(EXPERIMENT_STATUS_READY);
-                return;
-            }
+    // for ncl admin to force remove an experiment
+    public void adminRemoveExperiment(int expId) {
+        // for list version
+        for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
+	        List<Experiment> currExpList = entry.getValue();
+	        for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
+	            Experiment currExp = iter.next();
+	            if (currExp.getExperimentId() == expId) {
+	                iter.remove();
+	            }
+	        }
         }
-        */
-        
+    }
+    
+    public void startExperiment(int userId, int expId) {
         // for list version
         // need to check if user have rights to start the experiment
         for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
@@ -204,17 +166,6 @@ public class ExperimentManager {
     }
     
     public void stopExperiment(int userId, int expId) {
-        /*
-        for (Map.Entry<Integer, Experiment> entry : experimentMap.entrySet()) {
-            int currExpId = entry.getKey();
-            Experiment currExp = entry.getValue();
-            if (currExpId == expId && currExp.getStatus().equals(EXPERIMENT_STATUS_READY)) {
-                currExp.setStatus(EXPERIMENT_STATUS_STOP);
-                return;
-            }
-        }
-        */
-        
         // for list version
         for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
             int currUserId = entry.getKey();
