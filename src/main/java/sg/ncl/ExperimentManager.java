@@ -280,7 +280,7 @@ public class ExperimentManager {
 
 	public int generateRandomExpId() {
     	Random rn = new Random();
-    	int expId = rn.nextInt();
+    	int expId = rn.nextInt(Integer.MAX_VALUE) + 1;
     	while (isExpIdExists(expId)) {
     		expId = rn.nextInt();
     	}

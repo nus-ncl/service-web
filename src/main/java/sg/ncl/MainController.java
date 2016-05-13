@@ -629,6 +629,9 @@ public class MainController {
     	String editedDatasetRestricted = dataset.getIsRestricted();
     	boolean editedDatasetIsRequiredAuthorization = dataset.getRequireAuthorization();
     	
+    	System.out.println(origDataset.getDatasetId());
+    	System.out.println(dataset.getDatasetId());
+    	
     	if (origDataset.updateName(editedDatasetName) == true) {
     		redirectAttributes.addFlashAttribute("editName", "success");
     	}

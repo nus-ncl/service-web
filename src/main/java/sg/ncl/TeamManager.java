@@ -562,7 +562,7 @@ public class TeamManager {
     
     public int generateRandomTeamId() {
     	Random rn = new Random();
-    	int teamId = rn.nextInt();
+    	int teamId = rn.nextInt(Integer.MAX_VALUE) + 1;
     	while (teamMap.containsKey(teamId)) {
     		teamId = rn.nextInt();
     	}

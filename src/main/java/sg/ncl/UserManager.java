@@ -238,7 +238,7 @@ public class UserManager {
     
     public int generateRandomUserId() {
     	Random rn = new Random();
-    	int userId = rn.nextInt();
+    	int userId = rn.nextInt(Integer.MAX_VALUE) + 1;
     	while (usersMap.containsKey(userId)) {
     		userId = rn.nextInt();
     	}

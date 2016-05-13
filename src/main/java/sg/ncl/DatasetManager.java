@@ -86,7 +86,7 @@ public class DatasetManager {
     
 	public int generateRandomId() {
     	Random rn = new Random();
-    	int datasetId = rn.nextInt();
+    	int datasetId = rn.nextInt(Integer.MAX_VALUE) + 1;
     	while (isIdExists(datasetId)) {
     		datasetId = rn.nextInt();
     	}
