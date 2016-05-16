@@ -16,7 +16,7 @@
             <div class="row">
                 <div class="panel panel-primary team-panel team-panel-current-team">
                     <div class="panel-heading">
-		                <h2>Users requesting to join your team</h2>
+		                <h2 th:text="#{membersAwaiting.userRequesting.header}">Users requesting to join your team</h2>
 		                <h3 th:text="${team.name  + '-' + team.id}">Team name - ID</h3>
                     </div> <!-- panel heading -->
                     <div class="panel-body">
@@ -38,7 +38,7 @@
                                </td>
                             </tr>
                         </table>
-                        <p th:if="${team.joinRequestMap.isEmpty()}">You have no members awaiting for your approval yet.</p>
+                        <p th:if="${team.joinRequestMap.isEmpty()}" th:text="#{membersAwaiting.noMembers}">You have no members awaiting for your approval yet.</p>
                     </div> <!-- panel body -->
                 </div> <!-- panel -->
             </div> <!-- row -->
