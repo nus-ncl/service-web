@@ -479,7 +479,8 @@ public class MainController {
     @RequestMapping(value="/teams/apply_team", method=RequestMethod.POST)
     public String checkApplyTeamInfo(@Valid TeamPageApplyTeamForm teamPageApplyTeamForm, BindingResult bindingResult) {
        if (bindingResult.hasErrors()) {
-           return "redirect:/team_page_apply_team";
+           // return "redirect:/teams/apply_team";
+    	   return "team_page_apply_team";
        }
        // log data to ensure data has been parsed
        LOGGER.log(Level.INFO, "--------Apply for new team info---------");
