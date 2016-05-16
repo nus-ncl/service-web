@@ -447,10 +447,11 @@ public class MainController {
         // remove experiment
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
-        experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId);
+        if (experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId) == true) {
+            // decrease exp count to be display on Teams page
+            teamManager.decrementExperimentCount(teamId);
+        }
         model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
-        // decrease exp count to be display on Teams page
-        teamManager.decrementExperimentCount(teamId);
         return "redirect:/team_profile/{teamId}";
     }
     

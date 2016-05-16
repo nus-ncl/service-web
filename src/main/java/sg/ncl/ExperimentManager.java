@@ -118,7 +118,7 @@ public class ExperimentManager {
         return teamExpMap;
     }
     
-    public void removeExperiment(int userId, int expId) {
+    public boolean removeExperiment(int userId, int expId) {
         // for list version
         for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
             int currUserId = entry.getKey();
@@ -126,12 +126,14 @@ public class ExperimentManager {
                 List<Experiment> currExpList = entry.getValue();
                 for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
                     Experiment currExp = iter.next();
-                    if (currExp.getExperimentId() == expId) {
+                    if (currExp.getExperimentId() == expId && currExp.getExperimentOwnerId() == userId) {
                         iter.remove();
+                        return true;
                     }
                 }
             }
         }
+        return false;
     }
     
     // for ncl admin to force remove an experiment
@@ -148,6 +150,7 @@ public class ExperimentManager {
         }
     }
     
+    // Note: only experiment creators can start experiments
     public void startExperiment(int userId, int expId) {
         // for list version
         // need to check if user have rights to start the experiment
@@ -158,13 +161,14 @@ public class ExperimentManager {
                 for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
                     Experiment currExp = iter.next();
                     if (currExp.getExperimentId() == expId && currExp.getStatus().equals(EXPERIMENT_STATUS_STOP)) {
-                        currExp.setStatus(EXPERIMENT_STATUS_READY);
+                    	currExp.setStatus(EXPERIMENT_STATUS_READY);
                     }
                 }
             }
         }
     }
     
+    // Note: only experiment creators can stop experiments
     public void stopExperiment(int userId, int expId) {
         // for list version
         for (Map.Entry<Integer, List<Experiment>> entry : experimentMap2.entrySet()) {
