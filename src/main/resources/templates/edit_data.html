@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Edit Account Details</title>
+        <title>National Cybersecurity Laboratories - Edit Dataset Details</title>
         <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{~/css/bootstrap.min.css}" media="screen"/>
         <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{~/css/font-awesome/css/font-awesome.min.css}"/>
         <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{~/css/custom.css}"/>
@@ -16,52 +16,58 @@
             <div class="row">
                 <form  method="post" action="#" th:action="@{/data/edit/{datasetId}(datasetId=${editDataset.datasetId})}" th:object="${editDataset}" role="form">
                     <fieldset>
-                        <h2>Edit Info</h2>
+                        <h2 th:text="#{dataset.edit.header}">Edit Info</h2>
                         <div class="form-group">
-                            <label for="name">Dataset Name:</label>
+                            <label for="name" th:text="#{dataset.edit.name}">Dataset Name:</label>
                             <input type="text" class="form-control" th:field="*{datasetName}" />
-                            <span class="account-change-success" th:if="${editName eq 'success'}"><i class="fa fa-check"></i> Name change success.</span>
+                            <span class="account-change-success" th:if="${editName eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{dataset.edit.nameSuccess}">Name change success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="name">Description:</label>
+                            <label for="name" th:text="#{dataset.edit.desc}">Description:</label>
                             <input type="text" class="form-control" th:field="*{datasetDescription}" />
-                            <span class="account-change-success" th:if="${editDesc eq 'success'}"><i class="fa fa-check"></i> Description change success.</span>
+                            <span class="account-change-success" th:if="${editDesc eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{dataset.edit.descSuccess}">Description change success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="license">Preselected License List: 
+                            <label for="license"><span th:text="#{admin.contributeData.license}">Preselected License List:</span> 
 	                        	<a href="#" class="license-tooltip"><i class="fa fa-question-circle"></i>
 	                        		<span class="tooltiptext">
 	                        			<ul>
-	                        				<li>The GPL License is a copyleft license, which guarantees end users (individuals, organizations, companies) the freedoms to run, study, share (copy), and modify the software.</li>
-	                        				<li>The MIT License is a permissive free software license, meaning that it puts only very limited restriction on reuse and has therefore an excellent license compatibility.</li>
-	                        				<li>The BSD license is a class of extremely simple and very liberal licenses for computer software, imposing minimal restrictions on the redistribution of covered software.</li>
+	                        				<li>
+	                        					<span th:text="#{admin.contributeData.gplDesc}">The GPL License is a copyleft license, which guarantees end users (individuals, organizations, companies) the freedoms to run, study, share (copy), and modify the software.</span>
+	                        				</li>
+	                        				<li>
+	                        					<span th:text="#{admin.contributeData.mitDesc}">The MIT License is a permissive free software license, meaning that it puts only very limited restriction on reuse and has therefore an excellent license compatibility.</span>
+	                        				</li>
+	                        				<li>
+	                        					<span th:text="#{admin.contributeData.bsdDesc}">The BSD license is a class of extremely simple and very liberal licenses for computer software, imposing minimal restrictions on the redistribution of covered software.</span>
+	                        				</li>
 	                        			</ul>
 	                        		</span>
 	                        	</a>
                             </label>
                             <select class="form-control" th:field="*{license}">
-                                <option value="gpl">GPL</option>
-                                <option value="mit">MIT</option>
-                                <option value="bsd">BSD</option>
+                                <option value="gpl"><span th:text="#{admin.contributeData.licenseOption1}">GPL</span></option>
+                                <option value="mit"><span th:text="#{admin.contributeData.licenseOption2}">MIT</span></option>
+                                <option value="bsd"><span th:text="#{admin.contributeData.licenseOption3}">BSD</span></option>
                             </select>
-                            <span class="account-change-success" th:if="${editLicense eq 'success'}"><i class="fa fa-check"></i> License change success.</span>
+                            <span class="account-change-success" th:if="${editLicense eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{dataset.edit.licenseSuccess}">License change success.</span></span>
                         </div>
                         <div class="form-group">
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="public"/><strong>Public</strong> <em>Anyone can view the dataset.</em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="public"/><strong><span th:text="#{admin.contributeData.public}">Public</span></strong> <em><span th:text="#{admin.contributeData.publicDesc}">Anyone can view the dataset.</span></em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="private"/><strong>Private</strong> <em>The dataset is private.</em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="private"/><strong><span th:text="#{admin.contributeData.private}">Private</span></strong> <em><span th:text="#{admin.contributeData.privateDesc}">The dataset is private.</span></em></label>
                             </div>
-                            <span class="account-change-success" th:if="${editPublic eq 'success'}"><i class="fa fa-check"></i> Visibility change success.</span>
+                            <span class="account-change-success" th:if="${editPublic eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{dataset.edit.visibilitySuccess}">Visibility change success.</span></span>
                         </div>
                         <div class="form-group">
-                        	<span class="account-change-success" th:if="${editIsRequiredAuthorization eq 'success'}"><i class="fa fa-check"></i> Require authorization change success.</span>
+                        	<span class="account-change-success" th:if="${editIsRequiredAuthorization eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{dataset.edit.authSuccess}">Require authorization change success.</span></span>
                             <div class="checkbox">
-                                <label><input type="checkbox" th:field="*{requireAuthorization}"/> <strong>Require Authorization?</strong></label>
+                                <label><input type="checkbox" th:field="*{requireAuthorization}"/> <strong><span th:text="#{admin.contributeData.auth}">Require Authorization?</span></strong></label>
                                 <p>
-                                	<em>(Optional) Checked it if you wish other users to require your permission before downloading the dataset.
-                                	<br/>Otherwise, users can just download your dataset without you authorization</em>
+                                	<em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Checked it if you wish other users to require your permission before downloading the dataset.</span>
+                                	<br/><span th:text="#{admin.contributeData.authDesc2}">Otherwise, users can just download your dataset without you authorization</span></em>
                                 </p>
                             </div>
                         </div>
