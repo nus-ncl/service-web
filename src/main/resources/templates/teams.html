@@ -43,7 +43,7 @@
                                 <td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">---</td>
                             </tr>
                         </table>
-                        <p th:if="${teamMap.isEmpty()}">You have to be part of a team to use the resources.</p>
+                        <p th:if="${teamMap.isEmpty()}" th:text="#{team.haveToBeATeam}">You have to be part of a team to use the resources.</p>
                     </div> <!-- panel body -->
                     <div class="panel-footer">
                         <a href="teamPageApplyTeam" th:href="@{/teams/apply_team}" class="btn btn-primary"><i class="fa fa-plus"></i> Apply a New Team</a>
@@ -54,7 +54,7 @@
                     <div class="panel panel-default team-panel team-panel-request-participation">
 	                    <div class="panel-body">
                             <div th:if="${#lists.isEmpty(invitedToParticipateMap2)}">
-                                <p>You have not been invited to participate in any teams yet.</p>
+                                <p th:text="#{team.haveNotBeenInvited}">You have not been invited to participate in any teams yet.</p>
                             </div>
 	                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(invitedToParticipateMap2)}">
 	                            <thead>
@@ -76,7 +76,7 @@
                     <div class="panel panel-default team-panel team-panel-join-request">
                         <div class="panel-body">
                             <div th:if="${#lists.isEmpty(joinRequestMap2)}">
-                                <p>You have not requested to join any teams yet.</p>
+                                <p th:text="#{team.haveNotRequestedToJoin}">You have not requested to join any teams yet.</p>
                             </div>
                             <table class="table table-responsive" th:if="not ${#lists.isEmpty(joinRequestMap2)}">
                                 <thead>
