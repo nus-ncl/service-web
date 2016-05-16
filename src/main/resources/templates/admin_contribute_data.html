@@ -16,7 +16,7 @@
             <div class="row">
                 <form  method="post" action="#" th:action="@{/admin/data/contribute}" th:object="${dataset}" role="form">
                     <fieldset>
-                        <h2>Contribute Dataset</h2>
+                        <h2 th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{datasetName}"/>
                         </div>
@@ -27,37 +27,43 @@
                         	<input type="file" name="datasetUpload"/>
                         </div>
                         <div class="form-group">
-                            <label for="license">Preselected License List: 
+                            <label for="license"><span th:text="#{admin.contributeData.license}">Preselected License List:</span> 
 	                        	<a href="#" class="license-tooltip"><i class="fa fa-question-circle"></i>
 	                        		<span class="tooltiptext">
 	                        			<ul>
-	                        				<li>The GPL License is a copyleft license, which guarantees end users (individuals, organizations, companies) the freedoms to run, study, share (copy), and modify the software.</li>
-	                        				<li>The MIT License is a permissive free software license, meaning that it puts only very limited restriction on reuse and has therefore an excellent license compatibility.</li>
-	                        				<li>The BSD license is a class of extremely simple and very liberal licenses for computer software, imposing minimal restrictions on the redistribution of covered software.</li>
+	                        				<li>
+	                        					<span th:text="#{admin.contributeData.gplDesc}">The GPL License is a copyleft license, which guarantees end users (individuals, organizations, companies) the freedoms to run, study, share (copy), and modify the software.</span>
+	                        				</li>
+	                        				<li>
+	                        					<span th:text="#{admin.contributeData.mitDesc}">The MIT License is a permissive free software license, meaning that it puts only very limited restriction on reuse and has therefore an excellent license compatibility.</span>
+	                        				</li>
+	                        				<li>
+	                        					<span th:text="#{admin.contributeData.bsdDesc}">The BSD license is a class of extremely simple and very liberal licenses for computer software, imposing minimal restrictions on the redistribution of covered software.</span>
+	                        				</li>
 	                        			</ul>
 	                        		</span>
 	                        	</a>
                             </label>
                             <select class="form-control" th:field="*{license}">
-                                <option value="gpl">GPL</option>
-                                <option value="mit">MIT</option>
-                                <option value="bsd">BSD</option>
+                                <option value="gpl"><span th:text="#{admin.contributeData.licenseOption1}">GPL</span></option>
+                                <option value="mit"><span th:text="#{admin.contributeData.licenseOption2}">MIT</span></option>
+                                <option value="bsd"><span th:text="#{admin.contributeData.licenseOption3}">BSD</span></option>
                             </select>
                         </div>
                         <div class="form-group">
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="public"/><strong>Public</strong> <em>Anyone can view the dataset.</em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="public"/><strong><span th:text="#{admin.contributeData.public}">Public</span></strong> <em><span th:text="#{admin.contributeData.publicDesc}">Anyone can view the dataset.</span></em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="private"/><strong>Private</strong> <em>The dataset is private.</em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="private"/><strong><span th:text="#{admin.contributeData.private}">Private</span></strong> <em><span th:text="#{admin.contributeData.privateDesc}">The dataset is private.</span></em></label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
-                                <label><input type="checkbox" th:field="*{requireAuthorization}"/> <strong>Require Authorization?</strong></label>
+                                <label><input type="checkbox" th:field="*{requireAuthorization}"/> <strong><span th:text="#{admin.contributeData.auth}">Require Authorization?</span></strong></label>
                                 <p>
-                                	<em>(Optional) Checked it if you wish other users to require your permission before downloading the dataset.
-                                	<br/>Otherwise, users can just download your dataset without you authorization</em>
+                                	<em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Checked it if you wish other users to require your permission before downloading the dataset.</span>
+                                	<br/><span th:text="#{admin.contributeData.authDesc2}">Otherwise, users can just download your dataset without you authorization</span></em>
                                 </p>
                             </div>
                         </div>
