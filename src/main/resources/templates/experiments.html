@@ -14,10 +14,10 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-                <h2>Experiments</h2>
+                <h2 th:text="#{exp.header}">Experiments</h2>
                 <!-- user has no experiments -->
                 <div th:if="${#lists.isEmpty(experimentList)}">
-                    <p>You do not have any experiments running yet.</p>
+                    <p th:text="#{exp.noExpRunning}">You do not have any experiments running yet.</p>
                 </div>
                 <!-- user has some experiments -->
                 <div class="panel panel-primary team-panel team-panel-current-team">
