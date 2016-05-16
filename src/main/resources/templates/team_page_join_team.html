@@ -14,7 +14,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-                <h2>Join Team</h2>
+                <h2 th:text="#{joinTeam.header}">Join Team</h2>
                 <form  method="post" action="#" th:action="@{/teams/join_team}" th:object="${teamPageJoinTeamForm}" role="form">
                     <fieldset>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">
