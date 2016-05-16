@@ -14,7 +14,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-            	<h2>Public datasets</h2>
+            	<h2 th:text="#{dataset.public.header}">Public datasets</h2>
                 <table class="table table-responsive">
                     <thead>
                         <th th:text="#{data.header.name}">Name</th>
@@ -34,8 +34,8 @@
 						<td th:if="not ${publicDataEntry.value.requireAuthorization}"><a href="#" class="btn btn-primary">Download</a></td>
                     </tr>
                 </table>
-            	<h2>External Data Access</h2>
-            	<a href="#">Click here to access external data (e.g. US side)</a>
+            	<h2 th:text="#{dataset.public.external.header}">External Data Access</h2>
+            	<a href="#" th:text="#{dataset.public.external.clickHere}">Click here to access external data (e.g. US side)</a>
             </div> <!-- row -->
         </div> <!-- container -->
     </body>
