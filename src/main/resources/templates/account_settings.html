@@ -16,80 +16,80 @@
             <div class="row">
                 <form  method="post" action="#" th:action="@{/account_settings}" th:object="${editUser}" role="form">
                     <fieldset>
-                        <h2>Account Info</h2>
+                        <h2 th:text="#{acc.info.header.accInfo}">Account Info</h2>
                         <div class="form-group">
-                            <label for="email">Email:</label>
+                            <label for="email"><span th:text="#{acc.info.email}">Email</span>:</label>
                             <input type="text" class="form-control" th:field="*{email}" readonly="readonly"/>
                         </div>
                         <!-- TODO The page displays empty password for now because it will display the password value in HTML -->
-                        <span class="password-change-mismatch" th:if="${editPassword eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> Password cannot be empty.</span>
+                        <span class="password-change-mismatch" th:if="${editPassword eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> <span th:text="#{acc.info.pwdEmpty}">Password cannot be empty.</span></span>
                         <div class="form-group">
-                            <label for="password">Password:</label>
+                            <label for="password"><span th:text="#{acc.info.password}">Password</span>:</label>
                             <input type="password" class="form-control" th:field="*{password}"/>
-                        	<span class="password-change-mismatch" th:if="${editPasswordMismatch eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> Password mismatch.</span>
-                        	<span class="account-change-success" th:if="${editPassword eq 'success'}"><i class="fa fa-check"></i> Password change success.</span>
+                        	<span class="password-change-mismatch" th:if="${editPasswordMismatch eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> <span th:text="#{acc.info.pwdMismatch}">Password mismatch.</span></span>
+                        	<span class="account-change-success" th:if="${editPassword eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.pwdSuccess}">Password change success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="confirmPassword">Confirm Password:</label>
+                            <label for="confirmPassword"><span th:text="#{acc.info.confirmPassword}">Confirm Password</span>:</label>
                             <input type="password" class="form-control" th:field="*{confirmPassword}"/>
-                            <span class="password-change-mismatch" th:if="${editPasswordMismatch eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> Password mismatch.</span>
-                        	<span class="account-change-success" th:if="${editPassword eq 'success'}"><i class="fa fa-check"></i> Password change success.</span>
+                            <span class="password-change-mismatch" th:if="${editPasswordMismatch eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> <span th:text="#{acc.info.pwdMismatch}">Password mismatch.</span></span>
+                        	<span class="account-change-success" th:if="${editPassword eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.pwdSuccess}">Password change success.</span></span>
                         </div>
-                        <h2>Personal Info</h2>
+                        <h2 th:text="#{acc.info.header.personInfo}">Personal Info</h2>
                         <div class="form-group">
-                            <label for="name">Full Name:</label>
+                            <label for="name"><span th:text="#{acc.info.fullName}">Full Name</span>:</label>
                             <input type="text" class="form-control" th:field="*{name}"/>
-                            <span class="account-change-success" th:if="${editName eq 'success'}"><i class="fa fa-check"></i> Name changed success.</span>
+                            <span class="account-change-success" th:if="${editName eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.nameSuccess}">Name changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="jobTitle">Job Title:</label>
+                            <label for="jobTitle"><span th:text="#{acc.info.jobTitle}">Job Title</span>:</label>
                             <input type="text" class="form-control" th:field="*{jobTitle}"/>
-                            <span class="account-change-success" th:if="${editJobTitle eq 'success'}"><i class="fa fa-check"></i> Job title changed success.</span>
+                            <span class="account-change-success" th:if="${editJobTitle eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.jobTitleSuccess}">Job title changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="institution">Institution/Employee:</label>
+                            <label for="institution"><span th:text="#{acc.info.institution}">Institution/Employee</span>:</label>
                             <input type="text" class="form-control" th:field="*{institution}"/>
-                            <span class="account-change-success" th:if="${editInstitution eq 'success'}"><i class="fa fa-check"></i> Institution changed success.</span>
+                            <span class="account-change-success" th:if="${editInstitution eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.institutionSuccess}">Institution changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="institutionAbbreviation">Institution Abbreviation:</label>
+                            <label for="institutionAbbreviation"><span th:text="#{acc.info.abbrev}">Institution Abbreviation</span>:</label>
                             <input type="text" class="form-control" th:field="*{institutionAbbreviation}"/>
-                            <span class="account-change-success" th:if="${editInstitutionAbbreviation eq 'success'}"><i class="fa fa-check"></i> Institution abbreviation changed success.</span>
+                            <span class="account-change-success" th:if="${editInstitutionAbbreviation eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.abbrevSuccess}">Institution abbreviation changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="website">Institution Website:</label>
+                            <label for="website"><span th:text="#{acc.info.website}">Institution Website</span>:</label>
                             <input type="text" class="form-control" th:field="*{website}"/>
-                            <span class="account-change-success" th:if="${editWebsite eq 'success'}"><i class="fa fa-check"></i> Website changed success.</span>
+                            <span class="account-change-success" th:if="${editWebsite eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.websiteSuccess}">Website changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="address1">Address 1:</label>
+                            <label for="address1"><span th:text="#{acc.info.addr1}">Address 1</span>:</label>
                             <input type="text" class="form-control" th:field="*{address1}"/>
-                            <span class="account-change-success" th:if="${editAddress1 eq 'success'}"><i class="fa fa-check"></i> Address 1 changed success.</span>
+                            <span class="account-change-success" th:if="${editAddress1 eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.addr1Success}">Address 1 changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="address2">Address 2:</label>
+                            <label for="address2"><span th:text="#{acc.info.addr2}">Address 2</span>:</label>
                             <input type="text" class="form-control" th:field="*{address2}"/>
-                            <span class="account-change-success" th:if="${editAddress2 eq 'success'}"><i class="fa fa-check"></i> Address 2 changed success.</span>
+                            <span class="account-change-success" th:if="${editAddress2 eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.addr2Success}">Address 2 changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="country">Country:</label>
+                            <label for="country"><span th:text="#{acc.info.country}">Country</span>:</label>
                             <input type="text" class="form-control" th:field="*{country}"/>
-                            <span class="account-change-success" th:if="${editCountry eq 'success'}"><i class="fa fa-check"></i> Country changed success.</span>
+                            <span class="account-change-success" th:if="${editCountry eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.countrySuccess}">Country changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="city">City:</label>
+                            <label for="city"><span th:text="#{acc.info.city}">City</span>:</label>
                             <input type="text" class="form-control" th:field="*{city}"/>
-                            <span class="account-change-success" th:if="${editCity eq 'success'}"><i class="fa fa-check"></i> City changed success.</span>
+                            <span class="account-change-success" th:if="${editCity eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.citySuccess}">City changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="province">State/Province:</label>
+                            <label for="province"><span th:text="#{acc.info.state}">State/Province</span>:</label>
                             <input type="text" class="form-control" th:field="*{province}"/>
-                            <span class="account-change-success" th:if="${editProvince eq 'success'}"><i class="fa fa-check"></i> State/province changed success.</span>
+                            <span class="account-change-success" th:if="${editProvince eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.stateSuccess}">State/province changed success.</span></span>
                         </div>
                         <div class="form-group">
-                            <label for="postalCode">Postal Code:</label>
+                            <label for="postalCode"><span th:text="#{acc.info.postal}">Postal Code</span>:</label>
                             <input type="text" class="form-control" th:field="*{postalCode}"/>
-                            <span class="account-change-success" th:if="${editPostalCode eq 'success'}"><i class="fa fa-check"></i> Postal code changed success.</span>
+                            <span class="account-change-success" th:if="${editPostalCode eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.postalSuccess}">Postal code changed success.</span></span>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-success">Save</button>
