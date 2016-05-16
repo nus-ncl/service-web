@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Teams</title>
+        <title>National Cybersecurity Laboratories - Data</title>
         <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" media="screen"/>
         <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{css/font-awesome/css/font-awesome.min.css}"/>
         <link rel="stylesheet" type="text/css" href="static/css/custom.css" th:href="@{css/custom.css}"/>
@@ -14,14 +14,14 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-            	<h2>You contributed the following datasets</h2>
+            	<h2 th:text="#{dataset.user.contribute}">You contributed the following datasets</h2>
                 <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetOwnedByUserList)}">
                     <thead>
                         <th>
                         	<span th:text="#{data.header.name}">Name</span>
                         	<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
                         		<span class="tooltiptext">
-                        			<p>Dataset Name</p>
+                        			<p th:text="#{dataset.user.tooltip.name}">Dataset Name</p>
                         		</span>
                         	</a>
                        	</th>
@@ -29,7 +29,7 @@
                         	<span th:text="#{data.header.releaseDate}">Release Date</span>
                         	<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
                         		<span class="tooltiptext">
-                        			<p>The date when the dataset is made</p>
+                        			<p th:text="#{dataset.user.tooltip.date}">The date when the dataset is made</p>
                         		</span>
                         	</a>
                         </th>
@@ -45,9 +45,9 @@
 	                   	</td>
                    </tr>
                 </table>
-                <p th:if="${#lists.isEmpty(datasetOwnedByUserList)}">You have not contributed any datasets yet.</p>
+                <p th:if="${#lists.isEmpty(datasetOwnedByUserList)}" th:text="#{dataset.user.notContribute}">You have not contributed any datasets yet.</p>
                 
-            	<h2>You have access to the following datasets</h2>
+            	<h2 th:text="#{dataset.user.access}">You have access to the following datasets</h2>
                <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetAccessibleByUserList)}">
                     <thead>
                         <th>
@@ -57,7 +57,7 @@
                         	<span th:text="#{data.header.owner}">Owner</span>
                         	<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
                         		<span class="tooltiptext">
-                        			<p>The owner of the dataset</p>
+                        			<p th:text="#{dataset.user.tooltip.owner}">The owner of the dataset</p>
                         		</span>
                         	</a>
                         </th>
