@@ -14,7 +14,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-                <h2>Apply for a New Team</h2>
+                <h2 th:text="#{teamPageApply.header}">Apply for a New Team</h2>
                 <form  method="post" action="#" th:action="@{/teams/apply_team}" th:object="${teamPageApplyTeamForm}" role="form">
                     <fieldset>
                         <div class="form-group">
@@ -31,25 +31,25 @@
                             <input type="text" class="form-control" id="inputWebsite" placeholder="Team Website" name="" th:field="*{teamWebsite}"/> 
                         </div>
                         <div class="form-group">
-                            <label for="organizationType">Organization Type:</label>
+                            <label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
                             <select class="form-control" th:field="*{teamOrganizationType}">
-                                <option value="academia">Academia</option>
-                                <option value="government">Government</option>
-                                <option value="industry">Industry</option>
+                                <option value="academia" th:text="#{signup.academia}">Academia</option>
+                                <option value="government" th:text="#{signup.government}">Government</option>
+                                <option value="industry" th:text="#{signup.industry}">Industry</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <span class="text-danger" th:if="${#fields.hasErrors('isPublic')}" th:errors="*{isPublic}">Public or Private</span>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="public"/><strong>Public</strong> <em>Anyone can view the team.</em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="public"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="private"/><strong>Private</strong> <em>Only people explicitly granted permission can access.</em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="private"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
-                                <label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> <a href="/team_owner_policy" th:src="@{/team_owner_policy}">I accept the team owner policy</a></label>
+                                <label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> <a href="/team_owner_policy" th:src="@{/team_owner_policy}"> <span th:text="#{signup.acceptTeamOwnerPolicy}">I accept the team owner policy</span></a></label>
                                 <span class="text-danger" th:if="${#fields.hasErrors('hasAcceptTeamOwnerPolicy')}" th:errors="*{hasAcceptTeamOwnerPolicy}">Team owner error</span>
                             </div>
                         </div>
