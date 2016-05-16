@@ -24,20 +24,20 @@
 	        </div>
 	        <div class="collapse navbar-collapse" id="myNavbar">
 	           <ul class="nav navbar-nav dashboard-navbar">
-	               <li><a href="/teams" th:href="@{/teams}"><i class="fa fa-leaf"></i> Team</a></li>
-	               <li><a href="/experiments" th:href="@{/experiments}"><i class="fa fa-tasks"></i> Experiment</a></li>
+	               <li><a href="/teams" th:href="@{/teams}"><i class="fa fa-leaf"></i> <span th:text="#{nav.teams}">Teams</span></a></li>
+	               <li><a href="/experiments" th:href="@{/experiments}"><i class="fa fa-tasks"></i> <span th:text="#{nav.exp}">Experiment</span></a></li>
 	               <li><a href="/data" th:href="@{/data}"><i class="fa fa-database"></i> Data</a></li>
-	               <li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><i class="fa fa-book"></i> Admin</a></li>
-	               <li><a href="#"><i class="fa fa-umbrella"></i> Help</a></li>
+	               <li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><i class="fa fa-book"></i> <span th:text="#{nav.admin}">Admin</span></a></li>
+	               <li><a href="#"><i class="fa fa-umbrella"></i> <span th:text="#{nav.help}">Help</span></a></li>
 	           </ul>
 	           <ul class="nav navbar-nav navbar-right dashboard-navbar">
 	               <li class="dropdown">
 	                   <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg"></i> <span class="caret"></span></a>
 	                   <ul class="dropdown-menu">
 	                   	   <!-- TODO need to check if user is a team owner -->
-	                   	   <li><a href="/approve_new_user" th:href="@{/approve_new_user}">Approve New User</a></li>
-	                       <li><a href="/account_settings" th:href="@{/account_settings}">Edit Account Settings</a></li>
-	                       <li><a href="/logout" th:href="@{/logout}"><i class="fa fa-sign-out"></i> Sign Out</a></li>
+	                   	   <li><a href="/approve_new_user" th:href="@{/approve_new_user}"><span th:text="#{nav.approveNewUser}">Approve New User</span></a></li>
+	                       <li><a href="/account_settings" th:href="@{/account_settings}"><span th:text="#{nav.editAccount}">Edit Account Settings</span></a></li>
+	                       <li><a href="/logout" th:href="@{/logout}"><i class="fa fa-sign-out"></i> <span th:text="#{nav.signOut}">Sign Out</span></a></li>
 	                   </ul>
 	               </li>
 	           </ul>
