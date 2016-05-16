@@ -14,7 +14,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-                <h2>Invite User</h2>
+                <h2 th:text="#{inviteUsers.header}">Invite User</h2>
                 <form  method="post" action="#" th:action="@{/team_profile/invite_user/{teamId}(teamId=${teamIdVar})}" th:object="${teamPageInviteMemberForm}" role="form">
                     <fieldset>
                         <div class="form-group">
