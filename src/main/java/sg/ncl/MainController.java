@@ -62,13 +62,18 @@ public class MainController {
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
     
     
-    @RequestMapping(value="/", method=RequestMethod.GET)
-    public String index(Model model) throws Exception {
-        model.addAttribute("loginForm", new LoginForm());
+    @RequestMapping("/")
+    public String index() {
         return "index";
     }
     
-    @RequestMapping(value="/", method=RequestMethod.POST)
+    @RequestMapping(value="/login", method=RequestMethod.GET)
+    public String login(Model model) {
+    	model.addAttribute("loginForm", new LoginForm());
+    	return "login";
+    }
+    
+    @RequestMapping(value="/login", method=RequestMethod.POST)
     public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) throws Exception {
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
@@ -80,7 +85,7 @@ public class MainController {
         {
             // case1: invalid login
             loginForm.setErrorMsg("Invalid email/password.");
-            return "redirect:/";
+            return "login";
         } 
         else if (userManager.isEmailVerified(loginForm.getLoginEmail()) == false) 
         {
