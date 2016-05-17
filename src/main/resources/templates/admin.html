@@ -230,7 +230,7 @@
 													<td th:text="${dataEntry.value.releaseDate}">Release Date</td>
 													<td th:text="${userManager.getNameByUserId(dataEntry.value.ownerId)}">Owner</td>
 													<td>
-														<a href="#" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to permanently delete this dataset?"><i class="fa fa-trash"></i></a>
+														<a href="#" th:href="@{/admin/data/remove/{datasetId}(datasetId=${dataEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to permanently delete this dataset?"><i class="fa fa-trash"></i></a>
 													</td>
 												</tr>
 											</th:block>

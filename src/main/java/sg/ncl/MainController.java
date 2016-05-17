@@ -772,6 +772,12 @@ public class MainController {
     	return "redirect:/admin";
     }
     
+    @RequestMapping("/admin/data/remove/{datasetId}")
+    public String adminRemoveDataset(@PathVariable Integer datasetId) {
+    	datasetManager.removeDataset(datasetId);
+    	return "redirect:/admin";
+    }
+    
     @RequestMapping(value="/admin/node/add", method=RequestMethod.GET)
     public String adminAddNode(Model model) {
     	model.addAttribute("node", new Node());
