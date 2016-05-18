@@ -5,6 +5,7 @@
  */
 
 $(document).ready(function() {
+	
 	/* Register Form */
 	/* Hide all except first fieldset */
     $('.btn-next').click(function() {

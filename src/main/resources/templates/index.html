@@ -9,6 +9,7 @@
         <link rel="stylesheet" type="text/css" href="static/css/lightbox.css" th:href="@{css/lightbox.css}"/>
         <link rel="stylesheet" type="text/css" href="static/css/responsive.css" th:href="@{css/responsive.css}"/>
         <link rel="stylesheet" type="text/css" id="static/css-preset" href="css/presets/preset1.css" th:href="@{css/presets/preset1.css}"/>
+        <link rel="stylesheet" type="text/css" href="static/css/flexslider.css" th:href="@{css/flexslider.css}"/>
         <link rel="stylesheet" type="text/css" href="static/css/main.css" th:href="@{css/main.css}"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
         <link rel="shortcut icon" href="images/ncl_favicon.png"/>
@@ -28,6 +29,9 @@
 		<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{js/jquery.countTo.js}"></script>
 		<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{js/lightbox.min.js}"></script>
 		<script type="text/javascript" src="static/js/main.js" th:src="@{js/main.js}"></script>
+		<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{js/waypoints.min.js}"></script>
+		<script type="text/javascript" src="static/js/scripts.js" th:src="@{js/scripts.js}"></script>
+		<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{js/jquery.flexslider.js}"></script>
 	  
     </head>
     <body class="mybg">
@@ -51,6 +55,15 @@
     						 </div> <!-- about us -->
     					</div> <!-- caption -->
     					<div align="center"></div>
+    					<!-- bottom: fix some rendering issues of the black overlay for some browsers -->
+	    				<p>&nbsp;</p>
+	    				<p>&nbsp;</p>
+	    				<p>&nbsp;</p>
+	    				<p>&nbsp;</p>
+	    				<p>&nbsp;</p>
+	    				<p>&nbsp;</p>
+	    				<p>&nbsp;</p>
+	    				<p>&nbsp;</p>
     				</div> <!-- item -->
     			</div> <!-- carousel-inner -->
     		</div> <!-- home-slider -->
@@ -568,71 +581,104 @@
     					<h2>News &amp; Events</h2>
     					<p>&nbsp;</p>
     				</div>
-    			</div> <!-- row -->
-	    			<div class="blog-posts">
-	    				<div class="tab-content">
-	    					<div id="1" class="tab-pane fade in active">
-	    						<div class="col-sm-4">
-	    							<div class="post-thumb">
-	    								<a href="#"><img class="img-responsive" src="images/blog/3.png" alt="" /></a>
-	    							</div>
-	    							<div class="entry-header">
-	    								<h3><a href="#">Arrival of new server</a></h3>
-	    							</div>
-	    							<div class="entry-content">
-	    								<p>Our newly purchased servers have arrived on 20 April 2016. 100 machines will be up and running by the end of April 2016.</p>
-	    							</div>
-	    						</div> <!-- col sm 4 -->
-	    						
-	    						<div class="col-sm-4">
-	    							<div class="post-thumb">
-	    								<a href="#"><img class="img-responsive" src="images/blog/2.png" alt="" /></a>
-	    							</div>
-	    							<div class="entry-header">
-	    								<h3><a href="#">NCL OPENING WORKSHOP 15 April 2016</a></h3>
-	    							</div>
-	    							<div class="entry-content">
-	    								<p>The objective of this WORKSHOP is to allow internal stakeholders and supporting staff from the Information Technology Unit &amp; Research Office to have a better understanding of NCL and it's activities.</p>
-	    							</div>
-	    						</div> <!-- col sm 4 -->
-	    						
-	    						<div class="col-sm-4">
-	    							<div class="post-thumb">
-	    								<a href="#"><img class="img-responsive" src="images/blog/1.png" alt="" /></a>
-	    							</div>
-	    							<div class="entry-header">
-	    								<h3><a href="#">National Cybersecurity R&amp;D Laboratory at NUS School of Computing to be ready by end-2016</a></h3>
-	    							</div>
-	    							<div class="entry-content">
-	    								<p>The National Cybersecurity R&amp;D Laboratory, which will be set up by the security research group at the NUS School of Computing, will be operational by the end of this year. The new laboratory will be a shared national research infrastructure which can be used by the local research community and industry for the validation of research outcomes, for collaborative work with industry or international partners, and to curate useful datasets for cybersecurity experiments.</p>
-	    								<p><a href="http://news.nus.edu.sg/images/resources/news/2016/2016-01/2016-01-14/LABORATORY-stonline-14jan.pdf">Read More...</a></p>
-	    							</div>
-	    						</div> <!-- col sm 4 -->
-	    						
-	    					</div> <!-- 1 -->
-	    					
-	    					<div id="2" class="tab-pane fade">
-	    						<h3>DSO Coming</h3>
-	    						<p>Coming Soon</p>
-	    					</div> <!-- 2 -->
-	    					
-	    					<div id="3" class="tab-pane fade">
-	    						<h3>Menu 2</h3>
-	    						<p>Coming Soon</p>
-	    					</div> <!-- 3 -->
-	    				</div> <!-- tab content -->
-	    				
-	    				<p>&nbsp;</p>
-	    				
-						<ul class="nav nav-tabs pull-right">
-							<li class="active"><a data-toggle="tab" href="#1">Page 1</a></li>
-							<li><a data-toggle="tab" href="#2">2</a></li>
-							<li><a data-toggle="tab" href="#3">3</a></li>
-						</ul>
-	    				
-	    			</div> <!-- blog posts -->
+		    		<div id="portfolioSlider">
+		    			<ul class="slides">
+		    				<li>
+		    				
+		    					<div class="col-md-4 wp4">
+		    						<div class="overlay-effect effects clearfix">
+		    							<div class="img">
+		    								<img class="img-responsive" src="images/blog/3.png" alt="" />
+		    								<div class="overlay">
+		    									 <a href="#" class="expand"><i class="fa fa-search"></i><br/>View More</a>
+		    									 <a class="close-overlay hidden">&times;</a>
+		    								</div>
+		    							</div> <!-- img -->
+		    						</div> <!-- overlay -->
+		    						<h2>Arrival of new server</h2>
+		    						<p>Our newly purchased servers have arrived on 20 April 2016. 100 machines will be up and running by the end of April 2016.</p>
+		    					</div> <!-- news 1 -->
+		    					
+		    				</li>
+		    			</ul>
+		    		</div> <!-- portfolioSlider -->
+	    		</div> <!-- row -->
     		</div> <!-- container -->
     	</section> <!-- blog -->
+    	
+    	<section class="portfolio text-center section-padding" id="portfolio">
+    		<div class="container">
+    			<div class="row">
+    				<div id="portfolioSlider">
+    					<ul class="slides">
+    						<li>
+    							<div class="col-md-4 wp4">
+    								<div class="overlay-effect effects clearfix">
+    									<div class="img">
+    										<img src="images/blog/3.png" alt="Portfolio Item"/>
+    									</div>
+    								</div>
+    								<h2>Creative Minds</h2>
+    								<p>1</p>
+    							</div>
+    							<div class="col-md-4 wp4 delay-05s">
+    								<div class="overlay-effect effects clearfix">
+    									<div class="img">
+    										<img src="images/blog/3.png" alt="Portfolio Item"/>
+    									</div>
+    								</div>
+    								<h2>Creative Minds</h2>
+    								<p>2</p>
+    							</div>
+    							<div class="col-md-4 wp4 delay-1s">
+    								<div class="overlay-effect effects clearfix">
+    									<div class="img">
+    										<img src="images/blog/3.png" alt="Portfolio Item"/>
+    									</div>
+    								</div>
+    								<h2>Creative Minds</h2>
+    								<p>3</p>
+    							</div>
+    						</li>
+    						<li>
+    							<div class="col-md-4 wp4">
+    								<div class="overlay-effect effects clearfix">
+    									<div class="img">
+    										<img src="images/blog/3.png" alt="Portfolio Item"/>
+    									</div>
+    								</div>
+    								<h2>Creative Minds</h2>
+    								<p>4</p>
+    							</div>
+    							<div class="col-md-4 wp4 delay-05s">
+    								<div class="overlay-effect effects clearfix">
+    									<div class="img">
+    										<img src="images/blog/3.png" alt="Portfolio Item"/>
+    									</div>
+    								</div>
+    								<h2>Creative Minds</h2>
+    								<p>5</p>
+    							</div>
+    							<div class="col-md-4 wp4 delay-1s">
+    								<div class="overlay-effect effects clearfix">
+    									<div class="img">
+    										<img src="images/blog/3.png" alt="Portfolio Item"/>
+    									</div>
+    								</div>
+    								<h2>Creative Minds</h2>
+    								<p>6</p>
+    							</div>
+    						</li>
+    					</ul>
+    				</div>
+    			</div> <!-- row -->
+    			<div class="row">
+	                <div class="col-md-12 text-right navicon">
+	                  <a id="nav-toggle" class="nav_slide_button" href="#"><span></span></a>
+	                </div>
+    			</div>
+    		</div>
+    	</section>
     
     	<footer id="footer">
     		<div class="container">
