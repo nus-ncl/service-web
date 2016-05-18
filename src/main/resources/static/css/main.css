@@ -422,7 +422,7 @@ section {
   transition-property: opacity;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 900px;
+  height: 1000px;
 }
 
 .carousel-fade .carousel-inner .item:after {
@@ -631,18 +631,7 @@ section {
 /* ==========================================================================
 Portfolio
 ========================================================================== */
-#nav-toggle { position: absolute; right: 15px; top: 0; }
-#nav-toggle { cursor: pointer; padding: 10px 35px 16px 0px; }
-#nav-toggle span, #nav-toggle span:before, #nav-toggle span:after { cursor: pointer; border-radius: 1px; -moz-border-radius: 1px; -webkit-border-radius: 1px; -o-border-radius: 1px; height: 5px; width: 35px; background: #353535; position: absolute; display: block; content: ''; }
-#nav-toggle span:before { top: -10px; }
-#nav-toggle span:after { bottom: -10px; }
-#nav-toggle span, #nav-toggle span:before, #nav-toggle span:after { transition: all 500ms ease-in-out; -webkit-transition: all 500ms ease-in-out; -moz-transition: all 500ms ease-in-out; -o-transition: all 500ms ease-in-out; }
-#nav-toggle.active span { background-color: transparent; }
-#nav-toggle.active span:before, #nav-toggle.active span:after { top: 0; }
-#nav-toggle.active span:before { transform: rotate(45deg); -webkit-transform: rotate(45deg); -ms-transform: rotate(45deg); }
-#nav-toggle.active span:after { transform: translateY(-10px) rotate(-45deg); -webkit-transform: translateY(-10px) rotate(-45deg); -ms-transform: translateY(-10px) rotate(-45deg); top: 10px; }
 .navicon { position: relative; height: 26px; }
-
 .effects { padding-left: 15px; }
 .effects .img { position: relative; margin-bottom: 50px; position: relative; z-index: 1; overflow: hidden; }
 .effects .img:nth-child(n) { margin-right: 5px; }
@@ -674,6 +663,17 @@ Waypoints
 .delay-05s { animation-delay: 0.5s; -webkit-animation-delay: 0.5s; }
 .delay-1s { animation-delay: 1s; -webkit-animation-delay: 1s; }
 .wp3 { background: url('../img/iphone-bg.png') no-repeat center center; background-position: 200px 10px; height: 100%; }
+
+/*************************
+******News Events CSS*****
+**************************/
+.news-header {
+	text-align: center;
+	color : #028fcc;
+}
+
+.news-header::after { content: " "; border: solid 2px #ffffff; display: block; width: 35px; margin: 25px auto; }
+
 
 /*************************
 ***********Team CSS*******
@@ -819,7 +819,7 @@ Waypoints
 	font-size: 14px;
 	font-weight: 600;
 	padding-top: 39px;
-	padding-bottom: 10px ;
+	padding-bottom: 10px;
 	margin-left:20px;
 }
 
@@ -827,6 +827,16 @@ Waypoints
 	background-color: rgba(0,0,0,.4);
 	padding-top: 39px;
 	padding-bottom: 30px;
+	margin-left:20px;
+}
+
+.dashboard-navbar-left li a {
+	color: #000;
+	text-transform: uppercase;
+	font-size: 14px;
+	font-weight: 600;
+	padding-top: 20px;
+	padding-bottom: 20px;
 	margin-left:20px;
 }
 

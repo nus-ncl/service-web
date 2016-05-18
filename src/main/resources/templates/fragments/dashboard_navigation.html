@@ -20,7 +20,7 @@
     </head>
   <body>
       <!-- give a fragment name so that we can import from other html files -->
-	  <nav class="navbar navbar-default dashboard-navbar" th:fragment="dashboardnav">
+	  <nav class="navbar navbar-default" th:fragment="dashboardnav">
 	      <div class="container-fluid">
 	        <div class="navbar-header">
 	           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -28,17 +28,17 @@
 	            <span class="icon-bar"></span>
 	            <span class="icon-bar"></span>
 	           </button>
-	          <a class="navbar-brand" href="/dashboard" th:href="@{/dashboard}" title="NCL"><img class="img-circle img-responsive" src="../static/images/logo_20.png" th:src="@{~/images/logo_20.png}" alt="NCL"/></a>
+	          <a class="navbar-brand" href="/dashboard" th:href="@{/dashboard}" title="NCL"><img class="img-circle img-responsive" src="../static/images/nav_icon.png" th:src="@{~/images/nav_icon2.png}" alt="NCL" /></a>
 	        </div>
 	        <div class="collapse navbar-collapse" id="myNavbar">
-	           <ul class="nav navbar-nav dashboard-navbar">
-	               <li><a href="/teams" th:href="@{/teams}"><i class="fa fa-leaf"></i> <span th:text="#{nav.teams}">Teams</span></a></li>
-	               <li><a href="/experiments" th:href="@{/experiments}"><i class="fa fa-tasks"></i> <span th:text="#{nav.exp}">Experiment</span></a></li>
-	               <li><a href="/data" th:href="@{/data}"><i class="fa fa-database"></i> Data</a></li>
-	               <li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><i class="fa fa-book"></i> <span th:text="#{nav.admin}">Admin</span></a></li>
-	               <li><a href="#"><i class="fa fa-umbrella"></i> <span th:text="#{nav.help}">Help</span></a></li>
+	           <ul class="nav navbar-nav dashboard-navbar-left">
+	               <li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
+	               <li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a></li>
+	               <li><a href="/data" th:href="@{/data}">Data</a></li>
+	               <li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a></li>
+	               <li><a href="#"><span th:text="#{nav.help}">Help</span></a></li>
 	           </ul>
-	           <ul class="nav navbar-nav navbar-right dashboard-navbar">
+	           <ul class="nav navbar-nav navbar-right dashboard-navbar-left">
 	               <li class="dropdown">
 	                   <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg"></i> <span class="caret"></span></a>
 	                   <ul class="dropdown-menu">
