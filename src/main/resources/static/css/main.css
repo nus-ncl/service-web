@@ -872,8 +872,6 @@ section {
 ***Navigation Bar CSS*****
 **************************/
 .logo1 {
-	width: 134px;
-	height: 87px
 	alignment : center;
 	padding :15px;
 }
@@ -899,7 +897,7 @@ section {
 }
 
 .navbar-right li a:hover {
-	background-color: #f2f2f2;
+	background-color: none;
 	border-color: #f2f2f2;
 }
 

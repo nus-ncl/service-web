@@ -54,33 +54,7 @@
     				</div> <!-- item -->
     			</div> <!-- carousel-inner -->
     		</div> <!-- home-slider -->
-    		<div class="main-nav">
-    			<div class="container">
-    			
-    				<div class="navbar-header">
-    					<img src="images/nav_icon.png" alt="logo" class="logo1" />
-    					<button type="button" class="navbar-toggle icon-pad" data-toggle="collapse" data-target=".navbar-collapse">
-    						<span class="sr-only">Toggle navigation</span>
-    						<span class="icon-bar"></span>
-    						<span class="icon-bar"></span>
-    						<span class="icon-bar"></span>
-    					</button>
-    				</div> <!-- navbar-header -->
-    				
-    				<div class="collapse navbar-collapse">
-    					<ul class="nav navbar-nav navbar-left">
-    						<li class="scroll"><a href="#joinUs">Join Us</a></li>
-    						<li class="scroll"><a href="#team">Our Team</a></li>
-    						<li class="scroll"><a href="#blog">News &amp; Events</a></li>
-    					</ul>
-    					<ul class="nav navbar-nav navbar-right">
-    						<li><a href="#">Log in</a></li>
-    						<li><a href="#">Sign Up</a></li>
-    					</ul>
-    				</div> <!-- navigation links -->
-    				
-    			</div> <!-- container -->
-    		</div> <!-- main-nav -->
+    		<div th:replace="fragments/login_navigation :: loginnav">&nbsp;</div>
     	</header> <!-- home -->
     	
     	<section id="joinUs" class="join-us-background">
@@ -110,7 +84,7 @@
     				<ul class="nav nav-tabs nav-justified team-nav">
     					<li class="active"><a href="#asoprof" data-toggle="pill">Principal Investigators</a></li>
     					<li><a href="#Co-Inv" data-toggle="pill">Operations</a></li>
-    					<li><a href="#Research" data-toggle="pill">Research </a></li>
+    					<li><a href="#Research" data-toggle="pill">Research</a></li>
     					<li><a href="#Students" data-toggle="pill">Students</a></li>
     					<p>&nbsp;</p>
     				</ul> <!-- teams navigation -->
