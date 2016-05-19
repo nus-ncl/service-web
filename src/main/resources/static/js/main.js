@@ -5,43 +5,9 @@
  */
 
 $(document).ready(function() {
-	
-	/***************** Waypoints ******************/
-	$('.wp1').waypoint(function() {
-		$('.wp1').addClass('animated fadeInLeft');
-	}, {
-		offset: '75%'
-	});
-	$('.wp2').waypoint(function() {
-		$('.wp2').addClass('animated fadeInUp');
-	}, {
-		offset: '75%'
-	});
-	$('.wp3').waypoint(function() {
-		$('.wp3').addClass('animated fadeInDown');
-	}, {
-		offset: '55%'
-	});
-	$('.wp4').waypoint(function() {
-		$('.wp4').addClass('animated fadeInDown');
-	}, {
-		offset: '75%'
-	});
-	$('.wp5').waypoint(function() {
-		$('.wp5').addClass('animated fadeInUp');
-	}, {
-		offset: '75%'
-	});
-	$('.wp6').waypoint(function() {
-		$('.wp6').addClass('animated fadeInDown');
-	}, {
-		offset: '75%'
-	});
-	
 	/* Register Form */
 	/* Hide all except first fieldset */
     $('.btn-next').click(function() {
-
         current_fs = $(this).parent();
         next_fs = $(this).parent().next();
 
@@ -110,6 +76,14 @@ $(document).ready(function() {
     	$('.teamName', this).text(data.teamName);
     	$('.withdraw-ok', this).data('teamName', data.teamName);
     });
+    
+    //------------------to show the news section--------------
+    $('.wp4').waypoint(function() {
+    	$('.wp4').addClass('animated fadeInDown');
+    }, {
+    	offset: '75%'
+    });
+    
 });
 
 
@@ -277,7 +251,6 @@ jQuery(function($) {
 });
 
 /***************** Flexsliders ******************/
-
 $(window).load(function() {
 
 	$('#portfolioSlider').flexslider({

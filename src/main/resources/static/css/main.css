@@ -5,9 +5,6 @@
 */
 
 /* general */
-.mybg {
-	background-color: #ffffff;
-}
 
 .dashboard-navbar {
     letter-spacing: 2px;
@@ -310,6 +307,7 @@ h3 {
   color: #fff;
 }
 
+/*
 .btn {
   border: 0;
   border-radius: 0;
@@ -317,10 +315,10 @@ h3 {
 
 .btn.btn-primary:hover {
   background-color: #017fb5;
-}
+}*/
 
-.login-navbar li a:hover, 
-.login-navbar li a:focus {
+.navbar-nav li a:hover, 
+.navbar-nav li a:focus {
   outline:none;
   outline-offset: 0;
   text-decoration:none;  
@@ -631,7 +629,6 @@ section {
 /* ==========================================================================
 Portfolio
 ========================================================================== */
-.navicon { position: relative; height: 26px; }
 .effects { padding-left: 15px; }
 .effects .img { position: relative; margin-bottom: 50px; position: relative; z-index: 1; overflow: hidden; }
 .effects .img:nth-child(n) { margin-right: 5px; }
@@ -784,7 +781,7 @@ Waypoints
 	padding :15px;
 }
 
-.login-navbar-right li a {
+.navbar-right li a {
   color: #ffffff;
   text-transform: uppercase;
   font-size: 14px;
@@ -797,23 +794,24 @@ Waypoints
   border: 1px solid #028fcc;
 }
 
-.login-navbar-right li.active a {
+.navbar-right li.active a {
 	background-color: rgba(0,0,0,.4);
 	padding-top: 39px;
 	padding-bottom: 30px;
 	margin-left:20px;
 }
 
-.login-navbar-right li a:hover {
+.navbar-right li a:hover {
+	color: #028fcc;
 	background-color: none;
-	border-color: #f2f2f2;
+	border-color: #028fcc;
 }
 
 .navbar-brand h1 {
 	margin-top: 5px;
 }
 
-.login-navbar-left li a {
+.navbar-left li a {
 	color: #000;
 	text-transform: uppercase;
 	font-size: 14px;
@@ -823,7 +821,7 @@ Waypoints
 	margin-left:20px;
 }
 
-.login-navbar-left li.active a {
+.navbar-left li.active a {
 	background-color: rgba(0,0,0,.4);
 	padding-top: 39px;
 	padding-bottom: 30px;
@@ -969,23 +967,6 @@ Waypoints
   padding-top: 95px;
 }
 
-.form-control {
-  background-color: transparent;
-  border-color: rgba(255,255,255,.1);
-  height: 50px;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-textarea.form-control {
-  min-height: 180px;
-  resize:none;
-}
-
-.form-group {
-  margin-bottom: 30px;
-}
-
 .contact-info {
   padding-left:70px;
   font-weight: 300;
@@ -1004,15 +985,6 @@ ul.address {
 
 .contact-info ul li a {
   color: #fff;
-}
-
-.btn-submit {
-  display: block;
-  padding: 12px;
-  width: 100%;
-  color: #fff;
-  border:0;
-  margin-top: 40px;
 }
 
 #footer {
