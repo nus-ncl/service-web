@@ -546,7 +546,6 @@ public class MainController {
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
     public String validateExperiment(@ModelAttribute Experiment experiment, Model model, HttpSession session) {
-        model.addAttribute("teamMap", teamManager.getTeamMap(getSessionIdOfLoggedInUser(session)));
         // add current experiment to experiment manager
         experimentManager.addExperiment(getSessionIdOfLoggedInUser(session), experiment);
         // increase exp count to be display on Teams page

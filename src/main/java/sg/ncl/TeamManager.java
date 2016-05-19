@@ -16,7 +16,7 @@ public class TeamManager {
 	private final int NO_EXP_COUNT = 0;
     private static TeamManager TEAM_MANAGER_SINGLETON = null;
     private HashMap<Integer, Team> teamMap; /* teamId - Team */
-    private String infoMsg = null;
+    private String infoMsg = "";
     
     private HashMap<Integer, List<Team>> invitedToParticipateMap2; /* userId, arraylists of team */
     private HashMap<Integer, List<Team>> joinRequestMap2; /* userId, arraylists of team */
@@ -163,6 +163,7 @@ public class TeamManager {
     /**
      * @return list of team information that contains the user
      * user can be a member or owner of the team
+     * used for create experiment page
      */
     public HashMap<Integer, Team> getTeamMap(int userId) {
         HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
@@ -172,8 +173,9 @@ public class TeamManager {
             
             HashMap<Integer, String> membersMap = currTeam.getMembersMap();
             for (Map.Entry<Integer, String> membersEntry : membersMap.entrySet()) {
-                if (membersEntry.getKey() == userId) {
-                    rv.put(currTeamId, currTeam);
+                if (membersEntry.getKey() == userId && !membersEntry.getValue().equals(PENDING_ACCEPT_INVITATION_POSITION)) {
+                    // don't allow users if user is still pending for acceptance
+                	rv.put(currTeamId, currTeam);
                 }
             }
         }

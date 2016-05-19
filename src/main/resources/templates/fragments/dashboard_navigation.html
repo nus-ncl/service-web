@@ -31,14 +31,14 @@
 	          <a class="navbar-brand" href="/dashboard" th:href="@{/dashboard}" title="NCL"><img class="img-circle img-responsive" src="../static/images/nav_icon.png" th:src="@{~/images/nav_icon2.png}" alt="NCL" /></a>
 	        </div>
 	        <div class="collapse navbar-collapse" id="myNavbar">
-	           <ul class="nav navbar-nav dashboard-navbar-left">
+	           <ul class="nav navbar-nav navbar-left dashboard-navbar-left">
 	               <li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
 	               <li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a></li>
 	               <li><a href="/data" th:href="@{/data}">Data</a></li>
 	               <li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a></li>
 	               <li><a href="#"><span th:text="#{nav.help}">Help</span></a></li>
 	           </ul>
-	           <ul class="nav navbar-nav navbar-right dashboard-navbar-left">
+	           <ul class="nav navbar-nav navbar-right dashboard-navbar-right">
 	               <li class="dropdown">
 	                   <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg"></i> <span class="caret"></span></a>
 	                   <ul class="dropdown-menu">
