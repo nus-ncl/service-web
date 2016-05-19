@@ -22,6 +22,14 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
+				<div th:if="${message}">
+					<h4 th:text="${message}"></h4>
+				</div>
+				<div>
+					<ul>
+						<li th:each="file : ${files}" th:text="${file}"></li>
+					</ul>
+				</div>
             	<h2 th:text="#{dataset.user.contribute}">You contributed the following datasets</h2>
                 <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetOwnedByUserList)}">
                     <thead>

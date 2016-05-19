@@ -22,7 +22,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-                <form  method="post" action="#" th:action="@{/data/contribute}" th:object="${dataset}" role="form">
+                <form  method="post" action="#" th:action="@{/data/contribute}" th:object="${dataset}" role="form" enctype="multipart/form-data">
                     <fieldset>
                         <h2 th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
                         <div class="form-group">
@@ -32,7 +32,7 @@
                             <input type="text" class="form-control" placeholder="Enter Dataset Description" th:field="*{datasetDescription}"/>
                         </div>
                         <div class="form-group">
-                        	<input type="file" name="datasetUpload"/>
+                        	<input type="file" name="file"/>
                         </div>
                         <div class="form-group">
                             <label for="license"><span th:text="#{admin.contributeData.license}">Preselected License List:</span> 

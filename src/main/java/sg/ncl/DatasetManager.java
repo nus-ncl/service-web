@@ -140,12 +140,13 @@ public class DatasetManager {
 		}
 	}
 	
-	public void addDataset(int userId, Dataset dataset) {
+	public void addDataset(int userId, Dataset dataset, String fileName) {
 		int datasetId = generateRandomId();
 		dataset.setDatasetId(datasetId);
 		dataset.setOwnerId(userId);
 		dataset.addUsersAccess(userId);
 		dataset.setReleaseDate(getDateOfContribution());
+		dataset.setFileName(fileName);
 		datasetMap.put(datasetId, dataset);
 	}
 	

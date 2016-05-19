@@ -16,6 +16,7 @@ public class Dataset {
 	private boolean requireAuthorization; // true: need to request access Restricted, false: can just download Open
 	private Set<Integer> usersAccessSet = new HashSet<Integer>(); // stores a list of userids that have accessed to this dataset including the owner
 	private boolean hasAcceptDataOwnerPolicy;
+	private String fileName;
 	
 	public Dataset() {
 	}
@@ -142,5 +143,13 @@ public class Dataset {
 			return true;
 		}
 		return false;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 }

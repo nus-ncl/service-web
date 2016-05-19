@@ -1,18 +1,25 @@
 package sg.ncl;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,9 +34,7 @@ import sg.ncl.testbed_interface.Domain;
 import sg.ncl.testbed_interface.Experiment;
 import sg.ncl.testbed_interface.LoginForm;
 import sg.ncl.testbed_interface.Node;
-import sg.ncl.testbed_interface.SignUpAccountDetailsForm;
 import sg.ncl.testbed_interface.SignUpMergedForm;
-import sg.ncl.testbed_interface.SignUpPersonalDetailsForm;
 import sg.ncl.testbed_interface.Team;
 import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
 import sg.ncl.testbed_interface.User;
@@ -545,8 +550,44 @@ public class MainController {
     }
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
-    public String validateExperiment(@ModelAttribute Experiment experiment, Model model, HttpSession session) {
-        // add current experiment to experiment manager
+    public String validateExperiment(@ModelAttribute Experiment experiment, Model model, HttpSession session, @RequestParam("networkConfiguration") MultipartFile networkFile, @RequestParam("dataset") MultipartFile dataFile, RedirectAttributes redirectAttributes) {
+        // TODO Uploaded function for network configuration and optional dataset
+		if (!networkFile.isEmpty()) {
+			try {
+				String networkFileName = getSessionIdOfLoggedInUser(session) + "-networkconfig-" + networkFile.getOriginalFilename();
+				BufferedOutputStream stream = new BufferedOutputStream(
+						new FileOutputStream(new File(Application.EXP_CONFIG_DIR + "/" + networkFileName)));
+                FileCopyUtils.copy(networkFile.getInputStream(), stream);
+				stream.close();
+				redirectAttributes.addFlashAttribute("message",
+						"You successfully uploaded " + networkFile.getOriginalFilename() + "!");
+				// remember network file name here
+			}
+			catch (Exception e) {
+				redirectAttributes.addFlashAttribute("message",
+						"You failed to upload " + networkFile.getOriginalFilename() + " => " + e.getMessage());
+				return "redirect:/experiments/create";
+			}
+		}
+		
+		if (!dataFile.isEmpty()) {
+			try {
+				String dataFileName = getSessionIdOfLoggedInUser(session) + "-data-" + dataFile.getOriginalFilename();
+				BufferedOutputStream stream = new BufferedOutputStream(
+						new FileOutputStream(new File(Application.EXP_CONFIG_DIR + "/" + dataFileName)));
+                FileCopyUtils.copy(dataFile.getInputStream(), stream);
+				stream.close();
+				redirectAttributes.addFlashAttribute("message2",
+						"You successfully uploaded " + dataFile.getOriginalFilename() + "!");
+				// remember data file name here
+			}
+			catch (Exception e) {
+				redirectAttributes.addFlashAttribute("message2",
+						"You failed to upload " + dataFile.getOriginalFilename() + " => " + e.getMessage());
+			}
+		}
+    	
+    	// add current experiment to experiment manager
         experimentManager.addExperiment(getSessionIdOfLoggedInUser(session), experiment);
         // increase exp count to be display on Teams page
         teamManager.incrementExperimentCount(experiment.getTeamId());
@@ -608,15 +649,47 @@ public class MainController {
     @RequestMapping(value="/data/contribute", method=RequestMethod.GET)
     public String contributeData(Model model) {
     	model.addAttribute("dataset", new Dataset());
+    	
+    	File rootFolder = new File(Application.ROOT);
+    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
+    			.map(f -> f.getName())
+    			.collect(Collectors.toList());
+
+    		model.addAttribute("files",
+    			Arrays.stream(rootFolder.listFiles())
+    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
+    					.map(f -> f.getName())
+    					.collect(Collectors.toList())
+    		);
+    	
     	return "contribute_data";
     }
     
     @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
-    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session) {
+    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
     	// TODO
     	// validation
     	// get file from user upload to server
-    	datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset);
+		if (!file.isEmpty()) {
+			try {
+				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
+				BufferedOutputStream stream = new BufferedOutputStream(
+						new FileOutputStream(new File(Application.ROOT + "/" + fileName)));
+                FileCopyUtils.copy(file.getInputStream(), stream);
+				stream.close();
+				redirectAttributes.addFlashAttribute("message",
+						"You successfully uploaded " + file.getOriginalFilename() + "!");
+				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
+			}
+			catch (Exception e) {
+				redirectAttributes.addFlashAttribute("message",
+						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
+			}
+		}
+		else {
+			redirectAttributes.addFlashAttribute("message",
+					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
+		}
     	return "redirect:/data";
     }
     
@@ -764,15 +837,47 @@ public class MainController {
     @RequestMapping(value="/admin/data/contribute", method=RequestMethod.GET)
     public String adminContributeDataset(Model model) {
     	model.addAttribute("dataset", new Dataset());
+    	
+    	File rootFolder = new File(Application.ROOT);
+    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
+    			.map(f -> f.getName())
+    			.collect(Collectors.toList());
+
+    		model.addAttribute("files",
+    			Arrays.stream(rootFolder.listFiles())
+    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
+    					.map(f -> f.getName())
+    					.collect(Collectors.toList())
+    		);
+    		
     	return "admin_contribute_data";
     }
     
     @RequestMapping(value="/admin/data/contribute", method=RequestMethod.POST)
-    public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session) {
+    public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
     	// TODO
     	// validation
     	// get file from user upload to server
-    	datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset);
+		if (!file.isEmpty()) {
+			try {
+				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
+				BufferedOutputStream stream = new BufferedOutputStream(
+						new FileOutputStream(new File(Application.ROOT + "/" + fileName)));
+                FileCopyUtils.copy(file.getInputStream(), stream);
+				stream.close();
+				redirectAttributes.addFlashAttribute("message",
+						"You successfully uploaded " + file.getOriginalFilename() + "!");
+				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
+			}
+			catch (Exception e) {
+				redirectAttributes.addFlashAttribute("message",
+						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
+			}
+		}
+		else {
+			redirectAttributes.addFlashAttribute("message",
+					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
+		}
     	return "redirect:/admin";
     }
     

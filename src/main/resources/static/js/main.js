@@ -65,6 +65,12 @@ $(document).ready(function() {
     // tooltip hover
     $('[data-toggle="tooltip"]').tooltip();
     
+    // to show custom exp scenario only when necessary
+    $('#selectExpScenario').on('change', function() {
+    	$('#custom').hide();
+    	$('#'+this.value).show();
+    });
+    
     //-----------------team page-----------------
     // withdraw
     $('#confirm-withdraw').on('click', '.withdraw-ok', function(e) {

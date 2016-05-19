@@ -193,10 +193,13 @@ public class ExperimentManager {
     	toBeAddedExp.setExperimentId(expId);
     	toBeAddedExp.setExperimentOwnerId(userId);
     	toBeAddedExp.setStatus(EXPERIMENT_STATUS_STOP);
+    	String scenarioFileName = toBeAddedExp.getScenarioFileName();
     	
-    	// set the scenario contents
-    	String scenarioContents = getScenarioContents(toBeAddedExp.getScenarioFileName());
-    	toBeAddedExp.setScenarioContents(scenarioContents);
+    	if (!scenarioFileName.equals("custom")) {
+        	// set the scenario contents
+        	String scenarioContents = getScenarioContents(toBeAddedExp.getScenarioFileName());
+        	toBeAddedExp.setScenarioContents(scenarioContents);
+    	}
     	
     	if (experimentMap2.containsKey(userId)) {
     		// user has an existing record
