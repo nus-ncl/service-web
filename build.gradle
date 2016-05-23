@@ -43,6 +43,8 @@ dependencies {
     // compile 'org.apache.axis2:axis2-adb:1.7.1'
     // compile files('lib/jabac-1.5.jar')
     testCompile("junit:junit")
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.jmockit:jmockit:1.22'
 }
 
 // tag::wrapper[]
