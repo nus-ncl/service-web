@@ -16,6 +16,10 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -66,6 +70,8 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
     
+    private final String USERS_URI = "http://localhost:8080/users/";
+    
     
     @RequestMapping("/")
     public String index() {
@@ -83,6 +89,18 @@ public class MainController {
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
     	
+    	final String uri = "http://localhost:801/authentication/";
+    	RestTemplate restTemplate = new RestTemplate();
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.set("X-Username", "johndoe@nus.edu.sg");
+    	headers.set("X-Password", "password");
+    	
+    	HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+    	ResponseEntity responseEntity = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
+    	System.out.println(responseEntity.toString());
+    	return "redirect:/dashboard";
+    	
+    	/*
     	String inputEmail = loginForm.getLoginEmail();
     	int userId = userManager.getUserIdByEmail(inputEmail);
     	
@@ -124,6 +142,7 @@ public class MainController {
             session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
             return "redirect:/dashboard";
         }
+        */
     }
     
     @RequestMapping("/passwordreset")
@@ -220,6 +239,12 @@ public class MainController {
     //--------------------------Account Settings Page--------------------------
     @RequestMapping(value="/account_settings", method=RequestMethod.GET)
     public String accountDetails(Model model, HttpSession session) {
+    	
+    	String userId_uri = USERS_URI + "/{id}";
+    	
+    	RestTemplate restTemplate = new RestTemplate();
+    	System.out.println(restTemplate.getForObject(userId_uri, String.class, "1").toString());
+    	
     	User editUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
     	model.addAttribute("editUser", editUser);
         return "account_settings";
