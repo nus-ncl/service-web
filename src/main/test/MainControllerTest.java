@@ -57,7 +57,23 @@ public class MainControllerTest {
 		Mockito.when(loginForm.getLoginPassword()).thenReturn("password");
 		mockMvc.perform(post("/login"))
 		.andExpect(status().isOk())
-		.andExpect(view().name("dashboard"));
+		.andExpect(view().name("redirect:/dashboard"));
 		*/
+	}
+	
+	@Test
+	public void testGetSignUpPage() throws Exception {
+		mockMvc.perform(get("/signup2"))
+		.andExpect(status().isOk())
+		.andExpect(view().name("signup2"));
+	}
+	
+	@Test
+	public void testPostSignUpPage() throws Exception {
+		mockMvc.perform(post("/signup2"))
+		.andExpect(status().isOk())
+		.andExpect(view().name("signup2"))
+		.andExpect(model().attributeExists("loginForm"))
+		.andExpect(model().attributeExists("signUpMergedForm"));
 	}
 }
