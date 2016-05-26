@@ -60,6 +60,8 @@ public class MainControllerTest {
     public void testGetSignUpPage() throws Exception {
         mockMvc.perform(get("/signup2"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("signup2"));
+                .andExpect(view().name("signup2"))
+                .andExpect(model().attributeExists("loginForm"))
+                .andExpect(model().attributeExists("signUpMergedForm"));
     }
 }
