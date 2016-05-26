@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
 import org.springframework.http.*;
@@ -275,15 +273,12 @@ public class MainController {
     	// Need to be this way to "edit" details
     	// If not, the form details will overwrite existing user's details
 
-        String firstName = editUser.getFirstName();
-        String lastName = editUser.getLastName();
-
         JSONObject object = new JSONObject();
         JSONObject userDetails = new JSONObject();
         JSONObject address = new JSONObject();
 
-        userDetails.put("firstName", firstName);
-        userDetails.put("lastName", lastName);
+        userDetails.put("firstName", editUser.getFirstName());
+        userDetails.put("lastName", editUser.getLastName());
         userDetails.put("email", editUser.getEmail());
         userDetails.put("phone", editUser.getPhone());
         userDetails.put("address", address);
