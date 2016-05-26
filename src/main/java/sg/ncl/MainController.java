@@ -3,6 +3,7 @@ package sg.ncl;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -16,7 +17,10 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,17 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import sg.ncl.testbed_interface.Dataset;
-import sg.ncl.testbed_interface.Domain;
-import sg.ncl.testbed_interface.Experiment;
-import sg.ncl.testbed_interface.LoginForm;
-import sg.ncl.testbed_interface.Node;
-import sg.ncl.testbed_interface.SignUpMergedForm;
-import sg.ncl.testbed_interface.Team;
-import sg.ncl.testbed_interface.TeamPageJoinTeamForm;
-import sg.ncl.testbed_interface.User;
-import sg.ncl.testbed_interface.TeamPageApplyTeamForm;
-import sg.ncl.testbed_interface.TeamPageInviteMemberForm;
+import sg.ncl.testbed_interface.*;
 
 /**
  * 
@@ -56,7 +50,6 @@ public class MainController {
 	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final int ERROR_NO_SUCH_USER_ID = 0;
     private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
-    private final String host = "http://localhost:8080/";
     private int CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
     private boolean IS_USER_ADMIN = false;
     private TeamManager teamManager = TeamManager.getInstance();
@@ -68,8 +61,11 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
     
-    private final String USERS_URI = "http://localhost:8080/users/";
-    private final String AUTHENTICATION_URI = "http://localhost:8080/authentication";
+//    private final String USERS_URI = "http://localhost:8080/users/";
+//    private final String AUTHENTICATION_URI = "http://localhost:8080/authentication";
+    private final String USERS_URI = "http://localhost:80/users/";
+    private final String AUTHENTICATION_URI = "http://localhost:80/authentication";
+    private final String USER_ID = "b0086f54-b1e1-46fe-8d95-d101d7c265ad";
     
     @RequestMapping("/")
     public String index() {
@@ -258,21 +254,58 @@ public class MainController {
     
     //--------------------------Account Settings Page--------------------------
     @RequestMapping(value="/account_settings", method=RequestMethod.GET)
-    public String accountDetails(Model model, HttpSession session) {
-    	
-    	String userId_uri = USERS_URI + "/{id}";
+    public String accountDetails(Model model, HttpSession session) throws IOException {
+    	// TODO id should be some session variable?
+
+    	String userId_uri = USERS_URI + "{id}";
     	RestTemplate restTemplate = new RestTemplate();
-    	System.out.println(restTemplate.getForObject(userId_uri, String.class, "d8980ae1-4591-459a-b632-aa788d453555").toString());
-    	
+
+        String result = restTemplate.getForObject(userId_uri, String.class, USER_ID);
+        /*
     	User editUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
     	model.addAttribute("editUser", editUser);
+        */
+        User2 user2 = extractUserInfo(result);
+        model.addAttribute("editUser", user2);
         return "account_settings";
     }
     
     @RequestMapping(value="/account_settings", method=RequestMethod.POST)
-    public String editAccountDetails(@ModelAttribute("editUser") User editUser, final RedirectAttributes redirectAttributes, HttpSession session) {
+    public String editAccountDetails(@ModelAttribute("editUser") User2 editUser, final RedirectAttributes redirectAttributes, HttpSession session) {
     	// Need to be this way to "edit" details
     	// If not, the form details will overwrite existing user's details
+
+        String firstName = editUser.getFirstName();
+        String lastName = editUser.getLastName();
+
+        JSONObject object = new JSONObject();
+        JSONObject userDetails = new JSONObject();
+        JSONObject address = new JSONObject();
+
+        userDetails.put("firstName", firstName);
+        userDetails.put("lastName", lastName);
+        userDetails.put("email", editUser.getEmail());
+        userDetails.put("phone", editUser.getPhone());
+        userDetails.put("address", address);
+
+        address.put("address1", editUser.getAddress1());
+        address.put("address2", editUser.getAddress2());
+        address.put("country", editUser.getCountry());
+        address.put("region", editUser.getRegion());
+        address.put("zipCode", editUser.getZipCode());
+
+        object.put("userDetails", userDetails);
+
+        String userId_uri = USERS_URI + USER_ID;
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request = new HttpEntity<String>(object.toString(), headers);
+        ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
+
+        /*
     	// TODO for email changes need to resend email confirmation
     	User originalUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
     	
@@ -343,6 +376,8 @@ public class MainController {
     	}
     	
     	userManager.updateUserDetails(originalUser);
+        return "redirect:/account_settings";
+        */
         return "redirect:/account_settings";
     }
     
@@ -1025,5 +1060,46 @@ public class MainController {
     //--------------------------MISC--------------------------
     public int getSessionIdOfLoggedInUser(HttpSession session) {
     	return Integer.parseInt(session.getAttribute(SESSION_LOGGED_IN_USER_ID).toString());
+    }
+
+    public User2 extractUserInfo(String userJson) {
+        User2 user2 = new User2();
+//        Gson g = new Gson();
+//        Map<String, Object> javaRootMapObject = g.fromJson(userJson, Map.class);
+//
+//        for (Map.Entry<String, Object> entry : javaRootMapObject.entrySet())
+//        {
+//            String key = entry.getKey();
+//            Object data = entry.getValue();
+//
+//            if (key.equals("id")) {
+//                user2.setId(data.toString());
+//            } else if (key.equals("userDetails")) {
+//
+//
+//
+//            }
+//        }
+//        System.out.println((Map) javaRootMapObject.get("userDetails"));
+
+//        user2.setId(javaRootMapObject.get("id").toString());
+//        user2.setEmail(javaRootMapObject.get("email").toString());
+
+        JSONObject object = new JSONObject(userJson);
+        JSONObject userDetails = object.getJSONObject("userDetails");
+        JSONObject address = userDetails.getJSONObject("address");
+
+        user2.setId(object.getString("id"));
+        user2.setFirstName(userDetails.getString("firstName"));
+        user2.setLastName(userDetails.getString("lastName"));
+        user2.setEmail(userDetails.getString("email"));
+        user2.setPhone(userDetails.getString("phone"));
+        user2.setAddress1(address.getString("address1"));
+        user2.setAddress2(address.getString("address2"));
+        user2.setCountry(address.getString("country"));
+        user2.setRegion(address.getString("region"));
+        user2.setZipCode(address.getString("zipCode"));
+
+        return user2;
     }
 }

@@ -29,7 +29,48 @@
                             <label for="email"><span th:text="#{acc.info.email}">Email</span>:</label>
                             <input type="text" class="form-control" th:field="*{email}" readonly="readonly"/>
                         </div>
+                        <div class="form-group">
+                            <label for="name"><span th:text="#{acc.info.firstName}">First Name</span>:</label>
+                            <input type="text" class="form-control" th:field="*{firstName}"/>
+                            <span class="account-change-success" th:if="${editName eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.nameSuccess}">Name changed success.</span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="name"><span th:text="#{acc.info.lastName}">last Name</span>:</label>
+                            <input type="text" class="form-control" th:field="*{lastName}"/>
+                            <span class="account-change-success" th:if="${editName eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.nameSuccess}">Name changed success.</span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="name"><span th:text="#{acc.info.phone}">Phone</span>:</label>
+                            <input type="text" class="form-control" th:field="*{phone}"/>
+                            <span class="account-change-success" th:if="${editName eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.nameSuccess}">Name changed success.</span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="address1"><span th:text="#{acc.info.addr1}">Address 1</span>:</label>
+                            <input type="text" class="form-control" th:field="*{address1}"/>
+                            <span class="account-change-success" th:if="${editAddress1 eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.addr1Success}">Address 1 changed success.</span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="address2"><span th:text="#{acc.info.addr2}">Address 2</span>:</label>
+                            <input type="text" class="form-control" th:field="*{address2}"/>
+                            <span class="account-change-success" th:if="${editAddress2 eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.addr2Success}">Address 2 changed success.</span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="country"><span th:text="#{acc.info.country}">Country</span>:</label>
+                            <input type="text" class="form-control" th:field="*{country}"/>
+                            <span class="account-change-success" th:if="${editCountry eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.countrySuccess}">Country changed success.</span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="province"><span th:text="#{acc.info.region}">Region</span>:</label>
+                            <input type="text" class="form-control" th:field="*{region}"/>
+                            <span class="account-change-success" th:if="${editProvince eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.stateSuccess}">State/province changed success.</span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="postalCode"><span th:text="#{acc.info.zipCode}">Zip Code</span>:</label>
+                            <input type="text" class="form-control" th:field="*{zipCode}"/>
+                            <span class="account-change-success" th:if="${editPostalCode eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.postalSuccess}">Postal code changed success.</span></span>
+                        </div>
                         <!-- TODO The page displays empty password for now because it will display the password value in HTML -->
+                        <!--
                         <span class="password-change-mismatch" th:if="${editPassword eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> <span th:text="#{acc.info.pwdEmpty}">Password cannot be empty.</span></span>
                         <div class="form-group">
                             <label for="password"><span th:text="#{acc.info.password}">Password</span>:</label>
@@ -99,6 +140,7 @@
                             <input type="text" class="form-control" th:field="*{postalCode}"/>
                             <span class="account-change-success" th:if="${editPostalCode eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.postalSuccess}">Postal code changed success.</span></span>
                         </div>
+                        -->
                         <div class="form-group">
                             <button type="submit" class="btn btn-success">Save</button>
                             <a href="#" th:href="@{/dashboard}" class="btn btn-danger">Cancel</a>
