@@ -16,10 +16,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -71,7 +69,7 @@ public class MainController {
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
     
     private final String USERS_URI = "http://localhost:8080/users/";
-    
+    private final String AUTHENTICATION_URI = "http://localhost:8080/authentication";
     
     @RequestMapping("/")
     public String index() {
@@ -88,17 +86,39 @@ public class MainController {
     public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) throws Exception {
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
-    	
-    	final String uri = "http://localhost:801/authentication/";
-    	RestTemplate restTemplate = new RestTemplate();
-    	HttpHeaders headers = new HttpHeaders();
-    	headers.set("X-Username", "johndoe@nus.edu.sg");
-    	headers.set("X-Password", "password");
-    	
-    	HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-    	ResponseEntity responseEntity = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
-    	System.out.println(responseEntity.toString());
-    	return "redirect:/dashboard";
+
+        try {
+
+            String inputEmail = loginForm.getLoginEmail();
+            String inputPwd = loginForm.getLoginPassword();
+
+            RestTemplate restTemplate = new RestTemplate();
+            String plainCreds = inputEmail + ":" + inputPwd;
+            byte[] plainCredsBytes = plainCreds.getBytes();
+            byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+            String base64Creds = new String(base64CredsBytes);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Basic " + base64Creds);
+
+            HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+            ResponseEntity responseEntity = restTemplate.exchange(AUTHENTICATION_URI, HttpMethod.POST, request, String.class);
+
+
+            // TODO call the proper validation functions
+            if (responseEntity.getBody().toString().equals("johndoe@nus.edu.sg")) {
+                return "redirect:/dashboard";
+            }
+
+        } catch (Exception e) {
+            // TODO should catch credentialsNotFound exception or a more elegant way of doing
+
+            // case1: invalid login
+            loginForm.setErrorMsg("Invalid email/password.");
+            return "login";
+        }
+
+        return "login";
     	
     	/*
     	String inputEmail = loginForm.getLoginEmail();
@@ -241,9 +261,8 @@ public class MainController {
     public String accountDetails(Model model, HttpSession session) {
     	
     	String userId_uri = USERS_URI + "/{id}";
-    	
     	RestTemplate restTemplate = new RestTemplate();
-    	System.out.println(restTemplate.getForObject(userId_uri, String.class, "1").toString());
+    	System.out.println(restTemplate.getForObject(userId_uri, String.class, "d8980ae1-4591-459a-b632-aa788d453555").toString());
     	
     	User editUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
     	model.addAttribute("editUser", editUser);
