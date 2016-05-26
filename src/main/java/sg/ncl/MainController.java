@@ -1059,27 +1059,6 @@ public class MainController {
 
     public User2 extractUserInfo(String userJson) {
         User2 user2 = new User2();
-//        Gson g = new Gson();
-//        Map<String, Object> javaRootMapObject = g.fromJson(userJson, Map.class);
-//
-//        for (Map.Entry<String, Object> entry : javaRootMapObject.entrySet())
-//        {
-//            String key = entry.getKey();
-//            Object data = entry.getValue();
-//
-//            if (key.equals("id")) {
-//                user2.setId(data.toString());
-//            } else if (key.equals("userDetails")) {
-//
-//
-//
-//            }
-//        }
-//        System.out.println((Map) javaRootMapObject.get("userDetails"));
-
-//        user2.setId(javaRootMapObject.get("id").toString());
-//        user2.setEmail(javaRootMapObject.get("email").toString());
-
         JSONObject object = new JSONObject(userJson);
         JSONObject userDetails = object.getJSONObject("userDetails");
         JSONObject address = userDetails.getJSONObject("address");
