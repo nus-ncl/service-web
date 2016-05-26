@@ -37,15 +37,11 @@ configurations {
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    // compile 'org.springframework.boot:spring-boot-starter-actuator'
     compile('javax.inject:javax.inject:1')
     compile('org.json:json')
-    // compile 'org.apache.axis2:axis2-kernel:1.7.1'
-    // compile 'org.apache.axis2:axis2-adb:1.7.1'
-    // compile files('lib/jabac-1.5.jar')
     testCompile("junit:junit")
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.jmockit:jmockit:1.22'
+    testCompile('org.hamcrest:hamcrest-library')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 // tag::wrapper[]

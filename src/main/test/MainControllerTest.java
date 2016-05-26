@@ -1,39 +1,31 @@
-import mockit.Injectable;
-import mockit.Mocked;
-import mockit.integration.junit4.JMockit;
 import sg.ncl.MainController;
 import sg.ncl.testbed_interface.LoginForm;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.core.Is.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.View;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-@RunWith(JMockit.class)
+
 public class MainControllerTest {
 	
-	@Injectable
+	@Inject
 	MainController mainController;
 	
 	private MockMvc mockMvc;
-	
-	@Mocked
-	View mockView;
+
+	@Inject
+	private WebApplicationContext webApplicationContext;
 	
 	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		mockMvc = MockMvcBuilders.standaloneSetup(mainController).setSingleView(mockView).build();
-	}
-	
+    public void setup() {
+        mockMvc = webAppContextSetup(webApplicationContext).build();
+    }
+
 	@Test
 	public void testGetLoginPage() throws Exception {
 		mockMvc.perform(get("/login"))
@@ -51,14 +43,12 @@ public class MainControllerTest {
 	
 	@Test
 	public void testLoginSuccessful() throws Exception {
-		/*
 		LoginForm loginForm = Mockito.mock(LoginForm.class);
 		Mockito.when(loginForm.getLoginEmail()).thenReturn("johndoe@nus.edu.sg");
 		Mockito.when(loginForm.getLoginPassword()).thenReturn("password");
 		mockMvc.perform(post("/login"))
 		.andExpect(status().isOk())
 		.andExpect(view().name("redirect:/dashboard"));
-		*/
 	}
 	
 	@Test
