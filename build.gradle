@@ -19,7 +19,7 @@ sourceSets {
 }
 
 group = 'sg.ncl'
-version = '1.0-SNAPSHOT'
+version = '1.0-' + System.getenv('bamboo_build_number')
 
 // tag::dependencies[]
 sourceCompatibility = JavaVersion.VERSION_1_8
