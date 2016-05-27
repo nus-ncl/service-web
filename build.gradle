@@ -1,20 +1,13 @@
 buildscript {
-    repositories {
-        jcenter()
-    }
-    
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE")
-    }
+    repositories { jcenter() }
+
+    dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE") }
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'spring-boot'
-
-repositories {
-    jcenter()
-}
 
 sourceSets {
     main {
@@ -25,14 +18,19 @@ sourceSets {
     }
 }
 
+group = 'sg.ncl'
+version = '1.0-SNAPSHOT'
+
 // tag::dependencies[]
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 // for fixing conflict with axis2-kernel and spring boot
 configurations {
     all*.exclude group: '', module: 'servlet-api'
 }
+
+repositories { jcenter() }
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
