@@ -8,13 +8,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class Application {
+public class App {
 	
 	public static String ROOT = "uploaded-dataset-dir";
 	public static String EXP_CONFIG_DIR = "uploaded-exp-config";
     
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(App.class, args);
     }
     
     @Bean
