@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import sg.ncl.rest_client.RestClient;
 import sg.ncl.testbed_interface.*;
 
 /**
@@ -63,10 +64,31 @@ public class MainController {
 //    private final String AUTHENTICATION_URI = "http://localhost:8080/authentication";
     private final String USERS_URI = "http://localhost:80/users/";
     private final String AUTHENTICATION_URI = "http://localhost:80/authentication";
-    private final String USER_ID = "b0086f54-b1e1-46fe-8d95-d101d7c265ad";
+    private final String TEAM_URI = "http://localhost:80/teams/";
+    private final String CREDENTIALS_URI = "http://localhost:80/credentials/";
+
+    private final String USER_ID = "eec32c55-507e-4c30-b850-a4111b565c8f";
+    private final String TEAM_ID = "b424bb4e-302c-46ed-a459-8e3b780f60aa";
+
+    private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
+
+    private final RestClient restClient = new RestClient();
+
+    @Autowired
+    private RestTemplate restTemplate;
     
     @RequestMapping("/")
     public String index() {
+        // FIXME: Purposely create a fake credentials first
+//        JSONObject credObject = new JSONObject();
+//
+//        credObject.put("username", "johndoe@nus.edu.sg");
+//        credObject.put("password", "a");
+//        credObject.put("userId", USER_ID);
+//
+//        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(CREDENTIALS_URI, credObject.toString());
+//
+//        System.out.println(responseEntity.getBody().toString());
         return "index";
     }
     
@@ -81,6 +103,8 @@ public class MainController {
         // following is to test if form fields can be retrieved via user input
         // pretend as though this is a server side validation
 
+        // TODO: Uncomment the bottom working REST call until fixed
+        /*
         try {
 
             String inputEmail = loginForm.getLoginEmail();
@@ -113,8 +137,9 @@ public class MainController {
         }
 
         return "login";
+        */
     	
-    	/*
+
     	String inputEmail = loginForm.getLoginEmail();
     	int userId = userManager.getUserIdByEmail(inputEmail);
     	
@@ -156,7 +181,7 @@ public class MainController {
             session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
             return "redirect:/dashboard";
         }
-        */
+
     }
     
     @RequestMapping("/passwordreset")
@@ -255,15 +280,17 @@ public class MainController {
     public String accountDetails(Model model, HttpSession session) throws IOException {
     	// TODO id should be some session variable?
 
-    	String userId_uri = USERS_URI + "{id}";
-    	RestTemplate restTemplate = new RestTemplate();
+    	String userId_uri = USERS_URI + USER_ID;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        String result = restTemplate.getForObject(userId_uri, String.class, USER_ID);
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.GET, request, String.class);
         /*
     	User editUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
     	model.addAttribute("editUser", editUser);
         */
-        User2 user2 = extractUserInfo(result);
+        User2 user2 = extractUserInfo(responseEntity.getBody().toString());
         model.addAttribute("editUser", user2);
         return "account_settings";
     }
@@ -292,10 +319,10 @@ public class MainController {
         object.put("userDetails", userDetails);
 
         String userId_uri = USERS_URI + USER_ID;
-        RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>(object.toString(), headers);
         ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
@@ -404,17 +431,29 @@ public class MainController {
     
     @RequestMapping("/teams")
     public String teams(Model model, HttpSession session) {
-    	int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
+        int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
         model.addAttribute("infoMsg", teamManager.getInfoMsg());
         model.addAttribute("currentLoggedInUserId", currentLoggedInUserId);
         model.addAttribute("teamMap", teamManager.getTeamMap(currentLoggedInUserId));
         model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
         model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
         model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
-        // REST Client Code
-        // final String uri = host + "teams/?";
-        // RestTemplate restTemplate = new RestTemplate();
-        // TeamsList result = restTemplate.getForObject(uri, TeamsList.class);
+
+//        ResponseEntity responseEntity = restClient.sendGetRequest(TEAM_URI+TEAM_ID);
+//
+//        System.out.println(responseEntity.getBody().toString());
+
+        // add user to team
+//        restClient.sendPostRequest(USERS_URI + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
+//
+//        ResponseEntity responseEntity = restClient.sendGetRequest(USERS_URI + "/" + USER_ID);
+//        System.out.println("Add from user side:  " + responseEntity.getBody().toString());
+
+        restClient.sendPostRequest(TEAM_URI + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
+
+        ResponseEntity responseEntity2 = restClient.sendGetRequest(TEAM_URI + "/" + TEAM_ID);
+        System.out.println("Add from team side:  " + responseEntity2.getBody().toString());
+
         return "teams";
     }
     
@@ -630,7 +669,7 @@ public class MainController {
 			try {
 				String networkFileName = getSessionIdOfLoggedInUser(session) + "-networkconfig-" + networkFile.getOriginalFilename();
 				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(new File(Application.EXP_CONFIG_DIR + "/" + networkFileName)));
+						new FileOutputStream(new File(App.EXP_CONFIG_DIR + "/" + networkFileName)));
                 FileCopyUtils.copy(networkFile.getInputStream(), stream);
 				stream.close();
 				redirectAttributes.addFlashAttribute("message",
@@ -648,7 +687,7 @@ public class MainController {
 			try {
 				String dataFileName = getSessionIdOfLoggedInUser(session) + "-data-" + dataFile.getOriginalFilename();
 				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(new File(Application.EXP_CONFIG_DIR + "/" + dataFileName)));
+						new FileOutputStream(new File(App.EXP_CONFIG_DIR + "/" + dataFileName)));
                 FileCopyUtils.copy(dataFile.getInputStream(), stream);
 				stream.close();
 				redirectAttributes.addFlashAttribute("message2",
@@ -724,7 +763,7 @@ public class MainController {
     public String contributeData(Model model) {
     	model.addAttribute("dataset", new Dataset());
     	
-    	File rootFolder = new File(Application.ROOT);
+    	File rootFolder = new File(App.ROOT);
     	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
     			.map(f -> f.getName())
     			.collect(Collectors.toList());
@@ -748,7 +787,7 @@ public class MainController {
 			try {
 				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
 				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(new File(Application.ROOT + "/" + fileName)));
+						new FileOutputStream(new File(App.ROOT + "/" + fileName)));
                 FileCopyUtils.copy(file.getInputStream(), stream);
 				stream.close();
 				redirectAttributes.addFlashAttribute("message",
@@ -912,7 +951,7 @@ public class MainController {
     public String adminContributeDataset(Model model) {
     	model.addAttribute("dataset", new Dataset());
     	
-    	File rootFolder = new File(Application.ROOT);
+    	File rootFolder = new File(App.ROOT);
     	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
     			.map(f -> f.getName())
     			.collect(Collectors.toList());
@@ -936,7 +975,7 @@ public class MainController {
 			try {
 				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
 				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(new File(Application.ROOT + "/" + fileName)));
+						new FileOutputStream(new File(App.ROOT + "/" + fileName)));
                 FileCopyUtils.copy(file.getInputStream(), stream);
 				stream.close();
 				redirectAttributes.addFlashAttribute("message",
