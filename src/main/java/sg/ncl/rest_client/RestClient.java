@@ -38,8 +38,13 @@ public class RestClient {
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(serviceUri, HttpMethod.POST, request, String.class);
-        return responseEntity;
+        try {
+            ResponseEntity responseEntity = restTemplate.exchange(serviceUri, HttpMethod.POST, request, String.class);
+            return responseEntity;
+        } catch (Exception e) {
+
+        }
+        return null;
     }
 
     public ResponseEntity sendPutRequest(String serviceUri, JSONObject object) {

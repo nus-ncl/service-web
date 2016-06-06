@@ -31,24 +31,24 @@
                 <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2><a data-toggle="collapse" href="#collapse1"><i class="fa fa-caret-square-o-down fa-lg"></i></a>
                 <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team">
                     <div class="panel-body">
-                        <table class="table table-responsive" th:if="not ${teamMap.isEmpty()}">
+                        <table class="table table-responsive" th:if="not ${teamMap2.isEmpty()}">
                             <thead>
-                                <th><!-- owner icon --></th>
+                                <!--<th>&lt;!&ndash; owner icon &ndash;&gt;</th>-->
                                 <th th:text="#{team.table.header.team}">Team</th>
                                 <th th:text="#{team.table.header.description}">Description</th>
                                 <th th:text="#{team.table.header.members}">Members</th>
-                                <th th:text="#{team.table.header.experiments}">Experiments</th>
-                                <th th:text="#{team.table.header.actions}">Actions</th>
+                                <!--<th th:text="#{team.table.header.experiments}">Experiments</th>-->
+                                <!--<th th:text="#{team.table.header.actions}">Actions</th>-->
                             </thead>
-                            <tr th:each="teamEntry : ${teamMap}">
-                                <td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><span class="glyphicon glyphicon-king" data-toggle="tooltip" data-placement="bottom" title="You are the owner of this team"></span></td>
-                                <td th:unless="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
+                            <tr th:each="teamEntry : ${teamMap2}">
+                                <!--<td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><span class="glyphicon glyphicon-king" data-toggle="tooltip" data-placement="bottom" title="You are the owner of this team"></span></td>-->
+                                <!--<td th:unless="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>-->
                                 <td><a href="#" th:href="@{/team_profile/{teamId}(teamId=${teamEntry.key})}"><span th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</span></a></td>
                                 <td th:text="${teamEntry.value.description}">Description</td>
-                                <td><span th:text="${teamEntry.value.members}">Members</span> <a href="#" th:href="@{/teams/members_approval/{teamId}(teamId=${teamEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="You have pending approvals"><span th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}" th:text="${teamEntry.value.membersAwaitingApproval}" class="badge badge-danger">Members Awaiting Approval</span></a></td>
-                                <td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>
-                                <td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" th:href="@{/teams/invite_members/{teamId}(teamId=${teamEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>
-                                <td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">---</td>
+                                <td><span th:text="${teamEntry.value.membersCount}">Members</span></td>
+                                <!--<td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>-->
+                                <!--<td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" th:href="@{/teams/invite_members/{teamId}(teamId=${teamEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>-->
+                                <!--<td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">-&#45;&#45;</td>-->
                             </tr>
                         </table>
                         <p th:if="${teamMap.isEmpty()}" th:text="#{team.haveToBeATeam}">You have to be part of a team to use the resources.</p>
@@ -109,12 +109,12 @@
 	                            <thead>
                                     <th th:text="#{team.table.header.team}">Team</th>
                                     <th th:text="#{team.table.header.description}">Description</th>
-                                    <th th:text="#{team.table.header.institution}">Institution</th>
+                                    <!--<th th:text="#{team.table.header.institution}">Institution</th>-->
 	                            </thead>
-	                            <tr th:each="teamEntry : ${publicTeamMap}">
+	                            <tr th:each="teamEntry : ${publicTeamMap2}">
 	                               <td th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</td>
 	                               <td th:text="${teamEntry.value.description}">Description</td>
-	                               <td th:text="${teamEntry.value.institution}">Institution</td>
+	                               <!--<td th:text="${teamEntry.value.institution}">Institution</td>-->
 	                            </tr>
 	                        </table>
 	                    </div> <!-- panel body -->

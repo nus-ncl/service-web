@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -57,6 +58,9 @@ public class MainController {
     private DomainManager domainManager = DomainManager.getInstance();
     private DatasetManager datasetManager = DatasetManager.getInstance();
     private NodeManager nodeManager = NodeManager.getInstance();
+
+
+    private TeamManager2 teamManager2 = TeamManager2.getInstance();
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
     
@@ -67,8 +71,9 @@ public class MainController {
     private final String TEAM_URI = "http://localhost:80/teams/";
     private final String CREDENTIALS_URI = "http://localhost:80/credentials/";
 
-    private final String USER_ID = "eec32c55-507e-4c30-b850-a4111b565c8f";
-    private final String TEAM_ID = "b424bb4e-302c-46ed-a459-8e3b780f60aa";
+//    private final String USER_ID = "eec32c55-507e-4c30-b850-a4111b565c8f";
+    private final String USER_ID = "470f8820-465c-448e-97e2-1a077d0fd246";
+    private final String TEAM_ID = "78476090-1403-44ee-b657-4a240392aace";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
@@ -439,20 +444,41 @@ public class MainController {
         model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
         model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
-//        ResponseEntity responseEntity = restClient.sendGetRequest(TEAM_URI+TEAM_ID);
-//
-//        System.out.println(responseEntity.getBody().toString());
 
-        // add user to team
-//        restClient.sendPostRequest(USERS_URI + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
-//
-//        ResponseEntity responseEntity = restClient.sendGetRequest(USERS_URI + "/" + USER_ID);
-//        System.out.println("Add from user side:  " + responseEntity.getBody().toString());
+        // FIXME add user to team fake the data first
+        restClient.sendPostRequest(USERS_URI + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
 
+        // FIXME fake team side add user to team
         restClient.sendPostRequest(TEAM_URI + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
 
-        ResponseEntity responseEntity2 = restClient.sendGetRequest(TEAM_URI + "/" + TEAM_ID);
-        System.out.println("Add from team side:  " + responseEntity2.getBody().toString());
+        // FIXME get list of teamids
+        ResponseEntity responseEntity = restClient.sendGetRequest(USERS_URI + "/" + USER_ID);
+
+        JSONObject object = new JSONObject(responseEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teamIds");
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+            System.out.println(teamId);
+            ResponseEntity teamResponseEntity = restClient.sendGetRequest(TEAM_URI + "/" + teamId);
+            Team2 team2 = extractTeamInfo(teamResponseEntity.getBody().toString());
+            teamManager2.addTeamToTeamMap(team2);
+//            System.out.println(teamResponseEntity.getBody().toString());
+        }
+
+        // get public teams
+        ResponseEntity teamPublicResponseEntity = restClient.sendGetRequest(TEAM_URI + "/public");
+
+        JSONArray teamPublicJsonArray = new JSONArray(teamPublicResponseEntity.getBody().toString());
+        for (int i = 0; i < teamPublicJsonArray.length(); i++) {
+            JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
+            Team2 team2 = extractTeamInfo(teamInfoObject.toString());
+            teamManager2.addTeamToPublicTeamMap(team2);
+//            System.out.println(team2.toString());
+        }
+
+        model.addAttribute("teamMap2", teamManager2.getTeamMap());
+        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
 
         return "teams";
     }
@@ -1114,5 +1140,20 @@ public class MainController {
         user2.setZipCode(address.getString("zipCode"));
 
         return user2;
+    }
+
+    public Team2 extractTeamInfo(String json) {
+        Team2 team2 = new Team2();
+        JSONObject object = new JSONObject(json);
+        JSONArray membersArray = object.getJSONArray("members");
+
+        team2.setId(object.getString("id"));
+        team2.setName(object.getString("name"));
+        team2.setDescription(object.getString("description"));
+
+        // TODO need to check for pending for approval members count
+        team2.setMembersCount(membersArray.length());
+
+        return team2;
     }
 }

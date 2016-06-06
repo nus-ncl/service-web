@@ -4,7 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -36,6 +38,10 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 public class MainControllerTest {
 
+    @Bean
+    RestTemplate restTemplate() {
+        return Mockito.mock(RestTemplate.class);
+    }
     @Inject
     MainController mainController;
 
@@ -52,6 +58,7 @@ public class MainControllerTest {
 
     @Before
     public void setUp() throws Exception {
+        restTemplate = Mockito.mock(RestTemplate.class);
         mockServer = MockRestServiceServer.createServer(restTemplate);
         mockMvc = webAppContextSetup(webApplicationContext).build();
 
@@ -87,16 +94,24 @@ public class MainControllerTest {
 
     @Test
     public void updateUserProfileTest() throws Exception {
+
+        mockServer.expect(requestTo("http://localhost:80/users/sadsadsadsad"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{aaaaaa}", MediaType.APPLICATION_JSON));
+
+        String item = restTemplate.getForObject("http://localhost:80/users/{id}", String.class, "sadsadsadsad");
+
         MvcResult result = mockMvc.perform(get("/account_settings"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("account_settings"))
                 .andReturn();
 
-        mockServer.expect(requestTo("/users/eec32c55-507e-4c30-b850-a4111b565c8f"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess("{aaaaaa}", MediaType.APPLICATION_JSON));
-
-        String item = restTemplate.getForObject("/users/{id}", String.class, "eec32c55-507e-4c30-b850-a4111b565c8f");
+//        HttpHeaders responseHeaders = new HttpHeaders();
+//        responseHeaders.set("Authorization", AUTHORIZATION_HEADER);
+//        HttpEntity<String> request = new HttpEntity<String>("parameters", responseHeaders);
+//        ResponseEntity<String> responseEntity = new ResponseEntity<String>("{}", HttpStatus.OK);
+//
+//        when(restTemplate.exchange("http://localhost:80/users/eec32c55-507e-4c30-b850-a4111b565c8f", HttpMethod.GET, request, String.class)).thenReturn(responseEntity);
 
 //        HttpHeaders responseHeaders = new HttpHeaders();
 //        responseHeaders.set("Authorization", AUTHORIZATION_HEADER);
