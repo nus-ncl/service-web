@@ -108,7 +108,6 @@ public class MainControllerTest {
         String predefinedJsonStr = predefinedUserJson.toString();
 
         // uri must be equal to that defined in MainController
-
         mockServer.expect(requestTo("http://localhost:80/users/3c1cee22-f10c-47e4-8122-31851cbe85f6"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
@@ -122,7 +121,6 @@ public class MainControllerTest {
 
     @Test
     public void updateUserProfileTest() throws Exception {
-
         // TODO to be completed
 
         // update the phone to test main json
@@ -130,18 +128,24 @@ public class MainControllerTest {
         // update the address2 to test address json
 
         JSONObject predefinedUserJson = createUserJson("1234567890-ABCDEFGHIJKL", "teye", "yeo", "dcsyeoty@nus.edu.sg", "12345678", "computing drive 12", "", "Singapore", "west", "12345678");
+        JSONObject predefinedUserDetailsJson = predefinedUserJson.getJSONObject("userDetails");
         String predefinedJsonStr = predefinedUserJson.toString();
 
         mockServer.expect(requestTo("http://localhost:80/users/3c1cee22-f10c-47e4-8122-31851cbe85f6"))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
-        mockMvc.perform(
+        MvcResult result = mockMvc.perform(
                 post("/account_settings")
                         .param("phone", "98887666")
                         .param("lastName", "yang")
                         .param("address2", "expected address 2 is filled up"))
-                        .andExpect(view().name("redirect:/account_settings"));
+                        .andExpect(redirectedUrl("/account_settings"))
+                        .andReturn();
+
+        mockMvc.perform(get("/account_settings")).andExpect(status().isOk());
+
+        System.out.println(result.getResponse().getContentAsString());
     }
 
     private JSONObject createUserJson(String id, String firstName, String lastName, String email, String phone, String address1, String address2, String country, String region, String zipCode) {
