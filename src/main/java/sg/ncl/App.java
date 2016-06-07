@@ -31,4 +31,9 @@ public class App {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
+    @Bean
+    public ConnectionProperties connectionProperties() {
+        return new ConnectionProperties();
+    }
 }

@@ -33,6 +33,7 @@ configurations {
 repositories { jcenter() }
 
 dependencies {
+    compile "org.springframework.boot:spring-boot-configuration-processor"
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile('javax.inject:javax.inject:1')
@@ -41,6 +42,8 @@ dependencies {
     testCompile('org.hamcrest:hamcrest-library')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+compileJava.dependsOn(processResources)
 
 // tag::wrapper[]
 task wrapper(type: Wrapper) {
