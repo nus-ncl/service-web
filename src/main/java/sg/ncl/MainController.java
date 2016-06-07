@@ -72,8 +72,8 @@ public class MainController {
     private final String CREDENTIALS_URI = "http://localhost:80/credentials/";
 
 //    private final String USER_ID = "eec32c55-507e-4c30-b850-a4111b565c8f";
-    private final String USER_ID = "470f8820-465c-448e-97e2-1a077d0fd246";
-    private final String TEAM_ID = "78476090-1403-44ee-b657-4a240392aace";
+    private final String USER_ID = "3c1cee22-f10c-47e4-8122-31851cbe85f6";
+    private final String TEAM_ID = "5a8e8913-c3c8-4cef-b274-f253a3d3dd47";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
@@ -291,6 +291,9 @@ public class MainController {
 
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
         ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.GET, request, String.class);
+
+//        System.out.println(responseEntity.getBody().toString());
+
         /*
     	User editUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
     	model.addAttribute("editUser", editUser);
