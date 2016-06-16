@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,13 +86,14 @@ public class MainController {
     @RequestMapping("/")
     public String index() {
         // FIXME: Purposely create a fake credentials first
+        // ID is required
 //        JSONObject credObject = new JSONObject();
 //
+//        credObject.put("id", "1234567890");
 //        credObject.put("username", "johndoe@nus.edu.sg");
 //        credObject.put("password", "a");
-//        credObject.put("userId", USER_ID);
 //
-//        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(CREDENTIALS_URI, credObject.toString());
+//        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getCREDENTIALS_URI(), credObject.toString());
 //
 //        System.out.println(responseEntity.getBody().toString());
         return "index";
@@ -110,7 +111,7 @@ public class MainController {
         // pretend as though this is a server side validation
 
         // TODO: Uncomment the bottom working REST call until fixed
-        /*
+
         try {
 
             String inputEmail = loginForm.getLoginEmail();
@@ -126,13 +127,12 @@ public class MainController {
             headers.set("Authorization", "Basic " + base64Creds);
 
             HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-            ResponseEntity responseEntity = restTemplate.exchange(AUTHENTICATION_URI, HttpMethod.POST, request, String.class);
-
+            ResponseEntity responseEntity = restTemplate.exchange(properties.getAUTHENTICATION_URI(), HttpMethod.POST, request, String.class);
 
             // TODO call the proper validation functions
-            if (responseEntity.getBody().toString().equals("johndoe@nus.edu.sg")) {
-                return "redirect:/dashboard";
-            }
+            String jwtTokenString = responseEntity.getBody().toString();
+            System.out.println(jwtTokenString);
+//            JwtToken jwtToken = new JwtToken(jwtTokenString);
 
         } catch (Exception e) {
             // TODO should catch credentialsNotFound exception or a more elegant way of doing
@@ -143,9 +143,9 @@ public class MainController {
         }
 
         return "login";
-        */
-    	
 
+
+        /*
     	String inputEmail = loginForm.getLoginEmail();
     	int userId = userManager.getUserIdByEmail(inputEmail);
     	
@@ -187,6 +187,7 @@ public class MainController {
             session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
             return "redirect:/dashboard";
         }
+        */
 
     }
     
