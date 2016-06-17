@@ -133,6 +133,7 @@ public class MainController {
             String jwtTokenString = responseEntity.getBody().toString();
             System.out.println(jwtTokenString);
 //            JwtToken jwtToken = new JwtToken(jwtTokenString);
+            return "redirect:/dashboard";
 
         } catch (Exception e) {
             // TODO should catch credentialsNotFound exception or a more elegant way of doing
@@ -141,8 +142,6 @@ public class MainController {
             loginForm.setErrorMsg("Invalid email/password.");
             return "login";
         }
-
-        return "login";
 
 
         /*
@@ -223,6 +222,52 @@ public class MainController {
     @RequestMapping(value="/signup2", method=RequestMethod.POST)
     public String validateDetails(@ModelAttribute("loginForm") LoginForm loginForm, @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm) {
     	// TODO get each model data and put into relevant ones
+
+        // get form fields
+        // craft the registration json
+        JSONObject mainObject = new JSONObject();
+        JSONObject credentialsFields = new JSONObject();
+        credentialsFields.put("username", signUpMergedForm.getEmail());
+        credentialsFields.put("password", signUpMergedForm.getPassword());
+
+        // create the user JSON
+        JSONObject userFields = new JSONObject();
+        JSONObject userDetails = new JSONObject();
+        JSONObject address = new JSONObject();
+
+        userDetails.put("firstName", "orange");
+        userDetails.put("lastName", "apple");
+        userDetails.put("email", signUpMergedForm.getEmail());
+        userDetails.put("phone", "123456789");
+        userDetails.put("address", address);
+
+        address.put("address1", signUpMergedForm.getAddress1());
+        address.put("address2", signUpMergedForm.getAddress2());
+        address.put("country", signUpMergedForm.getCountry());
+        address.put("region", signUpMergedForm.getProvince());
+        address.put("zipCode", signUpMergedForm.getPostalCode());
+
+        userFields.put("userDetails", userDetails);
+
+        // create the team JSON
+        JSONObject teamFields = new JSONObject();
+        teamFields.put("visibility", "PUBLIC");
+        teamFields.put("id", "d3d3d460-43ee-4d22-bc32-0dd0a0c71816");
+        teamFields.put("name", "Aries");
+
+        // add all to main json
+        mainObject.put("credentials", credentialsFields);
+        mainObject.put("user", userFields);
+        mainObject.put("team", teamFields);
+
+        System.out.println(mainObject.toString());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getREGISTRATION_URI(), HttpMethod.POST, request, String.class);
     	
     	// add to User model
     	User newUser = new User();

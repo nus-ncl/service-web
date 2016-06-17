@@ -14,6 +14,7 @@ public class ConnectionProperties {
     private String TEAMS_URI = "http://localhost:80/teams/";
     private String AUTHENTICATION_URI = "http://localhost:80/authentication/";
     private String CREDENTIALS_URI = "http://localhost:80/credentials/";
+    private String REGISTRATION_URI = "http://localhost:80/registrations";
 
     public String getUSERS_URI() {
         return USERS_URI;
@@ -45,6 +46,14 @@ public class ConnectionProperties {
 
     public void setCREDENTIALS_URI(String CREDENTIALS_URI) {
         this.CREDENTIALS_URI = CREDENTIALS_URI;
+    }
+
+    public String getREGISTRATION_URI() {
+        return REGISTRATION_URI;
+    }
+
+    public void setREGISTRATION_URI(String REGISTRATION_URI) {
+        this.REGISTRATION_URI = REGISTRATION_URI;
     }
 }
 
