@@ -229,7 +229,7 @@ public class MainController {
         // create the user JSON
         JSONObject userFields = new JSONObject();
         JSONObject userDetails = new JSONObject();
-        JSONObject address = new JSONObject();
+        JSONObject addressDetails = new JSONObject();
 
         userDetails.put("firstName", signUpMergedForm.getFirstName());
         userDetails.put("lastName", signUpMergedForm.getLastName());
@@ -239,14 +239,14 @@ public class MainController {
         userDetails.put("institution", signUpMergedForm.getInstitution());
         userDetails.put("institutionAbbreviation", signUpMergedForm.getInstitutionAbbreviation());
         userDetails.put("institutionWeb", signUpMergedForm.getWebsite());
-        userDetails.put("address", address);
+        userDetails.put("address", addressDetails);
 
-        address.put("address1", signUpMergedForm.getAddress1());
-        address.put("address2", signUpMergedForm.getAddress2());
-        address.put("country", signUpMergedForm.getCountry());
-        address.put("region", signUpMergedForm.getProvince());
-        address.put("city", signUpMergedForm.getCity());
-        address.put("zipCode", signUpMergedForm.getPostalCode());
+        addressDetails.put("address1", signUpMergedForm.getAddress1());
+        addressDetails.put("address2", signUpMergedForm.getAddress2());
+        addressDetails.put("country", signUpMergedForm.getCountry());
+        addressDetails.put("region", signUpMergedForm.getProvince());
+        addressDetails.put("city", signUpMergedForm.getCity());
+        addressDetails.put("zipCode", signUpMergedForm.getPostalCode());
 
         userFields.put("userDetails", userDetails);
         userFields.put("applicationDate", ZonedDateTime.now());
