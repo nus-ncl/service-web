@@ -4,12 +4,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -235,25 +231,33 @@ public class MainController {
         JSONObject userDetails = new JSONObject();
         JSONObject address = new JSONObject();
 
-        userDetails.put("firstName", "orange");
-        userDetails.put("lastName", "apple");
+        userDetails.put("firstName", signUpMergedForm.getFirstName());
+        userDetails.put("lastName", signUpMergedForm.getLastName());
+        userDetails.put("jobTitle", signUpMergedForm.getJobTitle());
         userDetails.put("email", signUpMergedForm.getEmail());
-        userDetails.put("phone", "123456789");
+        userDetails.put("phone", signUpMergedForm.getPhone());
+        userDetails.put("institution", signUpMergedForm.getInstitution());
+        userDetails.put("institutionAbbreviation", signUpMergedForm.getInstitutionAbbreviation());
+        userDetails.put("institutionWeb", signUpMergedForm.getWebsite());
         userDetails.put("address", address);
 
         address.put("address1", signUpMergedForm.getAddress1());
         address.put("address2", signUpMergedForm.getAddress2());
         address.put("country", signUpMergedForm.getCountry());
         address.put("region", signUpMergedForm.getProvince());
+        address.put("city", signUpMergedForm.getCity());
         address.put("zipCode", signUpMergedForm.getPostalCode());
 
         userFields.put("userDetails", userDetails);
+        userFields.put("applicationDate", ZonedDateTime.now());
 
-        // create the team JSON
+        // get the team JSON from team name
+        // FIXME need to check if team exists?
         JSONObject teamFields = new JSONObject();
-        teamFields.put("visibility", "PUBLIC");
-        teamFields.put("id", "d3d3d460-43ee-4d22-bc32-0dd0a0c71816");
-        teamFields.put("name", "Aries");
+//        teamFields.put("visibility", "PUBLIC");
+//        teamFields.put("name", "Aries");
+        String teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName());
+        teamFields.put("id", teamIdToJoin);
 
         // add all to main json
         mainObject.put("credentials", credentialsFields);
@@ -326,7 +330,19 @@ public class MainController {
     		return "redirect:/signup2";
     	}
     }
-    
+
+    private String getTeamIdByName(String teamName) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getTEAMS_URI() + "name/" + teamName, HttpMethod.GET, request, String.class);
+        String resultJSON = responseEntity.getBody().toString();
+        JSONObject object = new JSONObject(resultJSON);
+        return object.getString("id");
+    }
+
     //--------------------------Account Settings Page--------------------------
     @RequestMapping(value="/account_settings", method=RequestMethod.GET)
     public String accountDetails(Model model, HttpSession session) throws IOException {

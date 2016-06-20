@@ -21,6 +21,9 @@ public class SignUpMergedForm {
     
 	// Personal Details Fields
     private String name;
+    private String firstName;
+    private String lastName;
+    private String phone;
     private String jobTitle;
     private String institution;
     private String institutionAbbreviation;
@@ -166,6 +169,30 @@ public class SignUpMergedForm {
     }
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
     
     //--------------------------------------- Create New Team Details ---------------------------------------
