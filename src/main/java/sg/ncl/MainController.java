@@ -66,8 +66,8 @@ public class MainController {
 //    private final String CREDENTIALS_URI = "http://localhost:80/credentials/";
 
 //    private final String USER_ID = "eec32c55-507e-4c30-b850-a4111b565c8f";
-    private final String USER_ID = "3c1cee22-f10c-47e4-8122-31851cbe85f6";
-    private final String TEAM_ID = "5a8e8913-c3c8-4cef-b274-f253a3d3dd47";
+    private final String USER_ID = "35456ded-9f47-44dd-b917-3a9ce9be97fc";
+    private final String TEAM_ID = "93709604-95ee-40a1-bb7b-77eee8e7e1a7";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
@@ -83,15 +83,15 @@ public class MainController {
     public String index() {
         // FIXME: Purposely create a fake credentials first
         // ID is required
-//        JSONObject credObject = new JSONObject();
-//
-//        credObject.put("id", "1234567890");
-//        credObject.put("username", "johndoe@nus.edu.sg");
-//        credObject.put("password", "a");
-//
-//        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getCREDENTIALS_URI(), credObject.toString());
-//
-//        System.out.println(responseEntity.getBody().toString());
+        JSONObject credObject = new JSONObject();
+
+        credObject.put("id", "1234567890");
+        credObject.put("username", "johndoe@nus.edu.sg");
+        credObject.put("password", "a");
+
+        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getCREDENTIALS_URI(), credObject.toString());
+
+        System.out.println(responseEntity.getBody().toString());
         return "index";
     }
     
@@ -129,6 +129,13 @@ public class MainController {
             String jwtTokenString = responseEntity.getBody().toString();
             System.out.println(jwtTokenString);
 //            JwtToken jwtToken = new JwtToken(jwtTokenString);
+
+            // needed for legacy codes to work
+            CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
+            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
+            session.setAttribute("isUserAdmin", IS_USER_ADMIN);
+            session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
+
             return "redirect:/dashboard";
 
         } catch (Exception e) {
@@ -251,49 +258,34 @@ public class MainController {
         userFields.put("userDetails", userDetails);
         userFields.put("applicationDate", ZonedDateTime.now());
 
-        // get the team JSON from team name
-        // FIXME need to check if team exists?
         JSONObject teamFields = new JSONObject();
-//        teamFields.put("visibility", "PUBLIC");
-//        teamFields.put("name", "Aries");
-        String teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName());
-        teamFields.put("id", teamIdToJoin);
 
         // add all to main json
         mainObject.put("credentials", credentialsFields);
         mainObject.put("user", userFields);
         mainObject.put("team", teamFields);
-
-        System.out.println(mainObject.toString());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getREGISTRATION_URI(), HttpMethod.POST, request, String.class);
     	
     	// add to User model
-    	User newUser = new User();
-    	newUser.setEmail(signUpMergedForm.getEmail());
-    	newUser.setPassword(signUpMergedForm.getPassword());
-    	newUser.setConfirmPassword(signUpMergedForm.getPassword());
-    	newUser.setRole("normal");
-    	newUser.setEmailVerified(false);
-    	newUser.setName(signUpMergedForm.getName());
-    	newUser.setJobTitle(signUpMergedForm.getJobTitle());
-    	newUser.setInstitution(signUpMergedForm.getInstitution());
-    	newUser.setInstitutionAbbreviation(signUpMergedForm.getInstitutionAbbreviation());
-    	newUser.setWebsite(signUpMergedForm.getWebsite());
-    	newUser.setAddress1(signUpMergedForm.getAddress1());
-    	newUser.setAddress2(signUpMergedForm.getAddress2());
-    	newUser.setCountry(signUpMergedForm.getCountry());
-    	newUser.setCity(signUpMergedForm.getCity());
-    	newUser.setProvince(signUpMergedForm.getProvince());
-    	newUser.setPostalCode(signUpMergedForm.getPostalCode());
-    	userManager.addNewUser(newUser);
+//    	User newUser = new User();
+//    	newUser.setEmail(signUpMergedForm.getEmail());
+//    	newUser.setPassword(signUpMergedForm.getPassword());
+//    	newUser.setConfirmPassword(signUpMergedForm.getPassword());
+//    	newUser.setRole("normal");
+//    	newUser.setEmailVerified(false);
+//    	newUser.setName(signUpMergedForm.getName());
+//    	newUser.setJobTitle(signUpMergedForm.getJobTitle());
+//    	newUser.setInstitution(signUpMergedForm.getInstitution());
+//    	newUser.setInstitutionAbbreviation(signUpMergedForm.getInstitutionAbbreviation());
+//    	newUser.setWebsite(signUpMergedForm.getWebsite());
+//    	newUser.setAddress1(signUpMergedForm.getAddress1());
+//    	newUser.setAddress2(signUpMergedForm.getAddress2());
+//    	newUser.setCountry(signUpMergedForm.getCountry());
+//    	newUser.setCity(signUpMergedForm.getCity());
+//    	newUser.setProvince(signUpMergedForm.getProvince());
+//    	newUser.setPostalCode(signUpMergedForm.getPostalCode());
+//    	userManager.addNewUser(newUser);
     	
-    	int newGeneratedUserId = newUser.getUserId();
+//    	int newGeneratedUserId = newUser.getUserId();
     	
     	// check if user chose create new team or join existing team by checking team name
     	String createNewTeamName = signUpMergedForm.getTeamName();
@@ -305,30 +297,50 @@ public class MainController {
     	if (createNewTeamName.isEmpty() == false) {
     		// System.out.println("apply for new team");
         	// add to team model
-        	Team newTeam = new Team();
-        	newTeam.setName(createNewTeamName);
-        	newTeam.setDescription(signUpMergedForm.getTeamDescription());
-        	newTeam.setWebsite(signUpMergedForm.getTeamDescription());
-        	newTeam.setOrganizationType(signUpMergedForm.getTeamOrganizationType());
-        	newTeam.setIsPublic(signUpMergedForm.getIsPublic());
-        	newTeam.setTeamOwnerId(newGeneratedUserId);
-        	newTeam.setIsApproved(false);
-        	teamManager.addNewTeam(newTeam);
+//        	Team newTeam = new Team();
+//        	newTeam.setName(createNewTeamName);
+//        	newTeam.setDescription(signUpMergedForm.getTeamDescription());
+//        	newTeam.setWebsite(signUpMergedForm.getTeamDescription());
+//        	newTeam.setOrganizationType(signUpMergedForm.getTeamOrganizationType());
+//        	newTeam.setIsPublic(signUpMergedForm.getIsPublic());
+//        	newTeam.setTeamOwnerId(newGeneratedUserId);
+//        	newTeam.setIsApproved(false);
+//        	teamManager.addNewTeam(newTeam);
         	// redirect to application submitted
+            registerUserToDeter(mainObject);
         	return "redirect:/team_application_submitted";
         	
     	} else if (joinNewTeamName.isEmpty() == false) {
     		// System.out.println("join existing new team");
         	// add user request to join team
-            int teamId = teamManager.getTeamIdByTeamName(joinNewTeamName);
-            teamManager.addJoinRequestTeamMap2(newGeneratedUserId, teamId, userManager.getUserById(newGeneratedUserId));
+//            int teamId = teamManager.getTeamIdByTeamName(joinNewTeamName);
+//            teamManager.addJoinRequestTeamMap2(newGeneratedUserId, teamId, userManager.getUserById(newGeneratedUserId));
             // redirect to join request submitted
+
+            // get the team JSON from team name
+            // FIXME need to check if team exists?
+            String teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName());
+            teamFields.put("id", teamIdToJoin);
+
+            registerUserToDeter(mainObject);
+
             return "redirect:/join_application_submitted";
-            
+
     	} else {
     		// logic error not suppose to reach here
     		return "redirect:/signup2";
     	}
+    }
+
+    private void registerUserToDeter(JSONObject mainObject) {
+        System.out.println(mainObject.toString());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getREGISTRATION_URI(), HttpMethod.POST, request, String.class);
     }
 
     private String getTeamIdByName(String teamName) {
@@ -1221,5 +1233,9 @@ public class MainController {
         team2.setMembersCount(membersArray.length());
 
         return team2;
+    }
+
+    public String getStubUserID() {
+        return USER_ID;
     }
 }

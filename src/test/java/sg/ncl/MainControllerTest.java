@@ -108,7 +108,7 @@ public class MainControllerTest {
         String predefinedJsonStr = predefinedUserJson.toString();
 
         // uri must be equal to that defined in MainController
-        mockServer.expect(requestTo("http://localhost:80/users/3c1cee22-f10c-47e4-8122-31851cbe85f6"))
+        mockServer.expect(requestTo("http://localhost:80/users/" + mainController.getStubUserID()))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
@@ -131,7 +131,7 @@ public class MainControllerTest {
         JSONObject predefinedUserDetailsJson = predefinedUserJson.getJSONObject("userDetails");
         String predefinedJsonStr = predefinedUserJson.toString();
 
-        mockServer.expect(requestTo("http://localhost:80/users/3c1cee22-f10c-47e4-8122-31851cbe85f6"))
+        mockServer.expect(requestTo("http://localhost:80/users/" + mainController.getStubUserID()))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
