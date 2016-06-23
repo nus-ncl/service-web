@@ -2,6 +2,7 @@ package sg.ncl;
 
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -57,6 +58,9 @@ public class MainControllerTest {
 
     @Autowired
     private RestOperations restOperations;
+
+    @Inject
+    private ConnectionProperties properties;
 
     private final String USERS_URI = "http://localhost:80/users/";
     private final String USER_ID = "eec32c55-507e-4c30-b850-a4111b565c8f";
@@ -146,6 +150,90 @@ public class MainControllerTest {
 //        mockMvc.perform(get("/account_settings")).andExpect(status().isOk());
 
         System.out.println(result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void signUpNewUserApplyNewTeam() throws Exception {
+
+        String stubUid = "AAAAAA";
+        JSONObject predefinedResultJson = new JSONObject();
+        predefinedResultJson.put("msg", "user is created");
+        predefinedResultJson.put("uid", stubUid);
+
+        mockServer.expect(requestTo(properties.getREGISTRATION_URI()))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
+
+        MvcResult result = mockMvc.perform(
+                post("/signup2")
+                        .param("email", "apple@nus.edu.sg")
+                        .param("password", "appleP@ssword")
+                        .param("confirmPassword", "appleP@ssword")
+                        .param("firstName", "apple")
+                        .param("lastName", "orange")
+                        .param("phone", "12345678")
+                        .param("jobTitle", "research")
+                        .param("institution", "national university")
+                        .param("institutionAbbreviation", "nus")
+                        .param("website", "http://www.nus.edu.sg")
+                        .param("address1", "address1")
+                        .param("address2", "address2")
+                        .param("country", "singapore")
+                        .param("city", "sg")
+                        .param("province", "west")
+                        .param("postalCode", "123456")
+                        .param("teamName", "project")
+                        .param("teamDescription", "a simple description")
+                        .param("teamWebsite", "http://team.com")
+                        .param("organizationType", "academia")
+                        .param("isPublic", "PUBLIC")
+                        .param("hasAcceptTeamOwnerPolicy", "true"))
+                .andExpect(redirectedUrl("/team_application_submitted"))
+                .andReturn();
+    }
+
+    @Test
+    @Ignore
+    public void signUpNewUserJoinExistingTeam() throws Exception {
+        // TODO TBD need a way to mock two rest operations
+        String stubUid = "AAAAAA";
+        JSONObject predefinedResultJson = new JSONObject();
+        predefinedResultJson.put("msg", "user is created");
+        predefinedResultJson.put("uid", stubUid);
+
+        JSONObject predefinedTeamJson = new JSONObject();
+        predefinedTeamJson.put("id", "123456789");
+
+        MvcResult result = mockMvc.perform(
+                post("/signup2")
+                        .param("email", "apple@nus.edu.sg")
+                        .param("password", "appleP@ssword")
+                        .param("confirmPassword", "appleP@ssword")
+                        .param("firstName", "apple")
+                        .param("lastName", "orange")
+                        .param("phone", "12345678")
+                        .param("jobTitle", "research")
+                        .param("institution", "national university")
+                        .param("institutionAbbreviation", "nus")
+                        .param("website", "http://www.nus.edu.sg")
+                        .param("address1", "address1")
+                        .param("address2", "address2")
+                        .param("country", "singapore")
+                        .param("city", "sg")
+                        .param("province", "west")
+                        .param("postalCode", "123456")
+                        .param("joinTeamName", "project")
+                        .param("hasAcceptTeamOwnerPolicy", "true"))
+                .andExpect(redirectedUrl("/join_application_submitted"))
+                .andReturn();
+
+//        mockServer.expect(requestTo(properties.getTEAMS_URI() + "name/" + "project"))
+//                .andExpect(method(HttpMethod.GET))
+//                .andRespond(withSuccess(predefinedTeamJson.toString(), MediaType.APPLICATION_JSON));
+//
+//        mockServer.expect(requestTo(properties.getREGISTRATION_URI()))
+//                .andExpect(method(HttpMethod.POST))
+//                .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
     }
 
     private JSONObject createUserJson(String id, String firstName, String lastName, String jobTitle, String email, String phone, String institution, String institutionAbbrev, String institutionWeb, String address1, String address2, String country, String region, String city, String zipCode) {

@@ -83,15 +83,15 @@ public class MainController {
     public String index() {
         // FIXME: Purposely create a fake credentials first
         // ID is required
-        JSONObject credObject = new JSONObject();
-
-        credObject.put("id", "1234567890");
-        credObject.put("username", "johndoe@nus.edu.sg");
-        credObject.put("password", "a");
-
-        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getCREDENTIALS_URI(), credObject.toString());
-
-        System.out.println(responseEntity.getBody().toString());
+//        JSONObject credObject = new JSONObject();
+//
+//        credObject.put("id", "1234567890");
+//        credObject.put("username", "johndoe@nus.edu.sg");
+//        credObject.put("password", "a");
+//
+//        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getCREDENTIALS_URI(), credObject.toString());
+//
+//        System.out.println(responseEntity.getBody().toString());
         return "index";
     }
     
@@ -294,7 +294,7 @@ public class MainController {
     	// System.out.println("New team name: " + createNewTeamName);
     	// System.out.println("Join existing team name: " + joinNewTeamName);
     	
-    	if (createNewTeamName.isEmpty() == false) {
+    	if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
     		// System.out.println("apply for new team");
         	// add to team model
 //        	Team newTeam = new Team();
@@ -307,10 +307,18 @@ public class MainController {
 //        	newTeam.setIsApproved(false);
 //        	teamManager.addNewTeam(newTeam);
         	// redirect to application submitted
+
+            // FIXME need to check if team exists?
+            teamFields.put("name", signUpMergedForm.getTeamName());
+            teamFields.put("description", signUpMergedForm.getTeamDescription());
+            teamFields.put("website", signUpMergedForm.getTeamWebsite());
+            teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
+            teamFields.put("visibility", signUpMergedForm.getIsPublic());
+            mainObject.put("isJoinTeam", false);
             registerUserToDeter(mainObject);
         	return "redirect:/team_application_submitted";
         	
-    	} else if (joinNewTeamName.isEmpty() == false) {
+    	} else if (joinNewTeamName != null) {
     		// System.out.println("join existing new team");
         	// add user request to join team
 //            int teamId = teamManager.getTeamIdByTeamName(joinNewTeamName);
@@ -321,6 +329,9 @@ public class MainController {
             // FIXME need to check if team exists?
             String teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName());
             teamFields.put("id", teamIdToJoin);
+
+            // set the flag to indicate to controller that it is joining an existing team
+            mainObject.put("isJoinTeam", true);
 
             registerUserToDeter(mainObject);
 
@@ -333,8 +344,6 @@ public class MainController {
     }
 
     private void registerUserToDeter(JSONObject mainObject) {
-        System.out.println(mainObject.toString());
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);

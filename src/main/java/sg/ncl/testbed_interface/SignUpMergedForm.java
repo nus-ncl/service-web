@@ -47,7 +47,7 @@ public class SignUpMergedForm {
     private String teamOrganizationType;
     
     // defaults to public
-    private String isPublic = "public";
+    private String isPublic = "PUBLIC";
     
     @AssertTrue(message="Please read and accept the team owner policy")
     private boolean hasAcceptTeamOwnerPolicy;
