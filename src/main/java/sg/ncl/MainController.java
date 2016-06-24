@@ -66,7 +66,7 @@ public class MainController {
 //    private final String CREDENTIALS_URI = "http://localhost:80/credentials/";
 
 //    private final String USER_ID = "eec32c55-507e-4c30-b850-a4111b565c8f";
-    private final String USER_ID = "35456ded-9f47-44dd-b917-3a9ce9be97fc";
+    private final String USER_ID = "6a902d27-0447-4501-87cc-4cd8cd46c9e2";
     private final String TEAM_ID = "93709604-95ee-40a1-bb7b-77eee8e7e1a7";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
@@ -399,11 +399,16 @@ public class MainController {
         userDetails.put("lastName", editUser.getLastName());
         userDetails.put("email", editUser.getEmail());
         userDetails.put("phone", editUser.getPhone());
+        userDetails.put("jobTitle", editUser.getJobTitle());
         userDetails.put("address", address);
+        userDetails.put("institution", editUser.getInstitution());
+        userDetails.put("institutionAbbreviation", editUser.getInstitutionAbbreviation());
+        userDetails.put("institutionWeb", editUser.getInstitutionWeb());
 
         address.put("address1", editUser.getAddress1());
         address.put("address2", editUser.getAddress2());
         address.put("country", editUser.getCountry());
+        address.put("city", editUser.getCity());
         address.put("region", editUser.getRegion());
         address.put("zipCode", editUser.getZipCode());
 
@@ -1217,6 +1222,7 @@ public class MainController {
         user2.setId(object.getString("id"));
         user2.setFirstName(userDetails.getString("firstName"));
         user2.setLastName(userDetails.getString("lastName"));
+        user2.setJobTitle(userDetails.getString("jobTitle"));
         user2.setEmail(userDetails.getString("email"));
         user2.setPhone(userDetails.getString("phone"));
         user2.setAddress1(address.getString("address1"));
@@ -1224,6 +1230,10 @@ public class MainController {
         user2.setCountry(address.getString("country"));
         user2.setRegion(address.getString("region"));
         user2.setZipCode(address.getString("zipCode"));
+        user2.setCity(address.getString("city"));
+        user2.setInstitution(userDetails.getString("institution"));
+        user2.setInstitutionAbbreviation(userDetails.getString("institutionAbbreviation"));
+        user2.setInstitutionWeb(userDetails.getString("institutionWeb"));
 
         return user2;
     }

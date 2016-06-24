@@ -9,13 +9,18 @@ public class User2 {
     private boolean emailVerified;
     private String firstName;
     private String lastName;
+    private String jobTitle;
     private String email;
     private String phone;
     private String address1;
     private String address2;
     private String country;
+    private String city;
     private String region;
     private String zipCode;
+    private String institution;
+    private String institutionAbbreviation;
+    private String institutionWeb;
 
     public User2() {
 
@@ -107,5 +112,45 @@ public class User2 {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
+    }
+
+    public String getInstitutionAbbreviation() {
+        return institutionAbbreviation;
+    }
+
+    public void setInstitutionAbbreviation(String institutionAbbreviation) {
+        this.institutionAbbreviation = institutionAbbreviation;
+    }
+
+    public String getInstitutionWeb() {
+        return institutionWeb;
+    }
+
+    public void setInstitutionWeb(String institutionWeb) {
+        this.institutionWeb = institutionWeb;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }
