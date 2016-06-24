@@ -113,7 +113,6 @@ public class MainController {
             String inputEmail = loginForm.getLoginEmail();
             String inputPwd = loginForm.getLoginPassword();
 
-            RestTemplate restTemplate = new RestTemplate();
             String plainCreds = inputEmail + ":" + inputPwd;
             byte[] plainCredsBytes = plainCreds.getBytes();
             byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
@@ -123,7 +122,7 @@ public class MainController {
             headers.set("Authorization", "Basic " + base64Creds);
 
             HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-            ResponseEntity responseEntity = restTemplate.exchange(properties.getAUTHENTICATION_URI(), HttpMethod.POST, request, String.class);
+            ResponseEntity responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
 
             // TODO call the proper validation functions
             String jwtTokenString = responseEntity.getBody().toString();
@@ -349,7 +348,7 @@ public class MainController {
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getREGISTRATION_URI(), HttpMethod.POST, request, String.class);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
     }
 
     private String getTeamIdByName(String teamName) {
@@ -358,7 +357,7 @@ public class MainController {
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getTEAMS_URI() + "name/" + teamName, HttpMethod.GET, request, String.class);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "name/" + teamName, HttpMethod.GET, request, String.class);
         String resultJSON = responseEntity.getBody().toString();
         JSONObject object = new JSONObject(resultJSON);
         return object.getString("id");
@@ -369,7 +368,7 @@ public class MainController {
     public String accountDetails(Model model, HttpSession session) throws IOException {
     	// TODO id should be some session variable?
 
-    	String userId_uri = properties.getUSERS_URI() + USER_ID;
+    	String userId_uri = properties.getSioUsersUrl() + USER_ID;
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
@@ -410,7 +409,7 @@ public class MainController {
 
         object.put("userDetails", userDetails);
 
-        String userId_uri = properties.getUSERS_URI() + USER_ID;
+        String userId_uri = properties.getSioUsersUrl() + USER_ID;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -533,13 +532,13 @@ public class MainController {
 
 
         // FIXME add user to team fake the data first
-        restClient.sendPostRequest(properties.getUSERS_URI() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
+        restClient.sendPostRequest(properties.getSioUsersUrl() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
 
         // FIXME fake team side add user to team
-        restClient.sendPostRequest(properties.getTEAMS_URI() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
+        restClient.sendPostRequest(properties.getSioTeamsUrl() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
 
         // FIXME get list of teamids
-        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getUSERS_URI() + "/" + USER_ID);
+        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + USER_ID);
 
         JSONObject object = new JSONObject(responseEntity.getBody().toString());
         JSONArray teamIdsJsonArray = object.getJSONArray("teamIds");
@@ -547,14 +546,14 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
             System.out.println(teamId);
-            ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getTEAMS_URI() + "/" + teamId);
+            ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
             Team2 team2 = extractTeamInfo(teamResponseEntity.getBody().toString());
             teamManager2.addTeamToTeamMap(team2);
 //            System.out.println(teamResponseEntity.getBody().toString());
         }
 
         // get public teams
-        ResponseEntity teamPublicResponseEntity = restClient.sendGetRequest(properties.getTEAMS_URI() + "/public");
+        ResponseEntity teamPublicResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/public");
 
         JSONArray teamPublicJsonArray = new JSONArray(teamPublicResponseEntity.getBody().toString());
         for (int i = 0; i < teamPublicJsonArray.length(); i++) {

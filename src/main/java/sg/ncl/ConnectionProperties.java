@@ -8,52 +8,89 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = ConnectionProperties.PREFIX)
 public class ConnectionProperties {
 
-    public static final String PREFIX = "connection.properties";
+    public static final String PREFIX = "ncl.web.service";
 
-    private String USERS_URI = "http://localhost:80/users/";
-    private String TEAMS_URI = "http://localhost:80/teams/";
-    private String AUTHENTICATION_URI = "http://localhost:80/authentication/";
-    private String CREDENTIALS_URI = "http://localhost:80/credentials/";
-    private String REGISTRATION_URI = "http://localhost:80/registrations";
+    private String sioAddress;
+    private String sioPort;
+    private String authEndpoint;
+    private String credEndpoint;
+    private String regEndpoint;
+    private String userEndpoint;
+    private String teamEndpoint;
 
-    public String getUSERS_URI() {
-        return USERS_URI;
+    public String getSioAddress() {
+        return sioAddress;
     }
 
-    public void setUSERS_URI(String USERS_URI) {
-        this.USERS_URI = USERS_URI;
+    public void setSioAddress(String sioAddress) {
+        this.sioAddress = sioAddress;
     }
 
-    public String getTEAMS_URI() {
-        return TEAMS_URI;
+    public String getSioPort() {
+        return sioPort;
     }
 
-    public void setTEAMS_URI(String TEAMS_URI) {
-        this.TEAMS_URI = TEAMS_URI;
+    public void setSioPort(String sioPort) {
+        this.sioPort = sioPort;
     }
 
-    public String getAUTHENTICATION_URI() {
-        return AUTHENTICATION_URI;
+    public String getAuthEndpoint() {
+        return authEndpoint;
     }
 
-    public void setAUTHENTICATION_URI(String AUTHENTICATION_URI) {
-        this.AUTHENTICATION_URI = AUTHENTICATION_URI;
+    public void setAuthEndpoint(String authEndpoint) {
+        this.authEndpoint = authEndpoint;
     }
 
-    public String getCREDENTIALS_URI() {
-        return CREDENTIALS_URI;
+    public String getCredEndpoint() {
+        return credEndpoint;
     }
 
-    public void setCREDENTIALS_URI(String CREDENTIALS_URI) {
-        this.CREDENTIALS_URI = CREDENTIALS_URI;
+    public void setCredEndpoint(String credEndpoint) {
+        this.credEndpoint = credEndpoint;
     }
 
-    public String getREGISTRATION_URI() {
-        return REGISTRATION_URI;
+    public String getRegEndpoint() {
+        return regEndpoint;
     }
 
-    public void setREGISTRATION_URI(String REGISTRATION_URI) {
-        this.REGISTRATION_URI = REGISTRATION_URI;
+    public void setRegEndpoint(String regEndpoint) {
+        this.regEndpoint = regEndpoint;
+    }
+
+    public String getUserEndpoint() {
+        return userEndpoint;
+    }
+
+    public void setUserEndpoint(String userEndpoint) {
+        this.userEndpoint = userEndpoint;
+    }
+
+    public String getTeamEndpoint() {
+        return teamEndpoint;
+    }
+
+    public void setTeamEndpoint(String teamEndpoint) {
+        this.teamEndpoint = teamEndpoint;
+    }
+
+    public String getSioUsersUrl() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/";
+    }
+
+    public String getSioTeamsUrl() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
+    }
+    public String getSioAuthUrl() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + authEndpoint + "/";
+    }
+
+    public String getSioCredUrl() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + credEndpoint + "/";
+    }
+
+    public String getSioRegUrl() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/";
     }
 }
 
