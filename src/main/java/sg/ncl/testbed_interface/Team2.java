@@ -8,6 +8,8 @@ public class Team2 {
     private String id;
     private String name;
     private String description;
+    private String website;
+    private String organisationType;
     private int membersCount;
 
 
@@ -41,5 +43,21 @@ public class Team2 {
 
     public void setMembersCount(int membersCount) {
         this.membersCount = membersCount;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getOrganisationType() {
+        return organisationType;
+    }
+
+    public void setOrganisationType(String organisationType) {
+        this.organisationType = organisationType;
     }
 }

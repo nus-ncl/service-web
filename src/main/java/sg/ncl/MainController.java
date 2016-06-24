@@ -63,8 +63,8 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "0a2ab585-01cf-490f-9dff-7beb2178a3ee";
-    private final String TEAM_ID = "93709604-95ee-40a1-bb7b-77eee8e7e1a7";
+    private final String USER_ID = "8b3e8d23-da23-4133-b523-683c11bc028b";
+    private final String TEAM_ID = "5eae5e4d-bd55-4975-ab29-1a170a460054";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
@@ -86,7 +86,7 @@ public class MainController {
 //        credObject.put("username", "johndoe@nus.edu.sg");
 //        credObject.put("password", "a");
 //
-//        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getCREDENTIALS_URI(), credObject.toString());
+//        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getSioCredUrl(), credObject.toString());
 //
 //        System.out.println(responseEntity.getBody().toString());
         return "index";
@@ -746,12 +746,24 @@ public class MainController {
     //--------------------------Team Profile Page--------------------------
     
     @RequestMapping("/team_profile/{teamId}")
-    public String teamProfile(@PathVariable Integer teamId, Model model, HttpSession session) {
+    public String teamProfile(@PathVariable String teamId, Model model, HttpSession session) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + teamId, HttpMethod.GET, request, String.class);
+
+        Team2 team = extractTeamInfo(responseEntity.getBody().toString());
+
         model.addAttribute("currentLoggedInUserId", getSessionIdOfLoggedInUser(session));
-        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
-        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
-        model.addAttribute("userManager", userManager);
-        model.addAttribute("teamExpMap", experimentManager.getTeamExperimentsMap(teamId));
+        model.addAttribute("team", team);
+
+//        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
+//        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
+//        model.addAttribute("userManager", userManager);
+//        model.addAttribute("teamExpMap", experimentManager.getTeamExperimentsMap(teamId));
+        // model add attribute team is correct
         return "team_profile";
     }
     
@@ -1345,6 +1357,8 @@ public class MainController {
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));
         team2.setDescription(object.getString("description"));
+        team2.setWebsite(object.getString("website"));
+        team2.setOrganisationType(object.getString("organisationType"));
 
         // TODO need to check for pending for approval members count
         team2.setMembersCount(membersArray.length());
