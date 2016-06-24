@@ -17,14 +17,10 @@ public class User2 {
     private String country;
     private String city;
     private String region;
-    private String zipCode;
+    private String postalCode;
     private String institution;
     private String institutionAbbreviation;
     private String institutionWeb;
-
-    public User2() {
-
-    }
 
     public String getId() {
         return id;
@@ -106,12 +102,12 @@ public class User2 {
         this.region = region;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public String getJobTitle() {

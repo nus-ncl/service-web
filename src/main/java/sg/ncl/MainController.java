@@ -55,18 +55,15 @@ public class MainController {
     private DatasetManager datasetManager = DatasetManager.getInstance();
     private NodeManager nodeManager = NodeManager.getInstance();
 
+    // to know which form fields have been changed
+    private User2 originalUser = null;
+
 
     private TeamManager2 teamManager2 = TeamManager2.getInstance();
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
-    
-//    private final String USERS_URI = "http://localhost:8080/users/";
-//    private final String AUTHENTICATION_URI = "http://localhost:8080/authentication";
-//    private final String AUTHENTICATION_URI = "http://localhost:80/authentication";
-//    private final String CREDENTIALS_URI = "http://localhost:80/credentials/";
 
-//    private final String USER_ID = "eec32c55-507e-4c30-b850-a4111b565c8f";
-    private final String USER_ID = "6a902d27-0447-4501-87cc-4cd8cd46c9e2";
+    private final String USER_ID = "0a2ab585-01cf-490f-9dff-7beb2178a3ee";
     private final String TEAM_ID = "93709604-95ee-40a1-bb7b-77eee8e7e1a7";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
@@ -375,13 +372,8 @@ public class MainController {
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
         ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.GET, request, String.class);
 
-//        System.out.println(responseEntity.getBody().toString());
-
-        /*
-    	User editUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
-    	model.addAttribute("editUser", editUser);
-        */
         User2 user2 = extractUserInfo(responseEntity.getBody().toString());
+        originalUser = user2;
         model.addAttribute("editUser", user2);
         return "account_settings";
     }
@@ -391,40 +383,146 @@ public class MainController {
     	// Need to be this way to "edit" details
     	// If not, the form details will overwrite existing user's details
 
-        JSONObject object = new JSONObject();
-        JSONObject userDetails = new JSONObject();
-        JSONObject address = new JSONObject();
+        boolean errorsFound = false;
 
-        userDetails.put("firstName", editUser.getFirstName());
-        userDetails.put("lastName", editUser.getLastName());
-        userDetails.put("email", editUser.getEmail());
-        userDetails.put("phone", editUser.getPhone());
-        userDetails.put("jobTitle", editUser.getJobTitle());
-        userDetails.put("address", address);
-        userDetails.put("institution", editUser.getInstitution());
-        userDetails.put("institutionAbbreviation", editUser.getInstitutionAbbreviation());
-        userDetails.put("institutionWeb", editUser.getInstitutionWeb());
+        // check fields first
+        if (errorsFound == false && editUser.getFirstName().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editFirstName", "fail");
+            errorsFound = true;
+        }
 
-        address.put("address1", editUser.getAddress1());
-        address.put("address2", editUser.getAddress2());
-        address.put("country", editUser.getCountry());
-        address.put("city", editUser.getCity());
-        address.put("region", editUser.getRegion());
-        address.put("zipCode", editUser.getZipCode());
+        if (errorsFound == false && editUser.getLastName().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editLastName", "fail");
+            errorsFound = true;
+        }
 
-        object.put("userDetails", userDetails);
+        if (errorsFound == false && editUser.getPhone().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editPhone", "fail");
+            errorsFound = true;
+        }
 
-        String userId_uri = properties.getSioUsersUrl() + USER_ID;
+        if (errorsFound == false && editUser.getJobTitle().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editJobTitle", "fail");
+            errorsFound = true;
+        }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
+        if (errorsFound == false && editUser.getInstitution().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editInstitution", "fail");
+            errorsFound = true;
+        }
 
-        HttpEntity<String> request = new HttpEntity<String>(object.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
+        if (errorsFound == false && editUser.getInstitutionAbbreviation().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editInstitutionAbbrev", "fail");
+            errorsFound = true;
+        }
 
+        if (errorsFound == false && editUser.getInstitutionWeb().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editInstitutionWeb", "fail");
+            errorsFound = true;
+        }
+
+        if (errorsFound == false && editUser.getAddress1().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editAddress1", "fail");
+            errorsFound = true;
+        }
+
+        if (errorsFound == false && editUser.getCountry().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editCountry", "fail");
+            errorsFound = true;
+        }
+
+        if (errorsFound == false && editUser.getCity().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editCity", "fail");
+            errorsFound = true;
+        }
+
+        if (errorsFound == false && editUser.getRegion().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editProvince", "fail");
+            errorsFound = true;
+        }
+
+        if (errorsFound == false && editUser.getPostalCode().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editPostalCode", "fail");
+            errorsFound = true;
+        }
+
+        if (errorsFound) {
+            originalUser = null;
+            return "redirect:/account_settings";
+        } else {
+            JSONObject object = new JSONObject();
+            JSONObject userDetails = new JSONObject();
+            JSONObject address = new JSONObject();
+
+            userDetails.put("firstName", editUser.getFirstName());
+            userDetails.put("lastName", editUser.getLastName());
+            userDetails.put("email", editUser.getEmail());
+            userDetails.put("phone", editUser.getPhone());
+            userDetails.put("jobTitle", editUser.getJobTitle());
+            userDetails.put("address", address);
+            userDetails.put("institution", editUser.getInstitution());
+            userDetails.put("institutionAbbreviation", editUser.getInstitutionAbbreviation());
+            userDetails.put("institutionWeb", editUser.getInstitutionWeb());
+
+            address.put("address1", editUser.getAddress1());
+            address.put("address2", editUser.getAddress2());
+            address.put("country", editUser.getCountry());
+            address.put("city", editUser.getCity());
+            address.put("region", editUser.getRegion());
+            address.put("zipCode", editUser.getPostalCode());
+
+            object.put("userDetails", userDetails);
+
+            String userId_uri = properties.getSioUsersUrl() + USER_ID;
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", AUTHORIZATION_HEADER);
+
+            HttpEntity<String> request = new HttpEntity<String>(object.toString(), headers);
+            ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
+
+            if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
+                redirectAttributes.addFlashAttribute("editFirstName", "success");
+            }
+            if (!originalUser.getLastName().equals(editUser.getLastName())) {
+                redirectAttributes.addFlashAttribute("editLastName", "success");
+            }
+            if (!originalUser.getPhone().equals(editUser.getPhone())) {
+                redirectAttributes.addFlashAttribute("editPhone", "success");
+            }
+            if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
+                redirectAttributes.addFlashAttribute("editJobTitle", "success");
+            }
+            if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
+                redirectAttributes.addFlashAttribute("editInstitution", "success");
+            }
+            if (!originalUser.getInstitutionAbbreviation().equals(editUser.getInstitutionAbbreviation())) {
+                redirectAttributes.addFlashAttribute("editInstitutionAbbrev", "success");
+            }
+            if (!originalUser.getInstitutionWeb().equals(editUser.getInstitutionWeb())) {
+                redirectAttributes.addFlashAttribute("editInstitutionWeb", "success");
+            }
+            if (!originalUser.getAddress1().equals(editUser.getAddress1())) {
+                redirectAttributes.addFlashAttribute("editAddress1", "success");
+            }
+            if (!originalUser.getAddress2().equals(editUser.getAddress2())) {
+                redirectAttributes.addFlashAttribute("editAddress2", "success");
+            }
+            if (!originalUser.getCountry().equals(editUser.getCountry())) {
+                redirectAttributes.addFlashAttribute("editCountry", "success");
+            }
+            if (!originalUser.getCity().equals(editUser.getCity())) {
+                redirectAttributes.addFlashAttribute("editCity", "success");
+            }
+            if (!originalUser.getRegion().equals(editUser.getRegion())) {
+                redirectAttributes.addFlashAttribute("editProvince", "success");
+            }
+            if (!originalUser.getPostalCode().equals(editUser.getPostalCode())) {
+                redirectAttributes.addFlashAttribute("editPostalCode", "success");
+            }
+        }
         /*
-    	// TODO for email changes need to resend email confirmation
     	User originalUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
     	
     	String editedName = editUser.getName();
@@ -496,6 +594,7 @@ public class MainController {
     	userManager.updateUserDetails(originalUser);
         return "redirect:/account_settings";
         */
+        originalUser = null;
         return "redirect:/account_settings";
     }
     
@@ -1229,7 +1328,7 @@ public class MainController {
         user2.setAddress2(address.getString("address2"));
         user2.setCountry(address.getString("country"));
         user2.setRegion(address.getString("region"));
-        user2.setZipCode(address.getString("zipCode"));
+        user2.setPostalCode(address.getString("zipCode"));
         user2.setCity(address.getString("city"));
         user2.setInstitution(userDetails.getString("institution"));
         user2.setInstitutionAbbreviation(userDetails.getString("institutionAbbreviation"));
