@@ -62,10 +62,6 @@ public class MainControllerTest {
     @Inject
     private ConnectionProperties properties;
 
-    private final String USERS_URI = "http://localhost:80/users/";
-    private final String USER_ID = "eec32c55-507e-4c30-b850-a4111b565c8f";
-    private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
-
     @Inject
     private WebApplicationContext webApplicationContext;
 
@@ -86,7 +82,10 @@ public class MainControllerTest {
 
     @Test
     public void testPostLoginPageInvalidUserPassword() throws Exception {
-        // have to run test after api-interface is up
+        mockServer.expect(requestTo(properties.getSioAuthUrl()))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess("{}", MediaType.APPLICATION_JSON));
+
         mockMvc.perform(
                 post("/login")
                 .param("loginEmail", "123456789@nus.edu.sg")
@@ -112,7 +111,7 @@ public class MainControllerTest {
         String predefinedJsonStr = predefinedUserJson.toString();
 
         // uri must be equal to that defined in MainController
-        mockServer.expect(requestTo("http://localhost:80/users/" + mainController.getStubUserID()))
+        mockServer.expect(requestTo(properties.getSioUsersUrl() + mainController.getStubUserID()))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
@@ -135,7 +134,7 @@ public class MainControllerTest {
         JSONObject predefinedUserDetailsJson = predefinedUserJson.getJSONObject("userDetails");
         String predefinedJsonStr = predefinedUserJson.toString();
 
-        mockServer.expect(requestTo("http://localhost:80/users/" + mainController.getStubUserID()))
+        mockServer.expect(requestTo(properties.getSioUsersUrl() + mainController.getStubUserID()))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
@@ -160,7 +159,7 @@ public class MainControllerTest {
         predefinedResultJson.put("msg", "user is created");
         predefinedResultJson.put("uid", stubUid);
 
-        mockServer.expect(requestTo(properties.getREGISTRATION_URI()))
+        mockServer.expect(requestTo(properties.getSioRegUrl()))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
 
