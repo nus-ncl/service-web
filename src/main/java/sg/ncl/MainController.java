@@ -63,8 +63,8 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "8b3e8d23-da23-4133-b523-683c11bc028b";
-    private final String TEAM_ID = "5eae5e4d-bd55-4975-ab29-1a170a460054";
+    private final String USER_ID = "7df8a711-2c19-4609-bbc9-3bc6fad43cd2";
+    private final String TEAM_ID = "b1911e19-7758-4adc-9d88-d1ecce714381";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
@@ -80,15 +80,15 @@ public class MainController {
     public String index() {
         // FIXME: Purposely create a fake credentials first
         // ID is required
-//        JSONObject credObject = new JSONObject();
-//
-//        credObject.put("id", "1234567890");
-//        credObject.put("username", "johndoe@nus.edu.sg");
-//        credObject.put("password", "a");
-//
-//        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getSioCredUrl(), credObject.toString());
-//
-//        System.out.println(responseEntity.getBody().toString());
+        JSONObject credObject = new JSONObject();
+
+        credObject.put("id", "1234567890");
+        credObject.put("username", "johndoe@nus.edu.sg");
+        credObject.put("password", "a");
+
+        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getSioCredUrl(), credObject.toString());
+
+        System.out.println(responseEntity.getBody().toString());
         return "index";
     }
     
@@ -1359,6 +1359,8 @@ public class MainController {
         team2.setDescription(object.getString("description"));
         team2.setWebsite(object.getString("website"));
         team2.setOrganisationType(object.getString("organisationType"));
+        team2.setStatus(object.getString("status"));
+        team2.setVisibility(object.getString("visibility"));
 
         // TODO need to check for pending for approval members count
         team2.setMembersCount(membersArray.length());

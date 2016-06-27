@@ -10,6 +10,9 @@ public class Team2 {
     private String description;
     private String website;
     private String organisationType;
+    private String status;
+    private String createdDate;
+    private String visibility;
     private int membersCount;
 
 
@@ -59,5 +62,29 @@ public class Team2 {
 
     public void setOrganisationType(String organisationType) {
         this.organisationType = organisationType;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(String visibility) {
+        this.visibility = visibility;
     }
 }
