@@ -55,16 +55,18 @@ public class MainController {
     private DatasetManager datasetManager = DatasetManager.getInstance();
     private NodeManager nodeManager = NodeManager.getInstance();
 
+    public String memberTypeOwner = "OWNER";
+    public String memberTypeMember = "MEMBER";
+
     // to know which form fields have been changed
     private User2 originalUser = null;
-
 
     private TeamManager2 teamManager2 = TeamManager2.getInstance();
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "7df8a711-2c19-4609-bbc9-3bc6fad43cd2";
-    private final String TEAM_ID = "b1911e19-7758-4adc-9d88-d1ecce714381";
+    private final String USER_ID = "fe60bd2a-e51b-4d76-a5df-22dbdb5f979b";
+    private final String TEAM_ID = "90a42136-4e7f-44fd-af4a-96cc73000f20";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
@@ -634,12 +636,16 @@ public class MainController {
         model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
         model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
+        JSONObject memberTypeObject = new JSONObject();
+        memberTypeObject.put("userId", USER_ID);
+        memberTypeObject.put("teamMemberType", memberTypeOwner);
 
         // FIXME add user to team fake the data first
         restClient.sendPostRequest(properties.getSioUsersUrl() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
 
         // FIXME fake team side add user to team
-        restClient.sendPostRequest(properties.getSioTeamsUrl() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
+//        restClient.sendPostRequest(properties.getSioTeamsUrl() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
+        restClient.sendPostRequestWithJson(properties.getSioTeamsUrl() + "addUserToTeam/" + TEAM_ID, memberTypeObject.toString());
 
         // FIXME get list of teamids
         ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + USER_ID);
@@ -758,6 +764,8 @@ public class MainController {
 
         model.addAttribute("currentLoggedInUserId", getSessionIdOfLoggedInUser(session));
         model.addAttribute("team", team);
+        model.addAttribute("owner", team.getOwner());
+        model.addAttribute("membersList", team.getMembersList());
 
 //        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
 //        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
@@ -1362,10 +1370,35 @@ public class MainController {
         team2.setStatus(object.getString("status"));
         team2.setVisibility(object.getString("visibility"));
 
+        for (int i = 0; i < membersArray.length(); i++) {
+            JSONObject memberObject = membersArray.getJSONObject(i);
+            String userId = memberObject.getString("userId");
+            String teamMemberType = memberObject.getString("teamMemberType");
+            User2 myUser = invokeAndExtractUserInfo(userId);
+            if (teamMemberType.equals(memberTypeMember)) {
+                team2.addMembers(myUser);
+            } else {
+                // owner
+                team2.setOwner(myUser);
+            }
+        }
+
         // TODO need to check for pending for approval members count
         team2.setMembersCount(membersArray.length());
 
         return team2;
+    }
+
+    public User2 invokeAndExtractUserInfo(String userId) {
+        String userId_uri = properties.getSioUsersUrl() + userId;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.GET, request, String.class);
+
+        User2 user2 = extractUserInfo(responseEntity.getBody().toString());
+        return user2;
     }
 
     public String getStubUserID() {

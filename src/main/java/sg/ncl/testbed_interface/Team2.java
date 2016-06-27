@@ -1,5 +1,8 @@
 package sg.ncl.testbed_interface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Te Ye.
  */
@@ -14,7 +17,12 @@ public class Team2 {
     private String createdDate;
     private String visibility;
     private int membersCount;
+    private User2 owner;
+    private List<User2> membersList;
 
+    public Team2() {
+        membersList = new ArrayList<>();
+    }
 
     public String getId() {
         return id;
@@ -86,5 +94,25 @@ public class Team2 {
 
     public void setVisibility(String visibility) {
         this.visibility = visibility;
+    }
+
+    public User2 getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User2 owner) {
+        this.owner = owner;
+    }
+
+    public List<User2> getMembersList() {
+        return membersList;
+    }
+
+    public void setMembersList(List<User2> membersList) {
+        this.membersList = membersList;
+    }
+
+    public void addMembers(User2 user) {
+        membersList.add(user);
     }
 }

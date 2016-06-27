@@ -76,6 +76,29 @@
                             <!--</tr>-->
                         </table>
                     </div>
+                    <div id="members" class="tab-pane fade">
+                        <h3 th:text="#{teamProfile.nav.members}">Members</h3>
+                        <table class="table table-responsive">
+                            <thead>
+                                <th th:text="#{team.members.name}">Name</th>
+                                <th th:text="#{team.members.institution}">TEXT</th>
+                                <th th:text="#{team.members.permission}">Permission</th>
+                                <th th:text="#{team.members.actions}"></th>
+                            </thead>
+                            <tr th:if="${team.owner}">
+                                <td th:text="${team.owner.firstName + ' ' + team.owner.lastName}">TEXT</td>
+                                <td th:text="${team.owner.institution}">TEXT</td>
+                                <td th:text="#{team.members.memberType.owner}">MEMBER TYPE</td>
+                                <td></td>
+                            </tr>
+                            <tr th:each="members : ${membersList}">
+                                <td th:text="${members.firstName + ' ' + members.lastName}">Name</td>
+                                <td th:text="${members.institution}">TEXT</td>
+                                <td th:text="#{team.members.memberType.member}">MEMBER TYPE</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
                     <!--<div id="members" class="tab-pane fade">-->
                         <!--<h3 th:text="#{teamProfile.nav.members}">Members</h3>-->
                         <!--<table class="table table-responsive">-->
