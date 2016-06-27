@@ -115,4 +115,13 @@ public class Team2 {
     public void addMembers(User2 user) {
         membersList.add(user);
     }
+
+    public boolean isUserTeamOwner(String email) {
+        if (owner == null) {
+            return false;
+        } else if (owner.getEmail().equals(email)) {
+            return true;
+        }
+        return false;
+    }
 }

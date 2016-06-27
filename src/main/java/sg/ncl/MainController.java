@@ -55,8 +55,8 @@ public class MainController {
     private DatasetManager datasetManager = DatasetManager.getInstance();
     private NodeManager nodeManager = NodeManager.getInstance();
 
-    public String memberTypeOwner = "OWNER";
-    public String memberTypeMember = "MEMBER";
+    private String memberTypeOwner = "OWNER";
+    private String memberTypeMember = "MEMBER";
 
     // to know which form fields have been changed
     private User2 originalUser = null;
@@ -134,6 +134,9 @@ public class MainController {
             session.setAttribute("isUserAdmin", IS_USER_ADMIN);
             session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
 
+            // FIXME supposed to set some session ID such as the user id returned by the token
+            session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
+
             return "redirect:/dashboard";
 
         } catch (Exception e) {
@@ -207,6 +210,7 @@ public class MainController {
         CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
         session.removeAttribute("isUserAdmin");
         session.removeAttribute(SESSION_LOGGED_IN_USER_ID);
+        session.removeAttribute("sessionLoggedEmail");
         return "redirect:/";
     }
     
@@ -655,7 +659,6 @@ public class MainController {
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
-            System.out.println(teamId);
             ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
             Team2 team2 = extractTeamInfo(teamResponseEntity.getBody().toString());
             teamManager2.addTeamToTeamMap(team2);

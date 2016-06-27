@@ -36,11 +36,6 @@
                                 <td><strong th:text="#{team.profile.id}">ID</strong></td>
                                 <td th:text="${team.id}">ID</td>
                             </tr>
-                            <!--<tr>-->
-                                <!--<td><strong th:text="#{team.profile.status}">Status</strong></td>-->
-                                <!--<td th:if="${team.isApproved}">Approved</td>-->
-                                <!--<td th:if="not ${team.isApproved}">Under Review</td>-->
-                            <!--</tr>-->
                             <tr>
                                 <td><strong th:text="#{team.profile.status}">ID</strong></td>
                                 <td th:text="${team.status}">ID</td>
@@ -57,6 +52,10 @@
                                 <!--<td><strong th:text="#{team.profile.owner}">Team Owner</strong></td>-->
                                 <!--<td th:text="${userManager.getNameByUserId(team.getTeamOwnerId())}">Team Owner</td>-->
                             <!--</tr>-->
+                            <tr th:if="${team.owner}">
+                                <td><strong th:text="#{team.profile.owner}">TEAM OWNER</strong></td>
+                                <td th:text="${team.owner.firstName + ' ' + team.owner.lastName}">TEXT</td>
+                            </tr>
                             <tr>
                                 <td><strong th:text="#{team.profile.organizationType}">Organization Type</strong></td>
                                 <td th:text="${team.organisationType}">Organization Type</td>
