@@ -65,7 +65,7 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "fe60bd2a-e51b-4d76-a5df-22dbdb5f979b";
+    private final String USER_ID = "56050f6e-8de0-498d-89df-087cb4644b04";
     private final String TEAM_ID = "90a42136-4e7f-44fd-af4a-96cc73000f20";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
@@ -488,44 +488,46 @@ public class MainController {
             HttpEntity<String> request = new HttpEntity<String>(object.toString(), headers);
             ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
 
-            if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
-                redirectAttributes.addFlashAttribute("editFirstName", "success");
-            }
-            if (!originalUser.getLastName().equals(editUser.getLastName())) {
-                redirectAttributes.addFlashAttribute("editLastName", "success");
-            }
-            if (!originalUser.getPhone().equals(editUser.getPhone())) {
-                redirectAttributes.addFlashAttribute("editPhone", "success");
-            }
-            if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
-                redirectAttributes.addFlashAttribute("editJobTitle", "success");
-            }
-            if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
-                redirectAttributes.addFlashAttribute("editInstitution", "success");
-            }
-            if (!originalUser.getInstitutionAbbreviation().equals(editUser.getInstitutionAbbreviation())) {
-                redirectAttributes.addFlashAttribute("editInstitutionAbbrev", "success");
-            }
-            if (!originalUser.getInstitutionWeb().equals(editUser.getInstitutionWeb())) {
-                redirectAttributes.addFlashAttribute("editInstitutionWeb", "success");
-            }
-            if (!originalUser.getAddress1().equals(editUser.getAddress1())) {
-                redirectAttributes.addFlashAttribute("editAddress1", "success");
-            }
-            if (!originalUser.getAddress2().equals(editUser.getAddress2())) {
-                redirectAttributes.addFlashAttribute("editAddress2", "success");
-            }
-            if (!originalUser.getCountry().equals(editUser.getCountry())) {
-                redirectAttributes.addFlashAttribute("editCountry", "success");
-            }
-            if (!originalUser.getCity().equals(editUser.getCity())) {
-                redirectAttributes.addFlashAttribute("editCity", "success");
-            }
-            if (!originalUser.getRegion().equals(editUser.getRegion())) {
-                redirectAttributes.addFlashAttribute("editProvince", "success");
-            }
-            if (!originalUser.getPostalCode().equals(editUser.getPostalCode())) {
-                redirectAttributes.addFlashAttribute("editPostalCode", "success");
+            if (originalUser != null) {
+                if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
+                    redirectAttributes.addFlashAttribute("editFirstName", "success");
+                }
+                if (!originalUser.getLastName().equals(editUser.getLastName())) {
+                    redirectAttributes.addFlashAttribute("editLastName", "success");
+                }
+                if (!originalUser.getPhone().equals(editUser.getPhone())) {
+                    redirectAttributes.addFlashAttribute("editPhone", "success");
+                }
+                if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
+                    redirectAttributes.addFlashAttribute("editJobTitle", "success");
+                }
+                if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
+                    redirectAttributes.addFlashAttribute("editInstitution", "success");
+                }
+                if (!originalUser.getInstitutionAbbreviation().equals(editUser.getInstitutionAbbreviation())) {
+                    redirectAttributes.addFlashAttribute("editInstitutionAbbrev", "success");
+                }
+                if (!originalUser.getInstitutionWeb().equals(editUser.getInstitutionWeb())) {
+                    redirectAttributes.addFlashAttribute("editInstitutionWeb", "success");
+                }
+                if (!originalUser.getAddress1().equals(editUser.getAddress1())) {
+                    redirectAttributes.addFlashAttribute("editAddress1", "success");
+                }
+                if (!originalUser.getAddress2().equals(editUser.getAddress2())) {
+                    redirectAttributes.addFlashAttribute("editAddress2", "success");
+                }
+                if (!originalUser.getCountry().equals(editUser.getCountry())) {
+                    redirectAttributes.addFlashAttribute("editCountry", "success");
+                }
+                if (!originalUser.getCity().equals(editUser.getCity())) {
+                    redirectAttributes.addFlashAttribute("editCity", "success");
+                }
+                if (!originalUser.getRegion().equals(editUser.getRegion())) {
+                    redirectAttributes.addFlashAttribute("editProvince", "success");
+                }
+                if (!originalUser.getPostalCode().equals(editUser.getPostalCode())) {
+                    redirectAttributes.addFlashAttribute("editPostalCode", "success");
+                }
             }
         }
         /*

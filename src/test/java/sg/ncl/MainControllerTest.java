@@ -140,15 +140,22 @@ public class MainControllerTest {
 
         MvcResult result = mockMvc.perform(
                 post("/account_settings")
-                        .param("phone", "98887666")
-                        .param("lastName", "yang")
-                        .param("address2", "expected address 2 is filled up"))
+                        .param("email", "apple@nus.edu.sg")
+                        .param("firstName", "apple")
+                        .param("lastName", "edited")
+                        .param("phone", "12345678")
+                        .param("jobTitle", "research")
+                        .param("institution", "national university")
+                        .param("institutionAbbreviation", "nus")
+                        .param("institutionWeb", "")
+                        .param("address1", "address1")
+                        .param("address2", "edited")
+                        .param("country", "singapore")
+                        .param("city", "sg")
+                        .param("province", "west")
+                        .param("postalCode", "123456"))
                         .andExpect(redirectedUrl("/account_settings"))
                         .andReturn();
-
-//        mockMvc.perform(get("/account_settings")).andExpect(status().isOk());
-
-        System.out.println(result.getResponse().getContentAsString());
     }
 
     @Test

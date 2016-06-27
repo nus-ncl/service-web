@@ -134,19 +134,19 @@ public class User2 {
         this.institutionAbbreviation = institutionAbbreviation;
     }
 
-    public String getInstitutionWeb() {
-        return institutionWeb;
-    }
-
-    public void setInstitutionWeb(String institutionWeb) {
-        this.institutionWeb = institutionWeb;
-    }
-
     public String getCity() {
         return city;
     }
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getInstitutionWeb() {
+        return institutionWeb;
+    }
+
+    public void setInstitutionWeb(String institutionWeb) {
+        this.institutionWeb = institutionWeb;
     }
 }
