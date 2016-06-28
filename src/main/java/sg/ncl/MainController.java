@@ -65,7 +65,7 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "56050f6e-8de0-498d-89df-087cb4644b04";
+    private final String USER_ID = "ff1b4d2a-0eab-42c5-857b-6fc393f7cb3d";
     private final String TEAM_ID = "90a42136-4e7f-44fd-af4a-96cc73000f20";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
@@ -456,7 +456,6 @@ public class MainController {
             originalUser = null;
             return "redirect:/account_settings";
         } else {
-            JSONObject object = new JSONObject();
             JSONObject userDetails = new JSONObject();
             JSONObject address = new JSONObject();
 
@@ -477,15 +476,13 @@ public class MainController {
             address.put("region", editUser.getRegion());
             address.put("zipCode", editUser.getPostalCode());
 
-            object.put("userDetails", userDetails);
-
             String userId_uri = properties.getSioUsersUrl() + USER_ID;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", AUTHORIZATION_HEADER);
 
-            HttpEntity<String> request = new HttpEntity<String>(object.toString(), headers);
+            HttpEntity<String> request = new HttpEntity<String>(userDetails.toString(), headers);
             ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
 
             if (originalUser != null) {
