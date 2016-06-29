@@ -65,7 +65,7 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "ff1b4d2a-0eab-42c5-857b-6fc393f7cb3d";
+    private final String USER_ID = "6fdccb04-6e97-45d6-a85d-0121b22787a8";
     private final String TEAM_ID = "90a42136-4e7f-44fd-af4a-96cc73000f20";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
