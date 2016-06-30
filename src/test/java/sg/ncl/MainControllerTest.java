@@ -29,6 +29,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -84,7 +85,7 @@ public class MainControllerTest {
     public void testPostLoginPageInvalidUserPassword() throws Exception {
         mockServer.expect(requestTo(properties.getSioAuthUrl()))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{}", MediaType.APPLICATION_JSON));
+                .andRespond(withBadRequest());
 
         mockMvc.perform(
                 post("/login")

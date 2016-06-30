@@ -80,17 +80,6 @@ public class MainController {
     
     @RequestMapping("/")
     public String index() {
-        // FIXME: Purposely create a fake credentials first
-        // ID is required
-        JSONObject credObject = new JSONObject();
-
-        credObject.put("id", "1234567890");
-        credObject.put("username", "johndoe@nus.edu.sg");
-        credObject.put("password", "a");
-
-        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getSioCredUrl(), credObject.toString());
-
-        System.out.println(responseEntity.getBody().toString());
         return "index";
     }
     
@@ -101,22 +90,18 @@ public class MainController {
     }
     
     @RequestMapping(value="/login", method=RequestMethod.POST)
-    public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) throws Exception {
-        // following is to test if form fields can be retrieved via user input
-        // pretend as though this is a server side validation
+    public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) {
+        String inputEmail = loginForm.getLoginEmail();
+        String inputPwd = loginForm.getLoginPassword();
 
-        // TODO: Uncomment the bottom working REST call until fixed
+        String plainCreds = inputEmail + ":" + inputPwd;
+        byte[] plainCredsBytes = plainCreds.getBytes();
+        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+        String base64Creds = new String(base64CredsBytes);
+
+        String jwtTokenString;
 
         try {
-
-            String inputEmail = loginForm.getLoginEmail();
-            String inputPwd = loginForm.getLoginPassword();
-
-            String plainCreds = inputEmail + ":" + inputPwd;
-            byte[] plainCredsBytes = plainCreds.getBytes();
-            byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-            String base64Creds = new String(base64CredsBytes);
-
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Basic " + base64Creds);
 
@@ -124,13 +109,19 @@ public class MainController {
             ResponseEntity responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
 
             // TODO call the proper validation functions
-            String jwtTokenString = responseEntity.getBody().toString();
-            System.out.println(jwtTokenString);
-//            JwtToken jwtToken = new JwtToken(jwtTokenString);
+            jwtTokenString = responseEntity.getBody().toString();
+            System.out.println(responseEntity.getHeaders().toString());
+            // JwtToken jwtToken = new JwtToken(jwtTokenString);
+        } catch (Exception e) {
+            // case1: invalid login
+            loginForm.setErrorMsg("Invalid email/password.");
+            return "login";
+        }
 
+        if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
             // needed for legacy codes to work
             CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
-            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
+//            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
             session.setAttribute("isUserAdmin", IS_USER_ADMIN);
             session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
 
@@ -138,15 +129,11 @@ public class MainController {
             session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
 
             return "redirect:/dashboard";
-
-        } catch (Exception e) {
-            // TODO should catch credentialsNotFound exception or a more elegant way of doing
-
+        } else {
             // case1: invalid login
             loginForm.setErrorMsg("Invalid email/password.");
             return "login";
         }
-
 
         /*
     	String inputEmail = loginForm.getLoginEmail();
