@@ -65,8 +65,8 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "6fdccb04-6e97-45d6-a85d-0121b22787a8";
-    private final String TEAM_ID = "90a42136-4e7f-44fd-af4a-96cc73000f20";
+    private final String USER_ID = "201a9e92-e410-4ce5-abff-8bb57fc95dde";
+    private final String TEAM_ID = "40d02a00-c47c-492a-abf4-b3c6670a345e";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
@@ -456,6 +456,7 @@ public class MainController {
             originalUser = null;
             return "redirect:/account_settings";
         } else {
+            JSONObject userObject = new JSONObject();
             JSONObject userDetails = new JSONObject();
             JSONObject address = new JSONObject();
 
@@ -476,13 +477,15 @@ public class MainController {
             address.put("region", editUser.getRegion());
             address.put("zipCode", editUser.getPostalCode());
 
+            userObject.put("userDetails", userDetails);
+
             String userId_uri = properties.getSioUsersUrl() + USER_ID;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", AUTHORIZATION_HEADER);
 
-            HttpEntity<String> request = new HttpEntity<String>(userDetails.toString(), headers);
+            HttpEntity<String> request = new HttpEntity<String>(userObject.toString(), headers);
             ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
 
             if (originalUser != null) {
@@ -643,12 +646,19 @@ public class MainController {
         memberTypeObject.put("userId", USER_ID);
         memberTypeObject.put("teamMemberType", memberTypeOwner);
 
+        JSONObject userObject = new JSONObject();
+        JSONObject userDetails = new JSONObject();
+        JSONArray teamArray = new JSONArray();
+        teamArray.put(TEAM_ID);
+        userObject.put("teams", teamArray);
+        userObject.put("userDetails", userDetails);
+
         // FIXME add user to team fake the data first
-        restClient.sendPostRequest(properties.getSioUsersUrl() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
+        restClient.sendPostRequestWithJson(properties.getSioUsersUrl() + USER_ID + "/teams", userObject.toString());
 
         // FIXME fake team side add user to team
 //        restClient.sendPostRequest(properties.getSioTeamsUrl() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
-        restClient.sendPostRequestWithJson(properties.getSioTeamsUrl() + "addUserToTeam/" + TEAM_ID, memberTypeObject.toString());
+        restClient.sendPostRequestWithJson(properties.getSioTeamsUrl() + TEAM_ID, memberTypeObject.toString());
 
         // FIXME get list of teamids
         ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + USER_ID);
