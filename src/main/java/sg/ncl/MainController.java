@@ -65,7 +65,7 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "201a9e92-e410-4ce5-abff-8bb57fc95dde";
+    private final String USER_ID = "ba4572db-cbab-4582-aff4-ac68c88013f8";
     private final String TEAM_ID = "40d02a00-c47c-492a-abf4-b3c6670a345e";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
@@ -110,8 +110,6 @@ public class MainController {
 
             // TODO call the proper validation functions
             jwtTokenString = responseEntity.getBody().toString();
-            System.out.println(responseEntity.getHeaders().toString());
-            // JwtToken jwtToken = new JwtToken(jwtTokenString);
         } catch (Exception e) {
             // case1: invalid login
             loginForm.setErrorMsg("Invalid email/password.");
@@ -119,6 +117,12 @@ public class MainController {
         }
 
         if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
+            JSONObject tokenObject = new JSONObject(jwtTokenString);
+            String token = tokenObject.getString("token");
+
+            System.out.println(token);
+            AUTHORIZATION_HEADER = "Bearer " + token;
+
             // needed for legacy codes to work
             CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
 //            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
