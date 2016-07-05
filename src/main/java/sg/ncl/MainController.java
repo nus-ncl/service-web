@@ -65,7 +65,7 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "ba4572db-cbab-4582-aff4-ac68c88013f8";
+    private final String USER_ID = "2535dccd-b7c1-4610-bd9b-4ed231f48f07";
     private final String TEAM_ID = "40d02a00-c47c-492a-abf4-b3c6670a345e";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
@@ -523,6 +523,20 @@ public class MainController {
                 if (!originalUser.getPostalCode().equals(editUser.getPostalCode())) {
                     redirectAttributes.addFlashAttribute("editPostalCode", "success");
                 }
+            }
+
+            // credential service change password
+            if (editUser.isPasswordMatch()) {
+                JSONObject credObject = new JSONObject();
+                credObject.put("password", editUser.getPassword());
+
+                HttpHeaders credHeaders = new HttpHeaders();
+                credHeaders.setContentType(MediaType.APPLICATION_JSON);
+                credHeaders.set("Authorization", AUTHORIZATION_HEADER);
+
+                HttpEntity<String> credRequest = new HttpEntity<String>(credObject.toString(), headers);
+                restTemplate.exchange(properties.getSioCredUrl() + USER_ID, HttpMethod.PUT, credRequest, String.class);
+                redirectAttributes.addFlashAttribute("editPassword", "success");
             }
         }
         /*

@@ -29,6 +29,16 @@
                             <label for="email"><span th:text="#{acc.info.email}">TEXT</span>:</label>
                             <input type="text" class="form-control" th:field="*{email}" readonly="readonly"/>
                         </div>
+                        <div class="form-group">
+                            <label for="password"><span th:text="#{acc.info.password}">Password</span>:</label>
+                            <input type="password" class="form-control" th:field="*{password}"/>
+                            <span class="account-change-success" th:if="${editPassword eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.pwdSuccess}">TEXT</span></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword"><span th:text="#{acc.info.confirmPassword}">Confirm Password</span>:</label>
+                            <input type="password" class="form-control" th:field="*{confirmPassword}"/>
+                        </div>
+                        <h2 th:text="#{acc.info.header.personInfo}">Personal Info</h2>
                         <div class="form-group row">
                             <div class="col-xs-6">
                                 <label for="firstName"><span th:text="#{acc.info.firstName}">TEXT</span>:</label>
@@ -109,7 +119,6 @@
                             <span class="account-change-success" th:if="${editPostalCode eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.postalCodeSuccess}">TEXT</span></span>
                             <span class="account-change-fail" th:if="${editPostalCode eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{acc.info.postalCodeFail}">TEXT</span></span>
                         </div>
-                        <!-- TODO The page displays empty password for now because it will display the password value in HTML -->
                         <!--
                         <span class="password-change-mismatch" th:if="${editPassword eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> <span th:text="#{acc.info.pwdEmpty}">Password cannot be empty.</span></span>
                         <div class="form-group">

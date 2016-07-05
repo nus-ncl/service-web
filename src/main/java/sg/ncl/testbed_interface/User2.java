@@ -22,6 +22,9 @@ public class User2 {
     private String institutionAbbreviation;
     private String institutionWeb;
 
+    private String password;
+    private String confirmPassword;
+
     public String getId() {
         return id;
     }
@@ -148,5 +151,30 @@ public class User2 {
 
     public void setInstitutionWeb(String institutionWeb) {
         this.institutionWeb = institutionWeb;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public boolean isPasswordMatch() {
+        if (password.isEmpty() || confirmPassword.isEmpty()) {
+            return false;
+        } else if (!password.equals(confirmPassword)) {
+            return false;
+        }
+        return true;
     }
 }
