@@ -100,6 +100,7 @@ public class MainController {
         String base64Creds = new String(base64CredsBytes);
 
         String jwtTokenString;
+        String id = "";
 
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -119,6 +120,7 @@ public class MainController {
         if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
             JSONObject tokenObject = new JSONObject(jwtTokenString);
             String token = tokenObject.getString("token");
+            id = tokenObject.getString("id");
 
             System.out.println(token);
             AUTHORIZATION_HEADER = "Bearer " + token;
@@ -131,6 +133,7 @@ public class MainController {
 
             // FIXME supposed to set some session ID such as the user id returned by the token
             session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
+            session.setAttribute("id", id);
 
             return "redirect:/dashboard";
         } else {
@@ -202,6 +205,7 @@ public class MainController {
         session.removeAttribute("isUserAdmin");
         session.removeAttribute(SESSION_LOGGED_IN_USER_ID);
         session.removeAttribute("sessionLoggedEmail");
+        session.removeAttribute("id");
         return "redirect:/";
     }
     
