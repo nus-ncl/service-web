@@ -65,7 +65,7 @@ public class MainController {
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
-    private final String USER_ID = "201a9e92-e410-4ce5-abff-8bb57fc95dde";
+    private final String USER_ID = "2535dccd-b7c1-4610-bd9b-4ed231f48f07";
     private final String TEAM_ID = "40d02a00-c47c-492a-abf4-b3c6670a345e";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
@@ -80,17 +80,6 @@ public class MainController {
     
     @RequestMapping("/")
     public String index() {
-        // FIXME: Purposely create a fake credentials first
-        // ID is required
-        JSONObject credObject = new JSONObject();
-
-        credObject.put("id", "1234567890");
-        credObject.put("username", "johndoe@nus.edu.sg");
-        credObject.put("password", "a");
-
-        ResponseEntity responseEntity = restClient.sendPostRequestWithJson(properties.getSioCredUrl(), credObject.toString());
-
-        System.out.println(responseEntity.getBody().toString());
         return "index";
     }
     
@@ -101,22 +90,19 @@ public class MainController {
     }
     
     @RequestMapping(value="/login", method=RequestMethod.POST)
-    public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) throws Exception {
-        // following is to test if form fields can be retrieved via user input
-        // pretend as though this is a server side validation
+    public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) {
+        String inputEmail = loginForm.getLoginEmail();
+        String inputPwd = loginForm.getLoginPassword();
 
-        // TODO: Uncomment the bottom working REST call until fixed
+        String plainCreds = inputEmail + ":" + inputPwd;
+        byte[] plainCredsBytes = plainCreds.getBytes();
+        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+        String base64Creds = new String(base64CredsBytes);
+
+        String jwtTokenString;
+        String id = "";
 
         try {
-
-            String inputEmail = loginForm.getLoginEmail();
-            String inputPwd = loginForm.getLoginPassword();
-
-            String plainCreds = inputEmail + ":" + inputPwd;
-            byte[] plainCredsBytes = plainCreds.getBytes();
-            byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-            String base64Creds = new String(base64CredsBytes);
-
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Basic " + base64Creds);
 
@@ -124,29 +110,37 @@ public class MainController {
             ResponseEntity responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
 
             // TODO call the proper validation functions
-            String jwtTokenString = responseEntity.getBody().toString();
-            System.out.println(jwtTokenString);
-//            JwtToken jwtToken = new JwtToken(jwtTokenString);
-
-            // needed for legacy codes to work
-            CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
-            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
-            session.setAttribute("isUserAdmin", IS_USER_ADMIN);
-            session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
-
-            // FIXME supposed to set some session ID such as the user id returned by the token
-            session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
-
-            return "redirect:/dashboard";
-
+            jwtTokenString = responseEntity.getBody().toString();
         } catch (Exception e) {
-            // TODO should catch credentialsNotFound exception or a more elegant way of doing
-
             // case1: invalid login
             loginForm.setErrorMsg("Invalid email/password.");
             return "login";
         }
 
+        if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
+            JSONObject tokenObject = new JSONObject(jwtTokenString);
+            String token = tokenObject.getString("token");
+            id = tokenObject.getString("id");
+
+            System.out.println(token);
+            AUTHORIZATION_HEADER = "Bearer " + token;
+
+            // needed for legacy codes to work
+            CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
+//            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
+            session.setAttribute("isUserAdmin", IS_USER_ADMIN);
+            session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
+
+            // FIXME supposed to set some session ID such as the user id returned by the token
+            session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
+            session.setAttribute("id", id);
+
+            return "redirect:/dashboard";
+        } else {
+            // case1: invalid login
+            loginForm.setErrorMsg("Invalid email/password.");
+            return "login";
+        }
 
         /*
     	String inputEmail = loginForm.getLoginEmail();
@@ -211,6 +205,7 @@ public class MainController {
         session.removeAttribute("isUserAdmin");
         session.removeAttribute(SESSION_LOGGED_IN_USER_ID);
         session.removeAttribute("sessionLoggedEmail");
+        session.removeAttribute("id");
         return "redirect:/";
     }
     
@@ -528,6 +523,20 @@ public class MainController {
                 if (!originalUser.getPostalCode().equals(editUser.getPostalCode())) {
                     redirectAttributes.addFlashAttribute("editPostalCode", "success");
                 }
+            }
+
+            // credential service change password
+            if (editUser.isPasswordMatch()) {
+                JSONObject credObject = new JSONObject();
+                credObject.put("password", editUser.getPassword());
+
+                HttpHeaders credHeaders = new HttpHeaders();
+                credHeaders.setContentType(MediaType.APPLICATION_JSON);
+                credHeaders.set("Authorization", AUTHORIZATION_HEADER);
+
+                HttpEntity<String> credRequest = new HttpEntity<String>(credObject.toString(), headers);
+                restTemplate.exchange(properties.getSioCredUrl() + USER_ID, HttpMethod.PUT, credRequest, String.class);
+                redirectAttributes.addFlashAttribute("editPassword", "success");
             }
         }
         /*
