@@ -366,7 +366,7 @@ public class MainController {
     public String accountDetails(Model model, HttpSession session) throws IOException {
     	// TODO id should be some session variable?
 
-    	String userId_uri = properties.getSioUsersUrl() + USER_ID;
+    	String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
@@ -474,7 +474,7 @@ public class MainController {
 
             userObject.put("userDetails", userDetails);
 
-            String userId_uri = properties.getSioUsersUrl() + USER_ID;
+            String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -535,7 +535,7 @@ public class MainController {
                 credHeaders.set("Authorization", AUTHORIZATION_HEADER);
 
                 HttpEntity<String> credRequest = new HttpEntity<String>(credObject.toString(), headers);
-                restTemplate.exchange(properties.getSioCredUrl() + USER_ID, HttpMethod.PUT, credRequest, String.class);
+                restTemplate.exchange(properties.getSioCredUrl() + session.getAttribute("id"), HttpMethod.PUT, credRequest, String.class);
                 redirectAttributes.addFlashAttribute("editPassword", "success");
             }
         }
@@ -663,14 +663,14 @@ public class MainController {
         userObject.put("userDetails", userDetails);
 
         // FIXME add user to team fake the data first
-        restClient.sendPostRequestWithJson(properties.getSioUsersUrl() + USER_ID + "/teams", userObject.toString());
+        restClient.sendPostRequestWithJson(properties.getSioUsersUrl() + session.getAttribute("id") + "/teams", userObject.toString());
 
         // FIXME fake team side add user to team
 //        restClient.sendPostRequest(properties.getSioTeamsUrl() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
         restClient.sendPostRequestWithJson(properties.getSioTeamsUrl() + TEAM_ID, memberTypeObject.toString());
 
         // FIXME get list of teamids
-        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + USER_ID);
+        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
 
         JSONObject object = new JSONObject(responseEntity.getBody().toString());
         JSONArray teamIdsJsonArray = object.getJSONArray("teamIds");
