@@ -17,6 +17,7 @@ public class ConnectionProperties {
     private String regEndpoint;
     private String userEndpoint;
     private String teamEndpoint;
+    private String teamVisibilityEndpoint;
 
     public String getSioAddress() {
         return sioAddress;
@@ -91,6 +92,14 @@ public class ConnectionProperties {
 
     public String getSioRegUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/";
+    }
+
+    public String getTeamVisibilityEndpoint() {
+        return teamVisibilityEndpoint;
+    }
+
+    public void setTeamVisibilityEndpoint(String teamVisibilityEndpoint) {
+        this.teamVisibilityEndpoint = teamVisibilityEndpoint;
     }
 }
 
