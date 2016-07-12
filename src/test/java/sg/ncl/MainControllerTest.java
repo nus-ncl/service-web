@@ -112,7 +112,7 @@ public class MainControllerTest {
         String predefinedJsonStr = predefinedUserJson.toString();
 
         // uri must be equal to that defined in MainController
-        mockServer.expect(requestTo(properties.getSioUsersUrl() + mainController.getStubUserID()))
+        mockServer.expect(requestTo(properties.getSioUsersUrl() + "null"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
