@@ -1383,8 +1383,8 @@ public class MainController {
             User2 myUser = invokeAndExtractUserInfo(userId);
             if (teamMemberType.equals(memberTypeMember)) {
                 team2.addMembers(myUser);
-            } else {
-                // owner
+            } else if (teamMemberType.equals(memberTypeOwner)) {
+                // explicit safer check
                 team2.setOwner(myUser);
             }
         }
