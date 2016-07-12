@@ -6,25 +6,25 @@
 
 $(document).ready(function() {
 	
-	
+
 	/* Scroll to section */
 	$('.tohash').click(function() {
-		
-	   // animate
-	   $('html, body').animate({
-		   scrollTop: $("#joinUs").offset().top
-		 }, 'slow');
-	
+
+		// animate
+		$('html, body').animate({
+			scrollTop: $("#joinUs").offset().top
+		}, 'slow');
+
 	});
-	
+
 	/* Scroll to section */
 	$('.tohash1').click(function() {
-		
-	   // animate
-	   $('html, body').animate({
-		   scrollTop: $("#nav").offset().top
-		 }, 'slow');
-	
+
+		// animate
+		$('html, body').animate({
+			scrollTop: $("#home-slider").offset().top
+		}, 'slow');
+
 	});
 		
 	

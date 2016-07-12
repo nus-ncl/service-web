@@ -865,21 +865,21 @@ Waypoints
     font-size: 14px;
     font-weight: 600;
     margin:20px;
-    background-color: #FAF038;
+    background-color: #21b3b7;
     border-radius: 2px;
-    border: 1px solid #FAF038;!important
+    border: 1px solid #21b3b7;!important
 }
 
 .login-navbar-right li a:hover {
-    color: #028fcc;
+    color: #21b3b7;
     background-color: none;
-    border-color: #028fcc;
+    border-color: #21b3b7;
 }
 
 .login-navbar-right li a:hover {
-    color: #028fcc;
+    color: #21b3b7;
     background-color: none;
-    border-color: #028fcc;
+    border-color: #21b3b7;
 }
 
 .bar-brand h1 {
