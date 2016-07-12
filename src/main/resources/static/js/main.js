@@ -5,6 +5,29 @@
  */
 
 $(document).ready(function() {
+	
+	
+	/* Scroll to section */
+	$('.tohash').click(function() {
+		
+	   // animate
+	   $('html, body').animate({
+		   scrollTop: $("#joinUs").offset().top
+		 }, 'slow');
+	
+	});
+	
+	/* Scroll to section */
+	$('.tohash1').click(function() {
+		
+	   // animate
+	   $('html, body').animate({
+		   scrollTop: $("#nav").offset().top
+		 }, 'slow');
+	
+	});
+		
+	
 	/* Register Form */
 	/* Hide all except first fieldset */
     $('.btn-next').click(function() {
@@ -65,12 +88,6 @@ $(document).ready(function() {
     // tooltip hover
     $('[data-toggle="tooltip"]').tooltip();
     
-    // to show custom exp scenario only when necessary
-    $('#selectExpScenario').on('change', function() {
-    	$('#custom').hide();
-    	$('#'+this.value).show();
-    });
-    
     //-----------------team page-----------------
     // withdraw
     $('#confirm-withdraw').on('click', '.withdraw-ok', function(e) {
@@ -109,7 +126,7 @@ jQuery(function($) {
 		$('#home-slider .item').css('height',slideHeight);
 	});
 	
-	//Scroll Menu
+	/*
 	$(window).on('scroll', function(){
 		if( $(window).scrollTop()>slideHeight ){
 			$('.main-nav').addClass('navbar-fixed-top');
@@ -117,6 +134,7 @@ jQuery(function($) {
 			$('.main-nav').removeClass('navbar-fixed-top');
 		}
 	});
+	*/
 	
 	// Navigation Scroll
 	$(window).scroll(function(event) {
@@ -293,3 +311,5 @@ $(window).load(function() {
 	});
 
 });
+
+
