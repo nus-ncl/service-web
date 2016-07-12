@@ -262,28 +262,6 @@ public class MainController {
         mainObject.put("user", userFields);
         mainObject.put("team", teamFields);
     	
-    	// add to User model
-//    	User newUser = new User();
-//    	newUser.setEmail(signUpMergedForm.getEmail());
-//    	newUser.setPassword(signUpMergedForm.getPassword());
-//    	newUser.setConfirmPassword(signUpMergedForm.getPassword());
-//    	newUser.setRole("normal");
-//    	newUser.setEmailVerified(false);
-//    	newUser.setName(signUpMergedForm.getName());
-//    	newUser.setJobTitle(signUpMergedForm.getJobTitle());
-//    	newUser.setInstitution(signUpMergedForm.getInstitution());
-//    	newUser.setInstitutionAbbreviation(signUpMergedForm.getInstitutionAbbreviation());
-//    	newUser.setWebsite(signUpMergedForm.getWebsite());
-//    	newUser.setAddress1(signUpMergedForm.getAddress1());
-//    	newUser.setAddress2(signUpMergedForm.getAddress2());
-//    	newUser.setCountry(signUpMergedForm.getCountry());
-//    	newUser.setCity(signUpMergedForm.getCity());
-//    	newUser.setProvince(signUpMergedForm.getProvince());
-//    	newUser.setPostalCode(signUpMergedForm.getPostalCode());
-//    	userManager.addNewUser(newUser);
-    	
-//    	int newGeneratedUserId = newUser.getUserId();
-    	
     	// check if user chose create new team or join existing team by checking team name
     	String createNewTeamName = signUpMergedForm.getTeamName();
     	String joinNewTeamName = signUpMergedForm.getJoinTeamName();
@@ -292,18 +270,6 @@ public class MainController {
     	// System.out.println("Join existing team name: " + joinNewTeamName);
     	
     	if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
-    		// System.out.println("apply for new team");
-        	// add to team model
-//        	Team newTeam = new Team();
-//        	newTeam.setName(createNewTeamName);
-//        	newTeam.setDescription(signUpMergedForm.getTeamDescription());
-//        	newTeam.setWebsite(signUpMergedForm.getTeamDescription());
-//        	newTeam.setOrganizationType(signUpMergedForm.getTeamOrganizationType());
-//        	newTeam.setIsPublic(signUpMergedForm.getIsPublic());
-//        	newTeam.setTeamOwnerId(newGeneratedUserId);
-//        	newTeam.setIsApproved(false);
-//        	teamManager.addNewTeam(newTeam);
-        	// redirect to application submitted
 
             // FIXME need to check if team exists?
             teamFields.put("name", signUpMergedForm.getTeamName());
@@ -316,11 +282,6 @@ public class MainController {
         	return "redirect:/team_application_submitted";
         	
     	} else if (joinNewTeamName != null) {
-    		// System.out.println("join existing new team");
-        	// add user request to join team
-//            int teamId = teamManager.getTeamIdByTeamName(joinNewTeamName);
-//            teamManager.addJoinRequestTeamMap2(newGeneratedUserId, teamId, userManager.getUserById(newGeneratedUserId));
-            // redirect to join request submitted
 
             // get the team JSON from team name
             // FIXME need to check if team exists?
@@ -355,7 +316,7 @@ public class MainController {
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "name/" + teamName, HttpMethod.GET, request, String.class);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "?name=" + teamName, HttpMethod.GET, request, String.class);
         String resultJSON = responseEntity.getBody().toString();
         JSONObject object = new JSONObject(resultJSON);
         return object.getString("id");
@@ -874,7 +835,22 @@ public class MainController {
         }
         // log data to ensure data has been parsed
         LOGGER.log(Level.INFO, "--------Join team---------");
-        LOGGER.log(Level.INFO, teamPageJoinForm.toString());
+
+        JSONObject mainObject = new JSONObject();
+        JSONObject teamFields = new JSONObject();
+        JSONObject userFields = new JSONObject();
+        mainObject.put("team", teamFields);
+        mainObject.put("user", userFields);
+
+        userFields.put("id", session.getAttribute("id")); // ncl-id
+        teamFields.put("name", teamPageJoinForm.getTeamName());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioRegUrl() + "/joinApplications", HttpMethod.POST, request, String.class);
         
         // perform join team request here
         // add to user join team list
