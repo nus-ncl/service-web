@@ -122,7 +122,7 @@ public class MainController {
             String token = tokenObject.getString("token");
             id = tokenObject.getString("id");
 
-            System.out.println(token);
+//            System.out.println(token);
             AUTHORIZATION_HEADER = "Bearer " + token;
 
             // needed for legacy codes to work
@@ -651,29 +651,14 @@ public class MainController {
         model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
         model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
-        JSONObject memberTypeObject = new JSONObject();
-        memberTypeObject.put("userId", USER_ID);
-        memberTypeObject.put("teamMemberType", memberTypeOwner);
-
-        JSONObject userObject = new JSONObject();
-        JSONObject userDetails = new JSONObject();
-        JSONArray teamArray = new JSONArray();
-        teamArray.put(TEAM_ID);
-        userObject.put("teams", teamArray);
-        userObject.put("userDetails", userDetails);
-
-        // FIXME add user to team fake the data first
-        restClient.sendPostRequestWithJson(properties.getSioUsersUrl() + session.getAttribute("id") + "/teams", userObject.toString());
-
-        // FIXME fake team side add user to team
-//        restClient.sendPostRequest(properties.getSioTeamsUrl() + "addUserToTeam/" + USER_ID + "/" + TEAM_ID);
-        restClient.sendPostRequestWithJson(properties.getSioTeamsUrl() + TEAM_ID, memberTypeObject.toString());
-
-        // FIXME get list of teamids
+        // get list of teamids
         ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
 
         JSONObject object = new JSONObject(responseEntity.getBody().toString());
-        JSONArray teamIdsJsonArray = object.getJSONArray("teamIds");
+        System.out.println(responseEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+
+        String userEmail = object.getJSONObject("userDetails").getString("email");
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
@@ -684,16 +669,16 @@ public class MainController {
         }
 
         // get public teams
-        ResponseEntity teamPublicResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/public");
+        ResponseEntity teamPublicResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + properties.getTeamVisibilityEndpoint());
 
         JSONArray teamPublicJsonArray = new JSONArray(teamPublicResponseEntity.getBody().toString());
         for (int i = 0; i < teamPublicJsonArray.length(); i++) {
             JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
             Team2 team2 = extractTeamInfo(teamInfoObject.toString());
             teamManager2.addTeamToPublicTeamMap(team2);
-//            System.out.println(team2.toString());
         }
 
+        model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
         model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
 
@@ -1394,7 +1379,7 @@ public class MainController {
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
             String userId = memberObject.getString("userId");
-            String teamMemberType = memberObject.getString("teamMemberType");
+            String teamMemberType = memberObject.getString("memberType");
             User2 myUser = invokeAndExtractUserInfo(userId);
             if (teamMemberType.equals(memberTypeMember)) {
                 team2.addMembers(myUser);

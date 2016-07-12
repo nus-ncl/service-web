@@ -33,7 +33,7 @@
                     <div class="panel-body">
                         <table class="table table-responsive" th:if="not ${teamMap2.isEmpty()}">
                             <thead>
-                                <!--<th></th>-->
+                                <th></th>
                                 <th th:text="#{team.table.header.team}">Team</th>
                                 <th th:text="#{team.table.header.description}">Description</th>
                                 <th th:text="#{team.table.header.members}">Members</th>
@@ -41,10 +41,8 @@
                                 <!--<th th:text="#{team.table.header.actions}">Actions</th>-->
                             </thead>
                             <tr th:each="teamEntry : ${teamMap2}">
-                                <!--
-                                <td th:if="${teamEntry.value.isUserTeamOwner(${session.sessionLoggedEmail})}"><span class="glyphicon glyphicon-king" data-toggle="tooltip" data-placement="bottom" title="You are the owner of this team"></span></td>
-                                <td th:unless="${teamEntry.value.isUserTeamOwner(${session.sessionLoggedEmail})}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
-                                -->
+                                <td th:if="${teamEntry.value.isUserTeamOwner(userEmail)} == true"><span class="glyphicon glyphicon-king" data-toggle="tooltip" data-placement="bottom" title="You are the owner of this team"></span></td>
+                                <td th:unless="${teamEntry.value.isUserTeamOwner(userEmail)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
                                 <td><a href="#" th:href="@{/team_profile/{teamId}(teamId=${teamEntry.key})}"><span th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</span></a></td>
                                 <td th:text="${teamEntry.value.description}">Description</td>
                                 <td><span th:text="${teamEntry.value.membersCount}">Members</span></td>
@@ -53,7 +51,7 @@
                                 <!--<td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">-&#45;&#45;</td>-->
                             </tr>
                         </table>
-                        <p th:if="${teamMap.isEmpty()}" th:text="#{team.haveToBeATeam}">You have to be part of a team to use the resources.</p>
+                        <p th:if="${teamMap2.isEmpty()}" th:text="#{team.haveToBeATeam}">You have to be part of a team to use the resources.</p>
                     </div> <!-- panel body -->
                     <div class="panel-footer">
                         <a href="teamPageApplyTeam" th:href="@{/teams/apply_team}" class="btn btn-primary"><i class="fa fa-plus"></i> Apply a New Team</a>

@@ -37,21 +37,17 @@
                                 <td th:text="${team.id}">ID</td>
                             </tr>
                             <tr>
-                                <td><strong th:text="#{team.profile.status}">ID</strong></td>
+                                <td><strong th:text="#{team.profile.status}">STATUS</strong></td>
                                 <td th:text="${team.status}">ID</td>
                             </tr>
                             <tr>
-                                <td><strong th:text="#{team.profile.name}">Name</strong></td>
+                                <td><strong th:text="#{team.profile.name}">NAME</strong></td>
                                 <td th:text="${team.name}">Name</td>
                             </tr>
                             <tr>
-                                <td><strong th:text="#{team.profile.description}">Description</strong></td>
+                                <td><strong th:text="#{team.profile.description}">DESCRIPTION</strong></td>
                                 <td th:text="${team.description}">Description</td>
                             </tr>
-                            <!--<tr>-->
-                                <!--<td><strong th:text="#{team.profile.owner}">Team Owner</strong></td>-->
-                                <!--<td th:text="${userManager.getNameByUserId(team.getTeamOwnerId())}">Team Owner</td>-->
-                            <!--</tr>-->
                             <tr th:if="${team.owner}">
                                 <td><strong th:text="#{team.profile.owner}">TEAM OWNER</strong></td>
                                 <td th:text="${team.owner.firstName + ' ' + team.owner.lastName}">TEXT</td>
@@ -68,11 +64,6 @@
                                 <td><strong th:text="#{team.profile.visibility}">TEXT</strong></td>
                                 <td th:text="${team.visibility}">TEXT</td>
                             </tr>
-                            <!--<tr>-->
-                                <!--<td><strong th:text="#{team.profile.visibility}">Listed Visibility</strong></td>-->
-	                            <!--<td th:if="${team.getIsPublic()}" th:text="Public">Listed Visibility</td>-->
-	                            <!--<td th:if="not ${team.isPublic}" th:text="Private">Listed Visibility</td>-->
-                            <!--</tr>-->
                         </table>
                     </div>
                     <div id="members" class="tab-pane fade">
@@ -94,7 +85,11 @@
                                 <td th:text="${members.firstName + ' ' + members.lastName}">Name</td>
                                 <td th:text="${members.institution}">TEXT</td>
                                 <td th:text="#{team.members.memberType.member}">MEMBER TYPE</td>
-                                <td></td>
+                                <td>
+                                    <th:block th:if="${owner.getId() == session.id}">
+                                        <a href="#" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash"></i></a>
+                                    </th:block>
+                                </td>
                             </tr>
                         </table>
                     </div>
