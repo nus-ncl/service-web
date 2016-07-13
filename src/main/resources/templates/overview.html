@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity R&amp;D Lab</title>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" media="screen"/>
+        <link rel="stylesheet" type="text/css" href="css/animate.min.css" th:href="@{css/animate.min.css}"/>
+        <link rel="stylesheet"  type="text/css" href="css/font-awesome/css/font-awesome.min.css" th:href="@{css/font-awesome/css/font-awesome.min.css}"/>
+        <link rel="stylesheet" type="text/css" href="css/lightbox.css" th:href="@{css/lightbox.css}"/>
+        <link rel="stylesheet" type="text/css" href="css/main.css" th:href="@{css/main.css}"/>
+        <link rel="stylesheet" type="text/css" href="css/responsive.css" th:href="@{css/responsive.css}"/>
+        <link rel="stylesheet" type="text/css" id="css-preset" href="css/presets/preset1.css" th:href="@{css/presets/preset1.css}"/>
+        <link rel="stylesheet" type="text/css" href="css/flexslider.css" th:href="@{css/flexslider.css}"/>
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
+        <link rel="shortcut icon" href="images/ncl_favicon1.png"/>
+
+	  <!--[if lt IE 9]>
+	    <script type="text/javascript" src="static/js/html5shiv.js" th:src="@{js/html5shiv.js}"></script>
+	    <script type="text/javascript" src="static/js/respond.min.js" th:src="@{js/respond.min.js}"></script>
+	  <![endif]-->
+
+        <script type="text/javascript" src="js/jquery-1.12.2.min.js" th:src="@{js/jquery-1.12.2.min.js}"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+		<script type="text/javascript" src="js/jquery.inview.min.js" th:src="@{js/jquery.inview.min.js}"></script>
+		<script type="text/javascript" src="js/wow.min.js" th:src="@{js/wow.min.js}"></script>
+		<script type="text/javascript" src="js/mousescroll.js" th:src="@{js/mousescroll.js}"></script>
+		<script type="text/javascript" src="js/smoothscroll.js" th:src="@{js/smoothscroll.js}"></script>
+		<script type="text/javascript" src="js/jquery.countTo.js" th:src="@{js/jquery.countTo.js}"></script>
+		<script type="text/javascript" src="js/lightbox.min.js" th:src="@{js/lightbox.min.js}"></script>
+		<script type="text/javascript" src="js/main.js" th:src="@{js/main.js}"></script>
+		<script type="text/javascript" src="js/waypoints.min.js" th:src="@{js/waypoints.min.js}"></script>
+		<script type="text/javascript" src="js/jquery.flexslider.js" th:src="@{js/jquery.flexslider.js}"></script>
+
+    </head>
+	<body>
+
+	<!-- main nav -->
+	<div class="main-nav navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<a href="index.html" th:href="@{/}"><img src="images/ncl_favicon1.png" alt="logo" width="53" height="53" class="logo1" /></a>
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</div> <!-- navbar-header -->
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav navbar-left login-navbar-left">
+					<li class="scroll"><a href="about.html">About</a></li>
+					<li class="scroll"><a href="event.html">Events</a></li>
+					<li class="scroll"><a href="plan.html">Features</a></li>
+					<li class="scroll"><a href="pricing.html">Pricing</a></li>
+					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
+						<span class="caret"></span></a>
+						<ul class="dropdown-menu ">
+							<li><a href="http://ncl.sg/docs-ncl/">Tutorial</a></li>
+							<li><a href="resources.html">Resources</a></li>
+						</ul>
+					<li class="scroll"><a href="contactus.html">Contact Us</a></li>
+					</li>
+				</ul>
+				<!--   <ul class="nav navbar-nav navbar-right login-navbar-right">
+                          <li><a href="#" th:href="@{/login}">Create account</a></li>
+                      </ul>
+                     <ul class="nav navbar-nav navbar-right login-navbar-right1">
+                          <li><a href="#" th:href="@{/signup2}">Log In</a></li>
+                      </ul>-->
+			</div> <!-- navigation links -->
+		</div>
+	</div> <!-- main-nav -->
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+
+	<section id="joinUs" class="background1">
+		<div class="container  ">
+			<div class="row ">
+
+				<div class="heading col-sm-10 col-sm-offset-1 ">
+					<div class="col-sm-6"><img src="images/10.png" width="377" height="299"/></div>
+					<div class="col-sm-6">
+						<div class="heading col-sm-12 col-sm-offset-1">
+							<h2>The Hardware to Support Your NEEDS </h2>
+							<p> Our cloud infrastructure can help to support you experimentation needs.
+							</p>
+						</div>
+					</div>
+					<h2>&nbsp;</h2>
+				</div>
+			</div> <!-- row -->
+		</div> <!-- container -->
+	</section>
+
+	<section id="joinUs" >
+		<div class="container  ">
+			<div class="row ">
+				<div class="heading col-sm-10  ">
+					<div class="col-sm-8">
+						<div class="heading col-sm-8 col-sm-offset-1">
+							<h2>Popular Operating System </h2>
+							<p> We support popular OPERATING SYSTEMS like Ubuntu and FreeBSD. What's more ! There are more to come!</p>
+						</div>
+					</div>
+					<div class="col-sm-1"><img src="images/3.png" width="175" height="157"/>
+					</div>
+					<div class="col-sm-1 col-sm-offset-2"><img src="images/4.png" width="202" height="184"/>
+					</div>
+				</div>
+			</div> <!-- row -->
+		</div> <!-- container -->
+	</section>
+
+	<section id="joinUs" class="background1">
+		<div class="container  ">
+			<div class="row ">
+				<div class="heading col-sm-10 col-sm-offset-1 ">
+					<div class="col-sm-6"><img src="images/data.png" width="449" height="299"/></div>
+					<div class="col-sm-6">
+						<div class="heading col-sm-12 col-sm-offset-1">
+							<h2>Up-To-Date Cybersecurity Dataset </h2>
+							<p>We host / provide access to UP-TO-DATE cybersecurity datasets.</p>
+						</div>
+					</div>
+					<h2>&nbsp;</h2>
+				</div>
+			</div> <!-- row -->
+		</div> <!-- container -->
+	</section> <!-- join us -->
+
+	<section id="joinUs" >
+		<div class="container  ">
+			<div class="row ">
+				<div class="heading text-center col-sm-12 col-sm-offset-1 ">
+					<div class="col-sm-8">
+						<div class="heading text-center  col-sm-10 col-sm-offset-3">
+							<h2>One-click Applications </h2>
+							<p> We provide numerous application such as Android emulator, Hadoop, Spark and Blockchain. What's more ! they can be easily deploy with a SINGLE CLICK!</p>
+						</div>
+					</div>
+				</div>
+				<div class="heading col-sm-10 col-sm-offset-1">
+					<div class="col-sm-1 col-sm-offset-0"><img src="images/5.png" width="175" height="157"/></div>
+					<div class="col-sm-1 col-sm-offset-3"><img src="images/6.png" width="123" height="111"/></div>
+					<div class="col-sm-1 col-sm-offset-2"><img src="images/7.png" width="198" height="103"/></div>
+					<div class="col-sm-1 col-sm-offset-3"><img src="images/8.png" width="147" height="132"/></div>
+					<h2>&nbsp;</h2>
+				</div>
+			</div> <!-- row -->
+		</div> <!-- container -->
+	</section>
+
+	<section id="joinUs" class="background1">
+		<div class="container  ">
+			<div class="row ">
+				<div class="heading text-center col-sm-12 col-sm-offset-1 ">
+					<div class="col-sm-8">
+						<div class="heading text-center  col-sm-10 col-sm-offset-3">
+							<h2>Vulnerable Host Enviroment Provisioning</h2>
+							<p> We have a collections of host environment with REAL WORLD VULNERABILITIES such as Shellshock, Heartbleed and ImageTragick. They are ready for you to use at anytime !</p>
+						</div>
+					</div>
+				</div>
+				<div class="heading col-sm-8col-sm-offset-1">
+					<div class="col-sm-1 col-sm-offset-2"><img src="images/11.png" width="175" height="157"/></div>
+					<div class="col-sm-1 col-sm-offset-3"><img src="images/12.png" width="162" height="146"/></div>
+					<div class="col-sm-1 col-sm-offset-2"><img src="images/13.png" width="207" height="167"/></div>
+					<h2>&nbsp;</h2>
+				</div>
+			</div> <!-- row -->
+		</div> <!-- container -->
+	</section> <!-- join us -->
+
+	<footer id="footer">
+		<div class="container col-sm-offset-3">
+			<p>&nbsp;</p>
+			<div class="row">
+				<div class="col-sm-4">
+					<ul class="address">
+						<li><i class="fa fa-phone"></i> <span> Phone: </span>+65 6601 1056</li>
+						<li><i class="fa fa-map-marker"></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+					</ul>
+					<div class="social-icons2">
+					</div>
+				</div> <!-- col sm 4 -->
+				<div class="col-sm-4">
+					Privacy policy | User Policy | Terms &amp; Conditions
+				</div> <!-- col sm 4 -->
+				<div class="col-sm-4">
+					<ul>
+						<a class="envelope" href="mailto:support@ncl.sg"><i class="fa fa-envelope fa-3x"></i></a>
+						<a href="">&nbsp;</a>
+						<a class="github" href="https://github.com/nus-ncl"><i class="fa fa-github fa-3x"></i></a>
+					</ul>
+				</div> <!-- col sm 4 -->
+			</div> <!-- row -->
+		</div> <!-- container -->
+	</footer>
+	</body>
+</html>

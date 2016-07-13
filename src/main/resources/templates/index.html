@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories</title>
+        <title>National Cybersecurity R&amp;D Lab</title>
         <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{css/bootstrap.min.css}" media="screen"/>
         <link rel="stylesheet" type="text/css" href="static/css/animate.min.css" th:href="@{css/animate.min.css}"/>
         <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{css/font-awesome/css/font-awesome.min.css}"/>
@@ -11,14 +11,15 @@
         <link rel="stylesheet" type="text/css" href="static/css/responsive.css" th:href="@{css/responsive.css}"/>
         <link rel="stylesheet" type="text/css" id="static/css-preset" href="css/presets/preset1.css" th:href="@{css/presets/preset1.css}"/>
         <link rel="stylesheet" type="text/css" href="static/css/flexslider.css" th:href="@{css/flexslider.css}"/>
+
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
-        <link rel="shortcut icon" href="images/ncl_favicon.png" th:href="@{~/images/ncl_favicon.png}"/>
-        
+        <link rel="shortcut icon" href="images/ncl_favicon1.png" th:href="@{~/images/ncl_favicon1.png}"/>
+
 	  <!--[if lt IE 9]>
 	    <script type="text/javascript" src="static/js/html5shiv.js" th:src="@{js/html5shiv.js}"></script>
 	    <script type="text/javascript" src="static/js/respond.min.js" th:src="@{js/respond.min.js}"></script>
 	  <![endif]-->
-	  
+
         <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{js/jquery-1.12.2.min.js}"></script>
         <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{js/bootstrap.min.js}"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
@@ -31,673 +32,305 @@
 		<script type="text/javascript" src="static/js/main.js" th:src="@{js/main.js}"></script>
 		<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{js/waypoints.min.js}"></script>
 		<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{js/jquery.flexslider.js}"></script>
-	  
+
+		<meta name="google-site-verification" content="9Rbb0iUDVKBNIkwpyLKnoyTN79LBNFQxLPcRNgYKeHQ" />
+
     </head>
     <body>
-    
-    	<!-- preloader -->
-    	<div class="preloader"> <i class="fa fa-circle-o-notch fa-spin"></i></div>
-    	
-    	<header id="home" class="background3">
-    		<div id="home-slider" class="carousel slide carousel-fade" data-ride="carousel">
-    			<div class="carousel-inner banner">
-    				<div class="item active">
-    					<div class="caption">
-    						 <h1>Welcome to <span class="h12">NCL</span></h1>
-    						 <p>National Cybersecurity Research &amp; Development Lab</p>
-    						 <p>&nbsp;</p>
-    						 <p>&nbsp;</p>
-    						 <div class="text-center col-sm-6 col-sm-offset-3">
-    						 	<p align="justify" style="text-transform:none; font-size: 2 vw;">NCL is a shared national infrastructure that provides computing resources, repeatable and controllable experimentation environments, as well as application services for the cybersecurity R&amp;D community. The infrastructure includes a cluster of 300 nodes that provides a wide range of provisioning mechanisms, hosting of security data and security services. NCL aims to provide a platform that fosters and encourages collaboration among researchers in academia, the industry as well as government bodies both locally and internationally through the sharing and validation of research outcomes.</p>
-    						 	<p>&nbsp;</p>
-    						 	<p align="justify" style="text-transform:none;">The laboratory is funded by the National Research Foundation (NRF) since November 2015.</p>
-    						 </div> <!-- about us -->
-    					</div> <!-- caption -->
-    					<div align="center"></div>
-    				</div> <!-- item -->
-    			</div> <!-- carousel-inner -->
-    		</div> <!-- home-slider -->
-    		
-    		<!-- need to put here instead of applying the thymeleaf fragment to solve the navigation bar problem with scroll active when th:href is involved -->
-	   		<div class="main-nav">
-	   			<div class="container">
-	   			
-	   				<div class="navbar-header">
-	   					<a href="#" th:href="@{/}"><img src="images/nav_icon.png" alt="logo" width="134" height="87" class="logo1" /></a>
-	   					<button type="button" class="navbar-toggle icon-pad" data-toggle="collapse" data-target=".navbar-collapse">
-	   						<span class="sr-only">Toggle navigation</span>
-	   						<span class="icon-bar"></span>
-	   						<span class="icon-bar"></span>
-	   						<span class="icon-bar"></span>
-	   					</button>
-	   				</div> <!-- navbar-header -->
-	   				
-	   				<div class="collapse navbar-collapse">
-	   					<ul class="nav navbar-nav navbar-left login-navbar-left">
-	   						<li class="scroll"><a href="#joinUs">Join Us</a></li>
-	   						<li class="scroll"><a href="#team">Our Team</a></li>
-	   						<li class="scroll"><a href="#blog">News &amp; Events</a></li>
-	   					</ul>
-	   					<ul class="nav navbar-nav navbar-right login-navbar-right">
-	   						<li><a href="#" th:href="@{/login}">Log in</a></li>
-	   						<li><a href="#" th:href="@{/signup2}">Sign Up</a></li>
-	   					</ul>
-	   				</div> <!-- navigation links -->
-	   				
-	   			</div> <!-- container -->
-	   		</div> <!-- main-nav -->
-    		
-    	</header> <!-- home -->
-    	
-    	<section id="joinUs" class="join-us-background">
-    		<div class="container">
-    			<div class="row">
-    				<div class="heading text-center col-sm-10 col-sm-offset-1">
-    					<h2>Join Us</h2>
-    					<p>&nbsp;</p>
-    					<p align="justify">NCL invites applications for a few research positions in the area of cyber security, including <span class="h13">Research Fellows, Research Assistants and Student Interns</span> (undergraduate and graduate).</p>
-    					<p align="justify">Applicants should possess knowledge or experiences in one or more cybersecurity research areas (e.g. system/software/web/mobile security), networking, virtualization and/or big data systems, etc.</p>
-    					<p align="justify">You will be working with the team together to make the testbed and its associated various services up and fully ready for use. You will have chance to work on cloud provisioning technologies (e.g. OpenStack), big-data management systems (e.g. HDFS), and various advanced and latest topics in cyber security.</p>
-    					<p align="justify">For more information, please contact: Assoc. Prof Chang Ee-Chien <a href="mailto:changec@comp.nus.edu.sg">changec@comp.nus.edu.sg</a></p>
-    				</div>
-    			</div> <!-- row -->
-    		</div> <!-- container -->
-    	</section> <!-- join us -->
-    	
-    	<section id="team">
-    		<div class="container">
-    			<div class="row">
-    				<div class="heading text-center col-sm-8 col-sm-offset-2">
-    					<p>&nbsp;</p>
-    					<p>&nbsp;</p>
-    					<p>&nbsp;</p>
-    					<h2>Our Team</h2>
-    				</div>
-    				<ul class="nav nav-tabs nav-justified team-nav">
-    					<li class="active"><a href="#asoprof" data-toggle="pill">Principal Investigators</a></li>
-    					<li><a href="#Co-Inv" data-toggle="pill">Operations</a></li>
-    					<li><a href="#Research" data-toggle="pill">Research</a></li>
-    					<li><a href="#Students" data-toggle="pill">Students</a></li>
-    					<p>&nbsp;</p>
-    				</ul> <!-- teams navigation -->
-    				
-    				<div class="tab-content">
-    					<div id="asoprof" class="tab-pane fade in active">
-    						<div class="container">
-    							<div class="row team-members">
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/1.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>CHANG Ee-Chien</h3>
-    										<h4>Associate Professor, Lead PI</h4>
-    										<ul>
-    											<li>Network Security</li>
-    											<li>Applied Cryptography</li>
-    											<li>Multimedia/Biometric Security</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin" href="https://sg.linkedin.com/in/ee-chien-chang-2321b535"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/~changec/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<div class="member-image">
-    										<img src="images/team/2.png" class="img-circle" />
-    										<div class="member-info">
-    											<h3>LIANG Zhenkai</h3>
-    											<h4>Associate Professor, Lead-PI</h4>
-    											<ul>
-    												<li>System and Software Security</li>
-    												<li>Applied Cryptography</li>
-    												<li>Multimedia Delivery</li>
-    											</ul>
-    										</div> <!-- member info -->
-    										<div class="team-member wow flipInY">
-    											<div class="social-icons">
-				                                    <ul>
-				                                    	<li><a class="linkedin" href="https://sg.linkedin.com/in/liangzk"><i class="fa fa-linkedin"></i></a></li>
-				                                    	<li><a class="dribbble" href="http://www.comp.nus.edu.sg/%7Eliangzk"><i class="fa fa-link"></i></a></li>
-				                                    </ul>
-    											</div> <!-- social icons -->
-    										</div>
-    									</div> <!-- member image -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/3.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>CHAN Mun Choon</h3>
-    										<h4>Associate Professor</h4>
-    										<ul>
-    											<li>Smartphone Based Applications</li>
-    											<li>Sensor Network Protocols</li>
-    											<li>DTN Applications</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin" href="https://sg.linkedin.com/in/mun-choon-chan-4b0707105"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="https://www.comp.nus.edu.sg/~chanmc/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/4.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Abhik ROYCHOUDHURY</h3>
-    										<h4>Professor</h4>
-    										<ul>
-    											<li>Software Testing &amp; Anaylsis</li>
-    											<li>Software Security</li>
-    											<li>Trust-worthy Software Construction</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin" href="https://sg.linkedin.com/in/abhik-roychoudhury-17521a9"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/~abhik"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    							</div> <!-- row -->
-    							
-    							<div class="row team-members">
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/5.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Prateek SAXENA</h3>
-    										<h4>Assistant Professor</h4>
-    										<ul>
-    											<li>Operating Systems</li>
-    											<li>Grid Computing</li>
-    											<li>Programming Languages</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin" href="https://sg.linkedin.com/in/prateek-saxena-8b241347"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/~prateeks/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/6.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>TEO Yong Meng</h3>
-    										<h4>Associate Professor</h4>
-    										<ul>
-    											<li>Parallel &amp; Distributed Simulation</li>
-    											<li>Grid Computing</li>
-    											<li>Parallel Computer Architecture</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/~teoym/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/7.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Roland YAP Hock Chuan</h3>
-    										<h4>Associate Professor</h4>
-    										<ul>
-    											<li>Programming Languages</li>
-    											<li>Program Analysis</li>
-    											<li>Constraint Solving Algorithms</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/%7Eryap"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    							</div> <!-- row -->
-    						</div> <!-- container -->
-    					</div> <!-- principal investigators -->
-    					
-    					<div id="Co-Inv" class="tab-pane fade">
-    						<div class="container">
-    							<div class="row team-members">
-    							
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/8.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Dr. GUO Charng Rang</h3>
-    										<h4>Programme Director</h4>
-    										<ul>
-    											<li>Trusted System Vetting</li>
-    											<li>Applied Cryptography</li>
-    											<li>&nbsp;</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/14.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Desmond LIM</h3>
-    										<h4>Lead Software Engineer</h4>
-    										<ul>
-    											<li>&nbsp;</li>
-    											<li>&nbsp;</li>
-    											<li>&nbsp;</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/15.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>TRAN Ly Vu</h3>
-    										<h4>Software Engineer</h4>
-    										<ul>
-    											<li>&nbsp;</li>
-    											<li>&nbsp;</li>
-    											<li>&nbsp;</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/16.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Kynaston ONG</h3>
-    										<h4>Project Engineer</h4>
-    										<ul>
-    											<li>Game Design</li>
-    											<li>Sand Sculptor</li>
-    											<li>Musician</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    							</div> <!-- row -->
-    							
-    							<div class="row team-members">
-    							
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/17.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Cassie PANG</h3>
-    										<h4>Project Engineer</h4>
-    										<ul>
-    											<li>E-Commerce</li>
-    											<li>Web Develepment</li>
-    											<li>&nbsp;</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    							</div> <!-- row -->
-    							
-    						</div> <!-- container -->
-    					</div> <!-- operations -->
-    					
-    					<div id="Research" class="tab-pane fade">
-    						<div class="container">
-    							<div class="row team-members">
-    							
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/9.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Dr. Christopher ZHONG</h3>
-    										<h4>Senior Research Fellow</h4>
-    										<ul>
-    											<li>Software Engineer</li>
-    											<li>Philosopher</li>
-    											<li>Scientist</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin" href="https://sg.linkedin.com/in/chriszhong"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://people.cis.ksu.edu/~czhong/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/10.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Dr. Chunwang ZHANG</h3>
-    										<h4>Research Fellow</h4>
-    										<ul>
-    											<li>&nbsp;</li>
-    											<li>&nbsp;</li>
-    											<li>&nbsp;</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin" href="https://sg.linkedin.com/in/chunwang-zhang-a3bb246a"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/~chunwang/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/11.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Dr. Sudipta SAHA</h3>
-    										<h4>Research Fellow</h4>
-    										<ul>
-    											<li>Complex Networks</li>
-    											<li>&nbsp;</li>
-    											<li>&nbsp;</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin" href="https://sg.linkedin.com/in/sudipta-saha-a328b258"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/~sudipta/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/12.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>TAN Jun Hao</h3>
-    										<h4>Research Assistant</h4>
-    										<ul>
-    											<li>Web Security</li>
-    											<li>System Security</li>
-    											<li>Network Security</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin" href="https://sg.linkedin.com/in/tan-jun-hao-60436617"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/~junhao17/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    							</div> <!-- row -->
-    							
-    							<div class="row team-members">
-    							
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/13.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>YEO Te Ye</h3>
-    										<h4>Research Assistant</h4>
-    										<ul>
-    											<li>Computer Security</li>
-    											<li>Audiophile</li>
-    											<li>&nbsp;</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    							
-    							</div> <!-- row -->
-    							
-    						</div> <!-- container -->
-    					</div> <!-- research -->
-    					
-    					<div id="Students" class="tab-pane fade">
-    						<div class="container">
-    							<div class="row team-members">
-    							
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/18.png" class="img-circle" />
-    									<div class="member-info">
-    										<h3>CHUA Zheng Leong</h3>
-    										<h4>PhD Student</h4>
-    										<ul>
-    											<li>Systems Security</li>
-    											<li>Embedded Security</li>
-    											<li>Binary Analysis</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="https://www.comp.nus.edu.sg/~chuazl/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/19.png" width="175" height="172" class="img-circle" />
-    									<div class="member-info">
-    										<h3>Pravein Govindan KANNAN</h3>
-    										<h4>PhD Student</h4>
-    										<ul>
-    											<li>&nbsp;</li>
-    											<li>&nbsp;</li>
-    											<li>&nbsp;</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/~pravein/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    								<div class="col-sm-3" align="center">
-    									<img src="images/team/20.png" width="175" height="172" class="img-circle" />
-    									<div class="member-info">
-    										<h3>DANG Khanh Hung</h3>
-    										<h4>PhD Student</h4>
-    										<ul>
-    											<li>Privacy-preserving Computation</li>
-    											<li>System Security</li>
-    											<li>Applied Cryptography</li>
-    										</ul>
-    									</div> <!-- member info -->
-    									<div class="team-member wow flipInY">
-    										<div class="social-icons">
-    											<ul>
-    												<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-    												<li><a class="dribbble" href="http://www.comp.nus.edu.sg/~hungdang/"><i class="fa fa-link"></i></a></li>
-    											</ul>
-    										</div> <!-- social icons -->
-    									</div> <!-- team member -->
-    								</div> <!-- col-sm-3 -->
-    								
-    							</div> <!-- row -->
-    						</div> <!-- container -->
-    					</div> <!-- students -->
-    					
-    				</div> <!-- tab content -->
-    				
-    			</div> <!-- row -->
-    		</div> <!-- container -->
-    	</section> <!-- team -->
-    	
-    	<section id="blog" class="background1">
-    		<div class="container">
-    			<div class="row">
-    				<div class="heading text-center col-sm-8 col-sm-offset-2">
-    					<h2>News &amp; Events</h2>
-    					<p>&nbsp;</p>
-    				</div>
-    			</div> <!-- row -->
-    			
-   				<div id="portfolioSlider">
-   					<ul class="slides">
-   						<li>
-   							<div class="col-md-4 wp4">
-   								<div class="overlay-effect effects clearfix">
-   									<div class="img">
-   										<img class="img-responsive" src="images/blog/3.png" alt=""/>
-   									</div>
-   								</div>
-   								<h3 class="news-header">Arrival of new server</h3>
-   								<p>Our newly purchased servers have arrived on 20 April 2016. 100 machines will be up and running by the end of April 2016.</p>
-   							</div>
-   							<div class="col-md-4 wp4 delay-05s">
-   								<div class="overlay-effect effects clearfix">
-   									<div class="img">
-   										<img class="img-responsive" src="images/blog/2.png" alt=""/>
-   									</div>
-   								</div>
-   								<h3 class="news-header">NCL OPENING WORKSHOP 15 April 2016</h3>
-   								<p>The objective of this WORKSHOP is to allow internal stakeholders and supporting staff from the Information Technology Unit &amp; Research Office to have a better understanding of NCL and it's activities.</p>
-   							</div>
-   							<div class="col-md-4 wp4 delay-1s">
-   								<div class="overlay-effect effects clearfix">
-   									<div class="img">
-   										<img class="img-responsive" src="images/blog/1.png" alt=""/>
-   									</div>
-   								</div>
-   								<h3 class="news-header">National Cybersecurity R&amp;D Laboratory at NUS School of Computing to be ready by end-2016</h3>
-   								<p>The National Cybersecurity R&amp;D Laboratory, which will be set up by the security research group at the NUS School of Computing, will be operational by the end of this year. The new laboratory will be a shared national research infrastructure which can be used by the local research community and industry for the validation of research outcomes, for collaborative work with industry or international partners, and to curate useful datasets for cybersecurity experiments.</p>
-   								<p><a href="http://news.nus.edu.sg/images/resources/news/2016/2016-01/2016-01-14/LABORATORY-stonline-14jan.pdf">Read More...</a></p>
-   							</div>
-   						</li>
-   						<li>
-   							<div class="col-md-4 wp4">
-   								<div class="overlay-effect effects clearfix">
-   									<div class="img">
-   										<img class="img-responsive" src="images/blog/3.png" alt="Portfolio Item"/>
-   									</div>
-   								</div>
-   								<h3 class="news-header">Creative Minds</h3>
-   								<p>4</p>
-   							</div>
-   							<div class="col-md-4 wp4 delay-05s">
-   								<div class="overlay-effect effects clearfix">
-   									<div class="img">
-   										<img class="img-responsive" src="images/blog/3.png" alt="Portfolio Item"/>
-   									</div>
-   								</div>
-   								<h3 class="news-header">Creative Minds</h3>
-   								<p>5</p>
-   							</div>
-   							<div class="col-md-4 wp4 delay-1s">
-   								<div class="overlay-effect effects clearfix">
-   									<div class="img">
-   										<img class="img-responsive" src="images/blog/3.png" alt="Portfolio Item"/>
-   									</div>
-   								</div>
-   								<h3 class="news-header">Creative Minds</h3>
-   								<p>6</p>
-   							</div>
-   						</li>
-   					</ul>
-   				</div> <!-- news section -->
-	    		
-    		</div> <!-- container -->
-    	</section> <!-- blog -->
-    	
-    	<footer id="footer">
-    		<div class="container">
-    			<div class="row">
-    				<div class="heading text-center col-sm-8 col-sm-offset-2"></div>
-    			</div>
-    			<div class="row">
-    			
-    				<div class="col-sm-4">
-    					<ul class="address">
-    						<li><i class="fa fa-phone"></i> <span> Phone: </span>+65 6516 6168</li>
-    						<li><i class="fa fa-map-marker"></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
-    					</ul>
-    					<div class="social-icons2"></div>
-    				</div> <!-- col sm 4 -->
-    				
-    				<div class="col-sm-4">
-    					Privacy policy | User Policy | Terms &amp; Conditions
-    				</div> <!-- col sm 4 -->
-    				
-    				<div class="col-sm-4">
-    					<ul>
-    						<a class="envelope" href="mailto:changec@comp.nus.edu.sg"><i class="fa fa-envelope fa-3x"></i></a>
-    						<a href="">&nbsp;</a>
-    						<a class="github" href="https://github.com/nus-ncl"><i class="fa fa-github fa-3x"></i></a>
-    					</ul>
-    				</div> <!-- col sm 4 -->
-    				
-    			</div> <!-- row -->
-    		</div> <!-- container -->
-    	</footer>
+
+    	<!-- main nav -->
+        <div class="main-nav navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="index.html" th:href="@{/}"><img src="images/ncl_favicon1.png" alt="logo" width="53" height="53" class="logo1" /></a>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div> <!-- navbar-header -->
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-left login-navbar-left">
+                        <li class="scroll"><a href="about.html">About</a></li>
+                        <li class="scroll"><a href="event.html">Events</a></li>
+                        <li class="scroll"><a href="plan.html">Features</a></li>
+                        <li class="scroll"><a href="pricing.html">Pricing</a></li>
+                        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
+                            <span class="caret"></span></a></li>
+                            <ul class="dropdown-menu ">
+                                <li><a href="http://ncl.sg/docs-ncl/">Tutorial</a></li>
+                                <li><a href="resources.html">Resources</a></li>
+                            </ul>
+                        <li class="scroll"><a href="contactus.html">Contact Us</a></li>
+
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right login-navbar-right">
+                        <li><a href="#" th:href="@{/signup2}">Create account</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right login-navbar-right1">
+                        <li><a href="#" th:href="@{/login}">Log In</a></li>
+                    </ul>
+                </div> <!-- navigation links -->
+            </div>
+        </div> <!-- main-nav -->
+
+        <!-- preloader -->
+        <div class="preloader"> <i class="fa fa-circle-o-notch fa-spin"></i></div>
+        <header id="home">
+            <div id="home-slider" class="carousel slide carousel-fade" data-ride="carousel">
+                <div class="carousel-inner banner">
+                    <div class="item active" style="background-image: url(images/slider/new1.png); 	background-repeat: no-repeat; background-size:100% 80%">
+                        <div class="caption">
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <h1 class="animated fadeInLeftBig">NATIONAL CYBERSECURITY R&amp;D LAB</h1>
+                            <div class="text-center col-sm-6 col-sm-offset-3" >
+                                <div class="col-sm-12 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="450ms">
+                                    <p>&nbsp;</p>
+                                    <p>&nbsp;</p>
+                                    <p>&nbsp;</p>
+                                    <p align="justify" style="text-transform:none; ">  Public Cloud Infrastructure | Up-to-date Cybersecurity Datasets | Ready-to-use Experiment Setups</p>
+                                    <p align="text-center" style="text-transform:none;">  All-in-one management console | Private, isolated</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="left-control" href="#home-slider" data-slide="prev"><i class="fa fa-angle-left"></i></a>
+                        <a class="right-control" href="#home-slider" data-slide="next"><i class="fa fa-angle-right"></i></a>
+                        <a id="tohash" href="#services" class="tohash"><i class="fa fa-angle-down"></i></a>
+                    </div>
+                    <div class="item" style="background-image: url(images/slider/7.png); 	background-repeat: no-repeat; background-size:100% 80%">
+                        <div class="caption">
+                            <h1 class="animated fadeInLeftBig"><p>&nbsp;</p><p>&nbsp;</p>Features</h1>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <div class="col-sm-1 col-sm-offset-3 wow fadeInDown " data-wow-duration="1000ms" data-wow-delay="300ms">
+                                <i class="fa fa-flask" style="font-size:60px;"></i>
+                                <div><p>&nbsp;</p>
+                                    <div class="service-info">
+                                        <h22 style="text-transform:none;">1-click Experiment Setups</h22>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-1 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="450ms">
+                                <i class="fa fa-database" style="font-size:60px;"></i>
+                                <div><p>&nbsp;</p>
+                                    <div class="service-info">
+                                        <h22 style="text-transform:none;">Data Repository </h22>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-1  wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="550ms">
+                                <i class="fa fa-book" style="font-size:60px;"></i>
+                                <div><p>&nbsp;</p>
+                                    <div class="service-info">
+                                        <h22 style="text-transform:none;">Infrastructure</h22>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-1  wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="550ms">
+                                <i class="fa fa-gavel" style="font-size:60px;"></i>
+                                <div><p>&nbsp;</p>
+                                    <div class="service-info">
+                                        <h22 style="text-transform:none;">Services&amp;Tools</h22>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-1 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="550ms">
+                                <i class="fa fa-user-secret" style="font-size:60px;"></i>
+                                <div><p>&nbsp;</p>
+                                    <div class="service-info">
+                                        <h22 style="text-transform:none;">Security</h22>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-1 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="550ms">
+                                <i class="fa fa-sign-in" style="font-size:60px;"></i>
+                                <div><p>&nbsp;</p>
+                                    <div class="service-info">
+                                        <h22 style="text-transform:none;">Federation</h22>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="left-control" href="#home-slider" data-slide="prev"><i class="fa fa-angle-left"></i></a>
+                        <a class="right-control" href="#home-slider" data-slide="next"><i class="fa fa-angle-right"></i></a>
+                        <a id="tohash" href="#services" class="tohash"><i class="fa fa-angle-down"></i></a>
+                    </div>
+                    <div class="item active" style="background-image: url(images/slider/new2.png); 	background-repeat: no-repeat; background-size:100% 80%">
+                        <div class="caption">
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p class="animated fadeInLeftBig h14">Focus on your </p>
+                            <p>&nbsp;</p>
+                            <p class="animated fadeInLeftBig h14">research priorities</p>
+                            <p>&nbsp;</p>
+                            <p>&nbsp;</p>
+                            <p class="animated fadeInLeftBig"><h23>Cut down on tedious environment set-up time.</h23></p>
+                            <a class="btn btn-start animated fadeInUpBig" href="plan.html">Find Out More </a>
+                        </div>
+                        </div>
+                        <a class="left-control" href="#home-slider" data-slide="prev"><i class="fa fa-angle-left"></i></a>
+                        <a class="right-control" href="#home-slider" data-slide="next"><i class="fa fa-angle-right"></i></a>
+                        <a id="tohash" href="#services" class="tohash"><i class="fa fa-angle-down"></i></a>
+                </div>
+                </div>
+        </header>
+
+
+        <div class="container ">
+            <div class="row">
+                <div class="our-services">
+                    <div class="col-sm-3 text-center" style=" margin:20px; width:320px;height:280px;padding:10px">
+                        <img src="images/1.png" width="157" height="132" class="img" />
+                        <div><p>&nbsp;</p>
+                            <div class="service-info ">
+                                <h21><a href="overview.html">Overview</a></h21>
+                                <p> Learn more about NCL</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 text-center" style=" margin:20px; width:355px;height:280px;padding:10px">
+                        <img src="images/community1.png" width="178" height="136" class="img" />
+                        <div><p>&nbsp;</p>
+                            <div class="service-info ">
+                                <h21><a href="community.html">Community</a></h21>
+                                <p>Provide the community with something of value</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 text-center" style=" margin:20px; width:320px;height:280px;padding:10px">
+                        <img src="images/tutorial1.png" width="206" height="136" class="img" />
+                        <div><p>&nbsp;</p>
+                            <div class="service-info ">
+                                <h21><a href="http://ncl.sg/docs-ncl/">Tutorial</a></h21>
+                                <p>Learn how to start using NCL  in minutes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+		<section id="joinUs" class="background4" >
+			<div class="container ">
+				<div class="row ">
+					<div class="heading text-center col-sm-12">
+						<div>
+							<p class="h15">What We Do</p>
+							<p>&nbsp;</p>
+						</div>
+					</div>
+					<div class="heading col-sm-10 col-sm-offset-1 ">
+						<div class="col-sm-1 "><img src="images/check.png" width="45" height="41"/></div>
+						<div class="col-sm-9 col-sm-offset-1">
+							<h4>Provide ready-to-use, repeatable, customisable and high fidelity experimentation environments
+							</h4>
+						</div>
+					</div>
+					<div class="heading col-sm-10 col-sm-offset-1 ">
+						<div class="col-sm-1"><img src="images/check.png" width="45" height="41"/></div>
+						<div class="col-sm-9 col-sm-offset-1">
+							<h4>Maintain national shared infrastructure for the  research community (cluster of 100 high-end servers, expanding to 300)</h4>
+						</div>
+					</div>
+					<div class="heading col-sm-10 col-sm-offset-1 ">
+						<div class="col-sm-1"><img src="images/check.png" width="45" height="41"/></div>
+						<div class="col-sm-9 col-sm-offset-1">
+							<h4>Host and share realistic and up to date data in our respository </h4>
+						</div>
+					</div>
+				</div> <!-- row -->
+			</div> <!-- container -->
+		</section> <!-- join us -->
+
+		<section>
+
+			<div class="container">
+                <div class="row ">
+				<div class="heading text-center col-sm-10 col-sm-offset-1">
+					<div class="h15">Solutions
+                    </div>
+				</div>
+            </div>
+            <div class="heading col-sm-10 col-sm-offset-2 ">
+                <p>&nbsp;</p>
+                <div class="col-sm-1">
+                    <p>&nbsp;</p>
+                    <img src="images/solback.png" width="170" height="157"/>
+                </div>
+            <div class="col-sm-7 col-sm-offset-2">
+                <h2>For Researchers</h2>
+                <p>With necessary resources and ready-to-use environments, you can: </p>
+                <p>- Spend less time on tedious experiment setup</p>
+                <p>- Conduct comprehensive experimental studies</p>
+                <p>- Response/react readily to new attack scenarios</p>
+                <p>- Focus more on research innovation</p>
+            </div>
+            </div>
+            <div class="heading col-sm-10 col-sm-offset-2 ">
+                <div class="col-sm-1">
+                    <p>&nbsp;</p>
+                    <img src="images/solback2.png" width="170" height="157"/>
+                </div>
+                <div class="col-sm-7 col-sm-offset-2">
+                    <p>&nbsp;</p>
+                    <h2>For Teaching Professional</h2>
+                    <p>A large collection of teaching materials is available for you to demonstrate realistic environments in teaching. Our collection of security environments is customisable to suit your teaching needs. </p>
+                </div>
+            </div>
+            <div class="heading col-sm-10 col-sm-offset-2 ">
+                <div class="col-sm-1">
+                    <img src="images/solback3.png" width="170" height="157"/>
+                </div>
+                <div class="col-sm-7 col-sm-offset-2">
+                    <h2>For Agencies</h2>
+                    <p>Our infrastructure is capable of supporting your experimentation validation, from small to large scale processes.</p>
+                </div>
+            </div>
+            </div>
+            <div class="heading col-sm-6 col-sm-offset-3 ">
+                <div class="col-sm-9 col-sm-offset-5">
+                    <div style="text-align: right;">
+                        <a id="tohash1" href="#home-slider" class="tohash1">Back to Top</a>
+                    </div>
+                </div>
+            </div>
+		</section>
+
+        <footer id="footer">
+            <div class="container col-sm-offset-3">
+                <p>&nbsp;</p>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <ul class="address">
+                            <li><i class="fa fa-phone"></i> <span> Phone: </span>+65 6601 1056</li>
+                            <li><i class="fa fa-map-marker"></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                        </ul>
+                        <div class="social-icons2">
+                        </div>
+                    </div> <!-- col sm 4 -->
+                    <div class="col-sm-4">
+                        Privacy policy | User Policy | Terms &amp; Conditions
+                    </div> <!-- col sm 4 -->
+                    <div class="col-sm-4">
+                        <ul>
+                            <a class="envelope" href="mailto:support@ncl.sg"><i class="fa fa-envelope fa-3x"></i></a>
+                            <a href="">&nbsp;</a>
+                            <a class="github" href="https://github.com/nus-ncl"><i class="fa fa-github fa-3x"></i></a>
+                        </ul>
+                    </div> <!-- col sm 4 -->
+                </div> <!-- row -->
+            </div> <!-- container -->
+        </footer>
     </body>
 </html>
+
+
+

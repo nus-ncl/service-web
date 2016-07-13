@@ -82,6 +82,56 @@ public class MainController {
     public String index() {
         return "index";
     }
+
+    @RequestMapping("/overview")
+    public String overview() {
+        return "overview";
+    }
+
+    @RequestMapping("/community")
+    public String community() {
+        return "community";
+    }
+
+    @RequestMapping("/about")
+    public String about() {
+        return "about";
+    }
+
+    @RequestMapping("/event")
+    public String event() {
+        return "event";
+    }
+
+    @RequestMapping("/plan")
+    public String plan() {
+        return "plan";
+    }
+
+    @RequestMapping("/futureplan")
+    public String futureplan() {
+        return "futureplan";
+    }
+
+    @RequestMapping("/pricing")
+    public String pricing() {
+        return "pricing";
+    }
+
+    @RequestMapping("/resources")
+    public String resources() {
+        return "resources";
+    }
+
+    @RequestMapping("/future_plan")
+    public String futureplanDownload() {
+        return "future_plan";
+    }
+
+    @RequestMapping("/contactus")
+    public String contactus() {
+        return "contactus";
+    }
     
     @RequestMapping(value="/login", method=RequestMethod.GET)
     public String login(Model model) {
