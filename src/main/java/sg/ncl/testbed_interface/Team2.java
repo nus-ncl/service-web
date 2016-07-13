@@ -1,6 +1,7 @@
 package sg.ncl.testbed_interface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -19,9 +20,11 @@ public class Team2 {
     private int membersCount;
     private User2 owner;
     private List<User2> membersList;
+    private HashMap<String, String> membersStatusMap; // userId, join status: e.g. PENDING, APPROVED
 
     public Team2() {
         membersList = new ArrayList<>();
+        membersStatusMap = new HashMap<>();
     }
 
     public String getId() {
@@ -123,5 +126,17 @@ public class Team2 {
             return true;
         }
         return false;
+    }
+
+    public HashMap<String, String> getMembersStatusMap() {
+        return membersStatusMap;
+    }
+
+    public void setMembersStatusMap(HashMap<String, String> membersStatusMap) {
+        this.membersStatusMap = membersStatusMap;
+    }
+
+    public void addMembersStatus(String userId, String memberStatus) {
+        membersStatusMap.put(userId, memberStatus);
     }
 }

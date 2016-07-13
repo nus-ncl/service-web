@@ -630,11 +630,71 @@ public class MainController {
     
     @RequestMapping("/approve_new_user")
     public String approveNewUser(Model model, HttpSession session) {
-    	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
-    	rv = teamManager.getTeamMapByTeamOwner(getSessionIdOfLoggedInUser(session));
-    	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
-    	model.addAttribute("teamMapOwnedByUser", rv);
-    	model.addAttribute("userHasAnyJoinRequest", userHasAnyJoinRequest);
+//    	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
+//    	rv = teamManager.getTeamMapByTeamOwner(getSessionIdOfLoggedInUser(session));
+//    	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
+//    	model.addAttribute("teamMapOwnedByUser", rv);
+//    	model.addAttribute("userHasAnyJoinRequest", userHasAnyJoinRequest);
+
+        List<JoinRequestApproval> rv = new ArrayList<>();
+        List<JoinRequestApproval> temp;
+
+        // get list of teamids
+        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
+
+        JSONObject object = new JSONObject(responseEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+            ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
+
+            Team2 team2 = new Team2();
+            JSONObject teamObject = new JSONObject(teamResponseEntity.getBody().toString());
+            JSONArray membersArray = teamObject.getJSONArray("members");
+
+            team2.setId(teamObject.getString("id"));
+            team2.setName(teamObject.getString("name"));
+
+            boolean isTeamLeader = false;
+            temp = new ArrayList<>();
+
+            for (int j = 0; j < membersArray.length(); j++) {
+                JSONObject memberObject = membersArray.getJSONObject(j);
+                String userId = memberObject.getString("userId");
+                String teamMemberType = memberObject.getString("memberType");
+                String teamMemberStatus = memberObject.getString("memberStatus");
+                String teamJoinedDate = memberObject.get("joinedDate").toString();
+
+                JoinRequestApproval joinRequestApproval = new JoinRequestApproval();
+
+                if (userId.equals(session.getAttribute("id").toString()) && teamMemberType.equals(memberTypeOwner)) {
+                    isTeamLeader = true;
+                }
+
+                if (teamMemberStatus.equals("PENDING") && teamMemberType.equals(memberTypeMember)) {
+                    User2 myUser = invokeAndExtractUserInfo(userId);
+                    joinRequestApproval.setUserId(myUser.getId());
+                    joinRequestApproval.setUserEmail(myUser.getEmail());
+                    joinRequestApproval.setUserName(myUser.getFirstName() + " " + myUser.getLastName());
+                    joinRequestApproval.setApplicationDate(teamJoinedDate);
+                    joinRequestApproval.setTeamId(team2.getId());
+                    joinRequestApproval.setTeamName(team2.getName());
+
+                    temp.add(joinRequestApproval);
+                }
+            }
+
+            if (isTeamLeader) {
+                if (!temp.isEmpty()) {
+                    rv.addAll(temp);
+                }
+            }
+
+        }
+
+        model.addAttribute("joinApprovalList", rv);
+
     	return "approve_new_user";
     }
     
@@ -654,13 +714,13 @@ public class MainController {
     
     @RequestMapping("/teams")
     public String teams(Model model, HttpSession session) {
-        int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
-        model.addAttribute("infoMsg", teamManager.getInfoMsg());
-        model.addAttribute("currentLoggedInUserId", currentLoggedInUserId);
-        model.addAttribute("teamMap", teamManager.getTeamMap(currentLoggedInUserId));
-        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
-        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
+//        int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
+//        model.addAttribute("infoMsg", teamManager.getInfoMsg());
+//        model.addAttribute("currentLoggedInUserId", currentLoggedInUserId);
+//        model.addAttribute("teamMap", teamManager.getTeamMap(currentLoggedInUserId));
+//        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
+//        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
+//        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
         // get list of teamids
         ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
@@ -676,6 +736,11 @@ public class MainController {
             ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
             Team2 team2 = extractTeamInfo(teamResponseEntity.getBody().toString());
             teamManager2.addTeamToTeamMap(team2);
+
+            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(session.getAttribute("id").toString(), teamResponseEntity.getBody().toString());
+            if (joinRequestTeam != null) {
+                teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
+            }
 //            System.out.println(teamResponseEntity.getBody().toString());
         }
 
@@ -689,10 +754,11 @@ public class MainController {
             teamManager2.addTeamToPublicTeamMap(team2);
         }
 
+
         model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
         model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
-
+        model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
         return "teams";
     }
     
@@ -779,7 +845,7 @@ public class MainController {
 
         Team2 team = extractTeamInfo(responseEntity.getBody().toString());
 
-        model.addAttribute("currentLoggedInUserId", getSessionIdOfLoggedInUser(session));
+//        model.addAttribute("currentLoggedInUserId", getSessionIdOfLoggedInUser(session));
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
         model.addAttribute("membersList", team.getMembersList());
@@ -933,7 +999,8 @@ public class MainController {
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
     public String validateExperiment(@ModelAttribute Experiment experiment, Model model, HttpSession session, @RequestParam("networkConfiguration") MultipartFile networkFile, @RequestParam("dataset") MultipartFile dataFile, RedirectAttributes redirectAttributes) {
         // TODO Uploaded function for network configuration and optional dataset
-		if (!networkFile.isEmpty()) {
+		/*
+        if (!networkFile.isEmpty()) {
 			try {
 				String networkFileName = getSessionIdOfLoggedInUser(session) + "-networkconfig-" + networkFile.getOriginalFilename();
 				BufferedOutputStream stream = new BufferedOutputStream(
@@ -972,6 +1039,7 @@ public class MainController {
         experimentManager.addExperiment(getSessionIdOfLoggedInUser(session), experiment);
         // increase exp count to be display on Teams page
         teamManager.incrementExperimentCount(experiment.getTeamId());
+        */
         
         return "redirect:/experiments";
     }
@@ -1419,6 +1487,34 @@ public class MainController {
         team2.setMembersCount(membersArray.length());
 
         return team2;
+    }
+
+    public Team2 extractTeamInfoUserJoinRequest(String userId, String json) {
+        Team2 team2 = new Team2();
+        JSONObject object = new JSONObject(json);
+        JSONArray membersArray = object.getJSONArray("members");
+
+        for (int i = 0; i < membersArray.length(); i++) {
+            JSONObject memberObject = membersArray.getJSONObject(i);
+            String uid = memberObject.getString("userId");
+            String teamMemberStatus = memberObject.getString("memberStatus");
+            if (uid.equals(userId) && teamMemberStatus.equals("PENDING")) {
+
+                team2.setId(object.getString("id"));
+                team2.setName(object.getString("name"));
+                team2.setDescription(object.getString("description"));
+                team2.setWebsite(object.getString("website"));
+                team2.setOrganisationType(object.getString("organisationType"));
+                team2.setStatus(object.getString("status"));
+                team2.setVisibility(object.getString("visibility"));
+                team2.setMembersCount(membersArray.length());
+
+                return team2;
+            }
+        }
+
+        // no such member in the team found
+        return null;
     }
 
     public User2 invokeAndExtractUserInfo(String userId) {
