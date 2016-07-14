@@ -924,54 +924,79 @@ public class MainController {
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
     public String createExperiment(Model model, HttpSession session) {
     	List<String> scenarioFileNameList = getScenarioFileNameList();
-        model.addAttribute("experiment", new Experiment());
+        model.addAttribute("experiment", new Experiment2());
         model.addAttribute("scenarioFileNameList", scenarioFileNameList);
         model.addAttribute("teamMap", teamManager.getTeamMap(getSessionIdOfLoggedInUser(session)));
         return "experiment_page_create_experiment";
     }
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
-    public String validateExperiment(@ModelAttribute Experiment experiment, Model model, HttpSession session, @RequestParam("networkConfiguration") MultipartFile networkFile, @RequestParam("dataset") MultipartFile dataFile, RedirectAttributes redirectAttributes) {
+    public String validateExperiment(@ModelAttribute("loginForm") LoginForm loginForm,
+                                     @ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm) {
+
+        JSONObject experimentObject = new JSONObject();
+        experimentObject.put("userId", experimentPageCreateExperimentForm.getUserId());
+        experimentObject.put("teamId", experimentPageCreateExperimentForm.getTeamId());
+        experimentObject.put("name", "name blah blah blah" + ZonedDateTime.now());
+        experimentObject.put("description", "description blah blah blah");
+        experimentObject.put("nsFile", "file name");
+        experimentObject.put("nsFileContent", "file content");
+        experimentObject.put("idleSwap", "240");
+        experimentObject.put("maxDuration", "960");
+
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@ " + experimentObject.toString());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        System.out.println(properties.getSioExpUrl());
+
+        HttpEntity<String> request = new HttpEntity<String>(experimentObject.toString(), headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
+
+
+
+        //
         // TODO Uploaded function for network configuration and optional dataset
-		if (!networkFile.isEmpty()) {
-			try {
-				String networkFileName = getSessionIdOfLoggedInUser(session) + "-networkconfig-" + networkFile.getOriginalFilename();
-				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(new File(App.EXP_CONFIG_DIR + "/" + networkFileName)));
-                FileCopyUtils.copy(networkFile.getInputStream(), stream);
-				stream.close();
-				redirectAttributes.addFlashAttribute("message",
-						"You successfully uploaded " + networkFile.getOriginalFilename() + "!");
-				// remember network file name here
-			}
-			catch (Exception e) {
-				redirectAttributes.addFlashAttribute("message",
-						"You failed to upload " + networkFile.getOriginalFilename() + " => " + e.getMessage());
-				return "redirect:/experiments/create";
-			}
-		}
-		
-		if (!dataFile.isEmpty()) {
-			try {
-				String dataFileName = getSessionIdOfLoggedInUser(session) + "-data-" + dataFile.getOriginalFilename();
-				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(new File(App.EXP_CONFIG_DIR + "/" + dataFileName)));
-                FileCopyUtils.copy(dataFile.getInputStream(), stream);
-				stream.close();
-				redirectAttributes.addFlashAttribute("message2",
-						"You successfully uploaded " + dataFile.getOriginalFilename() + "!");
-				// remember data file name here
-			}
-			catch (Exception e) {
-				redirectAttributes.addFlashAttribute("message2",
-						"You failed to upload " + dataFile.getOriginalFilename() + " => " + e.getMessage());
-			}
-		}
-    	
-    	// add current experiment to experiment manager
-        experimentManager.addExperiment(getSessionIdOfLoggedInUser(session), experiment);
-        // increase exp count to be display on Teams page
-        teamManager.incrementExperimentCount(experiment.getTeamId());
+//		if (!networkFile.isEmpty()) {
+//			try {
+//				String networkFileName = getSessionIdOfLoggedInUser(session) + "-networkconfig-" + networkFile.getOriginalFilename();
+//				BufferedOutputStream stream = new BufferedOutputStream(
+//						new FileOutputStream(new File(App.EXP_CONFIG_DIR + "/" + networkFileName)));
+//                FileCopyUtils.copy(networkFile.getInputStream(), stream);
+//				stream.close();
+//				redirectAttributes.addFlashAttribute("message",
+//						"You successfully uploaded " + networkFile.getOriginalFilename() + "!");
+//				// remember network file name here
+//			}
+//			catch (Exception e) {
+//				redirectAttributes.addFlashAttribute("message",
+//						"You failed to upload " + networkFile.getOriginalFilename() + " => " + e.getMessage());
+//				return "redirect:/experiments/create";
+//			}
+//		}
+//
+//		if (!dataFile.isEmpty()) {
+//			try {
+//				String dataFileName = getSessionIdOfLoggedInUser(session) + "-data-" + dataFile.getOriginalFilename();
+//				BufferedOutputStream stream = new BufferedOutputStream(
+//						new FileOutputStream(new File(App.EXP_CONFIG_DIR + "/" + dataFileName)));
+//                FileCopyUtils.copy(dataFile.getInputStream(), stream);
+//				stream.close();
+//				redirectAttributes.addFlashAttribute("message2",
+//						"You successfully uploaded " + dataFile.getOriginalFilename() + "!");
+//				// remember data file name here
+//			}
+//			catch (Exception e) {
+//				redirectAttributes.addFlashAttribute("message2",
+//						"You failed to upload " + dataFile.getOriginalFilename() + " => " + e.getMessage());
+//			}
+//		}
+//
+//    	// add current experiment to experiment manager
+//        experimentManager.addExperiment(getSessionIdOfLoggedInUser(session), experiment);
+//        // increase exp count to be display on Teams page
+//        teamManager.incrementExperimentCount(experiment.getTeamId());
         
         return "redirect:/experiments";
     }
@@ -1435,5 +1460,22 @@ public class MainController {
 
     public String getStubUserID() {
         return USER_ID;
+    }
+
+    public Experiment2 extractExperiment(String experimentJson) {
+        Experiment2 experiment2 = new Experiment2();
+        JSONObject object = new JSONObject(experimentJson);
+
+        experiment2.setId(object.getLong("id"));
+        experiment2.setUserId(object.getString("userId"));
+        experiment2.setTeamId(object.getString("teamId"));
+        experiment2.setName(object.getString("name"));
+        experiment2.setDescription(object.getString("description"));
+        experiment2.setNsFile(object.getString("nsFile"));
+        experiment2.setNsFileContent(object.getString("nsFileContent"));
+        experiment2.setIdleSwap(object.getInt("idleSwap"));
+        experiment2.setMaxDuration(object.getInt("maxDuration"));
+
+        return experiment2;
     }
 }
