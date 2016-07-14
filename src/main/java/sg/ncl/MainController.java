@@ -923,38 +923,51 @@ public class MainController {
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
     public String createExperiment(Model model, HttpSession session) {
-    	List<String> scenarioFileNameList = getScenarioFileNameList();
-        model.addAttribute("experiment", new Experiment2());
-        model.addAttribute("scenarioFileNameList", scenarioFileNameList);
-        model.addAttribute("teamMap", teamManager.getTeamMap(getSessionIdOfLoggedInUser(session)));
+//    	List<String> scenarioFileNameList = getScenarioFileNameList();
+//        model.addAttribute("experiment", new Experiment2());
+//        model.addAttribute("scenarioFileNameList", scenarioFileNameList);
+//        model.addAttribute("teamMap", teamManager.getTeamMap(getSessionIdOfLoggedInUser(session)));
+
+        // a list of teams that the logged in user is in
+        List<Team2> userTeamsList = new ArrayList<>();
+
+        // get list of teamids
+        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
+
+        JSONObject object = new JSONObject(responseEntity.getBody().toString());
+        System.out.println(responseEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+            ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
+            Team2 team2 = extractTeamInfo(teamResponseEntity.getBody().toString());
+            userTeamsList.add(team2);
+        }
+
+        model.addAttribute("experimentForm", new ExperimentPageCreateExperimentForm());
+        model.addAttribute("userTeamsList", userTeamsList);
         return "experiment_page_create_experiment";
     }
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
-    public String validateExperiment(@ModelAttribute("loginForm") LoginForm loginForm,
-                                     @ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm) {
+    public String validateExperiment(@ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm, HttpSession session) {
 
         JSONObject experimentObject = new JSONObject();
-        experimentObject.put("userId", experimentPageCreateExperimentForm.getUserId());
+        experimentObject.put("userId", session.getAttribute("id").toString());
         experimentObject.put("teamId", experimentPageCreateExperimentForm.getTeamId());
-        experimentObject.put("name", "name blah blah blah" + ZonedDateTime.now());
-        experimentObject.put("description", "description blah blah blah");
+        experimentObject.put("name", experimentPageCreateExperimentForm.getName());
+        experimentObject.put("description", experimentPageCreateExperimentForm.getDescription());
         experimentObject.put("nsFile", "file name");
-        experimentObject.put("nsFileContent", "file content");
+        experimentObject.put("nsFileContent", experimentPageCreateExperimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
-
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@ " + experimentObject.toString());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        System.out.println(properties.getSioExpUrl());
-
         HttpEntity<String> request = new HttpEntity<String>(experimentObject.toString(), headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
-
-
 
         //
         // TODO Uploaded function for network configuration and optional dataset

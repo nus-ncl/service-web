@@ -30,12 +30,12 @@
 					<h4 th:text="${message2}"></h4>
 				</div>
                 <h3 th:text="#{exp.info}">Experiment Info</h3>
-                <form  method="post" action="#" th:action="@{/experiments/create}" th:object="${experiment}" role="form" enctype="multipart/form-data">
+                <form  method="post" action="#" th:action="@{/experiments/create}" th:object="${experimentForm}" role="form" enctype="multipart/form-data">
                     <fieldset>
                         <div class="form-group">
                        	 	<label for="teamName"><span th:text="#{exp.selectTeam}">Select team:</span></label>
                             <select class="form-control" th:field="*{teamId}">
-                                <option th:each="teamOption : ${teamMap}" th:value="${teamOption.key}" th:text="${teamOption.value.name + '-' + teamOption.key}">Team Name</option>
+                                <option th:each="team : ${userTeamsList}" th:value="${team.id}" th:text="${team.name + ' (' + team.id + ')'}">Team Name</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -46,24 +46,24 @@
                         	<label for="description" th:text="#{exp.desc}">Description:</label>
                             <input type="text" class="form-control" placeholder="Description" th:field="*{description}"/>
                         </div>
-                        <h3 th:text="#{exp.scenario}">Experiment Scenario</h3>
-                        <div class="form-group">
-                        	<label for="scenarioName" th:text="#{exp.selectScenario}">Select a scenario:</label>
-                        	<select id="selectExpScenario" class="form-control" th:field="*{scenarioFileName}">
-                        		<option value="custom">Custom</option>
-                        		<option th:each="scenarioName: ${scenarioFileNameList}" th:value="${scenarioName}" th:text="${scenarioName}"></option>
-                        	</select>
-                        </div>
+                        <!--<h3 th:text="#{exp.scenario}">Experiment Scenario</h3>-->
+                        <!--<div class="form-group">-->
+                        	<!--<label for="scenarioName" th:text="#{exp.selectScenario}">Select a scenario:</label>-->
+                        	<!--<select id="selectExpScenario" class="form-control" th:field="*{scenarioFileName}">-->
+                        		<!--<option value="custom">Custom</option>-->
+                        		<!--<option th:each="scenarioName: ${scenarioFileNameList}" th:value="${scenarioName}" th:text="${scenarioName}"></option>-->
+                        	<!--</select>-->
+                        <!--</div>-->
                         <div id="custom">
                         	<h3 th:text="#{exp.manuallyConfigure}">Manually configure your topology</h3>
 	                        <div class="form-group">
 	                        	<label for="networkConfiguration" th:text="#{exp.networkConfig}">Network Configuration</label>
-	                        	<input type="file" name="networkConfiguration"/>
+	                        	<textarea rows="30" cols="50" style="resize: none" th:field="*{nsFileContent}" class="form-control"></textarea>
 	                        </div>
-	                        <div class="form-group">
-	                        	<label for="dataset" th:text="#{exp.dataset}">(Optional) Dataset</label>
-	                        	<input type="file" name="dataset"/>
-	                        </div>
+	                        <!--<div class="form-group">-->
+	                        	<!--<label for="dataset" th:text="#{exp.dataset}">(Optional) Dataset</label>-->
+	                        	<!--<input type="file" name="dataset"/>-->
+	                        <!--</div>-->
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-success">Submit</button>
