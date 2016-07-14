@@ -1,17 +1,16 @@
 package sg.ncl;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,13 +19,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -45,7 +40,7 @@ public class MainController {
     
 	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final int ERROR_NO_SUCH_USER_ID = 0;
-    private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
+    private final static Logger logger = Logger.getLogger(MainController.class.getName());
     private int CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
     private boolean IS_USER_ADMIN = false;
     private TeamManager teamManager = TeamManager.getInstance();
@@ -123,9 +118,21 @@ public class MainController {
         return "resources";
     }
 
-    @RequestMapping("/future_plan")
-    public String futureplanDownload() {
-        return "future_plan";
+    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
+    public void futureplanDownload(HttpServletResponse response) {
+        response.setContentType("application/pdf");
+        try {
+            File fileToDownload = new File("src/main/resources/downloads/future_plan.pdf");
+            InputStream is = new FileInputStream(fileToDownload);
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
+            IOUtils.copy(is, response.getOutputStream());
+            response.flushBuffer();
+            is.close();
+        } catch (IOException ex) {
+            logger.info("Error writing file to output stream.");
+            throw new RuntimeException("IOError writing file to output stream");
+        }
     }
 
     @RequestMapping("/contactus")
@@ -926,8 +933,8 @@ public class MainController {
     	   return "team_page_apply_team";
        }
        // log data to ensure data has been parsed
-       LOGGER.log(Level.INFO, "--------Apply for new team info---------");
-       LOGGER.log(Level.INFO, teamPageApplyTeamForm.toString());
+        logger.log(Level.INFO, "--------Apply for new team info---------");
+        logger.log(Level.INFO, teamPageApplyTeamForm.toString());
        return "redirect:/teams/team_application_submitted";
     }
     
@@ -950,7 +957,7 @@ public class MainController {
             return "team_page_join_team";
         }
         // log data to ensure data has been parsed
-        LOGGER.log(Level.INFO, "--------Join team---------");
+        logger.log(Level.INFO, "--------Join team---------");
 
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
