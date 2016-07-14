@@ -28,8 +28,8 @@
                     </div> <!-- panel heading -->
                     <div class="panel-body">
                     	<!-- user's controlled teams have some join request awaiting approval -->
-                    	<th:block th:if="${userHasAnyJoinRequest}">
-	                        <table class="table table-responsive" th:if="not ${teamMapOwnedByUser.isEmpty()}">
+                    	<th:block th:if="not ${#lists.isEmpty(joinApprovalList)}">
+	                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(joinApprovalList)}">
 	                            <thead>
 	                                <th th:text="#{team.table.awaiting.approval.header.name}"></th>
 	                                <th th:text="#{team.table.awaiting.approval.header.email}"></th>
@@ -38,23 +38,33 @@
 	                                <th><!-- Actions --></th>
 	                            </thead>
 	                            <!-- get each team's join request map -->
-	                            <tr th:each="team : ${teamMapOwnedByUser}">
-	                            	<th:block th:each="joinRequestEntry : ${team.value.joinRequestMap}">
-	                            		<td th:text="${joinRequestEntry.value.name}">Request Issuer Name</td>
-	                            		<td th:text="${joinRequestEntry.value.email}">Request Issuer Email</td>
-	                            		<td th:text="${team.value.getUserJoinRequestDate(joinRequestEntry.key)}">Request Issuer Date</td>
-	                            		<td th:text="${team.value.name}">Team wanting to join</td>
-		                                <td>
-		                                    <a href="#" title="Accept" class="btn btn-success" th:href="@{/approve_new_user/accept/{teamId}/{userId}(teamId=${team.key}, userId=${joinRequestEntry.key})}"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a>
-		                                    <a href="#" title="Reject" class="btn btn-danger" th:href="@{/approve_new_user/reject/{teamId}/{userId}(teamId=${team.key}, userId=${joinRequestEntry.key})}"><i class="fa fa-times-circle-o fa-lg"></i> Reject</a>
-		                               </td>
-	                            	</th:block>
-	                            </tr>
+								<tr th:each="joinInfo : ${joinApprovalList}">
+									<td th:text="${joinInfo.userName}">Request Issuer Name</td>
+									<td th:text="${joinInfo.userEmail}">Request Issuer Email</td>
+									<td th:text="${joinInfo.applicationDate}">Request Issuer Date</td>
+									<td th:text="${joinInfo.teamName}">Team wanting to join</td>
+									<td>
+										<a href="#" title="Accept" class="btn btn-success"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a>
+										<a href="#" title="Reject" class="btn btn-danger"><i class="fa fa-times-circle-o fa-lg"></i> Reject</a>
+									</td>
+								</tr>
+	                            <!--<tr th:each="team : ${teamMapOwnedByUser}">-->
+	                            	<!--<th:block th:each="joinRequestEntry : ${team.value.joinRequestMap}">-->
+	                            		<!--<td th:text="${joinRequestEntry.value.name}">Request Issuer Name</td>-->
+	                            		<!--<td th:text="${joinRequestEntry.value.email}">Request Issuer Email</td>-->
+	                            		<!--<td th:text="${team.value.getUserJoinRequestDate(joinRequestEntry.key)}">Request Issuer Date</td>-->
+	                            		<!--<td th:text="${team.value.name}">Team wanting to join</td>-->
+		                                <!--<td>-->
+		                                    <!--<a href="#" title="Accept" class="btn btn-success" th:href="@{/approve_new_user/accept/{teamId}/{userId}(teamId=${team.key}, userId=${joinRequestEntry.key})}"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a>-->
+		                                    <!--<a href="#" title="Reject" class="btn btn-danger" th:href="@{/approve_new_user/reject/{teamId}/{userId}(teamId=${team.key}, userId=${joinRequestEntry.key})}"><i class="fa fa-times-circle-o fa-lg"></i> Reject</a>-->
+		                               <!--</td>-->
+	                            	<!--</th:block>-->
+	                            <!--</tr>-->
 	                        </table>
-	                        <p th:if="${teamMapOwnedByUser.isEmpty()}" th:text="#{user.approve.notTeamOwner}">You are not a team owner of any teams yet.</p>
+	                        <!--<p th:if="${teamMapOwnedByUser.isEmpty()}" th:text="#{user.approve.notTeamOwner}">You are not a team owner of any teams yet.</p>-->
                     	</th:block>
                     	<!-- user's controlled teams have NO join request awaiting approval -->
-                    	<p th:if="not ${userHasAnyJoinRequest}" th:text="#{user.approve.noMembersAwaiting}">You have no members awaiting for your approval yet.</p>
+                    	<p th:if="${#lists.isEmpty(joinApprovalList)}" th:text="#{user.approve.noMembersAwaiting}">You have no members awaiting for your approval yet.</p>
                     </div> <!-- panel body -->
                 </div> <!-- panel -->
             </div> <!-- row -->

@@ -53,21 +53,22 @@
                 <li class="scroll"><a href="event.html">Events</a></li>
                 <li class="scroll"><a href="plan.html">Features</a></li>
                 <li class="scroll"><a href="pricing.html">Pricing</a></li>
-                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
-                    <span class="caret"></span></a>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
+                        <span class="caret"></span></a>
                     <ul class="dropdown-menu ">
                         <li><a href="http://ncl.sg/docs-ncl/">Tutorial</a></li>
                         <li><a href="resources.html">Resources</a></li>
                     </ul>
-                <li class="scroll"><a href="contactus.html">Contact Us</a></li>
                 </li>
+                <li class="scroll"><a href="contactus.html">Contact Us</a></li>
             </ul>
-            <!--   <ul class="nav navbar-nav navbar-right login-navbar-right">
-                      <li><a href="#" th:href="@{/login}">Create account</a></li>
-                  </ul>
-                 <ul class="nav navbar-nav navbar-right login-navbar-right1">
-                      <li><a href="#" th:href="@{/signup2}">Log In</a></li>
-                  </ul>-->
+            <ul class="nav navbar-nav navbar-right login-navbar-right">
+                <li><a href="#" th:href="@{/signup2}">Create account</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right login-navbar-right1">
+                <li><a href="#" th:href="@{/login}">Log In</a></li>
+            </ul>
         </div> <!-- navigation links -->
     </div>
 </div> <!-- main-nav -->
@@ -85,7 +86,7 @@
         </div>
         <p>&nbsp;</p>
 
-        <p align="right"><img src="images/download.png" width="26" height="26" class=""/><a href="future_plan.pdf"> DOWNLOAD </a></p>
+        <p align="right"><img src="images/download.png" width="26" height="26" class=""/><a href="#" th:href="@{/futureplan/download}"> DOWNLOAD </a></p>
 
 
         <div class="table-responsive">
@@ -131,13 +132,13 @@
                     <td><p>V</p></td>
                 </tr>
                 <tr>
-                    <td> <div align="left">Fully Controllable Networks <a href="#" data-toggle="tooltip" title="Control of bandwidth, latency, drop rate etc"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">Fully Controllable Networks <a href="#" data-toggle="tooltip" title="Control of bandwidth, latency, drop rate etc" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>V*</td>
                     <td BGCOLOR="#E0E0E0">V*</td>
                     <td>V*</td>
                 </tr>
                 <tr>
-                    <td> <div align="left">OS Support <a href="#" data-toggle="tooltip" title="(Linux, FreeBSD, Windows)"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">OS Support <a href="#" data-toggle="tooltip" title="(Linux, FreeBSD, Windows)" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>V</td>
                     <td BGCOLOR="#E0E0E0">V</td>
                     <td>V</td>
@@ -155,7 +156,7 @@
                     <td>Docker</td>
                 </tr>
                 <tr>
-                    <td> <div align="left">Creation of SDN-related Experiments <a href="#" data-toggle="tooltip" title="Evaluation of new switch design, new algorithms for multi-controllers management, resilience protocols and security mechanisms, etc"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">Creation of SDN-related Experiments <a href="#" data-toggle="tooltip" title="Evaluation of new switch design, new algorithms for multi-controllers management, resilience protocols and security mechanisms, etc" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>-</td>
                     <td BGCOLOR="#E0E0E0">V*</td>
                     <td>V</td>
@@ -192,7 +193,7 @@
                     <td><p>(uploading and downloading only</p></td>
                 </tr>
                 <tr>
-                    <td> <div align="left">Analytic Tools within NCL Data Repo <a href="#" data-toggle="tooltip" title="searching,sorting,extraction, anonymization etc."><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">Analytic Tools within NCL Data Repo <a href="#" data-toggle="tooltip" title="searching,sorting,extraction, anonymization etc." data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>-</td>
                     <td BGCOLOR="#E0E0E0">-</td>
                     <td>-</td>
@@ -204,7 +205,7 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td> <div align="left">Management Console <a href="#" data-toggle="tooltip" title="Accounts, projects and experiments management through a simple user interface"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">Management Console <a href="#" data-toggle="tooltip" title="Accounts, projects and experiments management through a simple user interface" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>V</td>
                     <td BGCOLOR="#E0E0E0">V</td>
                     <td>V</td>
@@ -247,7 +248,7 @@
                     <td>Software amd high-end dedicated hardware </td>
                 </tr>
                 <tr>
-                    <td> <div align="left">Internet Simulator <a href="#" data-toggle="tooltip" title="Detailed Internet model for simulation of Internet-wide events such as worm spread, DDoS, spam etc"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">Internet Simulator <a href="#" data-toggle="tooltip" title="Detailed Internet model for simulation of Internet-wide events such as worm spread, DDoS, spam etc" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>-</td>
                     <td BGCOLOR="#E0E0E0">V</td>
                     <td>V</td>
@@ -283,13 +284,13 @@
                     <td>Additional: H2O, Flink, etc</td>
                 </tr>
                 <tr>
-                    <td> <div align="left">Distributed Ledger System <a href="#" data-toggle="tooltip" title="For validation and testing of new protocols, data structure and security mechanisms, etc"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">Distributed Ledger System <a href="#" data-toggle="tooltip" title="For validation and testing of new protocols, data structure and security mechanisms, etc" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>Bitcoin </td>
                     <td BGCOLOR="#E0E0E0">Bitcoin and possible others</td>
                     <td>Bitcoin and possible others</td>
                 </tr>
                 <tr>
-                    <td> <div align="left">Cyber Range Infrastructure <a href="#" data-toggle="tooltip" title="Simulated infrastructure for training to defend against cyber attacks scenarios"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">Cyber Range Infrastructure <a href="#" data-toggle="tooltip" title="Simulated infrastructure for training to defend against cyber attacks scenarios" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>-</td>
                     <td BGCOLOR="#E0E0E0">1 simple example (e.g. a test lab) </td>
                     <td>More complex example (e.g. an organization)</td>
@@ -325,19 +326,19 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td> <div align="left">Access Control <a href="#" data-toggle="tooltip" title="Manage user access and encryption keys"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">Access Control <a href="#" data-toggle="tooltip" title="Manage user access and encryption keys" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>V</td>
                     <td BGCOLOR="#E0E0E0">V</td>
                     <td>V</td>
                 </tr>
                 <tr>
-                    <td> <div align="left">Contained experiments <a href="#" data-toggle="tooltip" title="Traffic in one experiment will not affect another"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td> <div align="left">Contained experiments <a href="#" data-toggle="tooltip" title="Traffic in one experiment will not affect another" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                     <td>V</td>
                     <td BGCOLOR="#E0E0E0">V</td>
                     <td>V</td>
                 </tr>
                 <tr>
-                <td> <div align="left">Internet Access <a href="#" data-toggle="tooltip" title="Accessibility to Internet from experiment nodes"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                <td> <div align="left">Internet Access <a href="#" data-toggle="tooltip" title="Accessibility to Internet from experiment nodes" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
                 <td>Isolated (no outgiong Internet access )</td>
                 <td BGCOLOR="#E0E0E0">Controlled</td>
                 <td>Controlled</td>

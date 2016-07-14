@@ -1,17 +1,16 @@
 package sg.ncl;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,13 +19,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -45,7 +40,7 @@ public class MainController {
     
 	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final int ERROR_NO_SUCH_USER_ID = 0;
-    private final static Logger LOGGER = Logger.getLogger(MainController.class.getName());
+    private final static Logger logger = Logger.getLogger(MainController.class.getName());
     private int CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
     private boolean IS_USER_ADMIN = false;
     private TeamManager teamManager = TeamManager.getInstance();
@@ -123,9 +118,21 @@ public class MainController {
         return "resources";
     }
 
-    @RequestMapping("/future_plan")
-    public String futureplanDownload() {
-        return "future_plan";
+    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
+    public void futureplanDownload(HttpServletResponse response) {
+        response.setContentType("application/pdf");
+        try {
+            File fileToDownload = new File("src/main/resources/downloads/future_plan.pdf");
+            InputStream is = new FileInputStream(fileToDownload);
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
+            IOUtils.copy(is, response.getOutputStream());
+            response.flushBuffer();
+            is.close();
+        } catch (IOException ex) {
+            logger.info("Error writing file to output stream.");
+            throw new RuntimeException("IOError writing file to output stream");
+        }
     }
 
     @RequestMapping("/contactus")
@@ -630,11 +637,71 @@ public class MainController {
     
     @RequestMapping("/approve_new_user")
     public String approveNewUser(Model model, HttpSession session) {
-    	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
-    	rv = teamManager.getTeamMapByTeamOwner(getSessionIdOfLoggedInUser(session));
-    	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
-    	model.addAttribute("teamMapOwnedByUser", rv);
-    	model.addAttribute("userHasAnyJoinRequest", userHasAnyJoinRequest);
+//    	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
+//    	rv = teamManager.getTeamMapByTeamOwner(getSessionIdOfLoggedInUser(session));
+//    	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
+//    	model.addAttribute("teamMapOwnedByUser", rv);
+//    	model.addAttribute("userHasAnyJoinRequest", userHasAnyJoinRequest);
+
+        List<JoinRequestApproval> rv = new ArrayList<>();
+        List<JoinRequestApproval> temp;
+
+        // get list of teamids
+        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
+
+        JSONObject object = new JSONObject(responseEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+            ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
+
+            Team2 team2 = new Team2();
+            JSONObject teamObject = new JSONObject(teamResponseEntity.getBody().toString());
+            JSONArray membersArray = teamObject.getJSONArray("members");
+
+            team2.setId(teamObject.getString("id"));
+            team2.setName(teamObject.getString("name"));
+
+            boolean isTeamLeader = false;
+            temp = new ArrayList<>();
+
+            for (int j = 0; j < membersArray.length(); j++) {
+                JSONObject memberObject = membersArray.getJSONObject(j);
+                String userId = memberObject.getString("userId");
+                String teamMemberType = memberObject.getString("memberType");
+                String teamMemberStatus = memberObject.getString("memberStatus");
+                String teamJoinedDate = memberObject.get("joinedDate").toString();
+
+                JoinRequestApproval joinRequestApproval = new JoinRequestApproval();
+
+                if (userId.equals(session.getAttribute("id").toString()) && teamMemberType.equals(memberTypeOwner)) {
+                    isTeamLeader = true;
+                }
+
+                if (teamMemberStatus.equals("PENDING") && teamMemberType.equals(memberTypeMember)) {
+                    User2 myUser = invokeAndExtractUserInfo(userId);
+                    joinRequestApproval.setUserId(myUser.getId());
+                    joinRequestApproval.setUserEmail(myUser.getEmail());
+                    joinRequestApproval.setUserName(myUser.getFirstName() + " " + myUser.getLastName());
+                    joinRequestApproval.setApplicationDate(teamJoinedDate);
+                    joinRequestApproval.setTeamId(team2.getId());
+                    joinRequestApproval.setTeamName(team2.getName());
+
+                    temp.add(joinRequestApproval);
+                }
+            }
+
+            if (isTeamLeader) {
+                if (!temp.isEmpty()) {
+                    rv.addAll(temp);
+                }
+            }
+
+        }
+
+        model.addAttribute("joinApprovalList", rv);
+
     	return "approve_new_user";
     }
     
@@ -654,13 +721,13 @@ public class MainController {
     
     @RequestMapping("/teams")
     public String teams(Model model, HttpSession session) {
-        int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
-        model.addAttribute("infoMsg", teamManager.getInfoMsg());
-        model.addAttribute("currentLoggedInUserId", currentLoggedInUserId);
-        model.addAttribute("teamMap", teamManager.getTeamMap(currentLoggedInUserId));
-        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
-        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
+//        int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
+//        model.addAttribute("infoMsg", teamManager.getInfoMsg());
+//        model.addAttribute("currentLoggedInUserId", currentLoggedInUserId);
+//        model.addAttribute("teamMap", teamManager.getTeamMap(currentLoggedInUserId));
+//        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
+//        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
+//        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
         // get list of teamids
         ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
@@ -676,6 +743,11 @@ public class MainController {
             ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
             Team2 team2 = extractTeamInfo(teamResponseEntity.getBody().toString());
             teamManager2.addTeamToTeamMap(team2);
+
+            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(session.getAttribute("id").toString(), teamResponseEntity.getBody().toString());
+            if (joinRequestTeam != null) {
+                teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
+            }
 //            System.out.println(teamResponseEntity.getBody().toString());
         }
 
@@ -689,10 +761,11 @@ public class MainController {
             teamManager2.addTeamToPublicTeamMap(team2);
         }
 
+
         model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
         model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
-
+        model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
         return "teams";
     }
     
@@ -779,7 +852,7 @@ public class MainController {
 
         Team2 team = extractTeamInfo(responseEntity.getBody().toString());
 
-        model.addAttribute("currentLoggedInUserId", getSessionIdOfLoggedInUser(session));
+//        model.addAttribute("currentLoggedInUserId", getSessionIdOfLoggedInUser(session));
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
         model.addAttribute("membersList", team.getMembersList());
@@ -860,8 +933,8 @@ public class MainController {
     	   return "team_page_apply_team";
        }
        // log data to ensure data has been parsed
-       LOGGER.log(Level.INFO, "--------Apply for new team info---------");
-       LOGGER.log(Level.INFO, teamPageApplyTeamForm.toString());
+        logger.log(Level.INFO, "--------Apply for new team info---------");
+        logger.log(Level.INFO, teamPageApplyTeamForm.toString());
        return "redirect:/teams/team_application_submitted";
     }
     
@@ -884,7 +957,7 @@ public class MainController {
             return "team_page_join_team";
         }
         // log data to ensure data has been parsed
-        LOGGER.log(Level.INFO, "--------Join team---------");
+        logger.log(Level.INFO, "--------Join team---------");
 
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
@@ -984,6 +1057,7 @@ public class MainController {
 
         //
         // TODO Uploaded function for network configuration and optional dataset
+
 //		if (!networkFile.isEmpty()) {
 //			try {
 //				String networkFileName = getSessionIdOfLoggedInUser(session) + "-networkconfig-" + networkFile.getOriginalFilename();
@@ -1023,7 +1097,7 @@ public class MainController {
 //        experimentManager.addExperiment(getSessionIdOfLoggedInUser(session), experiment);
 //        // increase exp count to be display on Teams page
 //        teamManager.incrementExperimentCount(experiment.getTeamId());
-        
+
         return "redirect:/experiments";
     }
     
@@ -1470,6 +1544,34 @@ public class MainController {
         team2.setMembersCount(membersArray.length());
 
         return team2;
+    }
+
+    public Team2 extractTeamInfoUserJoinRequest(String userId, String json) {
+        Team2 team2 = new Team2();
+        JSONObject object = new JSONObject(json);
+        JSONArray membersArray = object.getJSONArray("members");
+
+        for (int i = 0; i < membersArray.length(); i++) {
+            JSONObject memberObject = membersArray.getJSONObject(i);
+            String uid = memberObject.getString("userId");
+            String teamMemberStatus = memberObject.getString("memberStatus");
+            if (uid.equals(userId) && teamMemberStatus.equals("PENDING")) {
+
+                team2.setId(object.getString("id"));
+                team2.setName(object.getString("name"));
+                team2.setDescription(object.getString("description"));
+                team2.setWebsite(object.getString("website"));
+                team2.setOrganisationType(object.getString("organisationType"));
+                team2.setStatus(object.getString("status"));
+                team2.setVisibility(object.getString("visibility"));
+                team2.setMembersCount(membersArray.length());
+
+                return team2;
+            }
+        }
+
+        // no such member in the team found
+        return null;
     }
 
     public User2 invokeAndExtractUserInfo(String userId) {
