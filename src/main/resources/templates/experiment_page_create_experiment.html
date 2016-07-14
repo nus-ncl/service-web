@@ -34,8 +34,8 @@
                     <fieldset>
                         <div class="form-group">
                        	 	<label for="teamName"><span th:text="#{exp.selectTeam}">Select team:</span></label>
-                            <select class="form-control" th:field="*{teamId}">
-                                <option th:each="team : ${userTeamsList}" th:value="${team.id}" th:text="${team.name + ' (' + team.id + ')'}">Team Name</option>
+                            <select class="form-control" th:field="*{teamNameWithId}">
+                                <option th:each="team : ${userTeamsList}" th:value="${team.name + ':' + team.id}" th:text="${team.name + ' (' + team.id + ')'}">Team Name</option>
                             </select>
                         </div>
                         <div class="form-group">

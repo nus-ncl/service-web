@@ -9,6 +9,10 @@ public class ExperimentPageCreateExperimentForm {
     @Size(min = 1, message = "Team cannot be empty")
     private String teamId;
 
+    private String teamName;
+
+    private String teamNameWithId;
+
     @NotNull(message = "Name cannot be empty")
     @Size(min = 1, message = "Name cannot be empty")
     private String name;
@@ -31,7 +35,7 @@ public class ExperimentPageCreateExperimentForm {
         return teamId;
     }
 
-    public void setTeamId(String teamId) {
+    void setTeamId(String teamId) {
         this.teamId = teamId;
     }
 
@@ -81,5 +85,26 @@ public class ExperimentPageCreateExperimentForm {
 
     public void setMaxDuration(Integer maxDuration) {
         this.maxDuration = maxDuration;
+    }
+
+    public String getTeamNameWithId() {
+        return teamNameWithId;
+    }
+
+    public void setTeamNameWithId(String teamNameWithId) {
+        this.teamNameWithId = teamNameWithId;
+        // separate team name and team id
+        // cannot split by '-' because id has '-'
+        String[] parts = teamNameWithId.split(":");
+        this.teamName = parts[0];
+        this.teamId = parts[1];
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    void setTeamName(String teamName) {
+        this.teamName = teamName;
     }
 }

@@ -8,6 +8,7 @@ public class Experiment2 {
     private Long id;
     private String userId;
     private String teamId;
+    private String teamName;
     private String name;
     private String description;
     private String nsFile;
@@ -17,13 +18,21 @@ public class Experiment2 {
 
     public Experiment2() {}
 
-    public Experiment2(final Long id, final String userId, final String teamId, final String name,
-                       final String description, final String nsFile, final String nsFileContent,
-                       final Integer idleSwap, final Integer maxDuration) {
+    public Experiment2(final Long id,
+                       final String userId,
+                       final String teamId,
+                       final String teamName,
+                       final String name,
+                       final String description,
+                       final String nsFile,
+                       final String nsFileContent,
+                       final Integer idleSwap,
+                       final Integer maxDuration) {
 
         this.id = id;
         this.userId = userId;
         this.teamId = teamId;
+        this.teamName = teamName;
         this.name = name;
         this.description = description;
         this.nsFile = nsFile;
@@ -54,6 +63,14 @@ public class Experiment2 {
 
     public void setTeamId(String teamId) {
         this.teamId = teamId;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
     }
 
     public String getName() {

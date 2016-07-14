@@ -916,8 +916,18 @@ public class MainController {
     
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
     public String experiments(Model model, HttpSession session) {
-        model.addAttribute("teamManager", teamManager);
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
+
+        List<Experiment2> experimentList = new ArrayList<>();
+        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioExpUrl() + "/users/" + session.getAttribute("id").toString());
+
+        JSONArray experimentsArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i = 0; i < experimentsArray.length(); i++) {
+            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(i).toString());
+            experimentList.add(experiment2);
+        }
+
+        model.addAttribute("experimentList", experimentList);
         return "experiments";
     }
     
@@ -956,12 +966,15 @@ public class MainController {
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
         experimentObject.put("teamId", experimentPageCreateExperimentForm.getTeamId());
+        experimentObject.put("teamName", experimentPageCreateExperimentForm.getTeamName());
         experimentObject.put("name", experimentPageCreateExperimentForm.getName());
         experimentObject.put("description", experimentPageCreateExperimentForm.getDescription());
         experimentObject.put("nsFile", "file name");
         experimentObject.put("nsFileContent", experimentPageCreateExperimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
+
+        System.out.println(experimentObject.toString());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -1482,6 +1495,7 @@ public class MainController {
         experiment2.setId(object.getLong("id"));
         experiment2.setUserId(object.getString("userId"));
         experiment2.setTeamId(object.getString("teamId"));
+        experiment2.setTeamName(object.getString("teamName"));
         experiment2.setName(object.getString("name"));
         experiment2.setDescription(object.getString("description"));
         experiment2.setNsFile(object.getString("nsFile"));
