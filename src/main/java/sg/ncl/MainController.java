@@ -706,8 +706,21 @@ public class MainController {
     }
     
     @RequestMapping("/approve_new_user/accept/{teamId}/{userId}")
-    public String userSideAcceptJoinRequest(@PathVariable Integer teamId, @PathVariable Integer userId) {
-        teamManager.acceptJoinRequest(userId, teamId);
+    public String userSideAcceptJoinRequest(@PathVariable String teamId, @PathVariable String userId, HttpSession session) {
+
+        JSONObject mainObject = new JSONObject();
+        JSONObject userFields = new JSONObject();
+
+        userFields.put("id", session.getAttribute("id").toString());
+        mainObject.put("user", userFields);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+
         return "redirect:/approve_new_user";
     }
     

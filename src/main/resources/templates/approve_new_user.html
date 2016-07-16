@@ -44,7 +44,7 @@
 									<td th:text="${joinInfo.applicationDate}">Request Issuer Date</td>
 									<td th:text="${joinInfo.teamName}">Team wanting to join</td>
 									<td>
-										<a href="#" title="Accept" class="btn btn-success"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a>
+										<a href="#" th:href="@{/approve_new_user/accept/{teamId}/{userId}(teamId=${joinInfo.teamId},userId=${joinInfo.userId})}" title="Accept" class="btn btn-success"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a>
 										<a href="#" title="Reject" class="btn btn-danger"><i class="fa fa-times-circle-o fa-lg"></i> Reject</a>
 									</td>
 								</tr>
