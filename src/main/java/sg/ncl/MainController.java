@@ -2,6 +2,7 @@ package sg.ncl;
 
 import java.io.*;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
@@ -636,7 +639,7 @@ public class MainController {
     //--------------------User Side Approve Members Page------------
     
     @RequestMapping("/approve_new_user")
-    public String approveNewUser(Model model, HttpSession session) {
+    public String approveNewUser(Model model, HttpSession session) throws Exception {
 //    	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
 //    	rv = teamManager.getTeamMapByTeamOwner(getSessionIdOfLoggedInUser(session));
 //    	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
@@ -671,7 +674,7 @@ public class MainController {
                 String userId = memberObject.getString("userId");
                 String teamMemberType = memberObject.getString("memberType");
                 String teamMemberStatus = memberObject.getString("memberStatus");
-                String teamJoinedDate = memberObject.get("joinedDate").toString();
+                String teamJoinedDate = formatZonedDateTime(memberObject.get("joinedDate").toString());
 
                 JoinRequestApproval joinRequestApproval = new JoinRequestApproval();
 
@@ -1556,5 +1559,18 @@ public class MainController {
 
     public String getStubUserID() {
         return USER_ID;
+    }
+
+    /**
+     *
+     * @param zonedDateTimeJSON JSON string
+     * @return
+     */
+    private String formatZonedDateTime(String zonedDateTimeJSON) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ZonedDateTime zonedDateTime = mapper.readValue(zonedDateTimeJSON, ZonedDateTime.class);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
+        return zonedDateTime.format(format);
     }
 }
