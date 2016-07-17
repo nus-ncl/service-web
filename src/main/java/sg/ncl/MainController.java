@@ -32,7 +32,7 @@ import sg.ncl.testbed_interface.*;
  * 
  * Spring Controller
  * Direct the views to appropriate locations and invoke the respective REST API
- * @author yeoteye
+ * @author Cassie, Desmond, Te Ye
  * 
  */
 @Controller
