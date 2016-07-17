@@ -45,7 +45,10 @@
                                 <td th:unless="${teamEntry.value.isUserTeamOwner(userEmail)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
                                 <td><a href="#" th:href="@{/team_profile/{teamId}(teamId=${teamEntry.key})}"><span th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</span></a></td>
                                 <td th:text="${teamEntry.value.description}">Description</td>
-                                <td><span th:text="${teamEntry.value.membersCount}">Members</span></td>
+                                <td>
+                                    <span th:text="${teamEntry.value.membersCount}">Members</span>
+                                    <a href="#" th:href="@{/approve_new_user}"><span class="label label-warning" th:if="${not #lists.isEmpty(teamEntry.value.pendingMembersList)}" th:text="${teamEntry.value.pendingMembersList.size()}" data-toggle="tooltip" data-placement="bottom" title="Members pending for your approval">Members Awaiting Approval</span></a>
+                                </td>
                                 <!--<td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>-->
                                 <!--<td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" th:href="@{/teams/invite_members/{teamId}(teamId=${teamEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>-->
                                 <!--<td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">-&#45;&#45;</td>-->

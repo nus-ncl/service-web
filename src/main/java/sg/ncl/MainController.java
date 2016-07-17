@@ -1494,18 +1494,23 @@ public class MainController {
             JSONObject memberObject = membersArray.getJSONObject(i);
             String userId = memberObject.getString("userId");
             String teamMemberType = memberObject.getString("memberType");
+            String teamMemberStatus = memberObject.getString("memberStatus");
+
             User2 myUser = invokeAndExtractUserInfo(userId);
             if (teamMemberType.equals(memberTypeMember)) {
                 team2.addMembers(myUser);
+
+                // add to pending members list for Members Awaiting Approval function
+                if (teamMemberStatus.equals("PENDING")) {
+                    team2.addPendingMembers(myUser);
+                }
+
             } else if (teamMemberType.equals(memberTypeOwner)) {
                 // explicit safer check
                 team2.setOwner(myUser);
             }
         }
-
-        // TODO need to check for pending for approval members count
         team2.setMembersCount(membersArray.length());
-
         return team2;
     }
 
