@@ -20,9 +20,11 @@ public class Team2 {
     private int membersCount;
     private User2 owner;
     private List<User2> membersList;
+    private List<User2> pendingMembersList;
     private HashMap<String, String> membersStatusMap; // userId, join status: e.g. PENDING, APPROVED
 
     public Team2() {
+        pendingMembersList = new ArrayList<>();
         membersList = new ArrayList<>();
         membersStatusMap = new HashMap<>();
     }
@@ -119,6 +121,10 @@ public class Team2 {
         membersList.add(user);
     }
 
+    public void addPendingMembers(User2 user) {
+        pendingMembersList.add(user);
+    }
+
     public boolean isUserTeamOwner(String email) {
         if (owner == null) {
             return false;
@@ -138,5 +144,9 @@ public class Team2 {
 
     public void addMembersStatus(String userId, String memberStatus) {
         membersStatusMap.put(userId, memberStatus);
+    }
+
+    public List<User2> getPendingMembersList() {
+        return pendingMembersList;
     }
 }
