@@ -130,6 +130,7 @@
 			                        
 	                                <div class="form-group">
 	                                	<h4 th:text="#{signup.noTeam}">You need to be a part of a team to use our resources.</h4>
+										<p>&nbsp;</p>
 	                                	<div class="row">
 		                                	<div class="col-sm-6">
 		                                		<button type="button" class="btn btn-primary btn-block apply-create-team">Apply to create a new team</button>
@@ -138,6 +139,7 @@
 		                                		<button type="button" class="btn btn-primary btn-block apply-join-team">Apply to join an existing team</button>
 		                                	</div>
 	                                	</div>
+										<p>&nbsp;</p>
 	                                	<button type="button" class="btn btn-default btn-prev">Previous</button>
 	                                </div>
                                 </fieldset>
@@ -219,5 +221,6 @@
                 <div class="col-md-1"></div>
             </div> <!-- row -->
         </div> <!-- container -->
-    </body>
+		<div th:replace="fragments/footer :: footer"></div>
+	</body>
 </html>

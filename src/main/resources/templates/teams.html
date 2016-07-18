@@ -28,8 +28,14 @@
                         <!--<strong>Info!</strong> <span th:text="${infoMsg}"></span>-->
                     <!--</div>-->
                 <!--</div>-->
-                <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2><a data-toggle="collapse" href="#collapse1"><i class="fa fa-caret-square-o-down fa-lg"></i></a>
+                <p>&nbsp;</p>
+
+
+
                 <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team">
+                    <!--<div class="panel-heading">-->
+                        <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2>
+                    <!--</div> &lt;!&ndash; panel heading &ndash;&gt;-->
                     <div class="panel-body">
                         <table class="table table-responsive" th:if="not ${teamMap2.isEmpty()}">
                             <thead>
@@ -51,15 +57,18 @@
                                 <!--<td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">-&#45;&#45;</td>-->
                             </tr>
                         </table>
+
                         <p th:if="${teamMap2.isEmpty()}" th:text="#{team.haveToBeATeam}">You have to be part of a team to use the resources.</p>
                     </div> <!-- panel body -->
-                    <div class="panel-footer">
-                        <a href="teamPageApplyTeam" th:href="@{/teams/apply_team}" class="btn btn-primary"><i class="fa fa-plus"></i> Apply a New Team</a>
-                        <a href="teamPageJoinTeam" th:href="@{/teams/join_team}" class="btn btn-primary"><i class="fa fa-plus"></i> Join Team</a>
+                    <div class="panel-footer ">
+                        <a href="teamPageApplyTeam" th:href="@{/teams/apply_team}" class="btn btn-success"><i class="fa fa-plus"></i> Apply a New Team</a>
+                        <a href="teamPageJoinTeam" th:href="@{/teams/join_team}" class="btn btn-success"><i class="fa fa-plus"></i> Join Team</a>
                     </div>
                 </div> <!-- panel primary -->
-                <h2 class="text-success team-heading team-heading-request-participation" th:text="#{team.heading.requestParticipation}">text heading from .properties</h2>
-                    <div class="panel panel-default team-panel team-panel-request-participation">
+                    <div class="panel panel-primary team-panel team-panel-current-team">
+                        <!--<div class="panel-heading">-->
+                            <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.requestParticipation}">text heading from .properties</h2>
+                        <!--</div> &lt;!&ndash; panel heading &ndash;&gt;-->
 	                    <div class="panel-body">
                             <!--<div th:if="${#lists.isEmpty(invitedToParticipateMap2)}">-->
                                 <!--<p th:text="#{team.haveNotBeenInvited}">You have not been invited to participate in any teams yet.</p>-->
@@ -80,8 +89,8 @@
 	                        <!--</table>-->
 	                    </div> <!-- panel body -->
                     </div> <!-- panel -->
-                <h2 class="team-heading-join-request team-heading" th:text="#{team.heading.requestJoin}">text heading from .properties</h2>
-                    <div class="panel panel-default team-panel team-panel-join-request">
+                        <div class="panel panel-primary team-panel team-panel-current-team ">
+                                <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.requestJoin}">text heading from .properties</h2>
                         <div class="panel-body">
                             <div th:if="${userJoinRequestMap.isEmpty()}">
                                 <p th:text="#{team.haveNotRequestedToJoin}">You have not requested to join any teams yet.</p>
@@ -101,8 +110,8 @@
                             </table>
                         </div> <!-- panel body -->
                     </div> <!-- panel -->
-                <h2 class="team-heading" th:text="#{team.heading.public}">text heading from .properties</h2>
-                    <div class="panel panel-default team-panel">
+                        <div class="panel panel-primary team-panel team-panel-current-team ">
+                                <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.public}">text heading from .properties</h2>
 	                    <div class="panel-body">
 	                        <table class="table table-responsive">
 	                            <thead>
@@ -120,5 +129,6 @@
                     </div> <!-- panel -->
             </div> <!-- row -->
         </div> <!-- container -->
+        <div th:replace="fragments/footer :: footer"></div>
     </body>
 </html>

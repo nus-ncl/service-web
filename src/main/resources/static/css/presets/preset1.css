@@ -6,16 +6,16 @@ a,
 .single-table.featured .btn.btn-primary, 
 .contact-info ul li a:hover, 
 #footer .footer-bottom a  {
-  color: #028fcc;
+  color: #21b3b7;
 }
 
 .btn.btn-primary:hover,
 .btn-submit:hover {
-  background-color: #027db3
+  background-color: #1eafbb
 }
 
 a:hover, a:focus {
-	color: #027db3;
+	color: #1eafbb;
 }
 
 
@@ -52,15 +52,15 @@ a:hover, a:focus {
 .twitter-left-control:hover, 
 .twitter-right-control:hover, 
 .btn-loadmore:hover  {
-	border: 1px solid #028fcc;
+	border: 1px solid #21b3b7;
 }
 
 .caption .btn-start:hover, 
 .left-control:hover, 
 .right-control:hover {
-	border-color: #028fcc;
+	border-color: #21b3b7;
 }
 
 .twitter-icon .fa-twitter:after {
-	border-color: #028fcc transparent transparent;
+	border-color: #21b3b7 transparent transparent;
 }

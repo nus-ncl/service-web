@@ -17,7 +17,7 @@
 }
 
 .dashboard-navbar li a:hover, .dashboard-navbar li.active a {
-    color: #039be5 !important;
+    color: #1eafbb !important;
     background-color: #FFF !important;
 }
 
@@ -44,14 +44,14 @@
 .registration-panel {
     padding: 10px;
     margin-top: 50px;
-    border-color: #039be5;
+    /*border-color: #333;*/
     border-radius: 10px;
     background-color:rgba(255,255,255, 0.8) !important;
 }
 
 .registration-panel .panel-heading {
     background: none;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     text-align: center;
     color: #777;
 }
@@ -86,7 +86,7 @@
     font-size: 11px;
     color: #000;
     background: #FFF;
-    border: 1px #039be5 solid;
+    border: 1px #1eafbb solid;
     border-raidus: 3px;
     margin: 0 auto 5px auto;
 }
@@ -96,7 +96,7 @@
     content: '';
     width: 100%;
     height: 2px;
-    background: #039be5;
+    background: #1eafbb;
     position: absolute;
     left: -50%;
     top: 14px;
@@ -111,17 +111,25 @@
 /*marking active/completed steps green*/
 /*The number of the step and the connector before it = green*/
 #progressbar li.active:before, #progressbar li.active:after {
-    background: #039be5;
+    background: #1eafbb;
     color: #FFF;
 }
 
 /* teams */
+.team-panel {
+    border: 0;
+}
+
 .team-heading-current-team {
-    color: #039be5;
+    color: #FFF;
+    background-color : #333;
+    padding: 15px;
+    padding-top: 15px;
+    font-size: 22px;
 }
 
 .team-panel-current-team {
-    border-color: #039be5;
+    border-color: #1eafbb;
 }
 
 .team-heading-request-participation {
@@ -164,6 +172,13 @@
     font-weight: bold;
     color: #29a20d;
 }
+
+/* account details page */
+.account-change-fail {
+    font-weight: bold;
+    color: #dd4b39;
+}
+
 
 .password-change-mismatch {
     font-weight: bold;
@@ -252,7 +267,7 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 24px;
     color: #666;
     background-color: #fff;
@@ -346,15 +361,16 @@ h24 {
     color: #fff;
 }
 
-/*
-.btn {
-  border: 0;
-  border-radius: 0;
-}
 
-.btn.btn-primary:hover {
-  background-color: #017fb5;
-}*/
+/*.btn {*/
+  /*border: 0;*/
+  /*border-radius: 0;*/
+/*}*/
+
+/*.btn.btn-primary:hover {*/
+  /*background-color: #1eafbb;*/
+/*}*/
+
 .navbar-header {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -583,7 +599,7 @@ section {
 }
 
 .h12 {
-    color : #028fcc;
+    color : #21b3b7;
 }
 
 /*************************
@@ -912,8 +928,8 @@ Waypoints
 }
 
 .dashboard-navbar-right > li > a {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 40px;
+    padding-bottom: 25px;
 }
 
 
@@ -921,7 +937,7 @@ Waypoints
     color: #000;
     background-color:#FFF;
     text-transform: uppercase;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     margin-top : 20px;
     border-radius:4px;
@@ -931,12 +947,12 @@ Waypoints
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: #FFF;
     /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
 }
 
 .dropdown-menu li a:hover {
-    color: #028fcc;
+    color: #21b3b7;
 }
 
 /*************************
@@ -1090,6 +1106,7 @@ ul.address {
 
 #footer {
     color:#fff;
+
 }
 
 #footer1 {
@@ -1266,7 +1283,7 @@ h10 {
 }
 
 h12 {
-    color : #028fcc;
+    color : #21b3b7;
 }
 
 
@@ -1279,7 +1296,7 @@ h12 {
 }
 
 h13{
-    color : #028fcc;
+    color : #21b3b7;
 }
 
 .icon-pad{
@@ -1520,20 +1537,60 @@ h20 {
 
 table {
     width:100%;
+    padding: 12px;
 }
-table, th, td {
-    border: 1px solid #CCC;
+
+/*th, td {*/
+    /*padding: 12px;*/
+    /*text-align: center;*/
+/*}*/
+
+
+.table1{
     border-collapse: collapse;
+    text-align: center;
+    padding: 12px !important;
 }
-th, td {
+
+.table1 {
+    border: 1px solid #CCC;
+    padding: 12px;
+}
+
+.table1 th {
+    border: 1px solid #CCC;
     padding: 12px;
     text-align: center;
 }
 
-
-table#t01 th {
-    background-color: #CCC;
-    color: white;
+.table1 tr > td {
+    border: 1px solid #CCC;
+    padding: 12px;
 }
+
+.dashhead{
+    color : #1eafbb;
+    font-weight: bold;
+}
+
+.over1{
+    color: #FFF;
+    font-size: 18px;
+}
+
+.dashpanel{
+     border: 0px;
+ }
+
+.dashpanel2{
+    border-bottom: 1px solid #CCC;
+    padding: 8px;
+}
+
+.loginhead{
+    background-color: #333333;
+
+}
+
 
 
