@@ -54,6 +54,7 @@
     margin-bottom: 5px;
     text-align: center;
     color: #777;
+    border-color: #1eafbb;
 }
 
 /*progressbar*/
@@ -1106,7 +1107,10 @@ ul.address {
 
 #footer {
     color:#fff;
+}
 
+.footer-bgcolor {
+    background-color: #000;
 }
 
 #footer1 {
