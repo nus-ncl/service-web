@@ -153,6 +153,11 @@
     margin-bottom: 100px;
 }
 
+.team-panel-footer {
+    /* to get rid of the top border in the panel footer */
+    border: 0;
+}
+
 .badge-danger {
     background-color: #dd4b39;
 }
@@ -1601,6 +1606,57 @@ table {
     margin-bottom: 20px;
     font-weight: bold;
     color:#000;
+}
+
+/* for standardized button colors */
+.btn-standard{
+    font-weight: bold;
+    color:#333;
+    background-color: #f3f3f3;
+    border-color: #cacaca;
+}
+
+.btn-standard.focus,.btn-standard:focus{
+    color:#333;
+    background-color:#f3f3f3;
+    border-color:#cacaca;
+}
+
+.btn-standard:hover{
+    font-weight: bold;
+    color:#333;
+    background-color: #e4e4e4;
+    border-color:#cacaca;
+}
+
+/* for special registration button colors */
+.btn-special{
+    font-weight: bold;
+    color:#1eafbb;
+    background-color: #f3f3f3;
+    border-color: #cacaca;
+}
+
+.btn-special.focus,.btn-special:focus{
+    color:#1eafbb;
+    background-color:#f3f3f3;
+    border-color:#cacaca;
+}
+
+.btn-special:hover{
+    font-weight: bold;
+    color:#1eafbb;
+    background-color: #e4e4e4;
+    border-color:#cacaca;
+}
+
+/* for the standardized icon colors */
+.btn-fa-green {
+    color: #1eafbb;
+}
+
+.btn-fa-red {
+    color: #dd4b39;
 }
 
 

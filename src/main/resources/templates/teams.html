@@ -63,9 +63,9 @@
 
                         <p th:if="${teamMap2.isEmpty()}" th:text="#{team.haveToBeATeam}">You have to be part of a team to use the resources.</p>
                     </div> <!-- panel body -->
-                    <div class="panel-footer ">
-                        <a href="teamPageApplyTeam" th:href="@{/teams/apply_team}" class="btn btn-success"><i class="fa fa-plus"></i> Apply a New Team</a>
-                        <a href="teamPageJoinTeam" th:href="@{/teams/join_team}" class="btn btn-success"><i class="fa fa-plus"></i> Join Team</a>
+                    <div class="panel-footer team-panel-footer ">
+                        <a href="teamPageApplyTeam" th:href="@{/teams/apply_team}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Apply a New Team</a>
+                        <a href="teamPageJoinTeam" th:href="@{/teams/join_team}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Join Team</a>
                     </div>
                 </div> <!-- panel primary -->
                     <div class="panel panel-primary team-panel team-panel-current-team">
@@ -108,7 +108,7 @@
                                 <tr th:each="team : ${userJoinRequestMap}">
                                    <td th:text="${team.value.name}">Name</td>
                                    <td th:text="${team.value.description}">Description</td>
-                                   <td><a href="#" class="btn btn-danger" th:href="@{/withdraw/{teamId}(teamId=${team.value.id})}"><i class="fa fa-minus-circle"></i> Withdraw</a></td>
+                                   <td><a href="#" class="btn btn-standard" th:href="@{/withdraw/{teamId}(teamId=${team.value.id})}"><i class="fa fa-minus-circle btn-fa-red"></i> Withdraw</a></td>
                                 </tr>
                             </table>
                         </div> <!-- panel body -->
