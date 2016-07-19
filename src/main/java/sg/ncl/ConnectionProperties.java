@@ -18,6 +18,7 @@ public class ConnectionProperties {
     private String userEndpoint;
     private String teamEndpoint;
     private String teamVisibilityEndpoint;
+    private String expEndpoint;
     private String approveJoinRequest;
 
     public String getSioAddress() {
@@ -76,6 +77,14 @@ public class ConnectionProperties {
         this.teamEndpoint = teamEndpoint;
     }
 
+    public String getExpEndpoint() {
+        return expEndpoint;
+    }
+
+    public void setExpEndpoint(String expEndpoint) {
+        this.expEndpoint = expEndpoint;
+    }
+
     public String getSioUsersUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/";
     }
@@ -83,6 +92,7 @@ public class ConnectionProperties {
     public String getSioTeamsUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
     }
+
     public String getSioAuthUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + authEndpoint + "/";
     }
@@ -102,6 +112,9 @@ public class ConnectionProperties {
     public void setTeamVisibilityEndpoint(String teamVisibilityEndpoint) {
         this.teamVisibilityEndpoint = teamVisibilityEndpoint;
     }
+
+    public String getSioExpUrl() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/"; }
 
     public String getApproveJoinRequest(String teamId, String userId) {
         return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
