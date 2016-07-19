@@ -1627,6 +1627,8 @@ public class MainController {
         experiment2.setMaxDuration(object.getInt("maxDuration"));
 
         return experiment2;
+    }
+
     /**
      *
      * @param zonedDateTimeJSON JSON string
