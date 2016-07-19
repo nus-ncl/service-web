@@ -1042,7 +1042,7 @@ public class MainController {
         experimentObject.put("teamName", experimentPageCreateExperimentForm.getTeamName());
         experimentObject.put("name", experimentPageCreateExperimentForm.getName());
         experimentObject.put("description", experimentPageCreateExperimentForm.getDescription());
-        experimentObject.put("nsFile", "file name");
+        experimentObject.put("nsFile", "file");
         experimentObject.put("nsFileContent", experimentPageCreateExperimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
