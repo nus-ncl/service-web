@@ -142,6 +142,19 @@ public class MainController {
     public String contactus() {
         return "contactus";
     }
+
+    @RequestMapping("/notfound")
+    public String redirectNotFound(HttpSession session) {
+        if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
+            // user is already logged on and has encountered an error
+            // redirect to dashboard
+            return "redirect:/dashboard";
+        } else {
+            // user have not logged on before
+            // redirect to home page
+            return "redirect:/";
+        }
+    }
     
     @RequestMapping(value="/login", method=RequestMethod.GET)
     public String login(Model model) {
