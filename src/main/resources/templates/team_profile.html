@@ -87,81 +87,12 @@
                                 <td th:text="#{team.members.memberType.member}">MEMBER TYPE</td>
                                 <td>
                                     <th:block th:if="${owner.getId() == session.id}">
-                                        <a href="#" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash"></i></a>
+                                        <a href="#" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
                                     </th:block>
                                 </td>
                             </tr>
                         </table>
                     </div>
-                    <!--<div id="members" class="tab-pane fade">-->
-                        <!--<h3 th:text="#{teamProfile.nav.members}">Members</h3>-->
-                        <!--<table class="table table-responsive">-->
-                            <!--<thead>-->
-                                <!--<th th:text="#{team.members.name}">Name</th>-->
-                                <!--<th th:text="#{team.members.permission}">Permission</th>-->
-                                <!--<th th:text="#{team.members.actions}"></th>-->
-                            <!--</thead>-->
-                            <!--<tr th:each="membersEntry : ${membersMap}">-->
-                                <!--<td th:text="${userManager.getNameByUserId(membersEntry.key)}">Name</td>-->
-                                <!--<td th:text="${membersEntry.value}">Permission</td>-->
-                                <!--&lt;!&ndash; user has privilege to remove team member &ndash;&gt;-->
-                                <!--<td th:if="${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">-->
-                                    <!--<a href="#" th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.id}, userId=${membersEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash"></i></a>-->
-                                <!--</td>-->
-                                <!--&lt;!&ndash; team owner cannot remove own account &ndash;&gt;-->
-                                <!--<td th:if="${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'owner'}">-&#45;&#45;</td>-->
-                                <!--&lt;!&ndash; member cannot remove other members' account &ndash;&gt;-->
-                                <!--<td th:if="${not team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'member'}">-&#45;&#45;</td>-->
-                            	<!--&lt;!&ndash; member cannot resend invitation &ndash;&gt;-->
-                            	<!--<td th:if="${not team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'pending for acceptance'}">-&#45;&#45;</td>-->
-                            	<!--&lt;!&ndash; team owner can resend invitation &ndash;&gt;-->
-                            	<!--<td th:if="${team.isUserTeamOwner(currentLoggedInUserId) and membersEntry.value == 'pending for acceptance'}">-->
-                            		<!--<a href="#" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alert the experiment starter by sending email"><i class="fa fa-envelope-o"></i></a>-->
-                            	<!--</td>-->
-                            <!--</tr>-->
-                        <!--</table>-->
-                        <!--&lt;!&ndash; team owner can only invite users if the team is approved &ndash;&gt;-->
-                        <!--<th:block th:if="${team.isUserTeamOwner(currentLoggedInUserId) and team.isApproved}">-->
-                        	<!--<a href="#" th:href="@{/team_profile/invite_user/{teamId}(teamId=${team.id})}" class="btn btn-success"><i class="fa fa-plus"></i> Invite User</a>-->
-                        <!--</th:block>-->
-                    <!--</div>-->
-                    <!--<div id="experiments" class="tab-pane fade">-->
-                        <!--<h3 th:text="#{teamProfile.nav.exp}">Experiments</h3>-->
-                        <!--<p th:text="#{teamProfile.exp.info}">This page contains all the experiments running for this team.</p>-->
-                        <!--<p th:if="${teamExpMap.isEmpty()}" th:text="#{teamProfile.exp.noActiveExp}">There are no current active experiments running for this team.</p>-->
-                        <!--<table class="table table-responsive" th:if="not ${teamExpMap.isEmpty()}">-->
-                            <!--<thead>-->
-                                <!--<th th:text="#{team.experiment.name}">Experiment</th>-->
-                                <!--<th th:text="#{team.experiment.description}">Description</th>-->
-                                <!--<th th:text="#{team.experiment.status}">Status</th>-->
-                                <!--<th th:text="#{team.experiment.nodesAllocated}">Nodes Allocated</th>-->
-                                <!--<th th:text="#{team.experiment.idleHours}">Hours Idle</th>-->
-                                <!--<th>Actions</th>-->
-                            <!--</thead>-->
-                            <!--<tr th:each="teamExpEntry : ${teamExpMap}">-->
-                                <!--<td th:text="${teamExpEntry.value.name}">Experiment</td>-->
-                                <!--<td th:text="${teamExpEntry.value.description}">Description</td>-->
-                                <!--<td>-->
-                                	<!--<span th:if="${teamExpEntry.value.status == 'STOPPED'}" th:classappend="expStatusStop" th:text="${teamExpEntry.value.status}"></span>-->
-                                	<!--<span th:if="${teamExpEntry.value.status == 'READY'}" th:classappend="expStatusReady" th:text="${teamExpEntry.value.status}"></span>-->
-                                	<!--&lt;!&ndash; TODO need to cater for ALLOCATING and ERROR &ndash;&gt;-->
-                                <!--</td>-->
-                                <!--<td th:text="${teamExpEntry.value.nodesCount}">Nodes Allocated</td>-->
-                                <!--<td th:text="${teamExpEntry.value.hoursIdle}">Hours Idle</td>-->
-                                <!--<td>-->
-                                    <!--<span th:if="${teamExpEntry.value.status == 'STOPPED'}">-->
-                                        <!--<a href="#" th:href="@{/team_profile/{teamId}/start_experiment/{expId}(teamId=${teamExpEntry.value.teamId}, expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>-->
-                                    <!--</span>-->
-                                    <!--<span th:if="${teamExpEntry.value.status == 'READY'}">-->
-                                        <!--<a href="#" th:href="@{/team_profile/{teamId}/stop_experiment/{expId}(teamId=${teamExpEntry.value.teamId}, expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop"></i></a>-->
-                                    <!--</span>-->
-                                    <!--<span th:if="${teamExpEntry.value.status == 'STOPPED'}">-->
-                                        <!--<a href="#" th:href="@{/team_profile/{teamId}/remove_experiment/{expId}(teamId=${teamExpEntry.value.teamId}, expId=${teamExpEntry.value.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>-->
-                                    <!--</span>-->
-                                <!--</td>-->
-                            <!--</tr>-->
-                        <!--</table>-->
-                    <!--</div>-->
                 </div>
             </div> <!-- row -->
         </div> <!-- container -->

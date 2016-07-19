@@ -2,6 +2,7 @@ package sg.ncl;
 
 import java.io.*;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
@@ -32,7 +35,7 @@ import sg.ncl.testbed_interface.*;
  * 
  * Spring Controller
  * Direct the views to appropriate locations and invoke the respective REST API
- * @author yeoteye
+ * @author Cassie, Desmond, Te Ye
  * 
  */
 @Controller
@@ -636,7 +639,7 @@ public class MainController {
     //--------------------User Side Approve Members Page------------
     
     @RequestMapping("/approve_new_user")
-    public String approveNewUser(Model model, HttpSession session) {
+    public String approveNewUser(Model model, HttpSession session) throws Exception {
 //    	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
 //    	rv = teamManager.getTeamMapByTeamOwner(getSessionIdOfLoggedInUser(session));
 //    	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
@@ -671,7 +674,7 @@ public class MainController {
                 String userId = memberObject.getString("userId");
                 String teamMemberType = memberObject.getString("memberType");
                 String teamMemberStatus = memberObject.getString("memberStatus");
-                String teamJoinedDate = memberObject.get("joinedDate").toString();
+                String teamJoinedDate = formatZonedDateTime(memberObject.get("joinedDate").toString());
 
                 JoinRequestApproval joinRequestApproval = new JoinRequestApproval();
 
@@ -706,8 +709,21 @@ public class MainController {
     }
     
     @RequestMapping("/approve_new_user/accept/{teamId}/{userId}")
-    public String userSideAcceptJoinRequest(@PathVariable Integer teamId, @PathVariable Integer userId) {
-        teamManager.acceptJoinRequest(userId, teamId);
+    public String userSideAcceptJoinRequest(@PathVariable String teamId, @PathVariable String userId, HttpSession session) {
+
+        JSONObject mainObject = new JSONObject();
+        JSONObject userFields = new JSONObject();
+
+        userFields.put("id", session.getAttribute("id").toString());
+        mainObject.put("user", userFields);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+
         return "redirect:/approve_new_user";
     }
     
@@ -1531,18 +1547,23 @@ public class MainController {
             JSONObject memberObject = membersArray.getJSONObject(i);
             String userId = memberObject.getString("userId");
             String teamMemberType = memberObject.getString("memberType");
+            String teamMemberStatus = memberObject.getString("memberStatus");
+
             User2 myUser = invokeAndExtractUserInfo(userId);
             if (teamMemberType.equals(memberTypeMember)) {
                 team2.addMembers(myUser);
+
+                // add to pending members list for Members Awaiting Approval function
+                if (teamMemberStatus.equals("PENDING")) {
+                    team2.addPendingMembers(myUser);
+                }
+
             } else if (teamMemberType.equals(memberTypeOwner)) {
                 // explicit safer check
                 team2.setOwner(myUser);
             }
         }
-
-        // TODO need to check for pending for approval members count
         team2.setMembersCount(membersArray.length());
-
         return team2;
     }
 
@@ -1606,5 +1627,16 @@ public class MainController {
         experiment2.setMaxDuration(object.getInt("maxDuration"));
 
         return experiment2;
+    /**
+     *
+     * @param zonedDateTimeJSON JSON string
+     * @return
+     */
+    private String formatZonedDateTime(String zonedDateTimeJSON) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ZonedDateTime zonedDateTime = mapper.readValue(zonedDateTimeJSON, ZonedDateTime.class);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
+        return zonedDateTime.format(format);
     }
 }

@@ -28,8 +28,14 @@
                         <!--<strong>Info!</strong> <span th:text="${infoMsg}"></span>-->
                     <!--</div>-->
                 <!--</div>-->
-                <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2><a data-toggle="collapse" href="#collapse1"><i class="fa fa-caret-square-o-down fa-lg"></i></a>
+                <p>&nbsp;</p>
+
+
+
                 <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team">
+                    <!--<div class="panel-heading">-->
+                        <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2>
+                    <!--</div> &lt;!&ndash; panel heading &ndash;&gt;-->
                     <div class="panel-body">
                         <table class="table table-responsive" th:if="not ${teamMap2.isEmpty()}">
                             <thead>
@@ -45,21 +51,27 @@
                                 <td th:unless="${teamEntry.value.isUserTeamOwner(userEmail)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
                                 <td><a href="#" th:href="@{/team_profile/{teamId}(teamId=${teamEntry.key})}"><span th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</span></a></td>
                                 <td th:text="${teamEntry.value.description}">Description</td>
-                                <td><span th:text="${teamEntry.value.membersCount}">Members</span></td>
+                                <td>
+                                    <span th:text="${teamEntry.value.membersCount}">Members</span>
+                                    <a href="#" th:href="@{/approve_new_user}"><span class="label label-warning" th:if="${not #lists.isEmpty(teamEntry.value.pendingMembersList)}" th:text="${teamEntry.value.pendingMembersList.size()}" data-toggle="tooltip" data-placement="bottom" title="Members pending for your approval">Members Awaiting Approval</span></a>
+                                </td>
                                 <!--<td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>-->
                                 <!--<td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" th:href="@{/teams/invite_members/{teamId}(teamId=${teamEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>-->
                                 <!--<td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">-&#45;&#45;</td>-->
                             </tr>
                         </table>
+
                         <p th:if="${teamMap2.isEmpty()}" th:text="#{team.haveToBeATeam}">You have to be part of a team to use the resources.</p>
                     </div> <!-- panel body -->
-                    <div class="panel-footer">
-                        <a href="teamPageApplyTeam" th:href="@{/teams/apply_team}" class="btn btn-primary"><i class="fa fa-plus"></i> Apply a New Team</a>
-                        <a href="teamPageJoinTeam" th:href="@{/teams/join_team}" class="btn btn-primary"><i class="fa fa-plus"></i> Join Team</a>
+                    <div class="panel-footer team-panel-footer ">
+                        <a href="teamPageApplyTeam" th:href="@{/teams/apply_team}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Apply a New Team</a>
+                        <a href="teamPageJoinTeam" th:href="@{/teams/join_team}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Join Team</a>
                     </div>
                 </div> <!-- panel primary -->
-                <h2 class="text-success team-heading team-heading-request-participation" th:text="#{team.heading.requestParticipation}">text heading from .properties</h2>
-                    <div class="panel panel-default team-panel team-panel-request-participation">
+                    <div class="panel panel-primary team-panel team-panel-current-team">
+                        <!--<div class="panel-heading">-->
+                            <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.requestParticipation}">text heading from .properties</h2>
+                        <!--</div> &lt;!&ndash; panel heading &ndash;&gt;-->
 	                    <div class="panel-body">
                             <!--<div th:if="${#lists.isEmpty(invitedToParticipateMap2)}">-->
                                 <!--<p th:text="#{team.haveNotBeenInvited}">You have not been invited to participate in any teams yet.</p>-->
@@ -80,8 +92,8 @@
 	                        <!--</table>-->
 	                    </div> <!-- panel body -->
                     </div> <!-- panel -->
-                <h2 class="team-heading-join-request team-heading" th:text="#{team.heading.requestJoin}">text heading from .properties</h2>
-                    <div class="panel panel-default team-panel team-panel-join-request">
+                        <div class="panel panel-primary team-panel team-panel-current-team ">
+                                <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.requestJoin}">text heading from .properties</h2>
                         <div class="panel-body">
                             <div th:if="${userJoinRequestMap.isEmpty()}">
                                 <p th:text="#{team.haveNotRequestedToJoin}">You have not requested to join any teams yet.</p>
@@ -90,19 +102,19 @@
                                 <thead>
                                     <th th:text="#{team.table.header.team}">Team</th>
                                     <th th:text="#{team.table.header.description}">Description</th>
-                                    <th th:text="#{team.table.header.institution}">Institution</th>
+                                    <!--<th th:text="#{team.table.header.institution}">Institution</th>-->
                                     <th th:text="#{team.table.header.actions}">Actions</th>
                                 </thead>
                                 <tr th:each="team : ${userJoinRequestMap}">
                                    <td th:text="${team.value.name}">Name</td>
                                    <td th:text="${team.value.description}">Description</td>
-                                   <td><a href="#" class="btn btn-danger" th:href="@{/withdraw/{teamId}(teamId=${team.value.id})}"><i class="fa fa-minus-circle"></i> Withdraw</a></td>
+                                   <td><a href="#" class="btn btn-standard" th:href="@{/withdraw/{teamId}(teamId=${team.value.id})}"><i class="fa fa-minus-circle btn-fa-red"></i> Withdraw</a></td>
                                 </tr>
                             </table>
                         </div> <!-- panel body -->
                     </div> <!-- panel -->
-                <h2 class="team-heading" th:text="#{team.heading.public}">text heading from .properties</h2>
-                    <div class="panel panel-default team-panel">
+                        <div class="panel panel-primary team-panel team-panel-current-team ">
+                                <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.public}">text heading from .properties</h2>
 	                    <div class="panel-body">
 	                        <table class="table table-responsive">
 	                            <thead>
@@ -120,5 +132,6 @@
                     </div> <!-- panel -->
             </div> <!-- row -->
         </div> <!-- container -->
+        <div th:replace="fragments/footer :: footer"></div>
     </body>
 </html>

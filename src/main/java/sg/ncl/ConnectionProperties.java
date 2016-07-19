@@ -19,6 +19,7 @@ public class ConnectionProperties {
     private String teamEndpoint;
     private String teamVisibilityEndpoint;
     private String expEndpoint;
+    private String approveJoinRequest;
 
     public String getSioAddress() {
         return sioAddress;
@@ -114,5 +115,13 @@ public class ConnectionProperties {
 
     public String getSioExpUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/"; }
+
+    public String getApproveJoinRequest(String teamId, String userId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+    }
+
+    public void setApproveJoinRequest(String approveJoinRequest) {
+        this.approveJoinRequest = approveJoinRequest;
+    }
 }
 

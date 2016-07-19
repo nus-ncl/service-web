@@ -20,9 +20,11 @@
     </head>
     <body class="mybg">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+        <p>&nbsp;</p>
         <div class="container">
             <div class="row">
-                <h2 th:text="#{joinTeam.header}">Join Team</h2>
+                <h2 class="team-heading team-heading-current-team" th:text="#{joinTeam.header}">Join Team</h2>
+                <p>&nbsp;</p>
                 <form  method="post" action="#" th:action="@{/teams/join_team}" th:object="${teamPageJoinTeamForm}" role="form">
                     <fieldset>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">
@@ -30,11 +32,28 @@
                             <span class="help-block" th:if="${#fields.hasErrors('teamName')}" th:errors="*{teamName}">Team name cannot be empty</span>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-success">Submit</button>
+                            <button type="submit" class="btn btn-standard">Submit</button>
                         </div>
                     </fieldset>
                 </form>
             </div> <!-- row -->
-        </div> <!-- container -->  
+        </div> <!-- container -->
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <div th:replace="fragments/footer :: footer"></div>
     </body>
 </html>
