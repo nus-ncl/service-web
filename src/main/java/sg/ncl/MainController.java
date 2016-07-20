@@ -790,7 +790,6 @@ public class MainController {
             teamManager2.addTeamToPublicTeamMap(team2);
         }
 
-
         model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
         model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
@@ -956,15 +955,33 @@ public class MainController {
     }
     
     @RequestMapping(value="/teams/apply_team", method=RequestMethod.POST)
-    public String checkApplyTeamInfo(@Valid TeamPageApplyTeamForm teamPageApplyTeamForm, BindingResult bindingResult) {
-       if (bindingResult.hasErrors()) {
+    public String checkApplyTeamInfo(@Valid TeamPageApplyTeamForm teamPageApplyTeamForm, BindingResult bindingResult, HttpSession session) {
+        if (bindingResult.hasErrors()) {
+           logger.warning("Existing users apply for new team, page has errors");
            // return "redirect:/teams/apply_team";
-    	   return "team_page_apply_team";
-       }
-       // log data to ensure data has been parsed
-        logger.log(Level.INFO, "--------Apply for new team info---------");
-        logger.log(Level.INFO, teamPageApplyTeamForm.toString());
-       return "redirect:/teams/team_application_submitted";
+           return "team_page_apply_team";
+        }
+        // log data to ensure data has been parsed
+        logger.info("Apply for new team info at : " + properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
+        logger.info("Team application form: " + teamPageApplyTeamForm.toString());
+
+        JSONObject mainObject = new JSONObject();
+        JSONObject teamFields = new JSONObject();
+        mainObject.put("team", teamFields);
+        teamFields.put("name", teamPageApplyTeamForm.getTeamName());
+        teamFields.put("description", teamPageApplyTeamForm.getTeamDescription());
+        teamFields.put("website", teamPageApplyTeamForm.getTeamWebsite());
+        teamFields.put("organisationType", teamPageApplyTeamForm.getTeamOrganizationType());
+        teamFields.put("visibility", teamPageApplyTeamForm.getIsPublic());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()), HttpMethod.POST, request, String.class);
+
+        return "redirect:/teams/team_application_submitted";
     }
     
     @RequestMapping(value="/team_owner_policy", method=RequestMethod.GET)

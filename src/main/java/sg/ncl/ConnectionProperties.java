@@ -123,5 +123,10 @@ public class ConnectionProperties {
     public void setApproveJoinRequest(String approveJoinRequest) {
         this.approveJoinRequest = approveJoinRequest;
     }
+
+    // for existing users
+    public String getRegisterRequestToApplyTeam(String nclUserId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/newTeam/" + nclUserId;
+    }
 }
 
