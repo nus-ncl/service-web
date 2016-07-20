@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="static/css/main.css" th:href="@{~/css/main.css}"/>
         <link rel="stylesheet" type="text/css" id="static/css-preset" href="css/presets/preset1.css" th:href="@{~/css/presets/preset1.css}"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
-        <link rel="shortcut icon" href="images/ncl_favicon.png" th:href="@{~/images/ncl_favicon.png}"/>
+        <link rel="shortcut icon" href="images/ncl_favicon1.png" th:href="@{~/images/ncl_favicon1.png}"/>
         
 	  <!--[if lt IE 9]>
 	    <script type="text/javascript" src="static/js/html5shiv.js" th:src="@{~/js/html5shiv.js}"></script>
@@ -29,7 +29,7 @@
                         <div class="panel-heading ">
                             <h3 class="dashhead" th:text="#{login.header}">Login</h3>
                         </div> <!-- panel-heading -->
-                        
+
                         <div class="panel-body">
                             <!-- TODO hard code login details for now -->
                             <form method="post"  action="#" th:action="@{/login}" th:object="${loginForm}" role="form">

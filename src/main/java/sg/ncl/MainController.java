@@ -1097,6 +1097,7 @@ public class MainController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>(experimentObject.toString(), headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
@@ -1170,12 +1171,19 @@ public class MainController {
         return "redirect:/experiments";
     }
     
-    @RequestMapping("/start_experiment/{expId}")
-    public String startExperiment(@PathVariable Integer expId, Model model, HttpSession session) {
+    @RequestMapping("/start_experiment/{teamName}/{expId}")
+    public String startExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, HttpSession session) {
+
         // start experiment
         // ensure experiment is stopped first before starting
-        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
+//        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
+//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
+        logger.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
         return "redirect:/experiments";
     }
     

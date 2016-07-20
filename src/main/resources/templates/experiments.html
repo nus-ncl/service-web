@@ -41,7 +41,7 @@
                                 <th th:text="#{experiment.table.header.description}">Description</th>
                                 <!--<th th:text="#{experiment.table.header.configuration}">Configuration</th>-->
                                 <!--<th th:text="#{experiment.table.header.status}">Status</th>-->
-                                <!--<th th:text="#{experiment.table.header.actions}">Actions</th>-->
+                                <th th:text="#{experiment.table.header.actions}">Actions</th>
                             </thead>
                             <tr th:each="expEntry : ${experimentList}">
                                 <td th:text="${expEntry.name}">Name</td>
@@ -53,7 +53,8 @@
                                 	<!--<span th:if="${expEntry.status == 'READY'}" th:classappend="expStatusReady" th:text="${expEntry.status}"></span>-->
                                 	<!--&lt;!&ndash; TODO need to cater for ALLOCATING and ERROR &ndash;&gt;-->
                                 <!--</td>-->
-                                <!--<td>-->
+                                <td>
+                                    <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>
                                     <!--<span th:if="${expEntry.status == 'STOPPED'}">-->
                                         <!--<a href="#" th:href="@{/start_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>-->
                                     <!--</span>-->
@@ -63,7 +64,7 @@
                                     <!--<span th:if="${expEntry.status == 'STOPPED'}">-->
                                         <!--<a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>-->
                                     <!--</span>-->
-                                <!--</td>-->
+                                </td>
                             </tr>
                         </table>
                     </div> <!-- panel body -->
