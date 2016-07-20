@@ -43,18 +43,18 @@
                         <div class="form-group">
                             <label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
                             <select class="form-control" th:field="*{teamOrganizationType}">
-                                <option value="academia" th:text="#{signup.academia}">Academia</option>
-                                <option value="government" th:text="#{signup.government}">Government</option>
-                                <option value="industry" th:text="#{signup.industry}">Industry</option>
+                                <option value="Academic" th:text="#{signup.academia}">Academia</option>
+                                <option value="Government" th:text="#{signup.government}">Government</option>
+                                <option value="Industry" th:text="#{signup.industry}">Industry</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <span class="text-danger" th:if="${#fields.hasErrors('isPublic')}" th:errors="*{isPublic}">Public or Private</span>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="public"/><span th:text="#{signup.publicTeam}">Public</span> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><span th:text="#{signup.publicTeam}">Public</span> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="private"/><span th:text="#{signup.privateTeam}">Private</span><em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><span th:text="#{signup.privateTeam}">Private</span><em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
                             </div>
                         </div>
                         <div class="form-group">
