@@ -277,17 +277,13 @@ body {
     line-height: 24px;
     color: #666;
     background-color: #fff;
+    height : 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
     color: #333;
 }
 
-h7 {
-    color: #FFF;
-    font-size: 30px;
-    alignment : center;
-}
 
 h2 {
     font-size: 30px;
@@ -306,33 +302,6 @@ h3 {
     font-size: 18px;
     font-weight: 300px;
     color: #000;
-
-}
-
-h21 {
-    font-size: 18px;
-    font-weight: bold;
-    color: #FFF;
-
-}
-
-h22 {
-    font-size: 18px;
-    color: #FFF;
-
-}
-
-h23 {
-    font-size: 1em;
-    color: #000;
-
-}
-
-h24 {
-    font-size: 5em;
-    color : #1eafbb;
-    font-weight: bold;
-    line-height: 70px;
 
 }
 
@@ -1112,6 +1081,9 @@ ul.address {
 
 #footer {
     color:#fff;
+    position: absolute;
+    width: 100%;
+
 }
 
 .footer-bgcolor {
@@ -1233,11 +1205,6 @@ ul.address {
 
 
 
-
-h9 {
-    text-align: right;
-}
-
 .social-icons2{
     text-align: left;
     color:#FFF ;
@@ -1276,27 +1243,6 @@ h9 {
 
 }
 
-h8 {
-    font-size: 20px;
-    color: #000;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-
-h10 {
-    font-size: 18px;
-    color : #FFF;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-h12 {
-    color : #21b3b7;
-}
-
-
-
 #p1{
     color :#FFF;
     font-size: 18px;
@@ -1304,9 +1250,6 @@ h12 {
     text-tranform: none;
 }
 
-h13{
-    color : #21b3b7;
-}
 
 .icon-pad{
     margin: 30px;
@@ -1535,14 +1478,6 @@ h13{
 }
 
 
-h20 {
-    font-size: 18px;
-    font-weight: bold;
-    color: #000;
-
-}
-
-
 
 table {
     width:100%;
@@ -1658,6 +1593,4 @@ table {
 .btn-fa-red {
     color: #dd4b39;
 }
-
-
 
