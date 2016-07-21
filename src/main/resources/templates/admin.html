@@ -111,20 +111,51 @@
 								<thead>
 								<th th:text="#{admin.teams.header.name}">Team</th>
 								<th th:text="#{admin.teams.header.description}">Description</th>
+								<th th:text="#{admin.teams.header.owner}">Owner</th>
 								<!--<th th:text="#{admin.teams.header.institutition}">Institution</th>-->
 								<th th:text="#{admin.teams.header.type}">Type</th>
 								<th th:text="#{admin.teams.header.public}">Publicly Listed</th>
 								<th><!-- Actions --></th>
 								</thead>
 								<tr th:each="team : ${pendingApprovalTeamsList}">
-								<td th:text="${team.name}"></td>
-								<td th:text="${team.description}"></td>
-								<td th:text="${team.organisationType}"></td>
-								<td th:text="${team.visibility}">Listed Visibility</td>
-								<td>
-								<a href="#" title="Accept" class="btn btn-standard" th:href="@{/admin/teams/accept/{teamId}(teamId = ${team.id})}"><i class="fa fa-check-circle-o fa-lg btn-fa-green"></i> Accept</a>
-								<a href="#" title="Reject" class="btn btn-standard"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</a>
-								</td>
+									<td th:text="${team.name}"></td>
+									<td th:text="${team.description}"></td>
+									<td>
+										<a th:href="'#'+${team.owner.id}" data-toggle="modal"><span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></a>
+										<!-- Modal -->
+										<div class="modal fade admin-modal" th:id="${team.owner.id}" aria-labelledby="ownerId" tabindex="-1" role="dialog" aria-hidden="true">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+														<h4 class="modal-title" id="ownerId"><span th:text="#{admin.teams.header.modal}">Team Owner Info</span></h4>
+													</div>
+													<div class="modal-body">
+														<ul>
+															<li><strong th:text="#{acc.info.fullName}"></strong>: <span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></li>
+															<li><strong th:text="#{acc.info.email}"></strong>: <span th:text="${team.owner.email}"></span></li>
+															<li><strong th:text="#{acc.info.phone}"></strong>: <span th:text="${team.owner.phone}"></span></li>
+															<li><strong th:text="#{acc.info.jobTitle}"></strong>: <span th:text="${team.owner.jobTitle}"></span></li>
+															<li><strong th:text="#{acc.info.institution}"></strong>: <span th:text="${team.owner.institution}"></span></li>
+															<li><strong th:text="#{acc.info.website}"></strong>: <span th:text="${team.owner.institutionWeb}"></span></li>
+															<li><strong th:text="#{acc.info.addr1}"></strong>: <span th:text="${team.owner.address1}"></span></li>
+															<li><strong th:text="#{acc.info.addr2}"></strong>: <span th:text="${team.owner.address2}"></span></li>
+															<li><strong th:text="#{acc.info.country}"></strong>: <span th:text="${team.owner.country}"></span></li>
+															<li><strong th:text="#{acc.info.city}"></strong>: <span th:text="${team.owner.city}"></span></li>
+															<li><strong th:text="#{acc.info.region}"></strong>: <span th:text="${team.owner.region}"></span></li>
+															<li><strong th:text="#{acc.info.postalCode}"></strong>: <span th:text="${team.owner.postalCode}"></span></li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+									</td>
+									<td th:text="${team.organisationType}"></td>
+									<td th:text="${team.visibility}">Listed Visibility</td>
+									<td>
+									<a href="#" title="Accept" class="btn btn-standard" th:href="@{/admin/teams/accept/{teamId}(teamId = ${team.id})}"><i class="fa fa-check-circle-o fa-lg btn-fa-green"></i> Accept</a>
+									<a href="#" title="Reject" class="btn btn-standard"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</a>
+									</td>
 								</tr>
 							</table>
 						</th:block>
