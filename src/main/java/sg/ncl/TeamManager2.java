@@ -1,7 +1,6 @@
 package sg.ncl;
 
 import sg.ncl.testbed_interface.Team2;
-import sg.ncl.testbed_interface.User2;
 
 import java.util.*;
 
@@ -63,5 +62,4 @@ public class TeamManager2 {
     public void addTeamToUserJoinRequestTeamMap(Team2 team2) {
         userJoinRequestMap.put(team2.getId(), team2);
     }
-
 }

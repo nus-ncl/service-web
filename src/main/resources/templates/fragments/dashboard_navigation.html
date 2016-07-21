@@ -42,7 +42,8 @@
 				<li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
 				<li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a></li>
 				<li><a href="/data" th:href="@{/data}">Data</a></li>
-				<li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a></li>
+				<!--<li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a></li>-->
+				<li><a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a></li>
 				<li><a href="#"><span th:text="#{nav.help}">Help</span></a></li>
 
 			</ul>

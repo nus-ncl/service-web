@@ -1321,27 +1321,51 @@ public class MainController {
     	model.addAttribute("ownerEmail", rv.getEmail());
     	return "data_request_access";
     }
-    
+
+    //-----------------------------------------------------------------------
+    //--------------------------Admin Revamp---------------------------------
+    //-----------------------------------------------------------------------
     //---------------------------------Admin---------------------------------
     @RequestMapping("/admin")
     public String admin(Model model) {
-    	model.addAttribute("domain", new Domain());
-    	model.addAttribute("domainTable", domainManager.getDomainTable());
-    	model.addAttribute("usersMap", userManager.getUserMap());
+//    	model.addAttribute("domain", new Domain());
+//    	model.addAttribute("domainTable", domainManager.getDomainTable());
+//    	model.addAttribute("usersMap", userManager.getUserMap());
     	model.addAttribute("teamsMap", teamManager.getTeamMap());
     	model.addAttribute("teamManager", teamManager);
-    	model.addAttribute("teamsPendingApprovalMap", teamManager.getTeamsPendingApproval());
-    	model.addAttribute("experimentMap", experimentManager.getExperimentMap2());
-    	
-    	model.addAttribute("totalTeamCount", teamManager.getTotalTeamsCount());
-    	model.addAttribute("totalExpCount", experimentManager.getTotalExpCount());
-    	model.addAttribute("totalMemberCount", teamManager.getTotalMembersCount());
-    	model.addAttribute("totalMemberAwaitingApprovalCount", teamManager.getTotalMembersAwaitingApproval());
-    	
-    	model.addAttribute("datasetMap", datasetManager.getDatasetMap());
-    	model.addAttribute("userManager", userManager);
-    	
-    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
+//    	model.addAttribute("teamsPendingApprovalMap", teamManager.getTeamsPendingApproval());
+//    	model.addAttribute("experimentMap", experimentManager.getExperimentMap2());
+//
+//    	model.addAttribute("totalTeamCount", teamManager.getTotalTeamsCount());
+//    	model.addAttribute("totalExpCount", experimentManager.getTotalExpCount());
+//    	model.addAttribute("totalMemberCount", teamManager.getTotalMembersCount());
+//    	model.addAttribute("totalMemberAwaitingApprovalCount", teamManager.getTotalMembersAwaitingApproval());
+//
+//    	model.addAttribute("datasetMap", datasetManager.getDatasetMap());
+//    	model.addAttribute("userManager", userManager);
+//
+//    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
+
+        List<Team2> pendingApprovalTeamsList = new ArrayList<>();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i=0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            if (one.getStatus().equals(TeamStatus.PENDING.toString())) {
+                pendingApprovalTeamsList.add(one);
+            }
+        }
+
+        model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
     	
     	return "admin";
     }
@@ -1363,9 +1387,13 @@ public class MainController {
     }
     
     @RequestMapping("/admin/teams/accept/{teamId}")
-    public String approveTeam(@PathVariable Integer teamId) {
-    	// set the approved flag to true
-    	teamManager.approveTeamApplication(teamId);
+    public String approveTeam(@PathVariable String teamId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
     	return "redirect:/admin";
     }
     

@@ -1,6 +1,7 @@
 package sg.ncl;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import sg.ncl.testbed_interface.TeamStatus;
 
 /**
  * Created by Te Ye
@@ -140,6 +141,10 @@ public class ConnectionProperties {
     // for existing users
     public String getRegisterRequestToApplyTeam(String nclUserId) {
         return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/newTeam/" + nclUserId;
+    }
+
+    public String getApproveTeam(String teamId, TeamStatus teamStatus) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "?status=" + teamStatus;
     }
 }
 
