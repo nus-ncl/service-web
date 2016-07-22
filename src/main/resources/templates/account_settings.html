@@ -2,25 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Edit Account Details</title>
-        <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{~/css/bootstrap.min.css}" media="screen"/>
-        <link rel="stylesheet" type="text/css" href="static/css/animate.min.css" th:href="@{~/css/animate.min.css}"/>
-        <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{~/css/font-awesome/css/font-awesome.min.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/lightbox.css" th:href="@{~/css/lightbox.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/main.css" th:href="@{~/css/main.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/responsive.css" th:href="@{~/css/responsive.css}"/>
-        <link rel="stylesheet" type="text/css" id="static/css-preset" href="css/presets/preset1.css" th:href="@{~/css/presets/preset1.css}"/>
-        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
-        <link rel="shortcut icon" href="images/ncl_favicon1.png" th:href="@{/images/ncl_favicon1.png}"/>
-
-        <!--[if lt IE 9]>
-        <script type="text/javascript" src="static/js/html5shiv.js" th:src="@{~/js/html5shiv.js}"></script>
-        <script type="text/javascript" src="static/js/respond.min.js" th:src="@{~/js/respond.min.js}"></script>
-        <![endif]-->
-
-        <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{~/js/jquery-1.12.2.min.js}"></script>
-        <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
-        <script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+        <title>National Cybersecurity Laboratories - Login</title>
+        <object th:include="fragments/header :: header" th:remove="tag" />
     </head>
     <body class="mybg">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
@@ -28,6 +11,7 @@
             <div class="row">
                 <form  method="post" action="#" th:action="@{/account_settings}" th:object="${editUser}" role="form">
                     <fieldset>
+                        <p>&nbsp;</p>
                         <h2 class="team-heading team-heading-current-team" th:text="#{acc.info.header.accInfo}">Account Info</h2>
                         <div class="form-group">
                             <label for="email"><span th:text="#{acc.info.email}">TEXT</span>:</label>
