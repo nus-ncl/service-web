@@ -892,6 +892,32 @@ public class MainController {
         // model add attribute team is correct
         return "team_profile";
     }
+
+    @RequestMapping(value="/team_profile/edit", method=RequestMethod.POST)
+    public String editAccountDetails(@ModelAttribute("team") Team2 editTeam, Model model) {
+
+        JSONObject teamfields = new JSONObject();
+        teamfields.put("id", editTeam.getId());
+        teamfields.put("name", editTeam.getName());
+        teamfields.put("description", editTeam.getDescription());
+        teamfields.put("website", editTeam.getWebsite());
+        teamfields.put("organisationType", editTeam.getOrganisationType());
+        teamfields.put("visibility", editTeam.getVisibility());
+        teamfields.put("privacy", "OPEN");
+        teamfields.put("status", editTeam.getStatus());
+        teamfields.put("members", "[]");
+
+        System.out.println(teamfields.toString());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>(teamfields.toString(), headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "/" + editTeam.getId(), HttpMethod.PUT, request, String.class);
+
+        return "redirect:/team_profile";
+    }
     
     @RequestMapping("/remove_member/{teamId}/{userId}")
     public String removeMember(@PathVariable Integer teamId, @PathVariable Integer userId, Model model) {

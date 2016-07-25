@@ -149,4 +149,8 @@ public class Team2 {
     public List<User2> getPendingMembersList() {
         return pendingMembersList;
     }
+
+    void setPendingMembersList(List<User2> pendingMembersList) {
+        this.pendingMembersList = pendingMembersList;
+    }
 }
