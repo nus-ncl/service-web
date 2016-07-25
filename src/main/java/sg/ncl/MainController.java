@@ -869,9 +869,8 @@ public class MainController {
     
     //--------------------------Team Profile Page--------------------------
     
-    @RequestMapping("/team_profile/{teamId}")
+    @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
     public String teamProfile(@PathVariable String teamId, Model model, HttpSession session) {
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
@@ -884,7 +883,7 @@ public class MainController {
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
         model.addAttribute("membersList", team.getMembersList());
-
+        session.setAttribute("originalTeam", team);
 //        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
 //        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
 //        model.addAttribute("userManager", userManager);
@@ -893,30 +892,62 @@ public class MainController {
         return "team_profile";
     }
 
-    @RequestMapping(value="/team_profile/edit", method=RequestMethod.POST)
-    public String editAccountDetails(@ModelAttribute("team") Team2 editTeam, Model model) {
+    @RequestMapping(value="/team_profile/{teamId}", method=RequestMethod.POST)
+    public String editTeamProfile(
+            @PathVariable String teamId,
+            @ModelAttribute("team") Team2 editTeam,
+            final RedirectAttributes redirectAttributes,
+            HttpSession session) {
+
+        boolean errorsFound = false;
+
+        if (editTeam.getDescription().isEmpty()) {
+            errorsFound = true;
+            redirectAttributes.addFlashAttribute("editDesc", "fail");
+        }
+
+        if (editTeam.getWebsite().isEmpty()) {
+            errorsFound = true;
+            redirectAttributes.addFlashAttribute("editWebsite", "fail");
+        }
+
+        if (errorsFound) {
+            // safer to remove
+            session.removeAttribute("originalTeam");
+            return "redirect:/team_profile/" + editTeam.getId();
+        }
+
+        // can edit team description and team website for now
 
         JSONObject teamfields = new JSONObject();
-        teamfields.put("id", editTeam.getId());
+        teamfields.put("id", teamId);
         teamfields.put("name", editTeam.getName());
         teamfields.put("description", editTeam.getDescription());
         teamfields.put("website", editTeam.getWebsite());
         teamfields.put("organisationType", editTeam.getOrganisationType());
-        teamfields.put("visibility", editTeam.getVisibility());
         teamfields.put("privacy", "OPEN");
         teamfields.put("status", editTeam.getStatus());
-        teamfields.put("members", "[]");
-
-        System.out.println(teamfields.toString());
+        teamfields.put("members", editTeam.getMembersList());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>(teamfields.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "/" + editTeam.getId(), HttpMethod.PUT, request, String.class);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "/" + teamId, HttpMethod.PUT, request, String.class);
 
-        return "redirect:/team_profile";
+        Team2 originalTeam = (Team2) session.getAttribute("originalTeam");
+
+        if (!originalTeam.getDescription().equals(editTeam.getDescription())) {
+            redirectAttributes.addFlashAttribute("editDesc", "success");
+        }
+        if (!originalTeam.getWebsite().equals(editTeam.getWebsite())) {
+            redirectAttributes.addFlashAttribute("editWebsite", "success");
+        }
+
+        // safer to remove
+        session.removeAttribute("originalTeam");
+        return "redirect:/team_profile/" + teamId;
     }
     
     @RequestMapping("/remove_member/{teamId}/{userId}")

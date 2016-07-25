@@ -31,7 +31,7 @@
                 <div class="tab-content col-sm-10">
                     <div id="profile" class="tab-pane fade in active">
                         <h3 th:text="#{teamProfile.nav.profile}">Profile</h3>
-                        <form  method="post" action="#" th:action="@{/team_profile/edit}" th:object="${team}" role="form">
+                        <form  method="post" action="#" th:action="@{/team_profile/{teamId}(teamId=${team.id})}" th:object="${team}" role="form">
                             <table class="table table-responsive">
                                 <tr>
                                     <td><strong th:text="#{team.profile.id}">ID</strong></td>
@@ -47,7 +47,11 @@
                                 </tr>
                                 <tr>
                                     <td><strong th:text="#{team.profile.description}">DESCRIPTION</strong></td>
-                                    <td><input type="text" class="form-control" th:field="*{description}"/></td>
+                                    <td>
+                                        <span class="account-change-fail" th:if="${editDesc eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{team.profile.descriptionFail}">TEXT</span></span>
+                                        <span class="account-change-success" th:if="${editDesc eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{team.profile.descriptionSuccess}">TEXT</span></span>
+                                        <input type="text" class="form-control" th:field="*{description}"/>
+                                    </td>
                                 </tr>
                                 <tr th:if="${team.owner}">
                                     <td><strong th:text="#{team.profile.owner}">TEAM OWNER</strong></td>
@@ -60,12 +64,14 @@
                                 <tr>
                                     <td><strong th:text="#{team.profile.website}">Website</strong></td>
                                     <td>
+                                        <span class="account-change-fail" th:if="${editWebsite eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{team.profile.websiteFail}">TEXT</span></span>
+                                        <span class="account-change-success" th:if="${editWebsite eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{team.profile.websiteSucccess}">TEXT</span></span>
                                         <input type="text" class="form-control" th:field="*{website}"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><strong th:text="#{team.profile.visibility}">TEXT</strong></td>
-                                    <td th:text="${team.visibility}">TEXT</td>
+                                    <td th:text="${team.visibility}" th:field="*{visibility}">TEXT</td>
                                 </tr>
                             </table>
                             <div class="form-group">
