@@ -2,14 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Login</title>
+        <title>National Cybersecurity Laboratories - Data Public</title>
         <object th:include="fragments/header :: header" th:remove="tag" />
     </head>
     <body class="mybg">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
-            	<h2 th:text="#{dataset.public.header}">Public datasets</h2>
+                <p>&nbsp;</p>
+                <h2 class="team-heading team-heading-current-team" th:text="#{dataset.public.header}">Public datasets</h2>
                 <table class="table table-responsive">
                     <thead>
                         <th th:text="#{data.header.name}">Name</th>
@@ -29,9 +30,11 @@
 						<td th:if="not ${publicDataEntry.value.requireAuthorization}"><a href="#" class="btn btn-primary">Download</a></td>
                     </tr>
                 </table>
-            	<h2 th:text="#{dataset.public.external.header}">External Data Access</h2>
+                <p>&nbsp;</p>
+                <h2 class="team-heading team-heading-current-team" th:text="#{dataset.public.external.header}">External Data Access</h2>
             	<a href="#" th:text="#{dataset.public.external.clickHere}">Click here to access external data (e.g. US side)</a>
             </div> <!-- row -->
         </div> <!-- container -->
+        <div th:replace="fragments/footer_fixed :: footer-fixed"></div>
     </body>
 </html>

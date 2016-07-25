@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Login</title>
+        <title>National Cybersecurity Laboratories - Experiment Scenario/title>
         <object th:include="fragments/header :: header" th:remove="tag" />
     </head>
     <body class="mybg">
@@ -16,6 +16,7 @@
 	            	</form>
             	</div> <!-- col -->
             </div> <!-- row -->
-        </div> <!-- container -->  
+        </div> <!-- container -->
+        <div th:replace="fragments/footer_fixed :: footer-fixed"></div>
     </body>
 </html>

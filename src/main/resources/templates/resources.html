@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>National Cybersecurity Laboratories - Login</title>
+		<title>National Cybersecurity Laboratories - Resources</title>
 		<object th:include="fragments/header :: header" th:remove="tag" />
 	</head>
 <body>
@@ -78,31 +78,6 @@
 
 			</div>
 
-
-<footer id="footer" class="navbar-fixed-bottom">
-		<div class="container col-sm-offset-3">
-			<p>&nbsp;</p>
-			<div class="row">
-				<div class="col-sm-4">
-					<ul class="address">
-						<li><i class="fa fa-phone"></i> <span> Phone: </span>+65 6601 1056</li>
-						<li><i class="fa fa-map-marker"></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
-					</ul>
-					<div class="social-icons2">
-					</div>
-				</div> <!-- col sm 4 -->
-				<div class="col-sm-4">
-					Privacy policy | User Policy | Terms &amp; Conditions
-				</div> <!-- col sm 4 -->
-				<div class="col-sm-4">
-					<ul>
-						<a class="envelope" href="mailto:support@ncl.sg"><i class="fa fa-envelope fa-3x"></i></a>
-						<a href="">&nbsp;</a>
-						<a class="github" href="https://github.com/nus-ncl"><i class="fa fa-github fa-3x"></i></a>
-					</ul>
-				</div> <!-- col sm 4 -->
-			</div> <!-- row -->
-		</div> <!-- container -->
-	</footer>
+<div th:replace="fragments/footer_fixed :: footer-fixed"></div>
    </body>
 </html>

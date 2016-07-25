@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Login</title>
+        <title>National Cybersecurity Laboratories - Contribute data</title>
         <object th:include="fragments/header :: header" th:remove="tag" />
     </head>
     <body class="mybg">
@@ -11,7 +11,8 @@
             <div class="row">
                 <form  method="post" action="#" th:action="@{/data/contribute}" th:object="${dataset}" role="form" enctype="multipart/form-data">
                     <fieldset>
-                        <h2 th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
+                        <p>&nbsp;</p>
+                        <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{datasetName}"/>
                         </div>
@@ -74,5 +75,6 @@
                 </form>
             </div> <!-- row -->
         </div> <!-- container -->
+        <div th:replace="fragments/footer_fixed :: footer-fixed"></div>
     </body>
 </html>

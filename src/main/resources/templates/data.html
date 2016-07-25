@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>National Cybersecurity Laboratories - Login</title>
+		<title>National Cybersecurity Laboratories - Data</title>
 		<object th:include="fragments/header :: header" th:remove="tag" />
 	</head>
     <body class="mybg">
@@ -17,7 +17,8 @@
 						<li th:each="file : ${files}" th:text="${file}"></li>
 					</ul>
 				</div>
-            	<h2 th:text="#{dataset.user.contribute}">You contributed the following datasets</h2>
+				<p>&nbsp;</p>
+            	<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.contribute}">You contributed the following datasets</h2>
                 <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetOwnedByUserList)}">
                     <thead>
                         <th>
@@ -49,8 +50,8 @@
                    </tr>
                 </table>
                 <p th:if="${#lists.isEmpty(datasetOwnedByUserList)}" th:text="#{dataset.user.notContribute}">You have not contributed any datasets yet.</p>
-                
-            	<h2 th:text="#{dataset.user.access}">You have access to the following datasets</h2>
+				<p>&nbsp;</p>
+				<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.access}">You have access to the following datasets</h2>
                <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetAccessibleByUserList)}">
                     <thead>
                         <th>
@@ -82,5 +83,6 @@
             	<p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
             </div> <!-- row -->
         </div> <!-- container -->
+		<div th:replace="fragments/footer_fixed :: footer-fixed"></div>
     </body>
 </html>
