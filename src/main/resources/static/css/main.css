@@ -1614,3 +1614,16 @@ table {
      list-style: none;
 }
 
+.boxes{
+    padding: 20px;
+    border: 1px solid lightgrey;
+    margin: 25px;
+}
+
+.form{
+    color: #333;
+    padding-top: 15px;
+    font-size: 28px;
+    font-weight: 600;
+
+}
