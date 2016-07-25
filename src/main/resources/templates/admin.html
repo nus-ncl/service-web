@@ -24,11 +24,11 @@
             <div class="row">
             	<h2 th:text="#{admin.dashboard.header}">Admin Dashboard</h2>
                 <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
-                    <li class="active"><a data-toggle="pill" href="#overview"><span th:text="#{admin.dashboard.nav.overview}">Overview</span></a></li>
-                    <li><a data-toggle="pill" href="#domainsManagement"><span th:text="#{admin.dashboard.nav.domains}">Domains management</span></a></li>
+                    <!--<li class="active"><a data-toggle="pill" href="#overview"><span th:text="#{admin.dashboard.nav.overview}">Overview</span></a></li>-->
+                    <!--<li><a data-toggle="pill" href="#domainsManagement"><span th:text="#{admin.dashboard.nav.domains}">Domains management</span></a></li>-->
                     <li><a data-toggle="pill" href="#teamsManagement"><span th:text="#{admin.dashboard.nav.teams}">Teams management</span></a></li>
-                    <li><a data-toggle="pill" href="#usersManagement"><span th:text="#{admin.dashboard.nav.users}">Users management</span></a></li>
-                    <li><a data-toggle="pill" href="#resourcesManagement"><span th:text="#{admin.dashboard.nav.resources}">Resources management</span></a></li>
+                    <!--<li><a data-toggle="pill" href="#usersManagement"><span th:text="#{admin.dashboard.nav.users}">Users management</span></a></li>-->
+                    <!--<li><a data-toggle="pill" href="#resourcesManagement"><span th:text="#{admin.dashboard.nav.resources}">Resources management</span></a></li>-->
                 </ul>
                 <div class="tab-content col-sm-10">
                 	<!--<div id="overview" class="tab-pane fade in active">-->
@@ -104,7 +104,7 @@
                 		<!--</form>-->
                 	<!--</div> &lt;!&ndash; domainsManagement &ndash;&gt;-->
 
-					<div id="teamsManagement" class="tab-pane fade">
+					<div id="teamsManagement" class="tab-pane fade in active">
 						<h3 th:text="#{admin.teams.header.pending}">Teams Pending for Approval</h3>
 						<th:block th:if="not ${#lists.isEmpty(pendingApprovalTeamsList)}">
 							<table class="table table-responsive">
@@ -126,11 +126,11 @@
 										<div class="modal fade admin-modal" th:id="${team.owner.id}" aria-labelledby="ownerId" tabindex="-1" role="dialog" aria-hidden="true">
 											<div class="modal-dialog">
 												<div class="modal-content">
-													<div class="modal-header">
+													<div class="modal-header team-owner-info-header">
 														<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 														<h4 class="modal-title" id="ownerId"><span th:text="#{admin.teams.header.modal}">Team Owner Info</span></h4>
 													</div>
-													<div class="modal-body">
+													<div class="modal-body team-owner-info-body">
 														<ul>
 															<li><strong th:text="#{acc.info.fullName}"></strong>: <span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></li>
 															<li><strong th:text="#{acc.info.email}"></strong>: <span th:text="${team.owner.email}"></span></li>
