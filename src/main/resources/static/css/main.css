@@ -1599,6 +1599,21 @@ table {
     top: 10%;
 }
 
+/* for admin teams management page */
+.team-owner-info-header {
+    text-align: center;
+    background-color: #f3f3f3;
+}
+
+.team-owner-info-header h4,
+.team-owner-info-header .close {
+     color: #333;
+}
+
+.team-owner-info-body ul {
+     list-style: none;
+}
+
 .boxes{
     padding: 20px;
     border: 1px solid lightgrey;

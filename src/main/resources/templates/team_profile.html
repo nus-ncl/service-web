@@ -18,40 +18,53 @@
                 <div class="tab-content col-sm-10">
                     <div id="profile" class="tab-pane fade in active">
                         <h3 th:text="#{teamProfile.nav.profile}">Profile</h3>
-                        <table class="table table-responsive">
-                            <tr>
-                                <td><strong th:text="#{team.profile.id}">ID</strong></td>
-                                <td th:text="${team.id}">ID</td>
-                            </tr>
-                            <tr>
-                                <td><strong th:text="#{team.profile.status}">STATUS</strong></td>
-                                <td th:text="${team.status}">ID</td>
-                            </tr>
-                            <tr>
-                                <td><strong th:text="#{team.profile.name}">NAME</strong></td>
-                                <td th:text="${team.name}">Name</td>
-                            </tr>
-                            <tr>
-                                <td><strong th:text="#{team.profile.description}">DESCRIPTION</strong></td>
-                                <td th:text="${team.description}">Description</td>
-                            </tr>
-                            <tr th:if="${team.owner}">
-                                <td><strong th:text="#{team.profile.owner}">TEAM OWNER</strong></td>
-                                <td th:text="${team.owner.firstName + ' ' + team.owner.lastName}">TEXT</td>
-                            </tr>
-                            <tr>
-                                <td><strong th:text="#{team.profile.organizationType}">Organization Type</strong></td>
-                                <td th:text="${team.organisationType}">Organization Type</td>
-                            </tr>
-                            <tr>
-                                <td><strong th:text="#{team.profile.website}">Website</strong></td>
-                                <td><a th:href="@{${team.website}}" th:text="${team.website}">Website</a></td>
-                            </tr>
-                            <tr>
-                                <td><strong th:text="#{team.profile.visibility}">TEXT</strong></td>
-                                <td th:text="${team.visibility}">TEXT</td>
-                            </tr>
-                        </table>
+                        <form  method="post" action="#" th:action="@{/team_profile/{teamId}(teamId=${team.id})}" th:object="${team}" role="form">
+                            <table class="table table-responsive">
+                                <tr>
+                                    <td><strong th:text="#{team.profile.id}">ID</strong></td>
+                                    <td><input type="text" class="form-control" th:field="*{id}" readonly="readonly"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong th:text="#{team.profile.status}">STATUS</strong></td>
+                                    <td><input type="text" class="form-control" th:field="*{status}" readonly="readonly"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong th:text="#{team.profile.name}">NAME</strong></td>
+                                    <td><input type="text" class="form-control" th:field="*{name}" readonly="readonly"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong th:text="#{team.profile.description}">DESCRIPTION</strong></td>
+                                    <td>
+                                        <span class="account-change-fail" th:if="${editDesc eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{team.profile.descriptionFail}">TEXT</span></span>
+                                        <span class="account-change-success" th:if="${editDesc eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{team.profile.descriptionSuccess}">TEXT</span></span>
+                                        <input type="text" class="form-control" th:field="*{description}"/>
+                                    </td>
+                                </tr>
+                                <tr th:if="${team.owner}">
+                                    <td><strong th:text="#{team.profile.owner}">TEAM OWNER</strong></td>
+                                    <td><input type="text" class="form-control" th:value="${team.owner.firstName + ' ' + team.owner.lastName}" readonly="readonly"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong th:text="#{team.profile.organizationType}">Organization Type</strong></td>
+                                    <td><input type="text" class="form-control" th:field="*{organisationType}" readonly="readonly"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong th:text="#{team.profile.website}">Website</strong></td>
+                                    <td>
+                                        <span class="account-change-fail" th:if="${editWebsite eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{team.profile.websiteFail}">TEXT</span></span>
+                                        <span class="account-change-success" th:if="${editWebsite eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{team.profile.websiteSucccess}">TEXT</span></span>
+                                        <input type="text" class="form-control" th:field="*{website}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong th:text="#{team.profile.visibility}">TEXT</strong></td>
+                                    <td th:text="${team.visibility}" th:field="*{visibility}">TEXT</td>
+                                </tr>
+                            </table>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-standard">Save settings</button>
+                            </div>
+                        </form>
                     </div>
                     <div id="members" class="tab-pane fade">
                         <h3 th:text="#{teamProfile.nav.members}">Members</h3>
