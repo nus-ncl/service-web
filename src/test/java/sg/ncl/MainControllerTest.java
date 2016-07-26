@@ -71,7 +71,6 @@ public class MainControllerTest {
 //        restTemplate = Mockito.mock(RestTemplate.class);
         mockServer = MockRestServiceServer.createServer((RestTemplate) restOperations);
         mockMvc = webAppContextSetup(webApplicationContext).build();
-
     }
 
     @Test

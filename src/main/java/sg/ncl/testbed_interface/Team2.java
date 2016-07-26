@@ -1,5 +1,6 @@
 package sg.ncl.testbed_interface;
 
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +12,13 @@ public class Team2 {
 
     private String id;
     private String name;
+
+    @Size(min=1, message="Description cannot be empty")
     private String description;
+
+    @Size(min=1, message="Website cannot be empty")
     private String website;
+
     private String organisationType;
     private String status;
     private String createdDate;
@@ -148,5 +154,9 @@ public class Team2 {
 
     public List<User2> getPendingMembersList() {
         return pendingMembersList;
+    }
+
+    void setPendingMembersList(List<User2> pendingMembersList) {
+        this.pendingMembersList = pendingMembersList;
     }
 }
