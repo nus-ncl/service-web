@@ -23,15 +23,15 @@
                     <thead>
                         <th>
                         	<span th:text="#{data.header.name}">Name</span>
-                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+								<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
                         		<span class="tooltiptext">
                         			<p th:text="#{dataset.user.tooltip.name}">Dataset Name</p>
                         		</span>
-                        	</a>
-                       	</th>
-                        <th>
-                        	<span th:text="#{data.header.releaseDate}">Release Date</span>
-                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+								</a>
+						</th>
+						<th>
+							<span th:text="#{data.header.releaseDate}">Release Date</span>
+							<a href="#" class="dat a-name-tooltip"><i class="fa fa-question-circle"></i>
                         		<span class="tooltiptext">
                         			<p th:text="#{dataset.user.tooltip.date}">The date when the dataset is made</p>
                         		</span>
@@ -79,10 +79,10 @@
 	                 	</td>
                    </tr>
                 </table>
-            	<p><a href="#" th:href="@{/data/public}"><button type="button" class="btn btn-default"><i class="fa fa-globe"></i> View Public Datasets</button></a></p>
-            	<p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
+            	<p><a href="#" th:href="@{/data/public}"><button type="button" class="btn btn-standard"><i class="fa fa-globe"></i> View Public Datasets</button></a></p>
+            	<p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
             </div> <!-- row -->
         </div> <!-- container -->
-		<div th:replace="fragments/footer_fixed :: footer-fixed"></div>
+		<div th:replace="fragments/footer :: footer"></div>
     </body>
 </html>

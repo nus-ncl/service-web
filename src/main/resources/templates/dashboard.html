@@ -12,44 +12,76 @@
             <div class="row">
                 <p>&nbsp;</p>
                 <h1 class="dashhead">Dashboard</h1>
-                <p>&nbsp;</p>
                 <div class="panel panel-primary dashpanel">
-                    <div class="panel-heading">
-                        <h3 class="over1">Overview</h3>
-                    </div> <!-- panel heading -->
+                        <h2 class="team-heading team-heading-current-team" >Overview</h2>
                     <div class="panel-body">
-                        <div class="row dashpanel2">
-                            <div class="col-sm-4">
+                        <table class="table table-responsive">
+                            <thead>
+                            <th>
                                 <h4>Team</h4>
-                                <p>99</p>
-                            </div> <!-- col -->
-                            <div class="col-sm-4">
+                            </th>
+                            <th>
                                 <h4>Experiments</h4>
-                                <p>999</p>
-                            </div> <!-- col -->
-                            <div class="col-sm-4">
+                            </th>
+                            <th>
                                 <h4>Total Running Time</h4>
-                                <p>999 hours</p>
-                            </div> <!-- col -->
-                        </div>
-                        <div class="row dashpanel2">
-                            <div class="col-sm-4">
-                                <h4>Team</h4>
+                            </th>
+                            </thead>
+                            <thead>
+                            <th>
                                 <p>99</p>
-                            </div> <!-- col -->
-                            <div class="col-sm-4">
-                                <h4>Experiments</h4>
+                            </th>
+                            <th>
                                 <p>999</p>
-                            </div> <!-- col -->
-                            <div class="col-sm-4">
-                                <h4>Total Running Time</h4>
+                            </th>
+                            <th>
                                 <p>999 hours</p>
-                            </div> <!-- col -->
-                        </div>
+                            </th>
+                            </thead>
+                            <thead>
+                            <th>
+                                <p>AA</p>
+                            </th>
+                            <th>
+                                <p>888</p>
+                            </th>
+                            <th>
+                                <p>1000 hours</p>
+                            </th>
+                            </thead>
+                        </table>
+                        <!--<div class="row dashpanel2">-->
+                            <!--<div class="col-sm-4">-->
+                                <!--<h4>Team</h4>-->
+                                <!--<p>99</p>-->
+                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
+                            <!--<div class="col-sm-4">-->
+                                <!--<h4>Experiments</h4>-->
+                                <!--<p>999</p>-->
+                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
+                            <!--<div class="col-sm-4">-->
+                                <!--<h4>Total Running Time</h4>-->
+                                <!--<p>999 hours</p>-->
+                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
+                        <!--</div>-->
+                        <!--<div class="row dashpanel2">-->
+                            <!--<div class="col-sm-4">-->
+                                <!--<h4>Team</h4>-->
+                                <!--<p>99</p>-->
+                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
+                            <!--<div class="col-sm-4">-->
+                                <!--<h4>Experiments</h4>-->
+                                <!--<p>999</p>-->
+                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
+                            <!--<div class="col-sm-4">-->
+                                <!--<h4>Total Running Time</h4>-->
+                                <!--<p>999 hours</p>-->
+                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
+                        <!--</div>-->
                     </div> <!-- panel body -->
                 </div> <!-- panel -->
             </div>
         </div> <!-- container -->
-        <div th:replace="fragments/footer_fixed :: footer-fixed"></div>
+        <div th:replace="fragments/footer :: footer"></div>
     </body>
 </html>
