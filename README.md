@@ -18,4 +18,4 @@ Development of official NCL UI
 [ci-img]: https://travis-ci.org/nus-ncl/service-web.svg?branch=master
 [ci-lnk]: https://travis-ci.org/nus-ncl/service-web
 [co-img]: https://coveralls.io/repos/github/nus-ncl/service-web/badge.svg?branch=master
-[ci-lnk]: https://coveralls.io/github/nus-ncl/service-web?branch=master
+[co-lnk]: https://coveralls.io/github/nus-ncl/service-web?branch=master
