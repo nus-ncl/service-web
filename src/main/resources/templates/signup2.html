@@ -34,15 +34,26 @@
 	                                <div class="form-group">
 	                                    <input type="text" class="form-control" placeholder="Email" th:field="*{email}"/>
 	                                </div>
+									<h3>Password</h3>
 	                                <div class="form-group">
-	                                    <input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>
-	                                </div>
+										<div class='pwdwidgetdiv' id='thepwddiv'>
+										</div>
+										<noscript>
+											<div>
+												<input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>
+											</div>
+										</noscript>
+										<script  type="text/javascript" >
+											var pwdwidget = new PasswordWidget('thepwddiv','regpwd');
+											pwdwidget.MakePWDWidget();
+										</script>
+									</div>
+									<p>&nbsp;</p>
 	                                <div class="form-group">
 	                                    <input type="password" class="form-control" placeholder="Confirm Password" th:field="*{confirmPassword}"/>
 	                                </div>
+
 	                                <button type="button" class="btn btn-standard btn-next">Next</button>
-
-
                                 </fieldset>
 
                                 <!-- Personal Details -->
