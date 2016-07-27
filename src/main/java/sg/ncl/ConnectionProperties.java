@@ -124,10 +124,19 @@ public class ConnectionProperties {
     }
 
     public String getSioExpUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/"; }
+        return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/";
+    }
+
+    public String getDeleteExperiment(String expId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/delete/" + expId;
+    }
 
     public String getStartExperiment(String teamName, String expId) {
         return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/start/team/" + teamName + "/experiment/" + expId;
+    }
+
+    public String getStopExperiment(String teamName, String expId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
     }
 
     public String getApproveJoinRequest(String teamId, String userId) {
