@@ -1215,16 +1215,24 @@ public class MainController {
     }
     
     @RequestMapping("/remove_experiment/{expId}")
-    public String removeExperiment(@PathVariable Integer expId, Model model, HttpSession session) {
+    public String removeExperiment(@PathVariable String expId, Model model, HttpSession session) {
         // remove experiment
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
-    	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
-        experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId);
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
-        
-        // decrease exp count to be display on Teams page
-        teamManager.decrementExperimentCount(teamId);
+//    	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
+//        experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId);
+//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
+//
+//        // decrease exp count to be display on Teams page
+//        teamManager.decrementExperimentCount(teamId);
+//        return "redirect:/experiments";
+
+        logger.info("Starting experiment: at " + properties.getDeleteExperiment(expId));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getDeleteExperiment(expId), HttpMethod.POST, request, String.class);
         return "redirect:/experiments";
     }
     
@@ -1244,12 +1252,20 @@ public class MainController {
         return "redirect:/experiments";
     }
     
-    @RequestMapping("/stop_experiment/{expId}")
-    public String stopExperiment(@PathVariable Integer expId, Model model, HttpSession session) {
+    @RequestMapping("/stop_experiment/{teamName}/{expId}")
+    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, HttpSession session) {
         // stop experiment
         // ensure experiment is in ready mode before stopping
-        experimentManager.stopExperiment(getSessionIdOfLoggedInUser(session), expId);
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
+//        experimentManager.stopExperiment(getSessionIdOfLoggedInUser(session), expId);
+//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
+//        return "redirect:/experiments";
+
+        logger.info("Stopping experiment: at " + properties.getStopExperiment(teamName, expId));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
         return "redirect:/experiments";
     }
     
