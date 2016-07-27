@@ -316,7 +316,7 @@ function _MakePWDWidget()
 
 	this.pwdfieldid = pwdname+"_id";
 
-	code += "<input type='password' class='pwdfield' name='"+pwdname+"' id='"+this.pwdfieldid+"'>";
+	code += "<input th:field='*{password}' type='password' class='pwdfield' name='"+pwdname+"' id='"+this.pwdfieldid+"'>";
 
 	this.pwdtxtfield=pwdname+"_text";
 

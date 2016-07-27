@@ -38,13 +38,13 @@
 	                                <div class="form-group">
 										<div class='pwdwidgetdiv' id='thepwddiv'>
 										</div>
-										<noscript>
-											<div>
-												<input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>
-											</div>
-										</noscript>
+										<!--<noscript>-->
+											<!--<div>-->
+												<!--<input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>-->
+											<!--</div>-->
+										<!--</noscript>-->
 										<script  type="text/javascript" >
-											var pwdwidget = new PasswordWidget('thepwddiv','regpwd');
+											var pwdwidget = new PasswordWidget('thepwddiv','password');
 											pwdwidget.MakePWDWidget();
 										</script>
 									</div>
