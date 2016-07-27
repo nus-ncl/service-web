@@ -144,7 +144,7 @@
 									<td th:text="${team.visibility}">Listed Visibility</td>
 									<td>
 									<a href="#" title="Accept" class="btn btn-standard" th:href="@{/admin/teams/accept/{teamId}(teamId = ${team.id})}"><i class="fa fa-check-circle-o fa-lg btn-fa-green"></i> Accept</a>
-									<a href="#" title="Reject" class="btn btn-standard"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</a>
+									<a href="#" title="Reject" class="btn btn-standard" th:href="@{/admin/teams/reject/{teamId}(teamId = ${team.id})}"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</a>
 									</td>
 								</tr>
 							</table>

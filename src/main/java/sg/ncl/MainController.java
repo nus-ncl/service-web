@@ -1455,9 +1455,16 @@ public class MainController {
     }
     
     @RequestMapping("/admin/teams/reject/{teamId}")
-    public String rejectTeam(@PathVariable Integer teamId) {
-    	// need to cleanly remove the team application
-    	teamManager.rejectTeamApplication(teamId);
+    public String rejectTeam(@PathVariable String teamId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
+
+        // need to cleanly remove the team application
+//    	teamManager.rejectTeamApplication(teamId);
     	return "redirect:/admin";
     }
     
