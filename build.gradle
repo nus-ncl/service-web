@@ -15,6 +15,7 @@ plugins {
     id 'jacoco'
     id 'io.spring.dependency-management' version '0.6.0.RELEASE'
     id 'com.github.kt3k.coveralls' version '2.6.3'
+    id 'org.sonarqube' version '2.0.1'
 }
 apply plugin: 'spring-boot'
 
@@ -73,6 +74,20 @@ tasks.jacocoTestReport {
     reports {
         xml {
             enabled true
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property 'sonar.host.url', 'https://sonarqube.com'
+        property 'sonar.login', System.getenv('SONAR_TOKEN')
+        property 'sonar.projectKey', 'nus-ncl:service-web'
+        if (System.getenv('TRAVIS_PULL_REQUEST') != null) {
+            property 'sonar.analysis.mode', 'preview'
+            property 'sonar.github.pullRequest', System.getenv('TRAVIS_PULL_REQUEST')
+            property 'sonar.github.repository', System.getenv('TRAVIS_REPO_SLUG')
+            property 'sonar.github.oauth', System.getenv('GITHUB_TOKEN')
         }
     }
 }

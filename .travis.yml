@@ -26,7 +26,7 @@ before_install:
 install: true
 
 script:
-  - ./gradlew --continue build # continue perform tests from all subprojects instead of failing at the first one
+  - ./gradlew --continue build # continue flag to prevent build from terminating at first error
 
 after_script:
-  - ./gradlew jacocoTestReport coveralls # collect jacoco reports from subprojects send them to coveralls
+  - ./gradlew jacocoTestReport coveralls sonarqube
