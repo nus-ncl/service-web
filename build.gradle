@@ -70,7 +70,6 @@ compileJava {
 }
 
 tasks.jacocoTestReport {
-    dependsOn check
     reports {
         xml {
             enabled true
