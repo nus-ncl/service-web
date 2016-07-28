@@ -77,6 +77,20 @@ tasks.jacocoTestReport {
     }
 }
 
+sonarqube {
+    properties {
+        property 'sonar.host.url', 'https://sonarqube.com'
+        property 'sonar.login', System.getenv('SONAR_TOKEN')
+        property 'sonar.projectKey', 'nus-ncl:service-web'
+        if (System.getenv('TRAVIS_PULL_REQUEST') != null) {
+            property 'sonar.analysis.mode', 'preview'
+            property 'sonar.github.pullRequest', System.getenv('TRAVIS_PULL_REQUEST')
+            property 'sonar.github.repository', System.getenv('TRAVIS_REPO_SLUG')
+            property 'sonar.github.oauth', System.getenv('GITHUB_TOKEN')
+        }
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion '2.14'
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
