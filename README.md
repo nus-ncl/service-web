@@ -1,7 +1,9 @@
 # ncl-ui
 Development of official NCL UI
 
-[![Build Status][bs-img]][bs-lnk] [![Coverage Status][cs-img]][cs-lnk] [![Quality Gate][qg-img]]()
+[![Build Status][bs-img]][bs-lnk]
+[![Coverage Status][cs-img]][cs-lnk]
+[![Quality Gate][qg-img]]()
 
 - Tomcat (embedded by Spring Boot)
 - WSDL (Axis2 or Spring WSDL?)
