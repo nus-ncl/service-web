@@ -24,7 +24,7 @@ group = 'sg.ncl'
 def getVersion = {
     def major = '1'
     def minor = '0'
-    def build = System.getenv('bamboo_buildNumber')
+    def build = System.getenv('TRAVIS_BUILD_NUMBER')
     if (build == null || build.isEmpty()) {
         build = 'SNAPSHOT'
     } else {
