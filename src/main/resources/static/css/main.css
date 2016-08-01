@@ -48,6 +48,7 @@
     /*border-color: #333;*/
     border-radius: 10px;
     background-color:rgba(255,255,255, 0.8) !important;
+    border: 1px solid #ccc ;
 }
 
 .registration-panel .panel-heading {
@@ -1519,11 +1520,20 @@ table {
 .dashhead{
     color : #1eafbb;
     font-weight: bold;
+    background-color: transparent;
+    font-size: 40px;
 }
 
 
 .dashpanel{
-     border: 0px;
+    border: 0px;
+    margin-top: 50px;
+    background-color: transparent;
+    width: 100%;
+    border-bottom: 0px;
+    /*border-color: #333;*/
+    /*border-radius: 10px;*/
+    /*background-color:rgba(255,255,255, 0.7) !important;*/
  }
 
 .dashpanel2{
@@ -1699,5 +1709,92 @@ html {
     clear:both;
     font-family : Arial, Helvetica, sans-serif;
     font-size : 15px;
+
+}
+
+.loginback
+{
+    background-image: url(../images/login1.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+
+}
+
+.registration-panel1
+{
+    padding: 30px;
+    margin-top: 50px;
+    background-color: transparent;
+    border: 0px;
+    margin: 30px;
+    width: 600px;
+    /*border-color: #333;*/
+    /*border-radius: 10px;*/
+    background-color:rgba(255,255,255, 0.7) !important;
+}
+
+.registration-panel2
+{
+    padding: 30px;
+    margin-top: 50px;
+    background-color: transparent;
+    border: 0px;
+    margin: 30px;
+    /*border-color: #333;*/
+    /*border-radius: 10px;*/
+    background-color:rgba(255,255,255, 0.6) !important;
+}
+
+
+.loginpanel {
+    background-color: transparent;
+    border: 0px;
+}
+
+.loginform {
+    display: inline-block;
+    padding: 0px;
+    width: 100%;
+}
+
+.welcome {
+  font-size: 25px;
+ margin-top: 20px;
+    padding-top: 20px;
+
+}
+
+.registerback
+{
+    background-image: url(../images/register1.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+
+}
+
+.registertitle{
+    padding-bottom : 20px;
+    border-bottom: 1px solid #CCC;
+}
+
+
+.loginbackground
+{
+    background-color: #eaeff5;
+    /*background-size: cover;*/
+    /*background-repeat: no-repeat;*/
+    /*background-position: center;*/
+    /*background-attachment: fixed;*/
+
+}
+
+.panel-footer
+{
+    background-color: transparent;
+    border-bottom: transparent;
 
 }

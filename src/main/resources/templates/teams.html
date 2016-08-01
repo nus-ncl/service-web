@@ -5,7 +5,7 @@
         <title>National Cybersecurity Laboratories - Teams</title>
         <object th:include="fragments/header :: header" th:remove="tag" />
     </head>
-    <body class="mybg">
+    <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
             <div class="row">
@@ -15,11 +15,9 @@
                         <!--<strong>Info!</strong> <span th:text="${infoMsg}"></span>-->
                     <!--</div>-->
                 <!--</div>-->
-                <p>&nbsp;</p>
 
 
-
-                <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team">
+                <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team dashpanel">
                     <!--<div class="panel-heading">-->
                         <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2>
                     <!--</div> &lt;!&ndash; panel heading &ndash;&gt;-->
@@ -55,7 +53,7 @@
                         <a href="teamPageJoinTeam" th:href="@{/teams/join_team}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Join Team</a>
                     </div>
                 </div> <!-- panel primary -->
-                    <div class="panel panel-primary team-panel team-panel-current-team">
+                    <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
                         <!--<div class="panel-heading">-->
                             <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.requestParticipation}">text heading from .properties</h2>
                         <!--</div> &lt;!&ndash; panel heading &ndash;&gt;-->
@@ -79,7 +77,7 @@
 	                        <!--</table>-->
 	                    </div> <!-- panel body -->
                     </div> <!-- panel -->
-                        <div class="panel panel-primary team-panel team-panel-current-team ">
+                        <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
                                 <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.requestJoin}">text heading from .properties</h2>
                         <div class="panel-body">
                             <div th:if="${userJoinRequestMap.isEmpty()}">
@@ -100,7 +98,7 @@
                             </table>
                         </div> <!-- panel body -->
                     </div> <!-- panel -->
-                        <div class="panel panel-primary team-panel team-panel-current-team ">
+                        <div class="panel panel-primary team-panel team-panel-current-team dashpanel ">
                                 <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.public}">text heading from .properties</h2>
 	                    <div class="panel-body">
 	                        <table class="table table-responsive">
