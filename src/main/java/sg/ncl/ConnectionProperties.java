@@ -147,6 +147,11 @@ public class ConnectionProperties {
         this.approveJoinRequest = approveJoinRequest;
     }
 
+    public String getRejectJoinRequest(String teamId, String userId) {
+        // same but REST API is DELETE
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+    }
+
     // for existing users
     public String getRegisterRequestToApplyTeam(String nclUserId) {
         return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/newTeam/" + nclUserId;
