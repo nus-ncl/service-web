@@ -31,7 +31,7 @@
 									<td th:text="${joinInfo.teamName}">Team wanting to join</td>
 									<td>
 										<a href="#" th:href="@{/approve_new_user/accept/{teamId}/{userId}(teamId=${joinInfo.teamId},userId=${joinInfo.userId})}" title="Accept" class="btn btn-standard"><i class="fa fa-check-circle-o fa-lg btn-fa-green"></i> Accept</a>
-										<a href="#" title="Reject" class="btn btn-standard"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</a>
+										<a href="#" th:href="@{/approve_new_user/reject/{teamId}/{userId}(teamId=${joinInfo.teamId},userId=${joinInfo.userId})}" title="Reject" class="btn btn-standard"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</a>
 									</td>
 								</tr>
 	                            <!--<tr th:each="team : ${teamMapOwnedByUser}">-->

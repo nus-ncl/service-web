@@ -38,7 +38,9 @@
                                 	<!--&lt;!&ndash; TODO need to cater for ALLOCATING and ERROR &ndash;&gt;-->
                                 <!--</td>-->
                                 <td>
-                                    <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>
+                                    <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></a>
+                                    <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
+                                    <a href="#" th:href="@{/stop_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></a>
                                     <!--<span th:if="${expEntry.status == 'STOPPED'}">-->
                                         <!--<a href="#" th:href="@{/start_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>-->
                                     <!--</span>-->
