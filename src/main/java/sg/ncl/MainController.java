@@ -28,6 +28,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import sg.ncl.exceptions.FuturePlanDownloadException;
+import sg.ncl.exceptions.OrderFormDownloadException;
 import sg.ncl.rest_client.RestClient;
 import sg.ncl.testbed_interface.*;
 
@@ -137,7 +139,7 @@ public class MainController {
     }
 
     @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
-    public void futureplanDownload(HttpServletResponse response) {
+    public void futureplanDownload(HttpServletResponse response) throws Exception {
         response.setContentType("application/pdf");
         try {
             File fileToDownload = new File("src/main/resources/downloads/future_plan.pdf");
@@ -147,14 +149,14 @@ public class MainController {
             IOUtils.copy(is, response.getOutputStream());
             response.flushBuffer();
             is.close();
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             logger.info("Error writing file to output stream.");
-            throw new RuntimeException("IOError writing file to output stream");
+            throw new FuturePlanDownloadException("IOError writing file to output stream");
         }
     }
 
     @RequestMapping(value="/OrderForm_v1/download", method=RequestMethod.GET)
-    public void OrderForm_v1Download(HttpServletResponse response) {
+    public void OrderForm_v1Download(HttpServletResponse response) throws Exception {
         response.setContentType("application/pdf");
         try {
             File fileToDownload = new File("src/main/resources/downloads/OrderForm_v1.pdf");
@@ -166,7 +168,7 @@ public class MainController {
             is.close();
         } catch (IOException ex) {
             logger.info("Error writing file to output stream.");
-            throw new RuntimeException("IOError writing file to output stream");
+            throw new OrderFormDownloadException("IOError writing file to output stream");
         }
     }
 
