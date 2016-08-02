@@ -164,5 +164,9 @@ public class ConnectionProperties {
     public String getExpListByTeamId(String teamId) {
         return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId;
     }
+
+    public String getRealization(String expId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/" + expId;
+    }
 }
 

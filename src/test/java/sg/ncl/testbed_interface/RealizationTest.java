@@ -3,7 +3,11 @@ package sg.ncl.testbed_interface;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 
@@ -111,6 +115,20 @@ public class RealizationTest {
     }
 
     @Test
+    public void testGetDetails() {
+        final Realization realization = new Realization();
+        assertThat(realization.getDetails(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetDetails() {
+        final Realization realization = new Realization();
+        final String one = RandomStringUtils.randomAlphanumeric(20);
+        realization.setDetails(one);
+        assertThat(realization.getDetails(), is(one));
+    }
+
+    @Test
     public void testGetIdleMinutes() {
         final Realization realization = new Realization();
         assertThat(realization.getIdleMinutes(), is(nullValue()));
@@ -136,5 +154,20 @@ public class RealizationTest {
         final Long one = Long.parseLong(RandomStringUtils.randomNumeric(5));
         realization.setRunningMinutes(one);
         assertThat(realization.getRunningMinutes(), is(one));
+    }
+
+    @Test
+    public void testGetDetailsList() {
+        final Realization realization = new Realization();
+        assertThat(realization.getDetailsList(), is(empty()));
+    }
+
+    @Test
+    public void testSetDetailsList() {
+        final Realization realization = new Realization();
+        List<String> detailsList = new ArrayList<>();
+        detailsList.add(RandomStringUtils.randomAlphabetic(20));
+        realization.setDetailsList(detailsList);
+        assertThat(realization.getDetailsList(), is(detailsList));
     }
 }

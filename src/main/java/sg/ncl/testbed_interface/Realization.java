@@ -1,5 +1,8 @@
 package sg.ncl.testbed_interface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Desmond
  */
@@ -12,30 +15,13 @@ public class Realization {
     private String teamId;
     private Integer numberOfNodes;
     private String state;
+    private String details;
     private Long idleMinutes;
     private Long runningMinutes;
+    private List<String> detailsList;
 
-    public Realization() {}
-
-    public Realization(final Long id,
-                       final Long experimentId,
-                       final String experimentName,
-                       final String userId,
-                       final String teamId,
-                       final Integer numberOfNodes,
-                       final String state,
-                       final Long idleMinutes,
-                       final Long runningMinutes) {
-
-        this.id = id;
-        this.experimentId = experimentId;
-        this.experimentName = experimentName;
-        this.userId = userId;
-        this.teamId = teamId;
-        this.numberOfNodes = numberOfNodes;
-        this.state = state;
-        this.idleMinutes = idleMinutes;
-        this.runningMinutes = runningMinutes;
+    public Realization() {
+        detailsList = new ArrayList<>();
     }
 
     public Long getId() {
@@ -108,5 +94,21 @@ public class Realization {
 
     public void setRunningMinutes(Long runningMinutes) {
         this.runningMinutes = runningMinutes;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public List<String> getDetailsList() {
+        return detailsList;
+    }
+
+    public void setDetailsList(List<String> detailsList) {
+        this.detailsList = detailsList;
     }
 }

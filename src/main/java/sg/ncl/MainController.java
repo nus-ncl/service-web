@@ -1141,6 +1141,7 @@ public class MainController {
     public String experiments(Model model, HttpSession session) {
 
         List<Experiment2> experimentList = new ArrayList<>();
+        Map<Long, Realization> realizationMap = new HashMap<>();
 
         // get list of teamids
         ResponseEntity userRespEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
@@ -1157,20 +1158,23 @@ public class MainController {
             headers.set("Authorization", AUTHORIZATION_HEADER);
 
             HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-            ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.POST, request, String.class);
+            ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, request, String.class);
 
             JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
 
             for (int k = 0; k < experimentsArray.length(); k++) {
                 Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+                Realization realization = invokeAndExtractRealization(experiment2.getId());
+                realizationMap.put(experiment2.getId(), realization);
                 experimentList.add(experiment2);
             }
         }
 
         model.addAttribute("experimentList", experimentList);
+        model.addAttribute("realizationMap", realizationMap);
         return "experiments";
     }
-    
+
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
     public String createExperiment(Model model, HttpSession session) {
 //    	List<String> scenarioFileNameList = getScenarioFileNameList();
@@ -1712,11 +1716,11 @@ public class MainController {
     }
     
     //--------------------------MISC--------------------------
-    public int getSessionIdOfLoggedInUser(HttpSession session) {
+    private int getSessionIdOfLoggedInUser(HttpSession session) {
     	return Integer.parseInt(session.getAttribute(SESSION_LOGGED_IN_USER_ID).toString());
     }
 
-    public User2 extractUserInfo(String userJson) {
+    private User2 extractUserInfo(String userJson) {
         User2 user2 = new User2();
         JSONObject object = new JSONObject(userJson);
         JSONObject userDetails = object.getJSONObject("userDetails");
@@ -1741,7 +1745,7 @@ public class MainController {
         return user2;
     }
 
-    public Team2 extractTeamInfo(String json) {
+    private Team2 extractTeamInfo(String json) {
         Team2 team2 = new Team2();
         JSONObject object = new JSONObject(json);
         JSONArray membersArray = object.getJSONArray("members");
@@ -1778,7 +1782,7 @@ public class MainController {
         return team2;
     }
 
-    public Team2 extractTeamInfoUserJoinRequest(String userId, String json) {
+    private Team2 extractTeamInfoUserJoinRequest(String userId, String json) {
         Team2 team2 = new Team2();
         JSONObject object = new JSONObject(json);
         JSONArray membersArray = object.getJSONArray("members");
@@ -1806,7 +1810,7 @@ public class MainController {
         return null;
     }
 
-    public User2 invokeAndExtractUserInfo(String userId) {
+    private User2 invokeAndExtractUserInfo(String userId) {
         String userId_uri = properties.getSioUsersUrl() + userId;
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", AUTHORIZATION_HEADER);
@@ -1822,7 +1826,7 @@ public class MainController {
         return USER_ID;
     }
 
-    public Experiment2 extractExperiment(String experimentJson) {
+    private Experiment2 extractExperiment(String experimentJson) {
         Experiment2 experiment2 = new Experiment2();
         JSONObject object = new JSONObject(experimentJson);
 
@@ -1838,6 +1842,36 @@ public class MainController {
         experiment2.setMaxDuration(object.getInt("maxDuration"));
 
         return experiment2;
+    }
+
+    private Realization invokeAndExtractRealization(Long id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        ResponseEntity respEntity = restTemplate.exchange(properties.getRealization(id.toString()), HttpMethod.GET, request, String.class);
+
+        return extractRealization(respEntity.getBody().toString());
+    }
+
+    private Realization extractRealization(String json) {
+        Realization realization = new Realization();
+        JSONObject object = new JSONObject(json);
+
+        realization.setExperimentId(object.getLong("experimentId"));
+        realization.setExperimentName(object.getString("experimentName"));
+        realization.setUserId(object.getString("userId"));
+        realization.setTeamId(object.getString("teamId"));
+        realization.setState(object.getString("state"));
+
+        String exp_report = object.get("details").toString();
+//        String[] exp_report_parts = exp_report.split("@");
+//        realization.setDetailsList(Arrays.asList(exp_report_parts));
+        exp_report = exp_report.replaceAll("@", "\\\r\\\n");
+//        System.out.println(exp_report);
+        realization.setDetails(exp_report);
+
+        return realization;
     }
 
     /**
