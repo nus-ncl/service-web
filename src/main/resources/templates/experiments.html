@@ -5,18 +5,18 @@
         <title>National Cybersecurity Laboratories - Experiment</title>
         <object th:include="fragments/header :: header" th:remove="tag" />
     </head>
-    <body class="mybg">
+    <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
+            <p>&nbsp;</p>
             <div class="row">
-                <p>&nbsp;</p>
                 <h2 class="team-heading team-heading-current-team" th:text="#{exp.header}">Experiments</h2>
                 <!-- user has no experiments -->
                 <div th:if="${#lists.isEmpty(experimentList)}">
                     <p th:text="#{exp.noExpRunning}">You do not have any experiments running yet.</p>
                 </div>
                 <!-- user has some experiments -->
-                <div class="panel panel-primary team-panel team-panel-current-team">
+                <div class="team-panel team-panel-current-team">
                     <div class="panel-body" th:if="not ${#lists.isEmpty(experimentList)}">
                         <table class="table table-responsive">
                             <thead>
