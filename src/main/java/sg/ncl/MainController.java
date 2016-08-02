@@ -139,7 +139,7 @@ public class MainController {
     }
 
     @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
-    public void futureplanDownload(HttpServletResponse response) throws Exception {
+    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException {
         response.setContentType("application/pdf");
         try {
             File fileToDownload = new File("src/main/resources/downloads/future_plan.pdf");
@@ -156,7 +156,7 @@ public class MainController {
     }
 
     @RequestMapping(value="/OrderForm_v1/download", method=RequestMethod.GET)
-    public void OrderForm_v1Download(HttpServletResponse response) throws Exception {
+    public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException {
         response.setContentType("application/pdf");
         try {
             File fileToDownload = new File("src/main/resources/downloads/OrderForm_v1.pdf");
