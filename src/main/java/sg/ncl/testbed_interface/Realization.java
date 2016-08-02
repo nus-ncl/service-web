@@ -1,7 +1,7 @@
 package sg.ncl.testbed_interface;
 
 /**
- * Created by Desmond.
+ * @author Desmond
  */
 public class Realization {
 
