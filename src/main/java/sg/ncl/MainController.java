@@ -1141,13 +1141,30 @@ public class MainController {
     public String experiments(Model model, HttpSession session) {
 
         List<Experiment2> experimentList = new ArrayList<>();
-        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioExpUrl() + "/users/" + session.getAttribute("id").toString());
 
-        JSONArray experimentsArray = new JSONArray(responseEntity.getBody().toString());
+        // get list of teamids
+        ResponseEntity userRespEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
 
-        for (int i = 0; i < experimentsArray.length(); i++) {
-            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(i).toString());
-            experimentList.add(experiment2);
+        JSONObject object = new JSONObject(userRespEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+
+            // get experiments lists of the teams
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", AUTHORIZATION_HEADER);
+
+            HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+            ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.POST, request, String.class);
+
+            JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
+
+            for (int k = 0; k < experimentsArray.length(); k++) {
+                Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+                experimentList.add(experiment2);
+            }
         }
 
         model.addAttribute("experimentList", experimentList);
@@ -1280,6 +1297,7 @@ public class MainController {
 
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getDeleteExperiment(expId), HttpMethod.POST, request, String.class);
+        System.out.println(responseEntity.getBody().toString());
         return "redirect:/experiments";
     }
     

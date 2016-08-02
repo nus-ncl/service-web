@@ -160,5 +160,9 @@ public class ConnectionProperties {
     public String getApproveTeam(String teamId, TeamStatus teamStatus) {
         return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "?status=" + teamStatus;
     }
+
+    public String getExpListByTeamId(String teamId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId;
+    }
 }
 
