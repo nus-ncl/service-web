@@ -57,10 +57,9 @@
                                                             <ol>SSH into the node by using its Qualified Name, e.g. <em>n0.demoexp.project.ncl.sg</em></ol>
                                                         </ul>
                                                         <h4>Info</h4>
-                                                        <p th:utext="${#strings.replace( #strings.escapeXml(realization.details),T(java.lang.System).getProperty('line.separator'),'&lt;br /&gt;')}"></p>
-                                                        <!--<th:block th:each="details : ${realization.getDetailsList()}">-->
-                                                            <!--<p th:text="${details}"></p>-->
-                                                        <!--</th:block>-->
+                                                        <form action="#">
+                                                            <textarea th:text="${realization.details}" class="realization" rows="30" cols="100"></textarea>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -68,9 +67,21 @@
                                     </td>
                                 </th:block>
                                 <td>
-                                    <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></a>
-                                    <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
-                                    <a href="#" th:href="@{/stop_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></a>
+                                    <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
+                                        <span th:if="${realization.state == 'ACTIVATING'}">
+                                            <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
+                                        </span>
+                                        <span th:if="${realization.state == 'STOPPING'}">
+                                            <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
+                                        </span>
+                                        <span th:if="${realization.state == 'NEW' or realization.state == 'STOP'}">
+                                            <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></a>
+                                            <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
+                                        </span>
+                                        <span th:if="${realization.state == 'ACTIVE'}">
+                                            <a href="#" th:href="@{/stop_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></a>
+                                        </span>
+                                    </th:block>
                                     <!--<span th:if="${expEntry.status == 'STOPPED'}">-->
                                         <!--<a href="#" th:href="@{/start_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>-->
                                     <!--</span>-->
