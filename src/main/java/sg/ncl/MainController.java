@@ -1157,7 +1157,7 @@ public class MainController {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", AUTHORIZATION_HEADER);
 
-            HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+            HttpEntity<String> request = new HttpEntity<>("parameters", headers);
             ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, request, String.class);
 
             JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
@@ -1301,7 +1301,6 @@ public class MainController {
 
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getDeleteExperiment(expId), HttpMethod.POST, request, String.class);
-        System.out.println(responseEntity.getBody().toString());
         return "redirect:/experiments";
     }
     
@@ -1848,7 +1847,7 @@ public class MainController {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
         ResponseEntity respEntity = restTemplate.exchange(properties.getRealization(id.toString()), HttpMethod.GET, request, String.class);
 
         return extractRealization(respEntity.getBody().toString());
@@ -1865,10 +1864,7 @@ public class MainController {
         realization.setState(object.getString("state"));
 
         String exp_report = object.get("details").toString();
-//        String[] exp_report_parts = exp_report.split("@");
-//        realization.setDetailsList(Arrays.asList(exp_report_parts));
         exp_report = exp_report.replaceAll("@", "\\\r\\\n");
-//        System.out.println(exp_report);
         realization.setDetails(exp_report);
 
         return realization;
