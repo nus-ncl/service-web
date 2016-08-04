@@ -4,9 +4,8 @@ import java.io.*;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -17,12 +16,15 @@ import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
@@ -45,7 +47,7 @@ public class MainController {
     
 	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final int ERROR_NO_SUCH_USER_ID = 0;
-    private final static Logger logger = Logger.getLogger(MainController.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(MainController.class.getName());
     private int CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
     private boolean IS_USER_ADMIN = false;
     private TeamManager teamManager = TeamManager.getInstance();
@@ -74,6 +76,9 @@ public class MainController {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Inject
+    private ObjectMapper objectMapper;
 
     @Autowired
     private ConnectionProperties properties;
@@ -432,23 +437,40 @@ public class MainController {
     //--------------------------Account Settings Page--------------------------
     @RequestMapping(value="/account_settings", method=RequestMethod.GET)
     public String accountDetails(Model model, HttpSession session) throws IOException {
-    	// TODO id should be some session variable?
 
     	String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
+//        String userId_uri = properties.getSioUsersUrl() + "AAAAAAAAAAAAAAAAAAAA";
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.GET, request, String.class);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(userId_uri, HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
 
-        User2 user2 = extractUserInfo(responseEntity.getBody().toString());
-        originalUser = user2;
-        model.addAttribute("editUser", user2);
-        return "account_settings";
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                logger.error("No such user: {}", session.getAttribute("id"));
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                throw new RestClientException("[" + error.getExceptionName() + "] ");
+            } else {
+                User2 user2 = extractUserInfo(responseBody);
+                originalUser = user2;
+                model.addAttribute("editUser", user2);
+                return "account_settings";
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
     
     @RequestMapping(value="/account_settings", method=RequestMethod.POST)
-    public String editAccountDetails(@ModelAttribute("editUser") User2 editUser, final RedirectAttributes redirectAttributes, HttpSession session) {
+    public String editAccountDetails(
+            @ModelAttribute("editUser") User2 editUser,
+            final RedirectAttributes redirectAttributes,
+            HttpSession session)
+    {
     	// Need to be this way to "edit" details
     	// If not, the form details will overwrite existing user's details
 
@@ -548,8 +570,8 @@ public class MainController {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", AUTHORIZATION_HEADER);
 
-            HttpEntity<String> request = new HttpEntity<String>(userObject.toString(), headers);
-            ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
+            HttpEntity<String> request = new HttpEntity<>(userObject.toString(), headers);
+            ResponseEntity resp = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
 
             if (originalUser != null) {
                 if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
@@ -602,83 +624,25 @@ public class MainController {
                 credHeaders.setContentType(MediaType.APPLICATION_JSON);
                 credHeaders.set("Authorization", AUTHORIZATION_HEADER);
 
-                HttpEntity<String> credRequest = new HttpEntity<String>(credObject.toString(), headers);
-                restTemplate.exchange(properties.getSioCredUrl() + session.getAttribute("id"), HttpMethod.PUT, credRequest, String.class);
-                redirectAttributes.addFlashAttribute("editPassword", "success");
+                HttpEntity<String> credRequest = new HttpEntity<>(credObject.toString(), headers);
+                restTemplate.setErrorHandler(new MyResponseErrorHandler());
+                ResponseEntity response = restTemplate.exchange(properties.getSioCredUrl() + session.getAttribute("id"), HttpMethod.PUT, credRequest, String.class);
+                String responseBody = response.getBody().toString();
+
+                try {
+                    if (RestUtil.isError(response.getStatusCode())) {
+                        MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                        System.out.println(error.getExceptionName());
+                        redirectAttributes.addFlashAttribute("editPassword", "fail");
+                    } else {
+                        redirectAttributes.addFlashAttribute("editPassword", "success");
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-        /*
-    	User originalUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
-    	
-    	String editedName = editUser.getName();
-    	String editedPassword = editUser.getPassword();
-    	String editedConfirmPassword = editUser.getConfirmPassword();
-    	String editedJobTitle = editUser.getJobTitle();
-    	String editedInstitution = editUser.getInstitution();
-    	String editedInstitutionAbbreviation = editUser.getInstitutionAbbreviation();
-    	String editedWebsite = editUser.getWebsite();
-    	String editedAddress1 = editUser.getAddress1();
-    	String editedAddress2 = editUser.getAddress2();
-    	String editedCountry = editUser.getCountry();
-    	String editedCity = editUser.getCity();
-    	String editedProvince = editUser.getProvince();
-    	String editedPostalCode = editUser.getPostalCode();
-    	
-    	if (originalUser.updateName(editedName) == true) {
-        	redirectAttributes.addFlashAttribute("editName", "success");
-    	}
-    	
-    	if (editedPassword.equals(editedConfirmPassword) == false) {
-    		redirectAttributes.addFlashAttribute("editPasswordMismatch", "unsuccess");
-    	} else if (originalUser.updatePassword(editedPassword) == true) {
-    		redirectAttributes.addFlashAttribute("editPassword", "success");
-    	} else {
-    		redirectAttributes.addFlashAttribute("editPassword", "unsuccess");
-    	}
-    	
-    	if (originalUser.updateJobTitle(editedJobTitle) == true) {
-    		redirectAttributes.addFlashAttribute("editJobTitle", "success");
-    	}
-    	
-    	if (originalUser.updateInstitution(editedInstitution) == true) {
-    		redirectAttributes.addFlashAttribute("editInstitution", "success");
-    	}
-    	
-    	if (originalUser.updateInstitutionAbbreviation(editedInstitutionAbbreviation) == true) {
-    		redirectAttributes.addFlashAttribute("editInstitutionAbbreviation", "success");
-    	}
-    	
-    	if (originalUser.updateWebsite(editedWebsite) == true) {
-    		redirectAttributes.addFlashAttribute("editWebsite", "success");
-    	}
-    	
-    	if (originalUser.updateAddress1(editedAddress1) == true) {
-    		redirectAttributes.addFlashAttribute("editAddress1", "success");
-    	}
-    	
-    	if (originalUser.updateAddress2(editedAddress2) == true) {
-    		redirectAttributes.addFlashAttribute("editAddress2", "success");
-    	}
-    	
-    	if (originalUser.updateCountry(editedCountry) == true) {
-    		redirectAttributes.addFlashAttribute("editCountry", "success");
-    	}
-    	
-    	if (originalUser.updateCity(editedCity) == true) {
-    		redirectAttributes.addFlashAttribute("editCity", "success");
-    	}
-    	
-    	if (originalUser.updateProvince(editedProvince) == true) {
-    		redirectAttributes.addFlashAttribute("editProvince", "success");
-    	}
-    	
-    	if (originalUser.updatePostalCode(editedPostalCode) == true) {
-    		redirectAttributes.addFlashAttribute("editPostalCode", "success");
-    	}
-    	
-    	userManager.updateUserDetails(originalUser);
-        return "redirect:/account_settings";
-        */
+
         originalUser = null;
         return "redirect:/account_settings";
     }
@@ -1061,7 +1025,7 @@ public class MainController {
     @RequestMapping(value="/teams/apply_team", method=RequestMethod.POST)
     public String checkApplyTeamInfo(@Valid TeamPageApplyTeamForm teamPageApplyTeamForm, BindingResult bindingResult, HttpSession session) {
         if (bindingResult.hasErrors()) {
-           logger.warning("Existing users apply for new team, page has errors");
+           logger.warn("Existing users apply for new team, page has errors");
            // return "redirect:/teams/apply_team";
            return "team_page_apply_team";
         }
@@ -1107,7 +1071,7 @@ public class MainController {
             return "team_page_join_team";
         }
         // log data to ensure data has been parsed
-        logger.log(Level.INFO, "--------Join team---------");
+        logger.info("--------Join team---------");
 
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
