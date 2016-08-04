@@ -32,6 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.exceptions.FuturePlanDownloadException;
 import sg.ncl.exceptions.OrderFormDownloadException;
+import sg.ncl.exceptions.WebServiceRuntimeException;
 import sg.ncl.rest_client.RestClient;
 import sg.ncl.testbed_interface.*;
 
@@ -436,7 +437,7 @@ public class MainController {
 
     //--------------------------Account Settings Page--------------------------
     @RequestMapping(value="/account_settings", method=RequestMethod.GET)
-    public String accountDetails(Model model, HttpSession session) throws IOException {
+    public String accountDetails(Model model, HttpSession session) throws WebServiceRuntimeException {
 
     	String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
 //        String userId_uri = properties.getSioUsersUrl() + "AAAAAAAAAAAAAAAAAAAA";
@@ -460,7 +461,7 @@ public class MainController {
                 return "account_settings";
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new WebServiceRuntimeException(e.getMessage());
         }
 
     }
@@ -469,7 +470,7 @@ public class MainController {
     public String editAccountDetails(
             @ModelAttribute("editUser") User2 editUser,
             final RedirectAttributes redirectAttributes,
-            HttpSession session)
+            HttpSession session) throws WebServiceRuntimeException
     {
     	// Need to be this way to "edit" details
     	// If not, the form details will overwrite existing user's details
@@ -632,13 +633,12 @@ public class MainController {
                 try {
                     if (RestUtil.isError(response.getStatusCode())) {
                         MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                        System.out.println(error.getExceptionName());
                         redirectAttributes.addFlashAttribute("editPassword", "fail");
                     } else {
                         redirectAttributes.addFlashAttribute("editPassword", "success");
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new WebServiceRuntimeException(e.getMessage());
                 }
             }
         }
