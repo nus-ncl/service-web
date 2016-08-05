@@ -117,7 +117,7 @@ public class RealizationTest {
     @Test
     public void testGetDetails() {
         final Realization realization = new Realization();
-        assertThat(realization.getDetails(), is(nullValue()));
+        assertThat(realization.getDetails(), is(""));
     }
 
     @Test
