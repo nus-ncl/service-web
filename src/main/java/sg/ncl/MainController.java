@@ -1598,7 +1598,6 @@ public class MainController {
 				stream = new BufferedOutputStream(
 						new FileOutputStream(new File(App.ROOT + "/" + fileName)));
                 FileCopyUtils.copy(file.getInputStream(), stream);
-				stream.close();
 				redirectAttributes.addFlashAttribute("message",
 						"You successfully uploaded " + file.getOriginalFilename() + "!");
 				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
