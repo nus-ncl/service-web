@@ -640,11 +640,11 @@ public class MainController {
                     }
                 } catch (IOException e) {
                     throw new WebServiceRuntimeException(e.getMessage());
+                } finally {
+                    originalUser = null;
                 }
             }
         }
-
-        originalUser = null;
         return "redirect:/account_settings";
     }
     
