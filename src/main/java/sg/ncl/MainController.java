@@ -160,7 +160,9 @@ public class MainController {
             logger.info("Error writing file to output stream.");
             throw new FuturePlanDownloadException("IOError writing file to output stream");
         } finally {
-            stream.close();
+            if (stream != null) {
+                stream.close();
+            }
         }
     }
 
@@ -179,7 +181,9 @@ public class MainController {
             logger.info("Error writing file to output stream.");
             throw new OrderFormDownloadException("IOError writing file to output stream");
         } finally {
-            stream.close();
+            if (stream != null) {
+                stream.close();
+            }
         }
     }
 
@@ -1603,7 +1607,9 @@ public class MainController {
 				redirectAttributes.addFlashAttribute("message",
 						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
 			} finally {
-                stream.close();
+                if (stream != null) {
+                    stream.close();
+                }
             }
         }
 		else {
