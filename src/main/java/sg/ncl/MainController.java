@@ -165,19 +165,21 @@ public class MainController {
     }
 
     @RequestMapping(value="/OrderForm_v1/download", method=RequestMethod.GET)
-    public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException {
+    public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
+        InputStream stream = null;
         response.setContentType("application/pdf");
         try {
             File fileToDownload = new File("src/main/resources/downloads/OrderForm_v1.pdf");
-            InputStream is = new FileInputStream(fileToDownload);
+            stream = new FileInputStream(fileToDownload);
             response.setContentType("application/force-download");
             response.setHeader("Content-Disposition", "attachment; filename=OrderForm_v1.pdf");
-            IOUtils.copy(is, response.getOutputStream());
+            IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
-            is.close();
         } catch (IOException ex) {
             logger.info("Error writing file to output stream.");
             throw new OrderFormDownloadException("IOError writing file to output stream");
+        } finally {
+            stream.close();
         }
     }
 
@@ -1355,14 +1357,15 @@ public class MainController {
     }
     
     @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
-    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
     	// TODO
     	// validation
     	// get file from user upload to server
+        BufferedOutputStream stream = null;
 		if (!file.isEmpty()) {
 			try {
 				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-				BufferedOutputStream stream = new BufferedOutputStream(
+				stream = new BufferedOutputStream(
 						new FileOutputStream(new File(App.ROOT + "/" + fileName)));
                 FileCopyUtils.copy(file.getInputStream(), stream);
 				stream.close();
@@ -1373,8 +1376,10 @@ public class MainController {
 			catch (Exception e) {
 				redirectAttributes.addFlashAttribute("message",
 						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
-			}
-		}
+			} finally {
+                stream.close();
+            }
+        }
 		else {
 			redirectAttributes.addFlashAttribute("message",
 					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
@@ -1578,14 +1583,15 @@ public class MainController {
     }
     
     @RequestMapping(value="/admin/data/contribute", method=RequestMethod.POST)
-    public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-    	// TODO
+    public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+        BufferedOutputStream stream = null;
+        // TODO
     	// validation
     	// get file from user upload to server
 		if (!file.isEmpty()) {
 			try {
 				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-				BufferedOutputStream stream = new BufferedOutputStream(
+				stream = new BufferedOutputStream(
 						new FileOutputStream(new File(App.ROOT + "/" + fileName)));
                 FileCopyUtils.copy(file.getInputStream(), stream);
 				stream.close();
@@ -1596,8 +1602,10 @@ public class MainController {
 			catch (Exception e) {
 				redirectAttributes.addFlashAttribute("message",
 						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
-			}
-		}
+			} finally {
+                stream.close();
+            }
+        }
 		else {
 			redirectAttributes.addFlashAttribute("message",
 					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
