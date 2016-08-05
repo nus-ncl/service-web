@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -1366,11 +1367,13 @@ public class MainController {
     	// validation
     	// get file from user upload to server
         BufferedOutputStream stream = null;
+        FileOutputStream fileOutputStream = null;
+
 		if (!file.isEmpty()) {
 			try {
 				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-				stream = new BufferedOutputStream(
-						new FileOutputStream(new File(App.ROOT + "/" + fileName)));
+                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
+				stream = new BufferedOutputStream(fileOutputStream);
                 FileCopyUtils.copy(file.getInputStream(), stream);
 				stream.close();
 				redirectAttributes.addFlashAttribute("message",
@@ -1381,7 +1384,12 @@ public class MainController {
 				redirectAttributes.addFlashAttribute("message",
 						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
 			} finally {
-                stream.close();
+                if (stream != null) {
+                    stream.close();
+                }
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
+                }
             }
         }
 		else {
@@ -1589,14 +1597,15 @@ public class MainController {
     @RequestMapping(value="/admin/data/contribute", method=RequestMethod.POST)
     public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
         BufferedOutputStream stream = null;
+        FileOutputStream fileOutputStream = null;
         // TODO
     	// validation
     	// get file from user upload to server
 		if (!file.isEmpty()) {
 			try {
 				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-				stream = new BufferedOutputStream(
-						new FileOutputStream(new File(App.ROOT + "/" + fileName)));
+                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
+				stream = new BufferedOutputStream(fileOutputStream);
                 FileCopyUtils.copy(file.getInputStream(), stream);
 				redirectAttributes.addFlashAttribute("message",
 						"You successfully uploaded " + file.getOriginalFilename() + "!");
@@ -1608,6 +1617,9 @@ public class MainController {
 			} finally {
                 if (stream != null) {
                     stream.close();
+                }
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
                 }
             }
         }
