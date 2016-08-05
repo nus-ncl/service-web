@@ -13,10 +13,7 @@
                 <p>&nbsp;</p>
                 <h2 class="team-heading team-heading-current-team" th:text="#{exp.createExp}">Create Experiment</h2>
 				<div th:if="${message}">
-					<h4 th:text="${message}"></h4>
-				</div>
-				<div th:if="${message2}">
-					<h4 th:text="${message2}"></h4>
+					<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 				</div>
                 <h3 th:text="#{exp.info}">Experiment Info</h3>
                 <form  method="post" action="#" th:action="@{/experiments/create}" th:object="${experimentForm}" role="form" enctype="multipart/form-data">

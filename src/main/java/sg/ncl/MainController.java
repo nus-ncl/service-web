@@ -1168,7 +1168,8 @@ public class MainController {
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
     public String validateExperiment(
             @ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm,
-            HttpSession session) throws WebServiceRuntimeException
+            HttpSession session,
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException
     {
 
         JSONObject experimentObject = new JSONObject();
@@ -1181,8 +1182,6 @@ public class MainController {
         experimentObject.put("nsFileContent", experimentPageCreateExperimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
-
-        System.out.println(experimentObject.toString());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -1200,10 +1199,13 @@ public class MainController {
 
                 if (error.getExceptionName().equals(ExceptionState.NSFileParseException.toString())) {
                     // display error message
+                    redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
                 } else if (error.getExceptionName().equals(ExceptionState.ExpNameAlreadyExistsException.toString())) {
                     // display error message
+                    redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
                 } else {
                     // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", "Our server is currently overloaded with requests. Please try again later.");
                 }
                 return "redirect:/experiments/create";
             }
