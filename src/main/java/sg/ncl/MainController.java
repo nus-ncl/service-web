@@ -146,19 +146,21 @@ public class MainController {
     }
 
     @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
-    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException {
+    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
+        InputStream stream = null;
         response.setContentType("application/pdf");
         try {
             File fileToDownload = new File("src/main/resources/downloads/future_plan.pdf");
-            InputStream is = new FileInputStream(fileToDownload);
+            stream = new FileInputStream(fileToDownload);
             response.setContentType("application/force-download");
             response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
-            IOUtils.copy(is, response.getOutputStream());
+            IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
-            is.close();
         } catch (Exception ex) {
             logger.info("Error writing file to output stream.");
             throw new FuturePlanDownloadException("IOError writing file to output stream");
+        } finally {
+            stream.close();
         }
     }
 
