@@ -30,6 +30,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import sg.ncl.domain.ExceptionState;
 import sg.ncl.exceptions.FuturePlanDownloadException;
 import sg.ncl.exceptions.OrderFormDownloadException;
 import sg.ncl.exceptions.WebServiceRuntimeException;
@@ -1141,10 +1142,6 @@ public class MainController {
 
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
     public String createExperiment(Model model, HttpSession session) {
-//    	List<String> scenarioFileNameList = getScenarioFileNameList();
-//        model.addAttribute("experiment", new Experiment2());
-//        model.addAttribute("scenarioFileNameList", scenarioFileNameList);
-//        model.addAttribute("teamMap", teamManager.getTeamMap(getSessionIdOfLoggedInUser(session)));
 
         // a list of teams that the logged in user is in
         List<Team2> userTeamsList = new ArrayList<>();
@@ -1153,7 +1150,7 @@ public class MainController {
         ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
 
         JSONObject object = new JSONObject(responseEntity.getBody().toString());
-        System.out.println(responseEntity.getBody().toString());
+
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
@@ -1169,7 +1166,10 @@ public class MainController {
     }
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
-    public String validateExperiment(@ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm, HttpSession session) {
+    public String validateExperiment(
+            @ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm,
+            HttpSession session) throws WebServiceRuntimeException
+    {
 
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
@@ -1188,8 +1188,28 @@ public class MainController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>(experimentObject.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
+        HttpEntity<String> request = new HttpEntity<>(experimentObject.toString(), headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getExceptionName().equals(ExceptionState.NSFileParseException.toString())) {
+                    // display error message
+                } else if (error.getExceptionName().equals(ExceptionState.ExpNameAlreadyExistsException.toString())) {
+                    // display error message
+                } else {
+                    // possible sio or adapter connection fail
+                }
+                return "redirect:/experiments/create";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
 
         //
         // TODO Uploaded function for network configuration and optional dataset

@@ -5,5 +5,7 @@ package sg.ncl.domain;
  */
 public enum ExceptionState {
     UserNotFoundException,
-    CredentialsUpdateException
+    CredentialsUpdateException,
+    NSFileParseException,
+    ExpNameAlreadyExistsException
 }
