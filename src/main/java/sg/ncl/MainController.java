@@ -206,12 +206,17 @@ public class MainController {
     public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) {
         String inputEmail = loginForm.getLoginEmail();
         String inputPwd = loginForm.getLoginPassword();
+        if (inputEmail.trim().isEmpty() || inputPwd.trim().isEmpty()) {
+            loginForm.setErrorMsg("Email or Password cannot be empty!");
+            return "login";
+        }
 
         String plainCreds = inputEmail + ":" + inputPwd;
         byte[] plainCredsBytes = plainCreds.getBytes();
         byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
         String base64Creds = new String(base64CredsBytes);
 
+        ResponseEntity responseEntity;
         String jwtTokenString;
         String id = "";
 
@@ -220,16 +225,16 @@ public class MainController {
             headers.set("Authorization", "Basic " + base64Creds);
 
             HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-            ResponseEntity responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
-
-            // TODO call the proper validation functions
-            jwtTokenString = responseEntity.getBody().toString();
+            responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
         } catch (Exception e) {
+            // TODO: handle different types of error
             // case1: invalid login
-            loginForm.setErrorMsg("Invalid email/password.");
+            loginForm.setErrorMsg("Login failed: Invalid email/password.");
             return "login";
         }
 
+        // TODO call the proper validation functions
+        jwtTokenString = responseEntity.getBody().toString();
         if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
             JSONObject tokenObject = new JSONObject(jwtTokenString);
             String token = tokenObject.getString("token");
@@ -251,7 +256,7 @@ public class MainController {
             return "redirect:/dashboard";
         } else {
             // case1: invalid login
-            loginForm.setErrorMsg("Invalid email/password.");
+            loginForm.setErrorMsg("Login failed: Invalid email/password.");
             return "login";
         }
 
