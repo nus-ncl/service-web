@@ -1835,7 +1835,6 @@ public class MainController {
 
         HttpEntity<String> request = new HttpEntity<>("parameters", headers);
         ResponseEntity respEntity = restTemplate.exchange(properties.getRealization(id.toString()), HttpMethod.GET, request, String.class);
-
         return extractRealization(respEntity.getBody().toString());
     }
 
@@ -1849,9 +1848,14 @@ public class MainController {
         realization.setTeamId(object.getString("teamId"));
         realization.setState(object.getString("state"));
 
-        String exp_report = object.get("details").toString();
-        exp_report = exp_report.replaceAll("@", "\\\r\\\n");
-        realization.setDetails(exp_report);
+        String exp_report = "";
+
+        if (object.get("details") == null) {
+            realization.setDetails("");
+        } else {
+            exp_report = object.get("details").toString().replaceAll("@", "\\\r\\\n");
+            realization.setDetails(exp_report);
+        }
 
         return realization;
     }
