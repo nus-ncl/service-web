@@ -1036,7 +1036,10 @@ public class MainController {
     }
     
     @RequestMapping(value="/teams/apply_team", method=RequestMethod.POST)
-    public String checkApplyTeamInfo(@Valid TeamPageApplyTeamForm teamPageApplyTeamForm, BindingResult bindingResult, HttpSession session) {
+    public String checkApplyTeamInfo(
+            @Valid TeamPageApplyTeamForm teamPageApplyTeamForm,
+            BindingResult bindingResult,
+            HttpSession session) {
         if (bindingResult.hasErrors()) {
            logger.warn("Existing users apply for new team, page has errors");
            // return "redirect:/teams/apply_team";
@@ -1172,26 +1175,31 @@ public class MainController {
             userTeamsList.add(team2);
         }
 
-        model.addAttribute("experimentForm", new ExperimentPageCreateExperimentForm());
+        model.addAttribute("experimentForm", new ExperimentForm());
         model.addAttribute("userTeamsList", userTeamsList);
         return "experiment_page_create_experiment";
     }
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
     public String validateExperiment(
-            @ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm,
+            @ModelAttribute("experimentForm") ExperimentForm experimentForm,
             HttpSession session,
+            BindingResult bindingResult,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException
     {
 
+        if (bindingResult.hasErrors()) {
+            return "redirect:/experiments/create";
+        }
+
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
-        experimentObject.put("teamId", experimentPageCreateExperimentForm.getTeamId());
-        experimentObject.put("teamName", experimentPageCreateExperimentForm.getTeamName());
-        experimentObject.put("name", experimentPageCreateExperimentForm.getName());
-        experimentObject.put("description", experimentPageCreateExperimentForm.getDescription());
+        experimentObject.put("teamId", experimentForm.getTeamId());
+        experimentObject.put("teamName", experimentForm.getTeamName());
+        experimentObject.put("name", experimentForm.getName());
+        experimentObject.put("description", experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
-        experimentObject.put("nsFileContent", experimentPageCreateExperimentForm.getNsFileContent());
+        experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
 

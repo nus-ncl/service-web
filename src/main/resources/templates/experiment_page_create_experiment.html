@@ -16,7 +16,7 @@
 					<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 				</div>
                 <h3 th:text="#{exp.info}">Experiment Info</h3>
-                <form  method="post" action="#" th:action="@{/experiments/create}" th:object="${experimentForm}" role="form" enctype="multipart/form-data">
+                <form method="post" action="#" th:action="@{/experiments/create}" th:object="${experimentForm}" role="form">
                     <fieldset>
                         <div class="form-group">
                        	 	<label for="teamName"><span th:text="#{exp.selectTeam}">Select team:</span></label>
@@ -46,10 +46,6 @@
 	                        	<label for="networkConfiguration" th:text="#{exp.networkConfig}">Network Configuration</label>
 	                        	<textarea rows="30" cols="50" style="resize: none" th:field="*{nsFileContent}" class="form-control"></textarea>
 	                        </div>
-	                        <!--<div class="form-group">-->
-	                        	<!--<label for="dataset" th:text="#{exp.dataset}">(Optional) Dataset</label>-->
-	                        	<!--<input type="file" name="dataset"/>-->
-	                        <!--</div>-->
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-standard">Submit</button>

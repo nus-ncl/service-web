@@ -1,41 +1,34 @@
 package sg.ncl.testbed_interface;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class ExperimentPageCreateExperimentForm {
+public class ExperimentForm {
 
-    @NotNull(message = "Team cannot be empty")
-    @Size(min = 1, message = "Team cannot be empty")
     private String teamId;
-
     private String teamName;
 
+    @Size(min = 1, message = "Team cannot be empty")
     private String teamNameWithId;
 
-    @NotNull(message = "Name cannot be empty")
-    @Size(min = 1, message = "Name cannot be empty")
+    @Size(min = 1, message = "Experiment Name cannot be empty")
     private String name;
 
-    @NotNull(message = "Description cannot be empty")
     @Size(min = 1, message = "Description cannot be empty")
     private String description;
-
-    @NotNull(message = "Network Configuration cannot be empty")
-    @Size(min = 1, message = "Network Configuration cannot be empty")
     private String nsFile;
 
+    @Size(min = 1, message = "Network Configuration cannot be empty")
     private String nsFileContent;
     private Integer idleSwap;
     private Integer maxDuration;
 
-    public ExperimentPageCreateExperimentForm() {}
+    public ExperimentForm() {}
 
     public String getTeamId() {
         return teamId;
     }
 
-    void setTeamId(String teamId) {
+    public void setTeamId(String teamId) {
         this.teamId = teamId;
     }
 
@@ -104,7 +97,7 @@ public class ExperimentPageCreateExperimentForm {
         return teamName;
     }
 
-    void setTeamName(String teamName) {
+    public void setTeamName(String teamName) {
         this.teamName = teamName;
     }
 }
