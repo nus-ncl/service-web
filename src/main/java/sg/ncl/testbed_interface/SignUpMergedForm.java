@@ -1,5 +1,8 @@
 package sg.ncl.testbed_interface;
 
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
+
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -8,39 +11,62 @@ import javax.validation.constraints.Size;
 public class SignUpMergedForm {
 	
 	// Account Details Fields
-	@NotNull(message="Email cannot be empty")
     @Size(min=1, message="Email cannot be empty")
     private String email;
-    
-    @NotNull(message="Password cannot be empty")
+
     @Size(min=1, message="Password cannot be empty")
     private String password;
-    
+
     private String confirmPassword;
     private String errorMsg = null;
     
 	// Personal Details Fields
     private String name;
+
+    @Size(min=1, message = "First name cannot be empty")
     private String firstName;
+
+    @Size(min=1, message ="Last name cannot be empty")
     private String lastName;
+
+    @Pattern(regexp="^[0-9]*$", message = "Phone cannot have special characters" )
+    @Range(min=6, message="Phone minimum 6 digits")
     private String phone;
+
+    @NotEmpty(message = "Job title cannot be empty")
     private String jobTitle;
+
+    @NotEmpty(message = "Institution cannot be empty")
     private String institution;
+
+    @NotEmpty(message = "Institution Abbreviation cannot be empty")
     private String institutionAbbreviation;
+
+    @NotEmpty(message = "Website cannot be empty")
     private String website;
+
+    @NotEmpty(message = "Address 1 cannot be empty")
     private String address1;
+
     private String address2;
+
+    @NotEmpty(message = "Country cannot be empty")
     private String country;
+
+    @NotEmpty(message = "City cannot be empty")
     private String city;
+
+    @NotEmpty(message = "Province cannot be empty")
     private String province;
+
+    @Pattern(regexp="^[0-9]*$", message = "Postal code cannot have special characters" )
+    @Range(min=6, message="Postal code minimum 6 digits")
     private String postalCode;
     
     // Create New Team Fields
-    @Size(min=1, message="Team name cannot be empty")
     @Pattern(regexp="^[a-zA-Z0-9]*$", message="Team name cannot have special characters")
     private String teamName;
-    
-    @Size(min=1, message="Team description cannot be empty")
+
     private String teamDescription;
     
     private String teamWebsite;
@@ -48,12 +74,10 @@ public class SignUpMergedForm {
     
     // defaults to public
     private String isPublic = "PUBLIC";
-    
-    @AssertTrue(message="Please read and accept the team owner policy")
+
     private boolean hasAcceptTeamOwnerPolicy;
     
     // Join New Team Fields
-    @Size(min = 1, message="Team name cannot be empty")
     @Pattern(regexp="^[a-zA-Z0-9]*$", message="Team name cannot have special characters")
     private String joinTeamName;
 
@@ -94,12 +118,10 @@ public class SignUpMergedForm {
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
     }
-    
-    public boolean isPasswordMatch() {
-        if (!password.equals(confirmPassword)) {
-            return false;
-        }
-        return true;
+
+    @AssertTrue(message="Password should matched")
+    public boolean isValid() {
+        return this.password.equals(this.confirmPassword);
     }
     
     //--------------------------------------- Personal Details ---------------------------------------

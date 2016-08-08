@@ -347,8 +347,14 @@ public class MainController {
     }
     
     @RequestMapping(value="/signup2", method=RequestMethod.POST)
-    public String validateDetails(@ModelAttribute("loginForm") LoginForm loginForm, @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm) {
-    	// TODO get each model data and put into relevant ones
+    public String validateDetails(
+            @Valid
+            @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "/signup2";
+        }
 
         // get form fields
         // craft the registration json
