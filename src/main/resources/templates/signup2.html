@@ -167,6 +167,7 @@
 			                        </ul>
 
 									<p class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></p>
+									<p class="account-change-fail" th:if="${createTeamErrMsg}"><i class="fa fa-exclamation-circle"></i> <span th:text="${createTeamErrMsg}"></span></p>
 			                        
                                 	<h3 th:text="#{signup.applyCreateTeam.header}">Apply to create a new team</h3>
 	                                <div class="form-group">
