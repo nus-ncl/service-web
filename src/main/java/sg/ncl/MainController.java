@@ -212,7 +212,18 @@ public class MainController {
     }
     
     @RequestMapping(value="/login", method=RequestMethod.POST)
-    public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) {
+    public String loginSubmit(
+            @Valid
+            @ModelAttribute("loginForm") LoginForm loginForm,
+            BindingResult bindingResult,
+            Model model,
+            HttpSession session) {
+
+        if (bindingResult.hasErrors()) {
+            loginForm.setErrorMsg("Invalid email/password.");
+            return "login";
+        }
+
         String inputEmail = loginForm.getLoginEmail();
         String inputPwd = loginForm.getLoginPassword();
 
@@ -228,7 +239,7 @@ public class MainController {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Basic " + base64Creds);
 
-            HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+            HttpEntity<String> request = new HttpEntity<>("parameters", headers);
             ResponseEntity responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
 
             // TODO call the proper validation functions
@@ -246,12 +257,6 @@ public class MainController {
 
 //            System.out.println(token);
             AUTHORIZATION_HEADER = "Bearer " + token;
-
-            // needed for legacy codes to work
-            CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
-//            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
-            session.setAttribute("isUserAdmin", IS_USER_ADMIN);
-            session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
 
             // FIXME supposed to set some session ID such as the user id returned by the token
             session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
