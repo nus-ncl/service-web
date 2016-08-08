@@ -15,8 +15,8 @@
                 <form  method="post" action="#" th:action="@{/teams/join_team}" th:object="${teamPageJoinTeamForm}" role="form">
                     <fieldset>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">
-                            <input type="text" class="form-control" id="inputTeam" placeholder="Team Name to Join" name="" th:field="*{teamName}"/> 
-                            <span class="help-block" th:if="${#fields.hasErrors('teamName')}" th:errors="*{teamName}">Team name cannot be empty</span>
+                            <input type="text" class="form-control" id="inputTeam" placeholder="Team Name to Join" name="" th:field="*{teamName}"/>
+                            <span class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></span>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-standard">Submit</button>

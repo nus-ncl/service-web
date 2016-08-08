@@ -1082,7 +1082,13 @@ public class MainController {
     }
     
     @RequestMapping(value="/teams/join_team", method=RequestMethod.POST)
-    public String checkJoinTeamInfo(@Valid TeamPageJoinTeamForm teamPageJoinForm, BindingResult bindingResult, Model model, HttpSession session) {
+    public String checkJoinTeamInfo(
+            @Valid TeamPageJoinTeamForm teamPageJoinForm,
+            BindingResult bindingResult,
+            Model model,
+            HttpSession session)
+    {
+
         if (bindingResult.hasErrors()) {
             return "team_page_join_team";
         }
@@ -1102,7 +1108,7 @@ public class MainController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        HttpEntity<String> request = new HttpEntity<>(mainObject.toString(), headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioRegUrl() + "/joinApplications", HttpMethod.POST, request, String.class);
         
         // perform join team request here
