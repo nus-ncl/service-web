@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import sg.ncl.domain.ExceptionState;
 import sg.ncl.exceptions.FuturePlanDownloadException;
 import sg.ncl.exceptions.OrderFormDownloadException;
 import sg.ncl.exceptions.WebServiceRuntimeException;
@@ -145,36 +147,44 @@ public class MainController {
     }
 
     @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
-    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException {
+    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
+        InputStream stream = null;
         response.setContentType("application/pdf");
         try {
             File fileToDownload = new File("src/main/resources/downloads/future_plan.pdf");
-            InputStream is = new FileInputStream(fileToDownload);
+            stream = new FileInputStream(fileToDownload);
             response.setContentType("application/force-download");
             response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
-            IOUtils.copy(is, response.getOutputStream());
+            IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
-            is.close();
         } catch (Exception ex) {
             logger.info("Error writing file to output stream.");
             throw new FuturePlanDownloadException("IOError writing file to output stream");
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
         }
     }
 
     @RequestMapping(value="/OrderForm_v1/download", method=RequestMethod.GET)
-    public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException {
+    public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
+        InputStream stream = null;
         response.setContentType("application/pdf");
         try {
             File fileToDownload = new File("src/main/resources/downloads/OrderForm_v1.pdf");
-            InputStream is = new FileInputStream(fileToDownload);
+            stream = new FileInputStream(fileToDownload);
             response.setContentType("application/force-download");
             response.setHeader("Content-Disposition", "attachment; filename=OrderForm_v1.pdf");
-            IOUtils.copy(is, response.getOutputStream());
+            IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
-            is.close();
         } catch (IOException ex) {
             logger.info("Error writing file to output stream.");
             throw new OrderFormDownloadException("IOError writing file to output stream");
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
         }
     }
 
@@ -644,11 +654,11 @@ public class MainController {
                     }
                 } catch (IOException e) {
                     throw new WebServiceRuntimeException(e.getMessage());
+                } finally {
+                    originalUser = null;
                 }
             }
         }
-
-        originalUser = null;
         return "redirect:/account_settings";
     }
     
@@ -1146,10 +1156,6 @@ public class MainController {
 
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
     public String createExperiment(Model model, HttpSession session) {
-//    	List<String> scenarioFileNameList = getScenarioFileNameList();
-//        model.addAttribute("experiment", new Experiment2());
-//        model.addAttribute("scenarioFileNameList", scenarioFileNameList);
-//        model.addAttribute("teamMap", teamManager.getTeamMap(getSessionIdOfLoggedInUser(session)));
 
         // a list of teams that the logged in user is in
         List<Team2> userTeamsList = new ArrayList<>();
@@ -1158,7 +1164,7 @@ public class MainController {
         ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
 
         JSONObject object = new JSONObject(responseEntity.getBody().toString());
-        System.out.println(responseEntity.getBody().toString());
+
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
@@ -1174,7 +1180,11 @@ public class MainController {
     }
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
-    public String validateExperiment(@ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm, HttpSession session) {
+    public String validateExperiment(
+            @ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm,
+            HttpSession session,
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException
+    {
 
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
@@ -1187,14 +1197,35 @@ public class MainController {
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
 
-        System.out.println(experimentObject.toString());
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>(experimentObject.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
+        HttpEntity<String> request = new HttpEntity<>(experimentObject.toString(), headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getExceptionName().equals(ExceptionState.NSFileParseException.toString())) {
+                    // display error message
+                    redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
+                } else if (error.getExceptionName().equals(ExceptionState.ExpNameAlreadyExistsException.toString())) {
+                    // display error message
+                    redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
+                } else {
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", "Our server is currently overloaded with requests. Please try again later.");
+                }
+                return "redirect:/experiments/create";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
 
         //
         // TODO Uploaded function for network configuration and optional dataset
@@ -1336,15 +1367,18 @@ public class MainController {
     }
     
     @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
-    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
     	// TODO
     	// validation
     	// get file from user upload to server
+        BufferedOutputStream stream = null;
+        FileOutputStream fileOutputStream = null;
+
 		if (!file.isEmpty()) {
 			try {
 				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(new File(App.ROOT + "/" + fileName)));
+                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
+				stream = new BufferedOutputStream(fileOutputStream);
                 FileCopyUtils.copy(file.getInputStream(), stream);
 				stream.close();
 				redirectAttributes.addFlashAttribute("message",
@@ -1354,8 +1388,15 @@ public class MainController {
 			catch (Exception e) {
 				redirectAttributes.addFlashAttribute("message",
 						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
-			}
-		}
+			} finally {
+                if (stream != null) {
+                    stream.close();
+                }
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
+                }
+            }
+        }
 		else {
 			redirectAttributes.addFlashAttribute("message",
 					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
@@ -1559,17 +1600,18 @@ public class MainController {
     }
     
     @RequestMapping(value="/admin/data/contribute", method=RequestMethod.POST)
-    public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-    	// TODO
+    public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+        BufferedOutputStream stream = null;
+        FileOutputStream fileOutputStream = null;
+        // TODO
     	// validation
     	// get file from user upload to server
 		if (!file.isEmpty()) {
 			try {
 				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(new File(App.ROOT + "/" + fileName)));
+                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
+				stream = new BufferedOutputStream(fileOutputStream);
                 FileCopyUtils.copy(file.getInputStream(), stream);
-				stream.close();
 				redirectAttributes.addFlashAttribute("message",
 						"You successfully uploaded " + file.getOriginalFilename() + "!");
 				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
@@ -1577,8 +1619,15 @@ public class MainController {
 			catch (Exception e) {
 				redirectAttributes.addFlashAttribute("message",
 						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
-			}
-		}
+			} finally {
+                if (stream != null) {
+                    stream.close();
+                }
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
+                }
+            }
+        }
 		else {
 			redirectAttributes.addFlashAttribute("message",
 					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
@@ -1818,7 +1867,6 @@ public class MainController {
 
         HttpEntity<String> request = new HttpEntity<>("parameters", headers);
         ResponseEntity respEntity = restTemplate.exchange(properties.getRealization(id.toString()), HttpMethod.GET, request, String.class);
-
         return extractRealization(respEntity.getBody().toString());
     }
 
@@ -1832,9 +1880,14 @@ public class MainController {
         realization.setTeamId(object.getString("teamId"));
         realization.setState(object.getString("state"));
 
-        String exp_report = object.get("details").toString();
-        exp_report = exp_report.replaceAll("@", "\\\r\\\n");
-        realization.setDetails(exp_report);
+        String exp_report = "";
+
+        if (object.get("details") == null) {
+            realization.setDetails("");
+        } else {
+            exp_report = object.get("details").toString().replaceAll("@", "\\\r\\\n");
+            realization.setDetails(exp_report);
+        }
 
         return realization;
     }

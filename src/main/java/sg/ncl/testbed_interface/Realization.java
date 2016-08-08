@@ -21,6 +21,7 @@ public class Realization {
     private List<String> detailsList;
 
     public Realization() {
+        details = "";
         detailsList = new ArrayList<>();
     }
 
