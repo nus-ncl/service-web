@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -783,7 +782,6 @@ public class MainController {
         ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
 
         JSONObject object = new JSONObject(responseEntity.getBody().toString());
-        System.out.println(responseEntity.getBody().toString());
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
         String userEmail = object.getJSONObject("userDetails").getString("email");
@@ -1477,8 +1475,6 @@ public class MainController {
 //    	model.addAttribute("domain", new Domain());
 //    	model.addAttribute("domainTable", domainManager.getDomainTable());
 //    	model.addAttribute("usersMap", userManager.getUserMap());
-    	model.addAttribute("teamsMap", teamManager.getTeamMap());
-    	model.addAttribute("teamManager", teamManager);
 //    	model.addAttribute("teamsPendingApprovalMap", teamManager.getTeamsPendingApproval());
 //    	model.addAttribute("experimentMap", experimentManager.getExperimentMap2());
 //
@@ -1492,13 +1488,18 @@ public class MainController {
 //
 //    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
 
+        Map<String, List<String>> userToTeamMap = new HashMap<>(); // userId : list of team names
         List<Team2> pendingApprovalTeamsList = new ArrayList<>();
 
+        //------------------------------------
+        // get list of teams
+        // get list of teams pending for approval
+        //------------------------------------
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
 
         JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
@@ -1506,13 +1507,44 @@ public class MainController {
         for (int i=0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
             if (one.getStatus().equals(TeamStatus.PENDING.toString())) {
                 pendingApprovalTeamsList.add(one);
             }
         }
 
+        //------------------------------------
+        // get list of users
+        //------------------------------------
+        ResponseEntity response2 = restTemplate.exchange(properties.getSioUsersUrl(), HttpMethod.GET, request, String.class);
+        String responseBody2 = response2.getBody().toString();
+
+        JSONArray jsonUserArray = new JSONArray(responseBody2);
+        List<User2> usersList = new ArrayList<>();
+
+        for (int i = 0; i < jsonUserArray.length(); i++) {
+            JSONObject userObject = jsonUserArray.getJSONObject(i);
+            User2 user = extractUserInfo(userObject.toString());
+            usersList.add(user);
+
+            // get list of teams' names for each user
+            List<String> perUserTeamList = new ArrayList<>();
+            if (userObject.get("teams") != null) {
+                JSONArray teamJsonArray = userObject.getJSONArray("teams");
+                for (int k = 0; k < teamJsonArray.length(); k++) {
+                    Team2 team = invokeAndExtractTeamInfo(teamJsonArray.get(k).toString());
+                    perUserTeamList.add(team.getName());
+                }
+                userToTeamMap.put(user.getId(), perUserTeamList);
+            }
+        }
+
+//        model.addAttribute("teamsMap", teamManager.getTeamMap());
+//        model.addAttribute("teamManager", teamManager);
+        model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
-    	
+        model.addAttribute("usersList", usersList);
+        model.addAttribute("userToTeamMap", userToTeamMap);
     	return "admin";
     }
     
@@ -1827,11 +1859,22 @@ public class MainController {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
         ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.GET, request, String.class);
 
         User2 user2 = extractUserInfo(responseEntity.getBody().toString());
         return user2;
+    }
+
+    private Team2 invokeAndExtractTeamInfo(String teamId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "/" + teamId, HttpMethod.GET, request, String.class);
+
+        Team2 team = extractTeamInfo(responseEntity.getBody().toString());
+        return team;
     }
 
     public String getStubUserID() {
