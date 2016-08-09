@@ -222,14 +222,17 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
-    //--------------------------------------
-    // Test after login HTML pages
-    //--------------------------------------
     @Test
     public void testGetLoginPage() throws Exception {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("login"));
+                .andExpect(view().name("login"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("form method=\"post\" action=\"/login\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
     @Test
@@ -240,8 +243,8 @@ public class MainControllerTest {
 
         mockMvc.perform(
                 post("/login")
-                .param("loginEmail", "123456789@nus.edu.sg")
-                .param("loginPassword", "123456789")
+                        .param("loginEmail", "123456789@nus.edu.sg")
+                        .param("loginPassword", "123456789")
         )
                 .andExpect(view().name("login"))
                 .andExpect(model().attributeExists("loginForm"));
@@ -252,7 +255,35 @@ public class MainControllerTest {
         mockMvc.perform(get("/signup2"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("signup2"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("form action=\"/signup2\" method=\"post\" role=\"form\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")))
                 .andExpect(model().attributeExists("signUpMergedForm"));
+    }
+
+    //--------------------------------------
+    // Test after login HTML pages
+    //--------------------------------------
+    @Test
+    public void testGetDashboardPage() throws Exception {
+        mockMvc.perform(get("/dashboard"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("dashboard"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("calendar1.html")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("Dashboard")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
     @Test
