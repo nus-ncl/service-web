@@ -547,6 +547,13 @@ public class MainController {
             errorsFound = true;
         }
 
+        if (errorsFound == false && (editUser.getPhone().matches("(.*)[a-zA-Z](.*)") || editUser.getPhone().length() < 6)) {
+            // previously already check if phone is empty
+            // now check phone must contain only digits
+            redirectAttributes.addFlashAttribute("editPhone", "fail");
+            errorsFound = true;
+        }
+
         if (errorsFound == false && editUser.getJobTitle().isEmpty()) {
             redirectAttributes.addFlashAttribute("editJobTitle", "fail");
             errorsFound = true;
@@ -588,6 +595,13 @@ public class MainController {
         }
 
         if (errorsFound == false && editUser.getPostalCode().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editPostalCode", "fail");
+            errorsFound = true;
+        }
+
+        if (errorsFound == false && (editUser.getPostalCode().matches("(.*)[a-zA-Z](.*)") || editUser.getPostalCode().length() < 6)) {
+            // previously already check if postal code is empty
+            // now check postal code must contain only digits
             redirectAttributes.addFlashAttribute("editPostalCode", "fail");
             errorsFound = true;
         }
