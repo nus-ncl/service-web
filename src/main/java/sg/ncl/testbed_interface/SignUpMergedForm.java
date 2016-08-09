@@ -21,8 +21,6 @@ public class SignUpMergedForm {
     private String errorMsg = null;
     
 	// Personal Details Fields
-    private String name;
-
     @Size(min=1, message = "First name cannot be empty")
     private String firstName;
 
@@ -125,13 +123,6 @@ public class SignUpMergedForm {
     }
     
     //--------------------------------------- Personal Details ---------------------------------------
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
     public String getJobTitle() {
         return jobTitle;
     }
