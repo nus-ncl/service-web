@@ -397,4 +397,31 @@ public class SignUpMergedFormTest {
         one.setErrorTeamOwnerPolicy(str);
         assertThat(one.getErrorTeamOwnerPolicy(), is(str));
     }
+
+    @Test
+    public void testGetIsValidPasswords() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        assertThat(one.getIsValid(), is(false));
+    }
+
+    @Test
+    public void testSetIsValidPasswordsGood() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        one.setPassword(str);
+        one.setConfirmPassword(str);
+        one.setIsValid();
+        assertThat(one.getIsValid(), is(true));
+    }
+
+    @Test
+    public void testSetIsValidPasswordsBad() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        final String str2 = RandomStringUtils.randomAlphanumeric(20);
+        one.setPassword(str);
+        one.setConfirmPassword(str2);
+        one.setIsValid();
+        assertThat(one.getIsValid(), is(false));
+    }
 }
