@@ -167,7 +167,9 @@
 			                        </ul>
 
 									<p class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></p>
-									<p class="account-change-fail" th:if="${createTeamErrMsg}"><i class="fa fa-exclamation-circle"></i> <span th:text="${createTeamErrMsg}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamDescription != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamDescription}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamWebsite != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamWebsite}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamOwnerPolicy != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamOwnerPolicy}"></span></p>
 			                        
                                 	<h3 th:text="#{signup.applyCreateTeam.header}">Apply to create a new team</h3>
 	                                <div class="form-group">

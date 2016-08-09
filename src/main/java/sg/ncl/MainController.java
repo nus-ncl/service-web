@@ -340,8 +340,6 @@ public class MainController {
     
     @RequestMapping(value="/signup2", method=RequestMethod.GET)
     public String signup2(Model model) {
-    	// TODO get each model data and put into relevant ones
-    	model.addAttribute("loginForm", new LoginForm());
     	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
     	return "signup2";
     }
@@ -404,15 +402,37 @@ public class MainController {
     	
     	if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
 
-            // FIXME need to check if team exists?
-            teamFields.put("name", signUpMergedForm.getTeamName());
-            teamFields.put("description", signUpMergedForm.getTeamDescription());
-            teamFields.put("website", signUpMergedForm.getTeamWebsite());
-            teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
-            teamFields.put("visibility", signUpMergedForm.getIsPublic());
-            mainObject.put("isJoinTeam", false);
-            registerUserToDeter(mainObject);
-        	return "redirect:/team_application_submitted";
+    	    boolean errorsFound = false;
+
+    	    if (signUpMergedForm.getTeamDescription() == null || signUpMergedForm.getTeamDescription().isEmpty()) {
+    	        errorsFound = true;
+    	        signUpMergedForm.setErrorTeamDescription("Team description cannot be empty");
+            }
+
+            if (signUpMergedForm.getTeamWebsite() == null || signUpMergedForm.getTeamWebsite().isEmpty()) {
+                errorsFound = true;
+                signUpMergedForm.setErrorTeamWebsite("Team website cannot be empty");
+            }
+
+            if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
+                errorsFound = true;
+                signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
+            }
+
+            if (errorsFound) {
+                return "/signup2";
+            } else {
+
+                // FIXME need to check if team exists?
+                teamFields.put("name", signUpMergedForm.getTeamName());
+                teamFields.put("description", signUpMergedForm.getTeamDescription());
+                teamFields.put("website", signUpMergedForm.getTeamWebsite());
+                teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
+                teamFields.put("visibility", signUpMergedForm.getIsPublic());
+                mainObject.put("isJoinTeam", false);
+                registerUserToDeter(mainObject);
+                return "redirect:/team_application_submitted";
+            }
         	
     	} else if (joinNewTeamName != null) {
 
@@ -434,6 +454,10 @@ public class MainController {
     	}
     }
 
+    /**
+     * Use when registering new accounts
+     * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
+     */
     private void registerUserToDeter(JSONObject mainObject) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -441,14 +465,24 @@ public class MainController {
 
         HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
+        // FIXME check if email already exists
+        // FIXME check if team name duplicate when applying
+        // FIXME check if adapter connection error
     }
 
+    /**
+     * Use when users register a new account for joining existing team
+     * @param teamName The team name to join
+     * @return
+     */
     private String getTeamIdByName(String teamName) {
+        // FIXME check if team name exists
+        // FIXME check for general exception?
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "?name=" + teamName, HttpMethod.GET, request, String.class);
         String resultJSON = responseEntity.getBody().toString();
         JSONObject object = new JSONObject(resultJSON);
