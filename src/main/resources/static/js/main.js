@@ -317,7 +317,7 @@ function _MakePWDWidget()
 
 	this.pwdfieldid = pwdname+"_id";
 
-	code += "<div class='form-group'><input th:field='*{password}' type='password' class='pwdfield' name='"+pwdname+"' id='"+this.pwdfieldid+"'  placeholder='Password'></div>";
+	code += "<div class='form-group'><input th:field='*{password}' type='password' class='form-control pwdfield' name='"+pwdname+"' id='"+this.pwdfieldid+"'  placeholder='Password'></div>";
 
 	code += "<div class='form-group'><input type='password' class='form-control' placeholder='Confirm Password' th:field='*{confirmPassword}' name='confirmPassword'/></div>";
 
