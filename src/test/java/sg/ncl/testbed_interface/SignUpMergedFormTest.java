@@ -399,29 +399,34 @@ public class SignUpMergedFormTest {
     }
 
     @Test
-    public void testGetIsValidPasswords() {
+    public void testGetIsValid() {
         final SignUpMergedForm one = new SignUpMergedForm();
         assertThat(one.getIsValid(), is(false));
     }
 
     @Test
-    public void testSetIsValidPasswordsGood() {
+    public void testSetIsValid() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        final String str = RandomStringUtils.randomAlphanumeric(20);
-        one.setPassword(str);
-        one.setConfirmPassword(str);
-        one.setIsValid();
+        one.setIsValid(true);
         assertThat(one.getIsValid(), is(true));
     }
 
     @Test
-    public void testSetIsValidPasswordsBad() {
+    public void testIsValidPasswordGood() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        one.setPassword(str);
+        one.setConfirmPassword(str);
+        assertThat(one.isValid(), is(true));
+    }
+    @Test
+    public void testIsValidPasswordBad() {
         final SignUpMergedForm one = new SignUpMergedForm();
         final String str = RandomStringUtils.randomAlphanumeric(20);
         final String str2 = RandomStringUtils.randomAlphanumeric(20);
         one.setPassword(str);
         one.setConfirmPassword(str2);
-        one.setIsValid();
-        assertThat(one.getIsValid(), is(false));
+        assertThat(one.isValid(), is(false));
     }
+
 }

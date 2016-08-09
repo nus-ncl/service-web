@@ -350,7 +350,7 @@ public class MainController {
             @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             return "/signup2";
         }
 

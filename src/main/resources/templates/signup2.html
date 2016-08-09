@@ -32,7 +32,7 @@
 
 									<p class="account-change-fail" th:if="${#fields.hasErrors('email')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{email}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('password')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{password}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('isValid')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{isValid}"></span></p>
+									<p class="account-change-fail" th:if="${(signUpMergedForm.password != null and signUpMergedForm.confirmPassword != null) and (signUpMergedForm.getIsValid() == false)}"><i class="fa fa-exclamation-circle"></i> <span th:text="#{acc.info.pwdMismatch}"></span></p>
 
 	                                <h3 th:text="#{signup.createAcc.header}">Create Your Account</h3>
 	                                <div class="form-group">

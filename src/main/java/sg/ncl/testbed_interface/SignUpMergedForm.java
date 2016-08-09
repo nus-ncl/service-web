@@ -85,7 +85,6 @@ public class SignUpMergedForm {
     private String errorTeamWebsite;
     private String errorTeamOwnerPolicy;
 
-    @AssertTrue(message="Passwords should matched")
     private boolean isValid;
 
 	public SignUpMergedForm() {
@@ -130,8 +129,14 @@ public class SignUpMergedForm {
         return isValid;
     }
 
-    public void setIsValid() {
+    public void setIsValid(boolean isValid) {
+        this.isValid = isValid;
+    }
+
+    @AssertTrue(message="Passwords should matched")
+    public boolean isValid() {
         isValid = this.password.equals(this.confirmPassword);
+        return this.password.equals(this.confirmPassword);
     }
     
     //--------------------------------------- Personal Details ---------------------------------------
