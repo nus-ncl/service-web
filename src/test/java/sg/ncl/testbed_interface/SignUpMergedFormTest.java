@@ -352,4 +352,49 @@ public class SignUpMergedFormTest {
         one.setJoinTeamName(str);
         assertThat(one.getJoinTeamName(), is(str));
     }
+
+    //--------------------------------------------
+    // Errors
+    //--------------------------------------------
+    @Test
+    public void testGetErrorTeamDescription() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        assertThat(one.getErrorTeamDescription(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetErrorTeamDescription() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        one.setErrorTeamDescription(str);
+        assertThat(one.getErrorTeamDescription(), is(str));
+    }
+
+    @Test
+    public void testGetErrorTeamWebsite() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        assertThat(one.getErrorTeamWebsite(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetErrorTeamWebsite() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        one.setErrorTeamWebsite(str);
+        assertThat(one.getErrorTeamWebsite(), is(str));
+    }
+
+    @Test
+    public void testGetErrorTeamOwnerPolicy() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        assertThat(one.getErrorTeamOwnerPolicy(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetErrorTeamOwnerPolicy() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        one.setErrorTeamOwnerPolicy(str);
+        assertThat(one.getErrorTeamOwnerPolicy(), is(str));
+    }
 }

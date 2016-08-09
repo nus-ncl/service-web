@@ -79,6 +79,12 @@ public class SignUpMergedForm {
     @Pattern(regexp="^[a-zA-Z0-9]*$", message="Team name cannot have special characters")
     private String joinTeamName;
 
+    // A way to display error messages for create new team form
+    // Required as the controller cannot use redirectFlashAttributes to display errors; will cause the form fields to reset
+    private String errorTeamDescription;
+    private String errorTeamWebsite;
+    private String errorTeamOwnerPolicy;
+
 	public SignUpMergedForm() {
 		
 	}
@@ -266,4 +272,29 @@ public class SignUpMergedForm {
 	public void setJoinTeamName(String joinTeamName) {
 		this.joinTeamName = joinTeamName;
 	}
+
+    //--------------------------------------- Errors ---------------------------------------
+    public String getErrorTeamDescription() {
+        return errorTeamDescription;
+    }
+
+    public void setErrorTeamDescription(String errorTeamDescription) {
+        this.errorTeamDescription = errorTeamDescription;
+    }
+
+    public String getErrorTeamWebsite() {
+        return errorTeamWebsite;
+    }
+
+    public void setErrorTeamWebsite(String errorTeamWebsite) {
+        this.errorTeamWebsite = errorTeamWebsite;
+    }
+
+    public String getErrorTeamOwnerPolicy() {
+        return errorTeamOwnerPolicy;
+    }
+
+    public void setErrorTeamOwnerPolicy(String errorTeamOwnerPolicy) {
+        this.errorTeamOwnerPolicy = errorTeamOwnerPolicy;
+    }
 }
