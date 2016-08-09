@@ -5,28 +5,23 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.inject.Inject;
 
-import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
@@ -38,7 +33,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 
 /**
- * Created by Te Ye
+ * @author Te Ye
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = App.class)
@@ -73,11 +68,171 @@ public class MainControllerTest {
         mockMvc = webAppContextSetup(webApplicationContext).build();
     }
 
+    //--------------------------------------
+    // Test before login HTML pages
+    //--------------------------------------
+    @Test
+    public void testIndexPage() throws Exception {
+        // ensure page can load <head>, navigation, <body>, <footer>
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("NATIONAL CYBERSECURITY R&amp;D LAB")))
+                .andExpect(content().string(containsString("Features")))
+                .andExpect(content().string(containsString("Focus on your")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testOverviewPage() throws Exception {
+        mockMvc.perform(get("/overview"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("id=\"joinUs\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testCommunityPage() throws Exception {
+        mockMvc.perform(get("/community"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("id=\"joinUs\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testAboutPage() throws Exception {
+        mockMvc.perform(get("/about"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("id=\"about-us\"")))
+                .andExpect(content().string(containsString("id=\"joinUs\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testEventPage() throws Exception {
+        mockMvc.perform(get("/event"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("div id=\"portfolioSlider\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testPlanPage() throws Exception {
+        mockMvc.perform(get("/plan"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("a href=\"futureplan.html\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testFuturePlanPage() throws Exception {
+        mockMvc.perform(get("/futureplan"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("a href=\"/futureplan/download\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testPricingPage() throws Exception {
+        mockMvc.perform(get("/pricing"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("Pricing")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testResourcesPage() throws Exception {
+        mockMvc.perform(get("/resources"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testResearchPage() throws Exception {
+        mockMvc.perform(get("/research"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("Research")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testCalendarPage() throws Exception {
+        // calendar page display BEFORE login
+        mockMvc.perform(get("/calendar"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("iframe src=\"https://calendar.google.com/calendar/embed")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testCalendar1Page() throws Exception {
+        // calendar page display AFTER login
+        // navigation bar is different so need another html file
+        mockMvc.perform(get("/calendar1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("href=\"/teams\""))) // ensure this is indeed the after login navigation bar
+                .andExpect(content().string(containsString("iframe src=\"https://calendar.google.com/calendar/embed")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testContactUsPage() throws Exception {
+        // calendar page display BEFORE login
+        mockMvc.perform(get("/contactus"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("Contact Us")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
     @Test
     public void testGetLoginPage() throws Exception {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("login"));
+                .andExpect(view().name("login"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("form method=\"post\" action=\"/login\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
     @Test
@@ -88,8 +243,8 @@ public class MainControllerTest {
 
         mockMvc.perform(
                 post("/login")
-                .param("loginEmail", "123456789@nus.edu.sg")
-                .param("loginPassword", "123456789")
+                        .param("loginEmail", "123456789@nus.edu.sg")
+                        .param("loginPassword", "123456789")
         )
                 .andExpect(view().name("login"))
                 .andExpect(model().attributeExists("loginForm"));
@@ -100,8 +255,35 @@ public class MainControllerTest {
         mockMvc.perform(get("/signup2"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("signup2"))
-                .andExpect(model().attributeExists("loginForm"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("form action=\"/signup2\" method=\"post\" role=\"form\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")))
                 .andExpect(model().attributeExists("signUpMergedForm"));
+    }
+
+    //--------------------------------------
+    // Test after login HTML pages
+    //--------------------------------------
+    @Test
+    public void testGetDashboardPage() throws Exception {
+        mockMvc.perform(get("/dashboard"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("dashboard"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("calendar1.html")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("Dashboard")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
     @Test

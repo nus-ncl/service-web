@@ -30,6 +30,11 @@
 			                            <li>&nbsp;</li>
 			                        </ul>
 
+									<p class="account-change-fail" th:if="${signupError}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signupError}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('email')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{email}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('password')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{password}"></span></p>
+									<p class="account-change-fail" th:if="${(signUpMergedForm.password != null and signUpMergedForm.confirmPassword != null) and (signUpMergedForm.getIsValid() == false)}"><i class="fa fa-exclamation-circle"></i> <span th:text="#{acc.info.pwdMismatch}"></span></p>
+
 	                                <h3 th:text="#{signup.createAcc.header}">Create Your Account</h3>
 	                                <div class="form-group">
 	                                    <input type="text" class="form-control" placeholder="Email" th:field="*{email}"/>
@@ -47,10 +52,10 @@
 											pwdwidget.MakePWDWidget();
 										</script>
 									</div>
-									<p>&nbsp;</p>
-	                                <div class="form-group">
-	                                    <input type="password" class="form-control" placeholder="Confirm Password" th:field="*{confirmPassword}"/>
-	                                </div>
+									<!--<p>&nbsp;</p>-->
+	                                <!--<div class="form-group">-->
+	                                    <!--<input type="password" class="form-control" placeholder="Confirm Password" th:field="*{confirmPassword}"/>-->
+	                                <!--</div>-->
 
 	                                <button type="button" class="btn btn-standard btn-next">Next</button>
                                 </fieldset>
@@ -65,8 +70,20 @@
 			                            <li>&nbsp;</li>
 			                            <li>&nbsp;</li>
 			                        </ul>
-                                
-                                	<h3 th:text="#{signup.personalDetails.header}">Personal Details</h3>
+
+									<p class="account-change-fail" th:if="${#fields.hasErrors('firstName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{firstName}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('lastName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{lastName}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('phone')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{phone}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('jobTitle')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{jobTitle}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('institution')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institution}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('institutionAbbreviation')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institutionAbbreviation}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('address1')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{address1}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('country')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{country}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('city')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{city}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('province')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{province}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('postalCode')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{postalCode}"></span></p>
+
+									<h3 th:text="#{signup.personalDetails.header}">Personal Details</h3>
 									<div class="form-group row">
 										<div class="col-xs-6">
 											<input type="text" class="form-control" placeholder="First Name" th:field="*{firstName}"/>
@@ -150,6 +167,12 @@
 			                            <li>&nbsp;</li>
 			                            <li class="active">&nbsp;</li>
 			                        </ul>
+
+									<p class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamName != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamName}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamDescription != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamDescription}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamWebsite != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamWebsite}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamOwnerPolicy != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamOwnerPolicy}"></span></p>
 			                        
                                 	<h3 th:text="#{signup.applyCreateTeam.header}">Apply to create a new team</h3>
 	                                <div class="form-group">
@@ -199,6 +222,8 @@
 			                            <li>&nbsp;</li>
 			                            <li class="active">&nbsp;</li>
 			                        </ul>
+
+									<p class="account-change-fail" th:if="${#fields.hasErrors('joinTeamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{joinTeamName}"></span></p>
 			                        
                                 	<h3 th:text="#{signup.joinTeam.header}">Apply to join an existing team</h3>
 			                        <div class="form-group">

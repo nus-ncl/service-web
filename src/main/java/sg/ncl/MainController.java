@@ -212,7 +212,18 @@ public class MainController {
     }
     
     @RequestMapping(value="/login", method=RequestMethod.POST)
-    public String loginSubmit(@ModelAttribute("loginForm") LoginForm loginForm, Model model, HttpSession session) {
+    public String loginSubmit(
+            @Valid
+            @ModelAttribute("loginForm") LoginForm loginForm,
+            BindingResult bindingResult,
+            Model model,
+            HttpSession session) {
+
+        if (bindingResult.hasErrors()) {
+            loginForm.setErrorMsg("Login failed: Invalid email/password.");
+            return "login";
+        }
+
         String inputEmail = loginForm.getLoginEmail();
         String inputPwd = loginForm.getLoginPassword();
         if (inputEmail.trim().isEmpty() || inputPwd.trim().isEmpty()) {
@@ -233,7 +244,7 @@ public class MainController {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Basic " + base64Creds);
 
-            HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+            HttpEntity<String> request = new HttpEntity<>("parameters", headers);
             responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
         } catch (Exception e) {
             // TODO: handle different types of error
@@ -251,12 +262,6 @@ public class MainController {
 
 //            System.out.println(token);
             AUTHORIZATION_HEADER = "Bearer " + token;
-
-            // needed for legacy codes to work
-            CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
-//            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
-            session.setAttribute("isUserAdmin", IS_USER_ADMIN);
-            session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
 
             // FIXME supposed to set some session ID such as the user id returned by the token
             session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
@@ -340,15 +345,20 @@ public class MainController {
     
     @RequestMapping(value="/signup2", method=RequestMethod.GET)
     public String signup2(Model model) {
-    	// TODO get each model data and put into relevant ones
-    	model.addAttribute("loginForm", new LoginForm());
     	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
     	return "signup2";
     }
     
     @RequestMapping(value="/signup2", method=RequestMethod.POST)
-    public String validateDetails(@ModelAttribute("loginForm") LoginForm loginForm, @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm) {
-    	// TODO get each model data and put into relevant ones
+    public String validateDetails(
+            @Valid
+            @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
+            BindingResult bindingResult,
+            final RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
+            return "/signup2";
+        }
 
         // get form fields
         // craft the registration json
@@ -398,17 +408,44 @@ public class MainController {
     	
     	if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
 
-            // FIXME need to check if team exists?
-            teamFields.put("name", signUpMergedForm.getTeamName());
-            teamFields.put("description", signUpMergedForm.getTeamDescription());
-            teamFields.put("website", signUpMergedForm.getTeamWebsite());
-            teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
-            teamFields.put("visibility", signUpMergedForm.getIsPublic());
-            mainObject.put("isJoinTeam", false);
-            registerUserToDeter(mainObject);
-        	return "redirect:/team_application_submitted";
+    	    boolean errorsFound = false;
+
+            if (createNewTeamName.length() < 6 || createNewTeamName.length() > 12) {
+                errorsFound = true;
+                signUpMergedForm.setErrorTeamName("Team name must be 6 to 12 alphabetic/numeric characters");
+            }
+
+    	    if (signUpMergedForm.getTeamDescription() == null || signUpMergedForm.getTeamDescription().isEmpty()) {
+    	        errorsFound = true;
+    	        signUpMergedForm.setErrorTeamDescription("Team description cannot be empty");
+            }
+
+            if (signUpMergedForm.getTeamWebsite() == null || signUpMergedForm.getTeamWebsite().isEmpty()) {
+                errorsFound = true;
+                signUpMergedForm.setErrorTeamWebsite("Team website cannot be empty");
+            }
+
+            if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
+                errorsFound = true;
+                signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
+            }
+
+            if (errorsFound) {
+                return "/signup2";
+            } else {
+
+                // FIXME need to check if team exists?
+                teamFields.put("name", signUpMergedForm.getTeamName());
+                teamFields.put("description", signUpMergedForm.getTeamDescription());
+                teamFields.put("website", signUpMergedForm.getTeamWebsite());
+                teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
+                teamFields.put("visibility", signUpMergedForm.getIsPublic());
+                mainObject.put("isJoinTeam", false);
+                registerUserToDeter(mainObject);
+                return "redirect:/team_application_submitted";
+            }
         	
-    	} else if (joinNewTeamName != null) {
+    	} else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
 
             // get the team JSON from team name
             // FIXME need to check if team exists?
@@ -424,10 +461,16 @@ public class MainController {
 
     	} else {
     		// logic error not suppose to reach here
+            // possible if user fill up create new team but without the team name
+            redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
     		return "redirect:/signup2";
     	}
     }
 
+    /**
+     * Use when registering new accounts
+     * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
+     */
     private void registerUserToDeter(JSONObject mainObject) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -435,14 +478,24 @@ public class MainController {
 
         HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
+        // FIXME check if email already exists
+        // FIXME check if team name duplicate when applying
+        // FIXME check if adapter connection error
     }
 
+    /**
+     * Use when users register a new account for joining existing team
+     * @param teamName The team name to join
+     * @return
+     */
     private String getTeamIdByName(String teamName) {
+        // FIXME check if team name exists
+        // FIXME check for general exception?
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "?name=" + teamName, HttpMethod.GET, request, String.class);
         String resultJSON = responseEntity.getBody().toString();
         JSONObject object = new JSONObject(resultJSON);
@@ -507,6 +560,13 @@ public class MainController {
             errorsFound = true;
         }
 
+        if (errorsFound == false && (editUser.getPhone().matches("(.*)[a-zA-Z](.*)") || editUser.getPhone().length() < 6)) {
+            // previously already check if phone is empty
+            // now check phone must contain only digits
+            redirectAttributes.addFlashAttribute("editPhone", "fail");
+            errorsFound = true;
+        }
+
         if (errorsFound == false && editUser.getJobTitle().isEmpty()) {
             redirectAttributes.addFlashAttribute("editJobTitle", "fail");
             errorsFound = true;
@@ -548,6 +608,13 @@ public class MainController {
         }
 
         if (errorsFound == false && editUser.getPostalCode().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editPostalCode", "fail");
+            errorsFound = true;
+        }
+
+        if (errorsFound == false && (editUser.getPostalCode().matches("(.*)[a-zA-Z](.*)") || editUser.getPostalCode().length() < 6)) {
+            // previously already check if postal code is empty
+            // now check postal code must contain only digits
             redirectAttributes.addFlashAttribute("editPostalCode", "fail");
             errorsFound = true;
         }
@@ -1036,7 +1103,10 @@ public class MainController {
     }
     
     @RequestMapping(value="/teams/apply_team", method=RequestMethod.POST)
-    public String checkApplyTeamInfo(@Valid TeamPageApplyTeamForm teamPageApplyTeamForm, BindingResult bindingResult, HttpSession session) {
+    public String checkApplyTeamInfo(
+            @Valid TeamPageApplyTeamForm teamPageApplyTeamForm,
+            BindingResult bindingResult,
+            HttpSession session) {
         if (bindingResult.hasErrors()) {
            logger.warn("Existing users apply for new team, page has errors");
            // return "redirect:/teams/apply_team";
@@ -1079,7 +1149,13 @@ public class MainController {
     }
     
     @RequestMapping(value="/teams/join_team", method=RequestMethod.POST)
-    public String checkJoinTeamInfo(@Valid TeamPageJoinTeamForm teamPageJoinForm, BindingResult bindingResult, Model model, HttpSession session) {
+    public String checkJoinTeamInfo(
+            @Valid TeamPageJoinTeamForm teamPageJoinForm,
+            BindingResult bindingResult,
+            Model model,
+            HttpSession session)
+    {
+
         if (bindingResult.hasErrors()) {
             return "team_page_join_team";
         }
@@ -1099,7 +1175,7 @@ public class MainController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        HttpEntity<String> request = new HttpEntity<>(mainObject.toString(), headers);
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioRegUrl() + "/joinApplications", HttpMethod.POST, request, String.class);
         
         // perform join team request here
@@ -1172,26 +1248,31 @@ public class MainController {
             userTeamsList.add(team2);
         }
 
-        model.addAttribute("experimentForm", new ExperimentPageCreateExperimentForm());
+        model.addAttribute("experimentForm", new ExperimentForm());
         model.addAttribute("userTeamsList", userTeamsList);
         return "experiment_page_create_experiment";
     }
     
     @RequestMapping(value="/experiments/create", method=RequestMethod.POST)
     public String validateExperiment(
-            @ModelAttribute("experimentPageCreateExperimentForm") ExperimentPageCreateExperimentForm experimentPageCreateExperimentForm,
+            @ModelAttribute("experimentForm") ExperimentForm experimentForm,
             HttpSession session,
+            BindingResult bindingResult,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException
     {
 
+        if (bindingResult.hasErrors()) {
+            return "redirect:/experiments/create";
+        }
+
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
-        experimentObject.put("teamId", experimentPageCreateExperimentForm.getTeamId());
-        experimentObject.put("teamName", experimentPageCreateExperimentForm.getTeamName());
-        experimentObject.put("name", experimentPageCreateExperimentForm.getName());
-        experimentObject.put("description", experimentPageCreateExperimentForm.getDescription());
+        experimentObject.put("teamId", experimentForm.getTeamId());
+        experimentObject.put("teamName", experimentForm.getTeamName());
+        experimentObject.put("name", experimentForm.getName());
+        experimentObject.put("description", experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
-        experimentObject.put("nsFileContent", experimentPageCreateExperimentForm.getNsFileContent());
+        experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
 

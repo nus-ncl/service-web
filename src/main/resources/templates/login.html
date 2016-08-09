@@ -33,23 +33,21 @@
                             <h3 class="dashhead loginpanel" th:text="#{login.header}">Log In</h3>
                         </div> <!-- panel-heading -->
                         <div class="welcome">
-                        <p> <b>Welcome to ncl.sg </b></p>
+                        <p><b>Welcome to ncl.sg </b></p>
                         </div>
                         <p>&nbsp;</p>
 
                         <div class="panel-body loginform">
-                            <!-- TODO hard code login details for now -->
                             <form method="post"  action="#" th:action="@{/login}" th:object="${loginForm}" role="form">
 	                            <fieldset>
-	                                <div class="form-group text-danger" th:if="${loginForm != null and loginForm.errorMsg != null}" th:text="${loginForm.errorMsg}">Invalid email/password.</div>
+	                                <div class="form-group account-change-fail" th:if="${loginForm != null and loginForm.errorMsg != null}">
+                                        <i class="fa fa-exclamation-circle"></i> <span th:text="${loginForm.errorMsg}"></span>
+                                    </div>
 	                                <div class="form-group">
-	                                    <input type="text" class="form-control" placeholder="Email" th:field="*{loginEmail}" value="johndoe@nus.edu.sg"/>
+	                                    <input type="text" class="form-control" placeholder="Email" th:field="*{loginEmail}"/>
                                      </div>
                                      <div class="form-group">
-	                                       <input type="password" class="form-control" placeholder="Password" th:field="*{loginPassword}" value="password"/>
-	                                </div>
-	                                <div class="form-group">
-	                                        <input type="checkbox" name=""/> Remember me
+	                                       <input type="password" class="form-control" placeholder="Password" th:field="*{loginPassword}"/>
 	                                </div>
 	                                <div class="form-group">
 	                                    <button type="submit" class="btn btn-standard">Sign in</button>
