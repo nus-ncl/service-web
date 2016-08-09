@@ -348,7 +348,8 @@ public class MainController {
     public String validateDetails(
             @Valid
             @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
-            BindingResult bindingResult) {
+            BindingResult bindingResult,
+            final RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             return "/signup2";
@@ -404,6 +405,11 @@ public class MainController {
 
     	    boolean errorsFound = false;
 
+            if (createNewTeamName.length() < 6 || createNewTeamName.length() > 12) {
+                errorsFound = true;
+                signUpMergedForm.setErrorTeamName("Team name must be 6 to 12 alphabetic/numeric characters");
+            }
+
     	    if (signUpMergedForm.getTeamDescription() == null || signUpMergedForm.getTeamDescription().isEmpty()) {
     	        errorsFound = true;
     	        signUpMergedForm.setErrorTeamDescription("Team description cannot be empty");
@@ -434,7 +440,7 @@ public class MainController {
                 return "redirect:/team_application_submitted";
             }
         	
-    	} else if (joinNewTeamName != null) {
+    	} else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
 
             // get the team JSON from team name
             // FIXME need to check if team exists?
@@ -450,6 +456,8 @@ public class MainController {
 
     	} else {
     		// logic error not suppose to reach here
+            // possible if user fill up create new team but without the team name
+            redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
     		return "redirect:/signup2";
     	}
     }

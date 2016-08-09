@@ -357,6 +357,20 @@ public class SignUpMergedFormTest {
     // Errors
     //--------------------------------------------
     @Test
+    public void testGetErrorTeamName() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        assertThat(one.getErrorTeamName(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetErrorTeamName() {
+        final SignUpMergedForm one = new SignUpMergedForm();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        one.setErrorTeamName(str);
+        assertThat(one.getErrorTeamName(), is(str));
+    }
+
+    @Test
     public void testGetErrorTeamDescription() {
         final SignUpMergedForm one = new SignUpMergedForm();
         assertThat(one.getErrorTeamDescription(), is(nullValue()));

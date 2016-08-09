@@ -81,6 +81,7 @@ public class SignUpMergedForm {
 
     // A way to display error messages for create new team form
     // Required as the controller cannot use redirectFlashAttributes to display errors; will cause the form fields to reset
+    private String errorTeamName;
     private String errorTeamDescription;
     private String errorTeamWebsite;
     private String errorTeamOwnerPolicy;
@@ -307,5 +308,13 @@ public class SignUpMergedForm {
 
     public void setErrorTeamOwnerPolicy(String errorTeamOwnerPolicy) {
         this.errorTeamOwnerPolicy = errorTeamOwnerPolicy;
+    }
+
+    public String getErrorTeamName() {
+        return errorTeamName;
+    }
+
+    public void setErrorTeamName(String errorTeamName) {
+        this.errorTeamName = errorTeamName;
     }
 }
