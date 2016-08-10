@@ -1,11 +1,11 @@
 package sg.ncl;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -52,7 +52,7 @@ public class MainControllerTest {
 //    private RestTemplate restTemplate;
     private MockRestServiceServer mockServer;
 
-    @Autowired
+    @Inject
     private RestOperations restOperations;
 
     @Inject
@@ -269,7 +269,14 @@ public class MainControllerTest {
     //--------------------------------------
     @Test
     public void testGetDashboardPage() throws Exception {
-        mockMvc.perform(get("/dashboard"))
+
+        final String id = RandomStringUtils.randomAlphabetic(10);
+
+        mockServer.expect(requestTo(properties.getDeterUid(id)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(id, MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(get("/dashboard").sessionAttr("id", id))
                 .andExpect(status().isOk())
                 .andExpect(view().name("dashboard"))
                 .andExpect(content().string(containsString("main.css")))
