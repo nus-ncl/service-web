@@ -1650,25 +1650,25 @@ public class MainController {
     	return "redirect:/admin";
     }
     
-    @RequestMapping("/admin/teams/accept/{teamId}")
-    public String approveTeam(@PathVariable String teamId) {
+    @RequestMapping("/admin/teams/accept/{teamId}/{teamOwnerId}")
+    public String approveTeam(@PathVariable String teamId, @PathVariable String teamOwnerId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
     	return "redirect:/admin";
     }
     
     @RequestMapping("/admin/teams/reject/{teamId}")
-    public String rejectTeam(@PathVariable String teamId) {
+    public String rejectTeam(@PathVariable String teamId, @PathVariable String teamOwnerId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
 
         // need to cleanly remove the team application
 //    	teamManager.rejectTeamApplication(teamId);

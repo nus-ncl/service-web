@@ -157,8 +157,8 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/newTeam/" + nclUserId;
     }
 
-    public String getApproveTeam(String teamId, TeamStatus teamStatus) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "?status=" + teamStatus;
+    public String getApproveTeam(String teamId, String ownerId, TeamStatus teamStatus) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
     }
 
     public String getExpListByTeamId(String teamId) {
