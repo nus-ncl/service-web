@@ -168,5 +168,9 @@ public class ConnectionProperties {
     public String getRealization(String expId) {
         return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/" + expId;
     }
+
+    public String getDeterUid(String id) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/user/" + id;
+    }
 }
 
