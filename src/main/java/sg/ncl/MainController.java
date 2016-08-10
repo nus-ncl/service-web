@@ -334,6 +334,7 @@ public class MainController {
 
         HttpEntity<String> request = new HttpEntity<>("parameters", headers);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
 
         String responseBody = response.getBody().toString();
 
