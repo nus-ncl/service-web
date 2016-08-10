@@ -327,7 +327,28 @@ public class MainController {
     }
     
     @RequestMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(Model model, HttpSession session) throws WebServiceRuntimeException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                logger.error("No such user: {}", session.getAttribute("id"));
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                model.addAttribute("deterUid", "Connection Error");
+            } else {
+                logger.info("Show the deter user id: {}", responseBody);
+                model.addAttribute("deterUid", responseBody);
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
         return "dashboard";
     }
     
