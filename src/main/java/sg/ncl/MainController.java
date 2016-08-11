@@ -213,7 +213,30 @@ public class MainController {
     	model.addAttribute("loginForm", new LoginForm());
     	return "login";
     }
-    
+
+    @RequestMapping(value = "/activation", params = {"uid", "key"})
+    public String activateAccount(@RequestParam final String uid, @RequestParam final String key) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        final String link = properties.getSioRegUrl() + "activation?uid=" + uid + "&key=" + key;
+        logger.info("Activation link: {}", link);
+        ResponseEntity response = restTemplate.exchange(link,
+                HttpMethod.PUT, request, String.class);
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            logger.error("Activation of user {} failed.", uid);
+            return "email_validation_failed";
+        } else {
+            logger.info("Activation of user {} completed.", uid);
+            return "email_validation_ok";
+        }
+    }
+
+
     @RequestMapping(value="/login", method=RequestMethod.POST)
     public String loginSubmit(
             @Valid
