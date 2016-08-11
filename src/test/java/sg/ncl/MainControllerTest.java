@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
+import sg.ncl.testbed_interface.Team2;
 
 import javax.inject.Inject;
 
@@ -290,7 +291,8 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/account_settings")))
                 .andExpect(content().string(containsString("/logout")))
                 .andExpect(content().string(containsString("Dashboard")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")));
+                .andExpect(content().string(containsString("footer id=\"footer\"")))
+                .andExpect(model().attribute("deterUid", is(id)));
     }
 
     @Test
@@ -429,6 +431,26 @@ public class MainControllerTest {
 //        mockServer.expect(requestTo(properties.getREGISTRATION_URI()))
 //                .andExpect(method(HttpMethod.POST))
 //                .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    public void testGetJoinTeamPageFromTeamPage() throws Exception {
+        mockMvc.perform(get("/teams/join_team"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("team_page_join_team"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("calendar1.html")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("method=\"post\" action=\"/teams/join_team\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")))
+                .andExpect(model().attribute("teamPageJoinTeamForm", hasProperty("teamName")));
     }
 
     private JSONObject createUserJson(String id, String firstName, String lastName, String jobTitle, String email, String phone, String institution, String institutionAbbrev, String institutionWeb, String address1, String address2, String country, String region, String city, String zipCode) {
