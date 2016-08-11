@@ -1,15 +1,15 @@
 package sg.ncl.testbed_interface;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class TeamPageApplyTeamForm {
 
-    @Range(min = 6, max = 12, message = "Team name must be within 6 to 12 characters")
+    @Size(min = 2, max = 12, message = "Team name must be within 2 to 12 characters")
     @Pattern(regexp="^[a-zA-Z0-9]*$", message ="Team name cannot have special characters")
     private String teamName;
     

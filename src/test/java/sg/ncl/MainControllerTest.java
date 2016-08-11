@@ -453,6 +453,26 @@ public class MainControllerTest {
                 .andExpect(model().attribute("teamPageJoinTeamForm", hasProperty("teamName")));
     }
 
+    @Test
+    public void testGetApplyNewTeamPageFromTeamPage() throws Exception {
+        mockMvc.perform(get("/teams/apply_team"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("team_page_apply_team"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("calendar1.html")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("method=\"post\" action=\"/teams/apply_team\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")))
+                .andExpect(model().attribute("teamPageApplyTeamForm", hasProperty("hasAcceptTeamOwnerPolicy")));
+    }
+
     private JSONObject createUserJson(String id, String firstName, String lastName, String jobTitle, String email, String phone, String institution, String institutionAbbrev, String institutionWeb, String address1, String address2, String country, String region, String city, String zipCode) {
         JSONObject object = new JSONObject();
         JSONObject userDetails = new JSONObject();
