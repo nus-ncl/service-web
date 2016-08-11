@@ -6,7 +6,9 @@ package sg.ncl;
  */
 public class MyErrorResource {
 
-    private String exceptionName;
+    private String name;
+    private String message;
+    private String localizedMessage;
 
     /**
      * Converts and returns exceptions thrown from services-in-one
@@ -14,11 +16,27 @@ public class MyErrorResource {
      * e.g. sg.ncl.service.user.exceptions.UserNotFoundException to UserNotFoundException
      * @return the exceptionName only
      */
-    public String getExceptionName() {
-        return exceptionName.substring(exceptionName.lastIndexOf('.') + 1);
+    public String getName() {
+        return name.substring(name.lastIndexOf('.') + 1);
     }
 
-    public void setExceptionName(String exceptionName) {
-        this.exceptionName = exceptionName;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getLocalizedMessage() {
+        return localizedMessage;
+    }
+
+    public void setLocalizedMessage(String localizedMessage) {
+        this.localizedMessage = localizedMessage;
     }
 }

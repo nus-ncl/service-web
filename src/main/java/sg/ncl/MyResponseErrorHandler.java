@@ -17,7 +17,13 @@ public class MyResponseErrorHandler implements ResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-        log.error("Response error: {} {}", response.getStatusCode(), response.getStatusText());
+        String statusText;
+        if (response.getStatusText() == null) {
+            statusText = "";
+        } else {
+            statusText = response.getStatusText();
+        }
+        log.error("Response error: {} {}", response.getStatusCode(), statusText);
     }
 
     @Override
