@@ -379,7 +379,7 @@ public class MainController {
             @Valid
             @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
-            final RedirectAttributes redirectAttributes) {
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             return "/signup2";
@@ -435,9 +435,9 @@ public class MainController {
 
     	    boolean errorsFound = false;
 
-            if (createNewTeamName.length() < 6 || createNewTeamName.length() > 12) {
+            if (createNewTeamName.length() < 2 || createNewTeamName.length() > 12) {
                 errorsFound = true;
-                signUpMergedForm.setErrorTeamName("Team name must be 6 to 12 alphabetic/numeric characters");
+                signUpMergedForm.setErrorTeamName("Team name must be 2 to 12 alphabetic/numeric characters");
             }
 
     	    if (signUpMergedForm.getTeamDescription() == null || signUpMergedForm.getTeamDescription().isEmpty()) {
@@ -466,7 +466,7 @@ public class MainController {
                 teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
                 teamFields.put("visibility", signUpMergedForm.getIsPublic());
                 mainObject.put("isJoinTeam", false);
-                registerUserToDeter(mainObject);
+                registerUserToDeter(mainObject, redirectAttributes);
                 return "redirect:/team_application_submitted";
             }
         	
@@ -480,7 +480,7 @@ public class MainController {
             // set the flag to indicate to controller that it is joining an existing team
             mainObject.put("isJoinTeam", true);
 
-            registerUserToDeter(mainObject);
+            registerUserToDeter(mainObject, redirectAttributes);
 
             return "redirect:/join_application_submitted";
 
@@ -496,13 +496,37 @@ public class MainController {
      * Use when registering new accounts
      * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
      */
-    private void registerUserToDeter(JSONObject mainObject) {
+    private String registerUserToDeter(JSONObject mainObject, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
+        HttpEntity<String> request = new HttpEntity<>(mainObject.toString(), headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.JoinProjectException.toString())) {
+                    logger.warn("Register new users join team request : team name error");
+                    redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
+                } else {
+                    logger.warn("Registeration or adapter connection fail");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                }
+                return "redirect:/signup2";
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
         // FIXME check if email already exists
         // FIXME check if team name duplicate when applying
         // FIXME check if adapter connection error

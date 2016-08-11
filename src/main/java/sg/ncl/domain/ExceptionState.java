@@ -9,5 +9,5 @@ public enum ExceptionState {
     NSFileParseException,
     ExpNameAlreadyExistsException,
     TeamNotFoundException,
-    NullPointerException
+    JoinProjectException
 }
