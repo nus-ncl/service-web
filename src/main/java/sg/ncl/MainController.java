@@ -31,9 +31,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.domain.ExceptionState;
-import sg.ncl.exceptions.FuturePlanDownloadException;
-import sg.ncl.exceptions.OrderFormDownloadException;
-import sg.ncl.exceptions.WebServiceRuntimeException;
+import sg.ncl.exceptions.*;
 import sg.ncl.rest_client.RestClient;
 import sg.ncl.testbed_interface.*;
 
@@ -382,6 +380,7 @@ public class MainController {
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
+            logger.warn("Register form has errors {}", signUpMergedForm.toString());
             return "/signup2";
         }
 
@@ -466,21 +465,49 @@ public class MainController {
                 teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
                 teamFields.put("visibility", signUpMergedForm.getIsPublic());
                 mainObject.put("isJoinTeam", false);
-                registerUserToDeter(mainObject, redirectAttributes);
+
+                try {
+                    registerUserToDeter(mainObject);
+                } catch (TeamNotFoundException e) {
+                    redirectAttributes.addFlashAttribute("message", e.getMessage());
+                    return "redirect:/signup2";
+                } catch (AdapterConnectionException e) {
+                    redirectAttributes.addFlashAttribute("message", e.getMessage());
+                    return "redirect:/signup2";
+                }
+
                 return "redirect:/team_application_submitted";
             }
         	
     	} else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
 
             // get the team JSON from team name
-            // FIXME need to check if team exists?
-            String teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName());
+            String teamIdToJoin = "";
+
+            try {
+                teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName());
+            } catch (TeamNotFoundException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return  "redirect:/signup2";
+            } catch (AdapterConnectionException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return  "redirect:/signup2";
+            }
+
             teamFields.put("id", teamIdToJoin);
 
             // set the flag to indicate to controller that it is joining an existing team
             mainObject.put("isJoinTeam", true);
 
-            registerUserToDeter(mainObject, redirectAttributes);
+            try {
+                registerUserToDeter(mainObject);
+            } catch (TeamNotFoundException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return "redirect:/signup2";
+            } catch (AdapterConnectionException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return "redirect:/signup2";
+            }
 
             return "redirect:/join_application_submitted";
 
@@ -496,7 +523,7 @@ public class MainController {
      * Use when registering new accounts
      * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
      */
-    private String registerUserToDeter(JSONObject mainObject, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
@@ -513,15 +540,14 @@ public class MainController {
 
                 if (error.getName().equals(ExceptionState.JoinProjectException.toString())) {
                     logger.warn("Register new users join team request : team name error");
-                    redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
+                    throw new TeamNotFoundException("Team name does not exists");
                 } else {
-                    logger.warn("Registeration or adapter connection fail");
+                    logger.warn("Registration or adapter connection fail");
                     // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                    throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
                 }
-                return "redirect:/signup2";
             } else {
-                return null;
+                // do nothing
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -537,7 +563,7 @@ public class MainController {
      * @param teamName The team name to join
      * @return
      */
-    private String getTeamIdByName(String teamName) {
+    private String getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
         // FIXME check if team name exists
         // FIXME check for general exception?
         HttpHeaders headers = new HttpHeaders();
@@ -545,10 +571,30 @@ public class MainController {
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "?name=" + teamName, HttpMethod.GET, request, String.class);
-        String resultJSON = responseEntity.getBody().toString();
-        JSONObject object = new JSONObject(resultJSON);
-        return object.getString("id");
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                    logger.warn("Get team by name : team name error");
+                    throw new TeamNotFoundException("Team name " + teamName + "does not exists");
+                } else {
+                    logger.warn("Team service or adapter connection fail");
+                    // possible sio or adapter connection fail
+                    throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
+                }
+            } else {
+                JSONObject object = new JSONObject(responseBody);
+                return object.getString("id");
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
 
     //--------------------------Account Settings Page--------------------------

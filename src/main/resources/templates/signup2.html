@@ -18,6 +18,9 @@
 							<p> <b>Come join NCL. Let's set up your account.</b></p>
 						</div>
                         <div class="panel-body">
+							<div th:if="${message}">
+								<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+							</div>
                             <form action="#" th:action="@{/signup2}" method="post" role="form" th:object="${signUpMergedForm}">
                                 <!-- Account Details -->
                                 <fieldset id="step1" class="first current">
