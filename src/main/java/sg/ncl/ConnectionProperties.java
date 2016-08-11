@@ -103,6 +103,10 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
     }
 
+    public String getTeamByName(String name) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/?name=" + name;
+    }
+
     public String getSioAuthUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + authEndpoint + "/";
     }

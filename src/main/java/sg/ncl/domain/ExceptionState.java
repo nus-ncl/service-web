@@ -7,5 +7,7 @@ public enum ExceptionState {
     UserNotFoundException,
     CredentialsUpdateException,
     NSFileParseException,
-    ExpNameAlreadyExistsException
+    ExpNameAlreadyExistsException,
+    TeamNotFoundException,
+    NullPointerException
 }

@@ -46,7 +46,7 @@ import sg.ncl.testbed_interface.*;
  */
 @Controller
 public class MainController {
-    
+
 	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final int ERROR_NO_SUCH_USER_ID = 0;
     private final static Logger logger = LoggerFactory.getLogger(MainController.class.getName());
@@ -75,6 +75,9 @@ public class MainController {
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
     private final RestClient restClient = new RestClient();
+
+    // error messages
+    private final String ERR_SERVER_OVERLOAD = "Our server is currently overloaded with requests. Please try again later.";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -542,7 +545,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 logger.error("No such user: {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                throw new RestClientException("[" + error.getExceptionName() + "] ");
+                throw new RestClientException("[" + error.getName() + "] ");
             } else {
                 User2 user2 = extractUserInfo(responseBody);
                 originalUser = user2;
@@ -1175,10 +1178,12 @@ public class MainController {
             @Valid TeamPageJoinTeamForm teamPageJoinForm,
             BindingResult bindingResult,
             Model model,
-            HttpSession session)
+            HttpSession session,
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException
     {
 
         if (bindingResult.hasErrors()) {
+            logger.info("join team request form for team page has errors");
             return "team_page_join_team";
         }
         // log data to ensure data has been parsed
@@ -1193,21 +1198,37 @@ public class MainController {
         userFields.put("id", session.getAttribute("id")); // ncl-id
         teamFields.put("name", teamPageJoinForm.getTeamName());
 
+        logger.info("Calling the registration service to do join team request");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
         HttpEntity<String> request = new HttpEntity<>(mainObject.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioRegUrl() + "/joinApplications", HttpMethod.POST, request, String.class);
-        
-        // perform join team request here
-        // add to user join team list
-        // ensure user is not already in the team or have submitted the application
-        // add to team join request map also for members approval function
-        User currentUser = userManager.getUserById(getSessionIdOfLoggedInUser(session));
-        int teamId = teamManager.getTeamIdByTeamName(teamPageJoinForm.getTeamName());
-        teamManager.addJoinRequestTeamMap2(getSessionIdOfLoggedInUser(session), teamId, currentUser);
-        return "redirect:/teams/join_application_submitted/" + teamId;
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl() + "/joinApplications", HttpMethod.POST, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                    logger.warn("join team request : team name error");
+                    redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
+                } else {
+                    logger.warn("join team request : some other failure");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                }
+                return "redirect:/teams/join_team";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        logger.info("Completed invoking the join team request service for Team: {}", teamPageJoinForm.getTeamName());
+        return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
     }
     
     //--------------------------Experiment Page--------------------------
@@ -1284,6 +1305,7 @@ public class MainController {
     {
 
         if (bindingResult.hasErrors()) {
+            logger.info("Create experiment - form has errors");
             return "redirect:/experiments/create";
         }
 
@@ -1298,6 +1320,7 @@ public class MainController {
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
 
+        logger.info("Calling service to create experiment");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
@@ -1312,15 +1335,16 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                if (error.getExceptionName().equals(ExceptionState.NSFileParseException.toString())) {
-                    // display error message
+                if (error.getName().equals(ExceptionState.NSFileParseException.toString())) {
+                    logger.info("Ns file error");
                     redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
-                } else if (error.getExceptionName().equals(ExceptionState.ExpNameAlreadyExistsException.toString())) {
-                    // display error message
+                } else if (error.getName().equals(ExceptionState.ExpNameAlreadyExistsException.toString())) {
+                    logger.info("Exp name already exists");
                     redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
                 } else {
+                    logger.info("Exp service or adapter fail");
                     // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute("message", "Our server is currently overloaded with requests. Please try again later.");
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 }
                 return "redirect:/experiments/create";
             }
@@ -1796,10 +1820,37 @@ public class MainController {
         return "team_page_application_submitted";
     }
     
-    @RequestMapping("/teams/join_application_submitted/{teamId}")
-    public String teamAppJoinFromTeamsPage(@PathVariable Integer teamId, Model model) {
-        int teamOwnerId = teamManager.getTeamByTeamId(teamId).getTeamOwnerId();
-        model.addAttribute("teamOwner", userManager.getUserById(teamOwnerId));
+    @RequestMapping("/teams/join_application_submitted/{teamName}")
+    public String teamAppJoinFromTeamsPage(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
+        logger.info("Join application submitted");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                    logger.warn("submitted join team request : team name error");
+                } else {
+                    logger.warn("submitted join team request : some other failure");
+                    // possible sio or adapter connection fail
+                }
+                return "redirect:/teams/join_team";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        Team2 one = extractTeamInfo(responseBody);
+        model.addAttribute("team", one);
         return "team_page_join_application_submitted";
     }
     
