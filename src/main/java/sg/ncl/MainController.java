@@ -151,8 +151,7 @@ public class MainController {
         InputStream stream = null;
         response.setContentType("application/pdf");
         try {
-            File fileToDownload = new File("src/main/resources/downloads/future_plan.pdf");
-            stream = new FileInputStream(fileToDownload);
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/future_plan.pdf");
             response.setContentType("application/force-download");
             response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
             IOUtils.copy(stream, response.getOutputStream());
@@ -172,8 +171,7 @@ public class MainController {
         InputStream stream = null;
         response.setContentType("application/pdf");
         try {
-            File fileToDownload = new File("src/main/resources/downloads/OrderForm_v1.pdf");
-            stream = new FileInputStream(fileToDownload);
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/OrderForm_v1.pdf");
             response.setContentType("application/force-download");
             response.setHeader("Content-Disposition", "attachment; filename=OrderForm_v1.pdf");
             IOUtils.copy(stream, response.getOutputStream());
@@ -429,9 +427,10 @@ public class MainController {
     	
     	// System.out.println("New team name: " + createNewTeamName);
     	// System.out.println("Join existing team name: " + joinNewTeamName);
+
     	
     	if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
-
+            logger.info("Signup new team name {}", createNewTeamName);
     	    boolean errorsFound = false;
 
             if (createNewTeamName.length() < 2 || createNewTeamName.length() > 12) {
@@ -455,6 +454,7 @@ public class MainController {
             }
 
             if (errorsFound) {
+                logger.warn("Signup new team error {}", signUpMergedForm.toString());
                 return "/signup2";
             } else {
 
@@ -471,16 +471,17 @@ public class MainController {
                 } catch (TeamNotFoundException e) {
                     redirectAttributes.addFlashAttribute("message", e.getMessage());
                     return "redirect:/signup2";
-                } catch (AdapterConnectionException e) {
-                    redirectAttributes.addFlashAttribute("message", e.getMessage());
+                } catch (Exception e) {
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                     return "redirect:/signup2";
                 }
 
+                logger.info("Signup new team success");
                 return "redirect:/team_application_submitted";
             }
         	
     	} else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
-
+            logger.info("Signup join team name {}", joinNewTeamName);
             // get the team JSON from team name
             String teamIdToJoin = "";
 
@@ -509,10 +510,12 @@ public class MainController {
                 return "redirect:/signup2";
             }
 
+            logger.info("Signup join team success");
             return "redirect:/join_application_submitted";
 
     	} else {
-    		// logic error not suppose to reach here
+            logger.warn("Signup unreachable statement");
+            // logic error not suppose to reach here
             // possible if user fill up create new team but without the team name
             redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
     		return "redirect:/signup2";
