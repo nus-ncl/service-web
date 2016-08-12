@@ -245,6 +245,7 @@ public class MainController {
 
             HttpEntity<String> request = new HttpEntity<>("parameters", headers);
             responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
+            jwtTokenString = responseEntity.getBody().toString();
         } catch (Exception e) {
             // TODO: handle different types of error
             // case1: invalid login
@@ -252,17 +253,14 @@ public class MainController {
             return "login";
         }
 
-        // TODO call the proper validation functions
-        jwtTokenString = responseEntity.getBody().toString();
         if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
             JSONObject tokenObject = new JSONObject(jwtTokenString);
             String token = tokenObject.getString("token");
             id = tokenObject.getString("id");
 
-//            System.out.println(token);
+            logger.info("login success with token id {}", id);
             AUTHORIZATION_HEADER = "Bearer " + token;
 
-            // FIXME supposed to set some session ID such as the user id returned by the token
             session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
             session.setAttribute("id", id);
 
@@ -424,9 +422,6 @@ public class MainController {
     	// check if user chose create new team or join existing team by checking team name
     	String createNewTeamName = signUpMergedForm.getTeamName();
     	String joinNewTeamName = signUpMergedForm.getJoinTeamName();
-    	
-    	// System.out.println("New team name: " + createNewTeamName);
-    	// System.out.println("Join existing team name: " + joinNewTeamName);
 
     	
     	if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
@@ -458,7 +453,6 @@ public class MainController {
                 return "/signup2";
             } else {
 
-                // FIXME need to check if team exists?
                 teamFields.put("name", signUpMergedForm.getTeamName());
                 teamFields.put("description", signUpMergedForm.getTeamDescription());
                 teamFields.put("website", signUpMergedForm.getTeamWebsite());
