@@ -505,7 +505,7 @@ public class MainController {
             }
 
             logger.info("Signup join team success");
-            return "redirect:/join_application_submitted";
+            return "redirect:/join_application_submitted/" + signUpMergedForm.getJoinTeamName();
 
     	} else {
             logger.warn("Signup unreachable statement");
@@ -549,10 +549,6 @@ public class MainController {
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
-
-        // FIXME check if email already exists
-        // FIXME check if team name duplicate when applying
-        // FIXME check if adapter connection error
     }
 
     /**
@@ -1930,10 +1926,37 @@ public class MainController {
         return "team_application_submitted";
     }
     
-    @RequestMapping("/join_application_submitted")
-    public String joinTeamAppSubmit(Model model) {
-    	model.addAttribute("loginForm", new LoginForm());
-    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    @RequestMapping("/join_application_submitted/{teamName}")
+    public String joinTeamAppSubmit(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
+        logger.info("Register new user join application submitted");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                    logger.warn("Register new user join application request : team name error");
+                } else {
+                    logger.warn("Register new user join application request : some other failure");
+                    // possible sio or adapter connection fail
+                }
+                return "redirect:/signup2";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        Team2 one = extractTeamInfo(responseBody);
+        model.addAttribute("team", one);
         return "join_team_application_submitted";
     }
     
