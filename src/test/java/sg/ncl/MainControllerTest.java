@@ -13,6 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
@@ -242,12 +243,15 @@ public class MainControllerTest {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest());
 
-        mockMvc.perform(
+        ResultActions perform = mockMvc.perform(
                 post("/login")
                         .param("loginEmail", "123456789@nus.edu.sg")
                         .param("loginPassword", "123456789")
-        )
-                .andExpect(view().name("login"))
+        );
+
+        perform
+                .andExpect(view().name("login"));
+        perform
                 .andExpect(model().attributeExists("loginForm"));
     }
 
