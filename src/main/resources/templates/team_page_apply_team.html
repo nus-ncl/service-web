@@ -12,11 +12,14 @@
                     <div class="row">
                 <h2  class="team-heading team-heading-current-team" th:text="#{teamPageApply.header}">Apply for a New Team</h2>
                  <p>&nbsp;</p>
+                <div th:if="${message}">
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+                </div>
                 <form  method="post" action="#" th:action="@{/teams/apply_team}" th:object="${teamPageApplyTeamForm}" role="form">
                     <fieldset>
                         <div class="form-group">
                             <div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">
-                                <input type="text" class="form-control" id="inputTeam" placeholder="Team Name" th:field="*{teamName}"/>
+                                <input type="text" class="form-control" id="inputTeam" placeholder="Team Name" th:field="*{teamName}" th:maxlength="12"/>
                                 <span class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></span>
                             </div>
                         </div>
@@ -24,7 +27,7 @@
                             <input type="text" class="form-control" id="inputDescription" placeholder="Team Description" th:field="*{teamDescription}"/>
                             <span class="account-change-fail" th:if="${#fields.hasErrors('teamDescription')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamDescription}"></span></span>
                         </div>
-                        <div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">
+                        <div class="form-group" th:classappend="${#fields.hasErrors('teamWebsite')}? 'has-error'">
                             <input type="text" class="form-control" id="inputWebsite" placeholder="Team Website" th:field="*{teamWebsite}"/>
                             <span class="account-change-fail" th:if="${#fields.hasErrors('teamWebsite')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamWebsite}"></span></span>
                         </div>

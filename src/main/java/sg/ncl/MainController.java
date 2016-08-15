@@ -1164,9 +1164,11 @@ public class MainController {
     public String checkApplyTeamInfo(
             @Valid TeamPageApplyTeamForm teamPageApplyTeamForm,
             BindingResult bindingResult,
-            HttpSession session) {
+            HttpSession session,
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+
         if (bindingResult.hasErrors()) {
-           logger.warn("Existing users apply for new team, page has errors");
+           logger.warn("Existing users apply for new team, form has errors {}", teamPageApplyTeamForm.toString());
            // return "redirect:/teams/apply_team";
            return "team_page_apply_team";
         }
@@ -1186,7 +1188,33 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity response = restTemplate.exchange(properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()), HttpMethod.POST, request, String.class);
 
-        return "redirect:/teams/team_application_submitted";
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.ApplyNewProjectException.toString())) {
+                    logger.info("Apply new team fail at adapter deterlab");
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                } else if (error.getName().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
+                    logger.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
+                    redirectAttributes.addFlashAttribute("message", "Team name already exists.");
+                } else {
+                    logger.info("Apply new team fail: registration service or adapter fail");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                }
+                return "redirect:/teams/apply_team";
+
+            } else {
+                // no errors, everything ok
+                logger.info("Completed invoking the apply team request service for Team: {}", teamPageApplyTeamForm.getTeamName());
+                return "redirect:/teams/team_application_submitted";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     @RequestMapping(value="/team_owner_policy", method=RequestMethod.GET)
