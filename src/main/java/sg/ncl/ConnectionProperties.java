@@ -103,10 +103,6 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
     }
 
-    public String getTeamByName(String name) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/?name=" + name;
-    }
-
     public String getSioAuthUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + authEndpoint + "/";
     }
@@ -131,24 +127,23 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/";
     }
 
-    public String getDeleteExperiment(String expId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/delete/" + expId;
-    }
-
-    public String getStartExperiment(String teamName, String expId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/start/team/" + teamName + "/experiment/" + expId;
-    }
-
-    public String getStopExperiment(String teamName, String expId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
-    }
-
-    public String getApproveJoinRequest(String teamId, String userId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
-    }
-
     public void setApproveJoinRequest(String approveJoinRequest) {
         this.approveJoinRequest = approveJoinRequest;
+    }
+
+    //-------------------------------------
+    // CREDENTIALS
+    //-------------------------------------
+    public String getUpdateCredentials(String id) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + credEndpoint + "/" + id;
+    }
+
+    //-------------------------------------
+    // REGISTRATIONS
+    //-------------------------------------
+
+    public String getDeterUid(String id) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/user/" + id;
     }
 
     public String getRejectJoinRequest(String teamId, String userId) {
@@ -161,9 +156,46 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/newTeam/" + nclUserId;
     }
 
+    // for existing users
+    public String getJoinRequestExistingUser() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/joinApplications";
+    }
+
     public String getApproveTeam(String teamId, String ownerId, TeamStatus teamStatus) {
         return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
     }
+
+    public String getApproveJoinRequest(String teamId, String userId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+    }
+
+    //-------------------------------------
+    // TEAMS
+    //-------------------------------------
+
+    public String getTeamByName(String name) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/?name=" + name;
+    }
+
+    public String getTeamById(String id) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + id;
+    }
+
+    public String getTeamsByVisibility(String visibility) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/?visibility=" + visibility;
+    }
+
+    //-------------------------------------
+    // USERS
+    //-------------------------------------
+
+    public String getUser(String id) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id;
+    }
+
+    //-------------------------------------
+    // EXPERIMENTS
+    //-------------------------------------
 
     public String getExpListByTeamId(String teamId) {
         return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId;
@@ -173,8 +205,16 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/" + expId;
     }
 
-    public String getDeterUid(String id) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/user/" + id;
+    public String getDeleteExperiment(String expId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/delete/" + expId;
+    }
+
+    public String getStartExperiment(String teamName, String expId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/start/team/" + teamName + "/experiment/" + expId;
+    }
+
+    public String getStopExperiment(String teamName, String expId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
     }
 }
 
