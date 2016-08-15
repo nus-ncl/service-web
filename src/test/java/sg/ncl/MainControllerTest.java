@@ -13,6 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
@@ -242,12 +243,15 @@ public class MainControllerTest {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest());
 
-        mockMvc.perform(
+        ResultActions perform = mockMvc.perform(
                 post("/login")
                         .param("loginEmail", "123456789@nus.edu.sg")
                         .param("loginPassword", "123456789")
-        )
-                .andExpect(view().name("login"))
+        );
+
+        perform
+                .andExpect(view().name("login"));
+        perform
                 .andExpect(model().attributeExists("loginForm"));
     }
 
@@ -451,6 +455,26 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("method=\"post\" action=\"/teams/join_team\"")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")))
                 .andExpect(model().attribute("teamPageJoinTeamForm", hasProperty("teamName")));
+    }
+
+    @Test
+    public void testGetApplyNewTeamPageFromTeamPage() throws Exception {
+        mockMvc.perform(get("/teams/apply_team"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("team_page_apply_team"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("calendar1.html")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("method=\"post\" action=\"/teams/apply_team\"")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")))
+                .andExpect(model().attribute("teamPageApplyTeamForm", hasProperty("hasAcceptTeamOwnerPolicy")));
     }
 
     private JSONObject createUserJson(String id, String firstName, String lastName, String jobTitle, String email, String phone, String institution, String institutionAbbrev, String institutionWeb, String address1, String address2, String country, String region, String city, String zipCode) {

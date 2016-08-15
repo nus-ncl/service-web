@@ -32,10 +32,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.domain.ExceptionState;
-import sg.ncl.exceptions.FuturePlanDownloadException;
-import sg.ncl.exceptions.OrderFormDownloadException;
-import sg.ncl.exceptions.WebServiceRuntimeException;
-import sg.ncl.rest_client.RestClient;
+import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 
 /**
@@ -74,8 +71,6 @@ public class MainController {
     private final String TEAM_ID = "40d02a00-c47c-492a-abf4-b3c6670a345e";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
-
-    private final RestClient restClient = new RestClient();
 
     // error messages
     private final String ERR_SERVER_OVERLOAD = "Our server is currently overloaded with requests. Please try again later.";
@@ -155,8 +150,7 @@ public class MainController {
         InputStream stream = null;
         response.setContentType("application/pdf");
         try {
-            File fileToDownload = new File("src/main/resources/downloads/future_plan.pdf");
-            stream = new FileInputStream(fileToDownload);
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/future_plan.pdf");
             response.setContentType("application/force-download");
             response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
             IOUtils.copy(stream, response.getOutputStream());
@@ -176,8 +170,7 @@ public class MainController {
         InputStream stream = null;
         response.setContentType("application/pdf");
         try {
-            File fileToDownload = new File("src/main/resources/downloads/OrderForm_v1.pdf");
-            stream = new FileInputStream(fileToDownload);
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/OrderForm_v1.pdf");
             response.setContentType("application/force-download");
             response.setHeader("Content-Disposition", "attachment; filename=OrderForm_v1.pdf");
             IOUtils.copy(stream, response.getOutputStream());
@@ -278,8 +271,9 @@ public class MainController {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Basic " + base64Creds);
 
-            HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+            HttpEntity<String> request = new HttpEntity<>(headers);
             responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
+            jwtTokenString = responseEntity.getBody().toString();
         } catch (Exception e) {
             // TODO: handle different types of error
             // case1: invalid login
@@ -287,17 +281,14 @@ public class MainController {
             return "login";
         }
 
-        // TODO call the proper validation functions
-        jwtTokenString = responseEntity.getBody().toString();
         if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
             JSONObject tokenObject = new JSONObject(jwtTokenString);
             String token = tokenObject.getString("token");
             id = tokenObject.getString("id");
 
-//            System.out.println(token);
+            logger.info("login success with token id {}", id);
             AUTHORIZATION_HEADER = "Bearer " + token;
 
-            // FIXME supposed to set some session ID such as the user id returned by the token
             session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
             session.setAttribute("id", id);
 
@@ -362,11 +353,7 @@ public class MainController {
     
     @RequestMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) throws WebServiceRuntimeException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
 
@@ -410,9 +397,10 @@ public class MainController {
             @Valid
             @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
-            final RedirectAttributes redirectAttributes) {
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
+            logger.warn("Register form has errors {}", signUpMergedForm.toString());
             return "/signup2";
         }
 
@@ -458,17 +446,15 @@ public class MainController {
     	// check if user chose create new team or join existing team by checking team name
     	String createNewTeamName = signUpMergedForm.getTeamName();
     	String joinNewTeamName = signUpMergedForm.getJoinTeamName();
-    	
-    	// System.out.println("New team name: " + createNewTeamName);
-    	// System.out.println("Join existing team name: " + joinNewTeamName);
+
     	
     	if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
-
+            logger.info("Signup new team name {}", createNewTeamName);
     	    boolean errorsFound = false;
 
-            if (createNewTeamName.length() < 6 || createNewTeamName.length() > 12) {
+            if (createNewTeamName.length() < 2 || createNewTeamName.length() > 12) {
                 errorsFound = true;
-                signUpMergedForm.setErrorTeamName("Team name must be 6 to 12 alphabetic/numeric characters");
+                signUpMergedForm.setErrorTeamName("Team name must be 2 to 12 alphabetic/numeric characters");
             }
 
     	    if (signUpMergedForm.getTeamDescription() == null || signUpMergedForm.getTeamDescription().isEmpty()) {
@@ -487,36 +473,67 @@ public class MainController {
             }
 
             if (errorsFound) {
+                logger.warn("Signup new team error {}", signUpMergedForm.toString());
                 return "/signup2";
             } else {
 
-                // FIXME need to check if team exists?
                 teamFields.put("name", signUpMergedForm.getTeamName());
                 teamFields.put("description", signUpMergedForm.getTeamDescription());
                 teamFields.put("website", signUpMergedForm.getTeamWebsite());
                 teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
                 teamFields.put("visibility", signUpMergedForm.getIsPublic());
                 mainObject.put("isJoinTeam", false);
-                registerUserToDeter(mainObject);
+
+                try {
+                    registerUserToDeter(mainObject);
+                } catch (TeamNotFoundException e) {
+                    redirectAttributes.addFlashAttribute("message", e.getMessage());
+                    return "redirect:/signup2";
+                } catch (Exception e) {
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                    return "redirect:/signup2";
+                }
+
+                logger.info("Signup new team success");
                 return "redirect:/team_application_submitted";
             }
         	
     	} else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
-
+            logger.info("Signup join team name {}", joinNewTeamName);
             // get the team JSON from team name
-            // FIXME need to check if team exists?
-            String teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName());
+            String teamIdToJoin = "";
+
+            try {
+                teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName());
+            } catch (TeamNotFoundException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return  "redirect:/signup2";
+            } catch (AdapterConnectionException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return  "redirect:/signup2";
+            }
+
             teamFields.put("id", teamIdToJoin);
 
             // set the flag to indicate to controller that it is joining an existing team
             mainObject.put("isJoinTeam", true);
 
-            registerUserToDeter(mainObject);
+            try {
+                registerUserToDeter(mainObject);
+            } catch (TeamNotFoundException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return "redirect:/signup2";
+            } catch (AdapterConnectionException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return "redirect:/signup2";
+            }
 
-            return "redirect:/join_application_submitted";
+            logger.info("Signup join team success");
+            return "redirect:/join_application_submitted/" + signUpMergedForm.getJoinTeamName();
 
     	} else {
-    		// logic error not suppose to reach here
+            logger.warn("Signup unreachable statement");
+            // logic error not suppose to reach here
             // possible if user fill up create new team but without the team name
             redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
     		return "redirect:/signup2";
@@ -527,16 +544,31 @@ public class MainController {
      * Use when registering new accounts
      * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
      */
-    private void registerUserToDeter(JSONObject mainObject) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
+    private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
+        HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
 
-        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
-        // FIXME check if email already exists
-        // FIXME check if team name duplicate when applying
-        // FIXME check if adapter connection error
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.JoinProjectException.toString())) {
+                    logger.warn("Register new users join team request : team name error");
+                    throw new TeamNotFoundException("Team name does not exists");
+                } else {
+                    logger.warn("Registration or adapter connection fail");
+                    // possible sio or adapter connection fail
+                    throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
+                }
+            } else {
+                // do nothing
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
 
     /**
@@ -544,18 +576,34 @@ public class MainController {
      * @param teamName The team name to join
      * @return
      */
-    private String getTeamIdByName(String teamName) {
+    private String getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
         // FIXME check if team name exists
         // FIXME check for general exception?
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
 
-        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "?name=" + teamName, HttpMethod.GET, request, String.class);
-        String resultJSON = responseEntity.getBody().toString();
-        JSONObject object = new JSONObject(resultJSON);
-        return object.getString("id");
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                    logger.warn("Get team by name : team name error");
+                    throw new TeamNotFoundException("Team name " + teamName + "does not exists");
+                } else {
+                    logger.warn("Team service or adapter connection fail");
+                    // possible sio or adapter connection fail
+                    throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
+                }
+            } else {
+                JSONObject object = new JSONObject(responseBody);
+                return object.getString("id");
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
 
     //--------------------------Account Settings Page--------------------------
@@ -563,11 +611,7 @@ public class MainController {
     public String accountDetails(Model model, HttpSession session) throws WebServiceRuntimeException {
 
     	String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
-//        String userId_uri = properties.getSioUsersUrl() + "AAAAAAAAAAAAAAAAAAAA";
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(userId_uri, HttpMethod.GET, request, String.class);
         String responseBody = response.getBody().toString();
@@ -704,11 +748,7 @@ public class MainController {
 
             String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Authorization", AUTHORIZATION_HEADER);
-
-            HttpEntity<String> request = new HttpEntity<>(userObject.toString(), headers);
+            HttpEntity<String> request = createHttpEntityWithBody(userObject.toString());
             ResponseEntity resp = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
 
             if (originalUser != null) {
@@ -758,13 +798,9 @@ public class MainController {
                 JSONObject credObject = new JSONObject();
                 credObject.put("password", editUser.getPassword());
 
-                HttpHeaders credHeaders = new HttpHeaders();
-                credHeaders.setContentType(MediaType.APPLICATION_JSON);
-                credHeaders.set("Authorization", AUTHORIZATION_HEADER);
-
-                HttpEntity<String> credRequest = new HttpEntity<>(credObject.toString(), headers);
+                HttpEntity<String> credRequest = createHttpEntityWithBody(credObject.toString());
                 restTemplate.setErrorHandler(new MyResponseErrorHandler());
-                ResponseEntity response = restTemplate.exchange(properties.getSioCredUrl() + session.getAttribute("id"), HttpMethod.PUT, credRequest, String.class);
+                ResponseEntity response = restTemplate.exchange(properties.getUpdateCredentials(session.getAttribute("id").toString()), HttpMethod.PUT, credRequest, String.class);
                 String responseBody = response.getBody().toString();
 
                 try {
@@ -798,17 +834,21 @@ public class MainController {
         List<JoinRequestApproval> temp;
 
         // get list of teamids
-        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
 
-        JSONObject object = new JSONObject(responseEntity.getBody().toString());
+        JSONObject object = new JSONObject(responseBody);
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
-            ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody().toString();
 
             Team2 team2 = new Team2();
-            JSONObject teamObject = new JSONObject(teamResponseEntity.getBody().toString());
+            JSONObject teamObject = new JSONObject(teamResponseBody);
             JSONArray membersArray = teamObject.getJSONArray("members");
 
             team2.setId(teamObject.getString("id"));
@@ -865,11 +905,7 @@ public class MainController {
         userFields.put("id", session.getAttribute("id").toString());
         mainObject.put("user", userFields);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
 
         return "redirect:/approve_new_user";
@@ -883,11 +919,7 @@ public class MainController {
         userFields.put("id", session.getAttribute("id").toString());
         mainObject.put("user", userFields);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
+        HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity responseEntity = restTemplate.exchange(properties.getRejectJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
 
 //        teamManager.rejectJoinRequest(userId, teamId);
@@ -907,20 +939,25 @@ public class MainController {
 //        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
         // get list of teamids
-        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
 
-        JSONObject object = new JSONObject(responseEntity.getBody().toString());
+        JSONObject object = new JSONObject(responseBody);
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
         String userEmail = object.getJSONObject("userDetails").getString("email");
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
-            ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
-            Team2 team2 = extractTeamInfo(teamResponseEntity.getBody().toString());
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody().toString();
+
+            Team2 team2 = extractTeamInfo(teamResponseBody);
             teamManager2.addTeamToTeamMap(team2);
 
-            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(session.getAttribute("id").toString(), teamResponseEntity.getBody().toString());
+            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(session.getAttribute("id").toString(), teamResponseBody);
             if (joinRequestTeam != null) {
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
             }
@@ -928,9 +965,11 @@ public class MainController {
         }
 
         // get public teams
-        ResponseEntity teamPublicResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + properties.getTeamVisibilityEndpoint());
+        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+        ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
+        String teamResponseBody = teamResponse.getBody().toString();
 
-        JSONArray teamPublicJsonArray = new JSONArray(teamPublicResponseEntity.getBody().toString());
+        JSONArray teamPublicJsonArray = new JSONArray(teamResponseBody);
         for (int i = 0; i < teamPublicJsonArray.length(); i++) {
             JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
             Team2 team2 = extractTeamInfo(teamInfoObject.toString());
@@ -1018,13 +1057,11 @@ public class MainController {
     
     @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
     public String teamProfile(@PathVariable String teamId, Model model, HttpSession session) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", AUTHORIZATION_HEADER);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
 
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + teamId, HttpMethod.GET, request, String.class);
-
-        Team2 team = extractTeamInfo(responseEntity.getBody().toString());
+        Team2 team = extractTeamInfo(responseBody);
 
 //        model.addAttribute("currentLoggedInUserId", getSessionIdOfLoggedInUser(session));
         model.addAttribute("team", team);
@@ -1076,12 +1113,8 @@ public class MainController {
         teamfields.put("status", editTeam.getStatus());
         teamfields.put("members", editTeam.getMembersList());
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>(teamfields.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "/" + teamId, HttpMethod.PUT, request, String.class);
+        HttpEntity<String> request = createHttpEntityWithBody(teamfields.toString());
+        ResponseEntity response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
 
         Team2 originalTeam = (Team2) session.getAttribute("originalTeam");
 
@@ -1162,9 +1195,11 @@ public class MainController {
     public String checkApplyTeamInfo(
             @Valid TeamPageApplyTeamForm teamPageApplyTeamForm,
             BindingResult bindingResult,
-            HttpSession session) {
+            HttpSession session,
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+
         if (bindingResult.hasErrors()) {
-           logger.warn("Existing users apply for new team, page has errors");
+           logger.warn("Existing users apply for new team, form has errors {}", teamPageApplyTeamForm.toString());
            // return "redirect:/teams/apply_team";
            return "team_page_apply_team";
         }
@@ -1181,14 +1216,36 @@ public class MainController {
         teamFields.put("organisationType", teamPageApplyTeamForm.getTeamOrganizationType());
         teamFields.put("visibility", teamPageApplyTeamForm.getIsPublic());
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
+        HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
+        ResponseEntity response = restTemplate.exchange(properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()), HttpMethod.POST, request, String.class);
 
-        HttpEntity<String> request = new HttpEntity<String>(mainObject.toString(), headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()), HttpMethod.POST, request, String.class);
+        String responseBody = response.getBody().toString();
 
-        return "redirect:/teams/team_application_submitted";
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.ApplyNewProjectException.toString())) {
+                    logger.info("Apply new team fail at adapter deterlab");
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                } else if (error.getName().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
+                    logger.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
+                    redirectAttributes.addFlashAttribute("message", "Team name already exists.");
+                } else {
+                    logger.info("Apply new team fail: registration service or adapter fail");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                }
+                return "redirect:/teams/apply_team";
+
+            } else {
+                // no errors, everything ok
+                logger.info("Completed invoking the apply team request service for Team: {}", teamPageApplyTeamForm.getTeamName());
+                return "redirect:/teams/team_application_submitted";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     @RequestMapping(value="/team_owner_policy", method=RequestMethod.GET)
@@ -1230,13 +1287,9 @@ public class MainController {
         teamFields.put("name", teamPageJoinForm.getTeamName());
 
         logger.info("Calling the registration service to do join team request");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<>(mainObject.toString(), headers);
+        HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl() + "/joinApplications", HttpMethod.POST, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getJoinRequestExistingUser(), HttpMethod.POST, request, String.class);
 
         String responseBody = response.getBody().toString();
 
@@ -1271,7 +1324,8 @@ public class MainController {
         Map<Long, Realization> realizationMap = new HashMap<>();
 
         // get list of teamids
-        ResponseEntity userRespEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
 
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
@@ -1280,12 +1334,8 @@ public class MainController {
             String teamId = teamIdsJsonArray.get(i).toString();
 
             // get experiments lists of the teams
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Authorization", AUTHORIZATION_HEADER);
-
-            HttpEntity<String> request = new HttpEntity<>("parameters", headers);
-            ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, request, String.class);
+            HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
+            ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
 
             JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
 
@@ -1309,16 +1359,20 @@ public class MainController {
         List<Team2> userTeamsList = new ArrayList<>();
 
         // get list of teamids
-        ResponseEntity responseEntity = restClient.sendGetRequest(properties.getSioUsersUrl() + "/" + session.getAttribute("id"));
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
 
-        JSONObject object = new JSONObject(responseEntity.getBody().toString());
+        JSONObject object = new JSONObject(responseBody);
 
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
-            ResponseEntity teamResponseEntity = restClient.sendGetRequest(properties.getSioTeamsUrl() + "/" + teamId);
-            Team2 team2 = extractTeamInfo(teamResponseEntity.getBody().toString());
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody().toString();
+            Team2 team2 = extractTeamInfo(teamResponseBody);
             userTeamsList.add(team2);
         }
 
@@ -1352,11 +1406,7 @@ public class MainController {
         experimentObject.put("maxDuration", "960");
 
         logger.info("Calling service to create experiment");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<>(experimentObject.toString(), headers);
+        HttpEntity<String> request = createHttpEntityWithBody(experimentObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
 
@@ -1452,10 +1502,7 @@ public class MainController {
 //        return "redirect:/experiments";
 
         logger.info("Starting experiment: at " + properties.getDeleteExperiment(expId));
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity responseEntity = restTemplate.exchange(properties.getDeleteExperiment(expId), HttpMethod.POST, request, String.class);
         return "redirect:/experiments";
     }
@@ -1468,10 +1515,7 @@ public class MainController {
 //        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
 //        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
         logger.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity responseEntity = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
         return "redirect:/experiments";
     }
@@ -1485,10 +1529,7 @@ public class MainController {
 //        return "redirect:/experiments";
 
         logger.info("Stopping experiment: at " + properties.getStopExperiment(teamName, expId));
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity responseEntity = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
         return "redirect:/experiments";
     }
@@ -1658,11 +1699,7 @@ public class MainController {
         // get list of teams
         // get list of teams pending for approval
         //------------------------------------
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
 
         JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
@@ -1729,22 +1766,14 @@ public class MainController {
     
     @RequestMapping("/admin/teams/accept/{teamId}/{teamOwnerId}")
     public String approveTeam(@PathVariable String teamId, @PathVariable String teamOwnerId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
     	return "redirect:/admin";
     }
     
     @RequestMapping("/admin/teams/reject/{teamId}")
     public String rejectTeam(@PathVariable String teamId, @PathVariable String teamOwnerId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<String>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
 
         // need to cleanly remove the team application
@@ -1854,11 +1883,7 @@ public class MainController {
     @RequestMapping("/teams/join_application_submitted/{teamName}")
     public String teamAppJoinFromTeamsPage(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
         logger.info("Join application submitted");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
 
@@ -1894,10 +1919,33 @@ public class MainController {
         return "team_application_submitted";
     }
     
-    @RequestMapping("/join_application_submitted")
-    public String joinTeamAppSubmit(Model model) {
-    	model.addAttribute("loginForm", new LoginForm());
-    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    @RequestMapping("/join_application_submitted/{teamName}")
+    public String joinTeamAppSubmit(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
+        logger.info("Register new user join application submitted");
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                    logger.warn("Register new user join application request : team name error");
+                } else {
+                    logger.warn("Register new user join application request : some other failure");
+                    // possible sio or adapter connection fail
+                }
+                return "redirect:/signup2";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        Team2 one = extractTeamInfo(responseBody);
+        model.addAttribute("team", one);
         return "join_team_application_submitted";
     }
     
@@ -2045,23 +2093,16 @@ public class MainController {
     }
 
     private User2 invokeAndExtractUserInfo(String userId) {
-        String userId_uri = properties.getSioUsersUrl() + userId;
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(userId_uri, HttpMethod.GET, request, String.class);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
 
         User2 user2 = extractUserInfo(responseEntity.getBody().toString());
         return user2;
     }
 
     private Team2 invokeAndExtractTeamInfo(String teamId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl() + "/" + teamId, HttpMethod.GET, request, String.class);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, request, String.class);
 
         Team2 team = extractTeamInfo(responseEntity.getBody().toString());
         return team;
@@ -2090,10 +2131,7 @@ public class MainController {
     }
 
     private Realization invokeAndExtractRealization(Long id) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", AUTHORIZATION_HEADER);
-
-        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity respEntity = restTemplate.exchange(properties.getRealization(id.toString()), HttpMethod.GET, request, String.class);
         return extractRealization(respEntity.getBody().toString());
     }
@@ -2131,5 +2169,32 @@ public class MainController {
         ZonedDateTime zonedDateTime = mapper.readValue(zonedDateTimeJSON, ZonedDateTime.class);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
         return zonedDateTime.format(format);
+    }
+
+    /**
+     * Creates a HttpEntity with a request body and header
+     * @implNote Authorization header must be set to the JwTToken in the format [Bearer: TOKEN_ID]
+     * @param jsonString The JSON request converted to string
+     * @return A HttpEntity request
+     * @see HttpEntity createHttpEntityHeaderOnly() for request with only header
+     */
+    private HttpEntity<String> createHttpEntityWithBody(String jsonString) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+        return new HttpEntity<>(jsonString, headers);
+    }
+
+    /**
+     * Creates a HttpEntity that contains only a header and empty body
+     * @implNote Authorization header must be set to the JwTToken in the format [Bearer: TOKEN_ID]
+     * @return A HttpEntity request
+     * @see HttpEntity createHttpEntityWithBody() for request with both body and header
+     */
+    private HttpEntity<String> createHttpEntityHeaderOnly() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+        return new HttpEntity<>(headers);
     }
 }
