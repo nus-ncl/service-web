@@ -8,8 +8,8 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <p>&nbsp;</p>
-        <div class="container">
-            <div class="row boxes responsive">
+        <div class="container ">
+            <div class="row boxes responsive dashpanel">
                 <h2 class="form" th:text="#{dataset.request.sent}">Your requested has been submit.</h2>
                 <p th:text="#{dataset.request.info}">We have forwarded your request to the data’s owner for review.</p>
                 <p>Please contact the <strong>Data Owner: </strong>&lt;<span th:text="${ownerName}">Data Owner</span>&gt; <strong>Email: </strong>&lt;<span th:text="${ownerEmail}">team-owner@email</span>&gt; for any issues.</p>
@@ -18,5 +18,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

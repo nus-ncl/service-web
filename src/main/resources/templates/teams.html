@@ -8,6 +8,7 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
+            <p>&nbsp;</p>
             <div class="row">
                 <!--<div th:if="${not infoMsg.isEmpty()}">-->
                     <!--<div class="alert alert-info fade in">-->
@@ -98,7 +99,7 @@
                             </table>
                         </div> <!-- panel body -->
                     </div> <!-- panel -->
-                        <div class="panel panel-primary team-panel team-panel-current-team dashpanel ">
+                        <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
                                 <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.public}">text heading from .properties</h2>
 	                    <div class="panel-body">
 	                        <table class="table table-responsive">
@@ -118,5 +119,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

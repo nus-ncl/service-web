@@ -8,7 +8,8 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
-            <div class="row">
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
                 <h2><span th:text="#{teamProfile.nav.header}">Team:</span> <span th:text="${team.name}" style="color:#00C7BA;"></span></h2>
                 <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
                     <li class="active"><a data-toggle="pill" href="#profile"><span th:text="#{teamProfile.nav.profile}">Profile</span></a></li>
@@ -103,5 +104,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer:: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

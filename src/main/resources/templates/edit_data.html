@@ -8,7 +8,8 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
-            <div class="row">
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
                 <form  method="post" action="#" th:action="@{/data/edit/{datasetId}(datasetId=${editDataset.datasetId})}" th:object="${editDataset}" role="form">
                     <fieldset>
                         <h2 th:text="#{dataset.edit.header}">Edit Info</h2>
@@ -75,5 +76,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

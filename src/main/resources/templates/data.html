@@ -7,8 +7,9 @@
 	</head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
-        <div class="container">
-            <div class="row">
+        <div class="container ">
+			<p>&nbsp;</p>
+            <div class="row dashpanel">
 				<div th:if="${message}">
 					<h4 th:text="${message}"></h4>
 				</div>
@@ -17,7 +18,6 @@
 						<li th:each="file : ${files}" th:text="${file}"></li>
 					</ul>
 				</div>
-				<p>&nbsp;</p>
             	<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.contribute}">You contributed the following datasets</h2>
                 <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetOwnedByUserList)}">
                     <thead>
@@ -84,5 +84,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
 		<div th:replace="fragments/footer :: footer"></div>
+		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

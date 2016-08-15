@@ -150,8 +150,8 @@
                 <tr>
                     <td><div align="left">Database</div></td>
                     <td>Up to 3 (e.g. Rainbow table for GSM A5/1, Click-flaw data, mobile anti-virus apps)</td>
-                    <td BGCOLOR="#E0E0E0">Up to 3 (e.g. Rainbow table for GSM A5/1, Click-flaw data, mobile anti-virus apps) </td>
-                    <td>Up to 3 (e.g. Rainbow table for GSM A5/1, Click-flaw data, mobile anti-virus apps)</td>
+                    <td BGCOLOR="#E0E0E0">Up to 5 (additional: Alexa top 1,000,000 websites, Internet traffic) </td>
+                    <td>Up to 10 (including data for network, malware, web, mobile and human behavior etc)</td>
                 </tr>
                 <tr>
                     <td><div align="left">Access to External Databases</div></td>
@@ -163,7 +163,7 @@
                     <td><div align="left">Seamless Integration with NCL Testbed</div></td>
                     <td>(uploading and downloading only</td>
                     <td BGCOLOR="#E0E0E0">(uploading and downloading only</td>
-                    <td><p>(uploading and downloading only</p></td>
+                    <td><p> V(direct access within experiment nodes)</p></td>
                 </tr>
                 <tr>
                     <td> <div align="left">Analytic Tools within NCL Data Repo <a href="#" data-toggle="tooltip" title="searching,sorting,extraction, anonymization etc." data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
@@ -217,8 +217,8 @@
                     <td><div align="left">Network Traffic Generator
                     </div></td>
                     <td>Open-source software</td>
-                    <td BGCOLOR="#E0E0E0">Software amd high-end dedicated hardware </td>
-                    <td>Software amd high-end dedicated hardware </td>
+                    <td BGCOLOR="#E0E0E0">Software and high-end dedicated hardware </td>
+                    <td>Software and high-end dedicated hardware </td>
                 </tr>
                 <tr>
                     <td> <div align="left">Internet Simulator <a href="#" data-toggle="tooltip" title="Detailed Internet model for simulation of Internet-wide events such as worm spread, DDoS, spam etc" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
@@ -344,5 +344,6 @@
             <p>&nbsp;</p>
             <p>&nbsp;</p>
             <div th:replace="fragments/footer :: footer"></div>
+            <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
 </html>

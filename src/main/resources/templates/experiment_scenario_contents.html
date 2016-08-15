@@ -8,7 +8,8 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
-            <div class="row">
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
             	<div class="col-sm-10">
             		<h2 th:text="#{exp.networkConfig}">Network Configuration</h2>
 	            	<form action="#" method="post" role="form">
@@ -18,5 +19,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

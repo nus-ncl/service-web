@@ -8,7 +8,8 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
-            <div class="row">
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
                 <h2 th:text="#{inviteUsers.header}">Invite User</h2>
                 <form  method="post" action="#" th:action="@{/team_profile/invite_user/{teamId}(teamId=${teamIdVar})}" th:object="${teamPageInviteMemberForm}" role="form">
                     <fieldset>
@@ -23,5 +24,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

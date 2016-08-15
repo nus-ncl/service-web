@@ -7,9 +7,10 @@
     </head>
     <body class="mybg loginbackground">
                 <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
-                <p>&nbsp;</p>
+
                 <div class="container">
-                    <div class="row">
+                    <p>&nbsp;</p>
+                    <div class="row dashpanel">
                 <h2  class="team-heading team-heading-current-team" th:text="#{teamPageApply.header}">Apply for a New Team</h2>
                  <p>&nbsp;</p>
                 <form  method="post" action="#" th:action="@{/teams/apply_team}" th:object="${teamPageApplyTeamForm}" role="form">
@@ -58,5 +59,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
                 <div th:replace="fragments/footer :: footer"></div>
+                <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

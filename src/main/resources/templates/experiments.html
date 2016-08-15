@@ -7,9 +7,9 @@
     </head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
-        <div class="container">
+        <div class="container ">
             <p>&nbsp;</p>
-            <div class="row">
+            <div class="row dashpanel">
                 <h2 class="team-heading team-heading-current-team" th:text="#{exp.header}">Experiments</h2>
                 <!-- user has no experiments -->
                 <div th:if="${#lists.isEmpty(experimentList)}">
@@ -61,5 +61,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer:: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

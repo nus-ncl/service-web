@@ -8,7 +8,8 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
-            <div class="row">
+
+            <div class="row dashpanel">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
                     <h3 th:text="#{teamPage.submitTeamApp.header}">Your application has been received.</h3>
@@ -19,5 +20,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

@@ -8,10 +8,10 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
-            <div class="row">
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
                 <form  method="post" action="#" th:action="@{/data/contribute}" th:object="${dataset}" role="form" enctype="multipart/form-data">
                     <fieldset>
-                        <p>&nbsp;</p>
                         <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{datasetName}"/>
@@ -76,5 +76,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

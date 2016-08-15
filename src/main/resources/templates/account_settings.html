@@ -8,10 +8,10 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
-            <div class="row">
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
                 <form  method="post" action="#" th:action="@{/account_settings}" th:object="${editUser}" role="form">
                     <fieldset>
-                        <p>&nbsp;</p>
                         <h2 class="team-heading team-heading-current-team" th:text="#{acc.info.header.accInfo}">Account Info</h2>
                         <div class="form-group">
                             <label for="email"><span th:text="#{acc.info.email}">TEXT</span>:</label>
@@ -187,5 +187,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

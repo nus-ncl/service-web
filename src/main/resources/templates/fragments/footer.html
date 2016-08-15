@@ -13,15 +13,6 @@
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
         <link rel="shortcut icon" href="images/ncl_favicon1.png"/>
 
-	  <!--[if lt IE 9]>
-	    <script type="text/javascript" src="static/js/html5shiv.js" th:src="@{~/js/html5shiv.js}"></script>
-	    <script type="text/javascript" src="static/js/respond.min.js" th:src="@{~/js/respond.min.js}"></script>
-	  <![endif]-->
-
-        <script type="text/javascript" src="static/js/jquery-1.12.2.min.js" th:src="@{~/js/jquery-1.12.2.min.js}"></script>
-        <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
-		<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
-
     </head>
   <body>
       <!-- give a fragment name so that we can import from other html files -->
@@ -54,5 +45,6 @@
 					</div>
 				</footer>
    		</div> <!-- main-nav -->
+	  <object th:include="fragments/javascript :: javascript" th:remove="tag" />
   </body>
 </html>

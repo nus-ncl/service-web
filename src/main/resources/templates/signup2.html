@@ -4,6 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>National Cybersecurity Laboratories - Login</title>
 		<object th:include="fragments/header :: header" th:remove="tag" />
+		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
 	</head>
 	<body class="mybg registerback">
         <div th:replace="fragments/login_navigation :: loginnav"></div>
@@ -37,11 +38,11 @@
 	                                <div class="form-group">
 										<div class='pwdwidgetdiv' id='thepwddiv'>
 										</div>
-										<!--<noscript>-->
-											<!--<div>-->
-												<!--<input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>-->
-											<!--</div>-->
-										<!--</noscript>-->
+										<noscript>
+											<div>
+												<input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>
+											</div>
+										</noscript>
 										<script  type="text/javascript" >
 											var pwdwidget = new PasswordWidget('thepwddiv','password');
 											pwdwidget.MakePWDWidget();
@@ -218,7 +219,6 @@
                 <div class="col-md-1"></div>
             </div> <!-- row -->
         </div> <!-- container -->
-
 		<div th:replace="fragments/footer :: footer"></div>
 	</body>
 </html>

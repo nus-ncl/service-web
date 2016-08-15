@@ -8,7 +8,8 @@
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <div class="container">
-            <div class="row">
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
                 <form  method="post" action="#" th:action="@{/admin/node/add}" th:object="${node}" role="form">
                     <fieldset>
                         <h2 th:text="#{admin.header}">Add Node</h2>
@@ -74,5 +75,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
         <div th:replace="fragments/footer:: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

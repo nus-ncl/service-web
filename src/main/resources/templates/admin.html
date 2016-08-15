@@ -93,8 +93,8 @@
                 		<!--</form>-->
                 	<!--</div> &lt;!&ndash; domainsManagement &ndash;&gt;-->
 
-					<div id="teamsManagement" class="tab-pane fade in active">
-						<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.teams.header.pending}">Teams Pending for Approval</h2>
+					<div id="teamsManagement" class="tab-pane fade in active dashpanel">
+						<h2 class="team-heading team-heading-current-team padding " th:text="#{admin.teams.header.pending}">Teams Pending for Approval</h2>
 						<th:block th:if="not ${#lists.isEmpty(pendingApprovalTeamsList)}">
 							<p>&nbsp;</p>
 							<table class="table table-responsive">
@@ -332,5 +332,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
 		<div th:replace="fragments/footer:: footer"></div>
+		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>
