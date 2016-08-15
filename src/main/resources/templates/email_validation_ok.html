@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Email Validated</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/login_navigation :: loginnav"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <h3>Your email has been validated.</h3>
+            <p>Your email <strong><span th:text="*{emailAddress}">abc@example.com</span></strong> has been validated.</p>
+            <p>Please wait for the Admin to process your request.</p>
+        </div> <!-- col -->
+        <div class="col-md-1"></div>
+    </div> <!-- row -->
+</div> <!-- container -->
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

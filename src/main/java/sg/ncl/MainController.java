@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -82,7 +83,8 @@ public class MainController {
 
     @Autowired
     private ConnectionProperties properties;
-    
+
+
     @RequestMapping("/")
     public String index() {
         return "index";
@@ -206,7 +208,36 @@ public class MainController {
     	model.addAttribute("loginForm", new LoginForm());
     	return "login";
     }
-    
+
+    @RequestMapping(value = "/emailVerification", params = {"uid", "email", "key"})
+    public String verifyEmail(@RequestParam final String uid, @RequestParam final String email, @RequestParam final String key) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", AUTHORIZATION_HEADER);
+
+        ObjectNode keyObject = objectMapper.createObjectNode();
+        keyObject.put("key", key);
+
+        HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+
+        // convert email to base64 code as email contains "."
+        String emailBase64 = new String(Base64.encodeBase64(email.getBytes()));
+        final String link = properties.getSioUsersUrl() + uid + "/emails/" + emailBase64;
+        logger.info("Activation link: {}, verification key {}", link, key);
+        ResponseEntity response = restTemplate.exchange(link,
+                HttpMethod.PUT, request, String.class);
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            logger.error("Activation of user {} failed.", uid);
+            return "email_validation_failed";
+        } else {
+            logger.info("Activation of user {} completed.", uid);
+            return "email_validation_ok";
+        }
+    }
+
+
     @RequestMapping(value="/login", method=RequestMethod.POST)
     public String loginSubmit(
             @Valid
