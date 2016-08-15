@@ -241,7 +241,7 @@ public class MainControllerTest {
     public void testPostLoginPageInvalidUserPassword() throws Exception {
         mockServer.expect(requestTo(properties.getSioAuthUrl()))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest());
+                .andRespond(withBadRequest().body("{}").contentType(MediaType.APPLICATION_JSON));
 
         ResultActions perform = mockMvc.perform(
                 post("/login")

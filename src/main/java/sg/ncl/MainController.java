@@ -244,7 +244,7 @@ public class MainController {
             @ModelAttribute("loginForm") LoginForm loginForm,
             BindingResult bindingResult,
             Model model,
-            HttpSession session) {
+            HttpSession session) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
@@ -263,40 +263,51 @@ public class MainController {
         byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
         String base64Creds = new String(base64CredsBytes);
 
-        ResponseEntity responseEntity;
+        ResponseEntity response;
         String jwtTokenString;
         String id = "";
 
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Basic " + base64Creds);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Basic " + base64Creds);
 
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            responseEntity = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
-            jwtTokenString = responseEntity.getBody().toString();
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+
+        try {
+            response = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
+            jwtTokenString = response.getBody().toString();
         } catch (Exception e) {
-            // TODO: handle different types of error
-            // case1: invalid login
-            loginForm.setErrorMsg("Login failed: Invalid email/password.");
+            logger.warn("Error connecting to authentication service to validate login details");
+            loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
 
-        if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
-            JSONObject tokenObject = new JSONObject(jwtTokenString);
-            String token = tokenObject.getString("token");
-            id = tokenObject.getString("id");
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(jwtTokenString, MyErrorResource.class);
+                loginForm.setErrorMsg("Login failed: Invalid email/password.");
+                logger.warn("login failed with username {}", loginForm.getLoginEmail());
+                return "login";
+            } else if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
+                JSONObject tokenObject = new JSONObject(jwtTokenString);
+                String token = tokenObject.getString("token");
+                id = tokenObject.getString("id");
 
-            logger.info("login success with token id {}", id);
-            AUTHORIZATION_HEADER = "Bearer " + token;
+                AUTHORIZATION_HEADER = "Bearer " + token;
 
-            session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
-            session.setAttribute("id", id);
+                session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
+                session.setAttribute("id", id);
 
-            return "redirect:/dashboard";
-        } else {
-            // case1: invalid login
-            loginForm.setErrorMsg("Login failed: Invalid email/password.");
-            return "login";
+                logger.info("login success with username: {}, token id: {}", loginForm.getLoginEmail(), id);
+                return "redirect:/dashboard";
+            } else {
+                // case1: invalid login
+                loginForm.setErrorMsg("Login failed: Invalid email/password.");
+                logger.warn("login failed with unknown response code with username {}", loginForm.getLoginEmail());
+                return "login";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
         }
 
         /*
