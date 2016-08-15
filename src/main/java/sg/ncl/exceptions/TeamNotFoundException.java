@@ -2,7 +2,7 @@ package sg.ncl.exceptions;
 
 
 /**
- * @author Te Te
+ * @author Te Ye
  */
 public class TeamNotFoundException extends Exception {
 
