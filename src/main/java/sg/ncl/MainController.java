@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -87,7 +88,8 @@ public class MainController {
 
     @Autowired
     private ConnectionProperties properties;
-    
+
+
     @RequestMapping("/")
     public String index() {
         return "index";
@@ -214,16 +216,21 @@ public class MainController {
     	return "login";
     }
 
-    @RequestMapping(value = "/activation", params = {"uid", "key"})
-    public String activateAccount(@RequestParam final String uid, @RequestParam final String key) {
+    @RequestMapping(value = "/emailVerification", params = {"uid", "email", "key"})
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
 
-        HttpEntity<String> request = new HttpEntity<>("parameters", headers);
+        ObjectNode keyObject = objectMapper.createObjectNode();
+        keyObject.put("key", key);
+
+        HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        final String link = properties.getSioRegUrl() + "activation?uid=" + uid + "&key=" + key;
-        logger.info("Activation link: {}", link);
+
+        // convert email to base64 code as email contains "."
+        String emailBase64 = new String(Base64.encodeBase64(email.getBytes()));
+        final String link = properties.getSioUsersUrl() + uid + "/emails/" + emailBase64;
+        logger.info("Activation link: {}, verification key {}", link, key);
         ResponseEntity response = restTemplate.exchange(link,
                 HttpMethod.PUT, request, String.class);
 
