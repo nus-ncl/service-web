@@ -213,7 +213,7 @@ public class MainController {
             @ModelAttribute("loginForm") LoginForm loginForm,
             BindingResult bindingResult,
             Model model,
-            HttpSession session) {
+            HttpSession session) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
@@ -276,7 +276,7 @@ public class MainController {
                 return "login";
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new WebServiceRuntimeException(e.getMessage());
         }
 
         /*
