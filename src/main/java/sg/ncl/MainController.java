@@ -217,6 +217,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/emailVerification", params = {"uid", "email", "key"})
+    public String verifyEmail(@RequestParam final String uid, @RequestParam final String email, @RequestParam final String key) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
