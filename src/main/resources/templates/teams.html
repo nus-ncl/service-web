@@ -7,8 +7,28 @@
     </head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
         <div class="container">
             <p>&nbsp;</p>
+            <div class="sticky-container">
+                <p>&nbsp;</p>
+                <ul class="sticky">
+                    <li>
+                        <p>&nbsp;&nbsp;&nbsp;Your Teams</p>
+                    </li>
+                    <li>
+                        <p>&nbsp;&nbsp; Requested Teams</p>
+                    </li>
+                    <li>
+                        <p>&nbsp;&nbsp;&nbsp;Participated Teams</p>
+                    </li>
+                    <li>
+                        <p>&nbsp;&nbsp; Public Teams</p>
+                    </li>
+                </ul>
+            </div>
             <div class="row">
                 <!--<div th:if="${not infoMsg.isEmpty()}">-->
                     <!--<div class="alert alert-info fade in">-->
@@ -16,8 +36,6 @@
                         <!--<strong>Info!</strong> <span th:text="${infoMsg}"></span>-->
                     <!--</div>-->
                 <!--</div>-->
-
-
                 <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team dashpanel">
                     <!--<div class="panel-heading">-->
                         <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2>
@@ -44,6 +62,9 @@
                                 <!--<td th:text="${teamEntry.value.experimentsCount}">Experiments Count</td>-->
                                 <!--<td th:if="${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}"><a href="#" th:href="@{/teams/invite_members/{teamId}(teamId=${teamEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="Invite Members" class="btn btn-primary"><i class="fa fa-user-plus"></i></a></td>-->
                                 <!--<td th:if="not ${teamEntry.value.isUserTeamOwner(currentLoggedInUserId)}">-&#45;&#45;</td>-->
+                            </tr>
+                            <tr>
+                                <td height="500"></td>
                             </tr>
                         </table>
 
@@ -76,6 +97,9 @@
 	                                <!--<td><a href="#" title="Accept" class="btn btn-success" th:href="@{/accept_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a><a href="#" title="Ignore" class="btn btn-warning" th:href="@{/ignore_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-times-circle-o fa-lg"></i> Ignore</a></td>-->
 	                            <!--</tr>-->
 	                        <!--</table>-->
+                            <tr>
+                                <td height="700"></td>
+                            </tr>
 	                    </div> <!-- panel body -->
                     </div> <!-- panel -->
                         <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
@@ -96,6 +120,9 @@
                                    <td th:text="${team.value.description}">Description</td>
                                    <td><a href="#" class="btn btn-standard" th:href="@{/withdraw/{teamId}(teamId=${team.value.id})}"><i class="fa fa-minus-circle btn-fa-red"></i> Withdraw</a></td>
                                 </tr>
+                                <tr>
+                                    <td height="700"></td>
+                                </tr>
                             </table>
                         </div> <!-- panel body -->
                     </div> <!-- panel -->
@@ -113,10 +140,30 @@
 	                               <td th:text="${teamEntry.value.description}">Description</td>
 	                               <!--<td th:text="${teamEntry.value.institution}">Institution</td>-->
 	                            </tr>
+                                <tr>
+                                    <td height="700"></td>
+                                </tr>
 	                        </table>
 	                    </div> <!-- panel body -->
                     </div> <!-- panel -->
             </div> <!-- row -->
+            <div class="cc-wraper">
+                <div class="cc-contactpop fixed">
+                    <h1>Do you need Help? <span>Get in touch.</span></h1>
+                    <div class="renseignement">
+                        <i class="fa fa-times"></i>
+                        <p>We will get back to you as soon as possible. </p>
+                    </div>
+                    <form>
+                        <ul>
+                            <li><i class="fa fa-phone"></i> <span> Phone: </span>+65 6601 1056</li>
+                            <li><i class="fa fa-email"></i><span>Email:</span><a href="mailto:support@ncl.sg"> support@ncl.sg</a></li>
+                            <li><i class="fa fa-map-marker"></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                        </ul>
+                        <p>&nbsp;</p>
+                    </form>
+                </div>
+            </div>
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />

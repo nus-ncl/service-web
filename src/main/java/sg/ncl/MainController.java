@@ -118,6 +118,11 @@ public class MainController {
         return "pricing";
     }
 
+    @RequestMapping("/resources1")
+    public String resources1() {
+        return "resources1";
+    }
+
     @RequestMapping("/resources")
     public String resources() {
         return "resources";
