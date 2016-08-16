@@ -42,10 +42,10 @@
                         <div class="form-group">
                             <span class="text-danger" th:if="${#fields.hasErrors('isPublic')}" th:errors="*{isPublic}">Public or Private</span>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><span th:text="#{signup.publicTeam}">Public</span> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><span th:text="#{signup.privateTeam}">Private</span><em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
                             </div>
                         </div>
                         <div class="form-group">
