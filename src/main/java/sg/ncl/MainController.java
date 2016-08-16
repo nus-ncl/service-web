@@ -62,8 +62,6 @@ public class MainController {
 
     // to know which form fields have been changed
     private User2 originalUser = null;
-
-    private TeamManager2 teamManager2 = TeamManager2.getInstance();
     
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
@@ -971,6 +969,8 @@ public class MainController {
 //        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
 //        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
+        TeamManager2 teamManager2 = new TeamManager2();
+
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
@@ -1724,6 +1724,8 @@ public class MainController {
 //    	model.addAttribute("userManager", userManager);
 //
 //    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
+
+        TeamManager2 teamManager2 = new TeamManager2();
 
         Map<String, List<String>> userToTeamMap = new HashMap<>(); // userId : list of team names
         List<Team2> pendingApprovalTeamsList = new ArrayList<>();

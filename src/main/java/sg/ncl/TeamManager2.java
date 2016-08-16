@@ -9,23 +9,16 @@ import java.util.*;
  */
 public class TeamManager2 {
 
-    private static TeamManager2 TEAM_MANAGER_SINGLETON = null;
     private HashMap<String, Team2> teamMap; /* teamId - Team */
     private HashMap<String, Team2> publicTeamMap;
     private HashMap<String, Team2> userJoinRequestMap; /* teamId - Team*/
 
-    private TeamManager2() {
+    public TeamManager2() {
         teamMap = new HashMap<>();
         publicTeamMap = new HashMap<>();
         userJoinRequestMap = new HashMap<>();
     }
 
-    public static TeamManager2 getInstance() {
-        if (TEAM_MANAGER_SINGLETON == null) {
-            TEAM_MANAGER_SINGLETON = new TeamManager2();
-        }
-        return TEAM_MANAGER_SINGLETON;
-    }
 
     public HashMap<String, Team2> getTeamMap() {
         return teamMap;
