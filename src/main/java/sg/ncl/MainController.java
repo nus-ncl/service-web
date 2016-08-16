@@ -73,7 +73,7 @@ public class MainController {
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
     // error messages
-    private final String ERR_SERVER_OVERLOAD = "Our server is currently overloaded with requests. Please try again later.";
+    private final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact support@ncl.sg";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -415,6 +415,12 @@ public class MainController {
             return "/signup2";
         }
 
+        if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
+            signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
+            logger.warn("Policy not accepted");
+            return "/signup2";
+        }
+
         // get form fields
         // craft the registration json
         JSONObject mainObject = new JSONObject();
@@ -476,11 +482,6 @@ public class MainController {
             if (signUpMergedForm.getTeamWebsite() == null || signUpMergedForm.getTeamWebsite().isEmpty()) {
                 errorsFound = true;
                 signUpMergedForm.setErrorTeamWebsite("Team website cannot be empty");
-            }
-
-            if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
-                errorsFound = true;
-                signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
             }
 
             if (errorsFound) {
