@@ -24,9 +24,6 @@ public class TeamPageApplyTeamForm {
     @NotNull(message="Please select one of them")
     private String isPublic = TeamVisibility.PUBLIC.toString();
     
-    @AssertTrue(message="Please read and accept the team owner policy")
-    private boolean hasAcceptTeamOwnerPolicy;
-    
     public TeamPageApplyTeamForm() {   
     }
     
@@ -69,14 +66,7 @@ public class TeamPageApplyTeamForm {
     public void setIsPublic(String isPublic) {
         this.isPublic = isPublic;
     }
-    
-    public boolean getHasAcceptTeamOwnerPolicy() {
-        return hasAcceptTeamOwnerPolicy;
-    }
-    
-    public void setHasAcceptTeamOwnerPolicy(boolean hasAcceptTeamOwnerPolicy) {
-        this.hasAcceptTeamOwnerPolicy = hasAcceptTeamOwnerPolicy;
-    }
+
     
     @Override
     public String toString() {
@@ -84,7 +74,6 @@ public class TeamPageApplyTeamForm {
                 "Description: " + teamDescription + "\n" +
                 "Website: " + teamWebsite + "\n" +
                 "Organization Type: " + teamOrganizationType + "\n" +
-                "Visibility: " + isPublic + "\n" +
-                "Accepted Policy? " + hasAcceptTeamOwnerPolicy;
+                "Visibility: " + isPublic;
     }
 }
