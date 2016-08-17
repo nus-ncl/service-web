@@ -81,17 +81,4 @@ public class TeamPageApplyTeamFormTest {
         assertThat(one.getIsPublic(), is(TeamVisibility.PRIVATE.toString()));
     }
 
-    @Test
-    public void testGetTeamHasAcceptTeamOwnerPolicy() {
-        final TeamPageApplyTeamForm one = new TeamPageApplyTeamForm();
-        assertThat(one.getHasAcceptTeamOwnerPolicy(), is(false));
-    }
-
-    @Test
-    public void testSetTeamHasAcceptTeamOwnerPolicy() {
-        final TeamPageApplyTeamForm one = new TeamPageApplyTeamForm();
-        one.setHasAcceptTeamOwnerPolicy(true);
-        assertThat(one.getHasAcceptTeamOwnerPolicy(), is(true));
-    }
-
 }

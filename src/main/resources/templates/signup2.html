@@ -37,6 +37,7 @@
 									<p class="account-change-fail" th:if="${#fields.hasErrors('email')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{email}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('password')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{password}"></span></p>
 									<p class="account-change-fail" th:if="${(signUpMergedForm.password != null and signUpMergedForm.confirmPassword != null) and (signUpMergedForm.getIsValid() == false)}"><i class="fa fa-exclamation-circle"></i> <span th:text="#{acc.info.pwdMismatch}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamOwnerPolicy != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamOwnerPolicy}"></span></p>
 
 	                                <h3 th:text="#{signup.createAcc.header}">Create Your Account</h3>
 	                                <div class="form-group">
@@ -54,6 +55,11 @@
 											var pwdwidget = new PasswordWidget('thepwddiv','password');
 											pwdwidget.MakePWDWidget();
 										</script>
+									</div>
+									<div class="form-group">
+										<div class="checkbox">
+											<label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> I accept the <a href="team_owner_policy" th:src="@{/team_owner_policy}" th:text="#{signup.acceptTeamOwnerPolicy}">Acceptable Usage Policy</a> and <a href="#" th:text="#{signup.termsAndCondition}">Terms and Conditions</a></label>
+										</div>
 									</div>
 									<!--<p>&nbsp;</p>-->
 	                                <!--<div class="form-group">-->
@@ -175,7 +181,6 @@
 									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamName != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamName}"></span></p>
 									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamDescription != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamDescription}"></span></p>
 									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamWebsite != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamWebsite}"></span></p>
-									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamOwnerPolicy != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamOwnerPolicy}"></span></p>
 			                        
                                 	<h3 th:text="#{signup.applyCreateTeam.header}">Apply to create a new team</h3>
 	                                <div class="form-group">
@@ -201,11 +206,6 @@
 			                            </div>
 			                            <div class="radio">
 			                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
-			                            </div>
-			                        </div>
-			                        <div class="form-group">
-			                            <div class="checkbox">
-			                                <label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> I accept the <a href="team_owner_policy" th:src="@{/team_owner_policy}" th:text="#{signup.acceptTeamOwnerPolicy}">Acceptable Usage Policy</a> and <a href="#" th:text="#{signup.termsAndCondition}">Terms and Conditions</a></label>
 			                            </div>
 			                        </div>
 	                                <div class="form-group">

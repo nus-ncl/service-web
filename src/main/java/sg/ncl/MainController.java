@@ -1,6 +1,9 @@
 package sg.ncl;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -20,6 +23,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,17 +68,13 @@ public class MainController {
     // to know which form fields have been changed
     private User2 originalUser = null;
 
-    private TeamManager2 teamManager2 = TeamManager2.getInstance();
-    
-    private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
-
     private final String USER_ID = "2535dccd-b7c1-4610-bd9b-4ed231f48f07";
     private final String TEAM_ID = "40d02a00-c47c-492a-abf4-b3c6670a345e";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
     // error messages
-    private final String ERR_SERVER_OVERLOAD = "Our server is currently overloaded with requests. Please try again later.";
+    private final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact support@ncl.sg";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -225,8 +226,7 @@ public class MainController {
         String emailBase64 = new String(Base64.encodeBase64(email.getBytes()));
         final String link = properties.getSioUsersUrl() + uid + "/emails/" + emailBase64;
         logger.info("Activation link: {}, verification key {}", link, key);
-        ResponseEntity response = restTemplate.exchange(link,
-                HttpMethod.PUT, request, String.class);
+        ResponseEntity response = restTemplate.exchange(link, HttpMethod.PUT, request, String.class);
 
         if (RestUtil.isError(response.getStatusCode())) {
             logger.error("Activation of user {} failed.", uid);
@@ -236,7 +236,6 @@ public class MainController {
             return "email_validation_ok";
         }
     }
-
 
     @RequestMapping(value="/login", method=RequestMethod.POST)
     public String loginSubmit(
@@ -295,8 +294,7 @@ public class MainController {
 
                 AUTHORIZATION_HEADER = "Bearer " + token;
 
-                session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
-                session.setAttribute("id", id);
+                setSessionVariables(session, loginForm.getLoginEmail(), id);
 
                 logger.info("login success with username: {}, token id: {}", loginForm.getLoginEmail(), id);
                 return "redirect:/dashboard";
@@ -355,7 +353,7 @@ public class MainController {
         */
 
     }
-    
+
     @RequestMapping("/passwordreset")
     public String passwordreset(Model model) {
         model.addAttribute("loginForm", new LoginForm());
@@ -388,10 +386,7 @@ public class MainController {
     @RequestMapping(value="/logout", method=RequestMethod.GET)
     public String logout(HttpSession session) {
         CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
-        session.removeAttribute("isUserAdmin");
-        session.removeAttribute(SESSION_LOGGED_IN_USER_ID);
-        session.removeAttribute("sessionLoggedEmail");
-        session.removeAttribute("id");
+        removeSessionVariables(session);
         return "redirect:/";
     }
     
@@ -412,6 +407,12 @@ public class MainController {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             logger.warn("Register form has errors {}", signUpMergedForm.toString());
+            return "/signup2";
+        }
+
+        if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
+            signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
+            logger.warn("Policy not accepted");
             return "/signup2";
         }
 
@@ -476,11 +477,6 @@ public class MainController {
             if (signUpMergedForm.getTeamWebsite() == null || signUpMergedForm.getTeamWebsite().isEmpty()) {
                 errorsFound = true;
                 signUpMergedForm.setErrorTeamWebsite("Team website cannot be empty");
-            }
-
-            if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
-                errorsFound = true;
-                signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
             }
 
             if (errorsFound) {
@@ -970,6 +966,8 @@ public class MainController {
 //        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
 //        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
+        TeamManager2 teamManager2 = new TeamManager2();
+
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
@@ -1099,7 +1097,6 @@ public class MainController {
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
         model.addAttribute("membersList", team.getMembersList());
-        session.setAttribute("originalTeam", team);
 //        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
 //        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
 //        model.addAttribute("userManager", userManager);
@@ -1385,9 +1382,10 @@ public class MainController {
     }
 
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
-    public String createExperiment(Model model, HttpSession session) {
-
+    public String createExperiment(Model model, HttpSession session) throws WebServiceRuntimeException {
+        logger.info("Loading create experiment page");
         // a list of teams that the logged in user is in
+        List<String> scenarioFileNameList = getScenarioFileNameList();
         List<Team2> userTeamsList = new ArrayList<>();
 
         // get list of teamids
@@ -1408,6 +1406,7 @@ public class MainController {
             userTeamsList.add(team2);
         }
 
+        model.addAttribute("scenarioFileNameList", scenarioFileNameList);
         model.addAttribute("experimentForm", new ExperimentForm());
         model.addAttribute("userTeamsList", userTeamsList);
         return "experiment_page_create_experiment";
@@ -1426,6 +1425,18 @@ public class MainController {
             return "redirect:/experiments/create";
         }
 
+        if (experimentForm.getName() == null || experimentForm.getName().isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Experiment Name cannot be empty");
+            return "redirect:/experiments/create";
+        }
+
+        if (experimentForm.getDescription() == null || experimentForm.getDescription().isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Description cannot be empty");
+            return "redirect:/experiments/create";
+        }
+
+        experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
+
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
         experimentObject.put("teamId", experimentForm.getTeamId());
@@ -1433,7 +1444,7 @@ public class MainController {
         experimentObject.put("name", experimentForm.getName());
         experimentObject.put("description", experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
-        experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
+        experimentObject.put("nsFileContent", experimentForm.getScenarioContents());
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
 
@@ -1449,16 +1460,17 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
                 if (error.getName().equals(ExceptionState.NSFileParseException.toString())) {
-                    logger.info("Ns file error");
+                    logger.warn("Ns file error");
                     redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
                 } else if (error.getName().equals(ExceptionState.ExpNameAlreadyExistsException.toString())) {
-                    logger.info("Exp name already exists");
+                    logger.warn("Exp name already exists");
                     redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
                 } else {
-                    logger.info("Exp service or adapter fail");
+                    logger.warn("Exp service or adapter fail");
                     // possible sio or adapter connection fail
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 }
+                logger.info("Experiment {} created", experimentForm);
                 return "redirect:/experiments/create";
             }
         } catch (IOException e) {
@@ -1510,7 +1522,7 @@ public class MainController {
 
         return "redirect:/experiments";
     }
-    
+
     @RequestMapping("/experiments/configuration/{expId}")
     public String viewExperimentConfiguration(@PathVariable Integer expId, Model model) {
     	// get experiment from expid
@@ -1723,6 +1735,8 @@ public class MainController {
 //    	model.addAttribute("userManager", userManager);
 //
 //    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
+
+        TeamManager2 teamManager2 = new TeamManager2();
 
         Map<String, List<String>> userToTeamMap = new HashMap<>(); // userId : list of team names
         List<Team2> pendingApprovalTeamsList = new ArrayList<>();
@@ -2003,15 +2017,49 @@ public class MainController {
     }
     
     //--------------------------Get List of scenarios filenames--------------------------
-    private List<String> getScenarioFileNameList() {
-		List<String> scenarioFileNameList = new ArrayList<String>();
-		File[] files = new File(SCENARIOS_DIR_PATH).listFiles();
-		for (File file : files) {
-			if (file.isFile()) {
-				scenarioFileNameList.add(file.getName());
-			}
-		}
+    private List<String> getScenarioFileNameList() throws WebServiceRuntimeException {
+        logger.info("Retrieving scenario file names");
+//        List<String> scenarioFileNameList = null;
+//        try {
+//            scenarioFileNameList = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios"), StandardCharsets.UTF_8);
+//        } catch (IOException e) {
+//            throw new WebServiceRuntimeException(e.getMessage());
+//        }
+//        File folder = null;
+//        try {
+//            folder = new ClassPathResource("scenarios").getFile();
+//        } catch (IOException e) {
+//            throw new WebServiceRuntimeException(e.getMessage());
+//        }
+//        List<String> scenarioFileNameList = new ArrayList<>();
+//		File[] files = folder.listFiles();
+//		for (File file : files) {
+//			if (file.isFile()) {
+//				scenarioFileNameList.add(file.getName());
+//			}
+//		}
+        // FIXME: hardcode list of filenames for now
+        List<String> scenarioFileNameList = new ArrayList<>();
+        scenarioFileNameList.add("basic.ns");
+        scenarioFileNameList.add("basic2.ns");
+        logger.info("Scenario file list: {}", scenarioFileNameList);
 		return scenarioFileNameList;
+    }
+
+    private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
+        try {
+            logger.info("Retrieving scenario files {}", getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName));
+            List<String> lines = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName), StandardCharsets.UTF_8);
+            StringBuilder sb = new StringBuilder();
+            for (String line : lines) {
+                sb.append(line);
+                sb.append(System.getProperty("line.separator"));
+            }
+            logger.info("Experiment ns file contents: {}", sb);
+            return sb.toString();
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     //---Check if user is a team owner and has any join request waiting for approval----
@@ -2228,5 +2276,18 @@ public class MainController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
         return new HttpEntity<>(headers);
+    }
+
+    private void setSessionVariables(HttpSession session, String loginEmail, String id) {
+        User2 user = invokeAndExtractUserInfo(id);
+        session.setAttribute("sessionLoggedEmail", loginEmail);
+        session.setAttribute("id", id);
+        session.setAttribute("name", user.getFirstName());
+    }
+
+    private void removeSessionVariables(HttpSession session) {
+        session.removeAttribute("sessionLoggedEmail");
+        session.removeAttribute("id");
+        session.removeAttribute("name");
     }
 }

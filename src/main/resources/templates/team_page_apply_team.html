@@ -42,16 +42,10 @@
                         <div class="form-group">
                             <span class="text-danger" th:if="${#fields.hasErrors('isPublic')}" th:errors="*{isPublic}">Public or Private</span>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><span th:text="#{signup.publicTeam}">Public</span> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><span th:text="#{signup.privateTeam}">Private</span><em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> <a href="/team_owner_policy" th:src="@{/team_owner_policy}"> <span th:text="#{signup.acceptTeamOwnerPolicy}">I accept the team owner policy</span></a></label>
-                                <span class="account-change-fail" th:if="${#fields.hasErrors('hasAcceptTeamOwnerPolicy')}"><br/><i class="fa fa-exclamation-circle"></i> <span th:errors="*{hasAcceptTeamOwnerPolicy}"></span></span>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
                             </div>
                         </div>
                         <div class="form-group">
