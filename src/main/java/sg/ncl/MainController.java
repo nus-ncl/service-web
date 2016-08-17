@@ -62,8 +62,6 @@ public class MainController {
 
     // to know which form fields have been changed
     private User2 originalUser = null;
-    
-    private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
     private final String USER_ID = "2535dccd-b7c1-4610-bd9b-4ed231f48f07";
     private final String TEAM_ID = "40d02a00-c47c-492a-abf4-b3c6670a345e";
@@ -2001,8 +1999,9 @@ public class MainController {
     
     //--------------------------Get List of scenarios filenames--------------------------
     private List<String> getScenarioFileNameList() {
-		List<String> scenarioFileNameList = new ArrayList<String>();
-		File[] files = new File(SCENARIOS_DIR_PATH).listFiles();
+        String scenariosDirPath = "src/main/resources/scenarios";
+		List<String> scenarioFileNameList = new ArrayList<>();
+		File[] files = new File(scenariosDirPath).listFiles();
 		for (File file : files) {
 			if (file.isFile()) {
 				scenarioFileNameList.add(file.getName());
@@ -2228,12 +2227,15 @@ public class MainController {
     }
 
     private void setSessionVariables(HttpSession session, String loginEmail, String id) {
+        User2 user = invokeAndExtractUserInfo(id);
         session.setAttribute("sessionLoggedEmail", loginEmail);
         session.setAttribute("id", id);
+        session.setAttribute("name", user.getFirstName());
     }
 
     private void removeSessionVariables(HttpSession session) {
         session.removeAttribute("sessionLoggedEmail");
         session.removeAttribute("id");
+        session.removeAttribute("name");
     }
 }

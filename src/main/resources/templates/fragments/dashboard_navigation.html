@@ -55,9 +55,9 @@
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg fa-2x"></i> <span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<!-- TODO need to check if user is a team owner -->
-						<li>
-							<strong><p th:text="${session.sessionLoggedEmail}" th:if="${session.sessionLoggedEmail != null}" style="margin-left: 10px"></p></strong>
-							<strong><p th:text="#{nav.error}" th:if="${session.sessionLoggedEmail == null}" style="margin-left: 10px"></p></strong>
+						<li style="border-bottom: 1px solid #cacaca;">
+							<p th:if="${session.name != null}" style="margin-left: 10px">Signed in as <strong><span th:text="${session.name}"></span></strong></p>
+							<p th:if="${session.name == null}" style="margin-left: 10px">Signed in as <strong><span th:text="#{nav.error}"></span></strong></p>
 						</li>
 						<li><a href="/approve_new_user" th:href="@{/approve_new_user}"><span th:text="#{nav.approveNewUser}">Approve New User</span></a></li>
 						<li><a href="/account_settings" th:href="@{/account_settings}"><span th:text="#{nav.editAccount}">Edit Account Settings</span></a></li>
