@@ -237,7 +237,6 @@ public class MainController {
         }
     }
 
-
     @RequestMapping(value="/login", method=RequestMethod.POST)
     public String loginSubmit(
             @Valid
@@ -1384,7 +1383,7 @@ public class MainController {
 
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
     public String createExperiment(Model model, HttpSession session) throws WebServiceRuntimeException {
-
+        logger.info("Loading create experiment page");
         // a list of teams that the logged in user is in
         List<String> scenarioFileNameList = getScenarioFileNameList();
         List<Team2> userTeamsList = new ArrayList<>();
@@ -2019,31 +2018,44 @@ public class MainController {
     
     //--------------------------Get List of scenarios filenames--------------------------
     private List<String> getScenarioFileNameList() throws WebServiceRuntimeException {
-        File folder = null;
-        try {
-            folder = new ClassPathResource("scenarios").getFile();
-        } catch (IOException e) {
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
+        logger.info("Retrieving scenario file names");
+//        List<String> scenarioFileNameList = null;
+//        try {
+//            scenarioFileNameList = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios"), StandardCharsets.UTF_8);
+//        } catch (IOException e) {
+//            throw new WebServiceRuntimeException(e.getMessage());
+//        }
+//        File folder = null;
+//        try {
+//            folder = new ClassPathResource("scenarios").getFile();
+//        } catch (IOException e) {
+//            throw new WebServiceRuntimeException(e.getMessage());
+//        }
+//        List<String> scenarioFileNameList = new ArrayList<>();
+//		File[] files = folder.listFiles();
+//		for (File file : files) {
+//			if (file.isFile()) {
+//				scenarioFileNameList.add(file.getName());
+//			}
+//		}
+        // FIXME: hardcode list of filenames for now
         List<String> scenarioFileNameList = new ArrayList<>();
-		File[] files = folder.listFiles();
-		for (File file : files) {
-			if (file.isFile()) {
-				scenarioFileNameList.add(file.getName());
-			}
-		}
+        scenarioFileNameList.add("basic.ns");
+        scenarioFileNameList.add("basic2.ns");
+        logger.info("Scenario file list: {}", scenarioFileNameList);
 		return scenarioFileNameList;
     }
 
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
-        Resource resource = new ClassPathResource("scenarios/" + scenarioFileName);
         try {
-            List<String> lines = Files.readAllLines(Paths.get(resource.getFile().getAbsolutePath()), StandardCharsets.UTF_8);
+            logger.info("Retrieving scenario files {}", getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName));
+            List<String> lines = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName), StandardCharsets.UTF_8);
             StringBuilder sb = new StringBuilder();
             for (String line : lines) {
                 sb.append(line);
                 sb.append(System.getProperty("line.separator"));
             }
+            logger.info("Experiment ns file contents: {}", sb);
             return sb.toString();
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
