@@ -138,4 +138,32 @@ public class ExperimentFormTest {
         one.setMaxDuration(num);
         assertThat(one.getMaxDuration(), is(num));
     }
+
+    @Test
+    public void testGetScenarioFileName() {
+        final ExperimentForm one = new ExperimentForm();
+        assertThat(one.getScenarioFileName(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetScenarioFileName() {
+        final ExperimentForm one = new ExperimentForm();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        one.setScenarioFileName(str);
+        assertThat(one.getScenarioFileName(), is(str));
+    }
+
+    @Test
+    public void testGetScenarioContents() {
+        final ExperimentForm one = new ExperimentForm();
+        assertThat(one.getScenarioContents(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetScenarioContents() {
+        final ExperimentForm one = new ExperimentForm();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        one.setScenarioContents(str);
+        assertThat(one.getScenarioContents(), is(str));
+    }
 }

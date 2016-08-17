@@ -1,5 +1,7 @@
 package sg.ncl.testbed_interface;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.constraints.Size;
 
 public class ExperimentForm {
@@ -7,20 +9,25 @@ public class ExperimentForm {
     private String teamId;
     private String teamName;
 
+    @NotEmpty(message = "Team cannot be empty")
     @Size(min = 1, message = "Team cannot be empty")
     private String teamNameWithId;
 
+    @NotEmpty(message = "Experiment Name cannot be empty")
     @Size(min = 1, message = "Experiment Name cannot be empty")
     private String name;
 
+    @NotEmpty(message = "Description cannot be empty")
     @Size(min = 1, message = "Description cannot be empty")
     private String description;
     private String nsFile;
 
-    @Size(min = 1, message = "Network Configuration cannot be empty")
     private String nsFileContent;
     private Integer idleSwap;
     private Integer maxDuration;
+
+    private String scenarioFileName;
+    private String scenarioContents;
 
     public ExperimentForm() {}
 
@@ -99,5 +106,21 @@ public class ExperimentForm {
 
     public void setTeamName(String teamName) {
         this.teamName = teamName;
+    }
+
+    public String getScenarioFileName() {
+        return scenarioFileName;
+    }
+
+    public void setScenarioFileName(String scenarioFileName) {
+        this.scenarioFileName = scenarioFileName;
+    }
+
+    public String getScenarioContents() {
+        return scenarioContents;
+    }
+
+    public void setScenarioContents(String scenarioContents) {
+        this.scenarioContents = scenarioContents;
     }
 }

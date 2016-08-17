@@ -1,13 +1,12 @@
-# This script demos two pc and a gateway. Communication between nodes is managed by the gateway.
-
 set ns [new Simulator]
 source tb_compat.tcl
+set node1 [$ns node]
+set node2 [$ns node]
 
-set attacker [$ns node]
 
-set lan0 [$ns make-lan "$attacker" 100Mb 0ms]
+set link1 [$ns duplex-link $node1 $node2 10Gb 0ms DropTail]
+
+
 
 $ns rtproto Static
-
-# Go!
 $ns run

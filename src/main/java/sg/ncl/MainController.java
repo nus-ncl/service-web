@@ -1,6 +1,9 @@
 package sg.ncl;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -20,6 +23,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -1378,9 +1383,10 @@ public class MainController {
     }
 
     @RequestMapping(value="/experiments/create", method=RequestMethod.GET)
-    public String createExperiment(Model model, HttpSession session) {
+    public String createExperiment(Model model, HttpSession session) throws WebServiceRuntimeException {
 
         // a list of teams that the logged in user is in
+        List<String> scenarioFileNameList = getScenarioFileNameList();
         List<Team2> userTeamsList = new ArrayList<>();
 
         // get list of teamids
@@ -1401,6 +1407,7 @@ public class MainController {
             userTeamsList.add(team2);
         }
 
+        model.addAttribute("scenarioFileNameList", scenarioFileNameList);
         model.addAttribute("experimentForm", new ExperimentForm());
         model.addAttribute("userTeamsList", userTeamsList);
         return "experiment_page_create_experiment";
@@ -1419,6 +1426,18 @@ public class MainController {
             return "redirect:/experiments/create";
         }
 
+        if (experimentForm.getName() == null || experimentForm.getName().isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Experiment Name cannot be empty");
+            return "redirect:/experiments/create";
+        }
+
+        if (experimentForm.getDescription() == null || experimentForm.getDescription().isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Description cannot be empty");
+            return "redirect:/experiments/create";
+        }
+
+        experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
+
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
         experimentObject.put("teamId", experimentForm.getTeamId());
@@ -1426,7 +1445,7 @@ public class MainController {
         experimentObject.put("name", experimentForm.getName());
         experimentObject.put("description", experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
-        experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
+        experimentObject.put("nsFileContent", experimentForm.getScenarioContents());
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
 
@@ -1442,16 +1461,17 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
                 if (error.getName().equals(ExceptionState.NSFileParseException.toString())) {
-                    logger.info("Ns file error");
+                    logger.warn("Ns file error");
                     redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
                 } else if (error.getName().equals(ExceptionState.ExpNameAlreadyExistsException.toString())) {
-                    logger.info("Exp name already exists");
+                    logger.warn("Exp name already exists");
                     redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
                 } else {
-                    logger.info("Exp service or adapter fail");
+                    logger.warn("Exp service or adapter fail");
                     // possible sio or adapter connection fail
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 }
+                logger.info("Experiment {} created", experimentForm);
                 return "redirect:/experiments/create";
             }
         } catch (IOException e) {
@@ -1503,7 +1523,7 @@ public class MainController {
 
         return "redirect:/experiments";
     }
-    
+
     @RequestMapping("/experiments/configuration/{expId}")
     public String viewExperimentConfiguration(@PathVariable Integer expId, Model model) {
     	// get experiment from expid
@@ -1998,16 +2018,36 @@ public class MainController {
     }
     
     //--------------------------Get List of scenarios filenames--------------------------
-    private List<String> getScenarioFileNameList() {
-        String scenariosDirPath = "src/main/resources/scenarios";
-		List<String> scenarioFileNameList = new ArrayList<>();
-		File[] files = new File(scenariosDirPath).listFiles();
+    private List<String> getScenarioFileNameList() throws WebServiceRuntimeException {
+        File folder = null;
+        try {
+            folder = new ClassPathResource("scenarios").getFile();
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+        List<String> scenarioFileNameList = new ArrayList<>();
+		File[] files = folder.listFiles();
 		for (File file : files) {
 			if (file.isFile()) {
 				scenarioFileNameList.add(file.getName());
 			}
 		}
 		return scenarioFileNameList;
+    }
+
+    private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
+        Resource resource = new ClassPathResource("scenarios/" + scenarioFileName);
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(resource.getFile().getAbsolutePath()), StandardCharsets.UTF_8);
+            StringBuilder sb = new StringBuilder();
+            for (String line : lines) {
+                sb.append(line);
+                sb.append(System.getProperty("line.separator"));
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     //---Check if user is a team owner and has any join request waiting for approval----
