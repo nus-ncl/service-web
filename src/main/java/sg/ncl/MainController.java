@@ -223,8 +223,7 @@ public class MainController {
         String emailBase64 = new String(Base64.encodeBase64(email.getBytes()));
         final String link = properties.getSioUsersUrl() + uid + "/emails/" + emailBase64;
         logger.info("Activation link: {}, verification key {}", link, key);
-        ResponseEntity response = restTemplate.exchange(link,
-                HttpMethod.PUT, request, String.class);
+        ResponseEntity response = restTemplate.exchange(link, HttpMethod.PUT, request, String.class);
 
         if (RestUtil.isError(response.getStatusCode())) {
             logger.error("Activation of user {} failed.", uid);
@@ -293,8 +292,7 @@ public class MainController {
 
                 AUTHORIZATION_HEADER = "Bearer " + token;
 
-                session.setAttribute("sessionLoggedEmail", loginForm.getLoginEmail());
-                session.setAttribute("id", id);
+                setSessionVariables(session, loginForm.getLoginEmail(), id);
 
                 logger.info("login success with username: {}, token id: {}", loginForm.getLoginEmail(), id);
                 return "redirect:/dashboard";
@@ -353,7 +351,7 @@ public class MainController {
         */
 
     }
-    
+
     @RequestMapping("/passwordreset")
     public String passwordreset(Model model) {
         model.addAttribute("loginForm", new LoginForm());
@@ -386,10 +384,7 @@ public class MainController {
     @RequestMapping(value="/logout", method=RequestMethod.GET)
     public String logout(HttpSession session) {
         CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
-        session.removeAttribute("isUserAdmin");
-        session.removeAttribute(SESSION_LOGGED_IN_USER_ID);
-        session.removeAttribute("sessionLoggedEmail");
-        session.removeAttribute("id");
+        removeSessionVariables(session);
         return "redirect:/";
     }
     
@@ -1100,7 +1095,6 @@ public class MainController {
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
         model.addAttribute("membersList", team.getMembersList());
-        session.setAttribute("originalTeam", team);
 //        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
 //        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
 //        model.addAttribute("userManager", userManager);
@@ -2231,5 +2225,15 @@ public class MainController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", AUTHORIZATION_HEADER);
         return new HttpEntity<>(headers);
+    }
+
+    private void setSessionVariables(HttpSession session, String loginEmail, String id) {
+        session.setAttribute("sessionLoggedEmail", loginEmail);
+        session.setAttribute("id", id);
+    }
+
+    private void removeSessionVariables(HttpSession session) {
+        session.removeAttribute("sessionLoggedEmail");
+        session.removeAttribute("id");
     }
 }
