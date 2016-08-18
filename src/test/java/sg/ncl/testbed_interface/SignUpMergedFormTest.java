@@ -161,7 +161,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testSetWebsite() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        final String str = RandomStringUtils.randomAlphanumeric(20);
+        final String str = "http://" + RandomStringUtils.randomAlphanumeric(20);
         one.setWebsite(str);
         assertThat(one.getWebsite(), is(str));
     }
@@ -290,7 +290,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testSetTeamWebsite() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        final String str = RandomStringUtils.randomAlphanumeric(20);
+        final String str = "http://" + RandomStringUtils.randomAlphanumeric(20);
         one.setTeamWebsite(str);
         assertThat(one.getTeamWebsite(), is(str));
     }
