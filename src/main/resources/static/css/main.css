@@ -1613,6 +1613,15 @@ table {
     color: #dd4b39;
 }
 
+.btn-fa-loading {
+    color: #1a8edc;
+}
+
+/*for experiments - to view details after starting up */
+.exp-modal {
+    top: 10%;
+}
+
 /*for admin - Teams management page to push down the modal when click on team owner */
 .admin-modal {
     top: 10%;
@@ -1982,3 +1991,9 @@ h23 {
     }
 }
 
+
+
+.realization {
+    font-family: "Courier New";
+    font-size: 12px;
+}

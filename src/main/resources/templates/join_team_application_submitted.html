@@ -18,7 +18,7 @@
                 <div class="col-md-10">
                     <h3 th:text="#{joinTeam.appSubmit.header}">Your application has been received.</h3>
                     <p th:text="#{joinTeam.appSubmit.info}">We have forwarded your application to the team’s owner for review.</p>
-                    <p>Please contact &lt;Team Owner&gt;&lt;team-owner@email&gt; for any issues with your application.</p>
+                    <p>Please contact the <strong>Team Owner: </strong>&lt;<span th:text="${team.owner.firstName + ' ' + team.owner.lastName}">Team Owner</span>&gt; <strong>Email: </strong>&lt;<span th:text="${team.owner.email}">team-owner@email</span>&gt; for any issues with your application.</p>
                     <p th:text="#{joinTeam.appSubmit.info2}">We are unable to help in the resolution of your application.</p>
                 </div> <!-- col -->
                 <div class="col-md-1"></div>

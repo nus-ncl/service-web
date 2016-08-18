@@ -18,20 +18,24 @@
                     <div class="row dashpanel">
                 <h2  class="team-heading team-heading-current-team" th:text="#{teamPageApply.header}">Apply for a New Team</h2>
                  <p>&nbsp;</p>
+                <div th:if="${message}">
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+                </div>
                 <form  method="post" action="#" th:action="@{/teams/apply_team}" th:object="${teamPageApplyTeamForm}" role="form">
                     <fieldset>
                         <div class="form-group">
                             <div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">
-                                <input type="text" class="form-control" id="inputTeam" placeholder="Team Name" name="" th:field="*{teamName}"/>
-                                <span class="help-block" th:if="${#fields.hasErrors('teamName')}" th:errors="*{teamName}">Team name error</span>
+                                <input type="text" class="form-control" id="inputTeam" placeholder="Team Name" th:field="*{teamName}" th:maxlength="12"/>
+                                <span class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></span>
                             </div>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamDescription')}? 'has-error'">
-                            <input type="text" class="form-control" id="inputDescription" placeholder="Team Description" name="" th:field="*{teamDescription}"/> 
-                            <span class="help-block" th:if="${#fields.hasErrors('teamDescription')}" th:errors="*{teamDescription}">Team description error</span>
+                            <input type="text" class="form-control" id="inputDescription" placeholder="Team Description" th:field="*{teamDescription}"/>
+                            <span class="account-change-fail" th:if="${#fields.hasErrors('teamDescription')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamDescription}"></span></span>
                         </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="inputWebsite" placeholder="Team Website" name="" th:field="*{teamWebsite}"/> 
+                        <div class="form-group" th:classappend="${#fields.hasErrors('teamWebsite')}? 'has-error'">
+                            <input type="text" class="form-control" id="inputWebsite" placeholder="Team Website" th:field="*{teamWebsite}"/>
+                            <span class="account-change-fail" th:if="${#fields.hasErrors('teamWebsite')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamWebsite}"></span></span>
                         </div>
                         <div class="form-group">
                             <label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
@@ -44,16 +48,10 @@
                         <div class="form-group">
                             <span class="text-danger" th:if="${#fields.hasErrors('isPublic')}" th:errors="*{isPublic}">Public or Private</span>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><span th:text="#{signup.publicTeam}">Public</span> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><span th:text="#{signup.privateTeam}">Private</span><em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> <a href="/team_owner_policy" th:src="@{/team_owner_policy}"> <span th:text="#{signup.acceptTeamOwnerPolicy}">I accept the team owner policy</span></a></label>
-                                <span class="text-danger" th:if="${#fields.hasErrors('hasAcceptTeamOwnerPolicy')}" th:errors="*{hasAcceptTeamOwnerPolicy}">Team owner error</span>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
                             </div>
                         </div>
                         <div class="form-group">

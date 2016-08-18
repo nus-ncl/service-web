@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - TEam Join</title>
+        <title>National Cybersecurity Laboratories - Team Join</title>
         <object th:include="fragments/header :: header" th:remove="tag" />
     </head>
     <body class="mybg loginbackground">
@@ -17,11 +17,14 @@
             <div class="row dashpanel">
                 <h2 class="team-heading team-heading-current-team" th:text="#{joinTeam.header}">Join Team</h2>
                 <p>&nbsp;</p>
+                <div th:if="${message}">
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+                </div>
                 <form  method="post" action="#" th:action="@{/teams/join_team}" th:object="${teamPageJoinTeamForm}" role="form">
                     <fieldset>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">
-                            <input type="text" class="form-control" id="inputTeam" placeholder="Team Name to Join" name="" th:field="*{teamName}"/> 
-                            <span class="help-block" th:if="${#fields.hasErrors('teamName')}" th:errors="*{teamName}">Team name cannot be empty</span>
+                            <input type="text" class="form-control" id="inputTeam" placeholder="Team Name to Join" name="" th:field="*{teamName}"/>
+                            <span class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></span>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-standard">Submit</button>

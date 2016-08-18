@@ -8,8 +8,8 @@ set victim [$ns node]
 
 set lan0 [$ns make-lan "$attacker $victim" 100Mb 0ms]
 
-tb-set-node-os $attacker Ubuntu1204-64-STD
-tb-set-node-os $victim Ubuntu1204-64-STD
+tb-set-node-os $attacker Ubuntu1404-64-STD
+tb-set-node-os $victim Ubuntu1404-64-STD
 
 $ns rtproto Static
 

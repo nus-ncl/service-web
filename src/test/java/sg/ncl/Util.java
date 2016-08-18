@@ -1,6 +1,8 @@
 package sg.ncl;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.json.JSONObject;
+import sg.ncl.testbed_interface.Team2;
 import sg.ncl.testbed_interface.User2;
 
 import java.util.ArrayList;
@@ -38,4 +40,17 @@ public class Util {
         return membersList;
     }
 
+    public static JSONObject getTeamJsonObject() {
+        final JSONObject one = new JSONObject();
+        one.put("id", RandomStringUtils.randomAlphanumeric(20));
+        one.put("name", RandomStringUtils.randomAlphanumeric(20));
+        one.put("description", RandomStringUtils.randomAlphanumeric(20));
+        one.put("website", RandomStringUtils.randomAlphanumeric(20));
+        one.put("organisationType", RandomStringUtils.randomAlphanumeric(20));
+        one.put("visibility", "PUBLIC");
+        one.put("privacy", "OPEN");
+        one.put("status", "APPROVED");
+        one.put("members", new ArrayList());
+        return one;
+    }
 }

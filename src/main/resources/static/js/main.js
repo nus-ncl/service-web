@@ -298,11 +298,12 @@ function PasswordWidget(divid,pwdname)
 	this.txtShow = 'Show';
 	this.txtMask = 'Mask';
 	// this.txtGenerate = 'Generate';
-	this.txtWeak='weak';
-	this.txtMedium='medium';
+	this.txtStrength = 'Strength: ';
+	this.txtWeak='Weak';
+	this.txtMedium='Medium';
 	this.txtGood='Excellent';
 
-	this.enableShowMask=true;
+	this.enableShowMask=false;
 	// this.enableGenerate=true;
 	this.enableShowStrength=true;
 	this.enableShowStrengthStr=true;
@@ -316,7 +317,9 @@ function _MakePWDWidget()
 
 	this.pwdfieldid = pwdname+"_id";
 
-	code += "<input th:field='*{password}' type='password' class='pwdfield' name='"+pwdname+"' id='"+this.pwdfieldid+"'  placeholder='Password'>";
+	code += "<div class='form-group'><input th:field='*{password}' type='password' class='form-control pwdfield' name='"+pwdname+"' id='"+this.pwdfieldid+"'  placeholder='Password'></div>";
+
+	code += "<div class='form-group'><input type='password' class='form-control' placeholder='Confirm Password' th:field='*{confirmPassword}' name='confirmPassword'/></div>";
 
 	this.pwdtxtfield=pwdname+"_text";
 
@@ -494,9 +497,9 @@ function passwordStrength()
 
 	var desc='';
 	if(password.length < 1){desc='';}
-	else if(score<3){ desc = this.txtWeak; }
-	else if(score<4){ desc = this.txtMedium; }
-	else if(score>=4){ desc= this.txtGood; }
+	else if(score<3){ desc = this.txtStrength + this.txtWeak; }
+	else if(score<4){ desc = this.txtStrength + this.txtMedium; }
+	else if(score>=4){ desc= this.txtStrength + this.txtGood; }
 
 	var strengthstrdiv = this.pwdstrengthstr_obj;
 	strengthstrdiv.innerHTML = desc;
