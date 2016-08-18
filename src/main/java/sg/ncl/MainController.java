@@ -264,7 +264,6 @@ public class MainController {
 
         ResponseEntity response;
         String jwtTokenString;
-        String id = "";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + base64Creds);
@@ -290,7 +289,11 @@ public class MainController {
             } else if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
                 JSONObject tokenObject = new JSONObject(jwtTokenString);
                 String token = tokenObject.getString("token");
-                id = tokenObject.getString("id");
+                String id = tokenObject.getString("id");
+
+                // TODO: get user type from jwt token
+//                String userType = tokenObject.getString("type");
+//                setSessionVariables(session, loginForm.getLoginEmail(), id, userType);
 
                 AUTHORIZATION_HEADER = "Bearer " + token;
 
@@ -1719,7 +1722,7 @@ public class MainController {
     //-----------------------------------------------------------------------
     //---------------------------------Admin---------------------------------
     @RequestMapping("/admin")
-    public String admin(Model model) {
+    public String admin(Model model, HttpSession session) {
 //    	model.addAttribute("domain", new Domain());
 //    	model.addAttribute("domainTable", domainManager.getDomainTable());
 //    	model.addAttribute("usersMap", userManager.getUserMap());
@@ -1735,6 +1738,10 @@ public class MainController {
 //    	model.addAttribute("userManager", userManager);
 //
 //    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
+
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
+        }
 
         TeamManager2 teamManager2 = new TeamManager2();
 
@@ -2294,11 +2301,24 @@ public class MainController {
         session.setAttribute("sessionLoggedEmail", loginEmail);
         session.setAttribute("id", id);
         session.setAttribute("name", user.getFirstName());
+        // FIXME: get user type from token
+//        session.setAttribute("userType", "normal");
+        session.setAttribute("userType", "admin");
     }
 
     private void removeSessionVariables(HttpSession session) {
         session.removeAttribute("sessionLoggedEmail");
         session.removeAttribute("id");
         session.removeAttribute("name");
+        // FIXME: get user type from token
+        session.removeAttribute("userType");
+    }
+
+    private boolean validateIfAdmin(HttpSession session) {
+        if (session.getAttribute("userType").toString().equals("admin")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
