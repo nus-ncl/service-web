@@ -2040,13 +2040,24 @@ public class MainController {
 //		}
         // FIXME: hardcode list of filenames for now
         List<String> scenarioFileNameList = new ArrayList<>();
-        scenarioFileNameList.add("basic.ns");
-        scenarioFileNameList.add("basic2.ns");
+        scenarioFileNameList.add("Scenario 1 - A single node");
+        scenarioFileNameList.add("Scenario 2 - Two nodes linked with a 10Gbps link");
+        scenarioFileNameList.add("Scenario 3 - Three nodes in a star topology");
         logger.info("Scenario file list: {}", scenarioFileNameList);
 		return scenarioFileNameList;
     }
 
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
+        // FIXME: switch to better way of referencing scenario descriptions to actual filenames
+        String actualScenarioFileName = "";
+        if (scenarioFileName.contains("Scenario1")) {
+            actualScenarioFileName = "basic.ns";
+        } else if (scenarioFileName.contains("Scenario2")) {
+            actualScenarioFileName = "basic2.ns";
+        } else {
+            actualScenarioFileName = "basic3.ns";
+        }
+
         try {
             logger.info("Retrieving scenario files {}", getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName));
             List<String> lines = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName), StandardCharsets.UTF_8);
