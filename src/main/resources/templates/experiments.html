@@ -39,7 +39,24 @@
                                 	<!--&lt;!&ndash; TODO need to cater for ALLOCATING and ERROR &ndash;&gt;-->
                                 <!--</td>-->
                                 <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
-                                    <td th:text="${realization.state}"></td>
+                                    <span th:if="${realization.state == 'STARTING'}">
+                                        <td th:text="'Starting'"></td>
+                                    </span>
+                                    <span th:if="${realization.state == 'NOT_RUNNING'}">
+                                        <td th:text="'Not Running'"></td>
+                                    </span>
+                                    <span th:if="${realization.state == 'RUNNING'}">
+                                        <td th:text="'Running'"></td>
+                                    </span>
+                                    <span th:if="${realization.state == 'STOPPING'}">
+                                        <td th:text="'Stopping'"></td>
+                                    </span>
+                                    <span th:if="${realization.state == 'WANRING'}">
+                                        <td th:text="'Warning'"></td>
+                                    </span>
+                                    <span th:if="${realization.state == 'ERROR'}">
+                                        <td th:text="'Error'"></td>
+                                    </span>
                                     <td>
                                         <a th:href="'#'+${realization.experimentId}" data-toggle="modal">View</a>
                                         <!-- Modal -->
@@ -70,17 +87,17 @@
                                 </th:block>
                                 <td>
                                     <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
-                                        <span th:if="${realization.state == 'ACTIVATING'}">
+                                        <span th:if="${realization.state == 'STARTING'}">
                                             <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
                                         </span>
                                         <span th:if="${realization.state == 'STOPPING'}">
                                             <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
                                         </span>
-                                        <span th:if="${realization.state == 'NEW' or realization.state == 'STOP'}">
+                                        <span th:if="${realization.state == 'NOT_RUNNING'}">
                                             <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></a>
                                             <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
                                         </span>
-                                        <span th:if="${realization.state == 'ACTIVE'}">
+                                        <span th:if="${realization.state == 'RUNNING'}">
                                             <a href="#" th:href="@{/stop_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></a>
                                         </span>
                                     </th:block>
