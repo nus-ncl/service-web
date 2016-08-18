@@ -1985,7 +1985,7 @@ h23 {
 /**
  * Remove background if window width is 6OOpx or less
  */
-@media all and ( max-width: 600px ) {
+@media all and ( max-width: 1000px ) {
     .background8 {
         background: none;
     }
