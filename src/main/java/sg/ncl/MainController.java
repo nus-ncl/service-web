@@ -276,7 +276,7 @@ public class MainController {
             response = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
             jwtTokenString = response.getBody().toString();
         } catch (Exception e) {
-            logger.warn("Error connecting to authentication service to validate login details");
+            logger.warn("Error connecting to authentication service to validate login details", e.getMessage());
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
