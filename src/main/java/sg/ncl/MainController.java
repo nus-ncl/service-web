@@ -87,7 +87,6 @@ public class MainController {
     @Autowired
     private ConnectionProperties properties;
 
-
     @RequestMapping("/")
     public String index() {
         return "index";
@@ -128,6 +127,11 @@ public class MainController {
         return "pricing";
     }
 
+    @RequestMapping("/resources1")
+    public String resources1() {
+        return "resources1";
+    }
+
     @RequestMapping("/resources")
     public String resources() {
         return "resources";
@@ -146,6 +150,11 @@ public class MainController {
     @RequestMapping("/calendar1")
     public String calendar1() {
         return "calendar1";
+    }
+
+    @RequestMapping("/tools")
+    public String tools() {
+        return "tools";
     }
 
     @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
@@ -358,7 +367,7 @@ public class MainController {
         */
 
     }
-
+    
     @RequestMapping("/passwordreset")
     public String passwordreset(Model model) {
         model.addAttribute("loginForm", new LoginForm());
@@ -2081,7 +2090,7 @@ public class MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
-    
+
     //---Check if user is a team owner and has any join request waiting for approval----
     private boolean hasAnyJoinRequest(HashMap<Integer, Team> teamMapOwnedByUser) {
         for (Map.Entry<Integer, Team> entry : teamMapOwnedByUser.entrySet()) {
