@@ -87,9 +87,17 @@ $(document).ready(function() {
     //-----------------experiment page---------------------
     // tooltip hover
     $('[data-toggle="tooltip"]').tooltip();
-	
+
+	// prevent start and delete button from multi clicks
 	$(".click-once-button").click(function() {
 		$(".click-once-button").prop("disabled", true).addClass("disabled");
+		// TODO: refresh the page after click
+	});
+
+	// declare another new class in case if click on button on exp page also disables button on admin page
+	// prevent accept and reject for admin pending team approvals from multi clicks
+	$(".admin-click-once-button").click(function() {
+		$(".admin-click-once-button").prop("disabled", true).addClass("disabled");
 	});
     
     //-----------------team page-----------------
