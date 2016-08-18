@@ -576,3 +576,59 @@ function generatePWD()
 
 	return password;
 }
+
+$( document ).ready(function() {
+
+	// let's Hide Items
+	$( ".cc-contactpop form").hide();
+	$( ".cc-contactpop i").hide();
+	$( ".cc-contactpop p").hide();
+
+	// Show on elements ".slideDown"
+	$( ".cc-contactpop" ).click(function() {
+		$( ".cc-contactpop form").slideDown(500)
+		$( ".cc-contactpop p").slideDown(500)
+		$( ".cc-contactpop i").slideDown(500)
+	});
+
+	// Close Hidden Part
+	$( ".cc-contactpop i" ).click(function() {
+		$(this).slideUp(500)
+		$( ".cc-contactpop p").slideUp(500)
+		$( ".cc-contactpop form").slideUp(500)
+		return false
+	});
+
+});
+
+// Add show/hide button
+var sShowHideBtn = '<button class="contact-button-link show-hide-contact-bar"><span class="fa fa-angle-left"></span></button>';
+oContainer.append(sShowHideBtn);
+
+var i;
+for ( i in settings.buttons ) {
+	var bs = settings.buttons[i],
+		sLink = bs.link,
+		active = bs.use;
+
+	// Check if element is active
+	if (active) {
+
+		// Change the link for phone and email when needed
+		if (bs.type === 'phone') {
+			sLink = 'tel:' + bs.link;
+		} else if (bs.type === 'email') {
+			sLink = 'mailto:' + bs.link;
+		}
+
+		// Insert the links
+		var sIcon = '<span class="fa fa-' + bs.icon + '"></span>',
+			sButton = '<a href="' + sLink +
+				'" class="contact-button-link cb-ancor ' + bs.class + '" ' +
+				(bs.title ? 'title="' + bs.title + '"' : '') +
+				(bs.extras ? bs.extras : '') +
+				'>' + sIcon + '</a>';
+		oContainer.append(sButton);
+	}
+}
+
