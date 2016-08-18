@@ -1,4 +1,4 @@
-# This script demos two pc and a gateway. Communication between nodes is managed by the gateway.
+# This script contains only one node.
 
 set ns [new Simulator]
 source tb_compat.tcl

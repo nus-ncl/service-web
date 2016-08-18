@@ -80,8 +80,10 @@
                                             <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
                                         </span>
                                         <span th:if="${realization.state == 'NEW' or realization.state == 'STOP'}">
-                                            <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></a>
-                                            <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
+                                            <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><button type="button
+                                            " class="btn btn-standard click-once-button"><i class="fa fa-play btn-fa-green"></i></button></a>
+                                            <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><button type="button
+                                            " class="btn btn-standard click-once-button"><i class="fa fa-trash btn-fa-red"></i></button></a>
                                         </span>
                                         <span th:if="${realization.state == 'ACTIVE'}">
                                             <a href="#" th:href="@{/stop_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></a>
