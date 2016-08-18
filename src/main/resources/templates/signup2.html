@@ -102,7 +102,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Phone" th:field="*{phone}"/>
+										<input type="text" class="form-control" placeholder="Phone (numbers Only)" th:field="*{phone}"/>
 									</div>
 	                                <div class="form-group">
 	                                    <input type="text" class="form-control" placeholder="Job Title" th:field="*{jobTitle}"/>
@@ -184,7 +184,7 @@
 			                        
                                 	<h3 th:text="#{signup.applyCreateTeam.header}">Apply to create a new team</h3>
 	                                <div class="form-group">
-	                                    <input type="text" class="form-control" placeholder="Team Name" th:field="*{teamName}"/>
+	                                    <input type="text" class="form-control" placeholder="Team Name (alphabets and numbers only)" th:field="*{teamName}"/>
 	                                </div>
 	                                <div class="form-group">
 	                                    <input type="text" class="form-control" placeholder="Team Description" th:field="*{teamDescription}"/>
