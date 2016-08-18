@@ -36,6 +36,8 @@
                         <!--<strong>Info!</strong> <span th:text="${infoMsg}"></span>-->
                     <!--</div>-->
                 <!--</div>-->
+
+
                 <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team dashpanel">
                     <!--<div class="panel-heading">-->
                         <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2>
@@ -125,26 +127,6 @@
                                 <!--</tr>-->
                             </table>
                         </div> <!-- panel body -->
-                    </div> <!-- panel -->
-                        <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
-                                <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.public}">text heading from .properties</h2>
-	                    <div class="panel-body">
-	                        <table class="table table-responsive">
-	                            <thead>
-                                    <th th:text="#{team.table.header.team}">Team</th>
-                                    <th th:text="#{team.table.header.description}">Description</th>
-                                    <!--<th th:text="#{team.table.header.institution}">Institution</th>-->
-	                            </thead>
-	                            <tr th:each="teamEntry : ${publicTeamMap2}">
-	                               <td th:text="${teamEntry.value.name + '-' + teamEntry.key}">Name-Id</td>
-	                               <td th:text="${teamEntry.value.description}">Description</td>
-	                               <!--<td th:text="${teamEntry.value.institution}">Institution</td>-->
-	                            </tr>
-                                <!--<tr>-->
-                                    <!--<td height="700"></td>-->
-                                <!--</tr>-->
-	                        </table>
-	                    </div> <!-- panel body -->
                     </div> <!-- panel -->
             </div> <!-- row -->
             <div class="cc-wraper">
