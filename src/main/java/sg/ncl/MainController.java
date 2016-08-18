@@ -1020,20 +1020,20 @@ public class MainController {
         }
 
         // get public teams
-        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
-        ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
-        String teamResponseBody = teamResponse.getBody().toString();
-
-        JSONArray teamPublicJsonArray = new JSONArray(teamResponseBody);
-        for (int i = 0; i < teamPublicJsonArray.length(); i++) {
-            JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
-            Team2 team2 = extractTeamInfo(teamInfoObject.toString());
-            teamManager2.addTeamToPublicTeamMap(team2);
-        }
+//        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+//        ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
+//        String teamResponseBody = teamResponse.getBody().toString();
+//
+//        JSONArray teamPublicJsonArray = new JSONArray(teamResponseBody);
+//        for (int i = 0; i < teamPublicJsonArray.length(); i++) {
+//            JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
+//            Team2 team2 = extractTeamInfo(teamInfoObject.toString());
+//            teamManager2.addTeamToPublicTeamMap(team2);
+//        }
 
         model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
-        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
+//        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
         model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
         return "teams";
     }
