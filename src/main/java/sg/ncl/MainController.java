@@ -42,7 +42,7 @@ import sg.ncl.testbed_interface.*;
  */
 @Controller
 public class MainController {
-    
+
 	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final int ERROR_NO_SUCH_USER_ID = 0;
     private final static Logger logger = Logger.getLogger(MainController.class.getName());
@@ -62,7 +62,7 @@ public class MainController {
     private User2 originalUser = null;
 
     private TeamManager2 teamManager2 = TeamManager2.getInstance();
-    
+
     private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios";
 
     private final String USER_ID = "2535dccd-b7c1-4610-bd9b-4ed231f48f07";
@@ -77,7 +77,7 @@ public class MainController {
 
     @Autowired
     private ConnectionProperties properties;
-    
+
     @RequestMapping("/")
     public String index() {
         return "index";
@@ -141,6 +141,11 @@ public class MainController {
     @RequestMapping("/calendar1")
     public String calendar1() {
         return "calendar1";
+    }
+
+    @RequestMapping("/tools")
+    public String tools() {
+        return "tools";
     }
 
     @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)

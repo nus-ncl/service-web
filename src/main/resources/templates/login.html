@@ -4,71 +4,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>National Cybersecurity Laboratories - Login</title>
     <object th:include="fragments/header :: header" th:remove="tag" />
+    <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </head>
 
-    <body class="mybg loginback">
-        <div th:replace="fragments/login_navigation :: loginnav"></div>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-1">
-                    <!--<p>&nbsp;</p>-->
-                    <!--<p>&nbsp;</p>-->
-                    <!--<p>&nbsp;</p>-->
-                    <!--<p>&nbsp;</p>-->
-                    <!--<p>&nbsp;</p>-->
-                    <!--<img src="images/padlock1.png" width="127" height="300"/>-->
-                </div>
+<body class="mybg loginback">
+<div th:replace="fragments/login_navigation :: loginnav"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1">
+                <!--<p>&nbsp;</p>-->
+                <!--<p>&nbsp;</p>-->
+                <!--<p>&nbsp;</p>-->
+                <!--<p>&nbsp;</p>-->
+                <!--<p>&nbsp;</p>-->
+                <!--<img src="images/padlock1.png" width="127" height="300"/>-->
+            </div>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <div class="col-sm-2 col-sm-offset-2">
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
-                <div class="col-sm-2 col-sm-offset-2">
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
 
-                    <!--<img src="images/lightbulb.png" width="453" height="299" class="img-responsive"/>-->
-                </div>
-                <div class="col-md-5 col-sm-offset-1">
-                    <div class="panel panel-default registration-panel1">
-                        <div>
+                <!--<img src="images/lightbulb.png" width="453" height="299" class="img-responsive"/>-->
+            </div>
+            <div class="col-md-5 col-sm-offset-1">
+                <div class="panel panel-default registration-panel1">
+                    <div>
                         <!--<div class="panel-heading ">-->
-                            <h3 class="dashhead loginpanel" th:text="#{login.header}">Log In</h3>
-                        </div> <!-- panel-heading -->
-                        <div class="welcome">
+                        <h3 class="dashhead loginpanel" th:text="#{login.header}">Log In</h3>
+                    </div> <!-- panel-heading -->
+                    <div class="welcome">
                         <p> <b>Welcome to ncl.sg </b></p>
-                        </div>
-                        <p>&nbsp;</p>
+                    </div>
+                    <p>&nbsp;</p>
 
-                        <div class="panel-body loginform">
-                            <!-- TODO hard code login details for now -->
-                            <form method="post"  action="#" th:action="@{/login}" th:object="${loginForm}" role="form">
-	                            <fieldset>
-	                                <div class="form-group text-danger" th:if="${loginForm != null and loginForm.errorMsg != null}" th:text="${loginForm.errorMsg}">Invalid email/password.</div>
-	                                <div class="form-group">
-	                                    <input type="text" class="form-control" placeholder="Email" th:field="*{loginEmail}" value="johndoe@nus.edu.sg"/>
-                                     </div>
-                                     <div class="form-group">
-	                                       <input type="password" class="form-control" placeholder="Password" th:field="*{loginPassword}" value="password"/>
-	                                </div>
-	                                <div class="form-group">
-	                                        <input type="checkbox" name=""/> Remember me
-	                                </div>
-	                                <div class="form-group">
-	                                    <button type="submit" class="btn btn-standard">Sign in</button>
-	                                </div>
-	                                <div class="form-group">
-	                                    <p><a href="passwordreset" th:href="@{/passwordreset}">Forget Password?</a></p>
-	                                </div>
-	                            </fieldset>
-	                       </form>
-                        </div> <!-- panel-body -->
-                    </div> <!-- panel -->
-                </div> <!-- col -->
-                <div class="col-md-1"></div>
-            </div> <!-- row -->
-        </div> <!-- container -->
-        <div>
-
-        </div>
-        <div th:replace="fragments/footer :: footer"></div>
-        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
-    </body>
+                    <div class="panel-body loginform">
+                        <!-- TODO hard code login details for now -->
+                        <form method="post"  action="#" th:action="@{/login}" th:object="${loginForm}" role="form">
+                            <fieldset>
+                                <div class="form-group text-danger" th:if="${loginForm != null and loginForm.errorMsg != null}" th:text="${loginForm.errorMsg}">Invalid email/password.</div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Email" th:field="*{loginEmail}" value="johndoe@nus.edu.sg"/>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" placeholder="Password" th:field="*{loginPassword}" value="password"/>
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" name=""/> Remember me
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-standard">Sign in</button>
+                                </div>
+                                <div class="form-group">
+                                    <p><a href="passwordreset" th:href="@{/passwordreset}">Forget Password?</a></p>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div> <!-- panel-body -->
+                </div> <!-- panel -->
+            </div> <!-- col -->
+            <div class="col-md-1"></div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
 </html>

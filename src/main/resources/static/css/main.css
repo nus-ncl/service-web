@@ -917,7 +917,7 @@ Waypoints
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 600;
-    margin-top : 20px;
+    margin-top : 10px;
     border-radius:4px;
     padding :10px;
 }
@@ -1963,5 +1963,22 @@ h23 {
 }
 .cc-contactpop button:hover {
     background:#eb6166;
+}
+
+.background8 {
+    background-image: url(../images/tool.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+
+}
+/**
+ * Remove background if window width is 6OOpx or less
+ */
+@media all and ( max-width: 600px ) {
+    .background8 {
+        background: none;
+    }
 }
 
