@@ -2049,7 +2049,7 @@ public class MainController {
 
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
         // FIXME: switch to better way of referencing scenario descriptions to actual filenames
-        String actualScenarioFileName = "";
+        String actualScenarioFileName;
         if (scenarioFileName.contains("Scenario1")) {
             actualScenarioFileName = "basic.ns";
         } else if (scenarioFileName.contains("Scenario2")) {
@@ -2059,8 +2059,8 @@ public class MainController {
         }
 
         try {
-            logger.info("Retrieving scenario files {}", getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName));
-            List<String> lines = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName), StandardCharsets.UTF_8);
+            logger.info("Retrieving scenario files {}", getClass().getClassLoader().getResourceAsStream("scenarios/" + actualScenarioFileName));
+            List<String> lines = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios/" + actualScenarioFileName), StandardCharsets.UTF_8);
             StringBuilder sb = new StringBuilder();
             for (String line : lines) {
                 sb.append(line);
