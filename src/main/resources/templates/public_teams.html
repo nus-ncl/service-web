@@ -6,7 +6,12 @@
         <object th:include="fragments/header :: header" th:remove="tag" />
     </head>
     <body class="mybg loginbackground">
-        <div th:replace="fragments/login_navigation :: loginnav"></div>
+        <th:block th:if="${session.id == null}">
+            <div th:replace="fragments/login_navigation :: loginnav"></div>
+        </th:block>
+        <th:block th:if="${session.id != null}">
+            <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+        </th:block>
         <div class="container">
             <div class="row">
                 <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team dashpanel">
