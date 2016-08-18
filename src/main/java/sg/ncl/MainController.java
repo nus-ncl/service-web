@@ -960,6 +960,26 @@ public class MainController {
     }
     
     //--------------------------Teams Page--------------------------
+
+    @RequestMapping("/public_teams")
+    public String publicTeamsBeforeLogin(Model model) {
+        TeamManager2 teamManager2 = new TeamManager2();
+
+        // get public teams
+        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+        ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
+        String teamResponseBody = teamResponse.getBody().toString();
+
+        JSONArray teamPublicJsonArray = new JSONArray(teamResponseBody);
+        for (int i = 0; i < teamPublicJsonArray.length(); i++) {
+            JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
+            Team2 team2 = extractTeamInfo(teamInfoObject.toString());
+            teamManager2.addTeamToPublicTeamMap(team2);
+        }
+
+        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
+        return "public_teams";
+    }
     
     @RequestMapping("/teams")
     public String teams(Model model, HttpSession session) {
