@@ -163,7 +163,7 @@ public class SignUpMergedForm {
         return website;
     }
     public void setWebsite(String website) {
-        this.website = website;
+        this.website = website.startsWith("http") ? website : "http://" + website;
     }
     public String getAddress1() {
         return address1;
@@ -249,7 +249,7 @@ public class SignUpMergedForm {
     }
     
     public void setTeamWebsite(String teamWebsite) {
-        this.teamWebsite = teamWebsite;
+        this.teamWebsite = teamWebsite.startsWith("http") ? teamWebsite : "http://" + teamWebsite;
     }
     
     public String getTeamOrganizationType() {
