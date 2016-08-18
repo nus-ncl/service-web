@@ -87,6 +87,10 @@ $(document).ready(function() {
     //-----------------experiment page---------------------
     // tooltip hover
     $('[data-toggle="tooltip"]').tooltip();
+	
+	$(".click-once-button").click(function() {
+		$(".click-once-button").prop("disabled", true).addClass("disabled");
+	});
     
     //-----------------team page-----------------
     // withdraw
