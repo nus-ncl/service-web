@@ -37,6 +37,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.domain.ExceptionState;
+import sg.ncl.domain.UserType;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 
@@ -62,6 +63,7 @@ public class MainController {
     private DatasetManager datasetManager = DatasetManager.getInstance();
     private NodeManager nodeManager = NodeManager.getInstance();
 
+    private String userType = "userType";
     private String memberTypeOwner = "OWNER";
     private String memberTypeMember = "MEMBER";
 
@@ -2302,8 +2304,8 @@ public class MainController {
         session.setAttribute("id", id);
         session.setAttribute("name", user.getFirstName());
         // FIXME: get user type from token
-//        session.setAttribute("userType", "normal");
-        session.setAttribute("userType", "admin");
+//        session.setAttribute("userType", UserType.NORMAL.toString());
+        session.setAttribute(userType, UserType.ADMIN.toString());
     }
 
     private void removeSessionVariables(HttpSession session) {
@@ -2311,14 +2313,11 @@ public class MainController {
         session.removeAttribute("id");
         session.removeAttribute("name");
         // FIXME: get user type from token
-        session.removeAttribute("userType");
+        session.removeAttribute(userType);
     }
 
     private boolean validateIfAdmin(HttpSession session) {
-        if (session.getAttribute("userType").toString().equals("admin")) {
-            return true;
-        } else {
-            return false;
-        }
+        logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(userType));
+        return session.getAttribute(userType).equals(UserType.ADMIN.toString());
     }
 }
