@@ -25,16 +25,16 @@
                     <fieldset>
                         <div class="form-group">
                             <div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">
-                                <input type="text" class="form-control" id="inputTeam" placeholder="Team Name" th:field="*{teamName}" th:maxlength="12"/>
+                                <input type="text" class="form-control" id="inputTeam" th:placeholder="#{form.teamName}" th:field="*{teamName}" th:maxlength="12"/>
                                 <span class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></span>
                             </div>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamDescription')}? 'has-error'">
-                            <input type="text" class="form-control" id="inputDescription" placeholder="Team Description" th:field="*{teamDescription}"/>
+                            <input type="text" class="form-control" id="inputDescription" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
                             <span class="account-change-fail" th:if="${#fields.hasErrors('teamDescription')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamDescription}"></span></span>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamWebsite')}? 'has-error'">
-                            <input type="text" class="form-control" id="inputWebsite" placeholder="Team Website" th:field="*{teamWebsite}"/>
+                            <input type="text" class="form-control" id="inputWebsite" placeholder="Team Website (eg. http:// or https://)" th:field="*{teamWebsite}"/>
                             <span class="account-change-fail" th:if="${#fields.hasErrors('teamWebsite')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamWebsite}"></span></span>
                         </div>
                         <div class="form-group">
