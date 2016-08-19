@@ -37,6 +37,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.domain.ExceptionState;
+import sg.ncl.domain.UserType;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 
@@ -62,6 +63,7 @@ public class MainController {
     private DatasetManager datasetManager = DatasetManager.getInstance();
     private NodeManager nodeManager = NodeManager.getInstance();
 
+    private String userType = "userType";
     private String memberTypeOwner = "OWNER";
     private String memberTypeMember = "MEMBER";
 
@@ -84,7 +86,6 @@ public class MainController {
 
     @Autowired
     private ConnectionProperties properties;
-
 
     @RequestMapping("/")
     public String index() {
@@ -126,6 +127,11 @@ public class MainController {
         return "pricing";
     }
 
+    @RequestMapping("/resources1")
+    public String resources1() {
+        return "resources1";
+    }
+
     @RequestMapping("/resources")
     public String resources() {
         return "resources";
@@ -144,6 +150,11 @@ public class MainController {
     @RequestMapping("/calendar1")
     public String calendar1() {
         return "calendar1";
+    }
+
+    @RequestMapping("/tools")
+    public String tools() {
+        return "tools";
     }
 
     @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
@@ -264,7 +275,6 @@ public class MainController {
 
         ResponseEntity response;
         String jwtTokenString;
-        String id = "";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + base64Creds);
@@ -276,7 +286,7 @@ public class MainController {
             response = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
             jwtTokenString = response.getBody().toString();
         } catch (Exception e) {
-            logger.warn("Error connecting to authentication service to validate login details");
+            logger.warn("Error connecting to authentication service to validate login details", e.getMessage());
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
@@ -290,7 +300,11 @@ public class MainController {
             } else if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
                 JSONObject tokenObject = new JSONObject(jwtTokenString);
                 String token = tokenObject.getString("token");
-                id = tokenObject.getString("id");
+                String id = tokenObject.getString("id");
+
+                // TODO: get user type from jwt token
+//                String userType = tokenObject.getString("type");
+//                setSessionVariables(session, loginForm.getLoginEmail(), id, userType);
 
                 AUTHORIZATION_HEADER = "Bearer " + token;
 
@@ -353,7 +367,7 @@ public class MainController {
         */
 
     }
-
+    
     @RequestMapping("/passwordreset")
     public String passwordreset(Model model) {
         model.addAttribute("loginForm", new LoginForm());
@@ -955,6 +969,26 @@ public class MainController {
     }
     
     //--------------------------Teams Page--------------------------
+
+    @RequestMapping("/public_teams")
+    public String publicTeamsBeforeLogin(Model model) {
+        TeamManager2 teamManager2 = new TeamManager2();
+
+        // get public teams
+        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+        ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
+        String teamResponseBody = teamResponse.getBody().toString();
+
+        JSONArray teamPublicJsonArray = new JSONArray(teamResponseBody);
+        for (int i = 0; i < teamPublicJsonArray.length(); i++) {
+            JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
+            Team2 team2 = extractTeamInfo(teamInfoObject.toString());
+            teamManager2.addTeamToPublicTeamMap(team2);
+        }
+
+        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
+        return "public_teams";
+    }
     
     @RequestMapping("/teams")
     public String teams(Model model, HttpSession session) {
@@ -995,20 +1029,20 @@ public class MainController {
         }
 
         // get public teams
-        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
-        ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
-        String teamResponseBody = teamResponse.getBody().toString();
-
-        JSONArray teamPublicJsonArray = new JSONArray(teamResponseBody);
-        for (int i = 0; i < teamPublicJsonArray.length(); i++) {
-            JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
-            Team2 team2 = extractTeamInfo(teamInfoObject.toString());
-            teamManager2.addTeamToPublicTeamMap(team2);
-        }
+//        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+//        ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
+//        String teamResponseBody = teamResponse.getBody().toString();
+//
+//        JSONArray teamPublicJsonArray = new JSONArray(teamResponseBody);
+//        for (int i = 0; i < teamPublicJsonArray.length(); i++) {
+//            JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
+//            Team2 team2 = extractTeamInfo(teamInfoObject.toString());
+//            teamManager2.addTeamToPublicTeamMap(team2);
+//        }
 
         model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
-        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
+//        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
         model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
         return "teams";
     }
@@ -1719,7 +1753,7 @@ public class MainController {
     //-----------------------------------------------------------------------
     //---------------------------------Admin---------------------------------
     @RequestMapping("/admin")
-    public String admin(Model model) {
+    public String admin(Model model, HttpSession session) {
 //    	model.addAttribute("domain", new Domain());
 //    	model.addAttribute("domainTable", domainManager.getDomainTable());
 //    	model.addAttribute("usersMap", userManager.getUserMap());
@@ -1735,6 +1769,10 @@ public class MainController {
 //    	model.addAttribute("userManager", userManager);
 //
 //    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
+
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
+        }
 
         TeamManager2 teamManager2 = new TeamManager2();
 
@@ -2040,16 +2078,27 @@ public class MainController {
 //		}
         // FIXME: hardcode list of filenames for now
         List<String> scenarioFileNameList = new ArrayList<>();
-        scenarioFileNameList.add("basic.ns");
-        scenarioFileNameList.add("basic2.ns");
+        scenarioFileNameList.add("Scenario 1 - A single node");
+        scenarioFileNameList.add("Scenario 2 - Two nodes linked with a 10Gbps link");
+        scenarioFileNameList.add("Scenario 3 - Three nodes in a star topology");
         logger.info("Scenario file list: {}", scenarioFileNameList);
 		return scenarioFileNameList;
     }
 
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
+        // FIXME: switch to better way of referencing scenario descriptions to actual filenames
+        String actualScenarioFileName;
+        if (scenarioFileName.contains("Scenario 1")) {
+            actualScenarioFileName = "basic.ns";
+        } else if (scenarioFileName.contains("Scenario 2")) {
+            actualScenarioFileName = "basic2.ns";
+        } else {
+            actualScenarioFileName = "basic3.ns";
+        }
+
         try {
-            logger.info("Retrieving scenario files {}", getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName));
-            List<String> lines = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios/" + scenarioFileName), StandardCharsets.UTF_8);
+            logger.info("Retrieving scenario files {}", getClass().getClassLoader().getResourceAsStream("scenarios/" + actualScenarioFileName));
+            List<String> lines = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios/" + actualScenarioFileName), StandardCharsets.UTF_8);
             StringBuilder sb = new StringBuilder();
             for (String line : lines) {
                 sb.append(line);
@@ -2061,7 +2110,7 @@ public class MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
-    
+
     //---Check if user is a team owner and has any join request waiting for approval----
     private boolean hasAnyJoinRequest(HashMap<Integer, Team> teamMapOwnedByUser) {
         for (Map.Entry<Integer, Team> entry : teamMapOwnedByUser.entrySet()) {
@@ -2283,11 +2332,21 @@ public class MainController {
         session.setAttribute("sessionLoggedEmail", loginEmail);
         session.setAttribute("id", id);
         session.setAttribute("name", user.getFirstName());
+        // FIXME: get user type from token
+//        session.setAttribute("userType", UserType.NORMAL.toString());
+        session.setAttribute(userType, UserType.ADMIN.toString());
     }
 
     private void removeSessionVariables(HttpSession session) {
         session.removeAttribute("sessionLoggedEmail");
         session.removeAttribute("id");
         session.removeAttribute("name");
+        // FIXME: get user type from token
+        session.removeAttribute(userType);
+    }
+
+    private boolean validateIfAdmin(HttpSession session) {
+        logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(userType));
+        return session.getAttribute(userType).equals(UserType.ADMIN.toString());
     }
 }

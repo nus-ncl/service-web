@@ -7,8 +7,13 @@
     </head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/login_navigation :: loginnav"></div>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
         <div class="container">
-            <div class="row">
+
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
                     <h3 th:text="#{teamPage.submitTeamApp.header}">Your application has been received.</h3>
@@ -17,7 +22,25 @@
                 </div> <!-- col -->
                 <div class="col-md-1"></div>
             </div> <!-- row -->
+            <div class="cc-wraper">
+                <div class="cc-contactpop fixed">
+                    <h1>Do you need Help? <span>Get in touch.</span></h1>
+                    <div class="renseignement">
+                        <i class="fa fa-times"></i>
+                        <p>We will get back to you as soon as possible. </p>
+                    </div>
+                    <form>
+                        <ul>
+                            <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+                            <li><i class=""></i><span>Email:</span><a href="mailto:support@ncl.sg"> support@ncl.sg</a></li>
+                            <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                        </ul>
+                        <p>&nbsp;</p>
+                    </form>
+                </div>
+            </div>
         </div> <!-- container -->
         <div th:replace="fragments/footer:: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
 </html>

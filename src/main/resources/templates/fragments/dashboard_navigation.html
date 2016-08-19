@@ -25,7 +25,7 @@
 					</head>
 <body>
 <!-- give a fragment name so that we can import from other html files -->
-<div class="main-nav" th:fragment="dashboardnav">
+<div class="main-nav navbar-fixed-top" th:fragment="dashboardnav">
 	<div class="container">
 
 		<div class="navbar-header">
@@ -41,11 +41,15 @@
 			<ul class="nav navbar-nav navbar-left login-navbar-left">
 				<li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
 				<li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a></li>
-				<li><a href="/data" th:href="@{/data}">Data</a></li>
+				<!--<li><a href="/data" th:href="@{/data}">Data</a></li>-->
 				<!--<li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a></li>-->
-				<li><a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a></li>
+				<li th:if="${(session.userType != null) and (session.userType == 'ADMIN')}">
+					<a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a>
+				</li>
 				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="#{nav.help}">Support</span> <span class="caret"></span></a>
-					<ul class="dropdown-menu">
+					<ul class="dropdown-menu ">
+						<li><a href="http://ncl.sg/docs-ncl/">Tutorial</a></li>
+						<li><a href="resources1.html" th:href="@{/resources1}">External Links</a></li>
 						<li><a href="calendar1.html" th:href="@{/calendar1}">Usage Calendar</a></li>
 					</ul>
 				</li>
@@ -69,5 +73,6 @@
 
 	</div> <!-- container -->
 </div> <!-- main-nav -->
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
 </html>
