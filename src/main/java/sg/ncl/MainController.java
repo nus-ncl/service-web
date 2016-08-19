@@ -2088,9 +2088,9 @@ public class MainController {
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
         // FIXME: switch to better way of referencing scenario descriptions to actual filenames
         String actualScenarioFileName;
-        if (scenarioFileName.contains("Scenario1")) {
+        if (scenarioFileName.contains("Scenario 1")) {
             actualScenarioFileName = "basic.ns";
-        } else if (scenarioFileName.contains("Scenario2")) {
+        } else if (scenarioFileName.contains("Scenario 2")) {
             actualScenarioFileName = "basic2.ns";
         } else {
             actualScenarioFileName = "basic3.ns";
