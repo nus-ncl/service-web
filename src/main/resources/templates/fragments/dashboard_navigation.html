@@ -60,8 +60,8 @@
 					<ul class="dropdown-menu">
 						<!-- TODO need to check if user is a team owner -->
 						<li style="border-bottom: 1px solid #cacaca;">
-							<p th:if="${session.name != null}" style="margin-left: 10px">Signed in as <strong><span th:text="${session.name}"></span></strong></p>
-							<p th:if="${session.name == null}" style="margin-left: 10px">Signed in as <strong><span th:text="#{nav.error}"></span></strong></p>
+							<p th:if="${session.name != null}" style="margin-left: 10px">Signed in as <strong><span th:text="${session.name}" class="h13"></span></strong></p>
+							<p th:if="${session.name == null}" style="margin-left: 10px">Signed in as <strong><span th:text="#{nav.error}" class="h13"></span></strong></p>
 						</li>
 						<li><a href="/approve_new_user" th:href="@{/approve_new_user}"><span th:text="#{nav.approveNewUser}">Approve New User</span></a></li>
 						<li><a href="/account_settings" th:href="@{/account_settings}"><span th:text="#{nav.editAccount}">Edit Account Settings</span></a></li>
