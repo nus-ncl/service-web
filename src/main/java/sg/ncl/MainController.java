@@ -1586,7 +1586,10 @@ public class MainController {
     }
     
     @RequestMapping("/start_experiment/{teamName}/{expId}")
-    public String startExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, HttpSession session) {
+    public String startExperiment(
+            @PathVariable String teamName,
+            @PathVariable String expId,
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         // start experiment
         // ensure experiment is stopped first before starting
@@ -1594,8 +1597,40 @@ public class MainController {
 //        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
         logger.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
-        return "redirect:/experiments";
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+        } catch (Exception e) {
+            logger.warn("Error connecting to experiment service to start experiment", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.ExpStartException.toString())) {
+                    logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                } else {
+                    logger.warn("start experiment failed: some other failure");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                }
+                return "redirect:/experiments";
+            } else {
+                // everything ok
+                logger.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
+                return "redirect:/experiments";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     @RequestMapping("/stop_experiment/{teamName}/{expId}")
