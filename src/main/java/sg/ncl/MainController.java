@@ -1311,9 +1311,14 @@ public class MainController {
         }
     }
     
-    @RequestMapping(value="/team_owner_policy", method=RequestMethod.GET)
+    @RequestMapping(value="/acceptable_usage_policy", method=RequestMethod.GET)
     public String teamOwnerPolicy() {
-        return "team_owner_policy";
+        return "acceptable_usage_policy";
+    }
+
+    @RequestMapping(value="/terms_and_conditions", method=RequestMethod.GET)
+    public String termsAndConditions() {
+        return "terms_and_conditions";
     }
     
     //--------------------------Join Team Page--------------------------
