@@ -177,14 +177,14 @@ public class MainController {
         }
     }
 
-    @RequestMapping(value="/OrderForm_v1/download", method=RequestMethod.GET)
+    @RequestMapping(value="/orderform/download", method=RequestMethod.GET)
     public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
         InputStream stream = null;
         response.setContentType("application/pdf");
         try {
-            stream = getClass().getClassLoader().getResourceAsStream("downloads/OrderForm_v1.pdf");
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/order_form.pdf");
             response.setContentType("application/force-download");
-            response.setHeader("Content-Disposition", "attachment; filename=OrderForm_v1.pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=order_form.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
@@ -1311,9 +1311,14 @@ public class MainController {
         }
     }
     
-    @RequestMapping(value="/team_owner_policy", method=RequestMethod.GET)
+    @RequestMapping(value="/acceptable_usage_policy", method=RequestMethod.GET)
     public String teamOwnerPolicy() {
-        return "team_owner_policy";
+        return "acceptable_usage_policy";
+    }
+
+    @RequestMapping(value="/terms_and_conditions", method=RequestMethod.GET)
+    public String termsAndConditions() {
+        return "terms_and_conditions";
     }
     
     //--------------------------Join Team Page--------------------------
@@ -1475,7 +1480,7 @@ public class MainController {
         experimentObject.put("userId", session.getAttribute("id").toString());
         experimentObject.put("teamId", experimentForm.getTeamId());
         experimentObject.put("teamName", experimentForm.getTeamName());
-        experimentObject.put("name", experimentForm.getName());
+        experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
         experimentObject.put("description", experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
         experimentObject.put("nsFileContent", experimentForm.getScenarioContents());
@@ -2081,6 +2086,8 @@ public class MainController {
         scenarioFileNameList.add("Scenario 1 - A single node");
         scenarioFileNameList.add("Scenario 2 - Two nodes linked with a 10Gbps link");
         scenarioFileNameList.add("Scenario 3 - Three nodes in a star topology");
+        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
+//        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
         logger.info("Scenario file list: {}", scenarioFileNameList);
 		return scenarioFileNameList;
     }
@@ -2092,8 +2099,13 @@ public class MainController {
             actualScenarioFileName = "basic.ns";
         } else if (scenarioFileName.contains("Scenario 2")) {
             actualScenarioFileName = "basic2.ns";
-        } else {
+        } else if (scenarioFileName.contains("Scenario 3")) {
             actualScenarioFileName = "basic3.ns";
+        } else if (scenarioFileName.contains("Scenario 4")) {
+            actualScenarioFileName = "sdn.ns";
+        } else {
+            // defaults to basic single node
+            actualScenarioFileName = "basic.ns";
         }
 
         try {
