@@ -1550,6 +1550,16 @@ table {
     padding: 8px;
 }
 
+.dashpanel_admin {
+    padding: 20px;
+    margin-top: 10px;
+    background-color: transparent;
+    border: 0px;
+    border-color: #333;
+    border-radius: 10px;
+    background-color:rgba(255,255,255, 0.7) !important;
+}
+
 .loginhead{
     background-color: #333333;
 
