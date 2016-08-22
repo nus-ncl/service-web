@@ -3,13 +3,11 @@
 set ns [new Simulator]
 source tb_compat.tcl
 
-set attacker [$ns node]
-set victim [$ns node]
+set nodeA [$ns node]
 
-set lan0 [$ns make-lan "$attacker $victim" 100Mb 0ms]
+set lan0 [$ns make-lan "$nodeA" 100Mb 0ms]
 
-tb-set-node-os $attacker Ubuntu1404-64-STD
-tb-set-node-os $victim Ubuntu1404-64-STD
+tb-set-node-os $nodeA Ubuntu1404-64-STD
 
 $ns rtproto Static
 
