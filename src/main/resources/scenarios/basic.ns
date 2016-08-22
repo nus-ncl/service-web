@@ -5,8 +5,6 @@ source tb_compat.tcl
 
 set nodeA [$ns node]
 
-set lan0 [$ns make-lan "$nodeA" 100Mb 0ms]
-
 tb-set-node-os $nodeA Ubuntu1404-64-STD
 
 $ns rtproto Static
