@@ -1480,7 +1480,7 @@ public class MainController {
         experimentObject.put("userId", session.getAttribute("id").toString());
         experimentObject.put("teamId", experimentForm.getTeamId());
         experimentObject.put("teamName", experimentForm.getTeamName());
-        experimentObject.put("name", experimentForm.getName());
+        experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
         experimentObject.put("description", experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
         experimentObject.put("nsFileContent", experimentForm.getScenarioContents());
@@ -2087,7 +2087,7 @@ public class MainController {
         scenarioFileNameList.add("Scenario 2 - Two nodes linked with a 10Gbps link");
         scenarioFileNameList.add("Scenario 3 - Three nodes in a star topology");
         scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
-        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
+//        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
         logger.info("Scenario file list: {}", scenarioFileNameList);
 		return scenarioFileNameList;
     }
@@ -2103,8 +2103,6 @@ public class MainController {
             actualScenarioFileName = "basic3.ns";
         } else if (scenarioFileName.contains("Scenario 4")) {
             actualScenarioFileName = "sdn.ns";
-        } else if (scenarioFileName.contains("Scenario 5")) {
-            actualScenarioFileName = "blockchain.ns";
         } else {
             // defaults to basic single node
             actualScenarioFileName = "basic.ns";
