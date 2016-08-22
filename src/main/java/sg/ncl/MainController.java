@@ -177,14 +177,14 @@ public class MainController {
         }
     }
 
-    @RequestMapping(value="/OrderForm_v1/download", method=RequestMethod.GET)
+    @RequestMapping(value="/orderform/download", method=RequestMethod.GET)
     public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
         InputStream stream = null;
         response.setContentType("application/pdf");
         try {
-            stream = getClass().getClassLoader().getResourceAsStream("downloads/OrderForm_v1.pdf");
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/order_form.pdf");
             response.setContentType("application/force-download");
-            response.setHeader("Content-Disposition", "attachment; filename=OrderForm_v1.pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=order_form.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
