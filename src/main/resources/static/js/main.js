@@ -130,6 +130,10 @@ jQuery(function($) {
 		preloader.remove();
 	});
 
+	$("#submit-loader-button").click(function() {
+		$(".spinner").show();
+	});
+
 	//#main-slider
 	var slideHeight = $(window).height();
 	$('#home-slider .item').css('height',slideHeight);
