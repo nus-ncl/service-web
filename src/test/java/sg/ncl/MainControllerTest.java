@@ -225,6 +225,17 @@ public class MainControllerTest {
     }
 
     @Test
+    public void testToolsPage() throws Exception {
+        mockMvc.perform(get("/tools"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("navbar-header")))
+                .andExpect(content().string(containsString("Tools")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
     public void testGetLoginPage() throws Exception {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
