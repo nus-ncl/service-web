@@ -59,7 +59,7 @@
 									</div>
 									<div class="form-group">
 										<div class="checkbox">
-											<label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> I accept the <a href="team_owner_policy" th:src="@{/team_owner_policy}" th:text="#{signup.acceptTeamOwnerPolicy}">Acceptable Usage Policy</a> and <a href="#" th:text="#{signup.termsAndCondition}">Terms and Conditions</a></label>
+											<label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> I accept the <a href="acceptable_usage_policy" th:src="@{/acceptable_usage_policy}" th:text="#{signup.acceptableUsagePolicy}">Acceptable Usage Policy</a> and <a href="terms_and_conditions" th:text="#{signup.termsAndCondition}">Terms and Conditions</a></label>
 										</div>
 									</div>
 									<!--<p>&nbsp;</p>-->
@@ -188,7 +188,7 @@
 	                                    <input type="text" class="form-control" th:placeholder="#{form.teamName}" th:field="*{teamName}"/>
 	                                </div>
 	                                <div class="form-group">
-	                                    <input type="text" class="form-control" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
+	                                    <input data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the description" type="text" class="form-control" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
 	                                </div>
 	                                <div class="form-group">
 	                                    <input type="text" class="form-control" placeholder="Team Website" th:field="*{teamWebsite}"/>

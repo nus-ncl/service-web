@@ -30,7 +30,7 @@
                             </div>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamDescription')}? 'has-error'">
-                            <input type="text" class="form-control" id="inputDescription" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
+                            <input data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the description" type="text" class="form-control" id="inputDescription" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
                             <span class="account-change-fail" th:if="${#fields.hasErrors('teamDescription')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamDescription}"></span></span>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamWebsite')}? 'has-error'">
