@@ -22,7 +22,7 @@ apply plugin: 'spring-boot'
 
 group = 'sg.ncl'
 
-version "1.0-${System.getenv('TRAVIS_BUILD_NUMBER') == null ? 'SNAPSHOT' : 'b' + System.getenv('TRAVIS_BUILD_NUMBER')}"
+version "1-${System.getenv('TRAVIS_COMMIT') ?: 'SNAPSHOT'}"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -32,12 +32,14 @@ repositories {
 }
 
 dependencyManagement {
-    dependencies {
-        dependency 'commons-io:commons-io:2.5'
-        dependency 'org.projectlombok:lombok:1.16.10'
-    }
     imports {
         mavenBom 'io.spring.platform:platform-bom:2.0.6.RELEASE'
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:1.4.0.RELEASE'
+    }
+    dependencies {
+        dependency 'org.apache.commons:commons-lang3:3.4'
+        dependency 'commons-io:commons-io:2.5'
+        dependency 'org.projectlombok:lombok:1.16.10'
     }
 }
 
@@ -51,7 +53,7 @@ dependencies {
     compile 'commons-io:commons-io'
     compile 'org.projectlombok:lombok'
 
-    testCompile 'org.apache.commons:commons-lang3:3.4'
+    testCompile 'org.apache.commons:commons-lang3'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
@@ -92,13 +94,24 @@ bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
     configurations = ['archives']
+    publish = true
     pkg {
         repo = 'generic'
         name = 'service-web'
         userOrg = 'nus-ncl'
         desc = 'NCL web service'
+        websiteUrl = 'https://github.com/nus-ncl/service-web'
+        issueTrackerUrl = 'https://github.com/nus-ncl/service-web/issues'
         vcsUrl = 'https://github.com/nus-ncl/service-web.git'
         licenses = ['Apache-2.0']
+
+        githubRepo = 'nus-ncl/service-web'
+
+        version {
+            name = "${project.version}"
+            desc = "Web Service ${project.version} release"
+            released = new Date()
+        }
     }
 }
 
