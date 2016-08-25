@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.*;
  * @author Te Ye
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = App.class)
+@SpringApplicationConfiguration(classes = TestApp.class)
 @WebAppConfiguration
 public class ConnectionPropertiesTest {
 
