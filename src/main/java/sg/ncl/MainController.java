@@ -2,8 +2,6 @@ package sg.ncl;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -23,8 +21,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +33,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.domain.ExceptionState;
+import sg.ncl.domain.RealizationState;
 import sg.ncl.domain.UserType;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
@@ -1387,7 +1384,7 @@ public class MainController {
     
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
     public String experiments(Model model, HttpSession session) {
-
+//        long start = System.currentTimeMillis();
         List<Experiment2> experimentList = new ArrayList<>();
         Map<Long, Realization> realizationMap = new HashMap<>();
 
@@ -1409,7 +1406,7 @@ public class MainController {
 
             for (int k = 0; k < experimentsArray.length(); k++) {
                 Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-                Realization realization = invokeAndExtractRealization(experiment2.getId());
+                Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
                 realizationMap.put(experiment2.getId(), realization);
                 experimentList.add(experiment2);
             }
@@ -1417,6 +1414,7 @@ public class MainController {
 
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
+//        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
         return "experiments";
     }
 
@@ -1591,7 +1589,10 @@ public class MainController {
     }
     
     @RequestMapping("/start_experiment/{teamName}/{expId}")
-    public String startExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, HttpSession session) {
+    public String startExperiment(
+            @PathVariable String teamName,
+            @PathVariable String expId,
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         // start experiment
         // ensure experiment is stopped first before starting
@@ -1599,8 +1600,40 @@ public class MainController {
 //        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
         logger.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
-        return "redirect:/experiments";
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+        } catch (Exception e) {
+            logger.warn("Error connecting to experiment service to start experiment", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.ExpStartException.toString())) {
+                    logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                } else {
+                    logger.warn("start experiment failed: some other failure");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                }
+                return "redirect:/experiments";
+            } else {
+                // everything ok
+                logger.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
+                return "redirect:/experiments";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     @RequestMapping("/stop_experiment/{teamName}/{expId}")
@@ -2271,10 +2304,30 @@ public class MainController {
         return experiment2;
     }
 
-    private Realization invokeAndExtractRealization(Long id) {
+    private Realization invokeAndExtractRealization(String teamName, Long id) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity respEntity = restTemplate.exchange(properties.getRealization(id.toString()), HttpMethod.GET, request, String.class);
-        return extractRealization(respEntity.getBody().toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            logger.info("retrieving the latest exp status: {}", properties.getRealizationByTeam(teamName, id.toString()));
+            response = restTemplate.exchange(properties.getRealizationByTeam(teamName, id.toString()), HttpMethod.GET, request, String.class);
+        } catch (Exception e) {
+            return getCleanRealization();
+        }
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                logger.warn("error in retrieving realization for team: {}, realization: {}", teamName, id);
+                return getCleanRealization();
+            } else {
+                return extractRealization(responseBody);
+            }
+        } catch (Exception e) {
+            return getCleanRealization();
+        }
     }
 
     private Realization extractRealization(String json) {
@@ -2360,5 +2413,18 @@ public class MainController {
     private boolean validateIfAdmin(HttpSession session) {
         logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(userType));
         return session.getAttribute(userType).equals(UserType.ADMIN.toString());
+    }
+
+    private Realization getCleanRealization() {
+        Realization realization = new Realization();
+
+        realization.setExperimentId(0L);
+        realization.setExperimentName("");
+        realization.setUserId("");
+        realization.setTeamId("");
+        realization.setState(RealizationState.ERROR.toString());
+        realization.setDetails("");
+
+        return realization;
     }
 }

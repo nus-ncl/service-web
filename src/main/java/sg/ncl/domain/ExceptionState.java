@@ -11,5 +11,6 @@ public enum ExceptionState {
     TeamNotFoundException,
     ApplyNewProjectException,
     RegisterTeamNameDuplicateException,
-    JoinProjectException
+    JoinProjectException,
+    ExpStartException
 }
