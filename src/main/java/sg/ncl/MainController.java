@@ -1569,9 +1569,8 @@ public class MainController {
     	return "experiment_scenario_contents";
     }
     
-    @RequestMapping("/remove_experiment/{expId}")
-    public String removeExperiment(@PathVariable String expId, Model model, HttpSession session) {
-        // remove experiment
+    @RequestMapping("/remove_experiment/{teamName}/{expId}")
+    public String removeExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, HttpSession session) {
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
 //    	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
@@ -1582,9 +1581,9 @@ public class MainController {
 //        teamManager.decrementExperimentCount(teamId);
 //        return "redirect:/experiments";
 
-        logger.info("Starting experiment: at " + properties.getDeleteExperiment(expId));
+        logger.info("Removing experiment: at " + properties.getDeleteExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getDeleteExperiment(expId), HttpMethod.POST, request, String.class);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getDeleteExperiment(teamName, expId), HttpMethod.DELETE, request, String.class);
         return "redirect:/experiments";
     }
     
@@ -2347,7 +2346,13 @@ public class MainController {
         } catch (Exception e) {
             return getCleanRealization();
         }
-        String responseBody = response.getBody().toString();
+        String responseBody;
+
+        if (response.getBody() == null) {
+            return getCleanRealization();
+        } else {
+            responseBody = response.getBody().toString();
+        }
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
