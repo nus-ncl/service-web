@@ -20,6 +20,9 @@
                     <li><a data-toggle="pill" href="#usersManagement"><span th:text="#{admin.dashboard.nav.users}">Users management</span></a></li>
                     <!--<li><a data-toggle="pill" href="#resourcesManagement"><span th:text="#{admin.dashboard.nav.resources}">Resources management</span></a></li>-->
                 </ul>
+				<div th:if="${message}">
+					<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+				</div>
                 <div class="tab-content col-sm-10 dashpanel_admin">
                 	<!--<div id="overview" class="tab-pane fade in active">-->
                 		<!--<div class="row">-->

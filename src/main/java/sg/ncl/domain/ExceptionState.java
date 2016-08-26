@@ -13,5 +13,7 @@ public enum ExceptionState {
     RegisterTeamNameDuplicateException,
     JoinProjectException,
     ExpStartException,
-    ExpDeleteException
+    ExpDeleteException,
+    IdNullOrEmptyException,
+    InvalidTeamStatusException
 }
