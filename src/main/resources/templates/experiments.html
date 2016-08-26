@@ -21,6 +21,10 @@
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <strong>Success!</strong> <p th:text="${exp_message}"></p>
                 </div>
+                <div th:if="${exp_remove_message}" class="alert alert-warning">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Warning!</strong> <p th:text="${exp_remove_message}"></p>
+                </div>
                 <!-- user has no experiments -->
                 <div th:if="${#lists.isEmpty(experimentList)}">
                     <p th:text="#{exp.noExpRunning}">You do not have any experiments running yet.</p>
