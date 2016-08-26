@@ -205,6 +205,10 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/" + expId;
     }
 
+    public String getRealizationByTeam(String teamName, String expId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + "/experiment/" + expId;
+    }
+
     public String getDeleteExperiment(String expId) {
         return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/delete/" + expId;
     }

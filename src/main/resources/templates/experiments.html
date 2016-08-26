@@ -14,6 +14,13 @@
             <p>&nbsp;</p>
             <div class="row dashpanel">
                 <h2 class="team-heading team-heading-current-team" th:text="#{exp.header}">Experiments</h2>
+                <div th:if="${message}">
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+                </div>
+                <div th:if="${exp_message}" class="alert alert-success">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Success!</strong> <p th:text="${exp_message}"></p>
+                </div>
                 <!-- user has no experiments -->
                 <div th:if="${#lists.isEmpty(experimentList)}">
                     <p th:text="#{exp.noExpRunning}">You do not have any experiments running yet.</p>
@@ -92,9 +99,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                </th:block>
-                                <td>
-                                    <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
+                                    <td>
                                         <span th:if="${realization.state == 'STARTING'}">
                                             <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
                                         </span>
@@ -102,25 +107,17 @@
                                             <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
                                         </span>
                                         <span th:if="${realization.state == 'NOT_RUNNING'}">
-                                            <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><button type="button
-                                            " class="btn btn-standard click-once-button"><i class="fa fa-play btn-fa-green"></i></button></a>
-                                            <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><button type="button
-                                            " class="btn btn-standard click-once-button"><i class="fa fa-trash btn-fa-red"></i></button></a>
+                                            <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><button type="button" class="btn btn-standard click-once-button"><i class="fa fa-play btn-fa-green"></i></button></a>
+                                            <a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><button type="button" class="btn btn-standard click-once-button"><i class="fa fa-trash btn-fa-red"></i></button></a>
                                         </span>
                                         <span th:if="${realization.state == 'RUNNING'}">
                                             <a href="#" th:href="@{/stop_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></a>
                                         </span>
-                                    </th:block>
-                                    <!--<span th:if="${expEntry.status == 'STOPPED'}">-->
-                                        <!--<a href="#" th:href="@{/start_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><i class="fa fa-play"></i></a>-->
-                                    <!--</span>-->
-                                    <!--<span th:if="${expEntry.status == 'READY'}">-->
-                                        <!--<a href="#" th:href="@{/stop_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop"></i></a>-->
-                                    <!--</span>-->
-                                    <!--<span th:if="${expEntry.status == 'STOPPED'}">-->
-                                        <!--<a href="#" th:href="@{/remove_experiment/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash"></i></a>-->
-                                    <!--</span>-->
-                                </td>
+                                        <span th:if="${realization.state == 'ERROR'}">
+                                            <p th:text="#{nav.error}"></p>
+                                        </span>
+                                    </td>
+                                </th:block>
                             </tr>
                         </table>
                     </div> <!-- panel body -->
