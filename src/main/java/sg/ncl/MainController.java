@@ -1570,21 +1570,49 @@ public class MainController {
     }
     
     @RequestMapping("/remove_experiment/{teamName}/{expId}")
-    public String removeExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, HttpSession session) {
+    public String removeExperiment(@PathVariable String teamName, @PathVariable String expId, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
-//    	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
-//        experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId);
-//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
-//
-//        // decrease exp count to be display on Teams page
-//        teamManager.decrementExperimentCount(teamId);
-//        return "redirect:/experiments";
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
+            logger.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
+            return "redirect:/experiments";
+        }
 
         logger.info("Removing experiment: at " + properties.getDeleteExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getDeleteExperiment(teamName, expId), HttpMethod.DELETE, request, String.class);
-        return "redirect:/experiments";
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getDeleteExperiment(teamName, expId), HttpMethod.DELETE, request, String.class);
+        } catch (Exception e) {
+            logger.warn("Error connecting to experiment service to remove experiment", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                if (error.getName().equals(ExceptionState.ExpDeleteException.toString())) {
+                    logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                }
+                return "redirect:/experiments";
+            } else {
+                // everything ok
+                logger.info("remove experiment success for Team: {}, Exp: {}", teamName, expId);
+                redirectAttributes.addFlashAttribute("exp_remove_message", "Team: " + teamName + " has removed Exp: " + realization.getExperimentName());
+                return "redirect:/experiments";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     @RequestMapping("/start_experiment/{teamName}/{expId}")
@@ -1632,8 +1660,8 @@ public class MainController {
             } else {
                 // everything ok
                 logger.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
-                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
-                return "/experiments";
+                redirectAttributes.addFlashAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
+                return "redirect:/experiments";
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -1674,6 +1702,7 @@ public class MainController {
             } else {
                 // everything ok
                 logger.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
+                redirectAttributes.addFlashAttribute("exp_message", "Team: " + teamName + " has stopped Exp: " + realization.getExperimentName());
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
