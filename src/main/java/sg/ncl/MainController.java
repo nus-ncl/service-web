@@ -1592,12 +1592,17 @@ public class MainController {
     public String startExperiment(
             @PathVariable String teamName,
             @PathVariable String expId,
-            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+            final RedirectAttributes redirectAttributes, Model model) throws WebServiceRuntimeException {
 
-        // start experiment
         // ensure experiment is stopped first before starting
-//        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
-//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
+            logger.warn("Trying to start Team: {}, Experiment: {} with State: {} that is not running?", teamName, expId, realization.getState());
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to start Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
+            return "redirect:/experiments";
+        }
+
         logger.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -1620,16 +1625,16 @@ public class MainController {
                 if (error.getName().equals(ExceptionState.ExpStartException.toString())) {
                     logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                     redirectAttributes.addFlashAttribute("message", error.getMessage());
-                } else {
-                    logger.warn("start experiment failed: some other failure");
-                    // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 }
-                return "redirect:/experiments";
+                // possible for it to be error but experiment has started up finish
+                // if user clicks on start but reloads the page
+                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
+                return "/experiments";
             } else {
                 // everything ok
                 logger.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
-                return "redirect:/experiments";
+                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
+                return "/experiments";
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -1637,17 +1642,44 @@ public class MainController {
     }
     
     @RequestMapping("/stop_experiment/{teamName}/{expId}")
-    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, HttpSession session) {
-        // stop experiment
-        // ensure experiment is in ready mode before stopping
-//        experimentManager.stopExperiment(getSessionIdOfLoggedInUser(session), expId);
-//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
-//        return "redirect:/experiments";
+    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+
+        // ensure experiment is active first before stopping
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
+            logger.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
+            return "redirect:/experiments";
+        }
 
         logger.info("Stopping experiment: at " + properties.getStopExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
-        return "redirect:/experiments";
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+        } catch (Exception e) {
+            logger.warn("Error connecting to experiment service to stop experiment", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                return "redirect:/experiments";
+            } else {
+                // everything ok
+                logger.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
+                return "redirect:/experiments";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     //---------------------------------Dataset Page--------------------------
