@@ -1499,7 +1499,7 @@ public class MainController {
                 if (error.getName().equals(ExceptionState.NSFileParseException.toString())) {
                     logger.warn("Ns file error");
                     redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
-                } else if (error.getName().equals(ExceptionState.ExpNameAlreadyExistsException.toString())) {
+                } else if (error.getName().equals(ExceptionState.ExpNameAlreadyExistsException.toString()) || error.getName().equals(ExceptionState.ExperimentNameInUseException.toString())) {
                     logger.warn("Exp name already exists");
                     redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
                 } else {
@@ -1652,10 +1652,11 @@ public class MainController {
                 if (error.getName().equals(ExceptionState.ExpStartException.toString())) {
                     logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                     redirectAttributes.addFlashAttribute("message", error.getMessage());
+                    return "redirect:/experiments";
                 }
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
-                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
+//                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
                 return "/experiments";
             } else {
                 // everything ok

@@ -15,5 +15,6 @@ public enum ExceptionState {
     ExpStartException,
     ExpDeleteException,
     IdNullOrEmptyException,
-    InvalidTeamStatusException
+    InvalidTeamStatusException,
+    ExperimentNameInUseException
 }
