@@ -1999,14 +1999,57 @@ public class MainController {
         return "redirect:/admin";
     }
     
-    @RequestMapping("/admin/teams/reject/{teamId}")
-    public String rejectTeam(@PathVariable String teamId, @PathVariable String teamOwnerId) {
+    @RequestMapping("/admin/teams/reject/{teamId}/{teamOwnerId}")
+    public String rejectTeam(
+            @PathVariable String teamId,
+            @PathVariable String teamOwnerId,
+            final RedirectAttributes redirectAttributes
+    ) throws WebServiceRuntimeException {
+        //FIXME require approver info
+        logger.info("Rejecting new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(
+                properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
 
-        // need to cleanly remove the team application
-//    	teamManager.rejectTeamApplication(teamId);
-    	return "redirect:/admin";
+        String responseBody = response.getBody().toString();
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error;
+            try{
+                error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            } catch (IOException e) {
+                throw new WebServiceRuntimeException(e.getMessage());
+            }
+            if(error.getName().equals(ExceptionState.IdNullOrEmptyException.toString())) {
+                logger.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
+                        teamId, teamOwnerId);
+                redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
+            }
+            else if (error.getName().equals(ExceptionState.InvalidTeamStatusException.toString())) {
+                logger.warn("Reject team: TeamStatus is invalid");
+                redirectAttributes.addFlashAttribute("message", "Team status is invalid");
+            }
+            else if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                logger.warn("Reject team: Team {} not found", teamId);
+                redirectAttributes.addFlashAttribute("message", "Team does not exist");
+            }
+            else {
+                logger.warn("Reject team : sio or deterlab adapter connection error");
+                // possible sio or adapter connection fail
+                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            }
+            return "redirect:/admin";
+        }
+
+        // http status code is OK, then need to check the response message
+        String msg = new JSONObject(responseBody).getString("msg");
+        if ("reject project OK".equals(msg)) {
+            logger.info("Reject team {} OK", teamId);
+        } else {
+            logger.warn("Reject team {} FAIL", teamId);
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+        }
+        return "redirect:/admin";
     }
     
     @RequestMapping("/admin/users/ban/{userId}")
