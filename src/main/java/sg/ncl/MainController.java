@@ -919,6 +919,7 @@ public class MainController {
                     joinRequestApproval.setTeamName(team2.getName());
 
                     temp.add(joinRequestApproval);
+                    logger.info("Join request: UserId: {}, UserEmail: {}", myUser.getId(), myUser.getEmail());
                 }
             }
 
@@ -1464,17 +1465,23 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
 
-            // get experiments lists of the teams
-            HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
-            ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody().toString();
 
-            JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
+            if (!isMemberJoinRequestPending(session.getAttribute("id").toString(), teamResponseBody)) {
+                // get experiments lists of the teams
+                HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
+                ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
 
-            for (int k = 0; k < experimentsArray.length(); k++) {
-                Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-                Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-                realizationMap.put(experiment2.getId(), realization);
-                experimentList.add(experiment2);
+                JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
+
+                for (int k = 0; k < experimentsArray.length(); k++) {
+                    Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+                    Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+                    realizationMap.put(experiment2.getId(), realization);
+                    experimentList.add(experiment2);
+                }
             }
         }
 
@@ -2452,6 +2459,30 @@ public class MainController {
         }
         team2.setMembersCount(membersArray.length());
         return team2;
+    }
+
+    /**
+     * Checks if user is pending for join request approval from team leader
+     * Use for fixing bug for view experiment page where users previously can view the experiments just by issuing a join request
+     * @param json the response body after calling team service
+     * @param loginUserId the current logged in user id
+     * @return True if the user is anything but APPROVED, false otherwise
+     */
+    private boolean isMemberJoinRequestPending(String loginUserId, String json) {
+        JSONObject object = new JSONObject(json);
+        JSONArray membersArray = object.getJSONArray("members");
+
+        for (int i = 0; i < membersArray.length(); i++) {
+            JSONObject memberObject = membersArray.getJSONObject(i);
+            String userId = memberObject.getString("userId");
+            String teamMemberStatus = memberObject.getString("memberStatus");
+
+            if (userId.equals(loginUserId) && !teamMemberStatus.equals(MemberStatus.APPROVED.toString())) {
+                return true;
+            }
+        }
+        logger.info("User: {} is viewing experiment page", loginUserId);
+        return false;
     }
 
     private Team2 extractTeamInfoUserJoinRequest(String userId, String json) {
