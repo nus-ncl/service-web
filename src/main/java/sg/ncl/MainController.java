@@ -2354,6 +2354,8 @@ public class MainController {
         user2.setInstitution(userDetails.getString("institution"));
         user2.setInstitutionAbbreviation(userDetails.getString("institutionAbbreviation"));
         user2.setInstitutionWeb(userDetails.getString("institutionWeb"));
+        user2.setStatus(userDetails.getString("status"));
+        user2.setUserType(userDetails.getString("userType"));
 
         return user2;
     }
