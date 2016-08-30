@@ -21,6 +21,8 @@ public class User2 {
     private String institution;
     private String institutionAbbreviation;
     private String institutionWeb;
+    private String status;
+    private String userType;
 
     private String password;
     private String confirmPassword;
@@ -151,6 +153,22 @@ public class User2 {
 
     public void setInstitutionWeb(String institutionWeb) {
         this.institutionWeb = institutionWeb;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
     public String getPassword() {
