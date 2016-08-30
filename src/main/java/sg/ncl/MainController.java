@@ -36,6 +36,7 @@ import sg.ncl.domain.ExceptionState;
 import sg.ncl.domain.RealizationState;
 import sg.ncl.domain.UserType;
 import sg.ncl.exceptions.*;
+import sg.ncl.rest_client.RestClient;
 import sg.ncl.testbed_interface.*;
 
 /**
@@ -281,43 +282,62 @@ public class MainController {
 
         try {
             response = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
-            jwtTokenString = response.getBody().toString();
-        } catch (Exception e) {
-            logger.warn("Error connecting to authentication service to validate login details", e.getMessage());
+        } catch (RestClientException e) {
+            logger.warn("Error connecting to sio authentication service: {}", e);
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
-
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
+        jwtTokenString = response.getBody().toString();
+        if(jwtTokenString == null || jwtTokenString.isEmpty()) {
+            logger.warn("login failed for {}: unknown response", loginForm.getLoginEmail());
+            loginForm.setErrorMsg("Login failed: Invalid email/password.");
+            return "login";
+        }
+        if (RestUtil.isError(response.getStatusCode())) {
+            try {
                 MyErrorResource error = objectMapper.readValue(jwtTokenString, MyErrorResource.class);
-                loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                logger.warn("login failed with username {}", loginForm.getLoginEmail());
-                return "login";
-            } else if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
-                JSONObject tokenObject = new JSONObject(jwtTokenString);
-                String token = tokenObject.getString("token");
-                String id = tokenObject.getString("id");
+                if(error.getName().equals(ExceptionState.CredentialsNotFoundException.toString())) {
+                    logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
+                    loginForm.setErrorMsg("Login failed: Account does not exist. Please signup.");
+                    return "login";
+                }
+                else if(error.getName().equals(ExceptionState.UserNotFoundException.toString())) {
+                    logger.warn("login failed for {}: user not found", loginForm.getLoginEmail());
+                    loginForm.setErrorMsg("Login failed: Account does not exist. Please signup.");
+                    return "login";
+                }
+                else if(error.getName().equals(ExceptionState.EmailNotVerifiedException.toString())) {
+                    logger.warn("login failed for {}: email not verified", loginForm.getLoginEmail());
+                    return "redirect:/email_not_validated";
+                }
+                else if(error.getName().equals(ExceptionState.UserNotApprovedException.toString())) {
+                    logger.warn("login failed for {}: user not approved", loginForm.getLoginEmail());
+                    return "redirect:/team_application_under_review";
+                } else {
+                    logger.warn("login failed for {}: unkonwn error", loginForm.getLoginEmail());
+                    loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
+                    return "login";
+                }
+            } catch (IOException ioe) {
+                logger.warn("IOException {}", ioe);
+                throw new WebServiceRuntimeException(ioe.getMessage());
+            }
+        }
 
-                // TODO: get user type from jwt token
+        JSONObject tokenObject = new JSONObject(jwtTokenString);
+        String token = tokenObject.getString("token");
+        String id = tokenObject.getString("id");
+
+        // TODO: get user type from jwt token
 //                String userType = tokenObject.getString("type");
 //                setSessionVariables(session, loginForm.getLoginEmail(), id, userType);
 
-                AUTHORIZATION_HEADER = "Bearer " + token;
+        AUTHORIZATION_HEADER = "Bearer " + token;
+        setSessionVariables(session, loginForm.getLoginEmail(), id);
+        logger.info("login success for {}, token id: {}", loginForm.getLoginEmail(), id);
+        return "redirect:/dashboard";
 
-                setSessionVariables(session, loginForm.getLoginEmail(), id);
 
-                logger.info("login success with username: {}, token id: {}", loginForm.getLoginEmail(), id);
-                return "redirect:/dashboard";
-            } else {
-                // case1: invalid login
-                loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                logger.warn("login failed with unknown response code with username {}", loginForm.getLoginEmail());
-                return "login";
-            }
-        } catch (IOException e) {
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
 
         /*
     	String inputEmail = loginForm.getLoginEmail();
