@@ -919,6 +919,7 @@ public class MainController {
                     joinRequestApproval.setTeamName(team2.getName());
 
                     temp.add(joinRequestApproval);
+                    logger.info("Join request: UserId: {}, UserEmail: {}", myUser.getId(), myUser.getEmail());
                 }
             }
 
