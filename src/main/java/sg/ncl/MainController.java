@@ -513,6 +513,9 @@ public class MainController {
                 } catch (RegisterTeamNameDuplicateException e) {
                     redirectAttributes.addFlashAttribute("message", e.getMessage());
                     return "redirect:/signup2";
+                } catch (UsernameAlreadyExistsException e) {
+                    redirectAttributes.addFlashAttribute("message", e.getMessage());
+                    return "redirect:/signup2";
                 } catch (Exception e) {
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                     return "redirect:/signup2";
@@ -556,6 +559,9 @@ public class MainController {
             } catch (RegisterTeamNameDuplicateException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 return "redirect:/signup2";
+            } catch (UsernameAlreadyExistsException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return "redirect:/signup2";
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 return "redirect:/signup2";
@@ -577,7 +583,7 @@ public class MainController {
      * Use when registering new accounts
      * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
      */
-    private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException, ApplyNewProjectException, RegisterTeamNameDuplicateException {
+    private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException, ApplyNewProjectException, RegisterTeamNameDuplicateException, UsernameAlreadyExistsException {
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
@@ -597,6 +603,10 @@ public class MainController {
                 } else if (error.getName().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
                     logger.warn("Register new users new team request : team name duplicate");
                     throw new RegisterTeamNameDuplicateException();
+                } else if (error.getName().equals(ExceptionState.UsernameAlreadyExistsException.toString())) {
+                    String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
+                    logger.warn("Register new users : email already exists: {}", email);
+                    throw new UsernameAlreadyExistsException("Error: " + email + " already in use.");
                 } else {
                     logger.warn("Registration or adapter connection fail");
                     // possible sio or adapter connection fail
