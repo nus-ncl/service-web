@@ -20,5 +20,6 @@ public enum ExceptionState {
     UsernameAlreadyExistsException,
     CredentialsNotFoundException,
     EmailNotVerifiedException,
-    UserNotApprovedException
+    UserNotApprovedException,
+    InvalidCredentialsException
 }

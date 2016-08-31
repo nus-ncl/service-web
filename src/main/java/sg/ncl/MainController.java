@@ -288,33 +288,39 @@ public class MainController {
             return "login";
         }
         jwtTokenString = response.getBody().toString();
+        logger.info("token string {}", jwtTokenString);
         if(jwtTokenString == null || jwtTokenString.isEmpty()) {
-            logger.warn("login failed for {}: unknown response", loginForm.getLoginEmail());
+            logger.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
             return "login";
         }
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(jwtTokenString, MyErrorResource.class);
-                if(error.getName().equals(ExceptionState.CredentialsNotFoundException.toString())) {
+                if(ExceptionState.InvalidCredentialsException.toString().equals(error.getName())) {
+                    logger.warn("login failed for {}: invalid username or password", loginForm.getLoginEmail());
+                    loginForm.setErrorMsg("Login failed: Invalid email/password.");
+                    return "login";
+                }
+                else if(ExceptionState.CredentialsNotFoundException.toString().equals(error.getName())) {
                     logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
                     loginForm.setErrorMsg("Login failed: Account does not exist. Please signup.");
                     return "login";
                 }
-                else if(error.getName().equals(ExceptionState.UserNotFoundException.toString())) {
+                else if(ExceptionState.UserNotFoundException.toString().equals(error.getName())) {
                     logger.warn("login failed for {}: user not found", loginForm.getLoginEmail());
                     loginForm.setErrorMsg("Login failed: Account does not exist. Please signup.");
                     return "login";
                 }
-                else if(error.getName().equals(ExceptionState.EmailNotVerifiedException.toString())) {
+                else if(ExceptionState.EmailNotVerifiedException.toString().equals(error.getName())) {
                     logger.warn("login failed for {}: email not verified", loginForm.getLoginEmail());
                     return "redirect:/email_not_validated";
                 }
-                else if(error.getName().equals(ExceptionState.UserNotApprovedException.toString())) {
+                else if(ExceptionState.UserNotApprovedException.toString().equals(error.getName())) {
                     logger.warn("login failed for {}: user not approved", loginForm.getLoginEmail());
                     return "redirect:/team_application_under_review";
                 } else {
-                    logger.warn("login failed for {}: unkonwn error", loginForm.getLoginEmail());
+                    logger.warn("login failed for {}: unknown error code", loginForm.getLoginEmail());
                     loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
                     return "login";
                 }
