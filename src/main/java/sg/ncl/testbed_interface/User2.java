@@ -22,7 +22,7 @@ public class User2 {
     private String institutionAbbreviation;
     private String institutionWeb;
     private String status;
-    private String userType;
+    private String roles;
 
     private String password;
     private String confirmPassword;
@@ -163,12 +163,12 @@ public class User2 {
         this.status = status;
     }
 
-    public String getUserType() {
-        return userType;
+    public String getRoles() {
+        return roles;
     }
 
-    public void setUserType(String userType) {
-        this.userType = userType;
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 
     public String getPassword() {

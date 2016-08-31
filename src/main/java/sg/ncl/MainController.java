@@ -60,7 +60,7 @@ public class MainController {
     private DatasetManager datasetManager = DatasetManager.getInstance();
     private NodeManager nodeManager = NodeManager.getInstance();
 
-    private String userType = "userType";
+    private String roles = "roles";
     private String memberTypeOwner = "OWNER";
     private String memberTypeMember = "MEMBER";
 
@@ -2354,8 +2354,9 @@ public class MainController {
         user2.setInstitution(userDetails.getString("institution"));
         user2.setInstitutionAbbreviation(userDetails.getString("institutionAbbreviation"));
         user2.setInstitutionWeb(userDetails.getString("institutionWeb"));
-        user2.setStatus(userDetails.getString("status"));
-        user2.setUserType(userDetails.getString("userType"));
+
+        user2.setStatus(object.getString("status"));
+        user2.setRoles(object.getString("roles"));
 
         return user2;
     }
@@ -2586,22 +2587,20 @@ public class MainController {
         session.setAttribute("sessionLoggedEmail", loginEmail);
         session.setAttribute("id", id);
         session.setAttribute("name", user.getFirstName());
-        // FIXME: get user type from token
-//        session.setAttribute("userType", UserType.NORMAL.toString());
-        session.setAttribute(userType, UserType.ADMIN.toString());
+        session.setAttribute(roles, user.getRoles());
+        logger.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), user.getRoles());
     }
 
     private void removeSessionVariables(HttpSession session) {
         session.removeAttribute("sessionLoggedEmail");
         session.removeAttribute("id");
         session.removeAttribute("name");
-        // FIXME: get user type from token
-        session.removeAttribute(userType);
+        session.removeAttribute(roles);
     }
 
     private boolean validateIfAdmin(HttpSession session) {
-        logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(userType));
-        return session.getAttribute(userType).equals(UserType.ADMIN.toString());
+        logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(roles));
+        return session.getAttribute(roles).equals(UserType.ADMIN.toString());
     }
 
     private Realization getCleanRealization() {
