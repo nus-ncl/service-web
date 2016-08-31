@@ -2351,7 +2351,12 @@ public class MainController {
         user2.setInstitutionWeb(userDetails.getString("institutionWeb"));
 
         user2.setStatus(object.getString("status"));
-        user2.setRoles(object.getString("roles"));
+
+        String role = UserType.USER.toString();
+        if (object.getJSONArray("roles") != null) {
+            role = object.getJSONArray("roles").get(0).toString();
+        }
+        user2.setRoles(role);
 
         return user2;
     }
