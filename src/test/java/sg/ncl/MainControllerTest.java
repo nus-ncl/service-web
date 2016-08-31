@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
+import sg.ncl.domain.UserType;
 import sg.ncl.testbed_interface.Team2;
 
 import javax.inject.Inject;
@@ -299,6 +300,31 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/teams")))
                 .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/calendar1")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("Dashboard")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")))
+                .andExpect(model().attribute("deterUid", is(id)));
+    }
+
+    @Test
+    public void testGetDashboardPageWithAdmin() throws Exception {
+        final String id = RandomStringUtils.randomAlphabetic(10);
+
+        mockServer.expect(requestTo(properties.getDeterUid(id)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(id, MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(get("/dashboard").sessionAttr("id", id).sessionAttr("roles", UserType.ADMIN.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("dashboard"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
                 .andExpect(content().string(containsString("/admin")))
                 .andExpect(content().string(containsString("/calendar1")))
                 .andExpect(content().string(containsString("/approve_new_user")))
@@ -456,7 +482,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/teams")))
                 .andExpect(content().string(containsString("/experiments")))
-                .andExpect(content().string(containsString("/admin")))
                 .andExpect(content().string(containsString("/calendar1")))
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/approve_new_user")))
@@ -476,7 +501,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/teams")))
                 .andExpect(content().string(containsString("/experiments")))
-                .andExpect(content().string(containsString("/admin")))
                 .andExpect(content().string(containsString("/calendar1")))
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/approve_new_user")))
