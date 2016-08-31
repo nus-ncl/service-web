@@ -8,6 +8,8 @@ import sg.ncl.testbed_interface.Team2;
 import sg.ncl.testbed_interface.User2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -84,7 +86,7 @@ public class Util {
 
         object.put("userDetails", userDetails);
         object.put("status", UserStatus.APPROVED);
-        object.put("roles", UserType.USER);
+        object.put("roles", new HashSet<>(Arrays.asList(UserType.USER)));
         return object;
     }
 }
