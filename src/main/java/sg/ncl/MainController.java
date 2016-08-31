@@ -1860,21 +1860,6 @@ public class MainController {
     //---------------------------------Admin---------------------------------
     @RequestMapping("/admin")
     public String admin(Model model, HttpSession session) {
-//    	model.addAttribute("domain", new Domain());
-//    	model.addAttribute("domainTable", domainManager.getDomainTable());
-//    	model.addAttribute("usersMap", userManager.getUserMap());
-//    	model.addAttribute("teamsPendingApprovalMap", teamManager.getTeamsPendingApproval());
-//    	model.addAttribute("experimentMap", experimentManager.getExperimentMap2());
-//
-//    	model.addAttribute("totalTeamCount", teamManager.getTotalTeamsCount());
-//    	model.addAttribute("totalExpCount", experimentManager.getTotalExpCount());
-//    	model.addAttribute("totalMemberCount", teamManager.getTotalMembersCount());
-//    	model.addAttribute("totalMemberAwaitingApprovalCount", teamManager.getTotalMembersAwaitingApproval());
-//
-//    	model.addAttribute("datasetMap", datasetManager.getDatasetMap());
-//    	model.addAttribute("userManager", userManager);
-//
-//    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
 
         if (!validateIfAdmin(session)) {
             return "nopermission";
@@ -1929,8 +1914,6 @@ public class MainController {
             }
         }
 
-//        model.addAttribute("teamsMap", teamManager.getTeamMap());
-//        model.addAttribute("teamManager", teamManager);
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
         model.addAttribute("usersList", usersList);
@@ -1958,8 +1941,14 @@ public class MainController {
     public String approveTeam(
             @PathVariable String teamId,
             @PathVariable String teamOwnerId,
-            final RedirectAttributes redirectAttributes
+            final RedirectAttributes redirectAttributes,
+            HttpSession session
     ) throws WebServiceRuntimeException {
+
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
+        }
+
         //FIXME require approver info
         logger.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -2011,8 +2000,14 @@ public class MainController {
     public String rejectTeam(
             @PathVariable String teamId,
             @PathVariable String teamOwnerId,
-            final RedirectAttributes redirectAttributes
+            final RedirectAttributes redirectAttributes,
+            HttpSession session
     ) throws WebServiceRuntimeException {
+
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
+        }
+
         //FIXME require approver info
         logger.info("Rejecting new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
