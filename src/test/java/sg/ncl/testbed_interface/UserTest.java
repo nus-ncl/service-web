@@ -252,15 +252,15 @@ public class UserTest {
     @Test
     public void testGetUserType() {
         final User2 user = new User2();
-        assertThat(user.getUserType(), is(nullValue()));
+        assertThat(user.getRoles(), is(nullValue()));
     }
 
     @Test
     public void testSetUserType() {
         final User2 user = new User2();
         final String str = RandomStringUtils.randomAlphanumeric(20);
-        user.setUserType(str);
-        assertThat(user.getUserType(), is(str));
+        user.setRoles(str);
+        assertThat(user.getRoles(), is(str));
     }
 
 }

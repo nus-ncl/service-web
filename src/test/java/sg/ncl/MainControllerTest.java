@@ -313,7 +313,7 @@ public class MainControllerTest {
     @Test
     public void getUserProfileTest() throws Exception {
 
-        JSONObject predefinedUserJson = createUserJson("1234567890-ABCDEFGHIJKL", "teye", "yeo", "research assistant", "dcsyeoty@nus.edu.sg", "12345678", "national", "nus", "http://nus.edu.sg", "computing drive 12", "", "Singapore", "west", "city singapore", "12345678");
+        JSONObject predefinedUserJson = Util.createUserJson();
         String predefinedJsonStr = predefinedUserJson.toString();
 
         // uri must be equal to that defined in MainController
@@ -336,8 +336,7 @@ public class MainControllerTest {
         // update the lastname to test user details json
         // update the address2 to test address json
 
-        JSONObject predefinedUserJson = createUserJson("1234567890-ABCDEFGHIJKL", "teye", "yeo", "research assistant", "dcsyeoty@nus.edu.sg", "12345678", "national", "nus", "http://nus.edu.sg", "computing drive 12", "", "Singapore", "west", "city singapore", "12345678");
-        JSONObject predefinedUserDetailsJson = predefinedUserJson.getJSONObject("userDetails");
+        JSONObject predefinedUserJson = Util.createUserJson();
         String predefinedJsonStr = predefinedUserJson.toString();
 
         mockServer.expect(requestTo(properties.getSioUsersUrl() + mainController.getStubUserID()))
@@ -486,32 +485,5 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("method=\"post\" action=\"/teams/apply_team\"")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")))
                 .andExpect(model().attribute("teamPageApplyTeamForm", hasProperty("teamName")));
-    }
-
-    private JSONObject createUserJson(String id, String firstName, String lastName, String jobTitle, String email, String phone, String institution, String institutionAbbrev, String institutionWeb, String address1, String address2, String country, String region, String city, String zipCode) {
-        JSONObject object = new JSONObject();
-        JSONObject userDetails = new JSONObject();
-        JSONObject address = new JSONObject();
-
-        object.put("id", id);
-        userDetails.put("firstName", firstName);
-        userDetails.put("lastName", lastName);
-        userDetails.put("jobTitle", jobTitle);
-        userDetails.put("email", email);
-        userDetails.put("phone", phone);
-        userDetails.put("address", address);
-        userDetails.put("institution", institution);
-        userDetails.put("institutionAbbreviation", institutionAbbrev);
-        userDetails.put("institutionWeb", institutionWeb);
-
-        address.put("address1", address1);
-        address.put("address2", address2);
-        address.put("country", country);
-        address.put("region", region);
-        address.put("city", city);
-        address.put("zipCode", zipCode);
-
-        object.put("userDetails", userDetails);
-        return object;
     }
 }

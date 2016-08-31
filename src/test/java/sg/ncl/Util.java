@@ -2,6 +2,8 @@ package sg.ncl;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
+import sg.ncl.domain.UserStatus;
+import sg.ncl.domain.UserType;
 import sg.ncl.testbed_interface.Team2;
 import sg.ncl.testbed_interface.User2;
 
@@ -31,6 +33,9 @@ public class Util {
         user.setPhone(RandomStringUtils.randomAlphanumeric(20));
         user.setRegion(RandomStringUtils.randomAlphanumeric(20));
         user.setPostalCode(RandomStringUtils.randomAlphanumeric(20));
+
+        user.setStatus(UserStatus.APPROVED.toString());
+        user.setRoles(UserType.USER.toString());
         return user;
     }
 
@@ -52,5 +57,34 @@ public class Util {
         one.put("status", "APPROVED");
         one.put("members", new ArrayList());
         return one;
+    }
+
+    public static JSONObject createUserJson() {
+        JSONObject object = new JSONObject();
+        JSONObject userDetails = new JSONObject();
+        JSONObject address = new JSONObject();
+
+        object.put("id", RandomStringUtils.randomAlphanumeric(20));
+        userDetails.put("firstName", RandomStringUtils.randomAlphanumeric(20));
+        userDetails.put("lastName", RandomStringUtils.randomAlphanumeric(20));
+        userDetails.put("jobTitle", RandomStringUtils.randomAlphanumeric(20));
+        userDetails.put("email", RandomStringUtils.randomAlphanumeric(8) + "@ncl.sg");
+        userDetails.put("phone", RandomStringUtils.randomNumeric(8));
+        userDetails.put("address", address);
+        userDetails.put("institution", RandomStringUtils.randomAlphanumeric(20));
+        userDetails.put("institutionAbbreviation", RandomStringUtils.randomAlphanumeric(20));
+        userDetails.put("institutionWeb", RandomStringUtils.randomAlphanumeric(20));
+
+        address.put("address1", RandomStringUtils.randomAlphanumeric(20));
+        address.put("address2", RandomStringUtils.randomAlphanumeric(20));
+        address.put("country", RandomStringUtils.randomAlphanumeric(20));
+        address.put("region", RandomStringUtils.randomAlphanumeric(20));
+        address.put("city", RandomStringUtils.randomAlphanumeric(20));
+        address.put("zipCode", RandomStringUtils.randomNumeric(8));
+
+        object.put("userDetails", userDetails);
+        object.put("status", UserStatus.APPROVED);
+        object.put("roles", UserType.USER);
+        return object;
     }
 }
