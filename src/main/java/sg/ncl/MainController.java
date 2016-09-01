@@ -2217,16 +2217,12 @@ public class MainController {
     }
     
     @RequestMapping("/email_not_validated")
-    public String emailNotValidated(Model model) {
-    	model.addAttribute("loginForm", new LoginForm());
-    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    public String emailNotValidated() {
         return "email_not_validated";
     }
     
     @RequestMapping("/team_application_under_review")
-    public String teamAppUnderReview(Model model) {
-    	model.addAttribute("loginForm", new LoginForm());
-    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    public String teamAppUnderReview() {
         return "team_application_under_review";
     }
     
