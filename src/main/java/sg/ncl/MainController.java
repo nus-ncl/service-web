@@ -34,6 +34,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.domain.ExceptionState;
 import sg.ncl.domain.RealizationState;
+import sg.ncl.domain.UserStatus;
 import sg.ncl.domain.UserType;
 import sg.ncl.exceptions.*;
 import sg.ncl.rest_client.RestClient;
@@ -272,7 +273,6 @@ public class MainController {
         String base64Creds = new String(base64CredsBytes);
 
         ResponseEntity response;
-        String jwtTokenString;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + base64Creds);
@@ -287,7 +287,8 @@ public class MainController {
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
-        jwtTokenString = response.getBody().toString();
+
+        String jwtTokenString = response.getBody().toString();
         logger.info("token string {}", jwtTokenString);
         if(jwtTokenString == null || jwtTokenString.isEmpty()) {
             logger.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
@@ -297,31 +298,14 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(jwtTokenString, MyErrorResource.class);
-                if(ExceptionState.InvalidCredentialsException.toString().equals(error.getName())) {
-                    logger.warn("login failed for {}: invalid username or password", loginForm.getLoginEmail());
-                    loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                    return "login";
-                }
-                else if(ExceptionState.CredentialsNotFoundException.toString().equals(error.getName())) {
+                if(ExceptionState.CredentialsNotFoundException.toString().equals(error.getName())) {
                     logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
-                    loginForm.setErrorMsg("Login failed: Account does not exist. Please signup.");
+                    loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
                     return "login";
                 }
-                else if(ExceptionState.UserNotFoundException.toString().equals(error.getName())) {
-                    logger.warn("login failed for {}: user not found", loginForm.getLoginEmail());
-                    loginForm.setErrorMsg("Login failed: Account does not exist. Please signup.");
-                    return "login";
-                }
-                else if(ExceptionState.EmailNotVerifiedException.toString().equals(error.getName())) {
-                    logger.warn("login failed for {}: email not verified", loginForm.getLoginEmail());
-                    return "redirect:/email_not_validated";
-                }
-                else if(ExceptionState.UserNotApprovedException.toString().equals(error.getName())) {
-                    logger.warn("login failed for {}: user not approved", loginForm.getLoginEmail());
-                    return "redirect:/team_application_under_review";
-                } else {
-                    logger.warn("login failed for {}: unknown error code", loginForm.getLoginEmail());
-                    loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
+                else {
+                    logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getName());
+                    loginForm.setErrorMsg("Login failed: Invalid email/password.");
                     return "login";
                 }
             } catch (IOException ioe) {
@@ -333,6 +317,11 @@ public class MainController {
         JSONObject tokenObject = new JSONObject(jwtTokenString);
         String token = tokenObject.getString("token");
         String id = tokenObject.getString("id");
+        if(token.trim().isEmpty() || id.trim().isEmpty()) {
+            logger.warn("login failed for {}: empty id {} or token {}", loginForm.getLoginEmail(), id, token);
+            loginForm.setErrorMsg("Login failed: Invalid email/password.");
+            return "login";
+        }
 
         // TODO: get user type from jwt token
 //                String userType = tokenObject.getString("type");
@@ -340,9 +329,58 @@ public class MainController {
 
         AUTHORIZATION_HEADER = "Bearer " + token;
         setSessionVariables(session, loginForm.getLoginEmail(), id);
-        logger.info("login success for {}, token id: {}", loginForm.getLoginEmail(), id);
-        return "redirect:/dashboard";
+        logger.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
 
+        // now check user status to decide what to show to the user
+        String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
+        HttpEntity<String> userRequest = createHttpEntityHeaderOnly();
+        //restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity userResponse;
+        try {
+            userResponse = restTemplate.exchange(userId_uri, HttpMethod.GET, userRequest, String.class);
+        } catch (RestClientException e) {
+            logger.warn("Error connecting to sio user service: {}", e);
+            loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
+            return "login";
+        }
+        String responseBody = userResponse.getBody().toString();
+        if (RestUtil.isError(userResponse.getStatusCode())) {
+            try {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                logger.error("User {} not found: {}", session.getAttribute("id"), error.getName());
+                loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
+                return "login";
+            } catch (IOException ioe) {
+                logger.warn("IOException {}", ioe);
+                throw new WebServiceRuntimeException(ioe.getMessage());
+            }
+        }
+
+        try {
+            JSONObject user = new JSONObject(responseBody);
+            String userStatus = user.getString("status");
+            boolean emailVerified = user.getBoolean("emailVerified");
+            if(!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
+                logger.info("User {} not validated, redirected to email verification page", session.getAttribute("id"));
+                return "redirect:/email_not_validated";
+            }
+            else if((UserStatus.PENDING.toString()).equals(userStatus)) {
+                logger.info("User {} not approved, redirected to application pending page", session.getAttribute("id"));
+                return "redirect:/team_application_under_review";
+            }
+            else if((UserStatus.APPROVED.toString()).equals(userStatus)) {
+                return "redirect:/dashboard";
+            }
+            else {
+                logger.warn("login failed for user {}: account is rejected or closed", session.getAttribute("id"));
+                loginForm.setErrorMsg("Login Failed: Account Rejected/Closed.");
+                return "login";
+            }
+        } catch (Exception e) {
+            logger.warn("Error parsing json object for user: {}", e.getMessage());
+            loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
+            return "login";
+        }
 
 
         /*
