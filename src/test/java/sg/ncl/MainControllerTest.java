@@ -280,6 +280,19 @@ public class MainControllerTest {
                 .andExpect(model().attributeExists("signUpMergedForm"));
     }
 
+    @Test
+    public void testRedirectNotFoundNotLoggedOn() throws Exception {
+        mockMvc.perform(get("/notfound"))
+                .andExpect(redirectedUrl("/"));
+    }
+
+    @Test
+    public void testRedirectNotFoundLoggedOn() throws Exception {
+        final String id = RandomStringUtils.randomAlphabetic(10);
+        mockMvc.perform(get("/notfound").sessionAttr("id", id))
+                .andExpect(redirectedUrl("/dashboard"));
+    }
+
     //--------------------------------------
     // Test after login HTML pages
     //--------------------------------------
@@ -336,11 +349,12 @@ public class MainControllerTest {
         // update the lastname to test user details json
         // update the address2 to test address json
 
+        final String id = RandomStringUtils.randomAlphabetic(10);
         JSONObject predefinedUserJson = createUserJson("1234567890-ABCDEFGHIJKL", "teye", "yeo", "research assistant", "dcsyeoty@nus.edu.sg", "12345678", "national", "nus", "http://nus.edu.sg", "computing drive 12", "", "Singapore", "west", "city singapore", "12345678");
         JSONObject predefinedUserDetailsJson = predefinedUserJson.getJSONObject("userDetails");
         String predefinedJsonStr = predefinedUserJson.toString();
 
-        mockServer.expect(requestTo(properties.getSioUsersUrl() + mainController.getStubUserID()))
+        mockServer.expect(requestTo(properties.getSioUsersUrl() + id))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
