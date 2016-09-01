@@ -50,10 +50,9 @@ import sg.ncl.testbed_interface.*;
 public class MainController {
 
 	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
-    private final int ERROR_NO_SUCH_USER_ID = 0;
     private final static Logger logger = LoggerFactory.getLogger(MainController.class.getName());
-    private int CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
-    private boolean IS_USER_ADMIN = false;
+
+
     private TeamManager teamManager = TeamManager.getInstance();
     private UserManager userManager = UserManager.getInstance();
     private ExperimentManager experimentManager = ExperimentManager.getInstance();
@@ -397,7 +396,6 @@ public class MainController {
     
     @RequestMapping(value="/logout", method=RequestMethod.GET)
     public String logout(HttpSession session) {
-        CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
         removeSessionVariables(session);
         return "redirect:/";
     }
