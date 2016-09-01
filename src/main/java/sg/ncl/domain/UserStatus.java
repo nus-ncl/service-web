@@ -1,8 +1,8 @@
 package sg.ncl.domain;
 
 /**
- * @author Te Ye
+ * Created by dcszwang on 9/1/2016.
  */
 public enum UserStatus {
-    PENDING, APPROVED, REJECTED, CLOSED
+    CREATED, PENDING, APPROVED, REJECTED, CLOSED
 }

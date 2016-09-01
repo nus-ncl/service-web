@@ -252,7 +252,7 @@ public class MainControllerTest {
     public void testPostLoginPageInvalidUserPassword() throws Exception {
         mockServer.expect(requestTo(properties.getSioAuthUrl()))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest().body("{}").contentType(MediaType.APPLICATION_JSON));
+                .andRespond(withBadRequest().body("{\"name\":\"sg.ncl.service.authentication.exceptions.InvalidCredentialsException\"}").contentType(MediaType.APPLICATION_JSON));
 
         ResultActions perform = mockMvc.perform(
                 post("/login")
@@ -278,6 +278,19 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("form action=\"/signup2\" method=\"post\" role=\"form\"")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")))
                 .andExpect(model().attributeExists("signUpMergedForm"));
+    }
+
+    @Test
+    public void testRedirectNotFoundNotLoggedOn() throws Exception {
+        mockMvc.perform(get("/notfound"))
+                .andExpect(redirectedUrl("/"));
+    }
+
+    @Test
+    public void testRedirectNotFoundLoggedOn() throws Exception {
+        final String id = RandomStringUtils.randomAlphabetic(10);
+        mockMvc.perform(get("/notfound").sessionAttr("id", id))
+                .andExpect(redirectedUrl("/dashboard"));
     }
 
     //--------------------------------------
@@ -362,9 +375,10 @@ public class MainControllerTest {
         // update the address2 to test address json
 
         JSONObject predefinedUserJson = Util.createUserJson();
+        final String id = RandomStringUtils.randomAlphabetic(10);
         String predefinedJsonStr = predefinedUserJson.toString();
 
-        mockServer.expect(requestTo(properties.getSioUsersUrl() + mainController.getStubUserID()))
+        mockServer.expect(requestTo(properties.getSioUsersUrl() + id))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 

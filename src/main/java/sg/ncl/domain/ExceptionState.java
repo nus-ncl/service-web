@@ -16,5 +16,10 @@ public enum ExceptionState {
     ExpDeleteException,
     IdNullOrEmptyException,
     InvalidTeamStatusException,
-    ExperimentNameInUseException
+    ExperimentNameInUseException,
+    UsernameAlreadyExistsException,
+    CredentialsNotFoundException,
+    EmailNotVerifiedException,
+    UserNotApprovedException,
+    InvalidCredentialsException
 }

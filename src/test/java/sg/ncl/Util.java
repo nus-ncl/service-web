@@ -47,6 +47,15 @@ public class Util {
         return membersList;
     }
 
+    public static Team2 getTeam() {
+        final Team2 team = new Team2();
+        team.setId(RandomStringUtils.randomAlphanumeric(20));
+        team.setName(RandomStringUtils.randomAlphanumeric(20));
+        team.setDescription(RandomStringUtils.randomAlphanumeric(20));
+        team.setWebsite(RandomStringUtils.randomAlphanumeric(20));
+        return team;
+    }
+
     public static JSONObject getTeamJsonObject() {
         final JSONObject one = new JSONObject();
         one.put("id", RandomStringUtils.randomAlphanumeric(20));
@@ -87,6 +96,7 @@ public class Util {
         object.put("userDetails", userDetails);
         object.put("status", UserStatus.APPROVED);
         object.put("roles", new HashSet<>(Arrays.asList(UserType.USER)));
+        object.put("emailVerified", true);
         return object;
     }
 }
