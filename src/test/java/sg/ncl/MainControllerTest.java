@@ -280,6 +280,19 @@ public class MainControllerTest {
                 .andExpect(model().attributeExists("signUpMergedForm"));
     }
 
+    @Test
+    public void testRedirectNotFoundNotLoggedOn() throws Exception {
+        mockMvc.perform(get("/notfound"))
+                .andExpect(redirectedUrl("/"));
+    }
+
+    @Test
+    public void testRedirectNotFoundLoggedOn() throws Exception {
+        final String id = RandomStringUtils.randomAlphabetic(10);
+        mockMvc.perform(get("/notfound").sessionAttr("id", id))
+                .andExpect(redirectedUrl("/dashboard"));
+    }
+
     //--------------------------------------
     // Test after login HTML pages
     //--------------------------------------
