@@ -33,6 +33,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.domain.ExceptionState;
+import sg.ncl.domain.MemberStatus;
 import sg.ncl.domain.RealizationState;
 import sg.ncl.domain.UserType;
 import sg.ncl.exceptions.*;

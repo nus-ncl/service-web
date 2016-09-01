@@ -1,4 +1,4 @@
-package sg.ncl.testbed_interface;
+package sg.ncl.domain;
 
 /**
  * @author Te Ye
