@@ -62,9 +62,6 @@ public class MainController {
     // to know which form fields have been changed
     private User2 originalUser = null;
 
-    private final String USER_ID = "2535dccd-b7c1-4610-bd9b-4ed231f48f07";
-    private final String TEAM_ID = "40d02a00-c47c-492a-abf4-b3c6670a345e";
-
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
     // error messages
@@ -2465,10 +2462,6 @@ public class MainController {
 
         Team2 team = extractTeamInfo(responseEntity.getBody().toString());
         return team;
-    }
-
-    public String getStubUserID() {
-        return USER_ID;
     }
 
     private Experiment2 extractExperiment(String experimentJson) {
