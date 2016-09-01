@@ -32,10 +32,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import sg.ncl.domain.ExceptionState;
-import sg.ncl.domain.MemberStatus;
-import sg.ncl.domain.RealizationState;
-import sg.ncl.domain.UserType;
+import sg.ncl.domain.*;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 
@@ -61,8 +58,6 @@ public class MainController {
     private NodeManager nodeManager = NodeManager.getInstance();
 
     private String userType = "userType";
-    private String memberTypeOwner = "OWNER";
-    private String memberTypeMember = "MEMBER";
 
     // to know which form fields have been changed
     private User2 originalUser = null;
@@ -914,11 +909,11 @@ public class MainController {
 
                 JoinRequestApproval joinRequestApproval = new JoinRequestApproval();
 
-                if (userId.equals(session.getAttribute("id").toString()) && teamMemberType.equals(memberTypeOwner)) {
+                if (userId.equals(session.getAttribute("id").toString()) && teamMemberType.equals(MemberType.OWNER.toString())) {
                     isTeamLeader = true;
                 }
 
-                if (teamMemberStatus.equals("PENDING") && teamMemberType.equals(memberTypeMember)) {
+                if (teamMemberStatus.equals("PENDING") && teamMemberType.equals(MemberType.MEMBER.toString())) {
                     User2 myUser = invokeAndExtractUserInfo(userId);
                     joinRequestApproval.setUserId(myUser.getId());
                     joinRequestApproval.setUserEmail(myUser.getEmail());
@@ -2387,7 +2382,7 @@ public class MainController {
             String teamMemberStatus = memberObject.getString("memberStatus");
 
             User2 myUser = invokeAndExtractUserInfo(userId);
-            if (teamMemberType.equals(memberTypeMember)) {
+            if (teamMemberType.equals(MemberType.MEMBER.toString())) {
                 team2.addMembers(myUser);
 
                 // add to pending members list for Members Awaiting Approval function
@@ -2395,7 +2390,7 @@ public class MainController {
                     team2.addPendingMembers(myUser);
                 }
 
-            } else if (teamMemberType.equals(memberTypeOwner)) {
+            } else if (teamMemberType.equals(MemberType.OWNER.toString())) {
                 // explicit safer check
                 team2.setOwner(myUser);
             }
