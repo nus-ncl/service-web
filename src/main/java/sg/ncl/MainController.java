@@ -965,7 +965,7 @@ public class MainController {
             try {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 logger.warn("Server side error: {}", error.getName());
-                redirectAttributes.addFlashAttribute("message", "Server Side Error: " + error.getName());
+                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
                 logger.warn("IOException {}", ioe);
@@ -1013,7 +1013,7 @@ public class MainController {
             try {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 logger.warn("Server side error: {}", error.getName());
-                redirectAttributes.addFlashAttribute("message", "Server Side Error: " + error.getName());
+                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
                 logger.warn("IOException {}", ioe);
