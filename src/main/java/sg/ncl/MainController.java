@@ -930,32 +930,98 @@ public class MainController {
     }
     
     @RequestMapping("/approve_new_user/accept/{teamId}/{userId}")
-    public String userSideAcceptJoinRequest(@PathVariable String teamId, @PathVariable String userId, HttpSession session) {
+    public String userSideAcceptJoinRequest(
+            @PathVariable String teamId,
+            @PathVariable String userId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        logger.info("Approve join request: User {}, Team {}, Approver {}",
+                userId, teamId, session.getAttribute("id").toString());
 
         JSONObject mainObject = new JSONObject();
         JSONObject userFields = new JSONObject();
-
         userFields.put("id", session.getAttribute("id").toString());
         mainObject.put("user", userFields);
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+        ResponseEntity response;
+        try {
+            response = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+        } catch (RestClientException e) {
+            logger.warn("Error connecting to sio team service: {}", e);
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/approve_new_user";
+        }
 
+        String responseBody = response.getBody().toString();
+        if (RestUtil.isError(response.getStatusCode())) {
+            try {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                logger.warn("Server side error: {}", error.getName());
+                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                return "redirect:/approve_new_user";
+            } catch (IOException ioe) {
+                logger.warn("IOException {}", ioe);
+                throw new WebServiceRuntimeException(ioe.getMessage());
+            }
+        }
+        // everything looks OK?
+        String msg = new JSONObject(responseBody).getString("msg");
+        if(!"process join request OK".equals(msg)) {
+            logger.warn("Cannot process join request: {}", msg);
+            redirectAttributes.addFlashAttribute("message", "Cannot process join request: " + msg);
+            return "redirect:/approve_new_user";
+        }
+        logger.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
+        redirectAttributes.addFlashAttribute("message", "Join request has been APPROVED.");
         return "redirect:/approve_new_user";
     }
     
     @RequestMapping("/approve_new_user/reject/{teamId}/{userId}")
-    public String userSideRejectJoinRequest(@PathVariable String teamId, @PathVariable String userId, HttpSession session) {
+    public String userSideRejectJoinRequest(
+            @PathVariable String teamId,
+            @PathVariable String userId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        logger.info("Reject join request: User {}, Team {}, Approver {}",
+                userId, teamId, session.getAttribute("id").toString());
+
         JSONObject mainObject = new JSONObject();
         JSONObject userFields = new JSONObject();
-
         userFields.put("id", session.getAttribute("id").toString());
         mainObject.put("user", userFields);
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getRejectJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
+        ResponseEntity response;
+        try {
+            response = restTemplate.exchange(properties.getRejectJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
+        } catch (RestClientException e) {
+            logger.warn("Error connecting to sio team service: {}", e);
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/approve_new_user";
+        }
 
-//        teamManager.rejectJoinRequest(userId, teamId);
+        String responseBody = response.getBody().toString();
+        if (RestUtil.isError(response.getStatusCode())) {
+            try {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                logger.warn("Server side error: {}", error.getName());
+                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                return "redirect:/approve_new_user";
+            } catch (IOException ioe) {
+                logger.warn("IOException {}", ioe);
+                throw new WebServiceRuntimeException(ioe.getMessage());
+            }
+        }
+        // everything looks OK?
+        String msg = new JSONObject(responseBody).getString("msg");
+        if(!"process join request OK".equals(msg)) {
+            logger.warn("Cannot process join request: {}", msg);
+            redirectAttributes.addFlashAttribute("message", "Cannot process join request: " + msg);
+            return "redirect:/approve_new_user";
+        }
+        logger.info("Join request has been REJECTED, User {}, Team {}", userId, teamId);
+        redirectAttributes.addFlashAttribute("message", "Join request has been REJECTED.");
         return "redirect:/approve_new_user";
     }
     
