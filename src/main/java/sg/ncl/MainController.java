@@ -263,7 +263,6 @@ public class MainController {
         String base64Creds = new String(base64CredsBytes);
 
         ResponseEntity response;
-        String jwtTokenString;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + base64Creds);
@@ -273,43 +272,106 @@ public class MainController {
 
         try {
             response = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
-            jwtTokenString = response.getBody().toString();
-        } catch (Exception e) {
-            logger.warn("Error connecting to authentication service to validate login details", e.getMessage());
+        } catch (RestClientException e) {
+            logger.warn("Error connecting to sio authentication service: {}", e);
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
 
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
+        String jwtTokenString = response.getBody().toString();
+        logger.info("token string {}", jwtTokenString);
+        if(jwtTokenString == null || jwtTokenString.isEmpty()) {
+            logger.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
+            loginForm.setErrorMsg("Login failed: Invalid email/password.");
+            return "login";
+        }
+        if (RestUtil.isError(response.getStatusCode())) {
+            try {
                 MyErrorResource error = objectMapper.readValue(jwtTokenString, MyErrorResource.class);
-                loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                logger.warn("login failed with username {}", loginForm.getLoginEmail());
-                return "login";
-            } else if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
-                JSONObject tokenObject = new JSONObject(jwtTokenString);
-                String token = tokenObject.getString("token");
-                String id = tokenObject.getString("id");
+                if(ExceptionState.CredentialsNotFoundException.toString().equals(error.getName())) {
+                    logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
+                    loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
+                    return "login";
+                }
+                else {
+                    logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getName());
+                    loginForm.setErrorMsg("Login failed: Invalid email/password.");
+                    return "login";
+                }
+            } catch (IOException ioe) {
+                logger.warn("IOException {}", ioe);
+                throw new WebServiceRuntimeException(ioe.getMessage());
+            }
+        }
 
-                // TODO: get user type from jwt token
+        JSONObject tokenObject = new JSONObject(jwtTokenString);
+        String token = tokenObject.getString("token");
+        String id = tokenObject.getString("id");
+        if(token.trim().isEmpty() || id.trim().isEmpty()) {
+            logger.warn("login failed for {}: empty id {} or token {}", loginForm.getLoginEmail(), id, token);
+            loginForm.setErrorMsg("Login failed: Invalid email/password.");
+            return "login";
+        }
+
+        // TODO: get user type from jwt token
 //                String userType = tokenObject.getString("type");
 //                setSessionVariables(session, loginForm.getLoginEmail(), id, userType);
 
-                AUTHORIZATION_HEADER = "Bearer " + token;
+        AUTHORIZATION_HEADER = "Bearer " + token;
+        setSessionVariables(session, loginForm.getLoginEmail(), id);
+        logger.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
 
-                setSessionVariables(session, loginForm.getLoginEmail(), id);
+        // now check user status to decide what to show to the user
+        String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
+        HttpEntity<String> userRequest = createHttpEntityHeaderOnly();
+        //restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity userResponse;
+        try {
+            userResponse = restTemplate.exchange(userId_uri, HttpMethod.GET, userRequest, String.class);
+        } catch (RestClientException e) {
+            logger.warn("Error connecting to sio user service: {}", e);
+            loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
+            return "login";
+        }
+        String responseBody = userResponse.getBody().toString();
+        if (RestUtil.isError(userResponse.getStatusCode())) {
+            try {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                logger.error("User {} not found: {}", session.getAttribute("id"), error.getName());
+                loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
+                return "login";
+            } catch (IOException ioe) {
+                logger.warn("IOException {}", ioe);
+                throw new WebServiceRuntimeException(ioe.getMessage());
+            }
+        }
 
-                logger.info("login success with username: {}, token id: {}", loginForm.getLoginEmail(), id);
+        try {
+            JSONObject user = new JSONObject(responseBody);
+            String userStatus = user.getString("status");
+            boolean emailVerified = user.getBoolean("emailVerified");
+            if(!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
+                logger.info("User {} not validated, redirected to email verification page", session.getAttribute("id"));
+                return "redirect:/email_not_validated";
+            }
+            else if((UserStatus.PENDING.toString()).equals(userStatus)) {
+                logger.info("User {} not approved, redirected to application pending page", session.getAttribute("id"));
+                return "redirect:/team_application_under_review";
+            }
+            else if((UserStatus.APPROVED.toString()).equals(userStatus)) {
                 return "redirect:/dashboard";
-            } else {
-                // case1: invalid login
-                loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                logger.warn("login failed with unknown response code with username {}", loginForm.getLoginEmail());
+            }
+            else {
+                logger.warn("login failed for user {}: account is rejected or closed", session.getAttribute("id"));
+                loginForm.setErrorMsg("Login Failed: Account Rejected/Closed.");
                 return "login";
             }
-        } catch (IOException e) {
-            throw new WebServiceRuntimeException(e.getMessage());
+        } catch (Exception e) {
+            logger.warn("Error parsing json object for user: {}", e.getMessage());
+            loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
+            return "login";
         }
+
 
         /*
     	String inputEmail = loginForm.getLoginEmail();
@@ -1747,7 +1809,7 @@ public class MainController {
 //
 //    	return "contribute_data";
 //    }
-    
+
 //    @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
 //    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
 //    	// TODO
@@ -1785,14 +1847,14 @@ public class MainController {
 //		}
 //    	return "redirect:/data";
 //    }
-    
+
 //    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.GET)
 //    public String datasetInfo(@PathVariable Integer datasetId, Model model) {
 //    	Dataset dataset = datasetManager.getDataset(datasetId);
 //    	model.addAttribute("editDataset", dataset);
 //    	return "edit_data";
 //    }
-    
+
 //    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.POST)
 //    public String editDatasetInfo(@PathVariable Integer datasetId, @ModelAttribute("editDataset") Dataset dataset, final RedirectAttributes redirectAttributes) {
 //    	Dataset origDataset = datasetManager.getDataset(datasetId);
@@ -1830,20 +1892,20 @@ public class MainController {
 //
 //    	return "redirect:/data/edit/{datasetId}";
 //    }
-    
+
 //    @RequestMapping("/data/remove_dataset/{datasetId}")
 //    public String removeDataset(@PathVariable Integer datasetId) {
 //    	datasetManager.removeDataset(datasetId);
 //    	return "redirect:/data";
 //    }
-    
+
 //    @RequestMapping("/data/public")
 //    public String openDataset(Model model) {
 //    	model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
 //    	model.addAttribute("userManager", userManager);
 //    	return "data_public";
 //    }
-    
+
 //    @RequestMapping("/data/public/request_access/{dataOwnerId}")
 //    public String requestAccessForDataset(@PathVariable Integer dataOwnerId, Model model) {
 //    	// TODO
