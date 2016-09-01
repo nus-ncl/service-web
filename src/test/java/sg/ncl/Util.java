@@ -41,6 +41,15 @@ public class Util {
         return user;
     }
 
+    public static Team2 getTeam() {
+        final Team2 team = new Team2();
+        team.setId(RandomStringUtils.randomAlphanumeric(20));
+        team.setName(RandomStringUtils.randomAlphanumeric(20));
+        team.setDescription(RandomStringUtils.randomAlphanumeric(20));
+        team.setWebsite(RandomStringUtils.randomAlphanumeric(20));
+        return team;
+    }
+
     public static List<User2> getMembersList() {
         List<User2> membersList = new ArrayList<>();
         membersList.add(getUser());
