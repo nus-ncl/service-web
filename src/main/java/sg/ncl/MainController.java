@@ -913,7 +913,7 @@ public class MainController {
                     isTeamLeader = true;
                 }
 
-                if (teamMemberStatus.equals("PENDING") && teamMemberType.equals(MemberType.MEMBER.toString())) {
+                if (teamMemberStatus.equals(MemberStatus.PENDING.toString()) && teamMemberType.equals(MemberType.MEMBER.toString())) {
                     User2 myUser = invokeAndExtractUserInfo(userId);
                     joinRequestApproval.setUserId(myUser.getId());
                     joinRequestApproval.setUserEmail(myUser.getEmail());
@@ -2386,7 +2386,7 @@ public class MainController {
                 team2.addMembers(myUser);
 
                 // add to pending members list for Members Awaiting Approval function
-                if (teamMemberStatus.equals("PENDING")) {
+                if (teamMemberStatus.equals(MemberStatus.PENDING.toString())) {
                     team2.addPendingMembers(myUser);
                 }
 
@@ -2432,7 +2432,7 @@ public class MainController {
             JSONObject memberObject = membersArray.getJSONObject(i);
             String uid = memberObject.getString("userId");
             String teamMemberStatus = memberObject.getString("memberStatus");
-            if (uid.equals(userId) && teamMemberStatus.equals("PENDING")) {
+            if (uid.equals(userId) && teamMemberStatus.equals(MemberStatus.PENDING.toString())) {
 
                 team2.setId(object.getString("id"));
                 team2.setName(object.getString("name"));
