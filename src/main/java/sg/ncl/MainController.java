@@ -323,11 +323,11 @@ public class MainController {
             String userStatus = user.getStatus();
             boolean emailVerified = user.getEmailVerified();
             if(!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
-                logger.info("User {} not validated, redirected to email verification page", session.getAttribute("id"));
+                logger.info("User {} not validated, redirected to email verification page", id);
                 return "redirect:/email_not_validated";
             }
             else if((UserStatus.PENDING.toString()).equals(userStatus)) {
-                logger.info("User {} not approved, redirected to application pending page", session.getAttribute("id"));
+                logger.info("User {} not approved, redirected to application pending page", id);
                 return "redirect:/team_application_under_review";
             }
             else if((UserStatus.APPROVED.toString()).equals(userStatus)) {
@@ -337,7 +337,7 @@ public class MainController {
                 return "redirect:/dashboard";
             }
             else {
-                logger.warn("login failed for user {}: account is rejected or closed", session.getAttribute("id"));
+                logger.warn("login failed for user {}: account is rejected or closed", id);
                 loginForm.setErrorMsg("Login Failed: Account Rejected/Closed.");
                 return "login";
             }
