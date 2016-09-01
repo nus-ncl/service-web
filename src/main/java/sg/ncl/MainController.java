@@ -57,7 +57,7 @@ public class MainController {
 //    private DatasetManager datasetManager = DatasetManager.getInstance();
 //    private NodeManager nodeManager = NodeManager.getInstance();
 
-    private String userType = "userType";
+    private String session_roles = "roles";
 
     // to know which form fields have been changed
     private User2 originalUser = null;
@@ -313,56 +313,31 @@ public class MainController {
             return "login";
         }
 
-        // TODO: get user type from jwt token
-//                String userType = tokenObject.getString("type");
-//                setSessionVariables(session, loginForm.getLoginEmail(), id, userType);
 
         AUTHORIZATION_HEADER = "Bearer " + token;
-        setSessionVariables(session, loginForm.getLoginEmail(), id);
-        logger.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
 
         // now check user status to decide what to show to the user
-        String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
-        HttpEntity<String> userRequest = createHttpEntityHeaderOnly();
-        //restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity userResponse;
-        try {
-            userResponse = restTemplate.exchange(userId_uri, HttpMethod.GET, userRequest, String.class);
-        } catch (RestClientException e) {
-            logger.warn("Error connecting to sio user service: {}", e);
-            loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
-            return "login";
-        }
-        String responseBody = userResponse.getBody().toString();
-        if (RestUtil.isError(userResponse.getStatusCode())) {
-            try {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                logger.error("User {} not found: {}", session.getAttribute("id"), error.getName());
-                loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
-                return "login";
-            } catch (IOException ioe) {
-                logger.warn("IOException {}", ioe);
-                throw new WebServiceRuntimeException(ioe.getMessage());
-            }
-        }
+        User2 user = invokeAndExtractUserInfo(id);
 
         try {
-            JSONObject user = new JSONObject(responseBody);
-            String userStatus = user.getString("status");
-            boolean emailVerified = user.getBoolean("emailVerified");
+            String userStatus = user.getStatus();
+            boolean emailVerified = user.getEmailVerified();
             if(!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
-                logger.info("User {} not validated, redirected to email verification page", session.getAttribute("id"));
+                logger.info("User {} not validated, redirected to email verification page", id);
                 return "redirect:/email_not_validated";
             }
             else if((UserStatus.PENDING.toString()).equals(userStatus)) {
-                logger.info("User {} not approved, redirected to application pending page", session.getAttribute("id"));
+                logger.info("User {} not approved, redirected to application pending page", id);
                 return "redirect:/team_application_under_review";
             }
             else if((UserStatus.APPROVED.toString()).equals(userStatus)) {
+                // set session variables
+                setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), user.getRoles());
+                logger.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
                 return "redirect:/dashboard";
             }
             else {
-                logger.warn("login failed for user {}: account is rejected or closed", session.getAttribute("id"));
+                logger.warn("login failed for user {}: account is rejected or closed", id);
                 loginForm.setErrorMsg("Login Failed: Account Rejected/Closed.");
                 return "login";
             }
@@ -371,51 +346,6 @@ public class MainController {
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
-
-
-        /*
-    	String inputEmail = loginForm.getLoginEmail();
-    	int userId = userManager.getUserIdByEmail(inputEmail);
-    	
-        if (userManager.validateLoginDetails(loginForm.getLoginEmail(), loginForm.getLoginPassword()) == false) 
-        {
-            // case1: invalid login
-            loginForm.setErrorMsg("Invalid email/password.");
-            return "login";
-        } 
-        else if (userManager.isEmailVerified(loginForm.getLoginEmail()) == false) 
-        {
-            // case2: email address not validated
-            model.addAttribute("emailAddress", loginForm.getLoginEmail());
-            return "redirect:/email_not_validated";
-        } 
-        else if (teamManager.getApprovedTeams(userId) == 0 && teamManager.getJoinRequestTeamMap2(userId) != null) 
-        {
-        	// case3 
-        	// user is not a team owner nor a team member
-        	// user has request to join a team but has not been approved by the team owner
-        	return "redirect:/join_application_awaiting_approval";
-        } 
-        else if (teamManager.getApprovedTeams(userId) == 0 && teamManager.getUnApprovedTeams(userId) > 0)
-        {
-            // case4: since it goes through case3, user must be applying for a team
-        	// team approval under review
-            // email address is supposed to be valid here
-            return "redirect:/team_application_under_review";
-        } 
-        else 
-        {
-            // all validated
-        	// user may have no team at this point due to rejected team application or join request
-        	// must allow user to login so that user can apply again
-            // set login
-            CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
-            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
-            session.setAttribute("isUserAdmin", IS_USER_ADMIN);
-            session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
-            return "redirect:/dashboard";
-        }
-        */
 
     }
     
@@ -1923,21 +1853,6 @@ public class MainController {
     //---------------------------------Admin---------------------------------
     @RequestMapping("/admin")
     public String admin(Model model, HttpSession session) {
-//    	model.addAttribute("domain", new Domain());
-//    	model.addAttribute("domainTable", domainManager.getDomainTable());
-//    	model.addAttribute("usersMap", userManager.getUserMap());
-//    	model.addAttribute("teamsPendingApprovalMap", teamManager.getTeamsPendingApproval());
-//    	model.addAttribute("experimentMap", experimentManager.getExperimentMap2());
-//
-//    	model.addAttribute("totalTeamCount", teamManager.getTotalTeamsCount());
-//    	model.addAttribute("totalExpCount", experimentManager.getTotalExpCount());
-//    	model.addAttribute("totalMemberCount", teamManager.getTotalMembersCount());
-//    	model.addAttribute("totalMemberAwaitingApprovalCount", teamManager.getTotalMembersAwaitingApproval());
-//
-//    	model.addAttribute("datasetMap", datasetManager.getDatasetMap());
-//    	model.addAttribute("userManager", userManager);
-//
-//    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
 
         if (!validateIfAdmin(session)) {
             return "nopermission";
@@ -1992,8 +1907,6 @@ public class MainController {
             }
         }
 
-//        model.addAttribute("teamsMap", teamManager.getTeamMap());
-//        model.addAttribute("teamManager", teamManager);
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
         model.addAttribute("usersList", usersList);
@@ -2021,8 +1934,14 @@ public class MainController {
     public String approveTeam(
             @PathVariable String teamId,
             @PathVariable String teamOwnerId,
-            final RedirectAttributes redirectAttributes
+            final RedirectAttributes redirectAttributes,
+            HttpSession session
     ) throws WebServiceRuntimeException {
+
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
+        }
+
         //FIXME require approver info
         logger.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -2074,8 +1993,14 @@ public class MainController {
     public String rejectTeam(
             @PathVariable String teamId,
             @PathVariable String teamOwnerId,
-            final RedirectAttributes redirectAttributes
+            final RedirectAttributes redirectAttributes,
+            HttpSession session
     ) throws WebServiceRuntimeException {
+
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
+        }
+
         //FIXME require approver info
         logger.info("Rejecting new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -2292,16 +2217,12 @@ public class MainController {
     }
     
     @RequestMapping("/email_not_validated")
-    public String emailNotValidated(Model model) {
-    	model.addAttribute("loginForm", new LoginForm());
-    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    public String emailNotValidated() {
         return "email_not_validated";
     }
     
     @RequestMapping("/team_application_under_review")
-    public String teamAppUnderReview(Model model) {
-    	model.addAttribute("loginForm", new LoginForm());
-    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    public String teamAppUnderReview() {
         return "team_application_under_review";
     }
     
@@ -2398,6 +2319,11 @@ public class MainController {
 
     private User2 extractUserInfo(String userJson) {
         User2 user2 = new User2();
+        if (userJson == null) {
+            // return empty user
+            return user2;
+        }
+
         JSONObject object = new JSONObject(userJson);
         JSONObject userDetails = object.getJSONObject("userDetails");
         JSONObject address = userDetails.getJSONObject("address");
@@ -2417,6 +2343,15 @@ public class MainController {
         user2.setInstitution(userDetails.getString("institution"));
         user2.setInstitutionAbbreviation(userDetails.getString("institutionAbbreviation"));
         user2.setInstitutionWeb(userDetails.getString("institutionWeb"));
+
+        user2.setStatus(object.getString("status"));
+        user2.setEmailVerified(object.getBoolean("emailVerified"));
+
+        String role = UserType.USER.toString();
+        if (object.getJSONArray("roles") != null) {
+            role = object.getJSONArray("roles").get(0).toString();
+        }
+        user2.setRoles(role);
 
         return user2;
     }
@@ -2512,9 +2447,16 @@ public class MainController {
 
     private User2 invokeAndExtractUserInfo(String userId) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        ResponseEntity response;
 
-        User2 user2 = extractUserInfo(responseEntity.getBody().toString());
+        try {
+            response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        } catch (Exception e) {
+            logger.warn("User service not available to retrieve User: {}", userId);
+            return new User2();
+        }
+
+        User2 user2 = extractUserInfo(response.getBody().toString());
         return user2;
     }
 
@@ -2638,27 +2580,25 @@ public class MainController {
         return new HttpEntity<>(headers);
     }
 
-    private void setSessionVariables(HttpSession session, String loginEmail, String id) {
+    private void setSessionVariables(HttpSession session, String loginEmail, String id, String firstName, String userRoles) {
         User2 user = invokeAndExtractUserInfo(id);
         session.setAttribute("sessionLoggedEmail", loginEmail);
         session.setAttribute("id", id);
-        session.setAttribute("name", user.getFirstName());
-        // FIXME: get user type from token
-//        session.setAttribute("userType", UserType.NORMAL.toString());
-        session.setAttribute(userType, UserType.ADMIN.toString());
+        session.setAttribute("name", firstName);
+        session.setAttribute(session_roles, userRoles);
+        logger.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), user.getRoles());
     }
 
     private void removeSessionVariables(HttpSession session) {
         session.removeAttribute("sessionLoggedEmail");
         session.removeAttribute("id");
         session.removeAttribute("name");
-        // FIXME: get user type from token
-        session.removeAttribute(userType);
+        session.removeAttribute(session_roles);
     }
 
     private boolean validateIfAdmin(HttpSession session) {
-        logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(userType));
-        return session.getAttribute(userType).equals(UserType.ADMIN.toString());
+        logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(session_roles));
+        return session.getAttribute(session_roles).equals(UserType.ADMIN.toString());
     }
 
     private Realization getCleanRealization() {

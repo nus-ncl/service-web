@@ -42,8 +42,7 @@
 				<li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
 				<li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a></li>
 				<!--<li><a href="/data" th:href="@{/data}">Data</a></li>-->
-				<!--<li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a></li>-->
-				<li th:if="${(session.userType != null) and (session.userType == 'ADMIN')}">
+				<li th:if="${(session.roles != null) and (session.roles == 'ADMIN')}">
 					<a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a>
 				</li>
 				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="#{nav.help}">Support</span> <span class="caret"></span></a>
