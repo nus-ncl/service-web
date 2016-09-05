@@ -157,6 +157,11 @@ public class MainController {
         return "tools";
     }
 
+    @RequestMapping("/resource2")
+    public String resource2() {
+        return "resource2";
+    }
+
     @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
     public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
         InputStream stream = null;
@@ -190,6 +195,46 @@ public class MainController {
         } catch (IOException ex) {
             logger.info("Error writing file to output stream.");
             throw new OrderFormDownloadException("IOError writing file to output stream");
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+    }
+
+    @RequestMapping(value="/SubscriptionAgreement/download", method=RequestMethod.GET)
+    public void SubscriptionAgreementDownload(HttpServletResponse response) throws MasterSubscriptionAgreementDownloadException, IOException {
+        InputStream stream = null;
+        response.setContentType("application/pdf");
+        try {
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/SubscriptionAgreement.pdf");
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment; filename=SubscriptionAgreement.pdf");
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+            logger.info("Error writing file to output stream.");
+            throw new MasterSubscriptionAgreementDownloadException("IOError writing file to output stream");
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+    }
+
+    @RequestMapping(value="/UsagePolicy/download", method=RequestMethod.GET)
+    public void UsagePolicyDownloadDownload(HttpServletResponse response) throws UsagePolicyDownloadException, IOException {
+        InputStream stream = null;
+        response.setContentType("application/pdf");
+        try {
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/UsagePolicy.pdf");
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment; filename=UsagePolicy.pdf");
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+            logger.info("Error writing file to output stream.");
+            throw new UsagePolicyDownloadException("IOError writing file to output stream");
         } finally {
             if (stream != null) {
                 stream.close();
