@@ -675,13 +675,13 @@ $( document ).ready(function() {
 						}
 					}
 				});
-			}
-		});
-	})(jQuery);
+		}
+	});
+})(jQuery);
 
-	$(document).ready(function() {
-		$(".topnav").accordion({
-			accordion:false,
+$(document).ready(function() {
+	$(".topnav").accordion({
+		accordion:false,
 			speed: 500,
 			closedSign: '[+]',
 			openedSign: '[-]'
