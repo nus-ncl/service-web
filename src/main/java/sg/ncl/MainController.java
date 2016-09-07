@@ -2660,6 +2660,7 @@ public class MainController {
         session.removeAttribute("id");
         session.removeAttribute("name");
         session.removeAttribute(session_roles);
+        AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
     }
 
     private boolean validateIfAdmin(HttpSession session) {
