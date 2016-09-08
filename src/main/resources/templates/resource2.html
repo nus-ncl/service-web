@@ -14,7 +14,7 @@
 		<p>&nbsp;</p>
 		<!--here make changes-->
 		<!--<div class="tab-content col-sm-10 dashpanel_admin">-->
-		<div class="row dashpanel">
+		<div class="row dashpanel  col-sm-12">
 		<!--<div class="tab-content col-sm-10">-->
 		<h2 class="team-heading team-heading-current-team" th:text="#{resource.heading.current}">text heading from .properties</h2>
 
@@ -53,7 +53,7 @@
 
 		</ul>
 
-		<div class="tab-content col-sm-8">
+		<div class="col-sm-9">
 			<div id="vul" class="tab-panel fade in active">
 				<h3>System Vulnerability Environments</h3>
 
@@ -72,57 +72,63 @@
 				<div>
 					<table id="SUETable" class="table">
 					<tr>
-						<th></th>
-						<th>Public ID</th>
-						<th>Name</th>
-						<th>Description</th>
-						<th>Action</th>
+						<th width="1%"></th>
+						<th width="14%">Public ID</th>
+						<th width="20%">Name</th>
+						<th width="35%">Description</th>
+						<th width="30%">Action</th>
 					</tr>
 					<tr>
 						<td>1</td>
-
+						<td><a href="#" data-toggle="modal" data-target="#myModal">CVE-2011-2523</a></td>
 						<div class="container">
+							<div id="myModal" class="modal fade admin-modal" role="dialog">
+								<div class="modal-dialog">
 									<!--Modal Content-->
 									<div class="modal-content">
-										   <button type="button" class="close" data-dismiss="modal">&times;</button>
-									   </div>
-									   <div class="modal-body">
-										   <p><b>Vulnerability</b>
-										   	  <ul>
-										   		<li>CVE: 2011-2523</li>
-										   		<li>OSVDB: 73573</li>
-										   		<li>EDB: 17491</li>
-										      </ul>
-										   </p>
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal">&times;</button>
+											<h4 class="modal-title">CVE-2011-2523</h4>
+										</div>
+										<div class="modal-body">
+											<p><b>Vulnerability</b>
+											<ul>
+												<li>CVE: 2011-2523</li>
+												<li>OSVDB: 73573</li>
+												<li>EDB: 17491</li>
+											</ul>
+											</p>
 
-										   <p><b>Environment</b>
-										      <ul>
-										      <li>Operating system with version: Ubuntu 12.04.5 LTS</li>
-										      <li> Other environment information: NIL</li>
-										      </ul>
-										   </p>
+											<p><b>Environment</b>
+											<ul>
+												<li>Operating system with version: Ubuntu 12.04.5 LTS</li>
+												<li> Other environment information: NIL</li>
+											</ul>
+											</p>
 
-										   <p><b>Resources</b>
-										      <ul>
-										   	  <li>Link to vulnerable source: <a href="https://github.com/bb111189/BinariesForCTF" target="_blank">Click Here</a></li>
-										      <li>Link to exploit: NIL</li>
-										      </ul>
-										   </p>
+											<p><b>Resources</b>
+											<ul>
+												<li>Link to vulnerable source: <a href="https://github.com/bb111189/BinariesForCTF" target="_blank">Click Here</a></li>
+												<li>Link to exploit: NIL</li>
+											</ul>
+											</p>
 
 
-										   <p><b>Description of Vulnerability</b>
-											   <br/><br/>
-											   A malicious backdoor that was added to the VSFTPD download archive. This backdoor was introduced into the vsftpd-2.3.4.tar.gz archive between June 30th 2011 and July 1st 2011 according to the most recent information available. This backdoor was removed on July 3rd 2011.
+											<p><b>Description of Vulnerability</b>
+												<br/><br/>
+												A malicious backdoor that was added to the VSFTPD download archive. This backdoor was introduced into the vsftpd-2.3.4.tar.gz archive between June 30th 2011 and July 1st 2011 according to the most recent information available. This backdoor was removed on July 3rd 2011.
 
- 										   </p>
-
+											</p>
+											<p>
+												<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+												<button type="button" class="btn btn-standard">Save</button>
+											</p>
 										</div>
 										<div class="modal-footer">
 											<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 										</div>
 									</div>
-
-							</div>
+								</div>
 							</div>
 						</div>
 						<td>vsftpd</td>
@@ -199,16 +205,16 @@
 				<!--<p>Some content.</p>-->
 			</div>
 			<div id="bigdata" class="tab-pane fade">
-				<h3>Menu 1</h3>
-				<p>Some content in menu 1.</p>
+				<!--<h3>Menu 1</h3>-->
+				<!--<p>Some content in menu 1.</p>-->
 			</div>
 			<div id="blockchain" class="tab-pane fade">
-				<h3>Menu 2</h3>
-				<p>Some content in menu 2.</p>
+				<!--<h3>Menu 2</h3>-->
+				<!--<p>Some content in menu 2.</p>-->
 			</div>
 			<div id="mobile" class="tab-pane fade">
-				<h3>Menu 3</h3>
-				<p>Some content in menu 3.</p>
+				<!--<h3>Menu 3</h3>-->
+				<!--<p>Some content in menu 3.</p>-->
 			</div>
 		</div>
 		</div> <!--here-->
