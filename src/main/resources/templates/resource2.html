@@ -7,11 +7,15 @@
 	</head>
 	<body class="mybg loginbackground">
 	<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
-	<div class="container ">
+	<div class="container">
 		<p>&nbsp;</p>
 		<p>&nbsp;</p>
 		<p>&nbsp;</p>
 		<p>&nbsp;</p>
+		<!--here make changes-->
+		<!--<div class="tab-content col-sm-10 dashpanel_admin">-->
+		<div class="row dashpanel">
+		<!--<div class="tab-content col-sm-10">-->
 		<h2 class="team-heading team-heading-current-team" th:text="#{resource.heading.current}">text heading from .properties</h2>
 
 		<ul class="topnav col-sm-2">
@@ -51,8 +55,95 @@
 
 		<div class="tab-content col-sm-8">
 			<div id="vul" class="tab-pane fade in active">
-				<h3>HOME</h3>
-				<p>Some content.</p>
+				<h3>System Vulnerability Environments</h3>
+
+					<div class="container-1 form-inline">
+							<input type="search" class="form-control" placeholder="Search..."/>
+							<button type="button" class="form-control"><i class="fa fa-search"></i></button>
+					</div>
+
+
+				<!--<div class="input-group">-->
+					<!--<input type="search" class="form-control" placeholder="Search...">-->
+					<!--<span class="input-group-btn">-->
+    				<!--<button class="btn btn-default" button type="button">Go!</button>-->
+  					<!--</span>-->
+				<!--</div>-->
+
+
+				<table id="SUETable" class="table table-responsive">
+					<tr>
+						<th></th>
+						<th>Public ID</th>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Action</th>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>CVE2011-2523</td>
+						<td>vsftpd</td>
+						<td>Backdoor Trojan</td>
+						<td><button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+							<button type="button" class="btn btn-standard">Download</button>
+						</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>CVE-2014-6271</td>
+						<td>Bash Code Injection</td>
+						<td>ShellShock</td>
+						<td><button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+							<button type="button" class="btn btn-standard">Download</button>
+						</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>CVE-2014-0160</td>
+						<td>OpenSSL 'Heartbleed'</td>
+						<td>Heartbleed</td>
+						<td><button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+							<button type="button" class="btn btn-standard">Download</button>
+						</td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>CVE-2003-0352</td>
+						<td>Buffer Overrun in RPC</td>
+						<td>Microsoft RPC DCOM Interface Overflow</td>
+						<td><button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+							<button type="button" class="btn btn-standard">Download</button>
+						</td>
+					</tr>
+					<tr>
+						<td>5</td>
+						<td>OSVDB-16373</td>
+						<td>gIFTPD dupescan buffer overflow</td>
+						<td>SSH CRC-32 Compensation Attack Detector</td>
+						<td><button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+							<button type="button" class="btn btn-standard">Download</button>
+						</td>
+					</tr>
+					<tr>
+						<td>6</td>
+						<td>OSVDB-60979</td>
+						<td>HTTPd Remote Heap Overflow</td>
+						<td>Null HTTPd Remote Heap Overflow Vulnerability</td>
+						<td><button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+							<button type="button" class="btn btn-standard">Download</button>
+						</td>
+					</tr>
+					<tr>
+						<td>7</td>
+						<td>EDB-816</td>
+						<td>Anything to PostScript</td>
+						<td>GNU a2ps Local Exploit</td>
+						<td><button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+							<button type="button" class="btn btn-standard">Download</button>
+						</td>
+					</tr>
+				</table>
+				<!--<p>Some content.</p>-->
 			</div>
 			<div id="bigdata" class="tab-pane fade">
 				<h3>Menu 1</h3>
@@ -67,7 +158,8 @@
 				<p>Some content in menu 3.</p>
 			</div>
 		</div>
-
+		</div> <!--here-->
+	</div>
 
 
 		<div class="cc-wraper">
@@ -86,7 +178,7 @@
 					<p>&nbsp;</p>
 				</form>
 			</div>
-		</div>
+		<!--</div>-->
 	</div> <!-- container -->
 	<p>&nbsp;</p>
 	<p>&nbsp;</p>

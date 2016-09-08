@@ -2082,3 +2082,54 @@ ul.topnav span{
     float:right;
 }
 
+/*.SUE_Table > th, td{*/
+    /*border: 1px solid black;*/
+    /*border-collapse: collapse;*/
+    /*font-family: "Times New Roman", serif;*/
+    /*text-align: center;*/
+    /*padding: 5px;*/
+    /*width:100%;*/
+    /*white-space:nowrap;*/
+/*}*/
+/*.SUE_Table > th {*/
+    /*color: #00C7BA;*/
+/*}*/
+
+#vul h3 {
+   color: #21b3b7;
+   font-size: 22px;
+   font-weight: bold;
+   padding-left: 30px;
+   padding-bottom: 30px;
+}
+
+#SUETable {
+    /*border-collapse: collapse;*/
+    white-space:nowrap;
+/*didn't apply*/
+   /* #21b3b7*/
+}
+
+#SUETable th, td {
+    text-align: center;
+}
+
+#SUETable td {
+    font-size: 14px;
+    padding: 5.5px;
+}
+
+
+.container-1{
+    position: relative;
+    /*left: 650px;*/
+    left: 640px;
+    bottom: 30px;
+}
+
+
+/*.container-1 input#search:hover, .container-1 input#search:focus, .container-1 input#search:active{
+    outline:none;
+    background: #ffffff;
+}*/
+
