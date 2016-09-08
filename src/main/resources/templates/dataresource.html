@@ -9,21 +9,26 @@
 	<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
 	<div class="container">
 		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<!--here make changes-->
-		<!--<div class="tab-content col-sm-10 dashpanel_admin">-->
-		<div class="row dashpanel">
-		<!--<div class="tab-content col-sm-10">-->
-		<h2 class="team-heading team-heading-current-team" th:text="#{resource.heading.current}">text heading from .properties</h2>
+					<p>&nbsp;</p>
+					<p>&nbsp;</p>
+					<p>&nbsp;</p>
+					<!--here make changes-->
+					<!--<div class="tab-content col-sm-10 dashpanel_admin">-->
+					<div class="row dashpanel col-sm-12">
+						<!--<div class="tab-content col-sm-10">-->
+						<h2 class="team-heading team-heading-current-team" th:text="#{resource.heading.current}">text heading from .properties</h2>
 
-		<ul class="topnav col-sm-2">
-			<li>
-				<a href="#">Data Category</a>
-				<ul>
-					<li class="active"><a data-toggle="tab" href="#vul">Malware</a></li>
-					<li><a data-toggle="tab" href="#bigdata">Network</a></li>
+						<ul class="topnav col-sm-2">
+							<li>
+								<a href="#">Data Category</a>
+								<ul>
+									<li class="active"><a data-toggle="tab" href="#vul">Malware Data</a></li>
+									<li><a data-toggle="tab" href="#bigdata">Application Layer Security Data</a></li>
+									<li><a data-toggle="tab" href="#bigdata">DNS Data</a></li>
+									<li><a data-toggle="tab" href="#bigdata">IDS and Firewall Data</a></li>
+									<li><a data-toggle="tab" href="#bigdata">IP Packet Headers</a></li>
+
+
 						<!--<ul>-->
 							<!--<li><a href="#">/a></li>-->
 							<!--<li><a href="#"></a></li>-->
@@ -42,7 +47,7 @@
 
 		</ul>
 
-		<div class="tab-content col-sm-8">
+		<div class="col-sm-9">
 			<div id="vul" class="tab-panel fade in active">
 				<h3>Data Vulnerability Environments</h3>
 					<!--<div class="form-inline left">-->
@@ -61,98 +66,92 @@
 					<table id="SUETable" class="table">
 					<tr>
 						<th></th>
-						<th>Public ID</th>
-						<th>Name</th>
-						<th>Description</th>
-						<th>Action</th>
+						<th width="25%">Data Name</th>
+						<th width="30%">Description</th>
+						<th width="15%">Release Date</th>
+						<th width="30%">Action</th>
 					</tr>
 					<tr>
 						<td>1</td>
-						<td>CVE2011-2523</td>
-						<td>vsftpd</td>
-						<td>Backdoor Trojan</td>
+						<td><a href="#" data-toggle="modal" data-target="#myModal">ITDK 2015-08</a></td>
+						<div class="container">
+							<div id="myModal" class="modal fade admin-modal" role="dialog">
+								<div class="modal-dialog">
+									<!--Modal Content-->
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal">&times;</button>
+											<h4 class="modal-title">ITDK 2015-08 </h4>
+										</div>
+										<div class="modal-body">
+											<p><b>Details</b>
+											<p>This dataset enables the study of the topology of the IPv4 and IPv6 Internet at the router-level with inferences for assignments of routers to Autonomous Systems (AS). The August 2015 release of the ITDK includes two related IPv4 router-level topologies; an IPv6 router-level topology; assignments of routers to ASes; geographic locations of each router; and Domain Name Service (DNS) lookups of all observed IP addresses.</p>
+											</p>
+											<p>
+												<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
+												<button type="button" class="btn btn-standard">Save</button>
+											</p>
+
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<td>Study of the topology of the IPv4 and IPv6 Internet</td>
+						<td>2015/08</td>
 						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+							<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
 							<button type="button" class="btn btn-standard">Save</button>
 						</td>
 					</tr>
 					<tr>
 						<td>2</td>
-						<td>CVE-2014-6271</td>
-						<td>Bash Code Injection</td>
-						<td>ShellShock</td>
+						<td>DNS AMPL DDOS DEC2015 </td>
+						<td>DNS Server Spoofed Request Amplification DDoS</td>
+						<td>2015/07</td>
 						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+							<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
 							<button type="button" class="btn btn-standard">Save</button>
 						</td>
 					</tr>
 					<tr>
-						<td>3</td>
-						<td>CVE-2014-0160</td>
-						<td>OpenSSL 'Heartbleed'</td>
-						<td>Heartbleed</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
+							<td>2</td>
+							<td>SSDP DDoS attack 2015</td>
+							<td>Simple Service Discovery Protocol attack</td>
+						    <td>2015/12</td>
+							<td>
+								<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
+								<button type="button" class="btn btn-standard">Save</button>
+					</td>
 					</tr>
-					<tr>
-						<td>4</td>
-						<td>CVE-2003-0352</td>
-						<td>Buffer Overrun in RPC</td>
-						<td>Microsoft RPC DCOM Interface Overflow</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-					<tr>
-						<td>5</td>
-						<td>OSVDB-16373</td>
-						<td>gIFTPD dupescan buffer overflow</td>
-						<td>SSH CRC-32 Compensation Attack Detector</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-					<tr>
-						<td>6</td>
-						<td>OSVDB-60979</td>
-						<td>HTTPd Remote Heap Overflow</td>
-						<td>Null HTTPd Remote Heap Overflow Vulnerability</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-					<tr>
-						<td>7</td>
-						<td>EDB-816</td>
-						<td>Anything to PostScript</td>
-						<td>GNU a2ps Local Exploit</td>
-						<td><button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-						</table>
+
+
+					</table>
+					<hr/>
+					<div class="fa fa-share" ><strong> &nbsp;&nbsp;Link to <a href="https://www.impactcybertrust.org/"> Impact Data</a></strong></div>
 				</div>
 				<!--<p>Some content.</p>-->
 			</div>
 			<div id="bigdata" class="tab-pane fade">
-				<h3>Menu 1</h3>
-				<p>Some content in menu 1.</p>
+				<!--<h3>Menu 1</h3>-->
+				<!--<p>Some content in menu 1.</p>-->
 			</div>
 			<div id="blockchain" class="tab-pane fade">
-				<h3>Menu 2</h3>
-				<p>Some content in menu 2.</p>
+				<!--<h3>Menu 2</h3>-->
+				<!--<p>Some content in menu 2.</p>-->
 			</div>
 			<div id="mobile" class="tab-pane fade">
-				<h3>Menu 3</h3>
-				<p>Some content in menu 3.</p>
+				<!--<h3>Menu 3</h3>-->
+				<!--<p>Some content in menu 3.</p>-->
 			</div>
 		</div>
+
+
 		</div> <!--here-->
+
 	</div>
 
 

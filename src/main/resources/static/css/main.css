@@ -1639,7 +1639,7 @@ table {
 
 /*for admin - Teams management page to push down the modal when click on team owner */
 .admin-modal {
-    top: 10%;
+    top: 20%;
 }
 
 /* for admin teams management page */
@@ -2103,9 +2103,9 @@ ul.topnav span{
 
 #vul h3 {
    color: #21b3b7;
-   font-size: 22px;
+   font-size: 25px;
    font-weight: bold;
-    padding-left: 15px;
+    padding-left: 10px;
     padding-bottom: 30px;
 }
 
