@@ -281,6 +281,8 @@ body {
     background-color: #fff;
     height : 100%;
     margin: 0 0 100px; /* bottom = footer height */
+
+
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -1543,6 +1545,9 @@ table {
     border-color: #333;
     border-radius: 10px;
     background-color:rgba(255,255,255, 0.7) !important;
+
+
+
  }
 
 .dashpanel2{
@@ -1685,6 +1690,7 @@ table {
 html {
     position: relative;
     min-height: 100%;
+
 }
 
 .pwdwidgetdiv
@@ -2099,24 +2105,27 @@ ul.topnav span{
    color: #21b3b7;
    font-size: 22px;
    font-weight: bold;
-   padding-left: 30px;
-   padding-bottom: 30px;
+    padding-left: 15px;
+    padding-bottom: 30px;
 }
 
 #SUETable {
     /*border-collapse: collapse;*/
-    white-space:nowrap;
-/*didn't apply*/
-   /* #21b3b7*/
+    white-space:inherit;
+    /*didn't apply*/
+    /* #21b3b7*/
+
 }
 
 #SUETable th, td {
-    text-align: center;
+    text-align: left;
+
 }
 
 #SUETable td {
     font-size: 14px;
-    padding: 5.5px;
+    padding: 3px;
+
 }
 
 
@@ -2125,6 +2134,13 @@ ul.topnav span{
     /*left: 650px;*/
     left: 640px;
     bottom: 30px;
+}
+
+.filter-table {
+    padding-left: 10px;
+    position: relative;
+    padding-right: 0px;
+
 }
 
 

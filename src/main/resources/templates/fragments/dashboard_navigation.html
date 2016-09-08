@@ -41,7 +41,14 @@
 			<ul class="nav navbar-nav navbar-left login-navbar-left">
 				<li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
 				<li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a></li>
-				<li><a href="/resource2" th:href="@{/resource2}"><span th:text="#{nav.resource}">Resource</span></a></li>
+				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="#{nav.resource}">Resource</span> <span class="caret"></span></a>
+					<ul class="dropdown-menu ">
+						<!--<li><a href="http://ncl.sg/docs-ncl/">Tutorial</a></li>-->
+						<li><a href="/resource2" th:href="@{/resource2}">RTU Environment</a></li>
+						<li><a href="dataresource.html" th:href="@{/dataresource}">Data</a></li>
+					</ul>
+				</li>
+
 				<!--<li><a href="/data" th:href="@{/data}">Data</a></li>-->
 				<!--<li th:if="${session.isUserAdmin}"><a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a></li>-->
 				<li th:if="${(session.userType != null) and (session.userType == 'ADMIN')}">
