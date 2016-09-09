@@ -120,6 +120,26 @@ bintray {
     }
 }
 
+task printInfo << {
+    println "  - project: ${project.name}"
+    println "  - archive artifacts: ${project.configurations.archives.allArtifacts.size()}"
+    project.configurations.archives.artifacts.files.each {
+        println "    - ${it.name}"
+    }
+    println "  - group: ${project.group}"
+    println "  - version: ${project.version}"
+    println "  - ${subprojects.size()} subprojects:"
+    subprojects.each {
+        println "    - ${it.name}:"
+        println "      - archive artifacts: ${it.configurations.archives.allArtifacts.size()}"
+        it.configurations.archives.artifacts.files.each {
+            println "        - ${it.name}"
+        }
+        println "      - group: ${it.group}"
+        println "      - version: ${it.version}"
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion '2.14'
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
