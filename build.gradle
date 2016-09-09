@@ -20,9 +20,13 @@ plugins {
 }
 apply plugin: 'spring-boot'
 
+ext {
+    hash = System.getenv('TRAVIS_COMMIT') == null ? 'SNAPSHOT' : "git rev-parse --short ${System.getenv('TRAVIS_COMMIT')}".execute().text.trim()
+}
+
 group = 'sg.ncl'
 
-version "1-${System.getenv('TRAVIS_COMMIT') ?: 'SNAPSHOT'}"
+version "1-${hash}"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -94,7 +98,8 @@ bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
     configurations = ['archives']
-    publish = true
+    dryRun = System.getenv('TRAVIS_BRANCH') != 'master' || System.getenv('TRAVIS_PULL_REQUEST') != 'false'
+    publish = System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false'
     pkg {
         repo = 'generic'
         name = 'service-web'
@@ -112,6 +117,26 @@ bintray {
             desc = "Web Service ${project.version} release"
             released = new Date()
         }
+    }
+}
+
+task printInfo << {
+    println "  - project: ${project.name}"
+    println "  - archive artifacts: ${project.configurations.archives.allArtifacts.size()}"
+    project.configurations.archives.artifacts.files.each {
+        println "    - ${it.name}"
+    }
+    println "  - group: ${project.group}"
+    println "  - version: ${project.version}"
+    println "  - ${subprojects.size()} subprojects:"
+    subprojects.each {
+        println "    - ${it.name}:"
+        println "      - archive artifacts: ${it.configurations.archives.allArtifacts.size()}"
+        it.configurations.archives.artifacts.files.each {
+            println "        - ${it.name}"
+        }
+        println "      - group: ${it.group}"
+        println "      - version: ${it.version}"
     }
 }
 
