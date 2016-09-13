@@ -24,10 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -307,8 +305,13 @@ public class MainController {
         JSONObject tokenObject = new JSONObject(jwtTokenString);
         String token = tokenObject.getString("token");
         String id = tokenObject.getString("id");
-        if(token.trim().isEmpty() || id.trim().isEmpty()) {
-            logger.warn("login failed for {}: empty id {} or token {}", loginForm.getLoginEmail(), id, token);
+        String role = "";
+        if (tokenObject.getJSONArray("roles") != null) {
+            role = tokenObject.getJSONArray("roles").get(0).toString();
+        }
+
+        if(token.trim().isEmpty() || id.trim().isEmpty() || role.trim().isEmpty()) {
+            logger.warn("login failed for {}: empty id {} or token {} or role {}", loginForm.getLoginEmail(), id, token, role);
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
             return "login";
         }
@@ -332,7 +335,7 @@ public class MainController {
             }
             else if((UserStatus.APPROVED.toString()).equals(userStatus)) {
                 // set session variables
-                setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), user.getRoles());
+                setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), role);
                 logger.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
                 return "redirect:/dashboard";
             }
@@ -2413,11 +2416,11 @@ public class MainController {
         user2.setStatus(object.getString("status"));
         user2.setEmailVerified(object.getBoolean("emailVerified"));
 
-        String role = UserType.USER.toString();
-        if (object.getJSONArray("roles") != null) {
-            role = object.getJSONArray("roles").get(0).toString();
-        }
-        user2.setRoles(role);
+//        String role = UserType.USER.toString();
+//        if (object.getJSONArray("roles") != null) {
+//            role = object.getJSONArray("roles").get(0).toString();
+//        }
+//        user2.setRoles(role);
 
         return user2;
     }
@@ -2652,7 +2655,7 @@ public class MainController {
         session.setAttribute("id", id);
         session.setAttribute("name", firstName);
         session.setAttribute(session_roles, userRoles);
-        logger.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), user.getRoles());
+        logger.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), userRoles);
     }
 
     private void removeSessionVariables(HttpSession session) {
@@ -2660,6 +2663,7 @@ public class MainController {
         session.removeAttribute("id");
         session.removeAttribute("name");
         session.removeAttribute(session_roles);
+        AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
     }
 
     private boolean validateIfAdmin(HttpSession session) {
