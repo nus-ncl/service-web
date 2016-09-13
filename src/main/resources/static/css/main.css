@@ -1556,8 +1556,8 @@ table {
 }
 
 .dashpanel_admin {
-    padding: 20px;
-    margin-top: 10px;
+    padding: 2px;
+    margin-top: 1px;
     background-color: transparent;
     border: 0px;
     border-color: #333;
@@ -2149,3 +2149,11 @@ ul.topnav span{
     background: #ffffff;
 }*/
 
+h6 {
+    color: #21b3b7;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 0px;
+    margin: 0px;
+
+}
