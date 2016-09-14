@@ -29,7 +29,7 @@ install:
 script:
   - ./gradlew --continue --stacktrace --profile build
 #  - ./gradlew --stacktrace sonarqube jacocoTestReport coveralls
-   - ./gradlew --stacktrace jacocoTestReport coveralls #
+  - ./gradlew --stacktrace jacocoTestReport coveralls
 
 after_success:
  - ./gradlew --stacktrace bootRepackage bintrayUpload # use bootRepackage to fix issue with Spring Boot
