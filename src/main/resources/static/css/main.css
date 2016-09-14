@@ -1545,9 +1545,6 @@ table {
     border-color: #333;
     border-radius: 10px;
     background-color:rgba(255,255,255, 0.7) !important;
-
-
-
  }
 
 .dashpanel2{
@@ -1690,7 +1687,6 @@ table {
 html {
     position: relative;
     min-height: 100%;
-
 }
 
 .pwdwidgetdiv
@@ -2015,6 +2011,42 @@ h23 {
     width: 213px;
     padding: 40px 28px 25px 0;
     font-family: 'Open Sans', sans-serif;
+}
+/* for those seamless transitions */
+.spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    color: #21b3b7;
+    background-color: rgba(51,51,51,.7);
+}
+
+.spinner > h1 {
+    position: absolute;
+    color: #21b3b7;
+    top: 20%;
+    left: 40%;
+    margin-top: -15px;
+    margin-left: -15px;
+    height: 50px;
+    width: 500px;
+    display: inline-block;
+}
+
+.spinner > i {
+    position: absolute;
+    font-size: 36px;
+    line-height: 36px;
+    top: 50%;
+    left: 50%;
+    height: 36px;
+    width: 36px;
+    margin-top: -15px;
+    margin-left: -15px;
+    display: inline-block;
 }
 
 ul.topnav {

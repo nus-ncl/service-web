@@ -235,4 +235,32 @@ public class UserTest {
         assertThat(user.getInstitutionWeb(), is(str));
     }
 
+    @Test
+    public void testGetStatus() {
+        final User2 user = new User2();
+        assertThat(user.getStatus(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetStatus() {
+        final User2 user = new User2();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        user.setStatus(str);
+        assertThat(user.getStatus(), is(str));
+    }
+
+    @Test
+    public void testGetUserType() {
+        final User2 user = new User2();
+        assertThat(user.getRoles(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetUserType() {
+        final User2 user = new User2();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        user.setRoles(str);
+        assertThat(user.getRoles(), is(str));
+    }
+
 }

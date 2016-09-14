@@ -2,8 +2,6 @@ package sg.ncl;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -23,21 +21,16 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import sg.ncl.domain.ExceptionState;
-import sg.ncl.domain.UserType;
+import sg.ncl.domain.*;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 
@@ -52,26 +45,20 @@ import sg.ncl.testbed_interface.*;
 public class MainController {
 
 	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
-    private final int ERROR_NO_SUCH_USER_ID = 0;
     private final static Logger logger = LoggerFactory.getLogger(MainController.class.getName());
-    private int CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
-    private boolean IS_USER_ADMIN = false;
-    private TeamManager teamManager = TeamManager.getInstance();
-    private UserManager userManager = UserManager.getInstance();
-    private ExperimentManager experimentManager = ExperimentManager.getInstance();
-    private DomainManager domainManager = DomainManager.getInstance();
-    private DatasetManager datasetManager = DatasetManager.getInstance();
-    private NodeManager nodeManager = NodeManager.getInstance();
 
-    private String userType = "userType";
-    private String memberTypeOwner = "OWNER";
-    private String memberTypeMember = "MEMBER";
+
+    private TeamManager teamManager = TeamManager.getInstance();
+//    private UserManager userManager = UserManager.getInstance();
+//    private ExperimentManager experimentManager = ExperimentManager.getInstance();
+//    private DomainManager domainManager = DomainManager.getInstance();
+//    private DatasetManager datasetManager = DatasetManager.getInstance();
+//    private NodeManager nodeManager = NodeManager.getInstance();
+
+    private String session_roles = "roles";
 
     // to know which form fields have been changed
     private User2 originalUser = null;
-
-    private final String USER_ID = "2535dccd-b7c1-4610-bd9b-4ed231f48f07";
-    private final String TEAM_ID = "40d02a00-c47c-492a-abf4-b3c6670a345e";
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
@@ -157,10 +144,10 @@ public class MainController {
         return "tools";
     }
 
-    @RequestMapping("/resource2")
-    public String resource2() {
-        return "resource2";
-    }
+//    @RequestMapping("/resource2")
+//    public String resource2() {
+//        return "resource2";
+//    }
 
     @RequestMapping("/tutorials")
     public String tutorials() {
@@ -168,10 +155,10 @@ public class MainController {
     }
 
 
-    @RequestMapping("/dataresource")
-    public String dataresource() {
-        return "dataresource";
-    }
+//    @RequestMapping("/dataresource")
+//    public String dataresource() {
+//        return "dataresource";
+//    }
 
     @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
     public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
@@ -330,7 +317,6 @@ public class MainController {
         String base64Creds = new String(base64CredsBytes);
 
         ResponseEntity response;
-        String jwtTokenString;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic " + base64Creds);
@@ -340,87 +326,85 @@ public class MainController {
 
         try {
             response = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
-            jwtTokenString = response.getBody().toString();
-        } catch (Exception e) {
-            logger.warn("Error connecting to authentication service to validate login details", e.getMessage());
+        } catch (RestClientException e) {
+            logger.warn("Error connecting to sio authentication service: {}", e);
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
 
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
+        String jwtTokenString = response.getBody().toString();
+        logger.info("token string {}", jwtTokenString);
+        if(jwtTokenString == null || jwtTokenString.isEmpty()) {
+            logger.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
+            loginForm.setErrorMsg("Login failed: Invalid email/password.");
+            return "login";
+        }
+        if (RestUtil.isError(response.getStatusCode())) {
+            try {
                 MyErrorResource error = objectMapper.readValue(jwtTokenString, MyErrorResource.class);
-                loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                logger.warn("login failed with username {}", loginForm.getLoginEmail());
-                return "login";
-            } else if (jwtTokenString != null || !jwtTokenString.isEmpty()) {
-                JSONObject tokenObject = new JSONObject(jwtTokenString);
-                String token = tokenObject.getString("token");
-                String id = tokenObject.getString("id");
+                if(ExceptionState.CredentialsNotFoundException.toString().equals(error.getName())) {
+                    logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
+                    loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
+                    return "login";
+                }
+                else {
+                    logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getName());
+                    loginForm.setErrorMsg("Login failed: Invalid email/password.");
+                    return "login";
+                }
+            } catch (IOException ioe) {
+                logger.warn("IOException {}", ioe);
+                throw new WebServiceRuntimeException(ioe.getMessage());
+            }
+        }
 
-                // TODO: get user type from jwt token
-//                String userType = tokenObject.getString("type");
-//                setSessionVariables(session, loginForm.getLoginEmail(), id, userType);
+        JSONObject tokenObject = new JSONObject(jwtTokenString);
+        String token = tokenObject.getString("token");
+        String id = tokenObject.getString("id");
+        String role = "";
+        if (tokenObject.getJSONArray("roles") != null) {
+            role = tokenObject.getJSONArray("roles").get(0).toString();
+        }
 
-                AUTHORIZATION_HEADER = "Bearer " + token;
+        if(token.trim().isEmpty() || id.trim().isEmpty() || role.trim().isEmpty()) {
+            logger.warn("login failed for {}: empty id {} or token {} or role {}", loginForm.getLoginEmail(), id, token, role);
+            loginForm.setErrorMsg("Login failed: Invalid email/password.");
+            return "login";
+        }
 
-                setSessionVariables(session, loginForm.getLoginEmail(), id);
 
-                logger.info("login success with username: {}, token id: {}", loginForm.getLoginEmail(), id);
+        AUTHORIZATION_HEADER = "Bearer " + token;
+
+        // now check user status to decide what to show to the user
+        User2 user = invokeAndExtractUserInfo(id);
+
+        try {
+            String userStatus = user.getStatus();
+            boolean emailVerified = user.getEmailVerified();
+            if(!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
+                logger.info("User {} not validated, redirected to email verification page", id);
+                return "redirect:/email_not_validated";
+            }
+            else if((UserStatus.PENDING.toString()).equals(userStatus)) {
+                logger.info("User {} not approved, redirected to application pending page", id);
+                return "redirect:/team_application_under_review";
+            }
+            else if((UserStatus.APPROVED.toString()).equals(userStatus)) {
+                // set session variables
+                setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), role);
+                logger.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
                 return "redirect:/dashboard";
-            } else {
-                // case1: invalid login
-                loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                logger.warn("login failed with unknown response code with username {}", loginForm.getLoginEmail());
+            }
+            else {
+                logger.warn("login failed for user {}: account is rejected or closed", id);
+                loginForm.setErrorMsg("Login Failed: Account Rejected/Closed.");
                 return "login";
             }
-        } catch (IOException e) {
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
-
-        /*
-    	String inputEmail = loginForm.getLoginEmail();
-    	int userId = userManager.getUserIdByEmail(inputEmail);
-    	
-        if (userManager.validateLoginDetails(loginForm.getLoginEmail(), loginForm.getLoginPassword()) == false) 
-        {
-            // case1: invalid login
-            loginForm.setErrorMsg("Invalid email/password.");
+        } catch (Exception e) {
+            logger.warn("Error parsing json object for user: {}", e.getMessage());
+            loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
-        } 
-        else if (userManager.isEmailVerified(loginForm.getLoginEmail()) == false) 
-        {
-            // case2: email address not validated
-            model.addAttribute("emailAddress", loginForm.getLoginEmail());
-            return "redirect:/email_not_validated";
-        } 
-        else if (teamManager.getApprovedTeams(userId) == 0 && teamManager.getJoinRequestTeamMap2(userId) != null) 
-        {
-        	// case3 
-        	// user is not a team owner nor a team member
-        	// user has request to join a team but has not been approved by the team owner
-        	return "redirect:/join_application_awaiting_approval";
-        } 
-        else if (teamManager.getApprovedTeams(userId) == 0 && teamManager.getUnApprovedTeams(userId) > 0)
-        {
-            // case4: since it goes through case3, user must be applying for a team
-        	// team approval under review
-            // email address is supposed to be valid here
-            return "redirect:/team_application_under_review";
-        } 
-        else 
-        {
-            // all validated
-        	// user may have no team at this point due to rejected team application or join request
-        	// must allow user to login so that user can apply again
-            // set login
-            CURRENT_LOGGED_IN_USER_ID = userManager.getUserIdByEmail(loginForm.getLoginEmail());
-            IS_USER_ADMIN = userManager.isUserAdmin(CURRENT_LOGGED_IN_USER_ID);
-            session.setAttribute("isUserAdmin", IS_USER_ADMIN);
-            session.setAttribute(SESSION_LOGGED_IN_USER_ID, CURRENT_LOGGED_IN_USER_ID);
-            return "redirect:/dashboard";
         }
-        */
 
     }
     
@@ -455,7 +439,6 @@ public class MainController {
     
     @RequestMapping(value="/logout", method=RequestMethod.GET)
     public String logout(HttpSession session) {
-        CURRENT_LOGGED_IN_USER_ID = ERROR_NO_SUCH_USER_ID;
         removeSessionVariables(session);
         return "redirect:/";
     }
@@ -572,6 +555,9 @@ public class MainController {
                 } catch (RegisterTeamNameDuplicateException e) {
                     redirectAttributes.addFlashAttribute("message", e.getMessage());
                     return "redirect:/signup2";
+                } catch (UsernameAlreadyExistsException e) {
+                    redirectAttributes.addFlashAttribute("message", e.getMessage());
+                    return "redirect:/signup2";
                 } catch (Exception e) {
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                     return "redirect:/signup2";
@@ -615,6 +601,9 @@ public class MainController {
             } catch (RegisterTeamNameDuplicateException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 return "redirect:/signup2";
+            } catch (UsernameAlreadyExistsException e) {
+                redirectAttributes.addFlashAttribute("message", e.getMessage());
+                return "redirect:/signup2";
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 return "redirect:/signup2";
@@ -636,7 +625,7 @@ public class MainController {
      * Use when registering new accounts
      * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
      */
-    private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException, ApplyNewProjectException, RegisterTeamNameDuplicateException {
+    private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException, ApplyNewProjectException, RegisterTeamNameDuplicateException, UsernameAlreadyExistsException {
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
@@ -656,6 +645,10 @@ public class MainController {
                 } else if (error.getName().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
                     logger.warn("Register new users new team request : team name duplicate");
                     throw new RegisterTeamNameDuplicateException();
+                } else if (error.getName().equals(ExceptionState.UsernameAlreadyExistsException.toString())) {
+                    String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
+                    logger.warn("Register new users : email already exists: {}", email);
+                    throw new UsernameAlreadyExistsException("Error: " + email + " already in use.");
                 } else {
                     logger.warn("Registration or adapter connection fail");
                     // possible sio or adapter connection fail
@@ -964,11 +957,11 @@ public class MainController {
 
                 JoinRequestApproval joinRequestApproval = new JoinRequestApproval();
 
-                if (userId.equals(session.getAttribute("id").toString()) && teamMemberType.equals(memberTypeOwner)) {
+                if (userId.equals(session.getAttribute("id").toString()) && teamMemberType.equals(MemberType.OWNER.toString())) {
                     isTeamLeader = true;
                 }
 
-                if (teamMemberStatus.equals("PENDING") && teamMemberType.equals(memberTypeMember)) {
+                if (teamMemberStatus.equals(MemberStatus.PENDING.toString()) && teamMemberType.equals(MemberType.MEMBER.toString())) {
                     User2 myUser = invokeAndExtractUserInfo(userId);
                     joinRequestApproval.setUserId(myUser.getId());
                     joinRequestApproval.setUserEmail(myUser.getEmail());
@@ -978,6 +971,7 @@ public class MainController {
                     joinRequestApproval.setTeamName(team2.getName());
 
                     temp.add(joinRequestApproval);
+                    logger.info("Join request: UserId: {}, UserEmail: {}", myUser.getId(), myUser.getEmail());
                 }
             }
 
@@ -995,32 +989,98 @@ public class MainController {
     }
     
     @RequestMapping("/approve_new_user/accept/{teamId}/{userId}")
-    public String userSideAcceptJoinRequest(@PathVariable String teamId, @PathVariable String userId, HttpSession session) {
+    public String userSideAcceptJoinRequest(
+            @PathVariable String teamId,
+            @PathVariable String userId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        logger.info("Approve join request: User {}, Team {}, Approver {}",
+                userId, teamId, session.getAttribute("id").toString());
 
         JSONObject mainObject = new JSONObject();
         JSONObject userFields = new JSONObject();
-
         userFields.put("id", session.getAttribute("id").toString());
         mainObject.put("user", userFields);
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+        ResponseEntity response;
+        try {
+            response = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+        } catch (RestClientException e) {
+            logger.warn("Error connecting to sio team service: {}", e);
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/approve_new_user";
+        }
 
+        String responseBody = response.getBody().toString();
+        if (RestUtil.isError(response.getStatusCode())) {
+            try {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                logger.warn("Server side error: {}", error.getName());
+                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                return "redirect:/approve_new_user";
+            } catch (IOException ioe) {
+                logger.warn("IOException {}", ioe);
+                throw new WebServiceRuntimeException(ioe.getMessage());
+            }
+        }
+        // everything looks OK?
+        String msg = new JSONObject(responseBody).getString("msg");
+        if(!"process join request OK".equals(msg)) {
+            logger.warn("Cannot process join request: {}", msg);
+            redirectAttributes.addFlashAttribute("message", "Cannot process join request: " + msg);
+            return "redirect:/approve_new_user";
+        }
+        logger.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
+        redirectAttributes.addFlashAttribute("message", "Join request has been APPROVED.");
         return "redirect:/approve_new_user";
     }
     
     @RequestMapping("/approve_new_user/reject/{teamId}/{userId}")
-    public String userSideRejectJoinRequest(@PathVariable String teamId, @PathVariable String userId, HttpSession session) {
+    public String userSideRejectJoinRequest(
+            @PathVariable String teamId,
+            @PathVariable String userId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        logger.info("Reject join request: User {}, Team {}, Approver {}",
+                userId, teamId, session.getAttribute("id").toString());
+
         JSONObject mainObject = new JSONObject();
         JSONObject userFields = new JSONObject();
-
         userFields.put("id", session.getAttribute("id").toString());
         mainObject.put("user", userFields);
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getRejectJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
+        ResponseEntity response;
+        try {
+            response = restTemplate.exchange(properties.getRejectJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
+        } catch (RestClientException e) {
+            logger.warn("Error connecting to sio team service: {}", e);
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/approve_new_user";
+        }
 
-//        teamManager.rejectJoinRequest(userId, teamId);
+        String responseBody = response.getBody().toString();
+        if (RestUtil.isError(response.getStatusCode())) {
+            try {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                logger.warn("Server side error: {}", error.getName());
+                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                return "redirect:/approve_new_user";
+            } catch (IOException ioe) {
+                logger.warn("IOException {}", ioe);
+                throw new WebServiceRuntimeException(ioe.getMessage());
+            }
+        }
+        // everything looks OK?
+        String msg = new JSONObject(responseBody).getString("msg");
+        if(!"process join request OK".equals(msg)) {
+            logger.warn("Cannot process join request: {}", msg);
+            redirectAttributes.addFlashAttribute("message", "Cannot process join request: " + msg);
+            return "redirect:/approve_new_user";
+        }
+        logger.info("Join request has been REJECTED, User {}, Team {}", userId, teamId);
+        redirectAttributes.addFlashAttribute("message", "Join request has been REJECTED.");
         return "redirect:/approve_new_user";
     }
     
@@ -1103,32 +1163,32 @@ public class MainController {
         return "teams";
     }
     
-    @RequestMapping("/accept_participation/{teamId}")
-    public String acceptParticipationRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
-    	int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
-        // get user's participation request list
-        // add this user id to the requested list
-        teamManager.acceptParticipationRequest(currentLoggedInUserId, teamId);
-        // remove participation request since accepted
-        teamManager.removeParticipationRequest(currentLoggedInUserId, teamId);
-        
-        // must get team name
-        String teamName = teamManager.getTeamNameByTeamId(teamId);
-        teamManager.setInfoMsg("You have just joined Team " + teamName + " !");
-        
-        return "redirect:/teams";
-    }
+//    @RequestMapping("/accept_participation/{teamId}")
+//    public String acceptParticipationRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
+//    	int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
+//        // get user's participation request list
+//        // add this user id to the requested list
+//        teamManager.acceptParticipationRequest(currentLoggedInUserId, teamId);
+//        // remove participation request since accepted
+//        teamManager.removeParticipationRequest(currentLoggedInUserId, teamId);
+//
+//        // must get team name
+//        String teamName = teamManager.getTeamNameByTeamId(teamId);
+//        teamManager.setInfoMsg("You have just joined Team " + teamName + " !");
+//
+//        return "redirect:/teams";
+//    }
     
-    @RequestMapping("/ignore_participation/{teamId}")
-    public String ignoreParticipationRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
-        // get user's participation request list
-        // remove this user id from the requested list
-        String teamName = teamManager.getTeamNameByTeamId(teamId);
-        teamManager.ignoreParticipationRequest2(getSessionIdOfLoggedInUser(session), teamId);
-        teamManager.setInfoMsg("You have just ignored a team request from Team " + teamName + " !");
-        
-        return "redirect:/teams";
-    }
+//    @RequestMapping("/ignore_participation/{teamId}")
+//    public String ignoreParticipationRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
+//        // get user's participation request list
+//        // remove this user id from the requested list
+//        String teamName = teamManager.getTeamNameByTeamId(teamId);
+//        teamManager.ignoreParticipationRequest2(getSessionIdOfLoggedInUser(session), teamId);
+//        teamManager.setInfoMsg("You have just ignored a team request from Team " + teamName + " !");
+//
+//        return "redirect:/teams";
+//    }
     
     @RequestMapping("/withdraw/{teamId}")
     public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
@@ -1141,19 +1201,19 @@ public class MainController {
         return "redirect:/teams";
     }
     
-    @RequestMapping(value="/teams/invite_members/{teamId}", method=RequestMethod.GET)
-    public String inviteMember(@PathVariable Integer teamId, Model model) {
-        model.addAttribute("teamIdVar", teamId);
-        model.addAttribute("teamPageInviteMemberForm", new TeamPageInviteMemberForm());
-        return "team_page_invite_members";
-    }
+//    @RequestMapping(value="/teams/invite_members/{teamId}", method=RequestMethod.GET)
+//    public String inviteMember(@PathVariable Integer teamId, Model model) {
+//        model.addAttribute("teamIdVar", teamId);
+//        model.addAttribute("teamPageInviteMemberForm", new TeamPageInviteMemberForm());
+//        return "team_page_invite_members";
+//    }
     
-    @RequestMapping(value="/teams/invite_members/{teamId}", method=RequestMethod.POST)
-    public String sendInvitation(@PathVariable Integer teamId, @ModelAttribute TeamPageInviteMemberForm teamPageInviteMemberForm,Model model) {
-        int userId = userManager.getUserIdByEmail(teamPageInviteMemberForm.getInviteUserEmail());
-        teamManager.addInvitedToParticipateMap(userId, teamId);
-        return "redirect:/teams";
-    }
+//    @RequestMapping(value="/teams/invite_members/{teamId}", method=RequestMethod.POST)
+//    public String sendInvitation(@PathVariable Integer teamId, @ModelAttribute TeamPageInviteMemberForm teamPageInviteMemberForm,Model model) {
+//        int userId = userManager.getUserIdByEmail(teamPageInviteMemberForm.getInviteUserEmail());
+//        teamManager.addInvitedToParticipateMap(userId, teamId);
+//        return "redirect:/teams";
+//    }
     
     @RequestMapping(value="/teams/members_approval/{teamId}", method=RequestMethod.GET)
     public String membersApproval(@PathVariable Integer teamId, Model model) {
@@ -1259,48 +1319,48 @@ public class MainController {
         return "redirect:/team_profile/{teamId}";
     }
     
-    @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
-    public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
-        // start experiment
-        // ensure experiment is stopped first before starting
-        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
-    	return "redirect:/team_profile/{teamId}";
-    }
+//    @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
+//    public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
+//        // start experiment
+//        // ensure experiment is stopped first before starting
+//        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
+//    	return "redirect:/team_profile/{teamId}";
+//    }
     
-    @RequestMapping("/team_profile/{teamId}/stop_experiment/{expId}")
-    public String stopExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
-        // stop experiment
-        // ensure experiment is in ready mode before stopping
-        experimentManager.stopExperiment(getSessionIdOfLoggedInUser(session), expId);
-        return "redirect:/team_profile/{teamId}";
-    }
+//    @RequestMapping("/team_profile/{teamId}/stop_experiment/{expId}")
+//    public String stopExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
+//        // stop experiment
+//        // ensure experiment is in ready mode before stopping
+//        experimentManager.stopExperiment(getSessionIdOfLoggedInUser(session), expId);
+//        return "redirect:/team_profile/{teamId}";
+//    }
     
-    @RequestMapping("/team_profile/{teamId}/remove_experiment/{expId}")
-    public String removeExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
-        // remove experiment
-        // TODO check userid is indeed the experiment owner or team owner
-        // ensure experiment is stopped first
-        if (experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId) == true) {
-            // decrease exp count to be display on Teams page
-            teamManager.decrementExperimentCount(teamId);
-        }
-        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
-        return "redirect:/team_profile/{teamId}";
-    }
+//    @RequestMapping("/team_profile/{teamId}/remove_experiment/{expId}")
+//    public String removeExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
+//        // remove experiment
+//        // TODO check userid is indeed the experiment owner or team owner
+//        // ensure experiment is stopped first
+//        if (experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId) == true) {
+//            // decrease exp count to be display on Teams page
+//            teamManager.decrementExperimentCount(teamId);
+//        }
+//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
+//        return "redirect:/team_profile/{teamId}";
+//    }
     
-    @RequestMapping(value="/team_profile/invite_user/{teamId}", method=RequestMethod.GET)
-    public String inviteUserFromTeamProfile(@PathVariable Integer teamId, Model model) {
-        model.addAttribute("teamIdVar", teamId);
-        model.addAttribute("teamPageInviteMemberForm", new TeamPageInviteMemberForm());
-        return "team_profile_invite_members";
-    }
+//    @RequestMapping(value="/team_profile/invite_user/{teamId}", method=RequestMethod.GET)
+//    public String inviteUserFromTeamProfile(@PathVariable Integer teamId, Model model) {
+//        model.addAttribute("teamIdVar", teamId);
+//        model.addAttribute("teamPageInviteMemberForm", new TeamPageInviteMemberForm());
+//        return "team_profile_invite_members";
+//    }
     
-    @RequestMapping(value="/team_profile/invite_user/{teamId}", method=RequestMethod.POST)
-    public String sendInvitationFromTeamProfile(@PathVariable Integer teamId, @ModelAttribute TeamPageInviteMemberForm teamPageInviteMemberForm, Model model) {
-        int userId = userManager.getUserIdByEmail(teamPageInviteMemberForm.getInviteUserEmail());
-        teamManager.addInvitedToParticipateMap(userId, teamId);
-        return "redirect:/team_profile/{teamId}";
-    }
+//    @RequestMapping(value="/team_profile/invite_user/{teamId}", method=RequestMethod.POST)
+//    public String sendInvitationFromTeamProfile(@PathVariable Integer teamId, @ModelAttribute TeamPageInviteMemberForm teamPageInviteMemberForm, Model model) {
+//        int userId = userManager.getUserIdByEmail(teamPageInviteMemberForm.getInviteUserEmail());
+//        teamManager.addInvitedToParticipateMap(userId, teamId);
+//        return "redirect:/team_profile/{teamId}";
+//    }
     
     //--------------------------Apply for New Team Page--------------------------
     
@@ -1443,7 +1503,7 @@ public class MainController {
     
     @RequestMapping(value="/experiments", method=RequestMethod.GET)
     public String experiments(Model model, HttpSession session) {
-
+//        long start = System.currentTimeMillis();
         List<Experiment2> experimentList = new ArrayList<>();
         Map<Long, Realization> realizationMap = new HashMap<>();
 
@@ -1457,22 +1517,29 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
 
-            // get experiments lists of the teams
-            HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
-            ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody().toString();
 
-            JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
+            if (!isMemberJoinRequestPending(session.getAttribute("id").toString(), teamResponseBody)) {
+                // get experiments lists of the teams
+                HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
+                ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
 
-            for (int k = 0; k < experimentsArray.length(); k++) {
-                Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-                Realization realization = invokeAndExtractRealization(experiment2.getId());
-                realizationMap.put(experiment2.getId(), realization);
-                experimentList.add(experiment2);
+                JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
+
+                for (int k = 0; k < experimentsArray.length(); k++) {
+                    Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+                    Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+                    realizationMap.put(experiment2.getId(), realization);
+                    experimentList.add(experiment2);
+                }
             }
         }
 
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
+//        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
         return "experiments";
     }
 
@@ -1557,7 +1624,7 @@ public class MainController {
                 if (error.getName().equals(ExceptionState.NSFileParseException.toString())) {
                     logger.warn("Ns file error");
                     redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
-                } else if (error.getName().equals(ExceptionState.ExpNameAlreadyExistsException.toString())) {
+                } else if (error.getName().equals(ExceptionState.ExpNameAlreadyExistsException.toString()) || error.getName().equals(ExceptionState.ExperimentNameInUseException.toString())) {
                     logger.warn("Exp name already exists");
                     redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
                 } else {
@@ -1618,196 +1685,292 @@ public class MainController {
         return "redirect:/experiments";
     }
 
-    @RequestMapping("/experiments/configuration/{expId}")
-    public String viewExperimentConfiguration(@PathVariable Integer expId, Model model) {
-    	// get experiment from expid
-    	// retrieve the scenario contents to be displayed
-    	Experiment currExp = experimentManager.getExperimentByExpId(expId);
-    	model.addAttribute("scenarioContents", currExp.getScenarioContents());
-    	return "experiment_scenario_contents";
-    }
+//    @RequestMapping("/experiments/configuration/{expId}")
+//    public String viewExperimentConfiguration(@PathVariable Integer expId, Model model) {
+//    	// get experiment from expid
+//    	// retrieve the scenario contents to be displayed
+//    	Experiment currExp = experimentManager.getExperimentByExpId(expId);
+//    	model.addAttribute("scenarioContents", currExp.getScenarioContents());
+//    	return "experiment_scenario_contents";
+//    }
     
-    @RequestMapping("/remove_experiment/{expId}")
-    public String removeExperiment(@PathVariable String expId, Model model, HttpSession session) {
-        // remove experiment
+    @RequestMapping("/remove_experiment/{teamName}/{expId}")
+    public String removeExperiment(@PathVariable String teamName, @PathVariable String expId, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
-//    	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
-//        experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId);
-//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
-//
-//        // decrease exp count to be display on Teams page
-//        teamManager.decrementExperimentCount(teamId);
-//        return "redirect:/experiments";
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
-        logger.info("Starting experiment: at " + properties.getDeleteExperiment(expId));
+        if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
+            logger.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
+            return "redirect:/experiments";
+        }
+
+        logger.info("Removing experiment: at " + properties.getDeleteExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getDeleteExperiment(expId), HttpMethod.POST, request, String.class);
-        return "redirect:/experiments";
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getDeleteExperiment(teamName, expId), HttpMethod.DELETE, request, String.class);
+        } catch (Exception e) {
+            logger.warn("Error connecting to experiment service to remove experiment", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                if (error.getName().equals(ExceptionState.ExpDeleteException.toString())) {
+                    logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                }
+                return "redirect:/experiments";
+            } else {
+                // everything ok
+                logger.info("remove experiment success for Team: {}, Exp: {}", teamName, expId);
+                redirectAttributes.addFlashAttribute("exp_remove_message", "Team: " + teamName + " has removed Exp: " + realization.getExperimentName());
+                return "redirect:/experiments";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     @RequestMapping("/start_experiment/{teamName}/{expId}")
-    public String startExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, HttpSession session) {
+    public String startExperiment(
+            @PathVariable String teamName,
+            @PathVariable String expId,
+            final RedirectAttributes redirectAttributes, Model model) throws WebServiceRuntimeException {
 
-        // start experiment
         // ensure experiment is stopped first before starting
-//        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
-//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
+            logger.warn("Trying to start Team: {}, Experiment: {} with State: {} that is not running?", teamName, expId, realization.getState());
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to start Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
+            return "redirect:/experiments";
+        }
+
         logger.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
-        return "redirect:/experiments";
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+        } catch (Exception e) {
+            logger.warn("Error connecting to experiment service to start experiment", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+
+                if (error.getName().equals(ExceptionState.ExpStartException.toString())) {
+                    logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                    return "redirect:/experiments";
+                }
+                // possible for it to be error but experiment has started up finish
+                // if user clicks on start but reloads the page
+//                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
+                return "/experiments";
+            } else {
+                // everything ok
+                logger.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
+                redirectAttributes.addFlashAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
+                return "redirect:/experiments";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     @RequestMapping("/stop_experiment/{teamName}/{expId}")
-    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, HttpSession session) {
-        // stop experiment
-        // ensure experiment is in ready mode before stopping
-//        experimentManager.stopExperiment(getSessionIdOfLoggedInUser(session), expId);
-//        model.addAttribute("experimentList", experimentManager.getExperimentListByExperimentOwner(getSessionIdOfLoggedInUser(session)));
-//        return "redirect:/experiments";
+    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+
+        // ensure experiment is active first before stopping
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
+            logger.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
+            return "redirect:/experiments";
+        }
 
         logger.info("Stopping experiment: at " + properties.getStopExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
-        return "redirect:/experiments";
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+        } catch (Exception e) {
+            logger.warn("Error connecting to experiment service to stop experiment", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                return "redirect:/experiments";
+            } else {
+                // everything ok
+                logger.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
+                redirectAttributes.addFlashAttribute("exp_message", "Team: " + teamName + " has stopped Exp: " + realization.getExperimentName());
+                return "redirect:/experiments";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
     
     //---------------------------------Dataset Page--------------------------
     
-    @RequestMapping("/data")
-    public String data(Model model, HttpSession session) {
-    	model.addAttribute("datasetOwnedByUserList", datasetManager.getDatasetContributedByUser(getSessionIdOfLoggedInUser(session)));
-    	model.addAttribute("datasetAccessibleByUserList", datasetManager.getDatasetAccessibleByuser(getSessionIdOfLoggedInUser(session)));
-    	model.addAttribute("userManager", userManager);
-    	return "data";
-    }
+//    @RequestMapping("/data")
+//    public String data(Model model, HttpSession session) {
+//    	model.addAttribute("datasetOwnedByUserList", datasetManager.getDatasetContributedByUser(getSessionIdOfLoggedInUser(session)));
+//    	model.addAttribute("datasetAccessibleByUserList", datasetManager.getDatasetAccessibleByuser(getSessionIdOfLoggedInUser(session)));
+//    	model.addAttribute("userManager", userManager);
+//    	return "data";
+//    }
     
-    @RequestMapping(value="/data/contribute", method=RequestMethod.GET)
-    public String contributeData(Model model) {
-    	model.addAttribute("dataset", new Dataset());
-    	
-    	File rootFolder = new File(App.ROOT);
-    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
-    			.map(f -> f.getName())
-    			.collect(Collectors.toList());
+//    @RequestMapping(value="/data/contribute", method=RequestMethod.GET)
+//    public String contributeData(Model model) {
+//    	model.addAttribute("dataset", new Dataset());
+//
+//    	File rootFolder = new File(App.ROOT);
+//    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
+//    			.map(f -> f.getName())
+//    			.collect(Collectors.toList());
+//
+//    		model.addAttribute("files",
+//    			Arrays.stream(rootFolder.listFiles())
+//    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
+//    					.map(f -> f.getName())
+//    					.collect(Collectors.toList())
+//    		);
+//
+//    	return "contribute_data";
+//    }
 
-    		model.addAttribute("files",
-    			Arrays.stream(rootFolder.listFiles())
-    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
-    					.map(f -> f.getName())
-    					.collect(Collectors.toList())
-    		);
-    	
-    	return "contribute_data";
-    }
-    
-    @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
-    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
-    	// TODO
-    	// validation
-    	// get file from user upload to server
-        BufferedOutputStream stream = null;
-        FileOutputStream fileOutputStream = null;
+//    @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
+//    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+//    	// TODO
+//    	// validation
+//    	// get file from user upload to server
+//        BufferedOutputStream stream = null;
+//        FileOutputStream fileOutputStream = null;
+//
+//		if (!file.isEmpty()) {
+//			try {
+//				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
+//                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
+//				stream = new BufferedOutputStream(fileOutputStream);
+//                FileCopyUtils.copy(file.getInputStream(), stream);
+//				stream.close();
+//				redirectAttributes.addFlashAttribute("message",
+//						"You successfully uploaded " + file.getOriginalFilename() + "!");
+//				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
+//			}
+//			catch (Exception e) {
+//				redirectAttributes.addFlashAttribute("message",
+//						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
+//			} finally {
+//                if (stream != null) {
+//                    stream.close();
+//                }
+//                if (fileOutputStream != null) {
+//                    fileOutputStream.close();
+//                }
+//            }
+//        }
+//		else {
+//			redirectAttributes.addFlashAttribute("message",
+//					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
+//		}
+//    	return "redirect:/data";
+//    }
 
-		if (!file.isEmpty()) {
-			try {
-				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
-				stream = new BufferedOutputStream(fileOutputStream);
-                FileCopyUtils.copy(file.getInputStream(), stream);
-				stream.close();
-				redirectAttributes.addFlashAttribute("message",
-						"You successfully uploaded " + file.getOriginalFilename() + "!");
-				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
-			}
-			catch (Exception e) {
-				redirectAttributes.addFlashAttribute("message",
-						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
-			} finally {
-                if (stream != null) {
-                    stream.close();
-                }
-                if (fileOutputStream != null) {
-                    fileOutputStream.close();
-                }
-            }
-        }
-		else {
-			redirectAttributes.addFlashAttribute("message",
-					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
-		}
-    	return "redirect:/data";
-    }
-    
-    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.GET)
-    public String datasetInfo(@PathVariable Integer datasetId, Model model) {
-    	Dataset dataset = datasetManager.getDataset(datasetId);
-    	model.addAttribute("editDataset", dataset);
-    	return "edit_data";
-    }
-    
-    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.POST)
-    public String editDatasetInfo(@PathVariable Integer datasetId, @ModelAttribute("editDataset") Dataset dataset, final RedirectAttributes redirectAttributes) {
-    	Dataset origDataset = datasetManager.getDataset(datasetId);
-    	
-    	String editedDatasetName = dataset.getDatasetName();
-    	String editedDatasetDesc = dataset.getDatasetDescription();
-    	String editedDatasetLicense = dataset.getLicense();
-    	String editedDatasetPublic = dataset.getIsPublic();
-    	boolean editedDatasetIsRequiredAuthorization = dataset.getRequireAuthorization();
-    	
-    	System.out.println(origDataset.getDatasetId());
-    	System.out.println(dataset.getDatasetId());
-    	
-    	if (origDataset.updateName(editedDatasetName) == true) {
-    		redirectAttributes.addFlashAttribute("editName", "success");
-    	}
-    	
-    	if (origDataset.updateDescription(editedDatasetDesc) == true) {
-    		redirectAttributes.addFlashAttribute("editDesc", "success");
-    	}
-    	
-    	if (origDataset.updateLicense(editedDatasetLicense) == true) {
-    		redirectAttributes.addFlashAttribute("editLicense", "success");
-    	}
-    	
-    	if (origDataset.updatePublic(editedDatasetPublic) == true) {
-    		redirectAttributes.addFlashAttribute("editPublic", "success");
-    	}
-    	
-    	if (origDataset.updateAuthorization(editedDatasetIsRequiredAuthorization) == true) {
-    		redirectAttributes.addFlashAttribute("editIsRequiredAuthorization", "success");
-    	}
-    	
-    	datasetManager.updateDatasetDetails(origDataset);
-    	
-    	return "redirect:/data/edit/{datasetId}";
-    }
-    
-    @RequestMapping("/data/remove_dataset/{datasetId}")
-    public String removeDataset(@PathVariable Integer datasetId) {
-    	datasetManager.removeDataset(datasetId);
-    	return "redirect:/data";
-    }
-    
-    @RequestMapping("/data/public")
-    public String openDataset(Model model) {
-    	model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
-    	model.addAttribute("userManager", userManager);
-    	return "data_public";
-    }
-    
-    @RequestMapping("/data/public/request_access/{dataOwnerId}")
-    public String requestAccessForDataset(@PathVariable Integer dataOwnerId, Model model) {
-    	// TODO
-    	// send reuqest to team owner
-    	// show feedback to users
-    	User rv = userManager.getUserById(dataOwnerId);
-    	model.addAttribute("ownerName", rv.getName());
-    	model.addAttribute("ownerEmail", rv.getEmail());
-    	return "data_request_access";
-    }
+//    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.GET)
+//    public String datasetInfo(@PathVariable Integer datasetId, Model model) {
+//    	Dataset dataset = datasetManager.getDataset(datasetId);
+//    	model.addAttribute("editDataset", dataset);
+//    	return "edit_data";
+//    }
+
+//    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.POST)
+//    public String editDatasetInfo(@PathVariable Integer datasetId, @ModelAttribute("editDataset") Dataset dataset, final RedirectAttributes redirectAttributes) {
+//    	Dataset origDataset = datasetManager.getDataset(datasetId);
+//
+//    	String editedDatasetName = dataset.getDatasetName();
+//    	String editedDatasetDesc = dataset.getDatasetDescription();
+//    	String editedDatasetLicense = dataset.getLicense();
+//    	String editedDatasetPublic = dataset.getIsPublic();
+//    	boolean editedDatasetIsRequiredAuthorization = dataset.getRequireAuthorization();
+//
+//    	System.out.println(origDataset.getDatasetId());
+//    	System.out.println(dataset.getDatasetId());
+//
+//    	if (origDataset.updateName(editedDatasetName) == true) {
+//    		redirectAttributes.addFlashAttribute("editName", "success");
+//    	}
+//
+//    	if (origDataset.updateDescription(editedDatasetDesc) == true) {
+//    		redirectAttributes.addFlashAttribute("editDesc", "success");
+//    	}
+//
+//    	if (origDataset.updateLicense(editedDatasetLicense) == true) {
+//    		redirectAttributes.addFlashAttribute("editLicense", "success");
+//    	}
+//
+//    	if (origDataset.updatePublic(editedDatasetPublic) == true) {
+//    		redirectAttributes.addFlashAttribute("editPublic", "success");
+//    	}
+//
+//    	if (origDataset.updateAuthorization(editedDatasetIsRequiredAuthorization) == true) {
+//    		redirectAttributes.addFlashAttribute("editIsRequiredAuthorization", "success");
+//    	}
+//
+//    	datasetManager.updateDatasetDetails(origDataset);
+//
+//    	return "redirect:/data/edit/{datasetId}";
+//    }
+
+//    @RequestMapping("/data/remove_dataset/{datasetId}")
+//    public String removeDataset(@PathVariable Integer datasetId) {
+//    	datasetManager.removeDataset(datasetId);
+//    	return "redirect:/data";
+//    }
+
+//    @RequestMapping("/data/public")
+//    public String openDataset(Model model) {
+//    	model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
+//    	model.addAttribute("userManager", userManager);
+//    	return "data_public";
+//    }
+
+//    @RequestMapping("/data/public/request_access/{dataOwnerId}")
+//    public String requestAccessForDataset(@PathVariable Integer dataOwnerId, Model model) {
+//    	// TODO
+//    	// send reuqest to team owner
+//    	// show feedback to users
+//    	User rv = userManager.getUserById(dataOwnerId);
+//    	model.addAttribute("ownerName", rv.getName());
+//    	model.addAttribute("ownerEmail", rv.getEmail());
+//    	return "data_request_access";
+//    }
 
     //-----------------------------------------------------------------------
     //--------------------------Admin Revamp---------------------------------
@@ -1815,21 +1978,6 @@ public class MainController {
     //---------------------------------Admin---------------------------------
     @RequestMapping("/admin")
     public String admin(Model model, HttpSession session) {
-//    	model.addAttribute("domain", new Domain());
-//    	model.addAttribute("domainTable", domainManager.getDomainTable());
-//    	model.addAttribute("usersMap", userManager.getUserMap());
-//    	model.addAttribute("teamsPendingApprovalMap", teamManager.getTeamsPendingApproval());
-//    	model.addAttribute("experimentMap", experimentManager.getExperimentMap2());
-//
-//    	model.addAttribute("totalTeamCount", teamManager.getTotalTeamsCount());
-//    	model.addAttribute("totalExpCount", experimentManager.getTotalExpCount());
-//    	model.addAttribute("totalMemberCount", teamManager.getTotalMembersCount());
-//    	model.addAttribute("totalMemberAwaitingApprovalCount", teamManager.getTotalMembersAwaitingApproval());
-//
-//    	model.addAttribute("datasetMap", datasetManager.getDatasetMap());
-//    	model.addAttribute("userManager", userManager);
-//
-//    	model.addAttribute("nodeMap", nodeManager.getNodeMap());
 
         if (!validateIfAdmin(session)) {
             return "nopermission";
@@ -1884,8 +2032,6 @@ public class MainController {
             }
         }
 
-//        model.addAttribute("teamsMap", teamManager.getTeamMap());
-//        model.addAttribute("teamManager", teamManager);
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
         model.addAttribute("usersList", usersList);
@@ -1893,131 +2039,232 @@ public class MainController {
     	return "admin";
     }
     
-    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
-    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
-    	if (bindingResult.hasErrors()) {
-    		return "redirect:/admin";
-    	} else {
-    		domainManager.addDomains(domain.getDomainName());
-    	}
-    	return "redirect:/admin";
-    }
+//    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
+//    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
+//    	if (bindingResult.hasErrors()) {
+//    		return "redirect:/admin";
+//    	} else {
+//    		domainManager.addDomains(domain.getDomainName());
+//    	}
+//    	return "redirect:/admin";
+//    }
     
-    @RequestMapping("/admin/domains/remove/{domainKey}")
-    public String removeDomain(@PathVariable String domainKey) {
-    	domainManager.removeDomains(domainKey);
-    	return "redirect:/admin";
-    }
+//    @RequestMapping("/admin/domains/remove/{domainKey}")
+//    public String removeDomain(@PathVariable String domainKey) {
+//    	domainManager.removeDomains(domainKey);
+//    	return "redirect:/admin";
+//    }
     
     @RequestMapping("/admin/teams/accept/{teamId}/{teamOwnerId}")
-    public String approveTeam(@PathVariable String teamId, @PathVariable String teamOwnerId) {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
-    	return "redirect:/admin";
-    }
-    
-    @RequestMapping("/admin/teams/reject/{teamId}")
-    public String rejectTeam(@PathVariable String teamId, @PathVariable String teamOwnerId) {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
+    public String approveTeam(
+            @PathVariable String teamId,
+            @PathVariable String teamOwnerId,
+            final RedirectAttributes redirectAttributes,
+            HttpSession session
+    ) throws WebServiceRuntimeException {
 
-        // need to cleanly remove the team application
-//    	teamManager.rejectTeamApplication(teamId);
-    	return "redirect:/admin";
-    }
-    
-    @RequestMapping("/admin/users/ban/{userId}")
-    public String banUser(@PathVariable Integer userId) {
-    	// TODO
-    	// perform ban action here
-    	// need to cleanly remove user info from teams, user. etc
-    	return "redirect:/admin";
-    }
-    
-    @RequestMapping("/admin/experiments/remove/{expId}")
-    public String adminRemoveExp(@PathVariable Integer expId) {
-    	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
-        experimentManager.adminRemoveExperiment(expId);
-        
-        // decrease exp count to be display on Teams page
-        teamManager.decrementExperimentCount(teamId);
-    	return "redirect:/admin";
-    }
-    
-    @RequestMapping(value="/admin/data/contribute", method=RequestMethod.GET)
-    public String adminContributeDataset(Model model) {
-    	model.addAttribute("dataset", new Dataset());
-    	
-    	File rootFolder = new File(App.ROOT);
-    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
-    			.map(f -> f.getName())
-    			.collect(Collectors.toList());
-
-    		model.addAttribute("files",
-    			Arrays.stream(rootFolder.listFiles())
-    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
-    					.map(f -> f.getName())
-    					.collect(Collectors.toList())
-    		);
-    		
-    	return "admin_contribute_data";
-    }
-    
-    @RequestMapping(value="/admin/data/contribute", method=RequestMethod.POST)
-    public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
-        BufferedOutputStream stream = null;
-        FileOutputStream fileOutputStream = null;
-        // TODO
-    	// validation
-    	// get file from user upload to server
-		if (!file.isEmpty()) {
-			try {
-				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
-				stream = new BufferedOutputStream(fileOutputStream);
-                FileCopyUtils.copy(file.getInputStream(), stream);
-				redirectAttributes.addFlashAttribute("message",
-						"You successfully uploaded " + file.getOriginalFilename() + "!");
-				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
-			}
-			catch (Exception e) {
-				redirectAttributes.addFlashAttribute("message",
-						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
-			} finally {
-                if (stream != null) {
-                    stream.close();
-                }
-                if (fileOutputStream != null) {
-                    fileOutputStream.close();
-                }
-            }
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
         }
-		else {
-			redirectAttributes.addFlashAttribute("message",
-					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
-		}
-    	return "redirect:/admin";
+
+        //FIXME require approver info
+        logger.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(
+                properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
+
+        String responseBody = response.getBody().toString();
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error;
+            try{
+                error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            } catch (IOException e) {
+                throw new WebServiceRuntimeException(e.getMessage());
+            }
+            if(error.getName().equals(ExceptionState.IdNullOrEmptyException.toString())) {
+                logger.warn("Approve team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
+                        teamId, teamOwnerId);
+                redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
+            }
+            else if (error.getName().equals(ExceptionState.InvalidTeamStatusException.toString())) {
+                logger.warn("Approve team: TeamStatus is invalid");
+                redirectAttributes.addFlashAttribute("message", "Team status is invalid");
+            }
+            else if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                logger.warn("Approve team: Team {} not found", teamId);
+                redirectAttributes.addFlashAttribute("message", "Team does not exist");
+            }
+            else {
+                logger.warn("Approve team : sio or deterlab adapter connection error");
+                // possible sio or adapter connection fail
+                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            }
+            return "redirect:/admin";
+        }
+
+        // http status code is OK, then need to check the response message
+        String msg = new JSONObject(responseBody).getString("msg");
+        if ("approve project OK".equals(msg)) {
+            logger.info("Approve team {} OK", teamId);
+        } else {
+            logger.warn("Approve team {} FAIL", teamId);
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+        }
+        return "redirect:/admin";
     }
     
-    @RequestMapping("/admin/data/remove/{datasetId}")
-    public String adminRemoveDataset(@PathVariable Integer datasetId) {
-    	datasetManager.removeDataset(datasetId);
-    	return "redirect:/admin";
+    @RequestMapping("/admin/teams/reject/{teamId}/{teamOwnerId}")
+    public String rejectTeam(
+            @PathVariable String teamId,
+            @PathVariable String teamOwnerId,
+            final RedirectAttributes redirectAttributes,
+            HttpSession session
+    ) throws WebServiceRuntimeException {
+
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
+        }
+
+        //FIXME require approver info
+        logger.info("Rejecting new team {}, team owner {}", teamId, teamOwnerId);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(
+                properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
+
+        String responseBody = response.getBody().toString();
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error;
+            try{
+                error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            } catch (IOException e) {
+                throw new WebServiceRuntimeException(e.getMessage());
+            }
+            if(error.getName().equals(ExceptionState.IdNullOrEmptyException.toString())) {
+                logger.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
+                        teamId, teamOwnerId);
+                redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
+            }
+            else if (error.getName().equals(ExceptionState.InvalidTeamStatusException.toString())) {
+                logger.warn("Reject team: TeamStatus is invalid");
+                redirectAttributes.addFlashAttribute("message", "Team status is invalid");
+            }
+            else if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                logger.warn("Reject team: Team {} not found", teamId);
+                redirectAttributes.addFlashAttribute("message", "Team does not exist");
+            }
+            else {
+                logger.warn("Reject team : sio or deterlab adapter connection error");
+                // possible sio or adapter connection fail
+                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            }
+            return "redirect:/admin";
+        }
+
+        // http status code is OK, then need to check the response message
+        String msg = new JSONObject(responseBody).getString("msg");
+        if ("reject project OK".equals(msg)) {
+            logger.info("Reject team {} OK", teamId);
+        } else {
+            logger.warn("Reject team {} FAIL", teamId);
+            redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+        }
+        return "redirect:/admin";
     }
     
-    @RequestMapping(value="/admin/node/add", method=RequestMethod.GET)
-    public String adminAddNode(Model model) {
-    	model.addAttribute("node", new Node());
-    	return "admin_add_node";
-    }
+//    @RequestMapping("/admin/users/ban/{userId}")
+//    public String banUser(@PathVariable Integer userId) {
+//    	// TODO
+//    	// perform ban action here
+//    	// need to cleanly remove user info from teams, user. etc
+//    	return "redirect:/admin";
+//    }
     
-    @RequestMapping(value="/admin/node/add", method=RequestMethod.POST)
-    public String adminAddNode(@ModelAttribute("node") Node node) {
-    	// TODO
-    	// validate fields, eg should be integer
-    	nodeManager.addNode(node);
-    	return "redirect:/admin";
-    }
+//    @RequestMapping("/admin/experiments/remove/{expId}")
+//    public String adminRemoveExp(@PathVariable Integer expId) {
+//    	int teamId = experimentManager.getExperimentByExpId(expId).getTeamId();
+//        experimentManager.adminRemoveExperiment(expId);
+//
+//        // decrease exp count to be display on Teams page
+//        teamManager.decrementExperimentCount(teamId);
+//    	return "redirect:/admin";
+//    }
+    
+//    @RequestMapping(value="/admin/data/contribute", method=RequestMethod.GET)
+//    public String adminContributeDataset(Model model) {
+//    	model.addAttribute("dataset", new Dataset());
+//
+//    	File rootFolder = new File(App.ROOT);
+//    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
+//    			.map(f -> f.getName())
+//    			.collect(Collectors.toList());
+//
+//    		model.addAttribute("files",
+//    			Arrays.stream(rootFolder.listFiles())
+//    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
+//    					.map(f -> f.getName())
+//    					.collect(Collectors.toList())
+//    		);
+//
+//    	return "admin_contribute_data";
+//    }
+    
+//    @RequestMapping(value="/admin/data/contribute", method=RequestMethod.POST)
+//    public String validateAdminContributeDataset(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
+//        BufferedOutputStream stream = null;
+//        FileOutputStream fileOutputStream = null;
+//        // TODO
+//    	// validation
+//    	// get file from user upload to server
+//		if (!file.isEmpty()) {
+//			try {
+//				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
+//                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
+//				stream = new BufferedOutputStream(fileOutputStream);
+//                FileCopyUtils.copy(file.getInputStream(), stream);
+//				redirectAttributes.addFlashAttribute("message",
+//						"You successfully uploaded " + file.getOriginalFilename() + "!");
+//				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
+//			}
+//			catch (Exception e) {
+//				redirectAttributes.addFlashAttribute("message",
+//						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
+//			} finally {
+//                if (stream != null) {
+//                    stream.close();
+//                }
+//                if (fileOutputStream != null) {
+//                    fileOutputStream.close();
+//                }
+//            }
+//        }
+//		else {
+//			redirectAttributes.addFlashAttribute("message",
+//					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
+//		}
+//    	return "redirect:/admin";
+//    }
+    
+//    @RequestMapping("/admin/data/remove/{datasetId}")
+//    public String adminRemoveDataset(@PathVariable Integer datasetId) {
+//    	datasetManager.removeDataset(datasetId);
+//    	return "redirect:/admin";
+//    }
+
+//    @RequestMapping(value="/admin/node/add", method=RequestMethod.GET)
+//    public String adminAddNode(Model model) {
+//    	model.addAttribute("node", new Node());
+//    	return "admin_add_node";
+//    }
+
+//    @RequestMapping(value="/admin/node/add", method=RequestMethod.POST)
+//    public String adminAddNode(@ModelAttribute("node") Node node) {
+//    	// TODO
+//    	// validate fields, eg should be integer
+//    	nodeManager.addNode(node);
+//    	return "redirect:/admin";
+//    }
     
     //--------------------------Static pages for teams--------------------------
     @RequestMapping("/teams/team_application_submitted")
@@ -2095,16 +2342,12 @@ public class MainController {
     }
     
     @RequestMapping("/email_not_validated")
-    public String emailNotValidated(Model model) {
-    	model.addAttribute("loginForm", new LoginForm());
-    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    public String emailNotValidated() {
         return "email_not_validated";
     }
     
     @RequestMapping("/team_application_under_review")
-    public String teamAppUnderReview(Model model) {
-    	model.addAttribute("loginForm", new LoginForm());
-    	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    public String teamAppUnderReview() {
         return "team_application_under_review";
     }
     
@@ -2201,6 +2444,11 @@ public class MainController {
 
     private User2 extractUserInfo(String userJson) {
         User2 user2 = new User2();
+        if (userJson == null) {
+            // return empty user
+            return user2;
+        }
+
         JSONObject object = new JSONObject(userJson);
         JSONObject userDetails = object.getJSONObject("userDetails");
         JSONObject address = userDetails.getJSONObject("address");
@@ -2220,6 +2468,15 @@ public class MainController {
         user2.setInstitution(userDetails.getString("institution"));
         user2.setInstitutionAbbreviation(userDetails.getString("institutionAbbreviation"));
         user2.setInstitutionWeb(userDetails.getString("institutionWeb"));
+
+        user2.setStatus(object.getString("status"));
+        user2.setEmailVerified(object.getBoolean("emailVerified"));
+
+//        String role = UserType.USER.toString();
+//        if (object.getJSONArray("roles") != null) {
+//            role = object.getJSONArray("roles").get(0).toString();
+//        }
+//        user2.setRoles(role);
 
         return user2;
     }
@@ -2244,21 +2501,45 @@ public class MainController {
             String teamMemberStatus = memberObject.getString("memberStatus");
 
             User2 myUser = invokeAndExtractUserInfo(userId);
-            if (teamMemberType.equals(memberTypeMember)) {
+            if (teamMemberType.equals(MemberType.MEMBER.toString())) {
                 team2.addMembers(myUser);
 
                 // add to pending members list for Members Awaiting Approval function
-                if (teamMemberStatus.equals("PENDING")) {
+                if (teamMemberStatus.equals(MemberStatus.PENDING.toString())) {
                     team2.addPendingMembers(myUser);
                 }
 
-            } else if (teamMemberType.equals(memberTypeOwner)) {
+            } else if (teamMemberType.equals(MemberType.OWNER.toString())) {
                 // explicit safer check
                 team2.setOwner(myUser);
             }
         }
         team2.setMembersCount(membersArray.length());
         return team2;
+    }
+
+    /**
+     * Checks if user is pending for join request approval from team leader
+     * Use for fixing bug for view experiment page where users previously can view the experiments just by issuing a join request
+     * @param json the response body after calling team service
+     * @param loginUserId the current logged in user id
+     * @return True if the user is anything but APPROVED, false otherwise
+     */
+    private boolean isMemberJoinRequestPending(String loginUserId, String json) {
+        JSONObject object = new JSONObject(json);
+        JSONArray membersArray = object.getJSONArray("members");
+
+        for (int i = 0; i < membersArray.length(); i++) {
+            JSONObject memberObject = membersArray.getJSONObject(i);
+            String userId = memberObject.getString("userId");
+            String teamMemberStatus = memberObject.getString("memberStatus");
+
+            if (userId.equals(loginUserId) && !teamMemberStatus.equals(MemberStatus.APPROVED.toString())) {
+                return true;
+            }
+        }
+        logger.info("User: {} is viewing experiment page", loginUserId);
+        return false;
     }
 
     private Team2 extractTeamInfoUserJoinRequest(String userId, String json) {
@@ -2270,7 +2551,7 @@ public class MainController {
             JSONObject memberObject = membersArray.getJSONObject(i);
             String uid = memberObject.getString("userId");
             String teamMemberStatus = memberObject.getString("memberStatus");
-            if (uid.equals(userId) && teamMemberStatus.equals("PENDING")) {
+            if (uid.equals(userId) && teamMemberStatus.equals(MemberStatus.PENDING.toString())) {
 
                 team2.setId(object.getString("id"));
                 team2.setName(object.getString("name"));
@@ -2291,9 +2572,16 @@ public class MainController {
 
     private User2 invokeAndExtractUserInfo(String userId) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        ResponseEntity response;
 
-        User2 user2 = extractUserInfo(responseEntity.getBody().toString());
+        try {
+            response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        } catch (Exception e) {
+            logger.warn("User service not available to retrieve User: {}", userId);
+            return new User2();
+        }
+
+        User2 user2 = extractUserInfo(response.getBody().toString());
         return user2;
     }
 
@@ -2303,10 +2591,6 @@ public class MainController {
 
         Team2 team = extractTeamInfo(responseEntity.getBody().toString());
         return team;
-    }
-
-    public String getStubUserID() {
-        return USER_ID;
     }
 
     private Experiment2 extractExperiment(String experimentJson) {
@@ -2327,10 +2611,36 @@ public class MainController {
         return experiment2;
     }
 
-    private Realization invokeAndExtractRealization(Long id) {
+    private Realization invokeAndExtractRealization(String teamName, Long id) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity respEntity = restTemplate.exchange(properties.getRealization(id.toString()), HttpMethod.GET, request, String.class);
-        return extractRealization(respEntity.getBody().toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            logger.info("retrieving the latest exp status: {}", properties.getRealizationByTeam(teamName, id.toString()));
+            response = restTemplate.exchange(properties.getRealizationByTeam(teamName, id.toString()), HttpMethod.GET, request, String.class);
+        } catch (Exception e) {
+            return getCleanRealization();
+        }
+        String responseBody;
+
+        if (response.getBody() == null) {
+            return getCleanRealization();
+        } else {
+            responseBody = response.getBody().toString();
+        }
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                logger.warn("error in retrieving realization for team: {}, realization: {}", teamName, id);
+                return getCleanRealization();
+            } else {
+                return extractRealization(responseBody);
+            }
+        } catch (Exception e) {
+            return getCleanRealization();
+        }
     }
 
     private Realization extractRealization(String json) {
@@ -2395,26 +2705,38 @@ public class MainController {
         return new HttpEntity<>(headers);
     }
 
-    private void setSessionVariables(HttpSession session, String loginEmail, String id) {
+    private void setSessionVariables(HttpSession session, String loginEmail, String id, String firstName, String userRoles) {
         User2 user = invokeAndExtractUserInfo(id);
         session.setAttribute("sessionLoggedEmail", loginEmail);
         session.setAttribute("id", id);
-        session.setAttribute("name", user.getFirstName());
-        // FIXME: get user type from token
-//        session.setAttribute("userType", UserType.NORMAL.toString());
-        session.setAttribute(userType, UserType.ADMIN.toString());
+        session.setAttribute("name", firstName);
+        session.setAttribute(session_roles, userRoles);
+        logger.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), userRoles);
     }
 
     private void removeSessionVariables(HttpSession session) {
         session.removeAttribute("sessionLoggedEmail");
         session.removeAttribute("id");
         session.removeAttribute("name");
-        // FIXME: get user type from token
-        session.removeAttribute(userType);
+        session.removeAttribute(session_roles);
+        AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
     }
 
     private boolean validateIfAdmin(HttpSession session) {
-        logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(userType));
-        return session.getAttribute(userType).equals(UserType.ADMIN.toString());
+        logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(session_roles));
+        return session.getAttribute(session_roles).equals(UserType.ADMIN.toString());
+    }
+
+    private Realization getCleanRealization() {
+        Realization realization = new Realization();
+
+        realization.setExperimentId(0L);
+        realization.setExperimentName("");
+        realization.setUserId("");
+        realization.setTeamId("");
+        realization.setState(RealizationState.ERROR.toString());
+        realization.setDetails("");
+
+        return realization;
     }
 }

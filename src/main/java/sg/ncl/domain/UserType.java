@@ -4,5 +4,5 @@ package sg.ncl.domain;
  * @author Desmond
  */
 public enum UserType {
-    ADMIN, NORMAL
+    ADMIN, USER
 }

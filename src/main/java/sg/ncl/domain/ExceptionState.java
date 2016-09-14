@@ -11,5 +11,15 @@ public enum ExceptionState {
     TeamNotFoundException,
     ApplyNewProjectException,
     RegisterTeamNameDuplicateException,
-    JoinProjectException
+    JoinProjectException,
+    ExpStartException,
+    ExpDeleteException,
+    IdNullOrEmptyException,
+    InvalidTeamStatusException,
+    ExperimentNameInUseException,
+    UsernameAlreadyExistsException,
+    CredentialsNotFoundException,
+    EmailNotVerifiedException,
+    UserNotApprovedException,
+    InvalidCredentialsException
 }

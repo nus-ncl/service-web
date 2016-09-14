@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
+import sg.ncl.domain.UserType;
 import sg.ncl.testbed_interface.Team2;
 
 import javax.inject.Inject;
@@ -138,7 +139,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("navbar-header")))
-                .andExpect(content().string(containsString("a href=\"futureplan.html\"")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
@@ -251,7 +251,7 @@ public class MainControllerTest {
     public void testPostLoginPageInvalidUserPassword() throws Exception {
         mockServer.expect(requestTo(properties.getSioAuthUrl()))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest().body("{}").contentType(MediaType.APPLICATION_JSON));
+                .andRespond(withBadRequest().body("{\"name\":\"sg.ncl.service.authentication.exceptions.InvalidCredentialsException\"}").contentType(MediaType.APPLICATION_JSON));
 
         ResultActions perform = mockMvc.perform(
                 post("/login")
@@ -279,6 +279,19 @@ public class MainControllerTest {
                 .andExpect(model().attributeExists("signUpMergedForm"));
     }
 
+    @Test
+    public void testRedirectNotFoundNotLoggedOn() throws Exception {
+        mockMvc.perform(get("/notfound"))
+                .andExpect(redirectedUrl("/"));
+    }
+
+    @Test
+    public void testRedirectNotFoundLoggedOn() throws Exception {
+        final String id = RandomStringUtils.randomAlphabetic(10);
+        mockMvc.perform(get("/notfound").sessionAttr("id", id))
+                .andExpect(redirectedUrl("/dashboard"));
+    }
+
     //--------------------------------------
     // Test after login HTML pages
     //--------------------------------------
@@ -292,6 +305,31 @@ public class MainControllerTest {
                 .andRespond(withSuccess(id, MediaType.APPLICATION_JSON));
 
         mockMvc.perform(get("/dashboard").sessionAttr("id", id))
+                .andExpect(status().isOk())
+                .andExpect(view().name("dashboard"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/calendar1")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("Dashboard")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")))
+                .andExpect(model().attribute("deterUid", is(id)));
+    }
+
+    @Test
+    public void testGetDashboardPageWithAdmin() throws Exception {
+        final String id = RandomStringUtils.randomAlphabetic(10);
+
+        mockServer.expect(requestTo(properties.getDeterUid(id)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(id, MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(get("/dashboard").sessionAttr("id", id).sessionAttr("roles", UserType.ADMIN.toString()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("dashboard"))
                 .andExpect(content().string(containsString("main.css")))
@@ -312,7 +350,7 @@ public class MainControllerTest {
     @Test
     public void getUserProfileTest() throws Exception {
 
-        JSONObject predefinedUserJson = createUserJson("1234567890-ABCDEFGHIJKL", "teye", "yeo", "research assistant", "dcsyeoty@nus.edu.sg", "12345678", "national", "nus", "http://nus.edu.sg", "computing drive 12", "", "Singapore", "west", "city singapore", "12345678");
+        JSONObject predefinedUserJson = Util.createUserJson();
         String predefinedJsonStr = predefinedUserJson.toString();
 
         // uri must be equal to that defined in MainController
@@ -335,11 +373,11 @@ public class MainControllerTest {
         // update the lastname to test user details json
         // update the address2 to test address json
 
-        JSONObject predefinedUserJson = createUserJson("1234567890-ABCDEFGHIJKL", "teye", "yeo", "research assistant", "dcsyeoty@nus.edu.sg", "12345678", "national", "nus", "http://nus.edu.sg", "computing drive 12", "", "Singapore", "west", "city singapore", "12345678");
-        JSONObject predefinedUserDetailsJson = predefinedUserJson.getJSONObject("userDetails");
+        JSONObject predefinedUserJson = Util.createUserJson();
+        final String id = RandomStringUtils.randomAlphabetic(10);
         String predefinedJsonStr = predefinedUserJson.toString();
 
-        mockServer.expect(requestTo(properties.getSioUsersUrl() + mainController.getStubUserID()))
+        mockServer.expect(requestTo(properties.getSioUsersUrl() + id))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
@@ -456,7 +494,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/teams")))
                 .andExpect(content().string(containsString("/experiments")))
-                .andExpect(content().string(containsString("/admin")))
                 .andExpect(content().string(containsString("/calendar1")))
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/approve_new_user")))
@@ -476,7 +513,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/teams")))
                 .andExpect(content().string(containsString("/experiments")))
-                .andExpect(content().string(containsString("/admin")))
                 .andExpect(content().string(containsString("/calendar1")))
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/approve_new_user")))
@@ -485,32 +521,5 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("method=\"post\" action=\"/teams/apply_team\"")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")))
                 .andExpect(model().attribute("teamPageApplyTeamForm", hasProperty("teamName")));
-    }
-
-    private JSONObject createUserJson(String id, String firstName, String lastName, String jobTitle, String email, String phone, String institution, String institutionAbbrev, String institutionWeb, String address1, String address2, String country, String region, String city, String zipCode) {
-        JSONObject object = new JSONObject();
-        JSONObject userDetails = new JSONObject();
-        JSONObject address = new JSONObject();
-
-        object.put("id", id);
-        userDetails.put("firstName", firstName);
-        userDetails.put("lastName", lastName);
-        userDetails.put("jobTitle", jobTitle);
-        userDetails.put("email", email);
-        userDetails.put("phone", phone);
-        userDetails.put("address", address);
-        userDetails.put("institution", institution);
-        userDetails.put("institutionAbbreviation", institutionAbbrev);
-        userDetails.put("institutionWeb", institutionWeb);
-
-        address.put("address1", address1);
-        address.put("address2", address2);
-        address.put("country", country);
-        address.put("region", region);
-        address.put("city", city);
-        address.put("zipCode", zipCode);
-
-        object.put("userDetails", userDetails);
-        return object;
     }
 }
