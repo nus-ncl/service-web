@@ -1639,10 +1639,17 @@ public class MainController {
 //    }
     
     @RequestMapping("/remove_experiment/{teamName}/{expId}")
-    public String removeExperiment(@PathVariable String teamName, @PathVariable String expId, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    public String removeExperiment(@PathVariable String teamName, @PathVariable String expId, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        // check valid authentication to remove experiments
+        if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString())) {
+            logger.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamName, expId, session.getAttribute("id"), session.getAttribute(session_roles));
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove experiment; Permission denied. If the error persists, please contact support@ncl.sg");
+            return "redirect:/experiments";
+        }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             logger.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
