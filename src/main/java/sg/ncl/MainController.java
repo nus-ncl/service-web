@@ -162,6 +162,12 @@ public class MainController {
         return "resource2";
     }
 
+    @RequestMapping("/tutorials")
+    public String tutorials() {
+        return "tutorials";
+    }
+
+
     @RequestMapping("/dataresource")
     public String dataresource() {
         return "dataresource";
