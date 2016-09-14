@@ -2196,11 +2196,12 @@ img {
 }
 
 h16 {
-
 font-weight: bold;
-
-
+    color:#ac2925;
+    padding-top: 0px;
 }
+
+
 
 hr {
     background-color: #dedede;
