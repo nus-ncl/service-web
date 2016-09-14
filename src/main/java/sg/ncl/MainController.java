@@ -1191,6 +1191,7 @@ public class MainController {
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
         model.addAttribute("membersList", team.getMembersList());
+        session.setAttribute("originalTeam", team);
 //        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
 //        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
 //        model.addAttribute("userManager", userManager);
