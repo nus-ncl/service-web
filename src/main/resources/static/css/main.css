@@ -848,7 +848,10 @@ Waypoints
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 600;
-    margin:20px;
+    margin-left:10px;
+    margin-right:10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     background-color: #333;
     border-radius: 2px;
     border: 1px solid #333;
@@ -860,7 +863,10 @@ Waypoints
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 600;
-    margin:20px;
+    margin-left:10px;
+    margin-right:10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     background-color: #21b3b7;
     border-radius: 2px;
     border: 1px solid #21b3b7;!important
