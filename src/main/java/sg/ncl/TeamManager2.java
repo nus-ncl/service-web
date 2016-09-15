@@ -2,12 +2,13 @@ package sg.ncl;
 
 import sg.ncl.testbed_interface.Team2;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Created by Te Ye
  */
-public class TeamManager2 {
+public class TeamManager2 implements Serializable {
 
     private HashMap<String, Team2> teamMap; /* teamId - Team */
     private HashMap<String, Team2> publicTeamMap;

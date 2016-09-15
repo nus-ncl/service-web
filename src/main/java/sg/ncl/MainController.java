@@ -2404,8 +2404,8 @@ public class MainController {
         JSONObject address = userDetails.getJSONObject("address");
 
         user2.setId(object.getString("id"));
-        user2.setFirstName(userDetails.getString("firstName"));
-        user2.setLastName(userDetails.getString("lastName"));
+        user2.setFirstName(getJSONStr(userDetails.getString("firstName")));
+        user2.setLastName(getJSONStr(userDetails.getString("lastName")));
         user2.setJobTitle(userDetails.getString("jobTitle"));
         user2.setEmail(userDetails.getString("email"));
         user2.setPhone(userDetails.getString("phone"));
@@ -2466,6 +2466,15 @@ public class MainController {
         }
         team2.setMembersCount(membersArray.length());
         return team2;
+    }
+
+    // use to extract JSON Strings from services
+    // in the case where the JSON Strings are null, return "Connection Error"
+    private String getJSONStr(String jsonString) {
+        if (jsonString == null || jsonString.isEmpty()) {
+            return "Connection Error";
+        }
+        return jsonString;
     }
 
     /**
