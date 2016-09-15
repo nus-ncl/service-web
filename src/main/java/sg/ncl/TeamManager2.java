@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Created by Te Ye
  */
-public class TeamManager2 implements Serializable {
+public class TeamManager2 {
 
     private HashMap<String, Team2> teamMap; /* teamId - Team */
     private HashMap<String, Team2> publicTeamMap;
