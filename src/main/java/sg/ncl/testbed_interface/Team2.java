@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Te Ye.
+ * @author Te Ye
  */
 public class Team2 implements Serializable {
 
