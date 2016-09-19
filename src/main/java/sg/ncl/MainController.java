@@ -1191,6 +1191,7 @@ public class MainController {
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
         model.addAttribute("membersList", team.getMembersList());
+        session.setAttribute("originalTeam", team);
 //        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
 //        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
 //        model.addAttribute("userManager", userManager);
@@ -1639,10 +1640,17 @@ public class MainController {
 //    }
     
     @RequestMapping("/remove_experiment/{teamName}/{expId}")
-    public String removeExperiment(@PathVariable String teamName, @PathVariable String expId, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    public String removeExperiment(@PathVariable String teamName, @PathVariable String expId, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        // check valid authentication to remove experiments
+        if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString())) {
+            logger.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamName, expId, session.getAttribute("id"), session.getAttribute(session_roles));
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove experiment; Permission denied. If the error persists, please contact support@ncl.sg");
+            return "redirect:/experiments";
+        }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             logger.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
@@ -2329,7 +2337,7 @@ public class MainController {
         scenarioFileNameList.add("Scenario 1 - A single node");
         scenarioFileNameList.add("Scenario 2 - Two nodes linked with a 10Gbps link");
         scenarioFileNameList.add("Scenario 3 - Three nodes in a star topology");
-        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
+//        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
 //        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
         logger.info("Scenario file list: {}", scenarioFileNameList);
 		return scenarioFileNameList;
@@ -2344,8 +2352,6 @@ public class MainController {
             actualScenarioFileName = "basic2.ns";
         } else if (scenarioFileName.contains("Scenario 3")) {
             actualScenarioFileName = "basic3.ns";
-        } else if (scenarioFileName.contains("Scenario 4")) {
-            actualScenarioFileName = "sdn.ns";
         } else {
             // defaults to basic single node
             actualScenarioFileName = "basic.ns";
@@ -2398,8 +2404,8 @@ public class MainController {
         JSONObject address = userDetails.getJSONObject("address");
 
         user2.setId(object.getString("id"));
-        user2.setFirstName(userDetails.getString("firstName"));
-        user2.setLastName(userDetails.getString("lastName"));
+        user2.setFirstName(getJSONStr(userDetails.getString("firstName")));
+        user2.setLastName(getJSONStr(userDetails.getString("lastName")));
         user2.setJobTitle(userDetails.getString("jobTitle"));
         user2.setEmail(userDetails.getString("email"));
         user2.setPhone(userDetails.getString("phone"));
@@ -2460,6 +2466,15 @@ public class MainController {
         }
         team2.setMembersCount(membersArray.length());
         return team2;
+    }
+
+    // use to extract JSON Strings from services
+    // in the case where the JSON Strings are null, return "Connection Error"
+    private String getJSONStr(String jsonString) {
+        if (jsonString == null || jsonString.isEmpty()) {
+            return "Connection Error";
+        }
+        return jsonString;
     }
 
     /**

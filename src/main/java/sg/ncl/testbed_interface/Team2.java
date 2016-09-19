@@ -1,14 +1,15 @@
 package sg.ncl.testbed_interface;
 
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Te Ye.
+ * @author Te Ye
  */
-public class Team2 {
+public class Team2 implements Serializable {
 
     private String id;
     private String name;
