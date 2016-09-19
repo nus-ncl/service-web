@@ -146,6 +146,12 @@ function displayNsContent() {
 	document.getElementById("networkConfig").innerHTML = file;
 }
 
+// display the default ns file content
+function displayDefaultNsContent() {
+	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	document.getElementById("networkConfig").innerHTML = basic;
+}
+
 
 jQuery(function($) {
 
