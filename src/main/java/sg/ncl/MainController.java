@@ -144,10 +144,30 @@ public class MainController {
         return "tools";
     }
 
-//    @RequestMapping("/resource2")
-//    public String resource2() {
-//        return "resource2";
-//    }
+    @RequestMapping("/createaccount")
+    public String createaccount() {
+        return "createaccount";
+    }
+
+    @RequestMapping("/createexperiment")
+    public String createexperiment() {
+        return "createexperiment";
+    }
+
+    @RequestMapping("/applyteam")
+    public String applyteam() {
+        return "applyteam";
+    }
+
+    @RequestMapping("/jointeam")
+    public String jointeam() {
+        return "jointeam";
+    }
+
+    @RequestMapping("/resource2")
+    public String resource2() {
+        return "resource2";
+    }
 
     @RequestMapping("/tutorials")
     public String tutorials() {

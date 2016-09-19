@@ -2226,7 +2226,7 @@ img {
 
 .name {
     color: #565656;
-    font-weight: 300;
+    font-weight: 500;
     font-size: 3rem;
     margin-top: -5px;
     margin-bottom:8px;
@@ -2290,4 +2290,16 @@ margin-top: 30px;
     pre {
         font-size: 7px;
     }
+}
+
+
+h18{
+    color: #3b5999;
+
+}
+
+.tutorialbackground{
+    border: 2px solid #ccc ;
+    padding:10px;
+    margin: 0px;
 }
