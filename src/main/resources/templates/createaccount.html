@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Experiment</title>
+        <object th:include="fragments/header :: header" th:remove="tag" />
+    </head>
+    <body class="mybg">
+        <div th:replace="fragments/login_navigation :: loginnav">&nbsp;</div>
+        <div class="container">
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <div class="row ">
+
+                <div class="heading col-sm-12 tutorialbackground ">
+                       <div class="col-sm-6">
+                        <p>&nbsp;</p>
+                        <h2>Step 1 </h2>
+                        <p> Fill in a valid email address, your preferred password, and accept the Acceptable Usage Policy and Terms &amp; Conditions, then click on Next. </p>
+                        </div>
+                    <div class="col-sm-6">
+                        <img preload="true" minimal-lightbox="images/register11.png" src="images/register11.png" width="500" height="325" alt="screenshot"/></div>
+                </div>
+                <div class="heading col-sm-12 tutorialbackground ">
+                       <div class="col-sm-6">
+                            <h2>Step 2 </h2>
+                            <p> Fill in all required information here. ALL fields are required. </p>
+                        </div>
+                    <div class="col-sm-6">
+                        <img preload="true" minimal-lightbox="images/register2.png" src="images/register2.png" width="500" height="405" alt="screenshot"/></div>
+                </div>
+                <div class="heading col-sm-12 tutorialbackground ">
+                        <div class="col-sm-6">
+                            <h2>Step 3</h2>
+                            <p>Choose to create a new team, or to join an existing team. </p></div>
+                        <div class="col-sm-6">
+                            <img preload="true" minimal-lightbox="images/register3.png" src="images/register3.png" width="500" height="315" alt="screenshot"/>
+                        </div>
+                </div>
+                <div class="heading col-sm-12 tutorialbackground ">
+                    <div class="col-sm-6">
+                        <h2>Step 4 </h2>
+                        <p>To create a new team, fill in the required information such as Team Name, Team Description and Team Website.</p>
+                         <p>   Select your organization type from the drop-down menu.</p>
+                          <p>  Select if you want your team to be public or private.</p>
+                       </div>
+                    <div class="col-sm-6">
+                        <img preload="true" minimal-lightbox="images/register4.png" src="images/register4.png" width="500" height="365" alt="screenshot"/>
+                    </div>
+                </div>
+
+                <div class="heading col-sm-12 tutorialbackground">
+                    <div class="col-sm-6">
+                        <h2>Step 5 </h2>
+                        <p> To join an existing team, simply enter the team name to join. A list of public teams can be viewed at the footer of the website.  </p></div>
+                <hr/>
+                    <div class="col-sm-6">
+                    <img preload="true" minimal-lightbox="images/register5.png" src="images/register5.png" width="500" height="315" alt="screenshot"/>
+                </div>
+            </div>
+           </div>
+        </div> <!-- container -->
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <div th:replace="fragments/footer:: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+    </body>
+</html>

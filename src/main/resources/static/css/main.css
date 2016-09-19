@@ -281,6 +281,8 @@ body {
     background-color: #fff;
     height : 100%;
     margin: 0 0 100px; /* bottom = footer height */
+
+
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -846,7 +848,10 @@ Waypoints
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 600;
-    margin:20px;
+    margin-left:10px;
+    margin-right:10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     background-color: #333;
     border-radius: 2px;
     border: 1px solid #333;
@@ -858,7 +863,10 @@ Waypoints
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 600;
-    margin:20px;
+    margin-left:10px;
+    margin-right:10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     background-color: #21b3b7;
     border-radius: 2px;
     border: 1px solid #21b3b7;!important
@@ -1551,8 +1559,8 @@ table {
 }
 
 .dashpanel_admin {
-    padding: 20px;
-    margin-top: 10px;
+    padding: 2px;
+    margin-top: 1px;
     background-color: transparent;
     border: 0px;
     border-color: #333;
@@ -1634,7 +1642,7 @@ table {
 
 /*for admin - Teams management page to push down the modal when click on team owner */
 .admin-modal {
-    top: 10%;
+    top: 20%;
 }
 
 /* for admin teams management page */
@@ -1985,11 +1993,10 @@ h23 {
 }
 
 .background8 {
-    background-image: url(../images/tool.png);
+    background-image: url(../images/tool1.png);
     background-size: cover;
-    background-repeat: no-repeat;
     background-position: center;
-    background-attachment: fixed;
+
 
 }
 /**
@@ -2001,12 +2008,16 @@ h23 {
     }
 }
 
-
 .realization {
     font-family: "Courier New";
     font-size: 12px;
 }
 
+.topnav {
+    width: 213px;
+    padding: 40px 28px 25px 0;
+    font-family: 'Open Sans', sans-serif;
+}
 /* for those seamless transitions */
 .spinner {
     position: fixed;
@@ -2042,4 +2053,253 @@ h23 {
     margin-top: -15px;
     margin-left: -15px;
     display: inline-block;
+}
+
+ul.topnav {
+    padding: 0;
+    margin: 0;
+    font-size: 1em;
+    line-height: 0.5em;
+    list-style: none;
+}
+
+ul.topnav li {}
+
+ul.topnav li a {
+    line-height: 30px;
+    font-size: 18px;
+    padding: 10px 5px;
+    color: #000;
+    display: block;
+    text-decoration: none;
+    font-weight: bolder;
+    list-style-type: none;
+}
+
+ul.topnav li a:hover {
+    background-color:#675C7C;
+    color:white;
+}
+
+ul.topnav ul {
+    margin: 0;
+    padding: 0;
+    display: none;
+    list-style-type: none;
+}
+
+ul.topnav ul li {
+    margin: 0;
+    padding: 0;
+    clear: both;
+    list-style-type: none;
+}
+
+ul.topnav ul li a {
+    padding-left: 20px;
+    font-size: 15px;
+    font-weight: normal;
+    outline:0;
+    list-style-type: none;
+}
+
+ul.topnav ul li a:hover {
+    background-color:#1eafbb;
+    color:#675C7C;
+}
+
+ul.topnav ul ul li a {
+    color: #8c8c8c;;
+    padding-left: 40px;
+    list-style-type: none;
+}
+
+ul.topnav ul ul li a:hover {
+    background-color:#D3CEB8;
+    color:#675C7C;
+}
+
+ul.topnav span{
+    float:right;
+}
+
+/*.SUE_Table > th, td{*/
+    /*border: 1px solid black;*/
+    /*border-collapse: collapse;*/
+    /*font-family: "Times New Roman", serif;*/
+    /*text-align: center;*/
+    /*padding: 5px;*/
+    /*width:100%;*/
+    /*white-space:nowrap;*/
+/*}*/
+/*.SUE_Table > th {*/
+    /*color: #00C7BA;*/
+/*}*/
+
+#vul h3 {
+   color: #21b3b7;
+   font-size: 25px;
+   font-weight: bold;
+    padding-left: 10px;
+    padding-bottom: 30px;
+}
+
+#SUETable {
+    /*border-collapse: collapse;*/
+    white-space:inherit;
+    /*didn't apply*/
+    /* #21b3b7*/
+
+}
+
+#SUETable th, td {
+    text-align: left;
+
+}
+
+#SUETable td {
+    font-size: 14px;
+    padding: 3px;
+
+}
+
+
+.container-1{
+    position: relative;
+    /*left: 650px;*/
+    left: 640px;
+    bottom: 30px;
+}
+
+.filter-table {
+    padding-left: 10px;
+    position: relative;
+    padding-right: 0px;
+
+}
+
+
+/*.container-1 input#search:hover, .container-1 input#search:focus, .container-1 input#search:active{
+    outline:none;
+    background: #ffffff;
+}*/
+
+h6 {
+    color: #21b3b7;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 0px;
+    margin: 0px;
+
+}
+
+img {
+
+    image-rendering: auto;
+    image-rendering: crisp-edges;
+}
+
+/*Pricing*/
+.wrapper {
+
+    padding-top: 10px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    color: #9f9f9f;
+    font-size: 15px;
+
+
+}
+
+
+.package {
+    width:400px;
+    alignment: center;
+    height: 400px;
+    border: 3px solid #e8e8e8;
+    border-radius: 7px;
+    padding: 24px;
+    position: relative;
+}
+
+
+
+.name {
+    color: #565656;
+    font-weight: 500;
+    font-size: 3rem;
+    margin-top: -5px;
+    margin-bottom:8px;
+
+}
+
+h16 {
+font-weight: bold;
+    color:#ac2925;
+    padding-top: 0px;
+}
+
+
+
+hr {
+    background-color: #dedede;
+    border: none;
+    height: 1px;
+}
+
+
+.brilliant {
+    border-color: #33c4b6;
+}
+/* Triangle */
+.brilliant::before {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 64px 64px 0 0;
+    border-color: #3bc6b8 transparent transparent transparent;
+    position: absolute;
+    left: 0;
+    top: 0;
+    content: "";
+}
+.brilliant::after {
+    font-family: "FontAwesome";
+    content: "\f00c";
+    color: white;
+    position: absolute;
+    left: 9px;
+    top: 6px;
+    text-shadow: 0 0 2px #37c5b6;
+    font-size: 1.4rem;
+}
+
+#about img {
+margin-top: 30px;
+    width: 100%;
+    height: auto;
+}
+
+@media(max-width: 528px) {
+    body {
+        font-size: 10px;
+    }
+    #about {
+        width: 100%;
+    }
+    pre {
+        font-size: 7px;
+    }
+}
+
+
+h18{
+    color: #3b5999;
+
+}
+
+.tutorialbackground{
+    border: 2px solid #ccc ;
+    padding:10px;
+    margin: 0px;
 }

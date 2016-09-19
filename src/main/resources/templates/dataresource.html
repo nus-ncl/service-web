@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>National Cybersecurity Laboratories - Resource</title>
+		<object th:include="fragments/header :: header" th:remove="tag" />
+	</head>
+	<body class="mybg loginbackground">
+	<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+	<div class="container">
+		<!-- test comment -->
+		<p>&nbsp;</p>
+					<p>&nbsp;</p>
+					<p>&nbsp;</p>
+					<p>&nbsp;</p>
+					<!--here make changes-->
+					<div class="row dashpanel col-sm-12">
+						<h2 class="team-heading team-heading-current-team" th:text="#{data.heading.current}">text heading from .properties</h2>
+
+						<ul class="topnav col-sm-2">
+							<li>
+								<a href="#">Data Category</a>
+								<ul>
+									<li class="active"><a data-toggle="tab" href="#vul">Malware Data</a></li>
+									<li><a data-toggle="tab" href="#bigdata">Application Layer Security Data</a></li>
+									<li><a data-toggle="tab" href="#bigdata">DNS Data</a></li>
+									<li><a data-toggle="tab" href="#bigdata">IDS and Firewall Data</a></li>
+									<li><a data-toggle="tab" href="#bigdata">IP Packet Headers</a></li>
+								</ul>
+			</li>
+			<li><a href="#">Year Created</a>
+				<ul>
+					<li><a href="#">2016</a></li>
+					<li><a href="#">2015</a></li>
+					<li><a href="#">2014</a></li>
+
+				</ul>
+			</li>
+
+		</ul>
+
+		<div class="col-sm-9">
+			<div id="vul" class="tab-panel fade in active">
+				<h3>Malware Data</h3>
+				<div>
+					<table id="SUETable" class="table">
+					<tr>
+						<th></th>
+						<th width="25%">Data Name</th>
+						<th width="30%">Description</th>
+						<th width="15%">Release Date</th>
+						<th width="30%">Action</th>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td><a href="#" data-toggle="modal" data-target="#myModal">ITDK 2015-08</a></td>
+						<div class="container">
+							<div id="myModal" class="modal fade admin-modal" role="dialog">
+								<div class="modal-dialog">
+									<!--Modal Content-->
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal">&times;</button>
+											<h4 class="modal-title">ITDK 2015-08 </h4>
+										</div>
+										<div class="modal-body">
+											<p><b>Details</b>
+											<p>This dataset enables the study of the topology of the IPv4 and IPv6 Internet at the router-level with inferences for assignments of routers to Autonomous Systems (AS). The August 2015 release of the ITDK includes two related IPv4 router-level topologies; an IPv6 router-level topology; assignments of routers to ASes; geographic locations of each router; and Domain Name Service (DNS) lookups of all observed IP addresses.</p>
+											<p>
+												<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
+												<button type="button" class="btn btn-standard">Save</button>
+											</p>
+
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<td>Study of the topology of the IPv4 and IPv6 Internet</td>
+						<td>2015/08</td>
+						<td>
+							<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
+							<button type="button" class="btn btn-standard">Save</button>
+						</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>DNS AMPL DDOS DEC2015 </td>
+						<td>DNS Server Spoofed Request Amplification DDoS</td>
+						<td>2015/07</td>
+						<td>
+							<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
+							<button type="button" class="btn btn-standard">Save</button>
+						</td>
+					</tr>
+					<tr>
+							<td>2</td>
+							<td>SSDP DDoS attack 2015</td>
+							<td>Simple Service Discovery Protocol attack</td>
+						    <td>2015/12</td>
+							<td>
+								<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
+								<button type="button" class="btn btn-standard">Save</button>
+					</td>
+					</tr>
+
+
+					</table>
+					<hr/>
+					<div class="fa fa-share" ><strong> &nbsp;&nbsp;Link to <a href="https://www.impactcybertrust.org/"> IMPACT Data</a></strong></div>
+				</div>
+			</div>
+			<div id="bigdata" class="tab-pane fade">
+			</div>
+			<div id="blockchain" class="tab-pane fade">
+			</div>
+			<div id="mobile" class="tab-pane fade">
+			</div>
+		</div>
+
+
+		</div> <!--here-->
+
+	</div>
+
+
+		<div class="cc-wraper">
+			<div class="cc-contactpop fixed">
+				<h1>Do you need Help? <span>Get in touch.</span></h1>
+				<div class="renseignement">
+					<i class="fa fa-times"></i>
+					<p>We will get back to you as soon as possible. </p>
+				</div>
+				<form>
+					<ul>
+						<li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+						<li><i class=""></i><span>Email:</span><a href="mailto:support@ncl.sg"> support@ncl.sg</a></li>
+						<li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+					</ul>
+					<p>&nbsp;</p>
+				</form>
+			</div>
+		<!--</div>-->
+	</div> <!-- container -->
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<div th:replace="fragments/footer:: footer"></div>
+	<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+	</body>
+</html>

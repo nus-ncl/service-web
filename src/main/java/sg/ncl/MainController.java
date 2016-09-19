@@ -144,25 +144,67 @@ public class MainController {
         return "tools";
     }
 
-    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
-    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
-        InputStream stream = null;
-        response.setContentType("application/pdf");
-        try {
-            stream = getClass().getClassLoader().getResourceAsStream("downloads/future_plan.pdf");
-            response.setContentType("application/force-download");
-            response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
-            IOUtils.copy(stream, response.getOutputStream());
-            response.flushBuffer();
-        } catch (Exception ex) {
-            logger.info("Error writing file to output stream.");
-            throw new FuturePlanDownloadException("IOError writing file to output stream");
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-        }
+    @RequestMapping("/createaccount")
+    public String createaccount() {
+        return "createaccount";
     }
+
+    @RequestMapping("/createexperiment")
+    public String createexperiment() {
+        return "createexperiment";
+    }
+
+    @RequestMapping("/applyteam")
+    public String applyteam() {
+        return "applyteam";
+    }
+
+    @RequestMapping("/jointeam")
+    public String jointeam() {
+        return "jointeam";
+    }
+
+    @RequestMapping("/resource2")
+    public String resource2() {
+        return "resource2";
+    }
+
+    @RequestMapping("/admin2")
+    public String admin2() {
+        return "admin2";
+    }
+
+
+    @RequestMapping("/tutorials")
+    public String tutorials() {
+        return "tutorials";
+    }
+
+
+//    @RequestMapping("/dataresource")
+//    public String dataresource() {
+//        return "dataresource";
+//    }
+
+//    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
+//    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
+//        InputStream stream = null;
+//        response.setContentType("application/pdf");
+//        try {
+//            stream = getClass().getClassLoader().getResourceAsStream("downloads/future_plan.pdf");
+//            response.setContentType("application/force-download");
+//            response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
+//            IOUtils.copy(stream, response.getOutputStream());
+//            response.flushBuffer();
+//        } catch (Exception ex) {
+//            logger.info("Error writing file to output stream.");
+//            throw new FuturePlanDownloadException("IOError writing file to output stream");
+//        } finally {
+//            if (stream != null) {
+//                stream.close();
+//            }
+//        }
+//    }
 
     @RequestMapping(value="/orderform/download", method=RequestMethod.GET)
     public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
@@ -177,6 +219,46 @@ public class MainController {
         } catch (IOException ex) {
             logger.info("Error writing file to output stream.");
             throw new OrderFormDownloadException("IOError writing file to output stream");
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+    }
+
+    @RequestMapping(value="/SubscriptionAgreement/download", method=RequestMethod.GET)
+    public void SubscriptionAgreementDownload(HttpServletResponse response) throws MasterSubscriptionAgreementDownloadException, IOException {
+        InputStream stream = null;
+        response.setContentType("application/pdf");
+        try {
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/SubscriptionAgreement.pdf");
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment; filename=SubscriptionAgreement.pdf");
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+            logger.info("Error writing file to output stream.");
+            throw new MasterSubscriptionAgreementDownloadException("IOError writing file to output stream");
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+    }
+
+    @RequestMapping(value="/UsagePolicy/download", method=RequestMethod.GET)
+    public void UsagePolicyDownloadDownload(HttpServletResponse response) throws UsagePolicyDownloadException, IOException {
+        InputStream stream = null;
+        response.setContentType("application/pdf");
+        try {
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/UsagePolicy.pdf");
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment; filename=UsagePolicy.pdf");
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+            logger.info("Error writing file to output stream.");
+            throw new UsagePolicyDownloadException("IOError writing file to output stream");
         } finally {
             if (stream != null) {
                 stream.close();
