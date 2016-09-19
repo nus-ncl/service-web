@@ -121,6 +121,25 @@ $(document).ready(function() {
     
 });
 
+// display the ns file content when users select the predefined scenarios
+function displayNsContent() {
+	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic2 = "";
+	var basic3 = "";
+	var x = document.getElementById("selectExpScenario").value;
+	var file = "";
+	switch(x) {
+		case "Scenario 1 - A single node":
+			file = basic;
+			break;
+		default:
+			file = basic;
+			break;
+	}
+
+	document.getElementById("networkConfig").innerHTML = file;
+}
+
 
 jQuery(function($) {
 
