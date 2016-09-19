@@ -169,6 +169,12 @@ public class MainController {
         return "resource2";
     }
 
+    @RequestMapping("/admin2")
+    public String admin2() {
+        return "admin2";
+    }
+
+
     @RequestMapping("/tutorials")
     public String tutorials() {
         return "tutorials";
