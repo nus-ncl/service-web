@@ -123,7 +123,53 @@
 					</tr>
 					<tr>
 						<td>2</td>
-						<td>CVE-2014-6271</td>
+						<td><a href="#" data-toggle="modal" data-target="#myModal1">CVE-2014-6271</a></td>
+						<div class="container">
+							<div id="myModal1" class="modal fade admin-modal" role="dialog">
+								<div class="modal-dialog">
+									<!--Modal Content-->
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal">&times;</button>
+											<h4 class="modal-title">CVE-2014-6271</h4>
+										</div>
+										<div class="modal-body">
+											<p><b>Vulnerability</b>
+											<ul>
+												<li>CVE (if any): 2014-6271</li>
+												<li>OSVDB (if any): -</li>
+												<li>EDB ID (if any): 34860</li>
+												<li>Other ID (if any):  -</li>
+											</ul>
+											</p>
+											<p><b>Environment</b>
+											<ul>
+												<li>Operating system with version: Any Linux OS using GNU Bash 4.3 and below </li>
+												<li> Other environment information: NIL</li>
+											</ul>
+											</p>
+											<p><b>Resources</b>
+											<ul>
+												<li>Link to vulnerable source: <a href="http://ftp.gnu.org/gnu/bash/bash-4.3.tar.gz" target="_blank">Click Here</a></li>
+												<li>Link to exploit:  <a href="https://www.exploit-db.com/exploits/34860/" target="_blank">Click Here</a></li>
+											</ul>
+											</p>
+											<p><b>Description of Vulnerability</b>
+												<br/><br/>
+												GNU Bash through 4.3 processes trailing strings after function definitions in the values of environment variables, which allows remote attackers to execute arbitrary code via a crafted environment, as demonstrated by vectors involving the ForceCommand feature in OpenSSH sshd, the mod_cgi and mod_cgid modules in the Apache HTTP Server, scripts executed by unspecified DHCP clients, and other situations in which setting the environment occurs across a privilege boundary from Bash execution, aka "ShellShock."
+											</p>
+											<p>
+												<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
+												<button type="button" class="btn btn-standard">Save</button>
+											</p>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 						<td>Bash Code Injection</td>
 						<td>ShellShock</td>
 						<td>
