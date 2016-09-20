@@ -2383,7 +2383,7 @@ public class MainController {
     	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
         return "join_team_application_awaiting_approval";
     }
-    
+
     //--------------------------Get List of scenarios filenames--------------------------
     private List<String> getScenarioFileNameList() throws WebServiceRuntimeException {
         logger.info("Retrieving scenario file names");
@@ -2411,10 +2411,10 @@ public class MainController {
         scenarioFileNameList.add("Scenario 1 - A single node");
         scenarioFileNameList.add("Scenario 2 - Two nodes linked with a 10Gbps link");
         scenarioFileNameList.add("Scenario 3 - Three nodes in a star topology");
-        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
+//        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
 //        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
         logger.info("Scenario file list: {}", scenarioFileNameList);
-		return scenarioFileNameList;
+        return scenarioFileNameList;
     }
 
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
@@ -2426,8 +2426,6 @@ public class MainController {
             actualScenarioFileName = "basic2.ns";
         } else if (scenarioFileName.contains("Scenario 3")) {
             actualScenarioFileName = "basic3.ns";
-        } else if (scenarioFileName.contains("Scenario 4")) {
-            actualScenarioFileName = "sdn.ns";
         } else {
             // defaults to basic single node
             actualScenarioFileName = "basic.ns";
@@ -2447,6 +2445,7 @@ public class MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
+
 
     //---Check if user is a team owner and has any join request waiting for approval----
     private boolean hasAnyJoinRequest(HashMap<Integer, Team> teamMapOwnedByUser) {

@@ -39,76 +39,16 @@
                         </div>
                         <h3 th:text="#{exp.scenario}">Experiment Scenario</h3>
                         <div class="form-group">
-                        	<label for="scenarioName" th:text="#{exp.selectScenario}">Select a scenario:</label>
-                        	<select id="selectExpScenario" class="form-control" th:field="*{scenarioFileName}">
-                        		<option th:each="scenarioName: ${scenarioFileNameList}" th:value="${scenarioName}" th:text="${scenarioName}"></option>
-                        	</select>
+                            <label for="scenarioName" th:text="#{exp.selectScenario}">Select a scenario:</label>
+                            <select id="selectExpScenario" class="form-control" th:field="*{scenarioFileName}" onchange="displayNsContent()">
+                                <option th:each="scenarioName: ${scenarioFileNameList}" th:value="${scenarioName}" th:text="${scenarioName}"></option>
+                            </select>
                         </div>
-
-                        <div>
-                            <div class="panel-heading">
-                                <div class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1"> Scenario 1 : A Single Node
-                                    </a>
-                                </div>
+                        <div id="custom">
+                            <div class="form-group">
+                                <label for="networkConfiguration" th:text="#{exp.networkConfig}">Network Configuration</label>
+                                <textarea id="networkConfig" rows="30" cols="50" style="resize: none" th:field="*{nsFileContent}" class="form-control"></textarea>
                             </div>
-                            <div id="collapse1" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <div class="form-group">
-                                        <label for="networkConfiguration" th:text="#{exp.networkConfig}">Network Configuration</label>
-                                        <textarea rows="3" cols="10" style="resize: none" th:field="*{nsFileContent}" class="form-control"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Scenario 2 : Two nodes linked with a 10 Gbps links </a>
-                                </h4>
-                            </div>
-                            <div id="collapse2" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <div class="form-group">
-                                        <label for="networkConfiguration" th:text="#{exp.networkConfig}">Network Configuration</label>
-                                        <textarea rows="3" cols="10" style="resize: none" th:field="*{nsFileContent}" class="form-control"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Scenario 3 : Three nodes in a star topology</a>
-                                </h4>
-                            </div>
-                            <div id="collapse3" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <div class="form-group">
-                                        <label for="networkConfiguration" th:text="#{exp.networkConfig}">Network Configuration</label>
-                                        <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                                            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                                            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
-                                        <textarea rows="3" cols="10" style="resize: none" th:field="*{nsFileContent}" class="form-control"></textarea>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div>
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Scenario 4 : Two nodes linked with a 10 Gbps SDN switch </a>
-                                </h4>
-                            </div>
-                            <div id="collapse4" class="panel-collapse collapse">
-                                <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
-                            </div>
-
                         </div>
 
                         <!--<div id="custom">-->

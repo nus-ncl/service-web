@@ -742,3 +742,35 @@ for ( i in settings.buttons ) {
 		Container.append(sButton);
 	}
 }
+
+
+// display the ns file content when users select the predefined scenarios
+function displayNsContent() {
+	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic2 = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset attacker [$ns node]\r\nset victim [$ns node]\r\n\r\nset lan0 [$ns make-lan \"$attacker $victim\" 100Mb 0ms]\r\n\r\ntb-set-node-os $attacker Ubuntu1404-64-STD\r\ntb-set-node-os $victim Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic3 = "# This script contains only three nodes.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\nset node1 [$ns node]\r\nset node2 [$ns node]\r\nset node3 [$ns node]\r\n\r\nset lan0 [$ns make-lan \"$node1 $node2 $node3\" 100Mb 0ms]\r\n\r\ntb-set-node-os $node1 Ubuntu1404-64-STD\r\ntb-set-node-os $node2 Ubuntu1404-64-STD\r\ntb-set-node-os $node3 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n$ns run";
+	var x = document.getElementById("selectExpScenario").value;
+	var file = "";
+	switch(x) {
+		case "Scenario 1 - A single node":
+			file = basic;
+			break;
+		case "Scenario 2 - Two nodes linked with a 10Gbps link":
+			file = basic2;
+			break;
+		case "Scenario 3 - Three nodes in a star topology":
+			file = basic3;
+			break;
+		default:
+			file = basic;
+			break;
+	}
+
+	document.getElementById("networkConfig").innerHTML = file;
+}
+
+// display the default ns file content
+function displayDefaultNsContent() {
+	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	document.getElementById("networkConfig").innerHTML = basic;
+}
