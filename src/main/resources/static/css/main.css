@@ -1545,12 +1545,12 @@ table {
     padding: 20px;
     margin-top: 10px;
     background-color: transparent;
-    border: 0px;
+    border: 2px solid #CCC;
     margin: 10px;
     width: 100%;
-    border-color: #333;
     border-radius: 10px;
-    background-color:rgba(255,255,255, 0.7) !important;
+    /*background-color:rgba(255,255,255, 0.7) !important;*/
+ }
  }
 
 .dashpanel2{
@@ -1820,7 +1820,8 @@ html {
 
 .loginbackground
 {
-    background-color: #eaeff5;
+    background-color: #FFFFff;
+    /*background-color: #eaeff5;*/
     /*background-size: cover;*/
     /*background-repeat: no-repeat;*/
     /*background-position: center;*/
