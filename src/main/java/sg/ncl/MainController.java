@@ -1764,6 +1764,8 @@ public class MainController {
 
                 if (exceptionState == ExceptionState.EXP_DELETE_EXCEPTION) {
                     log.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
+                if (error.getName().equals(ExceptionState.ExpDeleteException.toString()) || error.getName().equals(ExceptionState.ForbiddenException.toString())) {
+                    logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
                     redirectAttributes.addFlashAttribute("message", error.getMessage());
                 }
                 return "redirect:/experiments";
