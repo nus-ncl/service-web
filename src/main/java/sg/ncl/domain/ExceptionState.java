@@ -21,5 +21,6 @@ public enum ExceptionState {
     CredentialsNotFoundException,
     EmailNotVerifiedException,
     UserNotApprovedException,
-    InvalidCredentialsException
+    InvalidCredentialsException,
+    ForbiddenException
 }

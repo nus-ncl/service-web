@@ -1676,7 +1676,7 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                if (error.getName().equals(ExceptionState.ExpDeleteException.toString())) {
+                if (error.getName().equals(ExceptionState.ExpDeleteException.toString()) || error.getName().equals(ExceptionState.ForbiddenException.toString())) {
                     logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
                     redirectAttributes.addFlashAttribute("message", error.getMessage());
                 }
