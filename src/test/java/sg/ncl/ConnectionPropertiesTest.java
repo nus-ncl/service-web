@@ -3,7 +3,7 @@ package sg.ncl;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import sg.ncl.testbed_interface.TeamStatus;
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.*;
  * @author Te Ye
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestApp.class)
+@SpringBootTest(classes = TestApp.class)
 @WebAppConfiguration
 public class ConnectionPropertiesTest {
 
