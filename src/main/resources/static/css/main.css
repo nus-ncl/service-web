@@ -2176,14 +2176,22 @@ ul.topnav span{
     padding-left: 10px;
     position: relative;
     padding-right: 0px;
-
 }
 
 
-/*.container-1 input#search:hover, .container-1 input#search:focus, .container-1 input#search:active{
-    outline:none;
-    background: #ffffff;
-}*/
+#teammanagement td {
+    text-align: center;
+}
+
+#currentdate, #newdate {
+    text-align: center;
+}
+
+
+    /*.container-1 input#search:hover, .container-1 input#search:focus, .container-1 input#search:active{
+        outline:none;
+        background: #ffffff;
+    }*/
 
 h6 {
     color: #21b3b7;
