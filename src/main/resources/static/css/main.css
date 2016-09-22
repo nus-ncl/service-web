@@ -1551,7 +1551,7 @@ table {
     border-radius: 10px;
     /*background-color:rgba(255,255,255, 0.7) !important;*/
  }
- }
+
 
 .dashpanel2{
     border-bottom: 1px solid #CCC;
@@ -2311,4 +2311,15 @@ h18{
     border: 2px solid #ccc ;
     padding:10px;
     margin: 0px;
+    margin: 0px;
+}
+
+
+.backadmin {
+    padding:30px;
+    margin: 10px;
+    border-radius: 10px;
+    background-color:#FFF;
+    width: 22%;
+
 }
