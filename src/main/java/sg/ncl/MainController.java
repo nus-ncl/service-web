@@ -220,7 +220,7 @@ public class MainController {
             response.flushBuffer();
         } catch (IOException ex) {
             logger.info("Error for download orderform.");
-            throw new OrderFormDownloadException("IOError writing file to output stream");
+            throw new OrderFormDownloadException("Error for download orderform.");
         } finally {
             if (stream != null) {
                 stream.close();
@@ -240,7 +240,7 @@ public class MainController {
             response.flushBuffer();
         } catch (IOException ex) {
             logger.info("Error for subscription download.");
-            throw new MasterSubscriptionAgreementDownloadException("IOError writing file to output stream");
+            throw new MasterSubscriptionAgreementDownloadException("Error for subscription download.");
         } finally {
             if (stream != null) {
                 stream.close();
@@ -260,7 +260,7 @@ public class MainController {
             response.flushBuffer();
         } catch (IOException ex) {
             logger.info("Error for usage policy download." + ex.getMessage());
-            throw new UsagePolicyDownloadException("IOError writing file to output stream");
+            throw new UsagePolicyDownloadException("Error for usage policy download.");
         } finally {
             if (stream != null) {
                 stream.close();
