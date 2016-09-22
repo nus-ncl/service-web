@@ -164,15 +164,15 @@ public class MainController {
         return "jointeam";
     }
 
-    @RequestMapping("/resource2")
-    public String resource2() {
-        return "resource2";
-    }
+//    @RequestMapping("/resource2")
+//    public String resource2() {
+//        return "resource2";
+//    }
 
-    @RequestMapping("/admin2")
-    public String admin2() {
-        return "admin2";
-    }
+//    @RequestMapping("/admin2")
+//    public String admin2() {
+//        return "admin2";
+//    }
 
 
     @RequestMapping("/tutorials")
@@ -2062,7 +2062,7 @@ public class MainController {
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
         model.addAttribute("usersList", usersList);
         model.addAttribute("userToTeamMap", userToTeamMap);
-    	return "admin";
+    	return "admin2";
     }
     
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)

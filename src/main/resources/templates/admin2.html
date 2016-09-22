@@ -8,27 +8,23 @@
 <body class="mybg loginbackground">
 <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
 <div class="container">
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<!--here make changes-->
-	<!--<div class="tab-content col-sm-10 dashpanel_admin">-->
-	<div class="row dashpanel col-sm-12">
-		<!--<div class="tab-content col-sm-10">-->
-		<h2 class="team-heading team-heading-current-team" th:text="#{admin.heading.current}">text heading from .properties</h2>
-		<ul class="nav nav-pills col-sm-2 text-left ">
+	<div class="row">
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<h1 class="dashhead" th:text="#{admin.dashboard.header}">Admin Dashboard</h1>
+		<p>&nbsp;</p>
+		<ul class="nav nav-pills col-sm-2 text-left">
 			<!--<li class="active"><a data-toggle="pill" href="#overview"><span th:text="#{admin.dashboard.nav.overview}">Overview</span></a></li>-->
 			<!--<li><a data-toggle="pill" href="#domainsManagement"><span th:text="#{admin.dashboard.nav.domains}">Domains management</span></a></li>-->
-			<li class="active"><a data-toggle="pill" href="#newteam"><span th:text="#{admin.dashboard.nav.overview}">Overview</span></a></li>
-			<li><a data-toggle="pill" href="#teamnabagement"><span th:text="#{admin.dashboard.nav.systemstatus}">System Status</span></a></li>
-			<li><a data-toggle="pill" href="#usermanagament"><span th:text="#{admin.dashboard.nav.domains}">Domain Management</span></a></li>
-			<li><a data-toggle="pill" href="#"><span th:text="#{admin.dashboard.nav.resources}">Resources Management</span></a></li>
-			<li><a data-toggle="pill" href="#"><span th:text="#{admin.dashboard.nav.teams}">Teams Management</span></a></li>
-			<li><a data-toggle="pill" href="#"><span th:text="#{admin.dashboard.nav.users}">Users Management</span></a></li>
-
+			<li class="active"><a data-toggle="pill" href="#newTeamsApproval"><span th:text="#{admin.dashboard.nav.teamsApproval}">New Teams Approval</span></a></li>
+			<li><a data-toggle="pill" href="#teamsManagement"><span th:text="#{admin.dashboard.nav.teams}">Teams management</span></a></li>
+			<li><a data-toggle="pill" href="#usersManagement"><span th:text="#{admin.dashboard.nav.users}">Users management</span></a></li>
 			<!--<li><a data-toggle="pill" href="#resourcesManagement"><span th:text="#{admin.dashboard.nav.resources}">Resources management</span></a></li>-->
 		</ul>
+		<div th:if="${message}">
+			<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+		</div>
 		<div class="tab-content col-sm-10 dashpanel_admin">
 			<!--<div id="overview" class="tab-pane fade in active">-->
 			<!--<div class="row">-->
@@ -103,8 +99,8 @@
 			<!--</form>-->
 			<!--</div> &lt;!&ndash; domainsManagement &ndash;&gt;-->
 
-			<div id="newteam" class="tab-pane fade in active">
-				<h6>Teams Pending for Approval</h6>
+			<div id="newTeamsApproval" class="tab-pane fade in active">
+				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.teams.header.pending}">Teams Pending for Approval</h2>
 				<th:block th:if="not ${#lists.isEmpty(pendingApprovalTeamsList)}">
 					<p>&nbsp;</p>
 					<table class="table table-responsive">
@@ -161,8 +157,8 @@
 				</th:block>
 			</div>
 
-			<div id="teamnabagement" class="tab-pane fade">
-				<h6>Teams Management</h6>
+			<div id="teamsManagement" class="tab-pane fade">
+				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.dashboard.nav.teams}">Teams Management</h2>
 				<p>&nbsp;</p>
 				<th:block th:if="${teamsMap.isEmpty()}">
 					<p>There is no teams in the system</p>
@@ -215,8 +211,8 @@
 				</table>
 			</div>
 
-			<div id="usermanagament" class="tab-pane fade">
-				<h6>Users Management</h6>
+			<div id="usersManagement" class="tab-pane fade">
+				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.users.header}">Users Management</h2>
 				<p>&nbsp;</p>
 				<p th:if="${#lists.isEmpty(usersList)}">There are no users in the system</p>
 				<table class="table table-responsive" th:if="${not #lists.isEmpty(usersList)}">
@@ -415,9 +411,8 @@
 				<p>&nbsp;</p>
 			</form>
 		</div>
-		<!--</div>-->
-	</div> <!-- container -->
-</div>
+	</div>
+</div> <!-- container -->
 <div th:replace="fragments/footer:: footer"></div>
 <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
