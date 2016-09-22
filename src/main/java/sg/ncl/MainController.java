@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.domain.*;
@@ -44,7 +45,8 @@ import sg.ncl.testbed_interface.*;
 @Controller
 public class MainController {
 
-	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
+    public static final String CONTENT_DISPOSITION = "Content-Disposition";
+    private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final static Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 
 
@@ -209,15 +211,15 @@ public class MainController {
     @RequestMapping(value="/orderform/download", method=RequestMethod.GET)
     public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
         InputStream stream = null;
-        response.setContentType("application/pdf");
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         try {
             stream = getClass().getClassLoader().getResourceAsStream("downloads/order_form.pdf");
             response.setContentType("application/force-download");
-            response.setHeader("Content-Disposition", "attachment; filename=order_form.pdf");
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=order_form.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
-            logger.info("Error writing file to output stream.");
+            logger.info("Error for download orderform.");
             throw new OrderFormDownloadException("IOError writing file to output stream");
         } finally {
             if (stream != null) {
@@ -229,15 +231,15 @@ public class MainController {
     @RequestMapping(value="/SubscriptionAgreement/download", method=RequestMethod.GET)
     public void SubscriptionAgreementDownload(HttpServletResponse response) throws MasterSubscriptionAgreementDownloadException, IOException {
         InputStream stream = null;
-        response.setContentType("application/pdf");
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         try {
             stream = getClass().getClassLoader().getResourceAsStream("downloads/SubscriptionAgreement.pdf");
             response.setContentType("application/force-download");
-            response.setHeader("Content-Disposition", "attachment; filename=SubscriptionAgreement.pdf");
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=SubscriptionAgreement.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
-            logger.info("Error writing file to output stream.");
+            logger.info("Error for subscription download.");
             throw new MasterSubscriptionAgreementDownloadException("IOError writing file to output stream");
         } finally {
             if (stream != null) {
@@ -249,15 +251,15 @@ public class MainController {
     @RequestMapping(value="/UsagePolicy/download", method=RequestMethod.GET)
     public void UsagePolicyDownloadDownload(HttpServletResponse response) throws UsagePolicyDownloadException, IOException {
         InputStream stream = null;
-        response.setContentType("application/pdf");
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         try {
             stream = getClass().getClassLoader().getResourceAsStream("downloads/UsagePolicy.pdf");
             response.setContentType("application/force-download");
-            response.setHeader("Content-Disposition", "attachment; filename=UsagePolicy.pdf");
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=UsagePolicy.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
-            logger.info("Error writing file to output stream." + ex.getMessage());
+            logger.info("Error for usage policy download." + ex.getMessage());
             throw new UsagePolicyDownloadException("IOError writing file to output stream");
         } finally {
             if (stream != null) {
