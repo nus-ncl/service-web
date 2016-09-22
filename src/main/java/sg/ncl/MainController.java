@@ -150,7 +150,7 @@ public class MainController {
     }
 
     @RequestMapping("/createexperiment")
-    public String createexperiment() {
+    public String createexperimenttutorial() {
         return "createexperiment";
     }
 
@@ -257,7 +257,7 @@ public class MainController {
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
-            logger.info("Error writing file to output stream.");
+            logger.info("Error writing file to output stream." + ex.getMessage());
             throw new UsagePolicyDownloadException("IOError writing file to output stream");
         } finally {
             if (stream != null) {
