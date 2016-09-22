@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import sg.ncl.testbed_interface.TeamStatus;
+import sg.ncl.testbed_interface.TeamVisibility;
 
 import javax.inject.Inject;
 
@@ -87,6 +89,116 @@ public class ConnectionPropertiesTest {
     @Test
     public void testGetTeamVisibilityEndpoint() throws Exception {
         assertThat(properties.getTeamVisibilityEndpoint(), is(equalTo("?visibility=PUBLIC")));
+    }
+
+    @Test
+    public void testGetSioTeamsUrl() throws Exception {
+        assertThat(properties.getSioTeamsUrl(), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/")));
+    }
+
+    @Test
+    public void testGetSioCredUrl() throws Exception {
+        assertThat(properties.getSioCredUrl(), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getCredEndpoint() + "/")));
+    }
+
+    @Test
+    public void testGetSioExpUrl() throws Exception {
+        assertThat(properties.getSioExpUrl(), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/")));
+    }
+
+    @Test
+    public void testGetUpdateCredentials() throws Exception {
+        String id = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getUpdateCredentials(id), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getCredEndpoint() + "/" + id)));
+    }
+
+    @Test
+    public void testGetRejectJoinRequest() throws Exception {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        String userId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getRejectJoinRequest(teamId, userId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/teams/" + teamId + "/members/" + userId)));
+    }
+
+    @Test
+    public void testGetRegisterRequestToApplyTeam() throws Exception {
+        String userId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getRegisterRequestToApplyTeam(userId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/newTeam/" + userId)));
+    }
+
+    @Test
+    public void testGetJoinRequestExistingUser() throws Exception {
+        assertThat(properties.getJoinRequestExistingUser(), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/joinApplications")));
+    }
+
+    @Test
+    public void testGetApproveTeam() throws Exception {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        String ownerId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getApproveTeam(teamId, ownerId, TeamStatus.APPROVED), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/teams/" + teamId + "/owner/" + ownerId + "?status=APPROVED")));
+    }
+
+    @Test
+    public void testGetApproveJoinRequest() throws Exception {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        String userId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getApproveJoinRequest(teamId, userId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/teams/" + teamId + "/members/" + userId)));
+    }
+
+    @Test
+    public void testGetTeamByName() throws Exception {
+        String teamName = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getTeamByName(teamName), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/?name=" + teamName)));
+    }
+
+    @Test
+    public void testGetTeamById() throws Exception {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getTeamById(teamId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + teamId)));
+    }
+
+    @Test
+    public void testGetTeamsByVisibility() throws Exception {
+        assertThat(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/?visibility=" + TeamVisibility.PUBLIC.toString())));
+    }
+
+    @Test
+    public void testGetUser() throws Exception {
+        String userId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getUser(userId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getUserEndpoint() + "/" + userId)));
+    }
+
+    @Test
+    public void testGetExpListByTeamId() throws Exception {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getExpListByTeamId(teamId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/teams/" + teamId)));
+    }
+
+    @Test
+    public void testGetRealizationByTeam() throws Exception {
+        String teamName = RandomStringUtils.randomAlphanumeric(20);
+        String expId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getRealizationByTeam(teamName, expId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRealEndpoint() + "/team/" + teamName + "/experiment/" + expId)));
+    }
+
+    @Test
+    public void testGetDeleteExperiment() throws Exception {
+        String teamName = RandomStringUtils.randomAlphanumeric(20);
+        String expId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getDeleteExperiment(teamName, expId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/" + expId + "/teams/" + teamName)));
+    }
+
+    @Test
+    public void testGetStartExperiment() throws Exception {
+        String teamName = RandomStringUtils.randomAlphanumeric(20);
+        String expId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getStartExperiment(teamName, expId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRealEndpoint() + "/start/team/" + teamName + "/experiment/" + expId)));
+    }
+
+    @Test
+    public void testGetStopExperiment() throws Exception {
+        String teamName = RandomStringUtils.randomAlphanumeric(20);
+        String expId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getStopExperiment(teamName, expId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRealEndpoint() + "/stop/team/" + teamName + "/experiment/" + expId)));
     }
 
 }

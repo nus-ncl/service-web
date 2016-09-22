@@ -201,10 +201,6 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId;
     }
 
-    public String getRealization(String expId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/" + expId;
-    }
-
     public String getRealizationByTeam(String teamName, String expId) {
         return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + "/experiment/" + expId;
     }

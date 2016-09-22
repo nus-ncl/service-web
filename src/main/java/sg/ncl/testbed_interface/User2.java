@@ -1,9 +1,11 @@
 package sg.ncl.testbed_interface;
 
+import java.io.Serializable;
+
 /**
- * Created by dcsyeoty on 26-May-16.
+ * @author Te Ye
  */
-public class User2 {
+public class User2 implements Serializable {
 
     private String id;
     private boolean emailVerified;
