@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.mvc.condition.MediaTypeExpression;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import sg.ncl.domain.*;
@@ -46,6 +44,7 @@ import sg.ncl.testbed_interface.*;
 public class MainController {
 
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
+    public static final String APPLICATION_FORCE_DOWNLOAD = "application/force-download";
     private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final static Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 
@@ -106,10 +105,10 @@ public class MainController {
         return "plan";
     }
 
-    @RequestMapping("/futureplan")
-    public String futureplan() {
-        return "futureplan";
-    }
+//    @RequestMapping("/futureplan")
+//    public String futureplan() {
+//        return "futureplan";
+//    }
 
     @RequestMapping("/pricing")
     public String pricing() {
@@ -147,12 +146,12 @@ public class MainController {
     }
 
     @RequestMapping("/createaccount")
-    public String createaccount() {
+    public String createAccount() {
         return "createaccount";
     }
 
     @RequestMapping("/createexperiment")
-    public String createexperimenttutorial() {
+    public String createExperimentTutorial() {
         return "createexperiment";
     }
 
@@ -214,7 +213,7 @@ public class MainController {
         response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         try {
             stream = getClass().getClassLoader().getResourceAsStream("downloads/order_form.pdf");
-            response.setContentType("application/force-download");
+            response.setContentType(APPLICATION_FORCE_DOWNLOAD);
             response.setHeader(CONTENT_DISPOSITION, "attachment; filename=order_form.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
@@ -229,17 +228,17 @@ public class MainController {
     }
 
     @RequestMapping(value="/SubscriptionAgreement/download", method=RequestMethod.GET)
-    public void SubscriptionAgreementDownload(HttpServletResponse response) throws MasterSubscriptionAgreementDownloadException, IOException {
+    public void subscriptionAgreementDownload(HttpServletResponse response) throws MasterSubscriptionAgreementDownloadException, IOException {
         InputStream stream = null;
         response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         try {
             stream = getClass().getClassLoader().getResourceAsStream("downloads/SubscriptionAgreement.pdf");
-            response.setContentType("application/force-download");
+            response.setContentType(APPLICATION_FORCE_DOWNLOAD);
             response.setHeader(CONTENT_DISPOSITION, "attachment; filename=SubscriptionAgreement.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
-            logger.info("Error for subscription download.");
+            logger.info("Error for subscription download." + ex.getMessage());
             throw new MasterSubscriptionAgreementDownloadException("Error for subscription download.");
         } finally {
             if (stream != null) {
@@ -249,12 +248,12 @@ public class MainController {
     }
 
     @RequestMapping(value="/UsagePolicy/download", method=RequestMethod.GET)
-    public void UsagePolicyDownloadDownload(HttpServletResponse response) throws UsagePolicyDownloadException, IOException {
+    public void usagePolicyDownload(HttpServletResponse response) throws UsagePolicyDownloadException, IOException {
         InputStream stream = null;
         response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         try {
             stream = getClass().getClassLoader().getResourceAsStream("downloads/UsagePolicy.pdf");
-            response.setContentType("application/force-download");
+            response.setContentType(APPLICATION_FORCE_DOWNLOAD);
             response.setHeader(CONTENT_DISPOSITION, "attachment; filename=UsagePolicy.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
