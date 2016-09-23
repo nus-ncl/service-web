@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -18,7 +18,6 @@ import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import sg.ncl.domain.UserType;
-import sg.ncl.testbed_interface.Team2;
 
 import javax.inject.Inject;
 
@@ -39,7 +38,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * @author Te Ye
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = App.class)
+@SpringBootTest(classes = App.class)
 @WebAppConfiguration
 public class MainControllerTest {
 
@@ -106,7 +105,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("navbar-header")))
-                .andExpect(content().string(containsString("id=\"joinUs\"")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
@@ -143,7 +141,8 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
-    @Test
+    // page is taken out as of 22/9/2016
+    @Ignore
     public void testFuturePlanPage() throws Exception {
         mockMvc.perform(get("/futureplan"))
                 .andExpect(status().isOk())

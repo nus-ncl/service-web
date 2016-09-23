@@ -502,6 +502,18 @@ function showpwdchars()
 
 }
 
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-36251023-1']);
+_gaq.push(['_setDomainName', 'jqueryscript.net']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+
+
 function passwordStrength()
 {
 	var colors = new Array();
@@ -634,6 +646,101 @@ $( document ).ready(function() {
 		return false
 	});
 
+	(function($){
+		$.fn.extend({
+
+			//pass the options variable to the function
+			accordion: function(options) {
+
+				var defaults = {
+					accordion: 'true',
+					speed: 300,
+					closedSign: '[+]',
+					openedSign: '[-]'
+				};
+
+				// Extend our default options with those provided.
+				var opts = $.extend(defaults, options);
+				//Assign current element to variable, in this case is UL element
+				var $this = $(this);
+
+				//add a mark [+] to a multilevel menu
+				$this.find("li").each(function() {
+					if($(this).find("ul").size() != 0){
+						//add the multilevel sign next to the link
+						$(this).find("a:first").append("<span>"+ opts.closedSign +"</span>");
+
+						//avoid jumping to the top of the page when the href is an #
+						if($(this).find("a:first").attr('href') == "#"){
+							$(this).find("a:first").click(function(){return false;});
+						}
+					}
+				});
+
+				//open active level
+				$this.find("li.active").each(function() {
+					$(this).parents("ul").slideDown(opts.speed);
+					$(this).parents("ul").parent("li").find("span:first").html(opts.openedSign);
+				});
+
+				$this.find("li a").click(function() {
+					if($(this).parent().find("ul").size() != 0){
+						if(opts.accordion){
+							//Do nothing when the list is open
+							if(!$(this).parent().find("ul").is(':visible')){
+								parents = $(this).parent().parents("ul");
+								visible = $this.find("ul:visible");
+								visible.each(function(visibleIndex){
+									var close = true;
+									parents.each(function(parentIndex){
+										if(parents[parentIndex] == visible[visibleIndex]){
+											close = false;
+											return false;
+										}
+									});
+									if(close){
+										if($(this).parent().find("ul") != visible[visibleIndex]){
+											$(visible[visibleIndex]).slideUp(opts.speed, function(){
+												$(this).parent("li").find("span:first").html(opts.closedSign);
+											});
+
+										}
+									}
+								});
+							}
+						}
+						if($(this).parent().find("ul:first").is(":visible")){
+							$(this).parent().find("ul:first").slideUp(opts.speed, function(){
+								$(this).parent("li").find("span:first").delay(opts.speed).html(opts.closedSign);
+							});
+
+
+			}else{
+				$(this).parent().find("ul:first").slideDown(opts.speed, function(){
+			$(this).parent("li").find("span:first").delay(opts.speed).html(opts.openedSign);
+		});
+	}
+	}
+	});
+		}
+	});
+})(jQuery);
+
+$(document).ready(function() {
+	$(".topnav").accordion({
+		accordion:false,
+			speed: 500,
+			closedSign: '[+]',
+			openedSign: '[-]'
+		});
+	});
+
+
+	!function($){var e=$.fn.jquery.split("."),t=parseFloat(e[0]),n=parseFloat(e[1]);2>t&&5>n?($.expr[":"].filterTableFind=function(e,t,n){return $(e).text().toUpperCase().indexOf(n[3].toUpperCase().replace(/"""/g,'"').replace(/"\\"/g,"\\"))>=0},$.expr[":"].filterTableFindAny=function(e,t,n){var i=n[3].split(/[\s,]/),r=[];return $.each(i,function(e,t){var n=t.replace(/^\s+|\s$/g,"");n&&r.push(n)}),r.length?function(e){var t=!1;return $.each(r,function(n,i){return $(e).text().toUpperCase().indexOf(i.toUpperCase().replace(/"""/g,'"').replace(/"\\"/g,"\\"))>=0?(t=!0,!1):void 0}),t}:!1},$.expr[":"].filterTableFindAll=function(e,t,n){var i=n[3].split(/[\s,]/),r=[];return $.each(i,function(e,t){var n=t.replace(/^\s+|\s$/g,"");n&&r.push(n)}),r.length?function(e){var t=0;return $.each(r,function(n,i){$(e).text().toUpperCase().indexOf(i.toUpperCase().replace(/"""/g,'"').replace(/"\\"/g,"\\"))>=0&&t++}),t===r.length}:!1}):($.expr[":"].filterTableFind=jQuery.expr.createPseudo(function(e){return function(t){return $(t).text().toUpperCase().indexOf(e.toUpperCase().replace(/"""/g,'"').replace(/"\\"/g,"\\"))>=0}}),$.expr[":"].filterTableFindAny=jQuery.expr.createPseudo(function(e){var t=e.split(/[\s,]/),n=[];return $.each(t,function(e,t){var i=t.replace(/^\s+|\s$/g,"");i&&n.push(i)}),n.length?function(e){var t=!1;return $.each(n,function(n,i){return $(e).text().toUpperCase().indexOf(i.toUpperCase().replace(/"""/g,'"').replace(/"\\"/g,"\\"))>=0?(t=!0,!1):void 0}),t}:!1}),$.expr[":"].filterTableFindAll=jQuery.expr.createPseudo(function(e){var t=e.split(/[\s,]/),n=[];return $.each(t,function(e,t){var i=t.replace(/^\s+|\s$/g,"");i&&n.push(i)}),n.length?function(e){var t=0;return $.each(n,function(n,i){$(e).text().toUpperCase().indexOf(i.toUpperCase().replace(/"""/g,'"').replace(/"\\"/g,"\\"))>=0&&t++}),t===n.length}:!1})),$.fn.filterTable=function(e){var t={autofocus:!1,callback:null,containerClass:"filter-table fa fa-search",containerTag:"p",filterExpression:"filterTableFind",hideTFootOnFilter:!1,highlightClass:"alt",ignoreClass:"",ignoreColumns:[],inputSelector:null,inputName:"", inputType:"search", label:"  Filter : ",minChars:1,minRows:6,placeholder:"Search...",preventReturnKey:!0,quickList:[],quickListClass:"quick",quickListGroupTag:"",quickListTag:"a",visibleClass:"visible"},n=function(e){return e.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")},i=$.extend({},t,e),r=function(e,t){var n=e.find("tbody");if(""===t||t.length<i.minChars)n.find("tr").show().addClass(i.visibleClass),n.find("td").removeClass(i.highlightClass),i.hideTFootOnFilter&&e.find("tfoot").show();else{var r=n.find("td");if(n.find("tr").hide().removeClass(i.visibleClass),r.removeClass(i.highlightClass),i.hideTFootOnFilter&&e.find("tfoot").hide(),i.ignoreColumns.length){var a=[];i.ignoreClass&&(r=r.not("."+i.ignoreClass)),a=r.filter(":"+i.filterExpression+'("'+t+'")'),a.each(function(){var e=$(this),t=e.parent().children().index(e);-1===$.inArray(t,i.ignoreColumns)&&e.addClass(i.highlightClass).closest("tr").show().addClass(i.visibleClass)})}else i.ignoreClass&&(r=r.not("."+i.ignoreClass)),r.filter(":"+i.filterExpression+'("'+t+'")').addClass(i.highlightClass).closest("tr").show().addClass(i.visibleClass)}i.callback&&i.callback(t,e)};return this.each(function(){var e=$(this),t=e.find("tbody"),a=null,l=null,s=null,o=!0;"TABLE"===e[0].nodeName&&t.length>0&&(0===i.minRows||i.minRows>0&&t.find("tr").length>=i.minRows)&&!e.prev().hasClass(i.containerClass)&&(i.inputSelector&&1===$(i.inputSelector).length?(s=$(i.inputSelector),a=s.parent(),o=!1):(a=$("<"+i.containerTag+" />"),""!==i.containerClass&&a.addClass(i.containerClass),a.prepend(i.label+" "),s=$('<input type="'+i.inputType+'" placeholder="'+i.placeholder+'" name="'+i.inputName+'" />'),i.preventReturnKey&&s.on("keydown",function(e){return 13===(e.keyCode||e.which)?(e.preventDefault(),!1):void 0})),i.autofocus&&s.attr("autofocus",!0),$.fn.bindWithDelay?s.bindWithDelay("keyup",function(){r(e,$(this).val())},200):s.bind("keyup",function(){r(e,$(this).val())}),s.bind("click search input paste blur",function(){r(e,$(this).val())}),o&&a.append(s),i.quickList.length>0&&(l=i.quickListGroupTag?$("<"+i.quickListGroupTag+" />"):a,$.each(i.quickList,function(e,t){var r=$("<"+i.quickListTag+' class="'+i.quickListClass+'" />');r.text(n(t)),"A"===r[0].nodeName&&r.attr("href","#"),r.bind("click",function(e){e.preventDefault(),s.val(t).focus().trigger("click")}),l.append(r)}),l!==a&&a.append(l)),o&&e.before(a))})}}(jQuery);
+	$(document).ready(function() {
+		$('table').filterTable(); // apply filterTable to all tables on this page
+	});
+
 });
 
 // Add show/hide button
@@ -663,7 +770,38 @@ for ( i in settings.buttons ) {
 				(bs.title ? 'title="' + bs.title + '"' : '') +
 				(bs.extras ? bs.extras : '') +
 				'>' + sIcon + '</a>';
-		oContainer.append(sButton);
+		Container.append(sButton);
 	}
 }
 
+
+// display the ns file content when users select the predefined scenarios
+function displayNsContent() {
+	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic2 = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset attacker [$ns node]\r\nset victim [$ns node]\r\n\r\nset lan0 [$ns make-lan \"$attacker $victim\" 100Mb 0ms]\r\n\r\ntb-set-node-os $attacker Ubuntu1404-64-STD\r\ntb-set-node-os $victim Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic3 = "# This script contains only three nodes.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\nset node1 [$ns node]\r\nset node2 [$ns node]\r\nset node3 [$ns node]\r\n\r\nset lan0 [$ns make-lan \"$node1 $node2 $node3\" 100Mb 0ms]\r\n\r\ntb-set-node-os $node1 Ubuntu1404-64-STD\r\ntb-set-node-os $node2 Ubuntu1404-64-STD\r\ntb-set-node-os $node3 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n$ns run";
+	var x = document.getElementById("selectExpScenario").value;
+	var file = "";
+	switch(x) {
+		case "Scenario 1 - A single node":
+			file = basic;
+			break;
+		case "Scenario 2 - Two nodes linked with a 10Gbps link":
+			file = basic2;
+			break;
+		case "Scenario 3 - Three nodes in a star topology":
+			file = basic3;
+			break;
+		default:
+			file = basic;
+			break;
+	}
+
+	document.getElementById("networkConfig").innerHTML = file;
+}
+
+// display the default ns file content
+function displayDefaultNsContent() {
+	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	document.getElementById("networkConfig").innerHTML = basic;
+}

@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,7 +43,9 @@ import sg.ncl.testbed_interface.*;
 @Controller
 public class MainController {
 
-	private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
+    public static final String CONTENT_DISPOSITION = "Content-Disposition";
+    public static final String APPLICATION_FORCE_DOWNLOAD = "application/force-download";
+    private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
     private final static Logger logger = LoggerFactory.getLogger(MainController.class.getName());
 
 
@@ -104,10 +105,10 @@ public class MainController {
         return "plan";
     }
 
-    @RequestMapping("/futureplan")
-    public String futureplan() {
-        return "futureplan";
-    }
+//    @RequestMapping("/futureplan")
+//    public String futureplan() {
+//        return "futureplan";
+//    }
 
     @RequestMapping("/pricing")
     public String pricing() {
@@ -144,19 +145,81 @@ public class MainController {
         return "tools";
     }
 
-    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
-    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
+    @RequestMapping("/createaccount")
+    public String createAccount() {
+        return "createaccount";
+    }
+
+    @RequestMapping("/createexperiment")
+    public String createExperimentTutorial() {
+        return "createexperiment";
+    }
+
+    @RequestMapping("/applyteam")
+    public String applyteam() {
+        return "applyteam";
+    }
+
+    @RequestMapping("/jointeam")
+    public String jointeam() {
+        return "jointeam";
+    }
+
+//    @RequestMapping("/resource2")
+//    public String resource2() {
+//        return "resource2";
+//    }
+
+//    @RequestMapping("/admin2")
+//    public String admin2() {
+//        return "admin2";
+//    }
+
+
+    @RequestMapping("/tutorials")
+    public String tutorials() {
+        return "tutorials";
+    }
+
+
+//    @RequestMapping("/dataresource")
+//    public String dataresource() {
+//        return "dataresource";
+//    }
+
+//    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
+//    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
+//        InputStream stream = null;
+//        response.setContentType("application/pdf");
+//        try {
+//            stream = getClass().getClassLoader().getResourceAsStream("downloads/future_plan.pdf");
+//            response.setContentType("application/force-download");
+//            response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
+//            IOUtils.copy(stream, response.getOutputStream());
+//            response.flushBuffer();
+//        } catch (Exception ex) {
+//            logger.info("Error writing file to output stream.");
+//            throw new FuturePlanDownloadException("IOError writing file to output stream");
+//        } finally {
+//            if (stream != null) {
+//                stream.close();
+//            }
+//        }
+//    }
+
+    @RequestMapping(value="/orderform/download", method=RequestMethod.GET)
+    public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
         InputStream stream = null;
-        response.setContentType("application/pdf");
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         try {
-            stream = getClass().getClassLoader().getResourceAsStream("downloads/future_plan.pdf");
-            response.setContentType("application/force-download");
-            response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/order_form.pdf");
+            response.setContentType(APPLICATION_FORCE_DOWNLOAD);
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=order_form.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
-        } catch (Exception ex) {
-            logger.info("Error writing file to output stream.");
-            throw new FuturePlanDownloadException("IOError writing file to output stream");
+        } catch (IOException ex) {
+            logger.info("Error for download orderform.");
+            throw new OrderFormDownloadException("Error for download orderform.");
         } finally {
             if (stream != null) {
                 stream.close();
@@ -164,19 +227,39 @@ public class MainController {
         }
     }
 
-    @RequestMapping(value="/orderform/download", method=RequestMethod.GET)
-    public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
+    @RequestMapping(value="/SubscriptionAgreement/download", method=RequestMethod.GET)
+    public void subscriptionAgreementDownload(HttpServletResponse response) throws MasterSubscriptionAgreementDownloadException, IOException {
         InputStream stream = null;
-        response.setContentType("application/pdf");
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         try {
-            stream = getClass().getClassLoader().getResourceAsStream("downloads/order_form.pdf");
-            response.setContentType("application/force-download");
-            response.setHeader("Content-Disposition", "attachment; filename=order_form.pdf");
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/SubscriptionAgreement.pdf");
+            response.setContentType(APPLICATION_FORCE_DOWNLOAD);
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=SubscriptionAgreement.pdf");
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
-            logger.info("Error writing file to output stream.");
-            throw new OrderFormDownloadException("IOError writing file to output stream");
+            logger.info("Error for subscription download." + ex.getMessage());
+            throw new MasterSubscriptionAgreementDownloadException("Error for subscription download.");
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+    }
+
+    @RequestMapping(value="/UsagePolicy/download", method=RequestMethod.GET)
+    public void usagePolicyDownload(HttpServletResponse response) throws UsagePolicyDownloadException, IOException {
+        InputStream stream = null;
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        try {
+            stream = getClass().getClassLoader().getResourceAsStream("downloads/UsagePolicy.pdf");
+            response.setContentType(APPLICATION_FORCE_DOWNLOAD);
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=UsagePolicy.pdf");
+            IOUtils.copy(stream, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+            logger.info("Error for usage policy download." + ex.getMessage());
+            throw new UsagePolicyDownloadException("Error for usage policy download.");
         } finally {
             if (stream != null) {
                 stream.close();
@@ -1988,7 +2071,7 @@ public class MainController {
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
         model.addAttribute("usersList", usersList);
         model.addAttribute("userToTeamMap", userToTeamMap);
-    	return "admin";
+    	return "admin2";
     }
     
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
@@ -2309,7 +2392,7 @@ public class MainController {
     	model.addAttribute("signUpMergedForm", new SignUpMergedForm());
         return "join_team_application_awaiting_approval";
     }
-    
+
     //--------------------------Get List of scenarios filenames--------------------------
     private List<String> getScenarioFileNameList() throws WebServiceRuntimeException {
         logger.info("Retrieving scenario file names");
@@ -2340,7 +2423,7 @@ public class MainController {
 //        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
 //        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
         logger.info("Scenario file list: {}", scenarioFileNameList);
-		return scenarioFileNameList;
+        return scenarioFileNameList;
     }
 
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
@@ -2371,6 +2454,7 @@ public class MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
+
 
     //---Check if user is a team owner and has any join request waiting for approval----
     private boolean hasAnyJoinRequest(HashMap<Integer, Team> teamMapOwnedByUser) {

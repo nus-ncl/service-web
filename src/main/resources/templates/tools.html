@@ -5,7 +5,7 @@
     <title>National Cybersecurity Laboratories - Tools</title>
     <object th:include="fragments/header :: header" th:remove="tag" />
 </head>
-<body class="background8">
+<body>
 
 
 <div th:replace="fragments/login_navigation :: loginnav"></div>
@@ -14,7 +14,8 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
-<div class="container">
+
+<div class="container background8">
     <div class="row">
         <div class="heading text-center col-sm-8 col-sm-offset-2">
             <div class="h15">
@@ -31,13 +32,12 @@
                 <li>A description of known vulnerabilities that can be found on  the internet.</li>
                 <li>Ready-to-use CVEs are deployable environments where the vulnerability exists and are difficult to build. </li>
             </ul>
-            <p align="left"><strong>Potential Users</strong></p>
-            <ul>
-                <li>System Security researchers &amp;lecturers</li>
-            </ul>
-             <hr/>
-            </div>
+            <!--<p align="left"><strong>Potential Users</strong></p>-->
+            <!--<ul>-->
+                <!--<li>System Security researchers &amp;lecturers</li>-->
+            <!--</ul>-->
 
+            </div>
               <div class="col-sm-4 col-sm-offset-4">
                         <hr/>
                         <h4 align="left"><strong>Software-defined Networking (SDN) Provisioning Tools</strong> </h4>
@@ -46,14 +46,13 @@
                             <li>The SDN technology rely on the hardware features on switches. Such SDN switches on large networks are not easily available.</li>
                             <li>NCL have 14 SDN switches connecting 300 nodes. </li>
                         </ul>
-                        <p align="left"><strong>Potential Users</strong></p>
-                        <ul>
-                            <li>SDN researchers in academia</li>
-                        </ul>
+                        <!--<p align="left"><strong>Potential Users</strong></p>-->
+                        <!--<ul>-->
+                            <!--<li>SDN researchers in academia</li>-->
+                        <!--</ul>-->
                         <hr/>
                     </div>
                 </div>
-
     <div class="col-sm-12">
         <div class="col-sm-4">
             <hr/>
@@ -62,29 +61,52 @@
             <ul>
                 <li>Secured Distributed ledger (Blockchain) is a distributed trust system whose security relies on a large number of peers.</li>
             </ul>
-            <p align="left"><strong>Potential Users</strong></p>
-            <ul>
-                <li>Financial community, government agencies and academia researchers/lecturers</li>
-            </ul>
+            <!--<p align="left"><strong>Potential Users</strong></p>-->
+            <!--<ul>-->
+                <!--<li>Financial community, government agencies and academia researchers/lecturers</li>-->
+            <!--</ul>-->
             <hr/>
         </div>
 
         <div class="col-sm-4 col-sm-offset-4">
             <hr/>
-            <h4 align="left"><strong>Ready-to-use Common Vulnerabilities and Exposure (CVE) Environments</strong></h4>
+            <h4 align="left"><strong>Virtual Mid-size Enterprise Network</strong></h4>
             <p align="left"><strong>What is this ?</strong></p>
             <ul>
                 <li>A medium-sized virtual network that can simulate multiple real life scenarios.</li>
                 <li>Useful for training and validation. </li>
             </ul>
-            <p align="left"><strong>Potential Users</strong></p>
-            <ul>
-                <li>Cyber exercise users, forensic training users, cyber security lecturers</li>
-            </ul>
+            <!--<p align="left"><strong>Potential Users</strong></p>-->
+            <!--<ul>-->
+                <!--<li>Cyber exercise users, forensic training users, cyber security lecturers</li>-->
+            <!--</ul>-->
             <hr/>
         </div>
-    </div>
-</div>
+
+            </div>
+        </div>
+        <section id="joinUs">
+            <div class="container ">
+                <div class="row ">
+                    <div class="heading text-center col-sm-12 background4 ">
+                        <div>
+                            <p class="h15">Data</p>
+                            <p>&nbsp;</p>
+                        </div></div>
+                    <div class="col-sm-12 ">
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                <div class="col-sm-1 col-sm-offset-1">
+                    <a href="http://impactcybertrust.org"> <img src="images/impact1.png" width="251" height="189" href="http://impactcybertrust.org"/></a>
+                </div>
+                <div class="col-sm-8 col-sm-offset-2">
+                    <h4><a href="http://impactcybertrust.org">IMPACT</a> </h4>
+                    <p>To access IMPACT, researchers need to register for an account at the official website. The Account registration will sent to NCL for verification. Once the profile is verified, researchers can start requesting data sets from IMPACT.</p><p>  Visit the website to create an account and browse the datasets available. Contact <strong>support@ncl.sg</strong> for any help you require.</p>
+                </div>
+            </div>
+        </div> <!-- row -->
+    </div> <!-- container -->
+</section> <!-- join us -->
 
 <div th:replace="fragments/footer :: footer"></div>
 <object th:include="fragments/javascript :: javascript" th:remove="tag" />
