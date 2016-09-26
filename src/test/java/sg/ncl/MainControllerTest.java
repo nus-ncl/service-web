@@ -251,7 +251,7 @@ public class MainControllerTest {
     public void testPostLoginPageInvalidUserPassword() throws Exception {
         mockServer.expect(requestTo(properties.getSioAuthUrl()))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withBadRequest().body("{\"name\":\"sg.ncl.service.authentication.exceptions.InvalidCredentialsException\"}").contentType(MediaType.APPLICATION_JSON));
+                .andRespond(withBadRequest().body("{\"error\":\"sg.ncl.service.authentication.exceptions.InvalidCredentialsException\"}").contentType(MediaType.APPLICATION_JSON));
 
         ResultActions perform = mockMvc.perform(
                 post("/login")
@@ -432,6 +432,7 @@ public class MainControllerTest {
                         .param("province", "west")
                         .param("postalCode", "123456")
                         .param("teamName", "project")
+                        .param("joinTeamName", "")
                         .param("teamDescription", "a simple description")
                         .param("teamWebsite", "http://team.com")
                         .param("organizationType", "academia")
