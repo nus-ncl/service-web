@@ -369,13 +369,13 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(jwtTokenString, MyErrorResource.class);
-                if(ExceptionState.CredentialsNotFoundException.toString().equals(error.getName())) {
+                if(ExceptionState.CredentialsNotFoundException.toString().equals(error.getError())) {
                     logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
                     loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
                     return "login";
                 }
                 else {
-                    logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getName());
+                    logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
                     loginForm.setErrorMsg("Login failed: Invalid email/password.");
                     return "login";
                 }
@@ -500,7 +500,7 @@ public class MainController {
         // craft the registration json
         JSONObject mainObject = new JSONObject();
         JSONObject credentialsFields = new JSONObject();
-        credentialsFields.put("username", signUpMergedForm.getEmail());
+        credentialsFields.put("username", signUpMergedForm.getEmail().trim());
         credentialsFields.put("password", signUpMergedForm.getPassword());
 
         // create the user JSON
@@ -508,22 +508,22 @@ public class MainController {
         JSONObject userDetails = new JSONObject();
         JSONObject addressDetails = new JSONObject();
 
-        userDetails.put("firstName", signUpMergedForm.getFirstName());
-        userDetails.put("lastName", signUpMergedForm.getLastName());
-        userDetails.put("jobTitle", signUpMergedForm.getJobTitle());
-        userDetails.put("email", signUpMergedForm.getEmail());
-        userDetails.put("phone", signUpMergedForm.getPhone());
-        userDetails.put("institution", signUpMergedForm.getInstitution());
-        userDetails.put("institutionAbbreviation", signUpMergedForm.getInstitutionAbbreviation());
-        userDetails.put("institutionWeb", signUpMergedForm.getWebsite());
+        userDetails.put("firstName", signUpMergedForm.getFirstName().trim());
+        userDetails.put("lastName", signUpMergedForm.getLastName().trim());
+        userDetails.put("jobTitle", signUpMergedForm.getJobTitle().trim());
+        userDetails.put("email", signUpMergedForm.getEmail().trim());
+        userDetails.put("phone", signUpMergedForm.getPhone().trim());
+        userDetails.put("institution", signUpMergedForm.getInstitution().trim());
+        userDetails.put("institutionAbbreviation", signUpMergedForm.getInstitutionAbbreviation().trim());
+        userDetails.put("institutionWeb", signUpMergedForm.getWebsite().trim());
         userDetails.put("address", addressDetails);
 
-        addressDetails.put("address1", signUpMergedForm.getAddress1());
-        addressDetails.put("address2", signUpMergedForm.getAddress2());
-        addressDetails.put("country", signUpMergedForm.getCountry());
-        addressDetails.put("region", signUpMergedForm.getProvince());
-        addressDetails.put("city", signUpMergedForm.getCity());
-        addressDetails.put("zipCode", signUpMergedForm.getPostalCode());
+        addressDetails.put("address1", signUpMergedForm.getAddress1().trim());
+        addressDetails.put("address2", signUpMergedForm.getAddress2().trim());
+        addressDetails.put("country", signUpMergedForm.getCountry().trim());
+        addressDetails.put("region", signUpMergedForm.getProvince().trim());
+        addressDetails.put("city", signUpMergedForm.getCity().trim());
+        addressDetails.put("zipCode", signUpMergedForm.getPostalCode().trim());
 
         userFields.put("userDetails", userDetails);
         userFields.put("applicationDate", ZonedDateTime.now());
@@ -536,8 +536,8 @@ public class MainController {
         mainObject.put("team", teamFields);
     	
     	// check if user chose create new team or join existing team by checking team name
-    	String createNewTeamName = signUpMergedForm.getTeamName();
-    	String joinNewTeamName = signUpMergedForm.getJoinTeamName();
+    	String createNewTeamName = signUpMergedForm.getTeamName().trim();
+    	String joinNewTeamName = signUpMergedForm.getJoinTeamName().trim();
 
     	
     	if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
@@ -564,25 +564,16 @@ public class MainController {
                 return "/signup2";
             } else {
 
-                teamFields.put("name", signUpMergedForm.getTeamName());
-                teamFields.put("description", signUpMergedForm.getTeamDescription());
-                teamFields.put("website", signUpMergedForm.getTeamWebsite());
+                teamFields.put("name", signUpMergedForm.getTeamName().trim());
+                teamFields.put("description", signUpMergedForm.getTeamDescription().trim());
+                teamFields.put("website", signUpMergedForm.getTeamWebsite().trim());
                 teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
                 teamFields.put("visibility", signUpMergedForm.getIsPublic());
                 mainObject.put("isJoinTeam", false);
 
                 try {
                     registerUserToDeter(mainObject);
-                } catch (TeamNotFoundException e) {
-                    redirectAttributes.addFlashAttribute("message", e.getMessage());
-                    return "redirect:/signup2";
-                } catch (ApplyNewProjectException e) {
-                    redirectAttributes.addFlashAttribute("message", e.getMessage());
-                    return "redirect:/signup2";
-                } catch (RegisterTeamNameDuplicateException e) {
-                    redirectAttributes.addFlashAttribute("message", e.getMessage());
-                    return "redirect:/signup2";
-                } catch (UsernameAlreadyExistsException e) {
+                } catch (TeamNotFoundException  | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException e) {
                     redirectAttributes.addFlashAttribute("message", e.getMessage());
                     return "redirect:/signup2";
                 } catch (Exception e) {
@@ -600,11 +591,8 @@ public class MainController {
             String teamIdToJoin = "";
 
             try {
-                teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName());
-            } catch (TeamNotFoundException e) {
-                redirectAttributes.addFlashAttribute("message", e.getMessage());
-                return  "redirect:/signup2";
-            } catch (AdapterConnectionException e) {
+                teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName().trim());
+            } catch (TeamNotFoundException  | AdapterConnectionException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 return  "redirect:/signup2";
             }
@@ -616,19 +604,7 @@ public class MainController {
 
             try {
                 registerUserToDeter(mainObject);
-            } catch (TeamNotFoundException e) {
-                redirectAttributes.addFlashAttribute("message", e.getMessage());
-                return "redirect:/signup2";
-            } catch (AdapterConnectionException e) {
-                redirectAttributes.addFlashAttribute("message", e.getMessage());
-                return "redirect:/signup2";
-            } catch (ApplyNewProjectException e) {
-                redirectAttributes.addFlashAttribute("message", e.getMessage());
-                return "redirect:/signup2";
-            } catch (RegisterTeamNameDuplicateException e) {
-                redirectAttributes.addFlashAttribute("message", e.getMessage());
-                return "redirect:/signup2";
-            } catch (UsernameAlreadyExistsException e) {
+            } catch (TeamNotFoundException | AdapterConnectionException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 return "redirect:/signup2";
             } catch (Exception e) {
@@ -637,7 +613,7 @@ public class MainController {
             }
 
             logger.info("Signup join team success");
-            return "redirect:/join_application_submitted/" + signUpMergedForm.getJoinTeamName();
+            return "redirect:/join_application_submitted/" + signUpMergedForm.getJoinTeamName().trim();
 
     	} else {
             logger.warn("Signup unreachable statement");
@@ -652,30 +628,40 @@ public class MainController {
      * Use when registering new accounts
      * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
      */
-    private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException, ApplyNewProjectException, RegisterTeamNameDuplicateException, UsernameAlreadyExistsException {
+    private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException, ApplyNewProjectException, RegisterTeamNameDuplicateException, UsernameAlreadyExistsException, EmailAlreadyExistsException {
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
 
         String responseBody = response.getBody().toString();
 
+        logger.info("Register user to deter response: {}", responseBody);
+
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                if (error.getName().equals(ExceptionState.JoinProjectException.toString())) {
+                logger.warn("Register user exception error: {}", error.getError());
+
+                if (error.getError().equals(ExceptionState.JoinProjectException.toString())) {
                     logger.warn("Register new users join team request : team name error");
                     throw new TeamNotFoundException("Team name does not exists");
-                } else if (error.getName().equals(ExceptionState.ApplyNewProjectException.toString())) {
+                } else if (error.getError().equals(ExceptionState.ApplyNewProjectException.toString())) {
                     logger.warn("Register new users new team request : team name error");
                     throw new ApplyNewProjectException();
-                } else if (error.getName().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
+                } else if (error.getError().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
                     logger.warn("Register new users new team request : team name duplicate");
                     throw new RegisterTeamNameDuplicateException();
-                } else if (error.getName().equals(ExceptionState.UsernameAlreadyExistsException.toString())) {
+                } else if (error.getError().equals(ExceptionState.UsernameAlreadyExistsException.toString())) {
+                    // throw from user service
                     String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
                     logger.warn("Register new users : email already exists: {}", email);
                     throw new UsernameAlreadyExistsException("Error: " + email + " already in use.");
+                } else if (error.getError().equals(ExceptionState.EmailAlreadyExistsException.toString())) {
+                    // throw from adapter deterlab
+                    String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
+                    logger.warn("Register new users : email already exists: {}", email);
+                    throw new EmailAlreadyExistsException("Error: " + email + " already in use.");
                 } else {
                     logger.warn("Registration or adapter connection fail");
                     // possible sio or adapter connection fail
@@ -683,6 +669,7 @@ public class MainController {
                 }
             } else {
                 // do nothing
+                logger.info("Not an error for status code: {}", response.getStatusCode());
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -707,7 +694,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
                     logger.warn("Get team by name : team name error");
                     throw new TeamNotFoundException("Team name " + teamName + "does not exists");
                 } else {
@@ -738,7 +725,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 logger.error("No such user: {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                throw new RestClientException("[" + error.getName() + "] ");
+                throw new RestClientException("[" + error.getError() + "] ");
             } else {
                 User2 user2 = extractUserInfo(responseBody);
                 originalUser = user2;
@@ -1043,7 +1030,7 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                logger.warn("Server side error: {}", error.getName());
+                logger.warn("Server side error: {}", error.getError());
                 redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
@@ -1091,7 +1078,7 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                logger.warn("Server side error: {}", error.getName());
+                logger.warn("Server side error: {}", error.getError());
                 redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
@@ -1432,10 +1419,10 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                if (error.getName().equals(ExceptionState.ApplyNewProjectException.toString())) {
+                if (error.getError().equals(ExceptionState.ApplyNewProjectException.toString())) {
                     logger.info("Apply new team fail at adapter deterlab");
                     redirectAttributes.addFlashAttribute("message", error.getMessage());
-                } else if (error.getName().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
+                } else if (error.getError().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
                     logger.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
                     redirectAttributes.addFlashAttribute("message", "Team name already exists.");
                 } else {
@@ -1509,7 +1496,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
                     logger.warn("join team request : team name error");
                     redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
                 } else {
@@ -1649,10 +1636,10 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                if (error.getName().equals(ExceptionState.NSFileParseException.toString())) {
+                if (error.getError().equals(ExceptionState.NSFileParseException.toString())) {
                     logger.warn("Ns file error");
                     redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
-                } else if (error.getName().equals(ExceptionState.ExpNameAlreadyExistsException.toString()) || error.getName().equals(ExceptionState.ExperimentNameInUseException.toString())) {
+                } else if (error.getError().equals(ExceptionState.ExpNameAlreadyExistsException.toString()) || error.getError().equals(ExceptionState.ExperimentNameInUseException.toString())) {
                     logger.warn("Exp name already exists");
                     redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
                 } else {
@@ -1759,7 +1746,7 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                if (error.getName().equals(ExceptionState.ExpDeleteException.toString())) {
+                if (error.getError().equals(ExceptionState.ExpDeleteException.toString())) {
                     logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
                     redirectAttributes.addFlashAttribute("message", error.getMessage());
                 }
@@ -1809,7 +1796,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                if (error.getName().equals(ExceptionState.ExpStartException.toString())) {
+                if (error.getError().equals(ExceptionState.ExpStartException.toString())) {
                     logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                     redirectAttributes.addFlashAttribute("message", error.getMessage());
                     return "redirect:/experiments";
@@ -1887,13 +1874,13 @@ public class MainController {
 //
 //    	File rootFolder = new File(App.ROOT);
 //    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
-//    			.map(f -> f.getName())
+//    			.map(f -> f.getError())
 //    			.collect(Collectors.toList());
 //
 //    		model.addAttribute("files",
 //    			Arrays.stream(rootFolder.listFiles())
 //    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
-//    					.map(f -> f.getName())
+//    					.map(f -> f.getError())
 //    					.collect(Collectors.toList())
 //    		);
 //
@@ -2002,7 +1989,7 @@ public class MainController {
 //    	// send reuqest to team owner
 //    	// show feedback to users
 //    	User rv = userManager.getUserById(dataOwnerId);
-//    	model.addAttribute("ownerName", rv.getName());
+//    	model.addAttribute("ownerName", rv.getError());
 //    	model.addAttribute("ownerEmail", rv.getEmail());
 //    	return "data_request_access";
 //    }
@@ -2117,16 +2104,16 @@ public class MainController {
             } catch (IOException e) {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
-            if(error.getName().equals(ExceptionState.IdNullOrEmptyException.toString())) {
+            if(error.getError().equals(ExceptionState.IdNullOrEmptyException.toString())) {
                 logger.warn("Approve team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
                         teamId, teamOwnerId);
                 redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
             }
-            else if (error.getName().equals(ExceptionState.InvalidTeamStatusException.toString())) {
+            else if (error.getError().equals(ExceptionState.InvalidTeamStatusException.toString())) {
                 logger.warn("Approve team: TeamStatus is invalid");
                 redirectAttributes.addFlashAttribute("message", "Team status is invalid");
             }
-            else if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+            else if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
                 logger.warn("Approve team: Team {} not found", teamId);
                 redirectAttributes.addFlashAttribute("message", "Team does not exist");
             }
@@ -2176,16 +2163,16 @@ public class MainController {
             } catch (IOException e) {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
-            if(error.getName().equals(ExceptionState.IdNullOrEmptyException.toString())) {
+            if(error.getError().equals(ExceptionState.IdNullOrEmptyException.toString())) {
                 logger.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
                         teamId, teamOwnerId);
                 redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
             }
-            else if (error.getName().equals(ExceptionState.InvalidTeamStatusException.toString())) {
+            else if (error.getError().equals(ExceptionState.InvalidTeamStatusException.toString())) {
                 logger.warn("Reject team: TeamStatus is invalid");
                 redirectAttributes.addFlashAttribute("message", "Team status is invalid");
             }
-            else if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+            else if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
                 logger.warn("Reject team: Team {} not found", teamId);
                 redirectAttributes.addFlashAttribute("message", "Team does not exist");
             }
@@ -2232,13 +2219,13 @@ public class MainController {
 //
 //    	File rootFolder = new File(App.ROOT);
 //    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
-//    			.map(f -> f.getName())
+//    			.map(f -> f.getError())
 //    			.collect(Collectors.toList());
 //
 //    		model.addAttribute("files",
 //    			Arrays.stream(rootFolder.listFiles())
 //    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
-//    					.map(f -> f.getName())
+//    					.map(f -> f.getError())
 //    					.collect(Collectors.toList())
 //    		);
 //
@@ -2320,7 +2307,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
                     logger.warn("submitted join team request : team name error");
                 } else {
                     logger.warn("submitted join team request : some other failure");
@@ -2359,7 +2346,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                if (error.getName().equals(ExceptionState.TeamNotFoundException.toString())) {
+                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
                     logger.warn("Register new user join application request : team name error");
                 } else {
                     logger.warn("Register new user join application request : some other failure");
@@ -2412,7 +2399,7 @@ public class MainController {
 //		File[] files = folder.listFiles();
 //		for (File file : files) {
 //			if (file.isFile()) {
-//				scenarioFileNameList.add(file.getName());
+//				scenarioFileNameList.add(file.getError());
 //			}
 //		}
         // FIXME: hardcode list of filenames for now

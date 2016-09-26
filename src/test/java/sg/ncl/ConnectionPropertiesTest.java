@@ -53,7 +53,7 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetAuthEndpoint() throws Exception {
-        assertThat(properties.getAuthEndpoint(), is(equalTo("authentication")));
+        assertThat(properties.getAuthEndpoint(), is(equalTo("authentications")));
     }
 
     @Test

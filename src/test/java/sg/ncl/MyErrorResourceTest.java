@@ -2,9 +2,6 @@ package sg.ncl;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
-import sg.ncl.testbed_interface.Team2;
-
-import java.util.HashMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
@@ -19,8 +16,8 @@ public class MyErrorResourceTest {
     public void testSetName() {
         final MyErrorResource myErrorResource = new MyErrorResource();
         String exceptionName = RandomStringUtils.randomAlphanumeric(20);
-        myErrorResource.setName("exceptions." + exceptionName);
-        assertThat(myErrorResource.getName(), is(exceptionName));
+        myErrorResource.setError("exceptions." + exceptionName);
+        assertThat(myErrorResource.getError(), is(exceptionName));
     }
 
     @Test
