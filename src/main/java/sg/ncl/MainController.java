@@ -686,7 +686,7 @@ public class MainController {
      * Use when users register a new account for joining existing team
      *
      * @param teamName The team name to join
-     * @return
+     * @return the team id from sio
      */
     private String getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
         // FIXME check if team name exists
@@ -2662,16 +2662,14 @@ public class MainController {
             return new User2();
         }
 
-        User2 user2 = extractUserInfo(response.getBody().toString());
-        return user2;
+        return extractUserInfo(response.getBody().toString());
     }
 
     private Team2 invokeAndExtractTeamInfo(String teamId) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity responseEntity = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, request, String.class);
 
-        Team2 team = extractTeamInfo(responseEntity.getBody().toString());
-        return team;
+        return extractTeamInfo(responseEntity.getBody().toString());
     }
 
     private Experiment2 extractExperiment(String experimentJson) {
@@ -2748,7 +2746,7 @@ public class MainController {
 
     /**
      * @param zonedDateTimeJSON JSON string
-     * @return
+     * @return a date in the format MMM-d-yyyy
      */
     private String formatZonedDateTime(String zonedDateTimeJSON) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
