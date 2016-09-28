@@ -45,6 +45,12 @@ public enum ExceptionState {
         this.exceptionName = exceptionName;
     }
 
+    /**
+     * Converts and returns exceptions thrown from services-in-one
+     * Exception thrown from services-in-one is in this form [class.exceptionName]
+     * e.g. sg.ncl.service.user.exceptions.UserNotFoundException to UserNotFoundException
+     * @return the exceptionName only
+     */
     public static ExceptionState parseExceptionState(String exceptionName) {
         return  map.get(exceptionName.substring(exceptionName.lastIndexOf('.') + 1));
     }
