@@ -13,10 +13,10 @@ import static org.hamcrest.core.Is.is;
 public class MyErrorResourceTest {
 
     @Test
-    public void testSetName() {
+    public void testSetError() {
         final MyErrorResource myErrorResource = new MyErrorResource();
-        String exceptionName = RandomStringUtils.randomAlphanumeric(20);
-        myErrorResource.setError("exceptions." + exceptionName);
+        String exceptionName = "sg.ncl.Exception." + RandomStringUtils.randomAlphanumeric(20);
+        myErrorResource.setError(exceptionName);
         assertThat(myErrorResource.getError(), is(exceptionName));
     }
 
