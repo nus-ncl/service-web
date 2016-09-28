@@ -27,7 +27,8 @@ public enum ExceptionState {
     EMAIL_NOT_VERIFIED_EXCEPTION("EmailNotVerifiedException"),
     USER_NOT_APPROVED_EXCEPTION("UserNotApprovedException"),
     INVALID_CREDENTIALS_EXCEPTION("InvalidCredentialsException"),
-    EMAIL_ALREADY_EXISTS_EXCEPTION("EmailAlreadyExistsException");
+    EMAIL_ALREADY_EXISTS_EXCEPTION("EmailAlreadyExistsException"),
+    FORBIDDEN_EXCEPTION("ForbiddenException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 

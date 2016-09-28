@@ -1762,9 +1762,15 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (exceptionState == ExceptionState.EXP_DELETE_EXCEPTION) {
-                    log.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
-                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                switch (exceptionState) {
+                    case EXP_DELETE_EXCEPTION:
+                    case FORBIDDEN_EXCEPTION:
+                        log.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
+                        redirectAttributes.addFlashAttribute("message", error.getMessage());
+                        break;
+                    default:
+                        // do nothing
+                        break;
                 }
                 return "redirect:/experiments";
             } else {
