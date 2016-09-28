@@ -381,16 +381,6 @@ public class MainController {
                         loginForm.setErrorMsg("Login failed: Invalid email/password.");
                         return "login";
                 }
-
-//                if (ExceptionState.CredentialsNotFoundException.toString().equals(error.getError())) {
-//                    logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
-//                    loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
-//                    return "login";
-//                } else {
-//                    logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
-//                    loginForm.setErrorMsg("Login failed: Invalid email/password.");
-//                    return "login";
-//                }
             } catch (IOException ioe) {
                 logger.warn("IOException {}", ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
@@ -1454,17 +1444,6 @@ public class MainController {
                         redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                         break;
                 }
-//                if (error.getError().equals(ExceptionState.ApplyNewProjectException.toString())) {
-//                    logger.info("Apply new team fail at adapter deterlab");
-//                    redirectAttributes.addFlashAttribute("message", error.getMessage());
-//                } else if (error.getError().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
-//                    logger.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
-//                    redirectAttributes.addFlashAttribute("message", "Team name already exists.");
-//                } else {
-//                    logger.info("Apply new team fail: registration service or adapter fail");
-//                    // possible sio or adapter connection fail
-//                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
-//                }
                 return "redirect:/teams/apply_team";
 
             } else {
@@ -1542,15 +1521,6 @@ public class MainController {
                         redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                         break;
                 }
-
-//                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-//                    logger.warn("join team request : team name error");
-//                    redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
-//                } else {
-//                    logger.warn("join team request : some other failure");
-//                    // possible sio or adapter connection fail
-//                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
-//                }
                 return "redirect:/teams/join_team";
             }
         } catch (IOException e) {
@@ -1699,18 +1669,6 @@ public class MainController {
                         redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                         break;
                 }
-
-//                if (error.getError().equals(ExceptionState.NSFileParseException.toString())) {
-//                    logger.warn("Ns file error");
-//                    redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
-//                } else if (error.getError().equals(ExceptionState.ExpNameAlreadyExistsException.toString()) || error.getError().equals(ExceptionState.ExperimentNameInUseException.toString())) {
-//                    logger.warn("Exp name already exists");
-//                    redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
-//                } else {
-//                    logger.warn("Exp service or adapter fail");
-//                    // possible sio or adapter connection fail
-//                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
-//                }
                 logger.info("Experiment {} created", experimentForm);
                 return "redirect:/experiments/create";
             }
@@ -1821,10 +1779,6 @@ public class MainController {
                         // do nothing
                         break;
                 }
-//                if (error.getError().equals(ExceptionState.ExpDeleteException.toString())) {
-//                    logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
-//                    redirectAttributes.addFlashAttribute("message", error.getMessage());
-//                }
                 return "redirect:/experiments";
             } else {
                 // everything ok
@@ -1881,11 +1835,6 @@ public class MainController {
                         // do nothing
                         break;
                 }
-//                if (error.getError().equals(ExceptionState.ExpStartException.toString())) {
-//                    logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
-//                    redirectAttributes.addFlashAttribute("message", error.getMessage());
-//                    return "redirect:/experiments";
-//                }
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
 //                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
@@ -2211,22 +2160,6 @@ public class MainController {
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                     break;
             }
-
-//            if (error.getError().equals(ExceptionState.IdNullOrEmptyException.toString())) {
-//                logger.warn("Approve team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
-//                        teamId, teamOwnerId);
-//                redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
-//            } else if (error.getError().equals(ExceptionState.InvalidTeamStatusException.toString())) {
-//                logger.warn("Approve team: TeamStatus is invalid");
-//                redirectAttributes.addFlashAttribute("message", "Team status is invalid");
-//            } else if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-//                logger.warn("Approve team: Team {} not found", teamId);
-//                redirectAttributes.addFlashAttribute("message", "Team does not exist");
-//            } else {
-//                logger.warn("Approve team : sio or deterlab adapter connection error");
-//                // possible sio or adapter connection fail
-//                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
-//            }
             return "redirect:/admin";
         }
 
@@ -2291,22 +2224,6 @@ public class MainController {
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                     break;
             }
-
-//            if (error.getError().equals(ExceptionState.IdNullOrEmptyException.toString())) {
-//                logger.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
-//                        teamId, teamOwnerId);
-//                redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
-//            } else if (error.getError().equals(ExceptionState.InvalidTeamStatusException.toString())) {
-//                logger.warn("Reject team: TeamStatus is invalid");
-//                redirectAttributes.addFlashAttribute("message", "Team status is invalid");
-//            } else if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-//                logger.warn("Reject team: Team {} not found", teamId);
-//                redirectAttributes.addFlashAttribute("message", "Team does not exist");
-//            } else {
-//                logger.warn("Reject team : sio or deterlab adapter connection error");
-//                // possible sio or adapter connection fail
-//                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
-//            }
             return "redirect:/admin";
         }
 
@@ -2444,14 +2361,6 @@ public class MainController {
                         break;
                 }
                 return "redirect:/teams/join_team";
-
-//                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-//                    logger.warn("submitted join team request : team name error");
-//                } else {
-//                    logger.warn("submitted join team request : some other failure");
-//                    // possible sio or adapter connection fail
-//                }
-//                return "redirect:/teams/join_team";
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2494,13 +2403,6 @@ public class MainController {
                         // possible sio or adapter connection fail
                         break;
                 }
-
-//                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-//                    logger.warn("Register new user join application request : team name error");
-//                } else {
-//                    logger.warn("Register new user join application request : some other failure");
-//                    // possible sio or adapter connection fail
-//                }
                 return "redirect:/signup2";
             }
         } catch (IOException e) {
