@@ -41,13 +41,12 @@ import sg.ncl.testbed_interface.*;
  * @author Cassie, Desmond, Te Ye
  */
 @Controller
+@Slf4j
 public class MainController {
 
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
     public static final String APPLICATION_FORCE_DOWNLOAD = "application/force-download";
     private final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
-    private final static Logger logger = LoggerFactory.getLogger(MainController.class.getName());
-
 
     private TeamManager teamManager = TeamManager.getInstance();
 //    private UserManager userManager = UserManager.getInstance();
@@ -218,7 +217,7 @@ public class MainController {
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
-            logger.info("Error for download orderform.");
+            log.info("Error for download orderform.");
             throw new OrderFormDownloadException("Error for download orderform.");
         } finally {
             if (stream != null) {
@@ -238,7 +237,7 @@ public class MainController {
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
-            logger.info("Error for subscription download." + ex.getMessage());
+            log.info("Error for subscription download." + ex.getMessage());
             throw new MasterSubscriptionAgreementDownloadException("Error for subscription download.");
         } finally {
             if (stream != null) {
@@ -258,7 +257,7 @@ public class MainController {
             IOUtils.copy(stream, response.getOutputStream());
             response.flushBuffer();
         } catch (IOException ex) {
-            logger.info("Error for usage policy download." + ex.getMessage());
+            log.info("Error for usage policy download." + ex.getMessage());
             throw new UsagePolicyDownloadException("Error for usage policy download.");
         } finally {
             if (stream != null) {
@@ -306,14 +305,14 @@ public class MainController {
         // convert email to base64 code as email contains "."
         String emailBase64 = new String(Base64.encodeBase64(email.getBytes()));
         final String link = properties.getSioUsersUrl() + id + "/emails/" + emailBase64;
-        logger.info("Activation link: {}, verification key {}", link, key);
+        log.info("Activation link: {}, verification key {}", link, key);
         ResponseEntity response = restTemplate.exchange(link, HttpMethod.PUT, request, String.class);
 
         if (RestUtil.isError(response.getStatusCode())) {
-            logger.error("Activation of user {} failed.", id);
+            log.error("Activation of user {} failed.", id);
             return "email_validation_failed";
         } else {
-            logger.info("Activation of user {} completed.", id);
+            log.info("Activation of user {} completed.", id);
             return "email_validation_ok";
         }
     }
@@ -354,15 +353,15 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
-            logger.warn("Error connecting to sio authentication service: {}", e);
+            log.warn("Error connecting to sio authentication service: {}", e);
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
 
         String jwtTokenString = response.getBody().toString();
-        logger.info("token string {}", jwtTokenString);
+        log.info("token string {}", jwtTokenString);
         if (jwtTokenString == null || jwtTokenString.isEmpty()) {
-            logger.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
+            log.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
             return "login";
         }
@@ -373,16 +372,16 @@ public class MainController {
 
                 switch (exceptionState) {
                     case CREDENTIALS_NOT_FOUND_EXCEPTION:
-                        logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
+                        log.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
                         loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
                         return "login";
                     default:
-                        logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
+                        log.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
                         loginForm.setErrorMsg("Login failed: Invalid email/password.");
                         return "login";
                 }
             } catch (IOException ioe) {
-                logger.warn("IOException {}", ioe);
+                log.warn("IOException {}", ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
@@ -396,7 +395,7 @@ public class MainController {
         }
 
         if (token.trim().isEmpty() || id.trim().isEmpty() || role.trim().isEmpty()) {
-            logger.warn("login failed for {}: empty id {} or token {} or role {}", loginForm.getLoginEmail(), id, token, role);
+            log.warn("login failed for {}: empty id {} or token {} or role {}", loginForm.getLoginEmail(), id, token, role);
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
             return "login";
         }
@@ -411,23 +410,23 @@ public class MainController {
             String userStatus = user.getStatus();
             boolean emailVerified = user.getEmailVerified();
             if (!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
-                logger.info("User {} not validated, redirected to email verification page", id);
+                log.info("User {} not validated, redirected to email verification page", id);
                 return "redirect:/email_not_validated";
             } else if ((UserStatus.PENDING.toString()).equals(userStatus)) {
-                logger.info("User {} not approved, redirected to application pending page", id);
+                log.info("User {} not approved, redirected to application pending page", id);
                 return "redirect:/team_application_under_review";
             } else if ((UserStatus.APPROVED.toString()).equals(userStatus)) {
                 // set session variables
                 setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), role);
-                logger.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
+                log.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
                 return "redirect:/dashboard";
             } else {
-                logger.warn("login failed for user {}: account is rejected or closed", id);
+                log.warn("login failed for user {}: account is rejected or closed", id);
                 loginForm.setErrorMsg("Login Failed: Account Rejected/Closed.");
                 return "login";
             }
         } catch (Exception e) {
-            logger.warn("Error parsing json object for user: {}", e.getMessage());
+            log.warn("Error parsing json object for user: {}", e.getMessage());
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return "login";
         }
@@ -450,11 +449,11 @@ public class MainController {
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                logger.error("No such user: {}", session.getAttribute("id"));
+                log.error("No such user: {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 model.addAttribute("deterUid", "Connection Error");
             } else {
-                logger.info("Show the deter user id: {}", responseBody);
+                log.info("Show the deter user id: {}", responseBody);
                 model.addAttribute("deterUid", responseBody);
             }
         } catch (IOException e) {
@@ -485,13 +484,13 @@ public class MainController {
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
-            logger.warn("Register form has errors {}", signUpMergedForm.toString());
+            log.warn("Register form has errors {}", signUpMergedForm.toString());
             return "/signup2";
         }
 
         if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
             signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
-            logger.warn("Policy not accepted");
+            log.warn("Policy not accepted");
             return "/signup2";
         }
 
@@ -540,7 +539,7 @@ public class MainController {
 
 
         if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
-            logger.info("Signup new team name {}", createNewTeamName);
+            log.info("Signup new team name {}", createNewTeamName);
             boolean errorsFound = false;
 
             if (createNewTeamName.length() < 2 || createNewTeamName.length() > 12) {
@@ -559,7 +558,7 @@ public class MainController {
             }
 
             if (errorsFound) {
-                logger.warn("Signup new team error {}", signUpMergedForm.toString());
+                log.warn("Signup new team error {}", signUpMergedForm.toString());
                 return "/signup2";
             } else {
 
@@ -580,12 +579,12 @@ public class MainController {
                     return "redirect:/signup2";
                 }
 
-                logger.info("Signup new team success");
+                log.info("Signup new team success");
                 return "redirect:/team_application_submitted";
             }
 
         } else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
-            logger.info("Signup join team name {}", joinNewTeamName);
+            log.info("Signup join team name {}", joinNewTeamName);
             // get the team JSON from team name
             String teamIdToJoin = "";
 
@@ -611,11 +610,11 @@ public class MainController {
                 return "redirect:/signup2";
             }
 
-            logger.info("Signup join team success");
+            log.info("Signup join team success");
             return "redirect:/join_application_submitted/" + signUpMergedForm.getJoinTeamName().trim();
 
         } else {
-            logger.warn("Signup unreachable statement");
+            log.warn("Signup unreachable statement");
             // logic error not suppose to reach here
             // possible if user fill up create new team but without the team name
             redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
@@ -635,48 +634,48 @@ public class MainController {
 
         String responseBody = response.getBody().toString();
 
-        logger.info("Register user to deter response: {}", responseBody);
+        log.info("Register user to deter response: {}", responseBody);
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
 
-                logger.warn("Register user exception error: {}", error.getError());
+                log.warn("Register user exception error: {}", error.getError());
 
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
                     case JOIN_PROJECT_EXCEPTION:
-                        logger.warn("Register new users join team request : team name error");
+                        log.warn("Register new users join team request : team name error");
                         throw new TeamNotFoundException("Team name does not exists");
                     case APPLY_NEW_PROJECT_EXCEPTION:
-                        logger.warn("Register new users new team request : team name error");
+                        log.warn("Register new users new team request : team name error");
                         throw new ApplyNewProjectException();
                     case REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION:
-                        logger.warn("Register new users new team request : team name duplicate");
+                        log.warn("Register new users new team request : team name duplicate");
                         throw new RegisterTeamNameDuplicateException();
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
                         // throw from user service
                     {
                         String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
-                        logger.warn("Register new users : email already exists: {}", email);
+                        log.warn("Register new users : email already exists: {}", email);
                         throw new UsernameAlreadyExistsException("Error: " + email + " already in use.");
                     }
                     case EMAIL_ALREADY_EXISTS_EXCEPTION:
                         // throw from adapter deterlab
                     {
                         String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
-                        logger.warn("Register new users : email already exists: {}", email);
+                        log.warn("Register new users : email already exists: {}", email);
                         throw new EmailAlreadyExistsException("Error: " + email + " already in use.");
                     }
                     default:
-                        logger.warn("Registration or adapter connection fail");
+                        log.warn("Registration or adapter connection fail");
                         // possible sio or adapter connection fail
                         throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
                 }
             } else {
                 // do nothing
-                logger.info("Not an error for status code: {}", response.getStatusCode());
+                log.info("Not an error for status code: {}", response.getStatusCode());
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -705,10 +704,10 @@ public class MainController {
 
                 switch (exceptionState) {
                     case TEAM_NOT_FOUND_EXCEPTION:
-                        logger.warn("Get team by name : team name error");
+                        log.warn("Get team by name : team name error");
                         throw new TeamNotFoundException("Team name " + teamName + "does not exists");
                     default:
-                        logger.warn("Team service or adapter connection fail");
+                        log.warn("Team service or adapter connection fail");
                         // possible sio or adapter connection fail
                         throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
                 }
@@ -733,7 +732,7 @@ public class MainController {
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                logger.error("No such user: {}", session.getAttribute("id"));
+                log.error("No such user: {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 throw new RestClientException("[" + error.getError() + "] ");
             } else {
@@ -994,7 +993,7 @@ public class MainController {
                     joinRequestApproval.setTeamName(team2.getName());
 
                     temp.add(joinRequestApproval);
-                    logger.info("Join request: UserId: {}, UserEmail: {}", myUser.getId(), myUser.getEmail());
+                    log.info("Join request: UserId: {}, UserEmail: {}", myUser.getId(), myUser.getEmail());
                 }
             }
 
@@ -1017,7 +1016,7 @@ public class MainController {
             @PathVariable String userId,
             HttpSession session,
             RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
-        logger.info("Approve join request: User {}, Team {}, Approver {}",
+        log.info("Approve join request: User {}, Team {}, Approver {}",
                 userId, teamId, session.getAttribute("id").toString());
 
         JSONObject mainObject = new JSONObject();
@@ -1030,7 +1029,7 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
-            logger.warn("Error connecting to sio team service: {}", e);
+            log.warn("Error connecting to sio team service: {}", e);
             redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
             return "redirect:/approve_new_user";
         }
@@ -1039,22 +1038,22 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                logger.warn("Server side error: {}", error.getError());
+                log.warn("Server side error: {}", error.getError());
                 redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
-                logger.warn("IOException {}", ioe);
+                log.warn("IOException {}", ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
         // everything looks OK?
         String msg = new JSONObject(responseBody).getString("msg");
         if (!"process join request OK".equals(msg)) {
-            logger.warn("Cannot process join request: {}", msg);
+            log.warn("Cannot process join request: {}", msg);
             redirectAttributes.addFlashAttribute("message", "Cannot process join request: " + msg);
             return "redirect:/approve_new_user";
         }
-        logger.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
+        log.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
         redirectAttributes.addFlashAttribute("message", "Join request has been APPROVED.");
         return "redirect:/approve_new_user";
     }
@@ -1065,7 +1064,7 @@ public class MainController {
             @PathVariable String userId,
             HttpSession session,
             RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
-        logger.info("Reject join request: User {}, Team {}, Approver {}",
+        log.info("Reject join request: User {}, Team {}, Approver {}",
                 userId, teamId, session.getAttribute("id").toString());
 
         JSONObject mainObject = new JSONObject();
@@ -1078,7 +1077,7 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getRejectJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
         } catch (RestClientException e) {
-            logger.warn("Error connecting to sio team service: {}", e);
+            log.warn("Error connecting to sio team service: {}", e);
             redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
             return "redirect:/approve_new_user";
         }
@@ -1087,22 +1086,22 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                logger.warn("Server side error: {}", error.getError());
+                log.warn("Server side error: {}", error.getError());
                 redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
-                logger.warn("IOException {}", ioe);
+                log.warn("IOException {}", ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
         // everything looks OK?
         String msg = new JSONObject(responseBody).getString("msg");
         if (!"process join request OK".equals(msg)) {
-            logger.warn("Cannot process join request: {}", msg);
+            log.warn("Cannot process join request: {}", msg);
             redirectAttributes.addFlashAttribute("message", "Cannot process join request: " + msg);
             return "redirect:/approve_new_user";
         }
-        logger.info("Join request has been REJECTED, User {}, Team {}", userId, teamId);
+        log.info("Join request has been REJECTED, User {}, Team {}", userId, teamId);
         redirectAttributes.addFlashAttribute("message", "Join request has been REJECTED.");
         return "redirect:/approve_new_user";
     }
@@ -1402,13 +1401,13 @@ public class MainController {
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
-            logger.warn("Existing users apply for new team, form has errors {}", teamPageApplyTeamForm.toString());
+            log.warn("Existing users apply for new team, form has errors {}", teamPageApplyTeamForm.toString());
             // return "redirect:/teams/apply_team";
             return "team_page_apply_team";
         }
         // log data to ensure data has been parsed
-        logger.info("Apply for new team info at : " + properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
-        logger.info("Team application form: " + teamPageApplyTeamForm.toString());
+        log.info("Apply for new team info at : " + properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
+        log.info("Team application form: " + teamPageApplyTeamForm.toString());
 
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
@@ -1431,15 +1430,15 @@ public class MainController {
 
                 switch (exceptionState) {
                     case APPLY_NEW_PROJECT_EXCEPTION:
-                        logger.info("Apply new team fail at adapter deterlab");
+                        log.info("Apply new team fail at adapter deterlab");
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         break;
                     case REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION:
-                        logger.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
+                        log.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
                         redirectAttributes.addFlashAttribute("message", "Team name already exists.");
                         break;
                     default:
-                        logger.info("Apply new team fail: registration service or adapter fail");
+                        log.info("Apply new team fail: registration service or adapter fail");
                         // possible sio or adapter connection fail
                         redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                         break;
@@ -1448,7 +1447,7 @@ public class MainController {
 
             } else {
                 // no errors, everything ok
-                logger.info("Completed invoking the apply team request service for Team: {}", teamPageApplyTeamForm.getTeamName());
+                log.info("Completed invoking the apply team request service for Team: {}", teamPageApplyTeamForm.getTeamName());
                 return "redirect:/teams/team_application_submitted";
             }
         } catch (IOException e) {
@@ -1483,11 +1482,11 @@ public class MainController {
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
-            logger.info("join team request form for team page has errors");
+            log.info("join team request form for team page has errors");
             return "team_page_join_team";
         }
         // log data to ensure data has been parsed
-        logger.info("--------Join team---------");
+        log.info("--------Join team---------");
 
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
@@ -1498,7 +1497,7 @@ public class MainController {
         userFields.put("id", session.getAttribute("id")); // ncl-id
         teamFields.put("name", teamPageJoinForm.getTeamName());
 
-        logger.info("Calling the registration service to do join team request");
+        log.info("Calling the registration service to do join team request");
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getJoinRequestExistingUser(), HttpMethod.POST, request, String.class);
@@ -1512,11 +1511,11 @@ public class MainController {
 
                 switch (exceptionState) {
                     case TEAM_NOT_FOUND_EXCEPTION:
-                        logger.warn("join team request : team name error");
+                        log.warn("join team request : team name error");
                         redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
                         break;
                     default:
-                        logger.warn("join team request : some other failure");
+                        log.warn("join team request : some other failure");
                         // possible sio or adapter connection fail
                         redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                         break;
@@ -1527,7 +1526,7 @@ public class MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        logger.info("Completed invoking the join team request service for Team: {}", teamPageJoinForm.getTeamName());
+        log.info("Completed invoking the join team request service for Team: {}", teamPageJoinForm.getTeamName());
         return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
     }
 
@@ -1577,7 +1576,7 @@ public class MainController {
 
     @RequestMapping(value = "/experiments/create", method = RequestMethod.GET)
     public String createExperiment(Model model, HttpSession session) throws WebServiceRuntimeException {
-        logger.info("Loading create experiment page");
+        log.info("Loading create experiment page");
         // a list of teams that the logged in user is in
         List<String> scenarioFileNameList = getScenarioFileNameList();
         List<Team2> userTeamsList = new ArrayList<>();
@@ -1614,7 +1613,7 @@ public class MainController {
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
-            logger.info("Create experiment - form has errors");
+            log.info("Create experiment - form has errors");
             return "redirect:/experiments/create";
         }
 
@@ -1641,7 +1640,7 @@ public class MainController {
         experimentObject.put("idleSwap", "240");
         experimentObject.put("maxDuration", "960");
 
-        logger.info("Calling service to create experiment");
+        log.info("Calling service to create experiment");
         HttpEntity<String> request = createHttpEntityWithBody(experimentObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
@@ -1655,21 +1654,21 @@ public class MainController {
 
                 switch (exceptionState) {
                     case NS_FILE_PARSE_EXCEPTION:
-                        logger.warn("Ns file error");
+                        log.warn("Ns file error");
                         redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
                         break;
                     case EXP_NAME_ALREADY_EXISTS_EXCEPTION:
                     case EXPERIMENT_NAME_IN_USE_EXCEPTION:
-                        logger.warn("Exp name already exists");
+                        log.warn("Exp name already exists");
                         redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
                         break;
                     default:
-                        logger.warn("Exp service or adapter fail");
+                        log.warn("Exp service or adapter fail");
                         // possible sio or adapter connection fail
                         redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                         break;
                 }
-                logger.info("Experiment {} created", experimentForm);
+                log.info("Experiment {} created", experimentForm);
                 return "redirect:/experiments/create";
             }
         } catch (IOException e) {
@@ -1739,18 +1738,18 @@ public class MainController {
 
         // check valid authentication to remove experiments
         if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString())) {
-            logger.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamName, expId, session.getAttribute("id"), session.getAttribute(session_roles));
+            log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamName, expId, session.getAttribute("id"), session.getAttribute(session_roles));
             redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove experiment; Permission denied. If the error persists, please contact support@ncl.sg");
             return "redirect:/experiments";
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
-            logger.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
+            log.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
             redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
             return "redirect:/experiments";
         }
 
-        logger.info("Removing experiment: at " + properties.getDeleteExperiment(teamName, expId));
+        log.info("Removing experiment: at " + properties.getDeleteExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
@@ -1758,7 +1757,7 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getDeleteExperiment(teamName, expId), HttpMethod.DELETE, request, String.class);
         } catch (Exception e) {
-            logger.warn("Error connecting to experiment service to remove experiment", e.getMessage());
+            log.warn("Error connecting to experiment service to remove experiment", e.getMessage());
             redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
             return "redirect:/experiments";
         }
@@ -1772,7 +1771,7 @@ public class MainController {
 
                 switch (exceptionState) {
                     case EXP_DELETE_EXCEPTION:
-                        logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
+                        log.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         break;
                     default:
@@ -1782,7 +1781,7 @@ public class MainController {
                 return "redirect:/experiments";
             } else {
                 // everything ok
-                logger.info("remove experiment success for Team: {}, Exp: {}", teamName, expId);
+                log.info("remove experiment success for Team: {}, Exp: {}", teamName, expId);
                 redirectAttributes.addFlashAttribute("exp_remove_message", "Team: " + teamName + " has removed Exp: " + realization.getExperimentName());
                 return "redirect:/experiments";
             }
@@ -1801,12 +1800,12 @@ public class MainController {
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
-            logger.warn("Trying to start Team: {}, Experiment: {} with State: {} that is not running?", teamName, expId, realization.getState());
+            log.warn("Trying to start Team: {}, Experiment: {} with State: {} that is not running?", teamName, expId, realization.getState());
             redirectAttributes.addFlashAttribute("message", "An error occurred while trying to start Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
             return "redirect:/experiments";
         }
 
-        logger.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
+        log.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
@@ -1814,7 +1813,7 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
         } catch (Exception e) {
-            logger.warn("Error connecting to experiment service to start experiment", e.getMessage());
+            log.warn("Error connecting to experiment service to start experiment", e.getMessage());
             redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
             return "redirect:/experiments";
         }
@@ -1828,7 +1827,7 @@ public class MainController {
 
                 switch (exceptionState) {
                     case EXP_START_EXCEPTION:
-                        logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
+                        log.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         return "redirect:/experiments";
                     default:
@@ -1841,7 +1840,7 @@ public class MainController {
                 return "/experiments";
             } else {
                 // everything ok
-                logger.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
+                log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
                 redirectAttributes.addFlashAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
                 return "redirect:/experiments";
             }
@@ -1857,12 +1856,12 @@ public class MainController {
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
         if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
-            logger.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
+            log.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
             redirectAttributes.addFlashAttribute("message", "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
             return "redirect:/experiments";
         }
 
-        logger.info("Stopping experiment: at " + properties.getStopExperiment(teamName, expId));
+        log.info("Stopping experiment: at " + properties.getStopExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
@@ -1870,7 +1869,7 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
         } catch (Exception e) {
-            logger.warn("Error connecting to experiment service to stop experiment", e.getMessage());
+            log.warn("Error connecting to experiment service to stop experiment", e.getMessage());
             redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
             return "redirect:/experiments";
         }
@@ -1883,7 +1882,7 @@ public class MainController {
                 return "redirect:/experiments";
             } else {
                 // everything ok
-                logger.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
+                log.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
                 redirectAttributes.addFlashAttribute("exp_message", "Team: " + teamName + " has stopped Exp: " + realization.getExperimentName());
                 return "redirect:/experiments";
             }
@@ -2124,7 +2123,7 @@ public class MainController {
         }
 
         //FIXME require approver info
-        logger.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
+        log.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(
@@ -2142,20 +2141,20 @@ public class MainController {
 
             switch (exceptionState) {
                 case ID_NULL_OR_EMPTY_EXCEPTION:
-                    logger.warn("Approve team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
+                    log.warn("Approve team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
                             teamId, teamOwnerId);
                     redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
                     break;
                 case INVALID_TEAM_STATUS_EXCEPTION:
-                    logger.warn("Approve team: TeamStatus is invalid");
+                    log.warn("Approve team: TeamStatus is invalid");
                     redirectAttributes.addFlashAttribute("message", "Team status is invalid");
                     break;
                 case TEAM_NOT_FOUND_EXCEPTION:
-                    logger.warn("Approve team: Team {} not found", teamId);
+                    log.warn("Approve team: Team {} not found", teamId);
                     redirectAttributes.addFlashAttribute("message", "Team does not exist");
                     break;
                 default:
-                    logger.warn("Approve team : sio or deterlab adapter connection error");
+                    log.warn("Approve team : sio or deterlab adapter connection error");
                     // possible sio or adapter connection fail
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                     break;
@@ -2166,9 +2165,9 @@ public class MainController {
         // http status code is OK, then need to check the response message
         String msg = new JSONObject(responseBody).getString("msg");
         if ("approve project OK".equals(msg)) {
-            logger.info("Approve team {} OK", teamId);
+            log.info("Approve team {} OK", teamId);
         } else {
-            logger.warn("Approve team {} FAIL", teamId);
+            log.warn("Approve team {} FAIL", teamId);
             redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
         }
         return "redirect:/admin";
@@ -2187,7 +2186,7 @@ public class MainController {
         }
 
         //FIXME require approver info
-        logger.info("Rejecting new team {}, team owner {}", teamId, teamOwnerId);
+        log.info("Rejecting new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(
@@ -2206,20 +2205,20 @@ public class MainController {
 
             switch (exceptionState) {
                 case ID_NULL_OR_EMPTY_EXCEPTION:
-                    logger.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
+                    log.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
                             teamId, teamOwnerId);
                     redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
                     break;
                 case INVALID_TEAM_STATUS_EXCEPTION:
-                    logger.warn("Reject team: TeamStatus is invalid");
+                    log.warn("Reject team: TeamStatus is invalid");
                     redirectAttributes.addFlashAttribute("message", "Team status is invalid");
                     break;
                 case TEAM_NOT_FOUND_EXCEPTION:
-                    logger.warn("Reject team: Team {} not found", teamId);
+                    log.warn("Reject team: Team {} not found", teamId);
                     redirectAttributes.addFlashAttribute("message", "Team does not exist");
                     break;
                 default:
-                    logger.warn("Reject team : sio or deterlab adapter connection error");
+                    log.warn("Reject team : sio or deterlab adapter connection error");
                     // possible sio or adapter connection fail
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                     break;
@@ -2230,9 +2229,9 @@ public class MainController {
         // http status code is OK, then need to check the response message
         String msg = new JSONObject(responseBody).getString("msg");
         if ("reject project OK".equals(msg)) {
-            logger.info("Reject team {} OK", teamId);
+            log.info("Reject team {} OK", teamId);
         } else {
-            logger.warn("Reject team {} FAIL", teamId);
+            log.warn("Reject team {} FAIL", teamId);
             redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
         }
         return "redirect:/admin";
@@ -2339,7 +2338,7 @@ public class MainController {
 
     @RequestMapping("/teams/join_application_submitted/{teamName}")
     public String teamAppJoinFromTeamsPage(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
-        logger.info("Join application submitted");
+        log.info("Join application submitted");
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
@@ -2353,10 +2352,10 @@ public class MainController {
 
                 switch (exceptionState) {
                     case TEAM_NOT_FOUND_EXCEPTION:
-                        logger.warn("submitted join team request : team name error");
+                        log.warn("submitted join team request : team name error");
                         break;
                     default:
-                        logger.warn("submitted join team request : some other failure");
+                        log.warn("submitted join team request : some other failure");
                         // possible sio or adapter connection fail
                         break;
                 }
@@ -2382,7 +2381,7 @@ public class MainController {
 
     @RequestMapping("/join_application_submitted/{teamName}")
     public String joinTeamAppSubmit(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
-        logger.info("Register new user join application submitted");
+        log.info("Register new user join application submitted");
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
@@ -2396,10 +2395,10 @@ public class MainController {
 
                 switch (exceptionState) {
                     case TEAM_NOT_FOUND_EXCEPTION:
-                        logger.warn("Register new user join application request : team name error");
+                        log.warn("Register new user join application request : team name error");
                         break;
                     default:
-                        logger.warn("Register new user join application request : some other failure");
+                        log.warn("Register new user join application request : some other failure");
                         // possible sio or adapter connection fail
                         break;
                 }
@@ -2433,7 +2432,7 @@ public class MainController {
 
     //--------------------------Get List of scenarios filenames--------------------------
     private List<String> getScenarioFileNameList() throws WebServiceRuntimeException {
-        logger.info("Retrieving scenario file names");
+        log.info("Retrieving scenario file names");
 //        List<String> scenarioFileNameList = null;
 //        try {
 //            scenarioFileNameList = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios"), StandardCharsets.UTF_8);
@@ -2460,7 +2459,7 @@ public class MainController {
         scenarioFileNameList.add("Scenario 3 - Three nodes in a star topology");
 //        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
 //        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
-        logger.info("Scenario file list: {}", scenarioFileNameList);
+        log.info("Scenario file list: {}", scenarioFileNameList);
         return scenarioFileNameList;
     }
 
@@ -2479,14 +2478,14 @@ public class MainController {
         }
 
         try {
-            logger.info("Retrieving scenario files {}", getClass().getClassLoader().getResourceAsStream("scenarios/" + actualScenarioFileName));
+            log.info("Retrieving scenario files {}", getClass().getClassLoader().getResourceAsStream("scenarios/" + actualScenarioFileName));
             List<String> lines = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios/" + actualScenarioFileName), StandardCharsets.UTF_8);
             StringBuilder sb = new StringBuilder();
             for (String line : lines) {
                 sb.append(line);
                 sb.append(System.getProperty("line.separator"));
             }
-            logger.info("Experiment ns file contents: {}", sb);
+            log.info("Experiment ns file contents: {}", sb);
             return sb.toString();
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2620,7 +2619,7 @@ public class MainController {
                 return true;
             }
         }
-        logger.info("User: {} is viewing experiment page", loginUserId);
+        log.info("User: {} is viewing experiment page", loginUserId);
         return false;
     }
 
@@ -2659,7 +2658,7 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
         } catch (Exception e) {
-            logger.warn("User service not available to retrieve User: {}", userId);
+            log.warn("User service not available to retrieve User: {}", userId);
             return new User2();
         }
 
@@ -2699,7 +2698,7 @@ public class MainController {
         ResponseEntity response;
 
         try {
-            logger.info("retrieving the latest exp status: {}", properties.getRealizationByTeam(teamName, id.toString()));
+            log.info("retrieving the latest exp status: {}", properties.getRealizationByTeam(teamName, id.toString()));
             response = restTemplate.exchange(properties.getRealizationByTeam(teamName, id.toString()), HttpMethod.GET, request, String.class);
         } catch (Exception e) {
             return getCleanRealization();
@@ -2715,7 +2714,7 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                logger.warn("error in retrieving realization for team: {}, realization: {}", teamName, id);
+                log.warn("error in retrieving realization for team: {}, realization: {}", teamName, id);
                 return getCleanRealization();
             } else {
                 return extractRealization(responseBody);
@@ -2794,7 +2793,7 @@ public class MainController {
         session.setAttribute("id", id);
         session.setAttribute("name", firstName);
         session.setAttribute(session_roles, userRoles);
-        logger.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), userRoles);
+        log.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), userRoles);
     }
 
     private void removeSessionVariables(HttpSession session) {
@@ -2806,7 +2805,7 @@ public class MainController {
     }
 
     private boolean validateIfAdmin(HttpSession session) {
-        logger.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(session_roles));
+        log.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(session_roles));
         return session.getAttribute(session_roles).equals(UserType.ADMIN.toString());
     }
 
