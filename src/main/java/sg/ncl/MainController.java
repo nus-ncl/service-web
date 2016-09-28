@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
@@ -368,15 +369,28 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(jwtTokenString, MyErrorResource.class);
-                if (ExceptionState.CredentialsNotFoundException.toString().equals(error.getError())) {
-                    logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
-                    loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
-                    return "login";
-                } else {
-                    logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
-                    loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                    return "login";
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case CREDENTIALS_NOT_FOUND_EXCEPTION:
+                        logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
+                        loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
+                        return "login";
+                    default:
+                        logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
+                        loginForm.setErrorMsg("Login failed: Invalid email/password.");
+                        return "login";
                 }
+
+//                if (ExceptionState.CredentialsNotFoundException.toString().equals(error.getError())) {
+//                    logger.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
+//                    loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
+//                    return "login";
+//                } else {
+//                    logger.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
+//                    loginForm.setErrorMsg("Login failed: Invalid email/password.");
+//                    return "login";
+//                }
             } catch (IOException ioe) {
                 logger.warn("IOException {}", ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
@@ -639,8 +653,7 @@ public class MainController {
 
                 logger.warn("Register user exception error: {}", error.getError());
 
-                ExceptionState exceptionState = ExceptionState.valueOf(error.getError());
-//                throw exceptionState.get();
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
                     case JOIN_PROJECT_EXCEPTION:
@@ -698,14 +711,16 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-                    logger.warn("Get team by name : team name error");
-                    throw new TeamNotFoundException("Team name " + teamName + "does not exists");
-                } else {
-                    logger.warn("Team service or adapter connection fail");
-                    // possible sio or adapter connection fail
-                    throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
+                switch (exceptionState) {
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        logger.warn("Get team by name : team name error");
+                        throw new TeamNotFoundException("Team name " + teamName + "does not exists");
+                    default:
+                        logger.warn("Team service or adapter connection fail");
+                        // possible sio or adapter connection fail
+                        throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
                 }
             } else {
                 JSONObject object = new JSONObject(responseBody);
@@ -1422,18 +1437,34 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (error.getError().equals(ExceptionState.ApplyNewProjectException.toString())) {
-                    logger.info("Apply new team fail at adapter deterlab");
-                    redirectAttributes.addFlashAttribute("message", error.getMessage());
-                } else if (error.getError().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
-                    logger.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
-                    redirectAttributes.addFlashAttribute("message", "Team name already exists.");
-                } else {
-                    logger.info("Apply new team fail: registration service or adapter fail");
-                    // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                switch (exceptionState) {
+                    case APPLY_NEW_PROJECT_EXCEPTION:
+                        logger.info("Apply new team fail at adapter deterlab");
+                        redirectAttributes.addFlashAttribute("message", error.getMessage());
+                        break;
+                    case REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION:
+                        logger.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
+                        redirectAttributes.addFlashAttribute("message", "Team name already exists.");
+                        break;
+                    default:
+                        logger.info("Apply new team fail: registration service or adapter fail");
+                        // possible sio or adapter connection fail
+                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                        break;
                 }
+//                if (error.getError().equals(ExceptionState.ApplyNewProjectException.toString())) {
+//                    logger.info("Apply new team fail at adapter deterlab");
+//                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+//                } else if (error.getError().equals(ExceptionState.RegisterTeamNameDuplicateException.toString())) {
+//                    logger.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
+//                    redirectAttributes.addFlashAttribute("message", "Team name already exists.");
+//                } else {
+//                    logger.info("Apply new team fail: registration service or adapter fail");
+//                    // possible sio or adapter connection fail
+//                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+//                }
                 return "redirect:/teams/apply_team";
 
             } else {
@@ -1498,15 +1529,28 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-                    logger.warn("join team request : team name error");
-                    redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
-                } else {
-                    logger.warn("join team request : some other failure");
-                    // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                switch (exceptionState) {
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        logger.warn("join team request : team name error");
+                        redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
+                        break;
+                    default:
+                        logger.warn("join team request : some other failure");
+                        // possible sio or adapter connection fail
+                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                        break;
                 }
+
+//                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
+//                    logger.warn("join team request : team name error");
+//                    redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
+//                } else {
+//                    logger.warn("join team request : some other failure");
+//                    // possible sio or adapter connection fail
+//                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+//                }
                 return "redirect:/teams/join_team";
             }
         } catch (IOException e) {
@@ -1637,18 +1681,36 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (error.getError().equals(ExceptionState.NSFileParseException.toString())) {
-                    logger.warn("Ns file error");
-                    redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
-                } else if (error.getError().equals(ExceptionState.ExpNameAlreadyExistsException.toString()) || error.getError().equals(ExceptionState.ExperimentNameInUseException.toString())) {
-                    logger.warn("Exp name already exists");
-                    redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
-                } else {
-                    logger.warn("Exp service or adapter fail");
-                    // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                switch (exceptionState) {
+                    case NS_FILE_PARSE_EXCEPTION:
+                        logger.warn("Ns file error");
+                        redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
+                        break;
+                    case EXP_NAME_ALREADY_EXISTS_EXCEPTION:
+                    case EXPERIMENT_NAME_IN_USE_EXCEPTION:
+                        logger.warn("Exp name already exists");
+                        redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
+                        break;
+                    default:
+                        logger.warn("Exp service or adapter fail");
+                        // possible sio or adapter connection fail
+                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                        break;
                 }
+
+//                if (error.getError().equals(ExceptionState.NSFileParseException.toString())) {
+//                    logger.warn("Ns file error");
+//                    redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
+//                } else if (error.getError().equals(ExceptionState.ExpNameAlreadyExistsException.toString()) || error.getError().equals(ExceptionState.ExperimentNameInUseException.toString())) {
+//                    logger.warn("Exp name already exists");
+//                    redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
+//                } else {
+//                    logger.warn("Exp service or adapter fail");
+//                    // possible sio or adapter connection fail
+//                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+//                }
                 logger.info("Experiment {} created", experimentForm);
                 return "redirect:/experiments/create";
             }
@@ -1748,10 +1810,21 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                if (error.getError().equals(ExceptionState.ExpDeleteException.toString())) {
-                    logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
-                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case EXP_DELETE_EXCEPTION:
+                        logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
+                        redirectAttributes.addFlashAttribute("message", error.getMessage());
+                        break;
+                    default:
+                        // do nothing
+                        break;
                 }
+//                if (error.getError().equals(ExceptionState.ExpDeleteException.toString())) {
+//                    logger.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
+//                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+//                }
                 return "redirect:/experiments";
             } else {
                 // everything ok
@@ -1797,12 +1870,22 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (error.getError().equals(ExceptionState.ExpStartException.toString())) {
-                    logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
-                    redirectAttributes.addFlashAttribute("message", error.getMessage());
-                    return "redirect:/experiments";
+                switch (exceptionState) {
+                    case EXP_START_EXCEPTION:
+                        logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
+                        redirectAttributes.addFlashAttribute("message", error.getMessage());
+                        return "redirect:/experiments";
+                    default:
+                        // do nothing
+                        break;
                 }
+//                if (error.getError().equals(ExceptionState.ExpStartException.toString())) {
+//                    logger.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
+//                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+//                    return "redirect:/experiments";
+//                }
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
 //                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
@@ -2106,21 +2189,44 @@ public class MainController {
             } catch (IOException e) {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
-            if (error.getError().equals(ExceptionState.IdNullOrEmptyException.toString())) {
-                logger.warn("Approve team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
-                        teamId, teamOwnerId);
-                redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
-            } else if (error.getError().equals(ExceptionState.InvalidTeamStatusException.toString())) {
-                logger.warn("Approve team: TeamStatus is invalid");
-                redirectAttributes.addFlashAttribute("message", "Team status is invalid");
-            } else if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-                logger.warn("Approve team: Team {} not found", teamId);
-                redirectAttributes.addFlashAttribute("message", "Team does not exist");
-            } else {
-                logger.warn("Approve team : sio or deterlab adapter connection error");
-                // possible sio or adapter connection fail
-                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            switch (exceptionState) {
+                case ID_NULL_OR_EMPTY_EXCEPTION:
+                    logger.warn("Approve team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
+                            teamId, teamOwnerId);
+                    redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
+                    break;
+                case INVALID_TEAM_STATUS_EXCEPTION:
+                    logger.warn("Approve team: TeamStatus is invalid");
+                    redirectAttributes.addFlashAttribute("message", "Team status is invalid");
+                    break;
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    logger.warn("Approve team: Team {} not found", teamId);
+                    redirectAttributes.addFlashAttribute("message", "Team does not exist");
+                    break;
+                default:
+                    logger.warn("Approve team : sio or deterlab adapter connection error");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                    break;
             }
+
+//            if (error.getError().equals(ExceptionState.IdNullOrEmptyException.toString())) {
+//                logger.warn("Approve team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
+//                        teamId, teamOwnerId);
+//                redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
+//            } else if (error.getError().equals(ExceptionState.InvalidTeamStatusException.toString())) {
+//                logger.warn("Approve team: TeamStatus is invalid");
+//                redirectAttributes.addFlashAttribute("message", "Team status is invalid");
+//            } else if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
+//                logger.warn("Approve team: Team {} not found", teamId);
+//                redirectAttributes.addFlashAttribute("message", "Team does not exist");
+//            } else {
+//                logger.warn("Approve team : sio or deterlab adapter connection error");
+//                // possible sio or adapter connection fail
+//                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+//            }
             return "redirect:/admin";
         }
 
@@ -2162,21 +2268,45 @@ public class MainController {
             } catch (IOException e) {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
-            if (error.getError().equals(ExceptionState.IdNullOrEmptyException.toString())) {
-                logger.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
-                        teamId, teamOwnerId);
-                redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
-            } else if (error.getError().equals(ExceptionState.InvalidTeamStatusException.toString())) {
-                logger.warn("Reject team: TeamStatus is invalid");
-                redirectAttributes.addFlashAttribute("message", "Team status is invalid");
-            } else if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-                logger.warn("Reject team: Team {} not found", teamId);
-                redirectAttributes.addFlashAttribute("message", "Team does not exist");
-            } else {
-                logger.warn("Reject team : sio or deterlab adapter connection error");
-                // possible sio or adapter connection fail
-                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            switch (exceptionState) {
+                case ID_NULL_OR_EMPTY_EXCEPTION:
+                    logger.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
+                            teamId, teamOwnerId);
+                    redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
+                    break;
+                case INVALID_TEAM_STATUS_EXCEPTION:
+                    logger.warn("Reject team: TeamStatus is invalid");
+                    redirectAttributes.addFlashAttribute("message", "Team status is invalid");
+                    break;
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    logger.warn("Reject team: Team {} not found", teamId);
+                    redirectAttributes.addFlashAttribute("message", "Team does not exist");
+                    break;
+                default:
+                    logger.warn("Reject team : sio or deterlab adapter connection error");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                    break;
             }
+
+//            if (error.getError().equals(ExceptionState.IdNullOrEmptyException.toString())) {
+//                logger.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
+//                        teamId, teamOwnerId);
+//                redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
+//            } else if (error.getError().equals(ExceptionState.InvalidTeamStatusException.toString())) {
+//                logger.warn("Reject team: TeamStatus is invalid");
+//                redirectAttributes.addFlashAttribute("message", "Team status is invalid");
+//            } else if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
+//                logger.warn("Reject team: Team {} not found", teamId);
+//                redirectAttributes.addFlashAttribute("message", "Team does not exist");
+//            } else {
+//                logger.warn("Reject team : sio or deterlab adapter connection error");
+//                // possible sio or adapter connection fail
+//                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+//            }
             return "redirect:/admin";
         }
 
@@ -2302,14 +2432,26 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-                    logger.warn("submitted join team request : team name error");
-                } else {
-                    logger.warn("submitted join team request : some other failure");
-                    // possible sio or adapter connection fail
+                switch (exceptionState) {
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        logger.warn("submitted join team request : team name error");
+                        break;
+                    default:
+                        logger.warn("submitted join team request : some other failure");
+                        // possible sio or adapter connection fail
+                        break;
                 }
                 return "redirect:/teams/join_team";
+
+//                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
+//                    logger.warn("submitted join team request : team name error");
+//                } else {
+//                    logger.warn("submitted join team request : some other failure");
+//                    // possible sio or adapter connection fail
+//                }
+//                return "redirect:/teams/join_team";
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2341,13 +2483,24 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
-                    logger.warn("Register new user join application request : team name error");
-                } else {
-                    logger.warn("Register new user join application request : some other failure");
-                    // possible sio or adapter connection fail
+                switch (exceptionState) {
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        logger.warn("Register new user join application request : team name error");
+                        break;
+                    default:
+                        logger.warn("Register new user join application request : some other failure");
+                        // possible sio or adapter connection fail
+                        break;
                 }
+
+//                if (error.getError().equals(ExceptionState.TeamNotFoundException.toString())) {
+//                    logger.warn("Register new user join application request : team name error");
+//                } else {
+//                    logger.warn("Register new user join application request : some other failure");
+//                    // possible sio or adapter connection fail
+//                }
                 return "redirect:/signup2";
             }
         } catch (IOException e) {
