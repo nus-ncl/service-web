@@ -104,7 +104,7 @@ public class ConnectionProperties {
     }
 
     public String getSioAuthUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + authEndpoint + "/";
+        return "http://" + sioAddress + ":" + sioPort + "/" + authEndpoint;
     }
 
     public String getSioCredUrl() {
@@ -112,7 +112,7 @@ public class ConnectionProperties {
     }
 
     public String getSioRegUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/";
+        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint;
     }
 
     public String getTeamVisibilityEndpoint() {
@@ -174,7 +174,7 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String getTeamByName(String name) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/?name=" + name;
+        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "?name=" + name;
     }
 
     public String getTeamById(String id) {
@@ -182,7 +182,7 @@ public class ConnectionProperties {
     }
 
     public String getTeamsByVisibility(String visibility) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/?visibility=" + visibility;
+        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "?visibility=" + visibility;
     }
 
     //-------------------------------------

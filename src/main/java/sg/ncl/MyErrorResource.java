@@ -6,22 +6,20 @@ package sg.ncl;
  */
 public class MyErrorResource {
 
-    private String name;
+    // note: variable names must match those of sio
+    private String error;
     private String message;
     private String localizedMessage;
 
     /**
-     * Converts and returns exceptions thrown from services-in-one
-     * Exception thrown from services-in-one is in this form [class.exceptionName]
-     * e.g. sg.ncl.service.user.exceptions.UserNotFoundException to UserNotFoundException
-     * @return the exceptionName only
+     * @return the full error name, e.g. sg.ncl.service.user.exceptions.UserNotFoundException
      */
-    public String getName() {
-        return name.substring(name.lastIndexOf('.') + 1);
+    public String getError() {
+        return error;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setError(String error) {
+        this.error = error;
     }
 
     public String getMessage() {

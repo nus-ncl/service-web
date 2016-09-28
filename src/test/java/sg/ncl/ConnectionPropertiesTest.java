@@ -53,7 +53,7 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetAuthEndpoint() throws Exception {
-        assertThat(properties.getAuthEndpoint(), is(equalTo("authentication")));
+        assertThat(properties.getAuthEndpoint(), is(equalTo("authentications")));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class ConnectionPropertiesTest {
     @Test
     public void testGetTeamByName() throws Exception {
         String teamName = RandomStringUtils.randomAlphanumeric(20);
-        assertThat(properties.getTeamByName(teamName), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/?name=" + teamName)));
+        assertThat(properties.getTeamByName(teamName), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "?name=" + teamName)));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetTeamsByVisibility() throws Exception {
-        assertThat(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/?visibility=" + TeamVisibility.PUBLIC.toString())));
+        assertThat(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "?visibility=" + TeamVisibility.PUBLIC.toString())));
     }
 
     @Test
