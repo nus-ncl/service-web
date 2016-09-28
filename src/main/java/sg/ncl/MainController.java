@@ -18,8 +18,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -370,16 +368,14 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(jwtTokenString, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    case CREDENTIALS_NOT_FOUND_EXCEPTION:
-                        log.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
-                        loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
-                        return "login";
-                    default:
-                        log.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
-                        loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                        return "login";
+                if (exceptionState == ExceptionState.CREDENTIALS_NOT_FOUND_EXCEPTION) {
+                    log.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
+                    loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
+                    return "login";
                 }
+                log.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
+                loginForm.setErrorMsg("Login failed: Invalid email/password.");
+                return "login";
             } catch (IOException ioe) {
                 log.warn("IOException {}", ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
@@ -702,15 +698,15 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    case TEAM_NOT_FOUND_EXCEPTION:
-                        log.warn("Get team by name : team name error");
-                        throw new TeamNotFoundException("Team name " + teamName + "does not exists");
-                    default:
-                        log.warn("Team service or adapter connection fail");
-                        // possible sio or adapter connection fail
-                        throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
+                if (exceptionState == ExceptionState.TEAM_NOT_FOUND_EXCEPTION) {
+                    log.warn("Get team by name : team name error");
+                    throw new TeamNotFoundException("Team name " + teamName + "does not exists");
+                } else {
+                    log.warn("Team service or adapter connection fail");
+                    // possible sio or adapter connection fail
+                    throw new AdapterConnectionException(ERR_SERVER_OVERLOAD);
                 }
+
             } else {
                 JSONObject object = new JSONObject(responseBody);
                 return object.getString("id");
@@ -1509,16 +1505,13 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    case TEAM_NOT_FOUND_EXCEPTION:
-                        log.warn("join team request : team name error");
-                        redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
-                        break;
-                    default:
-                        log.warn("join team request : some other failure");
-                        // possible sio or adapter connection fail
-                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
-                        break;
+                if (exceptionState == ExceptionState.TEAM_NOT_FOUND_EXCEPTION) {
+                    log.warn("join team request : team name error");
+                    redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
+                } else {
+                    log.warn("join team request : some other failure");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
                 }
                 return "redirect:/teams/join_team";
             }
@@ -1769,14 +1762,9 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    case EXP_DELETE_EXCEPTION:
-                        log.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
-                        redirectAttributes.addFlashAttribute("message", error.getMessage());
-                        break;
-                    default:
-                        // do nothing
-                        break;
+                if (exceptionState == ExceptionState.EXP_DELETE_EXCEPTION) {
+                    log.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
                 }
                 return "redirect:/experiments";
             } else {

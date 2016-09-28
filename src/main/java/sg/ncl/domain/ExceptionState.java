@@ -1,7 +1,6 @@
 package sg.ncl.domain;
 
 import lombok.Getter;
-import sg.ncl.exceptions.EmailAlreadyExistsException;
 
 import java.util.HashMap;
 import java.util.Map;
