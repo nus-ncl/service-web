@@ -22,7 +22,7 @@ cache:
 
 before_install:
   - chmod +x gradlew # ensure that the gradlew script is executable
-  - curl -X GET -H 'Accept: application/json' https://bamboo.ncl.sg/rest/api/latest/
+  - 'curl -X GET -H "Accept: application/json" https://bamboo.ncl.sg/rest/api/latest/'
 
 install:
   - ./gradlew --stacktrace printInfo # output some versioning info
