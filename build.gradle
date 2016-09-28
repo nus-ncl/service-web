@@ -131,13 +131,13 @@ task bamboo(type: org._10ne.gradle.rest.RestTask) {
     ]
     responseHandler = {
         assert it.buildNumber != null
-        println 'Bamboo Build: ' + it.buildNumber
+        println '- Response: ' + it
     }
 }
 
 task triggerBamboo << {
 //    if (System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
-        println 'Triggering Bamboo build'
+    println 'Triggering Bamboo Build:'
         tasks.bamboo.execute()
 //    } else {
 //        println 'Is not on master branch or is a pull request: branch = ' + System.getenv('TRAVIS_BRANCH') + ', pull request = ' + System.getenv('TRAVIS_PULL_REQUEST')
