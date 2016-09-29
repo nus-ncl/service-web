@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<div th:fragment="about">
+    <object th:include="fragments/header :: header" th:remove="tag"/>
+    <div id="fragment-login-nav" th:replace="fragments/login_navigation :: loginnav">&nbsp;</div>
+    <div th:replace="fragments/about :: about">&nbsp;</div>
+    <div th:replace="fragments/footer :: footer"></div>
+    <object th:include="fragments/javascript :: javascript" th:remove="tag"/>
+</div>
+<div th:fragment="events">
+    <p>THIS IS THE EVENT FRAGMENT</p>
+</div>
+</body>
+</html>

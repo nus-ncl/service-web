@@ -89,7 +89,7 @@ public class MainController {
 
     @RequestMapping("/about")
     public String about() {
-        return "about";
+        return "base :: about";
     }
 
     @RequestMapping("/event")
