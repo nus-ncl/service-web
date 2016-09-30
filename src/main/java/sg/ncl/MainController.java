@@ -1723,32 +1723,32 @@ public class MainController {
 //    	return "experiment_scenario_contents";
 //    }
 
-    @RequestMapping("/remove_experiment/{teamName}/{expId}")
-    public String removeExperiment(@PathVariable String teamName, @PathVariable String expId, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
+    @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}")
+    public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId, @PathVariable String expId, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
         // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
         // check valid authentication to remove experiments
         if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString())) {
-            log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamName, expId, session.getAttribute("id"), session.getAttribute(session_roles));
+            log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(session_roles));
             redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove experiment; Permission denied. If the error persists, please contact support@ncl.sg");
             return "redirect:/experiments";
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
-            log.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
+            log.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
             redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
             return "redirect:/experiments";
         }
 
-        log.info("Removing experiment: at " + properties.getDeleteExperiment(teamName, expId));
+        log.info("Removing experiment: at " + properties.getDeleteExperiment(teamId, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
 
         try {
-            response = restTemplate.exchange(properties.getDeleteExperiment(teamName, expId), HttpMethod.DELETE, request, String.class);
+            response = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId), HttpMethod.DELETE, request, String.class);
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to remove experiment", e.getMessage());
             redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
@@ -1765,7 +1765,7 @@ public class MainController {
                 switch (exceptionState) {
                     case EXP_DELETE_EXCEPTION:
                     case FORBIDDEN_EXCEPTION:
-                        log.warn("remove experiment failed for Team: {}, Exp: {}", teamName, expId);
+                        log.warn("remove experiment failed for Team: {}, Exp: {}", teamId, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         break;
                     default:
@@ -1775,8 +1775,8 @@ public class MainController {
                 return "redirect:/experiments";
             } else {
                 // everything ok
-                log.info("remove experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute("exp_remove_message", "Team: " + teamName + " has removed Exp: " + realization.getExperimentName());
+                log.info("remove experiment success for Team: {}, Exp: {}", teamId, expId);
+                redirectAttributes.addFlashAttribute("exp_remove_message", "Team: " + teamId + " has removed Exp: " + realization.getExperimentName());
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
