@@ -34,4 +34,4 @@ script:
 after_success:
  - ./gradlew --stacktrace bootRepackage bintrayUpload # use bootRepackage to fix issue with Spring Boot
  - ./gradlew --stacktrace triggerBamboo # initiate a Bamboo build deployment
- - 'curl -X POST -H "Accept: application/json" -H "Authorization: ${BAMBOO_CREDENTIALS}" https://bamboo.ncl.sg/rest/api/latest/queue/NCL-WS'
+ - 'curl -X POST -H "Accept: application/json" -H "Authorization: $BAMBOO_CREDENTIALS" https://bamboo.ncl.sg/rest/api/latest/queue/NCL-WS'
