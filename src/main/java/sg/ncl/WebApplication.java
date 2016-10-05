@@ -8,17 +8,18 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class WebApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(WebApplication.class, args);
-    }
-
     @Bean
-    public RestTemplate restTemplate() {
+    RestTemplate restTemplate() {
         return new RestTemplate();
     }
 
     @Bean
-    public ConnectionProperties connectionProperties() {
+    ConnectionProperties connectionProperties() {
         return new ConnectionProperties();
     }
+
+    public static void main(String[] args) {
+        SpringApplication.run(WebApplication.class, args);
+    }
+
 }
