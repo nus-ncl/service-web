@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 JARFile="web-service.jar"
 PIDFile="application.pid"
 SPRING_OPTS="-DLOG_FILE=application.log"
