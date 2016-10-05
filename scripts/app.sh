@@ -1,5 +1,5 @@
 #!/bin/sh
-JARFile="application.jar"
+JARFile="web-service.jar"
 PIDFile="application.pid"
 SPRING_OPTS="-DLOG_FILE=application.log"
 function check_if_pid_file_exists {
