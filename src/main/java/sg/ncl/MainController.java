@@ -1853,10 +1853,16 @@ public class MainController {
     }
 
     @RequestMapping("/stop_experiment/{teamName}/{expId}")
-    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
 
         // ensure experiment is active first before stopping
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if (!validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session)) {
+            log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
+            redirectAttributes.addFlashAttribute("message", "Permission deined. If the error persists, please contact " + contactEmail);
+            return "redirect:/experiments";
+        }
 
         if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
             log.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
