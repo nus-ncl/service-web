@@ -1788,10 +1788,16 @@ public class MainController {
     public String startExperiment(
             @PathVariable String teamName,
             @PathVariable String expId,
-            final RedirectAttributes redirectAttributes, Model model) throws WebServiceRuntimeException {
+            final RedirectAttributes redirectAttributes, Model model, HttpSession session) throws WebServiceRuntimeException {
 
         // ensure experiment is stopped first before starting
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if (!checkPermissionRealizeExperiment(realization, session)) {
+            log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
+            redirectAttributes.addFlashAttribute("message", "Permission deined. If the error persists, please contact support@ncl.sg");
+            return "redirect:/experiments";
+        }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             log.warn("Trying to start Team: {}, Experiment: {} with State: {} that is not running?", teamName, expId, realization.getState());
@@ -1821,6 +1827,7 @@ public class MainController {
 
                 switch (exceptionState) {
                     case EXP_START_EXCEPTION:
+                    case FORBIDDEN_EXCEPTION:
                         log.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         return "redirect:/experiments";
@@ -2799,6 +2806,21 @@ public class MainController {
     private boolean validateIfAdmin(HttpSession session) {
         log.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(session_roles));
         return session.getAttribute(session_roles).equals(UserType.ADMIN.toString());
+    }
+
+    /**
+     * Ensure that only users of the team can realize or un-realize experiment
+     * @return the main experiment page
+     */
+    private boolean checkPermissionRealizeExperiment(Realization realization, HttpSession session) {
+        Team2 team = invokeAndExtractTeamInfo(realization.getTeamId());
+        List<User2> membersList = team.getMembersList();
+        for (User2 member : membersList) {
+            if (member.getId().equals(session.getAttribute("id").toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Realization getCleanRealization() {
