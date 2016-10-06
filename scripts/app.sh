@@ -1,7 +1,6 @@
 #!/bin/bash
 JARFile="web-service.jar"
 PIDFile="application.pid"
-SPRING_OPTS="-DLOG_FILE=application.log"
 function check_if_pid_file_exists {
     if [ ! -f $PIDFile ]
     then
@@ -63,7 +62,7 @@ case "$1" in
             echo "Process $(print_process) already running"
             exit 1
         fi
-        nohup java $SPRING_OPTS -jar $JARFile &
+        nohup java -jar $JARFile </dev/null >application.log 2>&1 &
         echo "Process started"
         ;;
     restart)
