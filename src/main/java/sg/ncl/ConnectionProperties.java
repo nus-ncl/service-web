@@ -205,8 +205,8 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + "/experiment/" + expId;
     }
 
-    public String getDeleteExperiment(String teamName, String expId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + expId + "/teams/" + teamName;
+    public String getDeleteExperiment(String teamId, String expId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId;
     }
 
     public String getStartExperiment(String teamName, String expId) {
