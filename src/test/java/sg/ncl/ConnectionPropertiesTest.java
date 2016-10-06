@@ -182,9 +182,9 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetDeleteExperiment() throws Exception {
-        String teamName = RandomStringUtils.randomAlphanumeric(20);
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
         String expId = RandomStringUtils.randomAlphanumeric(20);
-        assertThat(properties.getDeleteExperiment(teamName, expId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/" + expId + "/teams/" + teamName)));
+        assertThat(properties.getDeleteExperiment(teamId, expId), is(equalTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/teams/" + teamId + "/experiments/" + expId)));
     }
 
     @Test
