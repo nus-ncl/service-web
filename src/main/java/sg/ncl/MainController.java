@@ -1888,6 +1888,13 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                if (exceptionState == ExceptionState.FORBIDDEN_EXCEPTION) {
+                    log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
+                    redirectAttributes.addFlashAttribute("message", "Permission deined. If the error persists, please contact " + contactEmail);
+                }
+
                 return "redirect:/experiments";
             } else {
                 // everything ok
