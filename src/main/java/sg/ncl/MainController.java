@@ -1776,7 +1776,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("remove experiment success for Team: {}, Exp: {}", teamId, expId);
-                redirectAttributes.addFlashAttribute("exp_remove_message", "Team: " + teamId + " has removed Exp: " + realization.getExperimentName());
+                redirectAttributes.addFlashAttribute("exp_remove_message", "Team: " + teamName + " has removed Exp: " + realization.getExperimentName());
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
