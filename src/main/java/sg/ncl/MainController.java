@@ -60,10 +60,10 @@ public class MainController {
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
-    private final static String CONTACT_EMAIL = "support@ncl.sg";
+    private static final String CONTACT_EMAIL = "support@ncl.sg";
 
     // error messages
-    private final static String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
+    private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
 
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
 
