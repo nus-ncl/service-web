@@ -1896,14 +1896,12 @@ public class MainController {
                     log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
                     redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
                 }
-
-                return "redirect:/experiments";
             } else {
                 // everything ok
                 log.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
                 redirectAttributes.addFlashAttribute("exp_message", "Team: " + teamName + " has stopped Exp: " + realization.getExperimentName());
-                return "redirect:/experiments";
             }
+            return "redirect:/experiments";
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
