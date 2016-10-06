@@ -1860,7 +1860,7 @@ public class MainController {
         // ensure experiment is active first before stopping
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
-        if (!validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session)) {
+        if (isNotAdminAndNotInTeam(session, realization)) {
             log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
             return "redirect:/experiments";
@@ -1907,6 +1907,10 @@ public class MainController {
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
+    }
+
+    private boolean isNotAdminAndNotInTeam(HttpSession session, Realization realization) {
+        return !validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session);
     }
 
     //---------------------------------Dataset Page--------------------------
