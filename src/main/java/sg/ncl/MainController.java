@@ -1864,7 +1864,9 @@ public class MainController {
             log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
             return "redirect:/experiments";
-        } else if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
+        }
+
+        if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
             log.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
             redirectAttributes.addFlashAttribute("message", "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
@@ -1890,11 +1892,9 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    case FORBIDDEN_EXCEPTION:
-                        log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
-                        redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
-                        break;
+                if (exceptionState == ExceptionState.FORBIDDEN_EXCEPTION) {
+                    log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
+                    redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
                 }
             } else {
                 // everything ok
@@ -2563,12 +2563,6 @@ public class MainController {
         user2.setStatus(object.getString("status"));
         user2.setEmailVerified(object.getBoolean("emailVerified"));
 
-//        String role = UserType.USER.toString();
-//        if (object.getJSONArray("roles") != null) {
-//            role = object.getJSONArray("roles").get(0).toString();
-//        }
-//        user2.setRoles(role);
-
         return user2;
     }
 
@@ -2833,14 +2827,16 @@ public class MainController {
      * @return the main experiment page
      */
     private boolean checkPermissionRealizeExperiment(Realization realization, HttpSession session) {
-        Team2 team = invokeAndExtractTeamInfo(realization.getTeamId());
-        List<User2> membersList = team.getMembersList();
-        User2 owner = team.getOwner();
-        if (owner.getId().equals(session.getAttribute("id").toString()) && owner.getStatus().equals(MemberStatus.APPROVED.toString())) {
-            return true;
-        }
-        for (User2 member : membersList) {
-            if (member.getId().equals(session.getAttribute("id").toString()) && member.getStatus().equals(MemberStatus.APPROVED.toString())) {
+        // get list of teamids
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+
+        JSONObject object = new JSONObject(userRespEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+            if (teamId.equals(realization.getTeamId())) {
                 return true;
             }
         }
