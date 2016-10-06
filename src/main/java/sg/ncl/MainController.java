@@ -1864,9 +1864,7 @@ public class MainController {
             log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
             return "redirect:/experiments";
-        }
-
-        if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
+        } else if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
             log.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
             redirectAttributes.addFlashAttribute("message", "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
