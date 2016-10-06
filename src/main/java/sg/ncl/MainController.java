@@ -60,10 +60,12 @@ public class MainController {
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
-    private final String contactEmail = "support@ncl.sg";
+    private final static String CONTACT_EMAIL = "support@ncl.sg";
 
     // error messages
-    private final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + contactEmail;
+    private final static String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
+
+    private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -1734,13 +1736,13 @@ public class MainController {
         // check valid authentication to remove experiments
         if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString())) {
             log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(session_roles));
-            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove experiment; Permission denied. If the error persists, please contact " + contactEmail);
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove experiment;" + permissionDeniedMessage);
             return "redirect:/experiments";
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             log.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
-            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + contactEmail);
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
 
@@ -1797,13 +1799,13 @@ public class MainController {
 
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
-            redirectAttributes.addFlashAttribute("message", "Permission deined. If the error persists, please contact " + contactEmail);
+            redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
             return "redirect:/experiments";
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             log.warn("Trying to start Team: {}, Experiment: {} with State: {} that is not running?", teamName, expId, realization.getState());
-            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to start Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + contactEmail);
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to start Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
 
@@ -1860,13 +1862,13 @@ public class MainController {
 
         if (!validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
-            redirectAttributes.addFlashAttribute("message", "Permission deined. If the error persists, please contact " + contactEmail);
+            redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
             return "redirect:/experiments";
         }
 
         if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
             log.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
-            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + contactEmail);
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
 
@@ -1892,7 +1894,7 @@ public class MainController {
 
                 if (exceptionState == ExceptionState.FORBIDDEN_EXCEPTION) {
                     log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
-                    redirectAttributes.addFlashAttribute("message", "Permission deined. If the error persists, please contact " + contactEmail);
+                    redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
                 }
 
                 return "redirect:/experiments";
