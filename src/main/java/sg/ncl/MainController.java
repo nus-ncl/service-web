@@ -2810,13 +2810,18 @@ public class MainController {
 
     /**
      * Ensure that only users of the team can realize or un-realize experiment
+     * A pre-condition is that the users must be approved.
      * @return the main experiment page
      */
     private boolean checkPermissionRealizeExperiment(Realization realization, HttpSession session) {
         Team2 team = invokeAndExtractTeamInfo(realization.getTeamId());
         List<User2> membersList = team.getMembersList();
+        User2 owner = team.getOwner();
+        if (owner.getId().equals(session.getAttribute("id").toString()) && owner.getStatus().equals(MemberStatus.APPROVED.toString())) {
+            return true;
+        }
         for (User2 member : membersList) {
-            if (member.getId().equals(session.getAttribute("id").toString())) {
+            if (member.getId().equals(session.getAttribute("id").toString()) && member.getStatus().equals(MemberStatus.APPROVED.toString())) {
                 return true;
             }
         }
