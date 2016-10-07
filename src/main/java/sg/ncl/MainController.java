@@ -1908,7 +1908,8 @@ public class MainController {
     }
 
     private boolean isNotAdminAndNotInTeam(HttpSession session, Realization realization) {
-        return !validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session);
+//        return !validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session);
+        return true;
     }
 
     //---------------------------------Dataset Page--------------------------
