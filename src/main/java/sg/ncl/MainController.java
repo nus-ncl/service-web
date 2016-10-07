@@ -38,7 +38,6 @@ import sg.ncl.testbed_interface.*;
  *
  * @author Cassie, Desmond, Te Ye
  */
-
 @Controller
 @Slf4j
 public class MainController {
@@ -1909,8 +1908,7 @@ public class MainController {
     }
 
     private boolean isNotAdminAndNotInTeam(HttpSession session, Realization realization) {
-//        return !validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session);
-        return true;
+        return !validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session);
     }
 
     //---------------------------------Dataset Page--------------------------
