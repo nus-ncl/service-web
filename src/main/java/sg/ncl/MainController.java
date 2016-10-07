@@ -1877,6 +1877,11 @@ public class MainController {
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
 
+        return abc(teamName, expId, redirectAttributes, realization, request);
+    }
+
+    private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
+        ResponseEntity response;
         try {
             response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
         } catch (Exception e) {
