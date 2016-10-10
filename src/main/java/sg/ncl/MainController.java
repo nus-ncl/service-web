@@ -60,8 +60,12 @@ public class MainController {
 
     private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
 
+    private static final String CONTACT_EMAIL = "support@ncl.sg";
+
     // error messages
-    private final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact support@ncl.sg";
+    private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
+
+    private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -1732,13 +1736,13 @@ public class MainController {
         // check valid authentication to remove experiments
         if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString())) {
             log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(session_roles));
-            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove experiment; Permission denied. If the error persists, please contact support@ncl.sg");
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove experiment;" + permissionDeniedMessage);
             return "redirect:/experiments";
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             log.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
-            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
 
@@ -1795,13 +1799,13 @@ public class MainController {
 
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
-            redirectAttributes.addFlashAttribute("message", "Permission deined. If the error persists, please contact support@ncl.sg");
+            redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
             return "redirect:/experiments";
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             log.warn("Trying to start Team: {}, Experiment: {} with State: {} that is not running?", teamName, expId, realization.getState());
-            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to start Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to start Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
 
@@ -1851,14 +1855,20 @@ public class MainController {
     }
 
     @RequestMapping("/stop_experiment/{teamName}/{expId}")
-    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
 
         // ensure experiment is active first before stopping
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
+        if (isNotAdminAndNotInTeam(session, realization)) {
+            log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
+            redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
+            return "redirect:/experiments";
+        }
+
         if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
             log.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
-            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact support@ncl.sg");
+            redirectAttributes.addFlashAttribute("message", "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
 
@@ -1867,6 +1877,11 @@ public class MainController {
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
 
+        return abc(teamName, expId, redirectAttributes, realization, request);
+    }
+
+    private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
+        ResponseEntity response;
         try {
             response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
         } catch (Exception e) {
@@ -1880,16 +1895,25 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                return "redirect:/experiments";
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                if (exceptionState == ExceptionState.FORBIDDEN_EXCEPTION) {
+                    log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
+                    redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
+                }
             } else {
                 // everything ok
                 log.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
                 redirectAttributes.addFlashAttribute("exp_message", "Team: " + teamName + " has stopped Exp: " + realization.getExperimentName());
-                return "redirect:/experiments";
             }
+            return "redirect:/experiments";
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
+    }
+
+    private boolean isNotAdminAndNotInTeam(HttpSession session, Realization realization) {
+        return !validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session);
     }
 
     //---------------------------------Dataset Page--------------------------
@@ -2544,12 +2568,6 @@ public class MainController {
         user2.setStatus(object.getString("status"));
         user2.setEmailVerified(object.getBoolean("emailVerified"));
 
-//        String role = UserType.USER.toString();
-//        if (object.getJSONArray("roles") != null) {
-//            role = object.getJSONArray("roles").get(0).toString();
-//        }
-//        user2.setRoles(role);
-
         return user2;
     }
 
@@ -2814,14 +2832,16 @@ public class MainController {
      * @return the main experiment page
      */
     private boolean checkPermissionRealizeExperiment(Realization realization, HttpSession session) {
-        Team2 team = invokeAndExtractTeamInfo(realization.getTeamId());
-        List<User2> membersList = team.getMembersList();
-        User2 owner = team.getOwner();
-        if (owner.getId().equals(session.getAttribute("id").toString()) && owner.getStatus().equals(MemberStatus.APPROVED.toString())) {
-            return true;
-        }
-        for (User2 member : membersList) {
-            if (member.getId().equals(session.getAttribute("id").toString()) && member.getStatus().equals(MemberStatus.APPROVED.toString())) {
+        // get list of teamids
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+
+        JSONObject object = new JSONObject(userRespEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+            if (teamId.equals(realization.getTeamId())) {
                 return true;
             }
         }
