@@ -89,12 +89,12 @@ public class MainController {
 
     @RequestMapping("/about")
     public String about() {
-        return "base :: about";
+        return "about2";
     }
 
     @RequestMapping("/event")
     public String event() {
-        return "event";
+        return "event2";
     }
 
     @RequestMapping("/plan")

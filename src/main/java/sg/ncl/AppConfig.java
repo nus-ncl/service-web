@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
@@ -15,4 +16,9 @@ public class AppConfig {
 
     @Bean
     public AppErrorController appErrorController(){return new AppErrorController(errorAttributes);}
+
+    @Bean
+    public LayoutDialect layoutDialect() {
+        return new LayoutDialect();
+    }
 }
