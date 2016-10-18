@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="base3">
+<head>
+    <title>Content page 1</title>
+    <script src="content-script.js"></script>
+</head>
+<body>
+<div layout:fragment="content">
+    <p>This is a paragraph from content page 1</p>
+</div>
+<footer>
+    <p layout:fragment="custom-footer">This is some footer content from content page 1</p>
+</footer>
+</body>
+</html>
