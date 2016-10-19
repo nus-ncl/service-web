@@ -17,6 +17,8 @@ public class AppConfig {
     @Bean
     public AppErrorController appErrorController(){return new AppErrorController(errorAttributes);}
 
+    // thymleaf-layout-dialect
+    // for fragments
     @Bean
     public LayoutDialect layoutDialect() {
         return new LayoutDialect();
