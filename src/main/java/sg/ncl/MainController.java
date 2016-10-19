@@ -289,7 +289,7 @@ public class MainController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model) {
         model.addAttribute("loginForm", new LoginForm());
-        return "login2";
+        return "login";
     }
 
     @RequestMapping(value = "/emailVerification", params = {"id", "email", "key"})
@@ -329,14 +329,14 @@ public class MainController {
 
         if (bindingResult.hasErrors()) {
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
-            return "login2";
+            return "login";
         }
 
         String inputEmail = loginForm.getLoginEmail();
         String inputPwd = loginForm.getLoginPassword();
         if (inputEmail.trim().isEmpty() || inputPwd.trim().isEmpty()) {
             loginForm.setErrorMsg("Email or Password cannot be empty!");
-            return "login2";
+            return "login";
         }
 
         String plainCreds = inputEmail + ":" + inputPwd;
@@ -357,7 +357,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio authentication service: {}", e);
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
-            return "login2";
+            return "login";
         }
 
         String jwtTokenString = response.getBody().toString();
@@ -365,7 +365,7 @@ public class MainController {
         if (jwtTokenString == null || jwtTokenString.isEmpty()) {
             log.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
-            return "login2";
+            return "login";
         }
         if (RestUtil.isError(response.getStatusCode())) {
             try {
@@ -375,11 +375,11 @@ public class MainController {
                 if (exceptionState == ExceptionState.CREDENTIALS_NOT_FOUND_EXCEPTION) {
                     log.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
                     loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
-                    return "login2";
+                    return "login";
                 }
                 log.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
                 loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                return "login2";
+                return "login";
             } catch (IOException ioe) {
                 log.warn("IOException {}", ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
@@ -397,7 +397,7 @@ public class MainController {
         if (token.trim().isEmpty() || id.trim().isEmpty() || role.trim().isEmpty()) {
             log.warn("login failed for {}: empty id {} or token {} or role {}", loginForm.getLoginEmail(), id, token, role);
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
-            return "login2";
+            return "login";
         }
 
 
@@ -423,12 +423,12 @@ public class MainController {
             } else {
                 log.warn("login failed for user {}: account is rejected or closed", id);
                 loginForm.setErrorMsg("Login Failed: Account Rejected/Closed.");
-                return "login2";
+                return "login";
             }
         } catch (Exception e) {
             log.warn("Error parsing json object for user: {}", e.getMessage());
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
-            return "login2";
+            return "login";
         }
 
     }
