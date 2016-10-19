@@ -6,10 +6,7 @@
 <div layout:fragment="content">
     <p>Page content goes here</p>
 </div>
-<footer>
-    <div th:replace="fragments/footer :: footer"></div>
-    <p layout:fragment="custom-footer"></p>
-</footer>
+<div th:replace="fragments/footer :: footer"></div>
 <object th:include="fragments/javascript :: javascript" th:remove="tag"/>
 </body>
 </html>
