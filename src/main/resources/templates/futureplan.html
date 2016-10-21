@@ -1,22 +1,30 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Future plan</title>
-        <object th:include="fragments/header :: header" th:remove="tag" />
-    </head>
-<body>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Future plan</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/animate.min.css" />
+    <link rel="stylesheet"  type="text/css" href="../static/css/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/lightbox.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/responsive.css"/>
+    <link rel="stylesheet" type="text/css" id="static/css-preset" href="../static/css/presets/preset1.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/flexslider.css"/>
 
-    <div th:replace="fragments/login_navigation :: loginnav"></div>
-         <p>&nbsp;</p>
-         <p>&nbsp;</p>
-         <p>&nbsp;</p>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
+</head>
+<body>
+<div layout:fragment="content">
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
 
 
     <div class="container">
         <div class="h15">
-         <div align="center">Future Plan Table
-         </div>
+            <div align="center">Future Plan Table
+            </div>
         </div>
         <p>&nbsp;</p>
 
@@ -26,11 +34,11 @@
         <div class="table-responsive">
             <table class="table1">
                 <thead BGCOLOR="#E0E0E0">
-                    <th width="42%"><h4 align="left"><b>Major Features</b></h4>
-                    </th>
-                    <th width="21%"><p><h4><b>Phase One</b></h4></p></th>
-                    <th width="20%"><p><h4><b>Phase Two</b></h4></p></th>
-                    <th width="17%"><p><h4><b>Phase Three</b></h4></p></th>
+                <th width="42%"><h4 align="left"><b>Major Features</b></h4>
+                </th>
+                <th width="21%"><p><h4><b>Phase One</b></h4></p></th>
+                <th width="20%"><p><h4><b>Phase Two</b></h4></p></th>
+                <th width="17%"><p><h4><b>Phase Three</b></h4></p></th>
                 </thead>
                 <tr BGCOLOR="#F3F3F3">
                     <td><div align="left"><strong>Hardware</strong></div></td>
@@ -271,39 +279,56 @@
                     <td><i class="fa fa-check"></i></td>
                 </tr>
                 <tr>
-                <td> <div align="left">Internet Access <a href="#" data-toggle="tooltip" title="Accessibility to Internet from experiment nodes" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
-                <td>Isolated (no outgiong Internet access )</td>
-                <td BGCOLOR="#E0E0E0">Controlled</td>
-                <td>Controlled</td>
-            </tr>
+                    <td> <div align="left">Internet Access <a href="#" data-toggle="tooltip" title="Accessibility to Internet from experiment nodes" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td>Isolated (no outgiong Internet access )</td>
+                    <td BGCOLOR="#E0E0E0">Controlled</td>
+                    <td>Controlled</td>
+                </tr>
                 <tr BGCOLOR="#F3F3F3">
-                <td><div align="left"><strong>Federation</strong></div></td>
-                <td>&nbsp;</td>
-                <td BGCOLOR="#E0E0E0">&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
+                    <td><div align="left"><strong>Federation</strong></div></td>
+                    <td>&nbsp;</td>
+                    <td BGCOLOR="#E0E0E0">&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
                 <tr>
-                <td><div align="left">NUS Sensor Network Testbed (Indriya) </div></td>
-                <td><i class="fa fa-check"></i></td>
-                <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
-                <td><i class="fa fa-check"></i></td>
-            </tr>
+                    <td><div align="left">NUS Sensor Network Testbed (Indriya) </div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
                 <tr>
-                <td><div align="left">SUTD Water Testbed</div></td>
-                <td>-</td>
-                <td BGCOLOR="#E0E0E0">-</td>
-                <td><i class="fa fa-check"></i></td>
-            </tr>
-                </table>
+                    <td><div align="left">SUTD Water Testbed</div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">-</td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+            </table>
 
             <p>&nbsp;</p>
             <p><i class="fa fa-check"></i>*Feature(s) only available in bare metal provisioning</p>
             <p><i class="fa fa-check"></i>#Feature(s) only available in VM provisioning</p>
         </div>
     </div>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <div th:replace="fragments/footer :: footer"></div>
-            <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</div>
+<!--[if lt IE 9]>
+<script type="text/javascript" src="../static/js/html5shiv.js"></script>
+<script type="text/javascript" src="../static/js/respond.min.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../static/js/jquery-1.12.2.min.js"></script>
+<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+<script type="text/javascript" src="../static/js/jquery.inview.min.js"></script>
+<script type="text/javascript" src="../static/js/wow.min.js"></script>
+<script type="text/javascript" src="../static/js/mousescroll.js"></script>
+<script type="text/javascript" src="../static/js/smoothscroll.js"></script>
+<script type="text/javascript" src="../static/js/jquery.countTo.js"></script>
+<script type="text/javascript" src="../static/js/lightbox.min.js"></script>
+<script type="text/javascript" src="../static/js/main.js"></script>
+<script type="text/javascript" src="../static/js/waypoints.min.js"></script>
+<script type="text/javascript" src="../static/js/minimal.lightbox.js"></script>
+<script type="text/javascript" src="../static/js/jquery.flexslider.js"></script>
 </body>
 </html>
