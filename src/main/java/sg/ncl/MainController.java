@@ -89,10 +89,15 @@ public class MainController {
         return "community";
     }
 
+
     @RequestMapping("/about")
     public String about() {
-        return "about";
+        return "base :: about";
     }
+//    @RequestMapping("/about")
+//    public String about() {
+//        return "about";
+//    }
 
     @RequestMapping("/event")
     public String event() {
@@ -164,6 +169,11 @@ public class MainController {
         return "jointeam";
     }
 
+    @RequestMapping("/accessexperiment")
+    public String accessexperiment() {
+        return "accessexperiment";
+    }
+
     @RequestMapping("/resource2")
     public String resource2() {
         return "resource2";
@@ -179,6 +189,13 @@ public class MainController {
     public String tutorials() {
         return "tutorials";
     }
+
+    @RequestMapping("/maintainance")
+    public String maintainance() {
+        return "maintainance";
+    }
+
+
 
 
 //    @RequestMapping("/dataresource")
