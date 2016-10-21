@@ -33,6 +33,7 @@ import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 
 /**
+ * 
  * Spring Controller
  * Direct the views to appropriate locations and invoke the respective REST API
  *
@@ -170,6 +171,15 @@ public class MainController {
 //    public String resource2() {
 //        return "resource2";
 //    }
+    @RequestMapping("/accessexperiment")
+    public String accessexperiment() {
+        return "accessexperiment";
+    }
+
+    @RequestMapping("/resource2")
+    public String resource2() {
+        return "resource2";
+    }
 
 //    @RequestMapping("/admin2")
 //    public String admin2() {
@@ -181,6 +191,13 @@ public class MainController {
     public String tutorials() {
         return "tutorials";
     }
+
+    @RequestMapping("/maintainance")
+    public String maintainance() {
+        return "maintainance";
+    }
+
+
 
 
 //    @RequestMapping("/dataresource")
