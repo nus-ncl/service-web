@@ -1,55 +1,78 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>National Cybersecurity Laboratories - Resources</title>
-		<object th:include="fragments/header :: header" th:remove="tag" />
-	</head>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+	<title>External links</title>
+	<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css" media="screen"/>
+	<link rel="stylesheet" type="text/css" href="../static/css/animate.min.css" />
+	<link rel="stylesheet"  type="text/css" href="../static/css/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../static/css/lightbox.css"/>
+	<link rel="stylesheet" type="text/css" href="../static/css/main.css"/>
+	<link rel="stylesheet" type="text/css" href="../static/css/responsive.css"/>
+	<link rel="stylesheet" type="text/css" id="static/css-preset" href="../static/css/presets/preset1.css"/>
+	<link rel="stylesheet" type="text/css" href="../static/css/flexslider.css"/>
+
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
+	<link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
+</head>
 <body>
+<div layout:fragment="content">
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
 
 
-<div th:replace="fragments/login_navigation :: loginnav"></div>
+	<div class="container">
+		<div class="row">
+			<div class="heading text-center col-sm-12">
+				<div class="h15">
+					<p>External Links</p>
+				</div>
+				<p>&nbsp;</p>
+				<h4>Learn more about cybersecurity research and development in Singapore.</h4>
+			</div>
 
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-
-
-			<div class="container">
-    			<div class="row">
-					<div class="heading text-center col-sm-12">
-                     <div class="h15">
-                       <p>External Links</p>
-                     </div>
-					<p>&nbsp;</p>
-                    <h4>Learn more about cybersecurity research and development in Singapore.</h4>
-                    </div>
-                    
-                    <div class="heading col-sm-8 col-sm-offset-2">
-                    <ul>
+			<div class="heading col-sm-8 col-sm-offset-2">
+				<ul>
 					<li><h3><a href="http://impactcybertrust.org">IMPACT</a></h3>
 						<p>The Information Marketplace for Policy and Analysis of Cyber-risk &amp; Trust (IMPACT) program, funded by US Department of Homeland Securities, supports the global cyber risk research community by coordinating and developing real world data and information sharing capabilities. IMPACT Datasets are available for use by all researchers based in academic universities in Singapore.</p>
 						<p>Visit the website to create an account and browse the datasets available. Contact <strong>support@ncl.sg</strong> for any help you require.</p>
 					</li>
-                    <li><h3><a href="https://www.csa.gov.sg/singcert">SingCERT</a></h3>
-                    <p>SingCERT responds to cyber security incident for its Singapore constituent. It was set up to facilitate the detection, resolution and prevention of cyber security related incidents on the Internet.</p>
+					<li><h3><a href="https://www.csa.gov.sg/singcert">SingCERT</a></h3>
+						<p>SingCERT responds to cyber security incident for its Singapore constituent. It was set up to facilitate the detection, resolution and prevention of cyber security related incidents on the Internet.</p>
 					</li>
-                    <li><h3><a href="http://itrust.sutd.edu.sg/">iTrust</a></h3>
-                     <p>iTrust researchers focus on the development of advanced tools and methodologies to ensure security and safety of current and future cyber physical systems and Internet of Things (IoT) systems.</p>
-                    </li>
-                    <li>
-                      <h3><a href="http://www.comp.nus.edu.sg/~tsunami/">TSUNAMi</a></h3>
-                     <p>TSUNAMi center  examines how trustworthy software can be built from commercial off-the-shelf (COTS) software components via ingenious combinations of analysis, testing, verification, hardening, isolation and system design.</p>
-                    </li>
-    			</ul>
-					</div>
-    			</div> <!-- row -->
-
+					<li><h3><a href="http://itrust.sutd.edu.sg/">iTrust</a></h3>
+						<p>iTrust researchers focus on the development of advanced tools and methodologies to ensure security and safety of current and future cyber physical systems and Internet of Things (IoT) systems.</p>
+					</li>
+					<li>
+						<h3><a href="http://www.comp.nus.edu.sg/~tsunami/">TSUNAMi</a></h3>
+						<p>TSUNAMi center  examines how trustworthy software can be built from commercial off-the-shelf (COTS) software components via ingenious combinations of analysis, testing, verification, hardening, isolation and system design.</p>
+					</li>
+				</ul>
 			</div>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<div th:replace="fragments/footer :: footer"></div>
-			<object th:include="fragments/javascript :: javascript" th:remove="tag" />
-   </body>
+		</div> <!-- row -->
+
+	</div>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+</div>
+<!--[if lt IE 9]>
+<script type="text/javascript" src="../static/js/html5shiv.js"></script>
+<script type="text/javascript" src="../static/js/respond.min.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../static/js/jquery-1.12.2.min.js"></script>
+<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+<script type="text/javascript" src="../static/js/jquery.inview.min.js"></script>
+<script type="text/javascript" src="../static/js/wow.min.js"></script>
+<script type="text/javascript" src="../static/js/mousescroll.js"></script>
+<script type="text/javascript" src="../static/js/smoothscroll.js"></script>
+<script type="text/javascript" src="../static/js/jquery.countTo.js"></script>
+<script type="text/javascript" src="../static/js/lightbox.min.js"></script>
+<script type="text/javascript" src="../static/js/main.js"></script>
+<script type="text/javascript" src="../static/js/waypoints.min.js"></script>
+<script type="text/javascript" src="../static/js/minimal.lightbox.js"></script>
+<script type="text/javascript" src="../static/js/jquery.flexslider.js"></script>
+</body>
 </html>
