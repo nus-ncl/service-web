@@ -23,15 +23,15 @@
                         <th th:text="#{data.header.access}">Access</th>
                         <th><!-- Actions --></th>
                     </thead>
-                    <tr th:each="publicDataEntry : ${publicDataMap}" th:if="${publicDataEntry.value.isPublic == 'public' }">
-                        <td th:text="${publicDataEntry.value.datasetName}">Name</td>
-                        <td th:text="${userManager.getNameByUserId(publicDataEntry.value.ownerId)}">Owner</td>
-                        <td th:text="${publicDataEntry.value.releaseDate}">Release Date</td>
-                        <td th:if="${publicDataEntry.value.requireAuthorization}" th:text="Restricted">Access</td>
-                        <td th:if="not ${publicDataEntry.value.requireAuthorization}" th:text="Open">Access</td>
+                    <tr th:each="publicDataEntry : ${publicDataMap}" th:if="${publicDataEntry.value.isPublic()}">
+                        <td th:text="${publicDataEntry.value.name}">Name</td>
+                        <td th:text="${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName}">Owner</td>
+                        <!-- td th:text="${publicDataEntry.value.releaseDate}">Release Date</td --> <td></td>
+                        <td th:if="not ${publicDataEntry.value.isOpen()}" th:text="Restricted">Access</td>
+                        <td th:if="${publicDataEntry.value.isOpen()}" th:text="Open">Access</td>
                         <!-- download or request for access -->
-                        <td th:if="${publicDataEntry.value.requireAuthorization}"><a href="#" th:href="@{/data/public/request_access/{dataOwnerId}(dataOwnerId=${publicDataEntry.value.ownerId})}" class="btn btn-standard">Request Access</a></td>
-						<td th:if="not ${publicDataEntry.value.requireAuthorization}"><a href="#" class="btn btn-standard">Download</a></td>
+                        <td th:if="not ${publicDataEntry.value.isAccessible()}"><a href="#" th:href="@{/data/public/request_access/{dataOwnerId}(dataOwnerId=${publicDataEntry.value.contributorId})}" class="btn btn-standard">Request Access</a></td>
+						<td th:if="${publicDataEntry.value.isAccessible()}"><a href="#" class="btn btn-standard">Download</a></td>
                     </tr>
                 </table>
                 <p>&nbsp;</p>

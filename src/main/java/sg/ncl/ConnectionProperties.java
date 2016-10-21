@@ -15,6 +15,7 @@ public class ConnectionProperties {
     private String sioPort;
     private String authEndpoint;
     private String credEndpoint;
+    private String dataEndpoint;
     private String regEndpoint;
     private String userEndpoint;
     private String teamEndpoint;
@@ -53,6 +54,14 @@ public class ConnectionProperties {
 
     public void setCredEndpoint(String credEndpoint) {
         this.credEndpoint = credEndpoint;
+    }
+
+    public String getDataEndpoint() {
+        return dataEndpoint;
+    }
+
+    public void setDataEndpoint(String dataEndpoint) {
+        this.dataEndpoint = dataEndpoint;
     }
 
     public String getRegEndpoint() {
@@ -109,6 +118,10 @@ public class ConnectionProperties {
 
     public String getSioCredUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + credEndpoint + "/";
+    }
+
+    public String getSioDataUrl() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/";
     }
 
     public String getSioRegUrl() {
@@ -215,6 +228,14 @@ public class ConnectionProperties {
 
     public String getStopExperiment(String teamName, String expId) {
         return "http://" +  sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
+    }
+
+    //-------------------------------------
+    // DATA
+    //-------------------------------------
+
+    public String getPublicData() {
+        return "http://" +  sioAddress + ":" + sioPort + "/" +dataEndpoint + "/public";
     }
 }
 

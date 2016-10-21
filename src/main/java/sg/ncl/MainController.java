@@ -1,15 +1,5 @@
 package sg.ncl;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -22,15 +12,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import sg.ncl.domain.*;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Spring Controller
@@ -2034,12 +2037,24 @@ public class MainController {
 //    	return "redirect:/data";
 //    }
 
-//    @RequestMapping("/data/public")
-//    public String openDataset(Model model) {
-//    	model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
-//    	model.addAttribute("userManager", userManager);
-//    	return "data_public";
-//    }
+    @RequestMapping("/data/public")
+    public String getPublicDatasets(Model model) {
+        DatasetManager datasetManager = new DatasetManager();
+
+        HttpEntity<String> dataRequest = createHttpEntityHeaderOnly();
+        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicData(), HttpMethod.GET, dataRequest, String.class);
+        String dataResponseBody = dataResponse.getBody().toString();
+
+        JSONArray dataPublicJsonArray = new JSONArray(dataResponseBody);
+        for (int i = 0; i < dataPublicJsonArray.length(); i++) {
+            JSONObject dataInfoObject = dataPublicJsonArray.getJSONObject(i);
+            Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            datasetManager.addDataset(dataset);
+        }
+
+    	model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
+    	return "data_public";
+    }
 
 //    @RequestMapping("/data/public/request_access/{dataOwnerId}")
 //    public String requestAccessForDataset(@PathVariable Integer dataOwnerId, Model model) {
@@ -2606,6 +2621,24 @@ public class MainController {
         }
         team2.setMembersCount(membersArray.length());
         return team2;
+    }
+
+    private Dataset extractDataInfo(String json) {
+        log.debug("data: {}", json);
+
+        Dataset dataset = new Dataset();
+        JSONObject object = new JSONObject(json);
+
+        dataset.setId(object.getInt("id"));
+        dataset.setName(object.getString("name"));
+        dataset.setDescription(object.getString("description"));
+        dataset.setContributorId(object.getString("contributorId"));
+        dataset.setVisibility(object.getString("visibility"));
+        dataset.setAccessibility(object.getString("accessibility"));
+
+        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
+
+        return dataset;
     }
 
     // use to extract JSON Strings from services
