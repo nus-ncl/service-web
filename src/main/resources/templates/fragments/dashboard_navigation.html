@@ -41,6 +41,7 @@
 			<ul class="nav navbar-nav navbar-left login-navbar-left">
 				<li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
 				<li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a></li>
+				<li><a href="/data" th:href="@{/data}"><span th:text="#{nav.data}">Data</span></a></li>
 				<li th:if="${(session.roles != null) and (session.roles == 'ADMIN')}">
 					<a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a>
 				</li>

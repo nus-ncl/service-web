@@ -1921,13 +1921,22 @@ public class MainController {
 
     //---------------------------------Dataset Page--------------------------
 
-//    @RequestMapping("/data")
-//    public String data(Model model, HttpSession session) {
+    @RequestMapping("/data")
+    public String data(Model model, HttpSession session) {
+        DatasetManager datasetManager = new DatasetManager();
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+
+        JSONArray dataJsonArray = new JSONArray(dataResponseBody);
+        log.debug("data: {}", dataJsonArray);
+
 //    	model.addAttribute("datasetOwnedByUserList", datasetManager.getDatasetContributedByUser(getSessionIdOfLoggedInUser(session)));
 //    	model.addAttribute("datasetAccessibleByUserList", datasetManager.getDatasetAccessibleByuser(getSessionIdOfLoggedInUser(session)));
 //    	model.addAttribute("userManager", userManager);
-//    	return "data";
-//    }
+    	return "data";
+    }
 
 //    @RequestMapping(value="/data/contribute", method=RequestMethod.GET)
 //    public String contributeData(Model model) {
@@ -2624,8 +2633,6 @@ public class MainController {
     }
 
     private Dataset extractDataInfo(String json) {
-        log.debug("data: {}", json);
-
         Dataset dataset = new Dataset();
         JSONObject object = new JSONObject(json);
 

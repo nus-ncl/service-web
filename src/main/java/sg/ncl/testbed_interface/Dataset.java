@@ -19,14 +19,12 @@ public class Dataset implements Serializable {
 	private String accessibility;
 	private List<DataResource> dataResources;
 	private List<String> approvedUsers;
-	private List<DataStatistics> statistics;
 
 	private User2 contributor;
 	
 	public Dataset() {
 	    dataResources = new ArrayList<>();
 	    approvedUsers = new ArrayList<>();
-	    statistics = new ArrayList<>();
     }
 
 	public boolean isOpen() {
