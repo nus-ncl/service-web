@@ -1926,15 +1926,18 @@ public class MainController {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
         String dataResponseBody = response.getBody().toString();
 
         JSONArray dataJsonArray = new JSONArray(dataResponseBody);
-        log.debug("data: {}", dataJsonArray);
+        for (int i = 0; i < dataJsonArray.length(); i++) {
+            JSONObject dataInfoObject = dataJsonArray.getJSONObject(i);
+            Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            datasetManager.addDataset(dataset);
+        }
 
-//    	model.addAttribute("datasetOwnedByUserList", datasetManager.getDatasetContributedByUser(getSessionIdOfLoggedInUser(session)));
-//    	model.addAttribute("datasetAccessibleByUserList", datasetManager.getDatasetAccessibleByuser(getSessionIdOfLoggedInUser(session)));
-//    	model.addAttribute("userManager", userManager);
+    	model.addAttribute("datasetOwnedByUserList", datasetManager.getDatasetMapOfContributor(session.getAttribute(SESSION_LOGGED_IN_USER_ID).toString()));
+    	model.addAttribute("datasetAccessibleByUserList", datasetManager.getDatasetMapOfNotContributor(session.getAttribute(SESSION_LOGGED_IN_USER_ID).toString()));
     	return "data";
     }
 

@@ -3,6 +3,7 @@ package sg.ncl;
 import sg.ncl.testbed_interface.Dataset;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DatasetManager {
 	
@@ -88,6 +89,18 @@ public class DatasetManager {
 
 	public Map getDatasetMap() {
 	    return datasetMap;
+    }
+
+    public Map getDatasetMapOfContributor(String userId) {
+        return datasetMap.entrySet().stream()
+                .filter(map -> map.getValue().getContributorId().equals(userId))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public Map getDatasetMapOfNotContributor(String userId) {
+        return datasetMap.entrySet().stream()
+                .filter(map -> !(map.getValue().getContributorId()).equals(userId))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 	
 }
