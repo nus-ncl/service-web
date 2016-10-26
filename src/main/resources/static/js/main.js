@@ -118,6 +118,19 @@ $(document).ready(function() {
     }, {
     	offset: '75%'
     });
+
+    //-----------------data page-----------------
+    // modal to show dataset details
+    $('#datasetModal').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var datasetLabel = anchor.data('name');
+        var datasetOwner = anchor.data('owner');
+        var datasetAccess = anchor.data('access');
+        var modal = $(this);
+        modal.find('#datasetLabel').text(datasetLabel);
+        modal.find('#datasetOwner').text(datasetOwner);
+        modal.find('#datasetAccess').text(datasetAccess);
+    });
     
 });
 

@@ -21,41 +21,60 @@
                         <th th:text="#{data.header.owner}">Owner</th>
                         <th th:text="#{data.header.releaseDate}">Release Date</th>
                         <th th:text="#{data.header.access}">Access</th>
-                        <th><!-- Actions --></th>
+                        <!-- th>Actions</th -->
                     </thead>
-                    <tr th:each="publicDataEntry : ${publicDataMap}" th:if="${publicDataEntry.value.isPublic == 'public' }">
-                        <td th:text="${publicDataEntry.value.datasetName}">Name</td>
-                        <td th:text="${userManager.getNameByUserId(publicDataEntry.value.ownerId)}">Owner</td>
-                        <td th:text="${publicDataEntry.value.releaseDate}">Release Date</td>
-                        <td th:if="${publicDataEntry.value.requireAuthorization}" th:text="Restricted">Access</td>
-                        <td th:if="not ${publicDataEntry.value.requireAuthorization}" th:text="Open">Access</td>
+                    <tr th:each="publicDataEntry : ${publicDataMap}" th:if="${publicDataEntry.value.isPublic()}">
+                        <td><a href="#datasetModal" data-toggle="modal"
+                               th:attr="data-name=${publicDataEntry.value.name},
+                                        data-owner=${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName},
+                                        data-access=${publicDataEntry.value.isOpen() ? 'Open' : 'Restricted'}"
+                               data-release=""
+                               th:text="${publicDataEntry.value.name}">Name</a></td>
+                        <td th:text="${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName}">Owner</td>
+                        <!-- td th:text="${publicDataEntry.value.releaseDate}">Release Date</td --> <td></td>
+                        <td th:if="not ${publicDataEntry.value.isOpen()}" th:text="Restricted">Access</td>
+                        <td th:if="${publicDataEntry.value.isOpen()}" th:text="Open">Access</td>
                         <!-- download or request for access -->
-                        <td th:if="${publicDataEntry.value.requireAuthorization}"><a href="#" th:href="@{/data/public/request_access/{dataOwnerId}(dataOwnerId=${publicDataEntry.value.ownerId})}" class="btn btn-standard">Request Access</a></td>
-						<td th:if="not ${publicDataEntry.value.requireAuthorization}"><a href="#" class="btn btn-standard">Download</a></td>
+                        <!-- td th:if="not ${publicDataEntry.value.isAccessible()}"><a href="#" th:href="@{/data/public/request_access/{dataOwnerId}(dataOwnerId=${publicDataEntry.value.contributorId})}" class="btn btn-standard">Request Access</a></td>
+						<td th:if="${publicDataEntry.value.isAccessible()}"><a href="#" class="btn btn-standard">Download</a></td -->
                     </tr>
                 </table>
                 <p>&nbsp;</p>
                 <h2 class="team-heading team-heading-current-team" th:text="#{dataset.public.external.header}">External Data Access</h2>
             	<a href="#" th:text="#{dataset.public.external.clickHere}">Click here to access external data (e.g. US side)</a>
-            </div> <!-- row -->
-            <div class="cc-wraper">
-                <div class="cc-contactpop fixed">
-                    <h1>Do you need Help? <span>Get in touch.</span></h1>
-                    <div class="renseignement">
-                        <i class="fa fa-times"></i>
-                        <p>We will get back to you as soon as possible. </p>
+            </div>
+
+        </div> <!-- container -->
+
+        <!-- Modal -->
+        <div class="modal fade" id="datasetModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="datasetLabel">Modal title</h4>
                     </div>
-                    <form>
-                        <ul>
-                            <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
-                            <li><i class=""></i><span>Email:</span><a href="mailto:support@ncl.sg"> support@ncl.sg</a></li>
-                            <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
-                        </ul>
-                        <p>&nbsp;</p>
-                    </form>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">Owner:</div>
+                            <div class="col-md-8" id="datasetOwner"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Release:</div>
+                            <div class="col-md-8" id="datasetRelease"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Access:</div>
+                            <div class="col-md-8" id="datasetAccess"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
-        </div> <!-- container -->
+        </div>
+
         <div th:replace="fragments/footer :: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
