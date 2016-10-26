@@ -32,42 +32,21 @@
                     </div>
                         <!--<h2 class="team-heading team-heading-current-team" >Overview</h2>-->
                     <div class="panel-body">
-                        <table class="table table-responsive">
-                            <div class="col-sm-12" ><img src="images/sample.png" width="100%" height="315" /></div>
-                            <!--<thead>-->
-                            <!--<th>-->
-                                <!--<h4>Team</h4>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<h4>Experiments</h4>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<h4>Total Running Time</h4>-->
-                            <!--</th>-->
-                            <!--</thead>-->
-                            <!--<thead>-->
-                            <!--<th>-->
-                                <!--<p>99</p>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<p>999</p>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<p>999 hours</p>-->
-                            <!--</th>-->
-                            <!--</thead>-->
-                            <!--<thead>-->
-                            <!--<th>-->
-                                <!--<p>AA</p>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<p>888</p>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<p>1000 hours</p>-->
-                            <!--</th>-->
-                            <!--</thead>-->
-                        </table>
+                        <a th:href="@{/teams}">
+                            <div class="col-sm-5 dashpanel_teams pull-left">
+                                <p class="dashboard_stats">4</p>
+                                <h2>Teams</h2>
+                            </div>
+                        </a>
+                        <a th:href="@{/experiments}">
+                            <div class="col-sm-5 dashpanel_experiments pull-right">
+                                <p class="dashboard_stats">2</p>
+                                <h2>Running Experiments</h2>
+                            </div>
+                        </a>
+                        <div class="col-sm-12">
+                            <h2>Resource Usage Information (Current Month)</h2>
+                        </div>
                         <!--<div class="row dashpanel2">-->
                             <!--<div class="col-sm-4">-->
                                 <!--<h4>Team</h4>-->
