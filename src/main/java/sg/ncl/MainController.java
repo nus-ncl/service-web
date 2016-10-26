@@ -59,7 +59,7 @@ public class MainController {
     // to know which form fields have been changed
     private User2 originalUser = null;
 
-    private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
+    private String AUTHORIZATION_HEADER = null;
 
     private static final String CONTACT_EMAIL = "support@ncl.sg";
 
@@ -2843,7 +2843,7 @@ public class MainController {
         session.removeAttribute("id");
         session.removeAttribute("name");
         session.removeAttribute(session_roles);
-        AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
+        AUTHORIZATION_HEADER = null;
     }
 
     private boolean validateIfAdmin(HttpSession session) {
