@@ -24,7 +24,12 @@
                         <!-- th>Actions</th -->
                     </thead>
                     <tr th:each="publicDataEntry : ${publicDataMap}" th:if="${publicDataEntry.value.isPublic()}">
-                        <td><a href="#" th:href="@{/data/public/{id}(id=${publicDataEntry.value.id})}" th:text="${publicDataEntry.value.name}">Name</a></td>
+                        <td><a href="#datasetModal" data-toggle="modal"
+                               th:attr="data-name=${publicDataEntry.value.name},
+                                        data-owner=${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName},
+                                        data-access=${publicDataEntry.value.isOpen() ? 'Open' : 'Restricted'}"
+                               data-release=""
+                               th:text="${publicDataEntry.value.name}">Name</a></td>
                         <td th:text="${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName}">Owner</td>
                         <!-- td th:text="${publicDataEntry.value.releaseDate}">Release Date</td --> <td></td>
                         <td th:if="not ${publicDataEntry.value.isOpen()}" th:text="Restricted">Access</td>
@@ -38,7 +43,38 @@
                 <h2 class="team-heading team-heading-current-team" th:text="#{dataset.public.external.header}">External Data Access</h2>
             	<a href="#" th:text="#{dataset.public.external.clickHere}">Click here to access external data (e.g. US side)</a>
             </div>
+
         </div> <!-- container -->
+
+        <!-- Modal -->
+        <div class="modal fade" id="datasetModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="datasetLabel">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">Owner:</div>
+                            <div class="col-md-8" id="datasetOwner"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Release:</div>
+                            <div class="col-md-8" id="datasetRelease"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Access:</div>
+                            <div class="col-md-8" id="datasetAccess"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div th:replace="fragments/footer :: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>

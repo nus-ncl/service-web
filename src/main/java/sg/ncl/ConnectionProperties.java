@@ -235,7 +235,7 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String getPublicData() {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/public";
+        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";
     }
 
     public String getData() {
