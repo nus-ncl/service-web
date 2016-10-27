@@ -199,4 +199,35 @@ public class ConnectionPropertiesTest {
         String expId = RandomStringUtils.randomAlphanumeric(20);
         assertThat(properties.getStopExperiment(teamName, expId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRealEndpoint() + "/stop/team/" + teamName + "/experiment/" + expId);
     }
+
+    @Test
+    public void testGetTelemetryAddress() throws Exception {
+        assertThat(properties.getTelemetryAddress()).isNotNull();
+        assertThat(properties.getTelemetryAddress()).isInstanceOf(String.class);
+    }
+
+    @Test
+    public void testSetTelemetryAddress() throws Exception {
+        final String one = RandomStringUtils.randomAlphabetic(8);
+        properties.setTelemetryAddress(one);
+        assertThat(properties.getTelemetryAddress()).isEqualTo(one);
+    }
+
+    @Test
+    public void testGetTelemetryPort() throws Exception {
+        assertThat(properties.getTelemetryPort()).isNotNull();
+        assertThat(properties.getTelemetryPort()).isInstanceOf(String.class);
+    }
+
+    @Test
+    public void testSetTelemetryPort() throws Exception {
+        final String one = RandomStringUtils.randomAlphabetic(8);
+        properties.setTelemetryPort(one);
+        assertThat(properties.getTelemetryPort()).isEqualTo(one);
+    }
+
+    @Test
+    public void testGetFreeNodes() throws Exception {
+        assertThat(properties.getFreeNodes()).isEqualTo("http://" + properties.getTelemetryAddress() + ":" + properties.getTelemetryPort() + "/" + properties.getTelemetryEndpoint());
+    }
 }
