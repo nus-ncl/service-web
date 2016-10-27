@@ -6,10 +6,15 @@
         <object th:include="fragments/header :: header" th:remove="tag" />
     </head>
     <body class="mybg loginbackground">
-        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
+        <th:block th:if="${session.id == null}">
+            <div th:replace="fragments/login_navigation :: loginnav"></div>
+        </th:block>
+        <th:block th:if="${session.id != null}">
+            <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+        </th:block>
         <div class="container">
 
             <p>&nbsp;</p>
@@ -17,9 +22,30 @@
                 <h2 class="team-heading team-heading-current-team" th:text="#{dataset.public.header}">Public datasets</h2>
                 <table class="table table-responsive">
                     <thead>
-                        <th th:text="#{data.header.name}">Name</th>
-                        <th th:text="#{data.header.owner}">Owner</th>
-                        <th th:text="#{data.header.releaseDate}">Release Date</th>
+                        <th>
+                            <span th:text="#{data.header.name}">Name</span>
+                            <a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                                <span class="tooltiptext">
+                                        <p th:text="#{dataset.user.tooltip.name}">Dataset Name</p>
+                                    </span>
+                            </a>
+                        </th>
+                        <th>
+                            <span th:text="#{data.header.owner}">Owner</span>
+                            <a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                                <span class="tooltiptext">
+                                        <p th:text="#{dataset.user.tooltip.owner}">The owner of the dataset</p>
+                                    </span>
+                            </a>
+                        </th>
+                        <th>
+                            <span th:text="#{data.header.releaseDate}">Release Date</span>
+                            <a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                                <span class="tooltiptext">
+                                        <p th:text="#{dataset.user.tooltip.date}">The date when the dataset is made</p>
+                                    </span>
+                            </a>
+                        </th>
                         <th th:text="#{data.header.access}">Access</th>
                         <!-- th>Actions</th -->
                     </thead>
@@ -27,13 +53,13 @@
                         <td><a href="#datasetModal" data-toggle="modal"
                                th:attr="data-name=${publicDataEntry.value.name},
                                         data-owner=${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName},
-                                        data-access=${publicDataEntry.value.isOpen() ? 'Open' : 'Restricted'}"
+                                        data-visible=${#strings.capitalize(#strings.toLowerCase(publicDataEntry.value.visibility))},
+                                        data-access=${#strings.capitalize(#strings.toLowerCase(publicDataEntry.value.accessibility))}"
                                data-release=""
                                th:text="${publicDataEntry.value.name}">Name</a></td>
                         <td th:text="${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName}">Owner</td>
                         <!-- td th:text="${publicDataEntry.value.releaseDate}">Release Date</td --> <td></td>
-                        <td th:if="not ${publicDataEntry.value.isOpen()}" th:text="Restricted">Access</td>
-                        <td th:if="${publicDataEntry.value.isOpen()}" th:text="Open">Access</td>
+                        <td th:text="${#strings.capitalize(#strings.toLowerCase(publicDataEntry.value.accessibility))}">Access</td>
                         <!-- download or request for access -->
                         <!-- td th:if="not ${publicDataEntry.value.isAccessible()}"><a href="#" th:href="@{/data/public/request_access/{dataOwnerId}(dataOwnerId=${publicDataEntry.value.contributorId})}" class="btn btn-standard">Request Access</a></td>
 						<td th:if="${publicDataEntry.value.isAccessible()}"><a href="#" class="btn btn-standard">Download</a></td -->
@@ -47,7 +73,7 @@
         </div> <!-- container -->
 
         <!-- Modal -->
-        <div class="modal fade" id="datasetModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade" id="datasetModal" tabindex="-1" role="dialog" aria-labelledby="datasetModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -64,7 +90,11 @@
                             <div class="col-md-8" id="datasetRelease"></div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">Access:</div>
+                            <div class="col-md-4">Visibility:</div>
+                            <div class="col-md-8" id="datasetVisible"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Accessibility:</div>
                             <div class="col-md-8" id="datasetAccess"></div>
                         </div>
                     </div>
