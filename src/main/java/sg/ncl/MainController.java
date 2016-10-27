@@ -1939,7 +1939,7 @@ public class MainController {
     //---------------------------------Dataset Page--------------------------
 
     @RequestMapping("/data")
-    public String data(Model model, HttpSession session) {
+    public String data(Model model, HttpSession session) throws Exception {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -2066,7 +2066,7 @@ public class MainController {
 //    }
 
     @RequestMapping("/data/public")
-    public String getPublicDatasets(Model model) {
+    public String getPublicDatasets(Model model) throws Exception {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> dataRequest = createHttpEntityHeaderOnly();
@@ -2651,7 +2651,7 @@ public class MainController {
         return team2;
     }
 
-    private Dataset extractDataInfo(String json) {
+    private Dataset extractDataInfo(String json) throws Exception {
         log.debug(json);
 
         JSONObject object = new JSONObject(json);
@@ -2663,6 +2663,7 @@ public class MainController {
         dataset.setContributorId(object.getString("contributorId"));
         dataset.setVisibility(object.getString("visibility"));
         dataset.setAccessibility(object.getString("accessibility"));
+        dataset.setReleaseDate(formatZonedDateTime(object.get("releaseDate").toString()));
 
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
 

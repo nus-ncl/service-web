@@ -19,6 +19,7 @@ public class Dataset implements Serializable {
 	private String contributorId;
 	private String visibility;
 	private String accessibility;
+	private String releaseDate;
 	private List<DataResource> dataResources;
 	private List<String> approvedUsers;
 

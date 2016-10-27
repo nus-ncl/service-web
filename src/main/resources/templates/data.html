@@ -63,16 +63,16 @@
 	                   	<td><a href="#datasetModal" data-toggle="modal"
 							   th:attr="data-name=${datasetEntry.value.name},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
+                                	    data-release=${datasetEntry.value.releaseDate},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
                                         data-access=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))}"
-							   data-release=""
 							   th:text="${datasetEntry.value.name}">Name</a></td>
 	                   	<td th:text="${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName}">Owner</td>
-                        <td></td>
+                        <td th:text="${datasetEntry.value.releaseDate}"></td>
 					    <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))}">Access</td>
 	                   	<td>
 	                   		<a th:if="${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#downloadModal" class="btn btn-primary" data-toggle="modal"
-                               th:attr="data-id=${datasetEntry.value.id}, data-name=${datasetEntry.value.name}, data-resources=${datasetEntry.value.getResourceUrisInArrayString()}">Download</a>
+                               th:attr="data-id=${datasetEntry.value.id}, data-name=${datasetEntry.value.name}, data-resources=${datasetEntry.value.getResourceIdsInArrayString()}">Download</a>
                             <a th:if="not ${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#requestModal" class="btn btn-primary" data-toggle="modal"
                                th:attr="data-name=${datasetEntry.value.name}">Request</a>
 	                   	</td>

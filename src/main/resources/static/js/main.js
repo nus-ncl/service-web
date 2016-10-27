@@ -125,11 +125,13 @@ $(document).ready(function() {
         var anchor = $(event.relatedTarget);
         var datasetLabel = anchor.data('name');
         var datasetOwner = anchor.data('owner');
+        var datasetRelease = anchor.data('release');
         var datasetVisible = anchor.data('visible');
         var datasetAccess = anchor.data('access');
         var modal = $(this);
         modal.find('#datasetLabel').text(datasetLabel);
         modal.find('#datasetOwner').text(datasetOwner);
+        modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);
         modal.find('#datasetAccess').text(datasetAccess);
     });
