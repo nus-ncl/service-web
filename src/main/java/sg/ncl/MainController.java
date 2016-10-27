@@ -2915,18 +2915,23 @@ public class MainController {
 
                 JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
 
-                for (int k = 0; k < experimentsArray.length(); k++) {
-                    Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-                    Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-                    if (realization.getState().equals(RealizationState.RUNNING.toString())) {
-                        numberOfRunningExperiments++;
-                    }
-                }
+                numberOfRunningExperiments = getNumberOfRunningExperiments(numberOfRunningExperiments, experimentsArray);
             }
         }
 
         userDashboardStats.put(USER_DASHBOARD_TEAMS, teamIdsJsonArray.length());
         userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
         return userDashboardStats;
+    }
+
+    private int getNumberOfRunningExperiments(int numberOfRunningExperiments, JSONArray experimentsArray) {
+        for (int k = 0; k < experimentsArray.length(); k++) {
+            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+            if (realization.getState().equals(RealizationState.RUNNING.toString())) {
+                numberOfRunningExperiments++;
+            }
+        }
+        return numberOfRunningExperiments;
     }
 }
