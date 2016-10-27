@@ -77,34 +77,6 @@
                         <a href="teamPageJoinTeam" th:href="@{/teams/join_team}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Join Team</a>
                     </div>
                 </div> <!-- panel primary -->
-                    <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
-                        <!--<div class="panel-heading">-->
-                            <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.requestParticipation}">text heading from .properties</h2>
-                        <!--</div> &lt;!&ndash; panel heading &ndash;&gt;-->
-	                    <div class="panel-body">
-                            <p th:text="#{team.haveNotBeenInvited}">You have not been invited to participate in any teams yet.</p>
-                            <!--<div th:if="${#lists.isEmpty(invitedToParticipateMap2)}">-->
-                                <!--<p th:text="#{team.haveNotBeenInvited}">You have not been invited to participate in any teams yet.</p>-->
-                            <!--</div>-->
-	                        <!--<table class="table table-responsive" th:if="not ${#lists.isEmpty(invitedToParticipateMap2)}">-->
-	                            <!--<thead>-->
-	                                <!--<th th:text="#{team.table.header.team}">Team</th>-->
-	                                <!--<th th:text="#{team.table.header.description}">Description</th>-->
-	                                <!--<th th:text="#{team.table.header.institution}">Institution</th>-->
-	                                <!--<th th:text="#{team.table.header.actions}">Actions</th>-->
-	                            <!--</thead>-->
-	                            <!--<tr th:each="teamEntry : ${invitedToParticipateMap2}">-->
-	                                <!--<td th:text="${teamEntry.name + '-' + teamEntry.id}">Name-Id</td>-->
-	                                <!--<td th:text="${teamEntry.description}">Description</td>-->
-	                                <!--<td th:text="${teamEntry.institution}">Institution</td>-->
-	                                <!--<td><a href="#" title="Accept" class="btn btn-success" th:href="@{/accept_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a><a href="#" title="Ignore" class="btn btn-warning" th:href="@{/ignore_participation/{teamId}(teamId=${teamEntry.id})}"><i class="fa fa-times-circle-o fa-lg"></i> Ignore</a></td>-->
-	                            <!--</tr>-->
-	                        <!--</table>-->
-                            <!--<tr>-->
-                                <!--<td height="700"></td>-->
-                            <!--</tr>-->
-	                    </div> <!-- panel body -->
-                    </div> <!-- panel -->
                         <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
                                 <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.requestJoin}">text heading from .properties</h2>
                         <div class="panel-body">
@@ -129,6 +101,10 @@
                             </table>
                         </div> <!-- panel body -->
                     </div> <!-- panel -->
+                <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
+                    <h2 class="team-heading team-heading-current-team" th:text="#{team.savedOSImages}">text heading from .properties</h2>
+                    <div class="panel-body"></div> <!-- panel body -->
+                </div> <!-- panel -->
             </div> <!-- row -->
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">
