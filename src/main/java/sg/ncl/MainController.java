@@ -69,8 +69,8 @@ public class MainController {
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
 
     // for user dashboard hashmap key values
-    private final String userDashboardTeams = "teams";
-    private final String userDashboardRunningExperiments = "runningExperiments";
+    private static final String USER_DASHBOARD_TEAMS = "teams";
+    private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "runningExperiments";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -2925,8 +2925,8 @@ public class MainController {
             }
         }
 
-        userDashboardStats.put(userDashboardTeams, teamIdsJsonArray.length());
-        userDashboardStats.put(userDashboardRunningExperiments, numberOfRunningExperiments);
+        userDashboardStats.put(USER_DASHBOARD_TEAMS, teamIdsJsonArray.length());
+        userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
         return userDashboardStats;
     }
 }
