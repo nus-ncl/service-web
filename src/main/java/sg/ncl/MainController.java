@@ -74,6 +74,7 @@ public class MainController {
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_TEAMS = "teams";
     private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "runningExperiments";
+    private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
 
     @Autowired
     private RestTemplate restTemplate;
