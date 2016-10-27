@@ -18,7 +18,7 @@
                 <!--<div class="panel panel-primary dashpanel">-->
                         <!--<h2 class="team-heading team-heading-current-team" >Overview</h2>-->
                 <div class="alert alert-danger">
-                    <strong>News: </strong>There will be scheduled downtime for maintenance on <strong>every monday, 0800 to 1800 (UTC+8)</strong> for updating new features. We thank you for the understanding.
+                    <strong>News: </strong>We hold regular scheduled maintenance on <strong>every first Sunday of the month, 0700 to 1900 (Singapore Time, UTC/GMT+8)</strong> for updating new features. We thank you for the understanding.
                 </div>
                 <div class="panel panel-primary dashpanel">
                     <div class="alert alert-warning">
@@ -32,70 +32,27 @@
                     </div>
                         <!--<h2 class="team-heading team-heading-current-team" >Overview</h2>-->
                     <div class="panel-body">
-                        <table class="table table-responsive">
-                            <div class="col-sm-12" ><img src="images/sample.png" width="100%" height="315" /></div>
-                            <!--<thead>-->
-                            <!--<th>-->
-                                <!--<h4>Team</h4>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<h4>Experiments</h4>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<h4>Total Running Time</h4>-->
-                            <!--</th>-->
-                            <!--</thead>-->
-                            <!--<thead>-->
-                            <!--<th>-->
-                                <!--<p>99</p>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<p>999</p>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<p>999 hours</p>-->
-                            <!--</th>-->
-                            <!--</thead>-->
-                            <!--<thead>-->
-                            <!--<th>-->
-                                <!--<p>AA</p>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<p>888</p>-->
-                            <!--</th>-->
-                            <!--<th>-->
-                                <!--<p>1000 hours</p>-->
-                            <!--</th>-->
-                            <!--</thead>-->
-                        </table>
-                        <!--<div class="row dashpanel2">-->
-                            <!--<div class="col-sm-4">-->
-                                <!--<h4>Team</h4>-->
-                                <!--<p>99</p>-->
-                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
-                            <!--<div class="col-sm-4">-->
-                                <!--<h4>Experiments</h4>-->
-                                <!--<p>999</p>-->
-                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
-                            <!--<div class="col-sm-4">-->
-                                <!--<h4>Total Running Time</h4>-->
-                                <!--<p>999 hours</p>-->
-                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
-                        <!--</div>-->
-                        <!--<div class="row dashpanel2">-->
-                            <!--<div class="col-sm-4">-->
-                                <!--<h4>Team</h4>-->
-                                <!--<p>99</p>-->
-                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
-                            <!--<div class="col-sm-4">-->
-                                <!--<h4>Experiments</h4>-->
-                                <!--<p>999</p>-->
-                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
-                            <!--<div class="col-sm-4">-->
-                                <!--<h4>Total Running Time</h4>-->
-                                <!--<p>999 hours</p>-->
-                            <!--</div> &lt;!&ndash; col &ndash;&gt;-->
-                        <!--</div>-->
+                        <a th:href="@{/teams}">
+                            <div class="col-sm-5 dashpanel_teams pull-left">
+                                <p class="dashboard_stats" th:text="${userDashboardMap.get('teams')}">4</p>
+                                <h2>Teams</h2>
+                            </div>
+                        </a>
+                        <a th:href="@{/experiments}">
+                            <div class="col-sm-5 dashpanel_experiments pull-right">
+                                <p class="dashboard_stats" th:text="${userDashboardMap.get('runningExperiments')}">2</p>
+                                <h2>Running Experiments</h2>
+                            </div>
+                        </a>
+                    </div> <!-- panel body -->
+                </div> <!-- panel -->
+
+                <!--  team resource usage -->
+                <div class="panel panel-primary dashpanel">
+                    <h2 class="team-heading team-heading-current-team">Resource Usage Information (Current Month)</h2>
+                    <div class="panel-body">
+                        <p>Team 1: 45 CPU hours</p>
+                        <p>Team 2: 46 CPU hours</p>
                     </div> <!-- panel body -->
                 </div> <!-- panel -->
             </div>

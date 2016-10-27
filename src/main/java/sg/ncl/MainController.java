@@ -62,7 +62,7 @@ public class MainController {
     // to know which form fields have been changed
     private User2 originalUser = null;
 
-    private String AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
+    private String AUTHORIZATION_HEADER = null;
 
     private static final String CONTACT_EMAIL = "support@ncl.sg";
 
@@ -70,6 +70,10 @@ public class MainController {
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
 
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
+
+    // for user dashboard hashmap key values
+    private static final String USER_DASHBOARD_TEAMS = "teams";
+    private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "runningExperiments";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -479,6 +483,10 @@ public class MainController {
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
+
+        // retrieve user dashboard stats
+        Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute("id").toString());
+        model.addAttribute("userDashboardMap", userDashboardMap);
         return "dashboard";
     }
 
@@ -2894,7 +2902,7 @@ public class MainController {
         session.removeAttribute("id");
         session.removeAttribute("name");
         session.removeAttribute(session_roles);
-        AUTHORIZATION_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
+        AUTHORIZATION_HEADER = null;
     }
 
     private boolean validateIfAdmin(HttpSession session) {
@@ -2935,5 +2943,54 @@ public class MainController {
         realization.setDetails("");
 
         return realization;
+    }
+
+    /**
+     * Computes the number of teams that the user is in and the number of running experiments to populate data for the user dashboard
+     * @return a map in the form teams: numberOfTeams, experiments: numberOfExperiments
+     */
+    private Map<String, Integer> getUserDashboardStats(String userId) {
+        int numberOfRunningExperiments = 0;
+        Map<String, Integer> userDashboardStats = new HashMap<>();
+
+        // get list of teamids
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+
+        JSONObject object = new JSONObject(userRespEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody().toString();
+
+            if (!isMemberJoinRequestPending(userId, teamResponseBody)) {
+                // get experiments lists of the teams
+                HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
+                ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
+
+                JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
+
+                numberOfRunningExperiments = getNumberOfRunningExperiments(numberOfRunningExperiments, experimentsArray);
+            }
+        }
+
+        userDashboardStats.put(USER_DASHBOARD_TEAMS, teamIdsJsonArray.length());
+        userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
+        return userDashboardStats;
+    }
+
+    private int getNumberOfRunningExperiments(int numberOfRunningExperiments, JSONArray experimentsArray) {
+        for (int k = 0; k < experimentsArray.length(); k++) {
+            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+            if (realization.getState().equals(RealizationState.RUNNING.toString())) {
+                numberOfRunningExperiments++;
+            }
+        }
+        return numberOfRunningExperiments;
     }
 }
