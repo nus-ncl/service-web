@@ -23,6 +23,7 @@ public class ConnectionProperties {
     private String expEndpoint;
     private String approveJoinRequest;
     private String realEndpoint;
+    private String imageEndpoint;
 
     public String getSioAddress() {
         return sioAddress;
@@ -102,6 +103,14 @@ public class ConnectionProperties {
 
     public void setRealEndpoint(String realEndpoint) {
         this.realEndpoint = realEndpoint;
+    }
+
+    public String getImageEndpoint() {
+        return imageEndpoint;
+    }
+
+    public void setImageEndpoint(String imageEndpoint) {
+        this.imageEndpoint = imageEndpoint;
     }
 
     public String getSioUsersUrl() {
@@ -240,6 +249,14 @@ public class ConnectionProperties {
 
     public String getData() {
         return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint;
+    }
+
+    //-------------------------------------
+    // IMAGES
+    //-------------------------------------
+
+    public String getSavedImages() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint;
     }
 
 }

@@ -1191,7 +1191,13 @@ public class MainController {
             if (joinRequestTeam != null) {
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
             }
-//            System.out.println(teamResponseEntity.getBody().toString());
+
+            Map<String, String> savedImageMap = new HashMap<>();
+            HttpEntity<String> imageRequest = createHttpEntityWithBody(team2.toString());
+            ResponseEntity imageResponse = restTemplate.exchange(properties.getSavedImages(), HttpMethod.GET, teamRequest, String.class);
+            String imageResponseBody = imageResponse.getBody().toString();
+
+            System.out.println(imageResponseBody);
         }
 
         // get public teams
