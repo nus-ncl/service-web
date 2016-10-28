@@ -24,6 +24,11 @@ public class ConnectionProperties {
     private String approveJoinRequest;
     private String realEndpoint;
 
+    // service-telemetry
+    private String telemetryAddress;
+    private String telemetryPort;
+    private String telemetryEndpoint;
+
     public String getSioAddress() {
         return sioAddress;
     }
@@ -242,4 +247,35 @@ public class ConnectionProperties {
         return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint;
     }
 
+    //-------------------------------------
+    // TELEMETRY
+    //-------------------------------------
+
+    public String getTelemetryAddress() {
+        return telemetryAddress;
+    }
+
+    public void setTelemetryAddress(String telemetryAddress) {
+        this.telemetryAddress = telemetryAddress;
+    }
+
+    public String getTelemetryPort() {
+        return telemetryPort;
+    }
+
+    public void setTelemetryPort(String telemetryPort) {
+        this.telemetryPort = telemetryPort;
+    }
+
+    public String getTelemetryEndpoint() {
+        return telemetryEndpoint;
+    }
+
+    public void setTelemetryEndpoint(String telemetryEndpoint) {
+        this.telemetryEndpoint = telemetryEndpoint;
+    }
+
+    public String getFreeNodes() {
+        return "http://" + telemetryAddress + ":" + telemetryPort + "/" + telemetryEndpoint;
+    }
 }

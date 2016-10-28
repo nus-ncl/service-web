@@ -74,6 +74,7 @@ public class MainController {
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_TEAMS = "teams";
     private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "runningExperiments";
+    private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -2964,6 +2965,7 @@ public class MainController {
 
         userDashboardStats.put(USER_DASHBOARD_TEAMS, teamIdsJsonArray.length());
         userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
+        userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNumberOfFreeNodes());
         return userDashboardStats;
     }
 
@@ -2976,5 +2978,19 @@ public class MainController {
             }
         }
         return numberOfRunningExperiments;
+    }
+
+    private int getNumberOfFreeNodes() {
+        String freeNodes;
+        log.info("Retrieving number of free nodes from: {}", properties.getFreeNodes());
+        try {
+            String jsonResult = restTemplate.getForObject(properties.getFreeNodes(), String.class);
+            JSONObject object = new JSONObject(jsonResult);
+            freeNodes = object.getString("numberOfFreeNodes");
+        } catch (RestClientException e) {
+            log.warn("Error connecting to service-telemetry: {}", e);
+            freeNodes = "0";
+        }
+        return Integer.parseInt(freeNodes);
     }
 }
