@@ -71,6 +71,7 @@
 						<td th:if="${publicDataEntry.value.isAccessible()}"><a href="#" class="btn btn-standard">Download</a></td -->
                     </tr>
                 </table>
+                <a href="/login" th:text="#{dataset.public.loginRequest}">Log in to download or request for access to data resources</a>
                 <p>&nbsp;</p>
                 <h2 class="team-heading team-heading-current-team" th:text="#{dataset.public.external.header}">External Data Access</h2>
             	<a href="#" th:text="#{dataset.public.external.clickHere}">Click here to access external data (e.g. US side)</a>
