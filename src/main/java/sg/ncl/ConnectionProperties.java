@@ -255,7 +255,7 @@ public class ConnectionProperties {
     // IMAGES
     //-------------------------------------
 
-    public String getSavedImages() {
+    public String getAllImages() {
         return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint;
     }
 

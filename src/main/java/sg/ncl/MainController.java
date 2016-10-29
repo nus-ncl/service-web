@@ -1168,6 +1168,8 @@ public class MainController {
 
         TeamManager2 teamManager2 = new TeamManager2();
 
+        Map<String, Image> imageMap = new HashMap<>();
+
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
@@ -1193,8 +1195,8 @@ public class MainController {
             }
 
             Map<String, String> savedImageMap = new HashMap<>();
-            HttpEntity<String> imageRequest = createHttpEntityWithBody(team2.toString());
-            ResponseEntity imageResponse = restTemplate.exchange(properties.getSavedImages(), HttpMethod.GET, teamRequest, String.class);
+            HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
+            ResponseEntity imageResponse = restTemplate.exchange(properties.getAllImages(), HttpMethod.GET, imageRequest, String.class);
             String imageResponseBody = imageResponse.getBody().toString();
 
             System.out.println(imageResponseBody);
@@ -1216,6 +1218,7 @@ public class MainController {
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
 //        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
         model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
+        model.addAttribute("imageMap", imageMap);
         return "teams";
     }
 
