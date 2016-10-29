@@ -1200,7 +1200,17 @@ public class MainController {
             ResponseEntity imageResponse = restTemplate.exchange(properties.getAllImages(), HttpMethod.GET, imageRequest, String.class);
             String imageResponseBody = imageResponse.getBody().toString();
 
-            System.out.println(imageResponseBody);
+            JSONArray imageJsonArray = new JSONArray(imageResponseBody);
+            for (int k = 0; k < imageJsonArray.length(); k++) {
+                JSONObject imageJsonObject = imageJsonArray.getJSONObject(k);
+                if (imageJsonObject != null) {
+                    Image image = new Image();
+                    image.setImageName(imageJsonObject.getString("imageName"));
+                    image.setDescription(imageJsonObject.getString("description"));
+                    image.setTeamId(imageJsonObject.getString("teamId"));
+                    imageMap.put(teamId, image);
+                }
+            }
         }
 
         // get public teams
