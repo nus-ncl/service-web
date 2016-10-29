@@ -103,7 +103,21 @@
                     </div> <!-- panel -->
                 <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
                     <h2 class="team-heading team-heading-current-team" th:text="#{team.savedOSImages}">text heading from .properties</h2>
-                    <div class="panel-body"></div> <!-- panel body -->
+                    <div class="panel-body">
+                        <div th:if="${imageMap.isEmpty()}">
+                            <p th:text="#{team.noSavedOSImages}">text heading from .properties</p>
+                        </div>
+                        <table class="table table-responsive" th:if="not ${imageMap.isEmpty()}">
+                            <thead>
+                            <th th:text="#{team.table.header.imageName}">Image Name</th>
+                            <th th:text="#{team.table.header.description}">Description</th>
+                            </thead>
+                            <tr th:each="image : ${imageMap}">
+                                <td th:text="${image.value.imageName}">Name</td>
+                                <td th:text="${image.value.description}">Description</td>
+                            </tr>
+                        </table>
+                    </div> <!-- panel body -->
                 </div> <!-- panel -->
             </div> <!-- row -->
             <div class="cc-wraper">
