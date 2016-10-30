@@ -295,4 +295,8 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint;
     }
 
+    public String getTeamImages(String teamId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint + "?teamId=" + teamId;
+    }
+
 }

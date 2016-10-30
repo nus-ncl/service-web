@@ -1169,7 +1169,7 @@ public class MainController {
 
         TeamManager2 teamManager2 = new TeamManager2();
 
-        Map<String, Image> imageMap = new HashMap<>();
+        List<Image> savedImageList = new ArrayList<>();
 
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -1201,14 +1201,16 @@ public class MainController {
             String imageResponseBody = imageResponse.getBody().toString();
 
             JSONArray imageJsonArray = new JSONArray(imageResponseBody);
+            log.info("{}", imageJsonArray);
             for (int k = 0; k < imageJsonArray.length(); k++) {
                 JSONObject imageJsonObject = imageJsonArray.getJSONObject(k);
                 if (imageJsonObject != null) {
+                    log.info("{}", imageJsonObject);
                     Image image = new Image();
                     image.setImageName(imageJsonObject.getString("imageName"));
                     image.setDescription(imageJsonObject.getString("description"));
                     image.setTeamId(imageJsonObject.getString("teamId"));
-                    imageMap.put(teamId, image);
+                    savedImageList.add(image);
                 }
             }
         }
@@ -1229,7 +1231,7 @@ public class MainController {
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
 //        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
         model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
-        model.addAttribute("imageMap", imageMap);
+        model.addAttribute("savedImageList", savedImageList);
         return "teams";
     }
 
