@@ -199,4 +199,15 @@ public class ConnectionPropertiesTest {
         String expId = RandomStringUtils.randomAlphanumeric(20);
         assertThat(properties.getStopExperiment(teamName, expId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRealEndpoint() + "/stop/team/" + teamName + "/experiment/" + expId);
     }
+
+    @Test
+    public void testGetAllImages() throws Exception {
+        assertThat(properties.getAllImages()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint());
+    }
+
+    @Test
+    public void testGetTeamImages() throws Exception {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getTeamImages(teamId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint() + "?teamId=" + teamId);
+    }
 }
