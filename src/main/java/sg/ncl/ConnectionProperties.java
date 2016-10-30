@@ -287,6 +287,7 @@ public class ConnectionProperties {
     public String getFreeNodes() {
         return "http://" + telemetryAddress + ":" + telemetryPort + "/" + telemetryEndpoint;
     }
+    
     //-------------------------------------
     // IMAGES
     //-------------------------------------
