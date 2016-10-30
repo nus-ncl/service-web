@@ -230,4 +230,15 @@ public class ConnectionPropertiesTest {
     public void testGetFreeNodes() throws Exception {
         assertThat(properties.getFreeNodes()).isEqualTo("http://" + properties.getTelemetryAddress() + ":" + properties.getTelemetryPort() + "/" + properties.getTelemetryEndpoint());
     }
+
+    @Test
+    public void testGetAllImages() throws Exception {
+        assertThat(properties.getAllImages()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint());
+    }
+
+    @Test
+    public void testGetTeamImages() throws Exception {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getTeamImages(teamId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint() + "?teamId=" + teamId);
+    }
 }

@@ -1169,6 +1169,8 @@ public class MainController {
 
         TeamManager2 teamManager2 = new TeamManager2();
 
+        List<Image> savedImageList = new ArrayList<>();
+
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
@@ -1192,7 +1194,24 @@ public class MainController {
             if (joinRequestTeam != null) {
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
             }
-//            System.out.println(teamResponseEntity.getBody().toString());
+
+            HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
+            ResponseEntity imageResponse = restTemplate.exchange(properties.getAllImages(), HttpMethod.GET, imageRequest, String.class);
+            String imageResponseBody = imageResponse.getBody().toString();
+
+            JSONArray imageJsonArray = new JSONArray(imageResponseBody);
+            log.info("{}", imageJsonArray);
+            for (int k = 0; k < imageJsonArray.length(); k++) {
+                JSONObject imageJsonObject = imageJsonArray.getJSONObject(k);
+                if (imageJsonObject != null) {
+                    log.info("{}", imageJsonObject);
+                    Image image = new Image();
+                    image.setImageName(imageJsonObject.getString("imageName"));
+                    image.setDescription(imageJsonObject.getString("description"));
+                    image.setTeamId(imageJsonObject.getString("teamId"));
+                    savedImageList.add(image);
+                }
+            }
         }
 
         // get public teams
@@ -1211,6 +1230,7 @@ public class MainController {
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
 //        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
         model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
+        model.addAttribute("savedImageList", savedImageList);
         return "teams";
     }
 

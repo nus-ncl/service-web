@@ -23,6 +23,7 @@ public class ConnectionProperties {
     private String expEndpoint;
     private String approveJoinRequest;
     private String realEndpoint;
+    private String imageEndpoint;
 
     // service-telemetry
     private String telemetryAddress;
@@ -107,6 +108,14 @@ public class ConnectionProperties {
 
     public void setRealEndpoint(String realEndpoint) {
         this.realEndpoint = realEndpoint;
+    }
+
+    public String getImageEndpoint() {
+        return imageEndpoint;
+    }
+
+    public void setImageEndpoint(String imageEndpoint) {
+        this.imageEndpoint = imageEndpoint;
     }
 
     public String getSioUsersUrl() {
@@ -278,4 +287,17 @@ public class ConnectionProperties {
     public String getFreeNodes() {
         return "http://" + telemetryAddress + ":" + telemetryPort + "/" + telemetryEndpoint;
     }
+    
+    //-------------------------------------
+    // IMAGES
+    //-------------------------------------
+
+    public String getAllImages() {
+        return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint;
+    }
+
+    public String getTeamImages(String teamId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint + "?teamId=" + teamId;
+    }
+
 }
