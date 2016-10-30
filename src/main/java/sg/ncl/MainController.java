@@ -1948,7 +1948,7 @@ public class MainController {
     //---------------------------------Dataset Page--------------------------
 
     @RequestMapping("/data")
-    public String data(Model model, HttpSession session) {
+    public String data(Model model, HttpSession session) throws Exception {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -1962,8 +1962,7 @@ public class MainController {
             datasetManager.addDataset(dataset);
         }
 
-    	model.addAttribute("datasetOwnedByUserList", datasetManager.getDatasetMapOfContributor(session.getAttribute(SESSION_LOGGED_IN_USER_ID).toString()));
-    	model.addAttribute("datasetAccessibleByUserList", datasetManager.getDatasetMapOfNotContributor(session.getAttribute(SESSION_LOGGED_IN_USER_ID).toString()));
+    	model.addAttribute("allDataMap", datasetManager.getDatasetMap());
     	return "data";
     }
 
@@ -2076,7 +2075,7 @@ public class MainController {
 //    }
 
     @RequestMapping("/data/public")
-    public String getPublicDatasets(Model model) {
+    public String getPublicDatasets(Model model) throws Exception {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> dataRequest = createHttpEntityHeaderOnly();
@@ -2661,9 +2660,11 @@ public class MainController {
         return team2;
     }
 
-    private Dataset extractDataInfo(String json) {
-        Dataset dataset = new Dataset();
+    private Dataset extractDataInfo(String json) throws Exception {
+        log.debug(json);
+
         JSONObject object = new JSONObject(json);
+        Dataset dataset = new Dataset();
 
         dataset.setId(object.getInt("id"));
         dataset.setName(object.getString("name"));
@@ -2671,8 +2672,23 @@ public class MainController {
         dataset.setContributorId(object.getString("contributorId"));
         dataset.setVisibility(object.getString("visibility"));
         dataset.setAccessibility(object.getString("accessibility"));
+        dataset.setReleaseDate(formatZonedDateTime(object.get("releaseDate").toString()));
 
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
+
+        JSONArray resources = object.getJSONArray("resources");
+        for (int i = 0; i < resources.length(); i++) {
+            JSONObject resource = resources.getJSONObject(i);
+            DataResource dataResource = new DataResource();
+            dataResource.setId(resource.getLong("id"));
+            dataResource.setUri(resource.getString("uri"));
+            dataset.addResource(dataResource);
+        }
+
+        JSONArray approvedUsers = object.getJSONArray("approvedUsers");
+        for (int i =0; i < approvedUsers.length(); i++) {
+            dataset.addApprovedUser(approvedUsers.getString(0));
+        }
 
         return dataset;
     }

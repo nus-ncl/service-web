@@ -34,16 +34,18 @@ public class DatasetManager {
 	    return datasetMap;
     }
 
-    public Map getDatasetMapOfContributor(String userId) {
+    public List getDatasetMapOfContributor(String userId) {
         return datasetMap.entrySet().stream()
                 .filter(map -> map.getValue().getContributorId().equals(userId))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
     }
 
-    public Map getDatasetMapOfNotContributor(String userId) {
+    public List getDatasetMapOfNotContributor(String userId) {
         return datasetMap.entrySet().stream()
                 .filter(map -> !(map.getValue().getContributorId()).equals(userId))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
     }
 	
 }

@@ -22,69 +22,64 @@
 						<li th:each="file : ${files}" th:text="${file}"></li>
 					</ul>
 				</div>
-            	<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.contribute}">You contributed the following datasets</h2>
-                <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetOwnedByUserList)}">
+            	<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.header}"></h2>
+                <table class="table table-responsive">
                     <thead>
                         <th>
                         	<span th:text="#{data.header.name}">Name</span>
-								<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+							<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
                         		<span class="tooltiptext">
                         			<p th:text="#{dataset.user.tooltip.name}">Dataset Name</p>
                         		</span>
-								</a>
+							</a>
 						</th>
+                        <th>
+                            <span th:text="#{data.header.owner}">Owner</span>
+                            <a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                                <span class="tooltiptext">
+                        			<p th:text="#{dataset.user.tooltip.owner}">The owner of the dataset</p>
+                        		</span>
+                            </a>
+                        </th>
 						<th>
 							<span th:text="#{data.header.releaseDate}">Release Date</span>
-							<a href="#" class="dat a-name-tooltip"><i class="fa fa-question-circle"></i>
+							<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
                         		<span class="tooltiptext">
                         			<p th:text="#{dataset.user.tooltip.date}">The date when the dataset is made</p>
                         		</span>
                         	</a>
                         </th>
+                        <th>
+                            <span th:text="#{data.header.access}">Access</span>
+                            <a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                                <span class="tooltiptext">
+                        			<p th:text="#{dataset.user.tooltip.access}">User granted access can download</p>
+                        		</span>
+                            </a>
+                        </th>
                         <th><!-- Actions --></th>
-                   </thead>
-                   <tr th:each="dataset : ${datasetOwnedByUserList}">
-	                   	<td th:text="${dataset.datasetName}"></td>
-	                   	<td th:text="${dataset.releaseDate}"></td>
+                    </thead>
+                    <tr th:each="datasetEntry : ${allDataMap}">
+	                   	<td><a href="#datasetModal" data-toggle="modal"
+							   th:attr="data-name=${datasetEntry.value.name},
+                                        data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
+                                	    data-release=${datasetEntry.value.releaseDate},
+                                        data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
+                                        data-access=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))}"
+							   th:text="${datasetEntry.value.name}">Name</a></td>
+	                   	<td th:text="${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName}">Owner</td>
+                        <td th:text="${datasetEntry.value.releaseDate}"></td>
+					    <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))}">Access</td>
 	                   	<td>
-	                   		<a href="#" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download">Download</a>
-	                   		<a href="#" th:href="@{/data/edit/{datasetId}(datasetId=${dataset.datasetId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pencil"></i></a>
-	                   		<a href="#" th:href="@{/data/remove_dataset/{datasetId}(datasetId=${dataset.datasetId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to delete this dataset?"><i class="fa fa-trash"></i></a>
+	                   		<a th:if="${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#downloadModal" class="btn btn-primary" data-toggle="modal"
+                               th:attr="data-id=${datasetEntry.value.id}, data-name=${datasetEntry.value.name}, data-resources=${datasetEntry.value.getResourceIdsInArrayString()}">Download</a>
+                            <a th:if="not ${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#requestModal" class="btn btn-primary" data-toggle="modal"
+                               th:attr="data-name=${datasetEntry.value.name}">Request</a>
 	                   	</td>
                    </tr>
                 </table>
-                <p th:if="${#lists.isEmpty(datasetOwnedByUserList)}" th:text="#{dataset.user.notContribute}">You have not contributed any datasets yet.</p>
-				<p>&nbsp;</p>
-				<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.access}">You have access to the following datasets</h2>
-               <table class="table table-responsive" th:if="not ${#lists.isEmpty(datasetAccessibleByUserList)}">
-                    <thead>
-                        <th>
-                        	<span th:text="#{data.header.name}">Name</span>
-                       	</th>
-                        <th>
-                        	<span th:text="#{data.header.owner}">Owner</span>
-                        	<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
-                        		<span class="tooltiptext">
-                        			<p th:text="#{dataset.user.tooltip.owner}">The owner of the dataset</p>
-                        		</span>
-                        	</a>
-                        </th>
-                        <th>
-                        	<span th:text="#{data.header.releaseDate}">Release Date</span>
-                        </th>
-                        <th><!-- Actions --></th>
-                   </thead>
-                   <tr th:each="dataset : ${datasetAccessibleByUserList}">
-	                   	<td th:text="${dataset.datasetName}"></td>
-	                   	<td th:text="${userManager.getNameByUserId(dataset.ownerId)}"></td>
-	                   	<td th:text="${dataset.releaseDate}"></td>
-	                   	<td>
-	                   		<a href="#" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Download">Download</a>
-	                 	</td>
-                   </tr>
-                </table>
-            	<p><a href="#" th:href="@{/data/public}"><button type="button" class="btn btn-standard"><i class="fa fa-globe"></i> View Public Datasets</button></a></p>
-            	<p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
+				<!--p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
+				<p>&nbsp;</p -->
             </div> <!-- row -->
 			<div class="cc-wraper">
 				<div class="cc-contactpop fixed">
@@ -104,6 +99,76 @@
 				</div>
 			</div>
         </div> <!-- container -->
+
+		<!-- Modal -->
+		<div class="modal fade" id="datasetModal" tabindex="-1" role="dialog" aria-labelledby="datasetModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="datasetLabel">Modal title</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-4">Owner:</div>
+							<div class="col-md-8" id="datasetOwner"></div>
+						</div>
+						<div class="row">
+							<div class="col-md-4">Release:</div>
+							<div class="col-md-8" id="datasetRelease"></div>
+						</div>
+                        <div class="row">
+                            <div class="col-md-4">Visibility:</div>
+                            <div class="col-md-8" id="datasetVisible"></div>
+                        </div>
+						<div class="row">
+							<div class="col-md-4">Accessibility:</div>
+							<div class="col-md-8" id="datasetAccess"></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+        <!-- Download Modal -->
+        <div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="downloadLabel">Resources</h4>
+                    </div>
+                    <div class="modal-body">
+                        <ul></ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Modal -->
+        <div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="requestLabel">Resources</h4>
+                    </div>
+                    <div class="modal-body">
+                        <span th:text="#{dataset.user.contactAdmin}"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 		<div th:replace="fragments/footer :: footer"></div>
 		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>

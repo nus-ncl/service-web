@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Setter
 public class DataResource implements Serializable {
 
-    private String id;
+    private Long id;
     private String uri;
 
 }

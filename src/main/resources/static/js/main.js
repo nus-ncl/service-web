@@ -125,13 +125,39 @@ $(document).ready(function() {
         var anchor = $(event.relatedTarget);
         var datasetLabel = anchor.data('name');
         var datasetOwner = anchor.data('owner');
+        var datasetRelease = anchor.data('release');
+        var datasetVisible = anchor.data('visible');
         var datasetAccess = anchor.data('access');
         var modal = $(this);
         modal.find('#datasetLabel').text(datasetLabel);
         modal.find('#datasetOwner').text(datasetOwner);
+        modal.find('#datasetRelease').text(datasetRelease);
+        modal.find('#datasetVisible').text(datasetVisible);
         modal.find('#datasetAccess').text(datasetAccess);
     });
-    
+
+    // modal to download dataset resource
+    $('#downloadModal').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var dataId = anchor.data('id');
+        var downloadLabel = anchor.data('name');
+        var resources = anchor.data('resources');
+        var modal = $(this);
+        modal.find('#downloadLabel').text("Resources of " + downloadLabel);
+        modal.find('ul').empty();
+        for (i = 0; i < resources.length; i++) {
+            modal.find('ul').append("<li><a href='/data/" + dataId + "/resources/" + resources[i] + "'>" + resources[i] + "</a></li>");
+        }
+    });
+
+    // modal to request dataset resource
+    $('#requestModal').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var requestLabel = anchor.data('name');
+        var modal = $(this);
+        modal.find('#requestLabel').text("Resources of " + requestLabel);
+    });
+
 });
 
 // display the ns file content when users select the predefined scenarios
