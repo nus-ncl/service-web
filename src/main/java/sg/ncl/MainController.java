@@ -1929,6 +1929,18 @@ public class MainController {
         return abc(teamName, expId, redirectAttributes, realization, request);
     }
 
+    @RequestMapping("/get_topology/{teamName}/{expId}")
+    public String getTopology(@PathVariable String teamName, @PathVariable String expId) {
+        try {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity response = restTemplate.exchange(properties.getTopology(teamName, expId), HttpMethod.GET, request, String.class);
+            return "data:image/png;base64," + response.getBody().toString();
+        } catch (Exception e) {
+            log.error("Error getting topology thumbnail", e.getMessage());
+            return "";
+        }
+    }
+
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
         ResponseEntity response;
         try {
