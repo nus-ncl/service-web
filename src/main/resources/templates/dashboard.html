@@ -51,8 +51,19 @@
                 <div class="panel panel-primary dashpanel">
                     <h2 class="team-heading team-heading-current-team">Resource Usage Information (Current Month)</h2>
                     <div class="panel-body">
-                        <p>Team 1: 45 CPU hours</p>
-                        <p>Team 2: 46 CPU hours</p>
+                        <div th:if="${#lists.isEmpty(usageInfoList)}">
+                            <p> You are not in any teams yet. </p>
+                        </div>
+                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(usageInfoList)}">
+                            <thead>
+                            <th th:text="#{team.table.header.team}">Team</th>
+                            <th th:text="#{team.table.header.usage}">Usage (Node x Hour)</th>
+                            </thead>
+                            <tr th:each="usageInfo : ${usageInfoList}">
+                                <td th:text="${usageInfo.name}">Team</td>
+                                <td th:text="${usageInfo.usage}">Usage</td>
+                            </tr>
+                        </table>
                     </div> <!-- panel body -->
                 </div> <!-- panel -->
 

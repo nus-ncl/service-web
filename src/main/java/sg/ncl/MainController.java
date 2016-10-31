@@ -487,7 +487,9 @@ public class MainController {
 
         // retrieve user dashboard stats
         Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute("id").toString());
+        List<TeamUsageInfo> usageInfoList = getTeamsUsageStatisticsForUser(session.getAttribute("id").toString());
         model.addAttribute("userDashboardMap", userDashboardMap);
+        model.addAttribute("usageInfoList", usageInfoList);
         return "dashboard";
     }
 
@@ -3028,5 +3030,48 @@ public class MainController {
             freeNodes = "0";
         }
         return Integer.parseInt(freeNodes);
+    }
+
+    private List<TeamUsageInfo> getTeamsUsageStatisticsForUser(String userId) {
+
+        List<TeamUsageInfo> usageInfoList = new ArrayList<>();
+
+        // get list of teamids
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        JSONObject object = new JSONObject(userRespEntity.getBody().toString());
+        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+
+        // get team info by team id
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody().toString();
+
+            if (!isMemberJoinRequestPending(userId, teamResponseBody)) {
+                TeamUsageInfo usageInfo = new TeamUsageInfo();
+                usageInfo.setId(teamId);
+                usageInfo.setName(new JSONObject(teamResponseBody).getString("name"));
+                usageInfo.setUsage(getUsageStatisticsByTeamId(teamId));
+                usageInfoList.add(usageInfo);
+            }
+        }
+        return usageInfoList;
+    }
+
+
+    private String getUsageStatisticsByTeamId(String id) {
+        log.info("Getting usage statistics for team {}", id);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response;
+        try {
+            response = restTemplate.exchange(properties.getUsageStatisticsByTeamId(id), HttpMethod.GET, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio get usage statistics {}", e);
+            return "?";
+        }
+        return response.getBody().toString();
     }
 }
