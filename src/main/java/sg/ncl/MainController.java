@@ -1935,7 +1935,7 @@ public class MainController {
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
             ResponseEntity response = restTemplate.exchange(properties.getTopology(teamName, expId), HttpMethod.GET, request, String.class);
-            log.info("experiment topo: {}", response.getBody().toString());
+            log.info("Retrieve experiment topo success");
             return "data:image/png;base64," + response.getBody();
         } catch (Exception e) {
             log.error("Error getting topology thumbnail", e.getMessage());
