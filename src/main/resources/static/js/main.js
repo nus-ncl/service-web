@@ -158,6 +158,19 @@ $(document).ready(function() {
         modal.find('#requestLabel').text("Resources of " + requestLabel);
     });
 
+    //-----------------get topology image-----------------
+    $('#topoModal').on('shown.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var title = anchor.data('title');
+        var imgsrc = anchor.data('imgsrc');
+        var modal = $(this);
+        modal.find('.modal-title').text(title);
+        modal.find('#loading').show();
+        $.get(imgsrc, function(data) {
+            modal.find('#loading').hide();
+            modal.find('#topoThumb').attr('src', data);
+        });
+    });
 });
 
 // display the ns file content when users select the predefined scenarios
