@@ -2,6 +2,7 @@ package sg.ncl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ser.impl.IteratorSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -2861,8 +2862,21 @@ public class MainController {
         if (object.get("details") == null) {
             realization.setDetails("");
         } else {
-            exp_report = object.get("details").toString().replaceAll("@", "\\\r\\\n");
+            exp_report = object.get("details").toString();
             realization.setDetails(exp_report);
+
+            JSONObject nodesInfoObject = new JSONObject(object.get("details").toString());
+
+            for (Object key : nodesInfoObject.keySet()) {
+                Map<String, String> nodeDetails = new HashMap<>();
+                String nodeName = (String) key;
+                JSONObject nodeDetailsJson = new JSONObject(nodesInfoObject.get(nodeName).toString());
+                nodeDetails.put("os", nodeDetailsJson.getString("os"));
+                nodeDetails.put("qualifiedName", nodeDetailsJson.getString("qualifiedName"));
+                nodeDetails.put("nodeId", nodeDetailsJson.getString("nodeId"));
+                realization.addNodeDetails(nodeName, nodeDetails);
+            }
+            log.info("nodes info object: {}", nodesInfoObject);
         }
 
         return realization;

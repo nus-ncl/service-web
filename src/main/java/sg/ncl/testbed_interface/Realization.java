@@ -1,7 +1,9 @@
 package sg.ncl.testbed_interface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Desmond
@@ -20,9 +22,12 @@ public class Realization {
     private Long runningMinutes;
     private List<String> detailsList;
 
+    private Map<String, Map<String, String>> nodesInfoMap;
+
     public Realization() {
         details = "";
         detailsList = new ArrayList<>();
+        nodesInfoMap = new HashMap<>();
     }
 
     public Long getId() {
@@ -111,5 +116,17 @@ public class Realization {
 
     public void setDetailsList(List<String> detailsList) {
         this.detailsList = detailsList;
+    }
+
+    public Map<String, Map<String, String>> getNodesInfoMap() {
+        return nodesInfoMap;
+    }
+
+    public void setNodesInfoMap(Map<String, Map<String, String>> nodesInfoMap) {
+        this.nodesInfoMap = nodesInfoMap;
+    }
+
+    public void addNodeDetails(String nodeName, Map<String, String> nodeDetails) {
+        nodesInfoMap.put(nodeName, nodeDetails);
     }
 }
