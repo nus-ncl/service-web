@@ -245,7 +245,7 @@ public class ConnectionProperties {
     }
 
     public String getTopology(String teamName, String expId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiments/" + expId;
+        return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiments/" + expId + "/topology";
     }
 
     //-------------------------------------

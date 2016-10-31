@@ -1929,15 +1929,31 @@ public class MainController {
         return abc(teamName, expId, redirectAttributes, realization, request);
     }
 
-    @RequestMapping("/get_topology/{teamName}/{expId}")
-    public String getTopology(@PathVariable String teamName, @PathVariable String expId) {
+//    @RequestMapping("/get_topology/{teamName}/{expId}")
+//    @ResponseBody
+//    public String getTopology(@PathVariable String teamName, @PathVariable String expId) {
+//        try {
+//            HttpEntity<String> request = createHttpEntityHeaderOnly();
+//            ResponseEntity response = restTemplate.exchange(properties.getTopology(teamName, expId), HttpMethod.GET, request, String.class);
+//            log.info("experiment topo: {}", response.getBody().toString());
+//            return "data:image/png;base64," + response.getBody();
+//        } catch (Exception e) {
+//            log.error("Error getting topology thumbnail", e.getMessage());
+//            return "";
+//        }
+//    }
+
+    @RequestMapping(value = "/get_topology/{teamName}/{expId}", method=RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public byte[] getTopology(@PathVariable String teamName, @PathVariable String expId) {
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
             ResponseEntity response = restTemplate.exchange(properties.getTopology(teamName, expId), HttpMethod.GET, request, String.class);
-            return "data:image/png;base64," + response.getBody().toString();
+            log.info("experiment topo: {}", response.getBody().toString());
+            return Base64.decodeBase64(response.getBody().toString());
         } catch (Exception e) {
             log.error("Error getting topology thumbnail", e.getMessage());
-            return "";
+            return null;
         }
     }
 
