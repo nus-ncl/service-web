@@ -43,16 +43,19 @@
 				<li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a></li>
 				<li><a href="/data" th:href="@{/data}"><span th:text="#{nav.data}">Data</span></a></li>
 				<li th:if="${(session.roles != null) and (session.roles == 'ADMIN')}">
-					<a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a>
+				<a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a>
 				</li>
 				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="#{nav.help}">Support</span> <span class="caret"></span></a>
 					<ul class="dropdown-menu ">
 						<!--<li><a href="http://ncl.sg/docs-ncl/">Tutorial</a></li>-->
 						<li><a href="resources1.html" th:href="@{/resources1}">External Links</a></li>
 						<li><a href="calendar1.html" th:href="@{/calendar1}">Usage Calendar</a></li>
+						<li><a href="TestbedInformation.html" th:href="@{/TestbedInformation}">Testbed Info</a></li>
 					</ul>
 				</li>
+				<li><a href="" th:href="@{/OpenStack}"><navsmall>Switch to OpenStack</navsmall></a></li>
 			</ul>
+
 			<ul class="nav navbar-nav navbar-right dashboard-navbar-right">
 				<li class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg fa-2x"></i> <span class="caret"></span></a>
