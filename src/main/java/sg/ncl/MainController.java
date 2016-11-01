@@ -197,7 +197,10 @@ public class MainController {
         return "maintainance";
     }
 
-
+    @RequestMapping("/TestbedInformation")
+    public String TestbedInformation() {
+        return "TestbedInformation";
+    }
 
 
 //    @RequestMapping("/dataresource")
@@ -1547,13 +1550,29 @@ public class MainController {
     //--------------------------Experiment Page--------------------------
 
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
-    public String experiments(Model model, HttpSession session) {
+    public String experiments(Model model, HttpSession session)throws WebServiceRuntimeException {
 //        long start = System.currentTimeMillis();
         List<Experiment2> experimentList = new ArrayList<>();
         Map<Long, Realization> realizationMap = new HashMap<>();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                log.error("No such user: {}", session.getAttribute("id"));
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                model.addAttribute("deterUid", "Connection Error");
+            } else {
+                log.info("Show the deter user id: {}", responseBody);
+                model.addAttribute("deterUid", responseBody);
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
 
         // get list of teamids
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
 
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
@@ -1576,15 +1595,18 @@ public class MainController {
                 for (int k = 0; k < experimentsArray.length(); k++) {
                     Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
                     Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+                    System.out.println(realization.getDetails());
                     realizationMap.put(experiment2.getId(), realization);
                     experimentList.add(experiment2);
                 }
             }
         }
 
+//        model.addAttribute("qn", )
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
+
         return "experiments";
     }
 
