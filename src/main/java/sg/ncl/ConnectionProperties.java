@@ -9,6 +9,7 @@ import sg.ncl.testbed_interface.TeamStatus;
 @ConfigurationProperties(prefix = ConnectionProperties.PREFIX)
 public class ConnectionProperties {
 
+    private static final String HTTP_MODE = "http://";
     public static final String PREFIX = "ncl.web.service";
 
     private String sioAddress;
@@ -304,4 +305,10 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint + "?teamId=" + teamId;
     }
 
+    //-------------------------------------
+    // USAGE STATISTICS
+    //-------------------------------------
+    public String getUsageStatisticsByTeamId(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +realEndpoint + "/teams/" + id + "/usage";
+    }
 }
