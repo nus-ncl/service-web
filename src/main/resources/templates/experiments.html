@@ -88,16 +88,35 @@
                                                             <ol>SSH into the node by using its Qualified Name, e.g. <em>n0.demoexp.project.ncl.sg</em></ol>
                                                         </ul>
                                                         <h4>Info</h4>
-                                                        <th:block th:if="${realization.details != 'null'}">
-                                                            <form action="#">
-                                                                <textarea th:text="${realization.details}" class="realization" rows="30" cols="100"></textarea>
-                                                            </form>
+                                                        <th:block th:if="${!realization.nodesInfoMap.isEmpty()}">
+                                                            <table class="table table-responsive table-striped">
+                                                                <thead style="text-align: center;">
+                                                                    <th th:text="#{experiment.table.header.nodes}">Node</th>
+                                                                    <th th:text="#{experiment.table.header.os}">OS</th>
+                                                                    <th th:text="#{experiment.table.header.qualifiedName}">Qualified Name</th>
+                                                                </thead>
+                                                                <th:block th:each="nodesDetailsMap: ${realization.nodesInfoMap}">
+                                                                    <tr>
+                                                                        <td th:text="${nodesDetailsMap.key}"></td>
+                                                                        <td th:text="${nodesDetailsMap.value.os}"></td>
+                                                                        <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
+                                                                    </tr>
+                                                                </th:block>
+                                                            </table>
                                                         </th:block>
-                                                        <th:block th:if="${realization.details == 'null'}">
-                                                            <form action="#">
-                                                                <textarea th:text="#{form.expNotStarted}" class="realization" rows="30" cols="100"></textarea>
-                                                            </form>
+                                                        <th:block th:if="${realization.nodesInfoMap.isEmpty()}">
+                                                            <p th:text="#{form.expNotStarted}"></p>
                                                         </th:block>
+                                                        <!--<th:block th:if="${realization.details != 'null'}">-->
+                                                            <!--<form action="#">-->
+                                                                <!--<textarea th:text="${realization.details}" class="realization" rows="30" cols="100"></textarea>-->
+                                                            <!--</form>-->
+                                                        <!--</th:block>-->
+                                                        <!--<th:block th:if="${realization.details == 'null'}">-->
+                                                            <!--<form action="#">-->
+                                                                <!--<textarea th:text="#{form.expNotStarted}" class="realization" rows="30" cols="100"></textarea>-->
+                                                            <!--</form>-->
+                                                        <!--</th:block>-->
                                                     </div>
                                                 </div>
                                             </div>
