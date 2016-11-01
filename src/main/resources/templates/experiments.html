@@ -100,8 +100,9 @@
                                                                     <tr>
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
+
                                                                         <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
-                                                                        <td><i class="fa fa-floppy-o"></i></td>
+                                                                        <td><a th:href="@{/experiments/save}"><i class="fa fa-floppy-o"></i></a></td>
                                                                     </tr>
                                                                 </th:block>
                                                             </table>

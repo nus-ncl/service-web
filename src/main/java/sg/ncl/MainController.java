@@ -1777,10 +1777,9 @@ public class MainController {
 //    	return "experiment_scenario_contents";
 //    }
 
-    @RequestMapping("/experiments/save/")
-    @ModelAttribute("realizationMap")
-    public String saveImage() {
-
+    @RequestMapping(value = "/experiments/save", method = RequestMethod.POST)
+    public String saveImage(@ModelAttribute("realization") Realization realization) {
+        log.info("save image is: {}" , realization.getNodesInfoMap());
         return null;
     }
 
