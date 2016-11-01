@@ -68,6 +68,10 @@ public class MainController {
 
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
 
+    private static final String CONNECTION_ERROR = "Connection Error";
+
+    private static final String DETER_UID = "deterUid";
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -469,12 +473,12 @@ public class MainController {
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                log.error("No such user: {}", session.getAttribute("id"));
+                log.error("No user exists : {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                model.addAttribute("deterUid", "Connection Error");
+                model.addAttribute(DETER_UID,  CONNECTION_ERROR);
             } else {
                 log.info("Show the deter user id: {}", responseBody);
-                model.addAttribute("deterUid", responseBody);
+                model.addAttribute(DETER_UID, responseBody);
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -752,7 +756,7 @@ public class MainController {
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                log.error("No such user: {}", session.getAttribute("id"));
+                log.error("No user to edit : {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 throw new RestClientException("[" + error.getError() + "] ");
             } else {
@@ -1561,12 +1565,12 @@ public class MainController {
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                log.error("No such user: {}", session.getAttribute("id"));
+                log.error("No user to get experiment: {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                model.addAttribute("deterUid", "Connection Error");
+                model.addAttribute(DETER_UID, CONNECTION_ERROR);
             } else {
                 log.info("Show the deter user id: {}", responseBody);
-                model.addAttribute("deterUid", responseBody);
+                model.addAttribute(DETER_UID, responseBody);
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2651,7 +2655,7 @@ public class MainController {
     // in the case where the JSON Strings are null, return "Connection Error"
     private String getJSONStr(String jsonString) {
         if (jsonString == null || jsonString.isEmpty()) {
-            return "Connection Error";
+            return CONNECTION_ERROR;
         }
         return jsonString;
     }
