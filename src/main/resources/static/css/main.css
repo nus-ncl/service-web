@@ -2377,3 +2377,49 @@ h13{
     color: #eb6166;
 
 }
+
+/* for events */
+
+.button {
+    background-color: #1eafbb;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    alignment-adjust:right;
+
+}
+
+h30{
+    color :#000;
+    font-weight:300;
+}
+
+h31{
+    color :#2D2D2D;
+    font-weight:300;
+    font-size:24px;
+}
+
+.backgroundevent {
+    border: 1px #333 solid;
+    padding : 25px;
+
+
+}
+
+
+h32 {
+    font-weight: bold;
+    color : #21b3b7;
+}
+
+h33{
+    color : #F00;
+
+}
