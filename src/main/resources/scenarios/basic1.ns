@@ -1,0 +1,13 @@
+# This is a simple experiment, containing only one node
+
+set ns [new Simulator]
+source tb_compat.tcl
+
+# Add a node
+set n0 [$ns node]
+
+# Set node OS
+tb-set-node-os $n0 Ubuntu1404-64-STD
+
+$ns rtproto Static
+$ns run
