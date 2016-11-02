@@ -1633,7 +1633,6 @@ public class MainController {
                 for (int k = 0; k < experimentsArray.length(); k++) {
                     Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
                     Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-                    System.out.println(realization.getDetails());
                     realizationMap.put(experiment2.getId(), realization);
                     experimentList.add(experiment2);
                 }
@@ -2859,7 +2858,7 @@ public class MainController {
     private Realization invokeAndExtractRealization(String teamName, Long id) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response;
+        ResponseEntity response = null;
 
         try {
             log.info("retrieving the latest exp status: {}", properties.getRealizationByTeam(teamName, id.toString()));
@@ -2883,12 +2882,13 @@ public class MainController {
             } else {
                 return extractRealization(responseBody);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             return getCleanRealization();
         }
     }
 
     private Realization extractRealization(String json) {
+        log.info("extracting realization: {}", json);
         Realization realization = new Realization();
         JSONObject object = new JSONObject(json);
 
@@ -2901,9 +2901,13 @@ public class MainController {
         String exp_report = "";
         Object expDetailsObject = object.get("details");
 
-        if (expDetailsObject == null) {
+        log.info("exp detail object: {}", expDetailsObject);
+
+        if (expDetailsObject == JSONObject.NULL) {
+            log.info("set details empty");
             realization.setDetails("");
         } else {
+            log.info("exp report to string: {}", expDetailsObject.toString());
             exp_report = expDetailsObject.toString();
             realization.setDetails(exp_report);
 
