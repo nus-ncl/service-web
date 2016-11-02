@@ -179,6 +179,12 @@ public class MainController {
         return "jointeam";
     }
 
+
+    @RequestMapping("/Error_OpenStack")
+    public String Error_OpenStack() {
+        return "Error_OpenStack";
+    }
+
 //    @RequestMapping("/resource2")
 //    public String resource2() {
 //        return "resource2";

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>National Cybersecurity Laboratories - Error</title>
+
+		<object th:include="fragments/header :: header" th:remove="tag" />
+	</head>
+<body>
+
+
+<!-- main nav -->
+<div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+
+	<section id="joinUs" class="join-us">
+		<div class="container" >
+			<div class="row">
+				<div class="box effect5">
+					<div class="heading text-center col-sm-12">
+						<h4>Currently, we are in the progress of integrating OpenStack with our systems.<p>&nbsp;</p>
+
+							If you are interested to find out more, email us at <strong>support@ncl.sg </strong></h4>
+						<h4>Thank you for your cooperation.</h4>
+						<p>&nbsp;</p>
+
+						<a class="btn btn-lg btn-standard" href="mailto:support@ncl.sg">Email Us</a>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+						<p>&nbsp;</p>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div th:replace="fragments/footer :: footer"></div>
+	<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+</body>
+</html>
