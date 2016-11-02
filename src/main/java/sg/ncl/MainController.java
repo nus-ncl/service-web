@@ -2899,12 +2899,26 @@ public class MainController {
         realization.setState(object.getString("state"));
 
         String exp_report = "";
+        Object expDetailsObject = object.get("details");
 
-        if (object.get("details") == null) {
+        if (expDetailsObject == null) {
             realization.setDetails("");
         } else {
-            exp_report = object.get("details").toString().replaceAll("@", "\\\r\\\n");
+            exp_report = expDetailsObject.toString();
             realization.setDetails(exp_report);
+
+            JSONObject nodesInfoObject = new JSONObject(expDetailsObject.toString());
+
+            for (Object key : nodesInfoObject.keySet()) {
+                Map<String, String> nodeDetails = new HashMap<>();
+                String nodeName = (String) key;
+                JSONObject nodeDetailsJson = new JSONObject(nodesInfoObject.get(nodeName).toString());
+                nodeDetails.put("os", nodeDetailsJson.getString("os"));
+                nodeDetails.put("qualifiedName", nodeDetailsJson.getString("qualifiedName"));
+                nodeDetails.put("nodeId", nodeDetailsJson.getString("nodeId"));
+                realization.addNodeDetails(nodeName, nodeDetails);
+            }
+            log.info("nodes info object: {}", nodesInfoObject);
         }
 
         return realization;
