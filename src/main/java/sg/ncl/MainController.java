@@ -1777,12 +1777,6 @@ public class MainController {
 //    	return "experiment_scenario_contents";
 //    }
 
-    @RequestMapping(value = "/experiments/save", method = RequestMethod.POST)
-    public String saveImage(@ModelAttribute("realization") Realization realization) {
-        log.info("save image is: {}" , realization.getNodesInfoMap());
-        return null;
-    }
-
     @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}")
     public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId, @PathVariable String expId, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
         // TODO check userid is indeed the experiment owner or team owner
