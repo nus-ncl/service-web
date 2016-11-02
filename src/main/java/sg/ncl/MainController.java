@@ -2,7 +2,6 @@ package sg.ncl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.ser.impl.IteratorSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -2858,14 +2857,15 @@ public class MainController {
         realization.setState(object.getString("state"));
 
         String exp_report = "";
+        Object expDetailsObject = object.get("details");
 
-        if (object.get("details") == null) {
+        if (expDetailsObject == null) {
             realization.setDetails("");
         } else {
-            exp_report = object.get("details").toString();
+            exp_report = expDetailsObject.toString();
             realization.setDetails(exp_report);
 
-            JSONObject nodesInfoObject = new JSONObject(object.get("details").toString());
+            JSONObject nodesInfoObject = new JSONObject(expDetailsObject.toString());
 
             for (Object key : nodesInfoObject.keySet()) {
                 Map<String, String> nodeDetails = new HashMap<>();
