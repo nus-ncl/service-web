@@ -84,7 +84,7 @@
                                                     <div class="modal-body team-owner-info-body">
                                                         <h4>Instructions to Access Nodes</h4>
                                                         <ul>
-                                                            <ol>SSH into <strong><span th:text="${deterUid}"></span></strong> users</ol>
+                                                            <ol>SSH into <strong><span th:text="${deterUid}"></span></strong>@users.ncl.sg</ol>
                                                             <ol>SSH into the node by using its Qualified Name, e.g. <em>n0.demoexp.project.ncl.sg</em></ol>
                                                         </ul>
                                                         <h4>Info</h4>
@@ -167,7 +167,7 @@
                     <form>
                         <ul>
                             <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
-                            <li><i class=""></i><span>Email:</span><a href="mailto:support@ncl.sg"> support@ncl.sg</a></li>
+                            <li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
                             <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
                         </ul>
                         <p>&nbsp;</p>
