@@ -180,9 +180,9 @@ public class MainController {
     }
 
 
-    @RequestMapping("/Error_OpenStack")
-    public String Error_OpenStack() {
-        return "Error_OpenStack";
+    @RequestMapping("/error_openstack")
+    public String error_openstack() {
+        return "error_openstack";
     }
 
 //    @RequestMapping("/resource2")
