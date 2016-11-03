@@ -42,7 +42,7 @@ public class ExperimentManager {
         exp01.setNodesCount(7);
         exp01.setHoursIdle(2);
         exp01.setExperimentOwnerId(JOHN_DOE);
-        exp01.setScenarioFileName("basic.ns");
+        exp01.setScenarioFileName("basic1.ns");
     	String exp01Config = getScenarioContents(exp01.getScenarioFileName());
     	exp01.setScenarioContents(exp01Config);
         
@@ -56,7 +56,7 @@ public class ExperimentManager {
         exp02.setNodesCount(7);
         exp02.setHoursIdle(2);
         exp02.setExperimentOwnerId(JOHN_DOE);
-        exp02.setScenarioFileName("basic.ns");
+        exp02.setScenarioFileName("basic1.ns");
     	String exp02Config = getScenarioContents(exp01.getScenarioFileName());
     	exp02.setScenarioContents(exp02Config);
         
@@ -70,7 +70,7 @@ public class ExperimentManager {
         exp03.setNodesCount(7);
         exp03.setHoursIdle(2);
         exp03.setExperimentOwnerId(JOHN_DOE);
-        exp03.setScenarioFileName("basic.ns");
+        exp03.setScenarioFileName("basic1.ns");
     	String exp03Config = getScenarioContents(exp01.getScenarioFileName());
     	exp03.setScenarioContents(exp03Config);
         

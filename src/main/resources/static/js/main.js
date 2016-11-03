@@ -175,23 +175,27 @@ $(document).ready(function() {
 
 // display the ns file content when users select the predefined scenarios
 function displayNsContent() {
-	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
-	var basic2 = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset attacker [$ns node]\r\nset victim [$ns node]\r\n\r\nset lan0 [$ns make-lan \"$attacker $victim\" 100Mb 0ms]\r\n\r\ntb-set-node-os $attacker Ubuntu1404-64-STD\r\ntb-set-node-os $victim Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
-	var basic3 = "# This script contains only three nodes.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\nset node1 [$ns node]\r\nset node2 [$ns node]\r\nset node3 [$ns node]\r\n\r\nset lan0 [$ns make-lan \"$node1 $node2 $node3\" 100Mb 0ms]\r\n\r\ntb-set-node-os $node1 Ubuntu1404-64-STD\r\ntb-set-node-os $node2 Ubuntu1404-64-STD\r\ntb-set-node-os $node3 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n$ns run";
+	var basic1 = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic2 = "# This is a simple experiment with 2 nodes and 10Gb link\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset n0 [$ns node]\r\nset n1 [$ns node]\r\n\r\n# Add link (use default values)\r\nset link0 [$ns duplex-link $n0 $n1 10Gb 0ms DropTail]\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic3 = "# This is a simple experiment with 3 nodes in a LAN\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset node0 [$ns node]\r\nset node1 [$ns node]\r\nset node2 [$ns node]\r\n\r\n# Make LAN\r\nset lan0 [$ns make-lan \"$node0 $node1 $node2\" 10Gb 0ms]\r\n\r\n$ns rtproto Static\r\n$ns run";
+	var basic4 = "# This is a simple experiment with 2 nodes and customized link specification\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset n0 [$ns node]\r\nset n1 [$ns node]\r\n\r\n# Add link and specify link properties\r\nset link0 [$ns duplex-link $n0 $n1 100Mb 200ms DropTail]\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	var x = document.getElementById("selectExpScenario").value;
 	var file = "";
 	switch(x) {
-		case "Scenario 1 - A single node":
-			file = basic;
+		case "Scenario 1 - Experiment with a single node":
+			file = basic1;
 			break;
-		case "Scenario 2 - Two nodes linked with a 10Gbps link":
+		case "Scenario 2 - Experiment with 2 nodes and 10Gb link":
 			file = basic2;
 			break;
-		case "Scenario 3 - Three nodes in a star topology":
+		case "Scenario 3 - Experiment with 3 nodes in a LAN":
 			file = basic3;
 			break;
+		case "Scenario 4 - Experiment with 2 nodes and customized link property":
+			file = basic4;
+			break;
 		default:
-			file = basic;
+			file = basic1;
 			break;
 	}
 
@@ -200,7 +204,7 @@ function displayNsContent() {
 
 // display the default ns file content
 function displayDefaultNsContent() {
-	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	document.getElementById("networkConfig").innerHTML = basic;
 }
 
@@ -826,26 +830,29 @@ for ( i in settings.buttons ) {
 	}
 }
 
-
 // display the ns file content when users select the predefined scenarios
 function displayNsContent() {
-	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
-	var basic2 = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset attacker [$ns node]\r\nset victim [$ns node]\r\n\r\nset lan0 [$ns make-lan \"$attacker $victim\" 100Mb 0ms]\r\n\r\ntb-set-node-os $attacker Ubuntu1404-64-STD\r\ntb-set-node-os $victim Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
-	var basic3 = "# This script contains only three nodes.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\nset node1 [$ns node]\r\nset node2 [$ns node]\r\nset node3 [$ns node]\r\n\r\nset lan0 [$ns make-lan \"$node1 $node2 $node3\" 100Mb 0ms]\r\n\r\ntb-set-node-os $node1 Ubuntu1404-64-STD\r\ntb-set-node-os $node2 Ubuntu1404-64-STD\r\ntb-set-node-os $node3 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n$ns run";
+	var basic1 = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic2 = "# This is a simple experiment with 2 nodes and 10Gb link\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset n0 [$ns node]\r\nset n1 [$ns node]\r\n\r\n# Add link (use default values)\r\nset link0 [$ns duplex-link $n0 $n1 10Gb 0ms DropTail]\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic3 = "# This is a simple experiment with 3 nodes in a LAN\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset node0 [$ns node]\r\nset node1 [$ns node]\r\nset node2 [$ns node]\r\n\r\n# Make LAN\r\nset lan0 [$ns make-lan \"$node0 $node1 $node2\" 10Gb 0ms]\r\n\r\n$ns rtproto Static\r\n$ns run";
+	var basic4 = "# This is a simple experiment with 2 nodes and customized link specification\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset n0 [$ns node]\r\nset n1 [$ns node]\r\n\r\n# Add link and specify link properties\r\nset link0 [$ns duplex-link $n0 $n1 100Mb 200ms DropTail]\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	var x = document.getElementById("selectExpScenario").value;
 	var file = "";
 	switch(x) {
-		case "Scenario 1 - A single node":
-			file = basic;
+		case "Scenario 1 - Experiment with a single node":
+			file = basic1;
 			break;
-		case "Scenario 2 - Two nodes linked with a 10Gbps link":
+		case "Scenario 2 - Experiment with 2 nodes and 10Gb link":
 			file = basic2;
 			break;
-		case "Scenario 3 - Three nodes in a star topology":
+		case "Scenario 3 - Experiment with 3 nodes in a LAN":
 			file = basic3;
 			break;
+		case "Scenario 4 - Experiment with 2 nodes and customized link property":
+			file = basic4;
+			break;
 		default:
-			file = basic;
+			file = basic1;
 			break;
 	}
 
@@ -854,6 +861,6 @@ function displayNsContent() {
 
 // display the default ns file content
 function displayDefaultNsContent() {
-	var basic = "# This script contains only one node.\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\nset nodeA [$ns node]\r\n\r\ntb-set-node-os $nodeA Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
+	var basic = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	document.getElementById("networkConfig").innerHTML = basic;
 }

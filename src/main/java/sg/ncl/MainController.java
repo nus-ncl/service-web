@@ -2592,9 +2592,10 @@ public class MainController {
 //		}
         // FIXME: hardcode list of filenames for now
         List<String> scenarioFileNameList = new ArrayList<>();
-        scenarioFileNameList.add("Scenario 1 - A single node");
-        scenarioFileNameList.add("Scenario 2 - Two nodes linked with a 10Gbps link");
-        scenarioFileNameList.add("Scenario 3 - Three nodes in a star topology");
+        scenarioFileNameList.add("Scenario 1 - Experiment with a single node");
+        scenarioFileNameList.add("Scenario 2 - Experiment with 2 nodes and 10Gb link");
+        scenarioFileNameList.add("Scenario 3 - Experiment with 3 nodes in a LAN");
+        scenarioFileNameList.add("Scenario 4 - Experiment with 2 nodes and customized link property");
 //        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
 //        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
         log.info("Scenario file list: {}", scenarioFileNameList);
@@ -2605,14 +2606,16 @@ public class MainController {
         // FIXME: switch to better way of referencing scenario descriptions to actual filenames
         String actualScenarioFileName;
         if (scenarioFileName.contains("Scenario 1")) {
-            actualScenarioFileName = "basic.ns";
+            actualScenarioFileName = "basic1.ns";
         } else if (scenarioFileName.contains("Scenario 2")) {
             actualScenarioFileName = "basic2.ns";
         } else if (scenarioFileName.contains("Scenario 3")) {
             actualScenarioFileName = "basic3.ns";
+        } else if (scenarioFileName.contains("Scenario 4")) {
+            actualScenarioFileName = "basic4.ns";
         } else {
             // defaults to basic single node
-            actualScenarioFileName = "basic.ns";
+            actualScenarioFileName = "basic1.ns";
         }
 
         try {

@@ -1,17 +1,14 @@
-# This script contains only one node.
+# This is a simple experiment with 2 nodes and 10Gb link
 
 set ns [new Simulator]
 source tb_compat.tcl
 
-set attacker [$ns node]
-set victim [$ns node]
+# Add nodes
+set n0 [$ns node]
+set n1 [$ns node]
 
-set lan0 [$ns make-lan "$attacker $victim" 100Mb 0ms]
-
-tb-set-node-os $attacker Ubuntu1404-64-STD
-tb-set-node-os $victim Ubuntu1404-64-STD
+# Add link between nodes (default values)
+set link0 [$ns duplex-link $n0 $n1 10Gb 0ms DropTail]
 
 $ns rtproto Static
-
-# Go!
 $ns run
