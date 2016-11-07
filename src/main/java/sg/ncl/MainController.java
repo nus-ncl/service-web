@@ -550,6 +550,7 @@ public class MainController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
 
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = null;
         try {
             response = restTemplate.exchange(properties.getPasswordResetURI(), HttpMethod.PUT, request, String.class);
@@ -565,7 +566,10 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
                 switch (exceptionState) {
                     case PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION:
-                        passwordResetForm.setErrMsg("Password reset request timed out. Please request a new reset email again.");
+                        passwordResetForm.setErrMsg("Password reset request timed out. Please request a new reset email.");
+                        break;
+                    case PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION:
+                        passwordResetForm.setErrMsg("Unknown password reset request. Please request a new reset email.");
                         break;
                     default:
                         passwordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
