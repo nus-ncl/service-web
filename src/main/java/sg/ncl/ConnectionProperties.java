@@ -311,4 +311,15 @@ public class ConnectionProperties {
     public String getUsageStatisticsByTeamId(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" +realEndpoint + "/teams/" + id + "/usage";
     }
+
+    //-------------------------------------
+    // PASSWORD RESET
+    //-------------------------------------
+    public String getPasswordResetRequestURI() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +credEndpoint + "/password/resets";
+    }
+
+    public String getPasswordResetURI() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +credEndpoint + "/password";
+    }
 }
