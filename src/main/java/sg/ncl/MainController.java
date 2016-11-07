@@ -647,6 +647,7 @@ public class MainController {
                 teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName().trim());
             } catch (TeamNotFoundException | AdapterConnectionException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
+                redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
             }
 
@@ -675,6 +676,7 @@ public class MainController {
             // logic error not suppose to reach here
             // possible if user fill up create new team but without the team name
             redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
+            redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
             return "redirect:/signup2";
         }
     }
