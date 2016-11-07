@@ -2988,10 +2988,12 @@ public class MainController {
     }
 
     private void removeSessionVariables(HttpSession session) {
+        log.info("removing session variables");
         session.removeAttribute("sessionLoggedEmail");
         session.removeAttribute("id");
         session.removeAttribute("name");
         session.removeAttribute(session_roles);
+        session.invalidate();
         AUTHORIZATION_HEADER = null;
     }
 
