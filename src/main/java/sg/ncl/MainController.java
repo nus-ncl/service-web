@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import sg.ncl.domain.*;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -515,8 +517,15 @@ public class MainController {
     //--------------------------Sign Up Page--------------------------
 
     @RequestMapping(value = "/signup2", method = RequestMethod.GET)
-    public String signup2(Model model) {
-        model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    public String signup2(Model model, HttpServletRequest request) {
+        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+        if (inputFlashMap != null) {
+            log.debug((String) inputFlashMap.get("message"));
+            model.addAttribute("signUpMergedForm", (SignUpMergedForm) inputFlashMap.get("signUpMergedForm"));
+        } else {
+            log.debug("InputFlashMap is null");
+            model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+        }
         return "signup2";
     }
 
@@ -617,9 +626,11 @@ public class MainController {
                     registerUserToDeter(mainObject);
                 } catch (TeamNotFoundException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException e) {
                     redirectAttributes.addFlashAttribute("message", e.getMessage());
+                    redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
                 } catch (Exception e) {
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                    redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
                 }
 
@@ -648,9 +659,11 @@ public class MainController {
                 registerUserToDeter(mainObject);
             } catch (TeamNotFoundException | AdapterConnectionException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
+                redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
             }
 
