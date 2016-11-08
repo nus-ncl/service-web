@@ -737,7 +737,7 @@ public class MainController {
     private String getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
         // FIXME check if team name exists
         // FIXME check for general exception?
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
 
