@@ -241,4 +241,14 @@ public class ConnectionPropertiesTest {
         String teamId = RandomStringUtils.randomAlphanumeric(20);
         assertThat(properties.getTeamImages(teamId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint() + "?teamId=" + teamId);
     }
+
+    @Test
+    public void testGetPasswordResetRequestURI() {
+        assertThat(properties.getPasswordResetRequestURI()).isEqualTo("http://"  + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getCredEndpoint() + "/password/resets");
+    }
+
+    @Test
+    public void testGetPasswordResetURI() {
+        assertThat(properties.getPasswordResetURI()).isEqualTo("http://"  + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getCredEndpoint() + "/password");
+    }
 }
