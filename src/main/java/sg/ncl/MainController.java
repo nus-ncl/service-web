@@ -57,7 +57,7 @@ public class MainController {
 //    private DatasetManager datasetManager = DatasetManager.getInstance();
 //    private NodeManager nodeManager = NodeManager.getInstance();
 
-    private String session_roles = "roles";
+//    public static String session_roles = "roles";
 
     // to know which form fields have been changed
     private User2 originalUser = null;
@@ -86,8 +86,11 @@ public class MainController {
     @Inject
     private ObjectMapper objectMapper;
 
-    @Autowired
+    @Inject
     private ConnectionProperties properties;
+
+    @Inject
+    private WebProperties webProperties;
 
     @RequestMapping("/")
     public String index() {
@@ -334,7 +337,6 @@ public class MainController {
     public String verifyEmail(@RequestParam final String id, @RequestParam final String email, @RequestParam final String key) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
 
         ObjectNode keyObject = objectMapper.createObjectNode();
         keyObject.put("key", key);
@@ -672,7 +674,7 @@ public class MainController {
      * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
      */
     private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException, ApplyNewProjectException, RegisterTeamNameDuplicateException, UsernameAlreadyExistsException, EmailAlreadyExistsException {
-        HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
+        HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
 
@@ -1157,7 +1159,7 @@ public class MainController {
         TeamManager2 teamManager2 = new TeamManager2();
 
         // get public teams
-        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+        HttpEntity<String> teamRequest = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
         String teamResponseBody = teamResponse.getBody().toString();
 
@@ -1817,7 +1819,7 @@ public class MainController {
 
         // check valid authentication to remove experiments
         if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString())) {
-            log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(session_roles));
+            log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
             redirectAttributes.addFlashAttribute("message", "An error occurred while trying to remove experiment;" + permissionDeniedMessage);
             return "redirect:/experiments";
         }
@@ -2145,7 +2147,7 @@ public class MainController {
     public String getPublicDatasets(Model model) throws Exception {
         DatasetManager datasetManager = new DatasetManager();
 
-        HttpEntity<String> dataRequest = createHttpEntityHeaderOnly();
+        HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicData(), HttpMethod.GET, dataRequest, String.class);
         String dataResponseBody = dataResponse.getBody().toString();
 
@@ -2826,7 +2828,7 @@ public class MainController {
     }
 
     private User2 invokeAndExtractUserInfo(String userId) {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity response;
 
         try {
@@ -2950,6 +2952,31 @@ public class MainController {
     }
 
     /**
+     * Creates a HttpEntity with a request body and header but no authorization header
+     * To solve the expired jwt token
+     * @param jsonString The JSON request converted to string
+     * @return A HttpEntity request
+     * @see HttpEntity createHttpEntityHeaderOnly() for request with only header
+     */
+    private HttpEntity<String> createHttpEntityWithBodyNoAuthHeader(String jsonString) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(jsonString, headers);
+    }
+
+    /**
+     * Creates a HttpEntity that contains only a header and empty body but no authorization header
+     * To solve the expired jwt token
+     * @return A HttpEntity request
+     * @see HttpEntity createHttpEntityWithBody() for request with both body and header
+     */
+    private HttpEntity<String> createHttpEntityHeaderOnlyNoAuthHeader() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(headers);
+    }
+
+    /**
      * Creates a HttpEntity with a request body and header
      *
      * @param jsonString The JSON request converted to string
@@ -2983,7 +3010,7 @@ public class MainController {
         session.setAttribute("sessionLoggedEmail", loginEmail);
         session.setAttribute("id", id);
         session.setAttribute("name", firstName);
-        session.setAttribute(session_roles, userRoles);
+        session.setAttribute(webProperties.getSessionRoles(), userRoles);
         log.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), userRoles);
     }
 
@@ -2992,14 +3019,14 @@ public class MainController {
         session.removeAttribute("sessionLoggedEmail");
         session.removeAttribute("id");
         session.removeAttribute("name");
-        session.removeAttribute(session_roles);
+        session.removeAttribute(webProperties.getSessionRoles());
         session.invalidate();
         AUTHORIZATION_HEADER = null;
     }
 
     private boolean validateIfAdmin(HttpSession session) {
-        log.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(session_roles));
-        return session.getAttribute(session_roles).equals(UserType.ADMIN.toString());
+        log.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(webProperties.getSessionRoles()));
+        return session.getAttribute(webProperties.getSessionRoles()).equals(UserType.ADMIN.toString());
     }
 
     /**
