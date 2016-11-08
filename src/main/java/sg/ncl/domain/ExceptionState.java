@@ -30,7 +30,8 @@ public enum ExceptionState {
     EMAIL_ALREADY_EXISTS_EXCEPTION("EmailAlreadyExistsException"),
     FORBIDDEN_EXCEPTION("ForbiddenException"),
     PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION("PasswordResetRequestTimeoutException"),
-    PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION("PasswordResetRequestNotFoundException");
+    PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION("PasswordResetRequestNotFoundException"),
+    ADAPTER_DETERLAB_CONNECT_EXCEPTION("AdapterDeterlabConnectException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 
