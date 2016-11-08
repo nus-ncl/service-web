@@ -1,6 +1,5 @@
 package sg.ncl;
 
-import com.sun.deploy.net.HttpResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -27,7 +26,6 @@ import javax.inject.Inject;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
