@@ -1,6 +1,5 @@
 package sg.ncl;
 
-import com.sun.deploy.net.HttpResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 import org.junit.Before;
