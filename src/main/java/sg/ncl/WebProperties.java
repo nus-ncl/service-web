@@ -16,4 +16,7 @@ public class WebProperties {
     public static final String PREFIX = "ncl.web.service.shared";
 
     private String sessionRoles;
+    private String sessionEmail;
+    private String sessionUserId;
+    private String sessionUserFirstName;
 }

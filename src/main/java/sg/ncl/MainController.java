@@ -3007,25 +3007,25 @@ public class MainController {
 
     private void setSessionVariables(HttpSession session, String loginEmail, String id, String firstName, String userRoles) {
         User2 user = invokeAndExtractUserInfo(id);
-        session.setAttribute("sessionLoggedEmail", loginEmail);
-        session.setAttribute("id", id);
-        session.setAttribute("name", firstName);
+        session.setAttribute(webProperties.getSessionEmail(), loginEmail);
+        session.setAttribute(webProperties.getSessionUserId(), id);
+        session.setAttribute(webProperties.getSessionUserFirstName(), firstName);
         session.setAttribute(webProperties.getSessionRoles(), userRoles);
         log.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), userRoles);
     }
 
     private void removeSessionVariables(HttpSession session) {
         log.info("removing session variables");
-        session.removeAttribute("sessionLoggedEmail");
-        session.removeAttribute("id");
-        session.removeAttribute("name");
+        session.removeAttribute(webProperties.getSessionEmail());
+        session.removeAttribute(webProperties.getSessionUserId());
+        session.removeAttribute(webProperties.getSessionUserFirstName());
         session.removeAttribute(webProperties.getSessionRoles());
         session.invalidate();
         AUTHORIZATION_HEADER = null;
     }
 
     private boolean validateIfAdmin(HttpSession session) {
-        log.info("User: {} is logged on as: {}", session.getAttribute("sessionLoggedEmail"), session.getAttribute(webProperties.getSessionRoles()));
+        log.info("User: {} is logged on as: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionRoles()));
         return session.getAttribute(webProperties.getSessionRoles()).equals(UserType.ADMIN.toString());
     }
 
