@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -19,11 +21,13 @@ import java.util.Map;
  * @author Te Ye
  */
 @Controller
+@Slf4j
 public class AppErrorController implements ErrorController {
 
     /**
      * Error Attributes in the Application
      */
+    private WebProperties webProperties;
     private ErrorAttributes errorAttributes;
     private final static String ERROR_PATH = "/error";
 
@@ -31,8 +35,9 @@ public class AppErrorController implements ErrorController {
      * Controller for the Error Controller
      * @param errorAttributes
      */
-    public AppErrorController(ErrorAttributes errorAttributes) {
+    public AppErrorController(ErrorAttributes errorAttributes, WebProperties webProperties) {
         this.errorAttributes = errorAttributes;
+        this.webProperties = webProperties;
     }
 
     /**
@@ -41,7 +46,8 @@ public class AppErrorController implements ErrorController {
      * @return
      */
     @RequestMapping(value = ERROR_PATH, produces = "text/html")
-    public ModelAndView errorHtml(HttpServletRequest request) {
+    public ModelAndView errorHtml(HttpServletRequest request, HttpSession session) {
+        removeSessionVariables(session);
         return new ModelAndView("error", getErrorAttributes(request, false));
     }
 
@@ -91,5 +97,14 @@ public class AppErrorController implements ErrorController {
             }
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    private void removeSessionVariables(HttpSession session) {
+        session.removeAttribute(webProperties.getSessionEmail());
+        session.removeAttribute(webProperties.getSessionUserId());
+        session.removeAttribute(webProperties.getSessionUserFirstName());
+        session.removeAttribute(webProperties.getSessionRoles());
+        session.invalidate();
+        log.info("Encounter error page...session invalidated");
     }
 }
