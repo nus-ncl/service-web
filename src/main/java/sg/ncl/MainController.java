@@ -62,8 +62,6 @@ public class MainController {
     // to know which form fields have been changed
     private User2 originalUser = null;
 
-    private String AUTHORIZATION_HEADER = null;
-
     private static final String CONTACT_EMAIL = "support@ncl.sg";
 
     // error messages
@@ -91,6 +89,9 @@ public class MainController {
 
     @Inject
     private WebProperties webProperties;
+
+    @Inject
+    private HttpSession httpScopedSession;
 
     @RequestMapping("/")
     public String index() {
@@ -440,9 +441,6 @@ public class MainController {
             return "login";
         }
 
-
-        AUTHORIZATION_HEADER = "Bearer " + token;
-
         // now check user status to decide what to show to the user
         User2 user = invokeAndExtractUserInfo(id);
 
@@ -457,7 +455,7 @@ public class MainController {
                 return "redirect:/team_application_under_review";
             } else if ((UserStatus.APPROVED.toString()).equals(userStatus)) {
                 // set session variables
-                setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), role);
+                setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), role, token);
                 log.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
                 return "redirect:/dashboard";
             } else {
@@ -483,13 +481,13 @@ public class MainController {
     public String dashboard(Model model, HttpSession session) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute(webProperties.getSessionUserId()).toString()), HttpMethod.GET, request, String.class);
 
         String responseBody = response.getBody().toString();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                log.error("No user exists : {}", session.getAttribute("id"));
+                log.error("No user exists : {}", session.getAttribute(webProperties.getSessionUserId()));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 model.addAttribute(DETER_UID,  CONNECTION_ERROR);
             } else {
@@ -501,8 +499,8 @@ public class MainController {
         }
 
         // retrieve user dashboard stats
-        Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute("id").toString());
-        List<TeamUsageInfo> usageInfoList = getTeamsUsageStatisticsForUser(session.getAttribute("id").toString());
+        Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute(webProperties.getSessionUserId()).toString());
+        List<TeamUsageInfo> usageInfoList = getTeamsUsageStatisticsForUser(session.getAttribute(webProperties.getSessionUserId()).toString());
         model.addAttribute("userDashboardMap", userDashboardMap);
         model.addAttribute("usageInfoList", usageInfoList);
         return "dashboard";
@@ -1614,6 +1612,7 @@ public class MainController {
         List<Experiment2> experimentList = new ArrayList<>();
         Map<Long, Realization> realizationMap = new HashMap<>();
         HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
 
         String responseBody = response.getBody().toString();
@@ -1622,6 +1621,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 log.error("No user to get experiment: {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                log.info("experiment error: {} - {} - {} - user token:{}", error.getError(), error.getMessage(), error.getLocalizedMessage(), httpScopedSession.getAttribute(webProperties.getSessionJwtToken()));
                 model.addAttribute(DETER_UID, CONNECTION_ERROR);
             } else {
                 log.info("Show the deter user id: {}", responseBody);
@@ -3000,7 +3000,7 @@ public class MainController {
     private HttpEntity<String> createHttpEntityWithBody(String jsonString) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
+        headers.set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
         return new HttpEntity<>(jsonString, headers);
     }
 
@@ -3014,17 +3014,18 @@ public class MainController {
     private HttpEntity<String> createHttpEntityHeaderOnly() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", AUTHORIZATION_HEADER);
+        headers.set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
         return new HttpEntity<>(headers);
     }
 
-    private void setSessionVariables(HttpSession session, String loginEmail, String id, String firstName, String userRoles) {
+    private void setSessionVariables(HttpSession session, String loginEmail, String id, String firstName, String userRoles, String token) {
         User2 user = invokeAndExtractUserInfo(id);
         session.setAttribute(webProperties.getSessionEmail(), loginEmail);
         session.setAttribute(webProperties.getSessionUserId(), id);
         session.setAttribute(webProperties.getSessionUserFirstName(), firstName);
         session.setAttribute(webProperties.getSessionRoles(), userRoles);
-        log.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}", loginEmail, id, user.getFirstName(), userRoles);
+        session.setAttribute(webProperties.getSessionJwtToken(), "Bearer " + token);
+        log.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}, token: {}", loginEmail, id, user.getFirstName(), userRoles, token);
     }
 
     private void removeSessionVariables(HttpSession session) {
@@ -3033,8 +3034,8 @@ public class MainController {
         session.removeAttribute(webProperties.getSessionUserId());
         session.removeAttribute(webProperties.getSessionUserFirstName());
         session.removeAttribute(webProperties.getSessionRoles());
+        session.removeAttribute(webProperties.getSessionJwtToken());
         session.invalidate();
-        AUTHORIZATION_HEADER = null;
     }
 
     private boolean validateIfAdmin(HttpSession session) {
