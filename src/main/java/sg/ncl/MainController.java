@@ -57,8 +57,6 @@ public class MainController {
 //    private DatasetManager datasetManager = DatasetManager.getInstance();
 //    private NodeManager nodeManager = NodeManager.getInstance();
 
-//    public static String session_roles = "roles";
-
     // to know which form fields have been changed
     private User2 originalUser = null;
 

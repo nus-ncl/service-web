@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author by Te Ye
@@ -13,14 +14,8 @@ import javax.inject.Inject;
 @Configuration("sg.ncl.AppConfig")
 public class AppConfig {
 
-    @Inject
-    private ErrorAttributes errorAttributes;
-
-    @Inject
-    private WebProperties webProperties;
-
     @Bean
-    public AppErrorController appErrorController() {
+    public AppErrorController appErrorController(@NotNull ErrorAttributes errorAttributes, @NotNull WebProperties webProperties) {
         return new AppErrorController(errorAttributes, webProperties);
     }
 
