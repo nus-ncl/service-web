@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  */
 @Configuration("sg.ncl.AppConfig")
 public class AppConfig {
-    
+
     @Bean
     public AppErrorController appErrorController(@NotNull ErrorAttributes errorAttributes, @NotNull WebProperties webProperties) {
         return new AppErrorController(errorAttributes, webProperties);
