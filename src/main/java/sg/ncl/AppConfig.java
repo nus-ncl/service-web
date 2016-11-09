@@ -14,15 +14,9 @@ import javax.validation.constraints.NotNull;
  */
 @Configuration("sg.ncl.AppConfig")
 public class AppConfig {
-
-    @Autowired
-    private ErrorAttributes errorAttributes;
-
-    @Inject
-    private WebProperties webProperties;
-
+    
     @Bean
-    public AppErrorController appErrorController() {
+    public AppErrorController appErrorController(@NotNull ErrorAttributes errorAttributes, @NotNull WebProperties webProperties) {
         return new AppErrorController(errorAttributes, webProperties);
     }
 
