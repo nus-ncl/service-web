@@ -38,10 +38,10 @@ public class SignUpMergedForm {
     private String institution;
 
     @NotEmpty(message = "Institution Abbreviation cannot be empty")
-    private String institutionAbbreviation;
+    private String institutionAbbreviation = "wsabbrev";
 
     @NotEmpty(message = "Website cannot be empty")
-    private String website;
+    private String website = "http://ws.com";
 
     @NotEmpty(message = "Address 1 cannot be empty")
     private String address1 = "wsaddress1";
@@ -52,14 +52,14 @@ public class SignUpMergedForm {
     private String country;
 
     @NotEmpty(message = "City cannot be empty")
-    private String city;
+    private String city = "wssg";
 
     @NotEmpty(message = "Province cannot be empty")
-    private String province;
+    private String province = "wssg";
 
     @Pattern(regexp="^[0-9]*$", message = "Postal code cannot have special characters" )
     @Range(min=6, message="Postal code minimum 6 digits")
-    private String postalCode;
+    private String postalCode = "00000000";
     
     // Create New Team Fields
     @Pattern(regexp="^[a-zA-Z0-9]*$", message="Team name cannot have special characters")
