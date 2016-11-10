@@ -329,7 +329,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model model) {
+    public String login(Model model, HttpSession session) {
         model.addAttribute("loginForm", new LoginForm());
         return "login";
     }
@@ -2796,6 +2796,10 @@ public class MainController {
      * @return True if the user is anything but APPROVED, false otherwise
      */
     private boolean isMemberJoinRequestPending(String loginUserId, String json) {
+        if (json == null) {
+            return true;
+        }
+
         JSONObject object = new JSONObject(json);
         JSONArray membersArray = object.getJSONArray("members");
 
@@ -3029,7 +3033,7 @@ public class MainController {
     }
 
     private void removeSessionVariables(HttpSession session) {
-        log.info("removing session variables");
+        log.info("removing session variables: email: {}, userid: {}, user first name: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionUserId()), session.getAttribute(webProperties.getSessionUserFirstName()));
         session.removeAttribute(webProperties.getSessionEmail());
         session.removeAttribute(webProperties.getSessionUserId());
         session.removeAttribute(webProperties.getSessionUserFirstName());
