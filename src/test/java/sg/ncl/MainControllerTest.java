@@ -4,8 +4,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -25,6 +30,7 @@ import javax.inject.Inject;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
@@ -47,13 +53,15 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 public class MainControllerTest {
 
+    @Rule
+    public MockitoRule mockito = MockitoJUnit.rule();
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
 //    @Bean
 //    RestTemplate restTemplate() {
 //        return Mockito.mock(RestTemplate.class);
 //    }
-
-    @Inject
-    MainController mainController;
 
     private MockMvc mockMvc;
 //    private RestTemplate restTemplate;
@@ -67,6 +75,9 @@ public class MainControllerTest {
 
     @Inject
     private WebApplicationContext webApplicationContext;
+
+    @Mock
+    private WebProperties webProperties;
 
     @Before
     public void setUp() throws Exception {
@@ -360,12 +371,14 @@ public class MainControllerTest {
         JSONObject predefinedUserJson = Util.createUserJson();
         String predefinedJsonStr = predefinedUserJson.toString();
 
+        when(webProperties.getSessionJwtToken()).thenReturn("token");
+
         // uri must be equal to that defined in MainController
         mockServer.expect(requestTo(properties.getSioUsersUrl() + "null"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
-        MvcResult result = mockMvc.perform(get("/account_settings"))
+        MvcResult result = mockMvc.perform(get("/account_settings").sessionAttr(webProperties.getSessionJwtToken(), "1234"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("account_settings"))
                 .andExpect(model().attribute("editUser", hasProperty("id", is(predefinedUserJson.getString("id")))))

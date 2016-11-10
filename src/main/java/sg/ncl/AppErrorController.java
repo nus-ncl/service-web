@@ -104,6 +104,7 @@ public class AppErrorController implements ErrorController {
         session.removeAttribute(webProperties.getSessionUserId());
         session.removeAttribute(webProperties.getSessionUserFirstName());
         session.removeAttribute(webProperties.getSessionRoles());
+        session.removeAttribute(webProperties.getSessionJwtToken());
         session.invalidate();
         log.info("Encounter error page...session invalidated");
     }
