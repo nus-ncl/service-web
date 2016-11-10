@@ -58,7 +58,6 @@ public class SignUpMergedForm {
     private String province = "wssg";
 
     @Pattern(regexp="^[0-9]*$", message = "Postal code cannot have special characters" )
-    @Range(min=6, message="Postal code minimum 6 digits")
     private String postalCode = "00000000";
     
     // Create New Team Fields
@@ -67,7 +66,7 @@ public class SignUpMergedForm {
 
     private String teamDescription;
     
-    private String teamWebsite;
+    private String teamWebsite = "http://wsteam.com";
     private String teamOrganizationType;
     
     // defaults to public
