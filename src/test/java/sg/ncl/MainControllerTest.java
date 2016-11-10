@@ -590,8 +590,8 @@ public class MainControllerTest {
     public void testResetPasswordNewPassword() throws Exception {
 
         mockMvc.perform(
-                get("/passwordReset?id=12345678"))
-                //    .param("id", "12345678"))
+                get("/passwordReset?key=12345678"))
+                //    .param("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
                 .andExpect(model().attributeExists("passwordResetForm"));
@@ -608,7 +608,7 @@ public class MainControllerTest {
                 post("/password_reset")
                         .param("password1", "password")
                         .param("password2", "password")
-        .sessionAttr("id", "12345678"))
+        .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_success"));
     }
@@ -624,7 +624,7 @@ public class MainControllerTest {
                 post("/password_reset")
                         .param("password1", "password")
                         .param("password2", "password")
-                        .sessionAttr("id", "12345678"))
+                        .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
         .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Password reset request timed out. Please request a new reset email."))));
@@ -642,7 +642,7 @@ public class MainControllerTest {
                 post("/password_reset")
                         .param("password1", "password")
                         .param("password2", "password")
-                        .sessionAttr("id", "12345678"))
+                        .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
                 .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Unknown password reset request. Please request a new reset email."))));
@@ -659,7 +659,7 @@ public class MainControllerTest {
                 post("/password_reset")
                         .param("password1", "password")
                         .param("password2", "password")
-                        .sessionAttr("id", "12345678"))
+                        .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
                 .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Server-side error. Please contact support@ncl.sg"))));

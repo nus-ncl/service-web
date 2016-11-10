@@ -522,10 +522,10 @@ public class MainController {
     }
 
     // triggered when user clicks password reset link in the email
-    @RequestMapping(path = "/passwordReset", params = {"id"})
-    public String passwordResetNewPassword(@NotNull @RequestParam("id") final String id, Model model, HttpSession session) {
+    @RequestMapping(path = "/passwordReset", params = {"key"})
+    public String passwordResetNewPassword(@NotNull @RequestParam("key") final String key, Model model, HttpSession session) {
         model.addAttribute("passwordResetForm", new PasswordResetForm());
-        session.setAttribute("id", id);
+        session.setAttribute("key", key);
         // redirect to the page for user to enter new password
         return "password_reset_new_password";
     }
@@ -545,7 +545,7 @@ public class MainController {
         }
 
         JSONObject obj = new JSONObject();
-        obj.put("id", session.getAttribute("id"));
+        obj.put("key", session.getAttribute("key"));
         obj.put("new", passwordResetForm.getPassword1());
 
         HttpHeaders headers = new HttpHeaders();
