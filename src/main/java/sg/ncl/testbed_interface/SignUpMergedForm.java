@@ -44,9 +44,9 @@ public class SignUpMergedForm {
     private String website;
 
     @NotEmpty(message = "Address 1 cannot be empty")
-    private String address1;
+    private String address1 = "wsaddress1";
 
-    private String address2;
+    private String address2 = "wsaddress2";
 
     @NotEmpty(message = "Country cannot be empty")
     private String country;
