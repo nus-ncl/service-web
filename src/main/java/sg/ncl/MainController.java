@@ -3033,7 +3033,7 @@ public class MainController {
     }
 
     private void removeSessionVariables(HttpSession session) {
-        log.info("removing session variables: email: {}, userid: {}, user first name: {}", webProperties.getSessionEmail(), webProperties.getSessionUserId(), webProperties.getSessionUserFirstName());
+        log.info("removing session variables: email: {}, userid: {}, user first name: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionUserId()), session.getAttribute(webProperties.getSessionUserFirstName()));
         session.removeAttribute(webProperties.getSessionEmail());
         session.removeAttribute(webProperties.getSessionUserId());
         session.removeAttribute(webProperties.getSessionUserFirstName());
