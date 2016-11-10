@@ -329,7 +329,6 @@ public class MainController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model, HttpSession session) {
-//        removeSessionVariables(session);
         model.addAttribute("loginForm", new LoginForm());
         return "login";
     }
