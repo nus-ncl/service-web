@@ -38,24 +38,24 @@ public class SignUpMergedForm {
     private String institution;
 
     @NotEmpty(message = "Institution Abbreviation cannot be empty")
-    private String institutionAbbreviation = "wsabbrev";
+    private String institutionAbbreviation = "defaultAbbrev";
 
     @NotEmpty(message = "Website cannot be empty")
-    private String website = "http://ws.com";
+    private String website = "http://default.com";
 
     @NotEmpty(message = "Address 1 cannot be empty")
-    private String address1 = "wsaddress1";
+    private String address1 = "default";
 
-    private String address2 = "wsaddress2";
+    private String address2 = "default";
 
     @NotEmpty(message = "Country cannot be empty")
     private String country;
 
     @NotEmpty(message = "City cannot be empty")
-    private String city = "wssg";
+    private String city = "default";
 
     @NotEmpty(message = "Province cannot be empty")
-    private String province = "wssg";
+    private String province = "default";
 
     @Pattern(regexp="^[0-9]*$", message = "Postal code cannot have special characters" )
     private String postalCode = "00000000";
@@ -66,7 +66,7 @@ public class SignUpMergedForm {
 
     private String teamDescription;
     
-    private String teamWebsite = "http://wsteam.com";
+    private String teamWebsite = "http://default.com";
     private String teamOrganizationType;
     
     // defaults to public
