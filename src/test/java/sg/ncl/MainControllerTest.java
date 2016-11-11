@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,13 +26,16 @@ import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import sg.ncl.domain.UserType;
+import sg.ncl.testbed_interface.User;
+import sg.ncl.testbed_interface.User2;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -67,6 +71,9 @@ public class MainControllerTest {
 //        return Mockito.mock(RestTemplate.class);
 //    }
 
+    @MockBean
+    private User2 testUser;
+
     private MockMvc mockMvc;
 //    private RestTemplate restTemplate;
     private MockRestServiceServer mockServer;
@@ -82,6 +89,9 @@ public class MainControllerTest {
 
     @Mock
     private WebProperties webProperties;
+
+    @Mock
+    private HttpSession session;
 
     @Before
     public void setUp() throws Exception {
@@ -398,16 +408,26 @@ public class MainControllerTest {
         // update the address2 to test address json
 
         JSONObject predefinedUserJson = Util.createUserJson();
+        final User2 user2 = Util.getUser();
         final String id = RandomStringUtils.randomAlphabetic(10);
         String predefinedJsonStr = predefinedUserJson.toString();
+
+        when(webProperties.getSessionUserAccount()).thenReturn("originalAccountDetails");
+        when(webProperties.getSessionJwtToken()).thenReturn("token");
+        when(webProperties.getSessionUserId()).thenReturn("id");
+        when(session.getAttribute(webProperties.getSessionUserAccount())).thenReturn(user2);
+        when(session.getAttribute(webProperties.getSessionUserId())).thenReturn(id);
+
 
         mockServer.expect(requestTo(properties.getSioUsersUrl() + id))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
         MvcResult result = mockMvc.perform(
-                post("/account_settings")
+                post("/account_settings").sessionAttr(webProperties.getSessionUserAccount(), user2).sessionAttr(webProperties.getSessionJwtToken(), "1234").sessionAttr(webProperties.getSessionUserId(), id)
                         .param("email", "apple@nus.edu.sg")
+                        .param("password", "password")
+                        .param("confirmPassword", "confirmPassword")
                         .param("firstName", "apple")
                         .param("lastName", "edited")
                         .param("phone", "12345678")
