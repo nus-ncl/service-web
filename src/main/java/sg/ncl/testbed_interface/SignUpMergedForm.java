@@ -61,7 +61,7 @@ public class SignUpMergedForm {
     private String postalCode = "00000000";
     
     // Create New Team Fields
-    @Pattern(regexp="^[a-zA-Z0-9]*$", message="Team name cannot have special characters")
+    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team name cannot have special characters")
     private String teamName;
 
     private String teamDescription;
@@ -75,7 +75,7 @@ public class SignUpMergedForm {
     private boolean hasAcceptTeamOwnerPolicy;
     
     // Join New Team Fields
-    @Pattern(regexp="^[a-zA-Z0-9]*$", message="Team name cannot have special characters")
+    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team name cannot have special characters")
     private String joinTeamName;
 
     // A way to display error messages for create new team form
