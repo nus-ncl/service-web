@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 public class PasswordResetForm {
 
+    private String key;
     private String password1;
     private String password2;
     private String errMsg;

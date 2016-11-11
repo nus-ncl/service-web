@@ -530,27 +530,27 @@ public class MainController {
 
     // triggered when user clicks password reset link in the email
     @RequestMapping(path = "/passwordReset", params = {"key"})
-    public String passwordResetNewPassword(@NotNull @RequestParam("key") final String key, Model model, HttpSession session) {
-        model.addAttribute("passwordResetForm", new PasswordResetForm());
-        session.setAttribute("key", key);
+    public String passwordResetNewPassword(@NotNull @RequestParam("key") final String key, Model model) {
+        PasswordResetForm form = new PasswordResetForm();
+        form.setKey(key);
+        model.addAttribute("passwordResetForm", form);
         // redirect to the page for user to enter new password
         return FORGET_PSWD_NEW_PSWD_PAGE;
     }
 
     // actual call to sio to reset password
     @RequestMapping(path = "/password_reset")
-    public String resetPassword(@ModelAttribute("passwordResetForm") PasswordResetForm passwordResetForm,
-                                HttpSession session) throws IOException
+    public String resetPassword(@ModelAttribute("passwordResetForm") PasswordResetForm passwordResetForm) throws IOException
     {
         if(!passwordResetForm.isPasswordOk()) {
             return FORGET_PSWD_NEW_PSWD_PAGE;
         }
 
         JSONObject obj = new JSONObject();
-        obj.put("key", session.getAttribute("key"));
+        obj.put("key", passwordResetForm.getKey());
         obj.put("new", passwordResetForm.getPassword1());
 
-        log.info("Connecting to sio for password reset, key = {}", session.getAttribute("key"));
+        log.info("Connecting to sio for password reset, key = {}", passwordResetForm.getKey());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
@@ -578,8 +578,7 @@ public class MainController {
             log.warn("Server responded error for password reset: {}", exceptionState.toString());
             return FORGET_PSWD_NEW_PSWD_PAGE;
         }
-        log.info("Password was reset, key = {}", session.getAttribute("key"));
-        session.removeAttribute("key");
+        log.info("Password was reset, key = {}", passwordResetForm.getKey());
         return "password_reset_success";
     }
 
