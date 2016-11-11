@@ -27,8 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -335,7 +337,11 @@ public class MainController {
     }
 
     @RequestMapping(value = "/emailVerification", params = {"id", "email", "key"})
-    public String verifyEmail(@RequestParam final String id, @RequestParam final String email, @RequestParam final String key) {
+    public String verifyEmail(
+            @NotNull @RequestParam("id") final String id,
+            @NotNull @RequestParam("email") final String emailBase64,
+            @NotNull @RequestParam("key") final String key
+    ) throws UnsupportedEncodingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -345,8 +351,6 @@ public class MainController {
         HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
-        // convert email to base64 code as email contains "."
-        String emailBase64 = new String(Base64.encodeBase64(email.getBytes()));
         final String link = properties.getSioUsersUrl() + id + "/emails/" + emailBase64;
         log.info("Activation link: {}, verification key {}", link, key);
         ResponseEntity response = restTemplate.exchange(link, HttpMethod.PUT, request, String.class);
