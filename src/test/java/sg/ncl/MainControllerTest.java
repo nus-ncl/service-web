@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -30,10 +31,13 @@ import javax.inject.Inject;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.core.Is.is;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -542,5 +546,122 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("method=\"post\" action=\"/teams/apply_team\"")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")))
                 .andExpect(model().attribute("teamPageApplyTeamForm", hasProperty("teamName")));
+    }
+
+    @Test
+    public void testResetPasswordEnterEmail() throws Exception {
+
+        mockMvc.perform(
+                get("/password_reset_email"))
+            .andExpect(view().name("password_reset_email"))
+            .andExpect(model().attributeExists("passwordResetRequestForm"));
+    }
+
+    @Test
+    public void testResetPasswordRequestUsernameNotFound() throws Exception {
+
+        mockServer.expect(requestTo(properties.getPasswordResetRequestURI()))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        ResultActions perform = mockMvc.perform(
+                post("/password_reset_request")
+                    .param("email", "123456@nus.edu.sg"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("passwordResetRequestForm", hasProperty("errMsg", is("Email not registered. Please use a different email address."))))
+                .andExpect(view().name("password_reset_email"));
+    }
+
+    @Test
+    public void testResetPasswordRequestGood() throws Exception {
+
+        mockServer.expect(requestTo(properties.getPasswordResetRequestURI()))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withStatus(HttpStatus.ACCEPTED));
+
+        mockMvc.perform(
+                post("/password_reset_request")
+                        .param("email", "123456@nus.edu.sg"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("password_reset_email_sent"));
+    }
+
+    @Test
+    public void testResetPasswordNewPassword() throws Exception {
+
+        mockMvc.perform(
+                get("/passwordReset?key=12345678"))
+                //    .param("key", "12345678"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("password_reset_new_password"))
+                .andExpect(model().attributeExists("passwordResetForm"));
+    }
+
+    @Test
+    public void testResetPasswordGood() throws Exception {
+
+        mockServer.expect(requestTo(properties.getPasswordResetURI()))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withStatus(HttpStatus.OK));
+
+        mockMvc.perform(
+                post("/password_reset")
+                        .param("password1", "password")
+                        .param("password2", "password")
+        .sessionAttr("key", "12345678"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("password_reset_success"));
+    }
+
+    @Test
+    public void testResetPasswordRequestTimeout() throws Exception {
+
+        mockServer.expect(requestTo(properties.getPasswordResetURI()))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withBadRequest().body("{\"error\":\"sg.ncl.service.authentication.exceptions.PasswordResetRequestTimeoutException\"}").contentType(MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(
+                post("/password_reset")
+                        .param("password1", "password")
+                        .param("password2", "password")
+                        .sessionAttr("key", "12345678"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("password_reset_new_password"))
+        .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Password reset request timed out. Please request a new reset email."))));
+    }
+
+
+    @Test
+    public void testResetPasswordUnknownRequest() throws Exception {
+
+        mockServer.expect(requestTo(properties.getPasswordResetURI()))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND).body("{\"error\":\"sg.ncl.service.authentication.exceptions.PasswordResetRequestNotFoundException\"}").contentType(MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(
+                post("/password_reset")
+                        .param("password1", "password")
+                        .param("password2", "password")
+                        .sessionAttr("key", "12345678"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("password_reset_new_password"))
+                .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Invalid password reset request. Please request a new reset email."))));
+    }
+
+    @Test
+    public void testResetPasswordServerError() throws Exception {
+
+        mockServer.expect(requestTo(properties.getPasswordResetURI()))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withServerError().body("{\"error\":\"sg.ncl.service.authentication.exceptions.AdapterDeterlabConnectException\"}").contentType(MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(
+                post("/password_reset")
+                        .param("password1", "password")
+                        .param("password2", "password")
+                        .sessionAttr("key", "12345678"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("password_reset_new_password"))
+                .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Server-side error. Please contact support@ncl.sg"))));
     }
 }
