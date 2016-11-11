@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -549,7 +550,7 @@ public class MainController {
         obj.put("key", session.getAttribute("key"));
         obj.put("new", passwordResetForm.getPassword1());
 
-        log.info("Connecting to sio for password reset...");
+        log.info("Connecting to sio for password reset, key = {}", session.getAttribute("key"));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
@@ -564,7 +565,7 @@ public class MainController {
         }
 
         if (RestUtil.isError(response.getStatusCode())) {
-            Map<ExceptionState, String> exceptionMessageMap = new HashMap<>();
+            EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<ExceptionState, String>(ExceptionState.class);
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION, "Password reset request timed out. Please request a new reset email.");
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION, "Invalid password reset request. Please request a new reset email.");
             exceptionMessageMap.put(ADAPTER_DETERLAB_CONNECT_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
@@ -577,9 +578,8 @@ public class MainController {
             log.warn("Server responded error for password reset: {}", exceptionState.toString());
             return FORGET_PSWD_NEW_PSWD_PAGE;
         }
-
+        log.info("Password was reset, key = {}", session.getAttribute("key"));
         session.removeAttribute("key");
-        log.info("Password was reset");
         return "password_reset_success";
     }
 
