@@ -59,9 +59,6 @@ public class MainController {
 //    private DatasetManager datasetManager = DatasetManager.getInstance();
 //    private NodeManager nodeManager = NodeManager.getInstance();
 
-    // to know which form fields have been changed
-    private User2 originalUser = null;
-
     private static final String CONTACT_EMAIL = "support@ncl.sg";
 
     // error messages
@@ -794,7 +791,8 @@ public class MainController {
                 throw new RestClientException("[" + error.getError() + "] ");
             } else {
                 User2 user2 = extractUserInfo(responseBody);
-                originalUser = user2;
+                // need to do this so that we can compare after submitting the form
+                session.setAttribute(webProperties.getSessionUserAccount(), user2);
                 model.addAttribute("editUser", user2);
                 return "account_settings";
             }
@@ -809,8 +807,6 @@ public class MainController {
             @ModelAttribute("editUser") User2 editUser,
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws WebServiceRuntimeException {
-        // Need to be this way to "edit" details
-        // If not, the form details will overwrite existing user's details
 
         boolean errorsFound = false;
 
@@ -853,9 +849,12 @@ public class MainController {
         }
 
         if (errorsFound) {
-            originalUser = null;
+            session.removeAttribute(webProperties.getSessionUserAccount());
             return "redirect:/account_settings";
         } else {
+            // used to compare original and edited User2 objects
+            User2 originalUser = (User2) session.getAttribute(webProperties.getSessionUserAccount());
+
             JSONObject userObject = new JSONObject();
             JSONObject userDetails = new JSONObject();
             JSONObject address = new JSONObject();
@@ -925,7 +924,7 @@ public class MainController {
                 } catch (IOException e) {
                     throw new WebServiceRuntimeException(e.getMessage());
                 } finally {
-                    originalUser = null;
+                    session.removeAttribute(webProperties.getSessionUserAccount());
                 }
             }
         }
