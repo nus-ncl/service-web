@@ -10,14 +10,14 @@ import javax.validation.constraints.Size;
 public class TeamPageApplyTeamForm {
 
     @Size(min = 2, max = 12, message = "Team name must be within 2 to 12 characters")
-    @Pattern(regexp="^[a-zA-Z0-9]*$", message ="Team name cannot have special characters")
+    @Pattern(regexp="^[a-zA-Z0-9-]*$", message ="Team name cannot have special characters")
     private String teamName;
     
     @NotEmpty(message="Team description cannot be empty")
     private String teamDescription;
 
     @NotEmpty(message = "Team website cannot be empty")
-    private String teamWebsite;
+    private String teamWebsite = "http://default.com";
 
     private String teamOrganizationType;
     
