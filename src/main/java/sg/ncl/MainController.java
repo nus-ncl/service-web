@@ -2541,7 +2541,7 @@ public class MainController {
     @RequestMapping("/join_application_submitted/{teamName}")
     public String joinTeamAppSubmit(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
         log.info("Register new user join application submitted");
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
 
