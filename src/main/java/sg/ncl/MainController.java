@@ -847,45 +847,8 @@ public class MainController {
             errorsFound = true;
         }
 
-        if (errorsFound == false && editUser.getInstitutionAbbreviation().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editInstitutionAbbrev", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getInstitutionWeb().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editInstitutionWeb", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getAddress1().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editAddress1", "fail");
-            errorsFound = true;
-        }
-
         if (errorsFound == false && editUser.getCountry().isEmpty()) {
             redirectAttributes.addFlashAttribute("editCountry", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getCity().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editCity", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getRegion().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editProvince", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getPostalCode().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editPostalCode", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && (editUser.getPostalCode().matches("(.*)[a-zA-Z](.*)") || editUser.getPostalCode().length() < 6)) {
-            // previously already check if postal code is empty
-            // now check postal code must contain only digits
-            redirectAttributes.addFlashAttribute("editPostalCode", "fail");
             errorsFound = true;
         }
 
@@ -904,15 +867,15 @@ public class MainController {
             userDetails.put("jobTitle", editUser.getJobTitle());
             userDetails.put("address", address);
             userDetails.put("institution", editUser.getInstitution());
-            userDetails.put("institutionAbbreviation", editUser.getInstitutionAbbreviation());
-            userDetails.put("institutionWeb", editUser.getInstitutionWeb());
+            userDetails.put("institutionAbbreviation", originalUser.getInstitutionAbbreviation());
+            userDetails.put("institutionWeb", originalUser.getInstitutionWeb());
 
-            address.put("address1", editUser.getAddress1());
-            address.put("address2", editUser.getAddress2());
+            address.put("address1", originalUser.getAddress1());
+            address.put("address2", originalUser.getAddress2());
             address.put("country", editUser.getCountry());
-            address.put("city", editUser.getCity());
-            address.put("region", editUser.getRegion());
-            address.put("zipCode", editUser.getPostalCode());
+            address.put("city", originalUser.getCity());
+            address.put("region", originalUser.getRegion());
+            address.put("zipCode", originalUser.getPostalCode());
 
             userObject.put("userDetails", userDetails);
 
@@ -937,29 +900,8 @@ public class MainController {
                 if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
                     redirectAttributes.addFlashAttribute("editInstitution", "success");
                 }
-                if (!originalUser.getInstitutionAbbreviation().equals(editUser.getInstitutionAbbreviation())) {
-                    redirectAttributes.addFlashAttribute("editInstitutionAbbrev", "success");
-                }
-                if (!originalUser.getInstitutionWeb().equals(editUser.getInstitutionWeb())) {
-                    redirectAttributes.addFlashAttribute("editInstitutionWeb", "success");
-                }
-                if (!originalUser.getAddress1().equals(editUser.getAddress1())) {
-                    redirectAttributes.addFlashAttribute("editAddress1", "success");
-                }
-                if (!originalUser.getAddress2().equals(editUser.getAddress2())) {
-                    redirectAttributes.addFlashAttribute("editAddress2", "success");
-                }
                 if (!originalUser.getCountry().equals(editUser.getCountry())) {
                     redirectAttributes.addFlashAttribute("editCountry", "success");
-                }
-                if (!originalUser.getCity().equals(editUser.getCity())) {
-                    redirectAttributes.addFlashAttribute("editCity", "success");
-                }
-                if (!originalUser.getRegion().equals(editUser.getRegion())) {
-                    redirectAttributes.addFlashAttribute("editProvince", "success");
-                }
-                if (!originalUser.getPostalCode().equals(editUser.getPostalCode())) {
-                    redirectAttributes.addFlashAttribute("editPostalCode", "success");
                 }
             }
 
