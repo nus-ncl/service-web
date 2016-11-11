@@ -24,23 +24,30 @@
 							</div>
                             <form action="#" th:action="@{/signup2}" method="post" role="form" th:object="${signUpMergedForm}">
                                 <!-- Account Details -->
-                                <fieldset id="step1" class="first current">
-
-			                        <!-- progressbar -->
-			                        <ul id="progressbar">
-			                            <li class="active">&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                        </ul>
-
+                                <fieldset>
 									<p class="account-change-fail" th:if="${signupError}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signupError}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('email')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{email}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('password')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{password}"></span></p>
 									<p class="account-change-fail" th:if="${(signUpMergedForm.password != null and signUpMergedForm.confirmPassword != null) and (signUpMergedForm.getIsValid() == false)}"><i class="fa fa-exclamation-circle"></i> <span th:text="#{acc.info.pwdMismatch}"></span></p>
 									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamOwnerPolicy != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamOwnerPolicy}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('firstName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{firstName}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('lastName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{lastName}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('phone')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{phone}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('jobTitle')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{jobTitle}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('institution')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institution}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('institutionAbbreviation')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institutionAbbreviation}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('address1')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{address1}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('country')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{country}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('city')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{city}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('province')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{province}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('postalCode')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{postalCode}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamName != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamName}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamDescription != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamDescription}"></span></p>
+									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamWebsite != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamWebsite}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('joinTeamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{joinTeamName}"></span></p>
 
-	                                <h3 th:text="#{signup.createAcc.header}">Create Your Account</h3>
+									<h3 th:text="#{signup.createAcc.header}">Create Your Account</h3>
 	                                <div class="form-group">
 	                                    <input type="text" class="form-control" placeholder="Email" th:field="*{email}"/>
 	                                </div>
@@ -62,37 +69,9 @@
 											<label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> I accept the <a href="acceptable_usage_policy" th:src="@{/acceptable_usage_policy}" th:text="#{signup.acceptableUsagePolicy}">Acceptable Usage Policy</a> and <a href="terms_and_conditions" th:text="#{signup.termsAndCondition}">Terms and Conditions</a></label>
 										</div>
 									</div>
-									<!--<p>&nbsp;</p>-->
-	                                <!--<div class="form-group">-->
-	                                    <!--<input type="password" class="form-control" placeholder="Confirm Password" th:field="*{confirmPassword}"/>-->
-	                                <!--</div>-->
 
-	                                <button type="button" class="btn btn-standard btn-next">Next</button>
-                                </fieldset>
-
-                                <!-- Personal Details -->
-                                <fieldset id="step2">
-                                
-			                        <!-- progressbar -->
-			                        <ul id="progressbar">
-			                            <li>&nbsp;</li>
-			                            <li class="active">&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                        </ul>
-
-									<p class="account-change-fail" th:if="${#fields.hasErrors('firstName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{firstName}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('lastName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{lastName}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('phone')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{phone}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('jobTitle')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{jobTitle}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('institution')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institution}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('institutionAbbreviation')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institutionAbbreviation}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('address1')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{address1}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('country')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{country}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('city')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{city}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('province')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{province}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('postalCode')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{postalCode}"></span></p>
-
+									<!-- personal details -->
+									<p>&nbsp;</p>
 									<h3 th:text="#{signup.personalDetails.header}">Personal Details</h3>
 									<div class="form-group row">
 										<div class="col-xs-6">
@@ -105,116 +84,63 @@
 									<div class="form-group">
 										<input type="text" class="form-control" placeholder="Phone (numbers Only)" th:field="*{phone}"/>
 									</div>
-	                                <div class="form-group">
-	                                    <input type="text" class="form-control" placeholder="Job Title" th:field="*{jobTitle}"/>
-	                                </div>
-	                                <div class="form-group">
-	                                    <input type="text" class="form-control" placeholder="Institution/Employer" th:field="*{institution}"/>
-	                                </div>
-	                                <div class="form-group">
-	                                    <input type="text" class="form-control" placeholder="Country" th:field="*{country}"/>
-	                                </div>
-									<button type="button" class="btn btn-standard btn-prev">Previous</button>
-									<button type="button" class="btn btn-standard btn-next">Next</button>
-                                </fieldset>
-                                
-                                <!-- Select to apply or join existing team -->
-                                <fieldset id="step3">
-                                
-			                        <!-- progressbar -->
-			                        <ul id="progressbar">
-			                            <li>&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                            <li class="active">&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                        </ul>
-			                        
-	                                <div class="form-group">
-	                                	<h4 th:text="#{signup.noTeam}">You need to be a part of a team to use our resources.</h4>
+									<div class="form-group">
+										<input type="text" class="form-control" placeholder="Job Title" th:field="*{jobTitle}"/>
+									</div>
+									<div class="form-group">
+										<input type="text" class="form-control" placeholder="Institution/Employer" th:field="*{institution}"/>
+									</div>
+									<div class="form-group">
+										<input type="text" class="form-control" placeholder="Country" th:field="*{country}"/>
+									</div>
+
+									<!-- select to apply new team or join team -->
+									<p>&nbsp;</p>
+									<h3 th:text="#{signup.noTeam}">text from message.properties</h3>
+									<ul class="nav nav-tabs">
+										<li class="active"><a data-toggle="pill" href="#newTeam" class="btn btn-standard">Apply a new team</a></li>
+										<li><a data-toggle="pill" href="#joinTeam" class="btn btn-standard">Apply to join an existing team</a></li>
+									</ul>
+
+									<div class="tab-content">
 										<p>&nbsp;</p>
-	                                	<div class="row">
-		                                	<div class="col-sm-6">
-		                                		<button type="button" class="btn btn-standard btn-block apply-create-team">Apply to create a new team</button>
-		                                	</div>
-		                                	<div class="col-sm-6">
-		                                		<button type="button" class="btn btn-standard btn-block apply-join-team">Apply to join an existing team</button>
-		                                	</div>
-	                                	</div>
-										<p>&nbsp;</p>
-	                                	<button type="button" class="btn btn-standard btn-prev">Previous</button>
-	                                </div>
-
-                                </fieldset>
-                                
-                                <!-- Apply to Create New Team Details -->
-                                <fieldset id="step4_1" class="last">
-                                
-			                        <!-- progressbar -->
-			                        <ul id="progressbar">
-			                            <li>&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                            <li class="active">&nbsp;</li>
-			                        </ul>
-
-									<p class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></p>
-									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamName != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamName}"></span></p>
-									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamDescription != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamDescription}"></span></p>
-									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamWebsite != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamWebsite}"></span></p>
-			                        
-                                	<h3 th:text="#{signup.applyCreateTeam.header}">Apply to create a new team</h3>
-	                                <div class="form-group">
-	                                    <input type="text" class="form-control" th:placeholder="#{form.teamName}" th:field="*{teamName}"/>
-	                                </div>
-	                                <div class="form-group">
-	                                    <input data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the description" type="text" class="form-control" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
-	                                </div>
-			                        <div class="form-group">
-			                            <label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
-			                            <select class="form-control" th:field="*{teamOrganizationType}">
-			                                <option value="Academic" th:text="#{signup.academia}">Academic</option>
-			                                <option value="Government" th:text="#{signup.government}">Government</option>
-			                                <option value="Industry" th:text="#{signup.industry}">Industry</option>
-			                            </select>
-			                        </div>
-			                        <div class="form-group">
-			                            <div class="radio">
-			                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
-			                            </div>
-			                            <div class="radio">
-			                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
-			                            </div>
-			                        </div>
-	                                <div class="form-group">
-	                                	<button type="button" class="btn btn-standard btn-prev-selection">Previous</button>
-	                                    <button type="submit" class="btn btn-special">Submit</button>
-	                                </div>
-
-                               	</fieldset>
-                               	
-                                <!-- Apply to Join Existing Team Details -->
-                                <fieldset id="step4_2" class="last">
-
-			                        <!-- progressbar -->
-			                        <ul id="progressbar">
-			                            <li>&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                            <li>&nbsp;</li>
-			                            <li class="active">&nbsp;</li>
-			                        </ul>
-
-									<p class="account-change-fail" th:if="${#fields.hasErrors('joinTeamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{joinTeamName}"></span></p>
-			                        
-                                	<h3 th:text="#{signup.joinTeam.header}">Apply to join an existing team</h3>
-			                        <div class="form-group">
-			                            <input type="text" class="form-control" placeholder="Team Name to Join" th:field="*{joinTeamName}"/> 
-			                        </div>
-	                                <div class="form-group">
-	                                	<button type="button" class="btn btn-standard btn-prev-selection">Previous</button>
-	                                    <button type="submit" class="btn btn-special">Submit</button>
-	                                </div>
-                                </fieldset>
-
+										<div id="newTeam" class="tab-pane fade in active">
+											<div class="form-group">
+												<input type="text" class="form-control" th:placeholder="#{form.teamName}" th:field="*{teamName}"/>
+											</div>
+											<div class="form-group">
+												<input data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the description" type="text" class="form-control" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
+											</div>
+											<div class="form-group">
+												<label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
+												<select class="form-control" th:field="*{teamOrganizationType}">
+													<option value="Academic" th:text="#{signup.academia}">Academic</option>
+													<option value="Government" th:text="#{signup.government}">Government</option>
+													<option value="Industry" th:text="#{signup.industry}">Industry</option>
+												</select>
+											</div>
+											<div class="form-group">
+												<div class="radio">
+													<label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
+												</div>
+												<div class="radio">
+													<label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
+												</div>
+											</div>
+											<div class="form-group">
+												<button type="submit" class="btn btn-special">Submit</button>
+											</div>
+										</div>
+										<div id="joinTeam" class="tab-pane fade">
+											<div class="form-group">
+												<input type="text" class="form-control" placeholder="Team Name to Join" th:field="*{joinTeamName}"/>
+											</div>
+											<div class="form-group">
+												<button type="submit" class="btn btn-special">Submit</button>
+											</div>
+										</div>
+									</div>
+								</fieldset>
                             </form>
                         </div> <!-- panel-body -->
                         
