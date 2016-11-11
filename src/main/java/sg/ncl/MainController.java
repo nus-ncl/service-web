@@ -715,6 +715,8 @@ public class MainController {
 
             if (errorsFound) {
                 log.warn("Signup new team error {}", signUpMergedForm.toString());
+                // clear join team name first before submitting the form
+                signUpMergedForm.setJoinTeamName(null);
                 return "/signup2";
             } else {
 
@@ -816,7 +818,7 @@ public class MainController {
                         throw new ApplyNewProjectException();
                     case REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION:
                         log.warn("Register new users new team request : team name duplicate");
-                        throw new RegisterTeamNameDuplicateException();
+                        throw new RegisterTeamNameDuplicateException("Team name already in use");
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
                         // throw from user service
                     {
@@ -986,7 +988,7 @@ public class MainController {
 
             userObject.put("userDetails", userDetails);
 
-            String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
+            String userId_uri = properties.getSioUsersUrl() + session.getAttribute(webProperties.getSessionUserId());
 
             HttpEntity<String> request = createHttpEntityWithBody(userObject.toString());
             ResponseEntity resp = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
@@ -1160,7 +1162,7 @@ public class MainController {
             return "redirect:/approve_new_user";
         }
         log.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
-        redirectAttributes.addFlashAttribute("message", "Join request has been APPROVED.");
+        redirectAttributes.addFlashAttribute("messageSuccess", "Join request has been APPROVED.");
         return "redirect:/approve_new_user";
     }
 

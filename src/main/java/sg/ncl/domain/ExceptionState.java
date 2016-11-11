@@ -15,7 +15,7 @@ public enum ExceptionState {
     EXP_NAME_ALREADY_EXISTS_EXCEPTION("ExpNameAlreadyExistsException"),
     TEAM_NOT_FOUND_EXCEPTION("TeamNotFoundException"),
     APPLY_NEW_PROJECT_EXCEPTION("ApplyNewProjectException"),
-    REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION("RegisterTeamNameDuplicateException"),
+    REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION("TeamNameDuplicateException"),
     JOIN_PROJECT_EXCEPTION("JoinProjectException"),
     EXP_START_EXCEPTION("ExpStartException"),
     EXP_DELETE_EXCEPTION("ExpDeleteException"),
