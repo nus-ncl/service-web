@@ -565,7 +565,7 @@ public class MainController {
         }
 
         if (RestUtil.isError(response.getStatusCode())) {
-            EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<ExceptionState, String>(ExceptionState.class);
+            EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION, "Password reset request timed out. Please request a new reset email.");
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION, "Invalid password reset request. Please request a new reset email.");
             exceptionMessageMap.put(ADAPTER_DETERLAB_CONNECT_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
