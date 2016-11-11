@@ -39,6 +39,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static sg.ncl.domain.ExceptionState.ADAPTER_DETERLAB_CONNECT_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION;
+
 /**
  * 
  * Spring Controller
@@ -499,6 +503,7 @@ public class MainController {
         JSONObject obj = new JSONObject();
         obj.put("username", email);
 
+        log.info("Connecting to sio for password reset email: {}", email);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
@@ -507,17 +512,18 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getPasswordResetRequestURI(), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
-            log.warn("Cannot connect to sio for password reset request: {}", e);
+            log.warn("Cannot connect to sio for password reset email: {}", e);
             passwordResetRequestForm.setErrMsg("Cannot connect. Server may be down!");
             return FORGET_PSWD_PAGE;
         }
 
         if (RestUtil.isError(response.getStatusCode())) {
-            log.warn("server responded error for password reset request: {}", response.getStatusCode());
+            log.warn("Server responded error for password reset email: {}", response.getStatusCode());
             passwordResetRequestForm.setErrMsg("Email not registered. Please use a different email address.");
             return FORGET_PSWD_PAGE;
         }
 
+        log.info("Password reset email sent for {}", email);
         return "password_reset_email_sent";
     }
 
@@ -535,13 +541,7 @@ public class MainController {
     public String resetPassword(@ModelAttribute("passwordResetForm") PasswordResetForm passwordResetForm,
                                 HttpSession session) throws IOException
     {
-        if(!passwordResetForm.getPassword1().equals(passwordResetForm.getPassword2())) {
-            passwordResetForm.setErrMsg("Password not match!");
-            return FORGET_PSWD_NEW_PSWD_PAGE;
-        }
-
-        if(passwordResetForm.getPassword1().trim().length() < 8) {
-            passwordResetForm.setErrMsg("Password too short! Minimal 8 characters.");
+        if(!passwordResetForm.isPasswordOk()) {
             return FORGET_PSWD_NEW_PSWD_PAGE;
         }
 
@@ -549,10 +549,10 @@ public class MainController {
         obj.put("key", session.getAttribute("key"));
         obj.put("new", passwordResetForm.getPassword1());
 
+        log.info("Connecting to sio for password reset...");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
-
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = null;
         try {
@@ -564,26 +564,22 @@ public class MainController {
         }
 
         if (RestUtil.isError(response.getStatusCode())) {
+            Map<ExceptionState, String> exceptionMessageMap = new HashMap<>();
+            exceptionMessageMap.put(PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION, "Password reset request timed out. Please request a new reset email.");
+            exceptionMessageMap.put(PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION, "Invalid password reset request. Please request a new reset email.");
+            exceptionMessageMap.put(ADAPTER_DETERLAB_CONNECT_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
+
             MyErrorResource error = objectMapper.readValue(response.getBody().toString(), MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-            switch (exceptionState) {
-                case PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION:
-                    passwordResetForm.setErrMsg("Password reset request timed out. Please request a new reset email.");
-                    break;
-                case PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION:
-                    passwordResetForm.setErrMsg("Unknown password reset request. Please request a new reset email.");
-                    break;
-                case ADAPTER_DETERLAB_CONNECT_EXCEPTION:
-                    passwordResetForm.setErrMsg("Server-side error. Please contact " + CONTACT_EMAIL);
-                    break;
-                default:
-                    passwordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
-            }
-            log.warn("server responded error for password reset: {}", response.getStatusCode());
+
+            final String errMsg = exceptionMessageMap.get(exceptionState) == null ? ERR_SERVER_OVERLOAD : exceptionMessageMap.get(exceptionState);
+            passwordResetForm.setErrMsg(errMsg);
+            log.warn("Server responded error for password reset: {}", exceptionState.toString());
             return FORGET_PSWD_NEW_PSWD_PAGE;
         }
 
         session.removeAttribute("key");
+        log.info("Password was reset");
         return "password_reset_success";
     }
 
