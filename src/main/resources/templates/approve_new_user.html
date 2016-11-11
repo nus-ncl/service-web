@@ -20,6 +20,9 @@
 						<div th:if="${message}">
 							<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 						</div>
+						<div th:if="${messageSuccess}">
+							<p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+						</div>
                     	<!-- user's controlled teams have some join request awaiting approval -->
                     	<th:block th:if="not ${#lists.isEmpty(joinApprovalList)}">
 	                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(joinApprovalList)}">
