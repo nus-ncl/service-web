@@ -645,7 +645,7 @@ public class MainControllerTest {
                         .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
-                .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Unknown password reset request. Please request a new reset email."))));
+                .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Invalid password reset request. Please request a new reset email."))));
     }
 
     @Test
