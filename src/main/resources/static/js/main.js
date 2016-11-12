@@ -87,14 +87,26 @@ $(document).ready(function() {
 	$('#registerApplyNewTeamBtn').on("click", function () {
 		// clear fields for Join Existing Team
 		var joinTeamNameField = document.getElementById('joinTeamName');
-		joinTeamNameField.value = joinTeamNameField.defaultValue;
+		joinTeamNameField.value = '';
 	});
 
 	$('#registerApplyJoinTeamBtn').on("click", function() {
 		// clear fields for Create New Team
 		var teamNameField = document.getElementById('teamName');
-		teamNameField.value = teamNameField.defaultValue;
+		teamNameField.value = '';
 	});
+
+	// make the tab in the tab group active
+	// when join existing team is selected
+	if (document.getElementById('joinTeamName').value) {
+		// change the tab to join team being selected
+		$('#registerApplyJoinTeamTab').addClass('active');
+		$('#registerApplyNewTeamTab').removeClass('active');
+
+		// change the tab-content to the join team
+		$('#newTeam').removeClass('in active');
+		$('#joinTeam').addClass('in active');
+	}
     
     //-----------------experiment page---------------------
     // tooltip hover

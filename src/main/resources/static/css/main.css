@@ -118,6 +118,38 @@
     color: #FFF;
 }
 
+/* for the tab buttons Apply for New Team and Apply to Join an existing team in the reduced registration page */
+.tab-group {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 20px 0;
+}
+
+/* before the button is hover or clicked */
+.tab-group > li a {
+    display:block;
+    text-decoration:none;
+    padding:15px;
+    background:rgba(160,179,176, .25);
+    color: #a0b3b0;
+    font-size:20px;
+    float:left;
+    width:50%;
+    text-align:center;
+    transition:.5s ease;
+}
+
+.tab-group > li a:hover {
+    background: #21989c;
+    color: #FFF;
+}
+
+/* after the button has been clicked */
+.tab-group > li.active a {
+    background: #21b3b7;
+    color: #FFF;
+}
+
 /* teams */
 .team-panel {
     border: 0;

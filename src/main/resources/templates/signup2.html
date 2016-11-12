@@ -92,9 +92,9 @@
 									<!-- select to apply new team or join team -->
 									<p>&nbsp;</p>
 									<h3 th:text="#{signup.noTeam}">text from message.properties</h3>
-									<ul class="nav nav-tabs">
-										<li class="active"><a id="registerApplyNewTeamBtn" data-toggle="pill" href="#newTeam" class="btn btn-standard">Apply a new team</a></li>
-										<li><a id="registerApplyJoinTeamBtn" data-toggle="pill" href="#joinTeam" class="btn btn-standard">Apply to join an existing team</a></li>
+									<ul class="tab-group">
+										<li id="registerApplyNewTeamTab" class="active"><a id="registerApplyNewTeamBtn" data-toggle="tab" href="#newTeam">Apply a new team</a></li>
+										<li id="registerApplyJoinTeamTab"><a id="registerApplyJoinTeamBtn" data-toggle="tab" href="#joinTeam">Apply to join an existing team</a></li>
 									</ul>
 
 									<div class="tab-content">
