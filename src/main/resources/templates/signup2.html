@@ -93,13 +93,13 @@
 									<p>&nbsp;</p>
 									<h3 th:text="#{signup.noTeam}">text from message.properties</h3>
 									<ul class="tab-group">
-										<li id="registerApplyNewTeamTab" class="active"><a id="registerApplyNewTeamBtn" data-toggle="tab" href="#newTeam">Apply a new team</a></li>
-										<li id="registerApplyJoinTeamTab"><a id="registerApplyJoinTeamBtn" data-toggle="tab" href="#joinTeam">Apply to join an existing team</a></li>
+										<li id="registerApplyNewTeamTab" class="active"><a id="registerApplyNewTeamBtn" data-toggle="tab" href="#registerNewTeamDiv">Apply a new team</a></li>
+										<li id="registerApplyJoinTeamTab"><a id="registerApplyJoinTeamBtn" data-toggle="tab" href="#registerJoinTeamDiv">Apply to join an existing team</a></li>
 									</ul>
 
 									<div class="tab-content">
 										<p>&nbsp;</p>
-										<div id="newTeam" class="tab-pane fade in active">
+										<div id="registerNewTeamDiv" class="tab-pane fade in active">
 											<div class="form-group">
 												<input type="text" class="form-control" th:placeholder="#{form.teamName}" th:field="*{teamName}"/>
 											</div>
@@ -123,7 +123,7 @@
 												</div>
 											</div>
 										</div>
-										<div id="joinTeam" class="tab-pane fade">
+										<div id="registerJoinTeamDiv" class="tab-pane fade">
 											<div class="form-group">
 												<input type="text" class="form-control" placeholder="Team Name to Join" th:field="*{joinTeamName}"/>
 											</div>
