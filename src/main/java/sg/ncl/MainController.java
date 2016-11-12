@@ -869,7 +869,7 @@ public class MainController {
 
                 if (exceptionState == ExceptionState.TEAM_NOT_FOUND_EXCEPTION) {
                     log.warn("Get team by name : team name error");
-                    throw new TeamNotFoundException("Team name " + teamName + "does not exists");
+                    throw new TeamNotFoundException("Team name " + teamName + " does not exists");
                 } else {
                     log.warn("Team service or adapter connection fail");
                     // possible sio or adapter connection fail
