@@ -26,9 +26,9 @@ $(document).ready(function() {
 		}, 'slow');
 
 	});
-		
-	
-	/* Register Form */
+
+
+	//-----------------registration page -----------------
 	/* Hide all except first fieldset */
     $('.btn-next').click(function() {
         current_fs = $(this).parent();
@@ -83,6 +83,18 @@ $(document).ready(function() {
         var joinTeamNameField = document.getElementById('joinTeamName');
         joinTeamNameField.value = joinTeamNameField.defaultValue;
     });
+
+	$('#registerApplyNewTeamBtn').on("click", function () {
+		// clear fields for Join Existing Team
+		var joinTeamNameField = document.getElementById('joinTeamName');
+		joinTeamNameField.value = joinTeamNameField.defaultValue;
+	});
+
+	$('#registerApplyJoinTeamBtn').on("click", function() {
+		// clear fields for Create New Team
+		var teamNameField = document.getElementById('teamName');
+		teamNameField.value = teamNameField.defaultValue;
+	});
     
     //-----------------experiment page---------------------
     // tooltip hover
