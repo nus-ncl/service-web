@@ -98,14 +98,14 @@ $(document).ready(function() {
 
 	// make the tab in the tab group active
 	// when join existing team is selected
-	if (document.getElementById('joinTeamName').value) {
+	if (document.getElementById('joinTeamName') != null && document.getElementById('joinTeamName').value) {
 		// change the tab to join team being selected
 		$('#registerApplyJoinTeamTab').addClass('active');
 		$('#registerApplyNewTeamTab').removeClass('active');
 
 		// change the tab-content to the join team
-		$('#newTeam').removeClass('in active');
-		$('#joinTeam').addClass('in active');
+		$('#registerNewTeamDiv').removeClass('in active');
+		$('#registerJoinTeamDiv').addClass('in active');
 	}
     
     //-----------------experiment page---------------------
@@ -822,6 +822,37 @@ $(document).ready(function() {
 	});
 
 });
+
+// Add show/hide button
+var sShowHideBtn = '<button class="contact-button-link show-hide-contact-bar"><span class="fa fa-angle-left"></span></button>';
+// oContainer.append(sShowHideBtn);
+
+var i;
+for ( i in settings.buttons ) {
+	var bs = settings.buttons[i],
+		sLink = bs.link,
+		active = bs.use;
+
+	// Check if element is active
+	if (active) {
+
+		// Change the link for phone and email when needed
+		if (bs.type === 'phone') {
+			sLink = 'tel:' + bs.link;
+		} else if (bs.type === 'email') {
+			sLink = 'mailto:' + bs.link;
+		}
+
+		// Insert the links
+		var sIcon = '<span class="fa fa-' + bs.icon + '"></span>',
+			sButton = '<a href="' + sLink +
+				'" class="contact-button-link cb-ancor ' + bs.class + '" ' +
+				(bs.title ? 'title="' + bs.title + '"' : '') +
+				(bs.extras ? bs.extras : '') +
+				'>' + sIcon + '</a>';
+		Container.append(sButton);
+	}
+}
 
 // display the ns file content when users select the predefined scenarios
 function displayNsContent() {
