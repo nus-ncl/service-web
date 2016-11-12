@@ -94,6 +94,7 @@ $(document).ready(function() {
 		// clear fields for Create New Team
 		var teamNameField = document.getElementById('teamName');
 		teamNameField.value = '';
+		document.getElementById('teamDescription').value = '';
 	});
 
 	// make the tab in the tab group active
