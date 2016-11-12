@@ -823,37 +823,6 @@ $(document).ready(function() {
 
 });
 
-// Add show/hide button
-var sShowHideBtn = '<button class="contact-button-link show-hide-contact-bar"><span class="fa fa-angle-left"></span></button>';
-oContainer.append(sShowHideBtn);
-
-var i;
-for ( i in settings.buttons ) {
-	var bs = settings.buttons[i],
-		sLink = bs.link,
-		active = bs.use;
-
-	// Check if element is active
-	if (active) {
-
-		// Change the link for phone and email when needed
-		if (bs.type === 'phone') {
-			sLink = 'tel:' + bs.link;
-		} else if (bs.type === 'email') {
-			sLink = 'mailto:' + bs.link;
-		}
-
-		// Insert the links
-		var sIcon = '<span class="fa fa-' + bs.icon + '"></span>',
-			sButton = '<a href="' + sLink +
-				'" class="contact-button-link cb-ancor ' + bs.class + '" ' +
-				(bs.title ? 'title="' + bs.title + '"' : '') +
-				(bs.extras ? bs.extras : '') +
-				'>' + sIcon + '</a>';
-		Container.append(sButton);
-	}
-}
-
 // display the ns file content when users select the predefined scenarios
 function displayNsContent() {
 	var basic1 = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
