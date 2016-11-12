@@ -35,12 +35,7 @@
 									<p class="account-change-fail" th:if="${#fields.hasErrors('phone')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{phone}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('jobTitle')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{jobTitle}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('institution')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institution}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('institutionAbbreviation')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institutionAbbreviation}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('address1')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{address1}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('country')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{country}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('city')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{city}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('province')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{province}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('postalCode')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{postalCode}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></p>
 									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamName != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamName}"></span></p>
 									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamDescription != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamDescription}"></span></p>
@@ -98,8 +93,8 @@
 									<p>&nbsp;</p>
 									<h3 th:text="#{signup.noTeam}">text from message.properties</h3>
 									<ul class="nav nav-tabs">
-										<li class="active"><a data-toggle="pill" href="#newTeam" class="btn btn-standard">Apply a new team</a></li>
-										<li><a data-toggle="pill" href="#joinTeam" class="btn btn-standard">Apply to join an existing team</a></li>
+										<li class="active"><a id="registerApplyNewTeamBtn" data-toggle="pill" href="#newTeam" class="btn btn-standard">Apply a new team</a></li>
+										<li><a id="registerApplyJoinTeamBtn" data-toggle="pill" href="#joinTeam" class="btn btn-standard">Apply to join an existing team</a></li>
 									</ul>
 
 									<div class="tab-content">
