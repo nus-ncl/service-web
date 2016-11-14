@@ -2801,6 +2801,11 @@ public class MainController {
         JSONObject object = new JSONObject(json);
         JSONArray membersArray = object.getJSONArray("members");
 
+        try {
+            team2.setCreatedDate(formatZonedDateTime(object.get("applicationDate").toString()));
+        } catch (Exception e) {
+            log.warn("Error getting team application date {}", e.getMessage());
+        }
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));
         team2.setDescription(object.getString("description"));

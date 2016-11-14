@@ -105,12 +105,14 @@
 					<p>&nbsp;</p>
 					<table class="table table-responsive">
 						<thead>
+						<th th:text="#{admin.dashboard.registeredDate}">Date</th>
 						<th th:text="#{admin.teams.header.name}">Team</th>
 						<th th:text="#{admin.teams.header.description}">Description</th>
 						<th th:text="#{admin.teams.header.owner}">Owner</th>
 						<th><!-- Actions --></th>
 						</thead>
 						<tr th:each="team : ${pendingApprovalTeamsList}">
+							<td th:text="${team.createdDate}"></td>
 							<td th:text="${team.name}"></td>
 							<td th:text="${team.description}"></td>
 							<td>
