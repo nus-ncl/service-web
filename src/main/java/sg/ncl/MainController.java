@@ -641,13 +641,13 @@ public class MainController {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             log.warn("Register form has errors {}", signUpMergedForm.toString());
-            return "/signup2";
+            return "signup2";
         }
 
         if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
             signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
             log.warn("Policy not accepted");
-            return "/signup2";
+            return "signup2";
         }
 
         // get form fields
@@ -717,7 +717,7 @@ public class MainController {
                 log.warn("Signup new team error {}", signUpMergedForm.toString());
                 // clear join team name first before submitting the form
                 signUpMergedForm.setJoinTeamName(null);
-                return "/signup2";
+                return "signup2";
             } else {
 
                 teamFields.put("name", signUpMergedForm.getTeamName().trim());
@@ -1988,7 +1988,7 @@ public class MainController {
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
 //                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
-                return "/experiments";
+                return "experiments";
             } else {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
