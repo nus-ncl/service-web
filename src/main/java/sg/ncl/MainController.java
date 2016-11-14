@@ -878,7 +878,7 @@ public class MainController {
                 }
 
             } else {
-                return extractTeamInfo(responseBody.toString());
+                return extractTeamInfo(responseBody);
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());

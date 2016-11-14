@@ -13,7 +13,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -27,7 +26,6 @@ public class AppErrorController implements ErrorController {
     /**
      * Error Attributes in the Application
      */
-    private WebProperties webProperties;
     private ErrorAttributes errorAttributes;
     private final static String ERROR_PATH = "/error";
 
@@ -35,9 +33,8 @@ public class AppErrorController implements ErrorController {
      * Controller for the Error Controller
      * @param errorAttributes
      */
-    public AppErrorController(ErrorAttributes errorAttributes, WebProperties webProperties) {
+    public AppErrorController(ErrorAttributes errorAttributes) {
         this.errorAttributes = errorAttributes;
-        this.webProperties = webProperties;
     }
 
     /**
