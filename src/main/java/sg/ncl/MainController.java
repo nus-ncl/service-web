@@ -640,7 +640,7 @@ public class MainController {
             @Valid
             @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
-            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+            final RedirectAttributes redirectAttributes, Model model) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             log.warn("Register form has errors {}", signUpMergedForm.toString());
@@ -747,17 +747,17 @@ public class MainController {
         } else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
             log.info("Signup join team name {}", joinNewTeamName);
             // get the team JSON from team name
-            String teamIdToJoin = "";
+            JSONObject joinTeamJsonObject;
 
             try {
-                teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName().trim());
+                joinTeamJsonObject = getTeamIdByName(signUpMergedForm.getJoinTeamName().trim());
             } catch (TeamNotFoundException | AdapterConnectionException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
             }
 
-            teamFields.put("id", teamIdToJoin);
+            teamFields.put("id", joinTeamJsonObject.getString("id"));
 
             // set the flag to indicate to controller that it is joining an existing team
             mainObject.put("isJoinTeam", true);
@@ -775,7 +775,9 @@ public class MainController {
             }
 
             log.info("Signup join team success");
-            return "redirect:/join_application_submitted/" + signUpMergedForm.getJoinTeamName().trim();
+            model.addAttribute("")
+            return "redirect:/join_application_submitted";
+//            return "redirect:/join_application_submitted/" + signUpMergedForm.getJoinTeamName().trim();
 
         } else {
             log.warn("Signup unreachable statement");
@@ -853,7 +855,7 @@ public class MainController {
      * @param teamName The team name to join
      * @return the team id from sio
      */
-    private String getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
+    private JSONObject getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
         // FIXME check if team name exists
         // FIXME check for general exception?
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
@@ -877,8 +879,7 @@ public class MainController {
                 }
 
             } else {
-                JSONObject object = new JSONObject(responseBody);
-                return object.getString("id");
+                return new JSONObject(responseBody);
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2645,7 +2646,10 @@ public class MainController {
     }
 
     @RequestMapping("/join_application_submitted/{teamName}")
-    public String joinTeamAppSubmit(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
+    public String joinTeamAppSubmit(@PathVariable String teamName, Model model, HttpServletRequest httpServletRequest) throws WebServiceRuntimeException {
+
+        log.info("{}", httpServletRequest.getHeader("Referer"));
+
         log.info("Register new user join application submitted");
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -2667,7 +2671,7 @@ public class MainController {
                         // possible sio or adapter connection fail
                         break;
                 }
-                return "redirect:/signup2";
+                return "redirect:/error";
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
