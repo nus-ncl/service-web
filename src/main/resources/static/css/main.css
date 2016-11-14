@@ -1687,6 +1687,10 @@ table {
      list-style: none;
 }
 
+.blue-tick {
+    color: #5890ff;
+}
+
 .boxes{
     padding: 20px;
     border: 1px solid lightgrey;
