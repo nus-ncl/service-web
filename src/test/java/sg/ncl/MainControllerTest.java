@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,7 +25,6 @@ import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import sg.ncl.domain.UserType;
-import sg.ncl.testbed_interface.User;
 import sg.ncl.testbed_interface.User2;
 
 import javax.inject.Inject;
@@ -34,8 +32,6 @@ import javax.servlet.http.HttpSession;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -70,9 +66,6 @@ public class MainControllerTest {
 //    RestTemplate restTemplate() {
 //        return Mockito.mock(RestTemplate.class);
 //    }
-
-    @MockBean
-    private User2 testUser;
 
     private MockMvc mockMvc;
 //    private RestTemplate restTemplate;
