@@ -46,8 +46,7 @@ public class AppErrorController implements ErrorController {
      * @return
      */
     @RequestMapping(value = ERROR_PATH, produces = "text/html")
-    public ModelAndView errorHtml(HttpServletRequest request, HttpSession session) {
-        removeSessionVariables(session);
+    public ModelAndView errorHtml(HttpServletRequest request) {
         return new ModelAndView("error", getErrorAttributes(request, false));
     }
 
@@ -97,15 +96,5 @@ public class AppErrorController implements ErrorController {
             }
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;
-    }
-
-    private void removeSessionVariables(HttpSession session) {
-        session.removeAttribute(webProperties.getSessionEmail());
-        session.removeAttribute(webProperties.getSessionUserId());
-        session.removeAttribute(webProperties.getSessionUserFirstName());
-        session.removeAttribute(webProperties.getSessionRoles());
-        session.removeAttribute(webProperties.getSessionJwtToken());
-        session.invalidate();
-        log.info("Encounter error page...session invalidated");
     }
 }
