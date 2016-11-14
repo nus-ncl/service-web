@@ -991,27 +991,25 @@ public class MainController {
             String userId_uri = properties.getSioUsersUrl() + session.getAttribute(webProperties.getSessionUserId());
 
             HttpEntity<String> request = createHttpEntityWithBody(userObject.toString());
-            ResponseEntity resp = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
+            restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
 
-            if (originalUser != null) {
-                if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
-                    redirectAttributes.addFlashAttribute("editFirstName", "success");
-                }
-                if (!originalUser.getLastName().equals(editUser.getLastName())) {
-                    redirectAttributes.addFlashAttribute("editLastName", "success");
-                }
-                if (!originalUser.getPhone().equals(editUser.getPhone())) {
-                    redirectAttributes.addFlashAttribute("editPhone", "success");
-                }
-                if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
-                    redirectAttributes.addFlashAttribute("editJobTitle", "success");
-                }
-                if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
-                    redirectAttributes.addFlashAttribute("editInstitution", "success");
-                }
-                if (!originalUser.getCountry().equals(editUser.getCountry())) {
-                    redirectAttributes.addFlashAttribute("editCountry", "success");
-                }
+            if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
+                redirectAttributes.addFlashAttribute("editFirstName", "success");
+            }
+            if (!originalUser.getLastName().equals(editUser.getLastName())) {
+                redirectAttributes.addFlashAttribute("editLastName", "success");
+            }
+            if (!originalUser.getPhone().equals(editUser.getPhone())) {
+                redirectAttributes.addFlashAttribute("editPhone", "success");
+            }
+            if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
+                redirectAttributes.addFlashAttribute("editJobTitle", "success");
+            }
+            if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
+                redirectAttributes.addFlashAttribute("editInstitution", "success");
+            }
+            if (!originalUser.getCountry().equals(editUser.getCountry())) {
+                redirectAttributes.addFlashAttribute("editCountry", "success");
             }
 
             // credential service change password

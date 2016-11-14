@@ -9,6 +9,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class SignUpMergedForm {
+
+    private static final String DEFAULT = "default";
 	
 	// Account Details Fields
     @Size(min=1, message="Email cannot be empty")
@@ -44,18 +46,18 @@ public class SignUpMergedForm {
     private String website = "http://default.com";
 
     @NotEmpty(message = "Address 1 cannot be empty")
-    private String address1 = "default";
+    private String address1 = DEFAULT;
 
-    private String address2 = "default";
+    private String address2 = DEFAULT;
 
     @NotEmpty(message = "Country cannot be empty")
     private String country;
 
     @NotEmpty(message = "City cannot be empty")
-    private String city = "default";
+    private String city = DEFAULT;
 
     @NotEmpty(message = "Province cannot be empty")
-    private String province = "default";
+    private String province = DEFAULT;
 
     @Pattern(regexp="^[0-9]*$", message = "Postal code cannot have special characters" )
     private String postalCode = "00000000";
