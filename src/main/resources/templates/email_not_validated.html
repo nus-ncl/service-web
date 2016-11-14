@@ -16,10 +16,10 @@
             <div class="row dashpanel">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
-                    <h3 th:text="#{email.notVlaidated.header}">Your email has not been validated.</h3>
-                    <p>Your email <strong><span th:text="*{emailAddress}">abc@example.com</span></strong> has not been validated.</p>
-                    <p>Please check your email for a verification link. You may need to check your spam folder or unblock <a href="mailto:no-reply@ncl.sg">no-reply@ncl.sg</a>.</p>
-                    <p>If you did not receive a validation email, please click <a href="#">#here</a> to resend the email verification.</p>
+                    <h2 th:text="#{email.notVlaidated.header}">Your email has not been verified.</h2>
+                    <p>Your email address <strong><span th:text="*{emailAddress}">abc@example.com</span></strong> has not been verified.</p>
+                    <p>Please check your mail box for the verification link. You may need to check your spam folder.</p>
+                    <p> If you do not receive a verification email after 5 business days, please contact us at <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
                 </div> <!-- col -->
                 <div class="col-md-1"></div>
             </div> <!-- row -->

@@ -16,9 +16,11 @@
             <div class="row dashpanel">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
-                    <h3 th:text="#{teamPage.submitTeamApp.header}">Your application has been received.</h3>
-                    <p th:text="#{teamPage.submitTeamApp.info}">We will usually review your application real fast!</p>
-                    <p>However, if your application is still pending after 5 business days, please contact us at <a href="mailto:support@ncl.sg">support@ncl.sg</a></p>
+                    <h2 th:text="#{teamPage.submitTeamApp.header}">Your application has been received.</h2>
+                    <h3> However, as a new user, you are required to verify your email address first. </h3>
+                    <p> A verification email has been sent to your registered email account. Please kindly check your mail box.</p>
+                    <p> We will only review your application after your email address has been verified. </p>
+                    <p> If you do not receive a verification email after 5 business days, please contact us at <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
                 </div> <!-- col -->
                 <div class="col-md-1"></div>
             </div> <!-- row -->
