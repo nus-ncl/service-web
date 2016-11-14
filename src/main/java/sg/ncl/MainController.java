@@ -1418,11 +1418,6 @@ public class MainController {
             redirectAttributes.addFlashAttribute("editDesc", "fail");
         }
 
-        if (editTeam.getWebsite().isEmpty()) {
-            errorsFound = true;
-            redirectAttributes.addFlashAttribute("editWebsite", "fail");
-        }
-
         if (errorsFound) {
             // safer to remove
             session.removeAttribute("originalTeam");
@@ -1435,7 +1430,7 @@ public class MainController {
         teamfields.put("id", teamId);
         teamfields.put("name", editTeam.getName());
         teamfields.put("description", editTeam.getDescription());
-        teamfields.put("website", editTeam.getWebsite());
+        teamfields.put("website", "http://default.com");
         teamfields.put("organisationType", editTeam.getOrganisationType());
         teamfields.put("privacy", "OPEN");
         teamfields.put("status", editTeam.getStatus());
@@ -1448,9 +1443,6 @@ public class MainController {
 
         if (!originalTeam.getDescription().equals(editTeam.getDescription())) {
             redirectAttributes.addFlashAttribute("editDesc", "success");
-        }
-        if (!originalTeam.getWebsite().equals(editTeam.getWebsite())) {
-            redirectAttributes.addFlashAttribute("editWebsite", "success");
         }
 
         // safer to remove
