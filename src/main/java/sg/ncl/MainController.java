@@ -641,13 +641,13 @@ public class MainController {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             log.warn("Register form has errors {}", signUpMergedForm.toString());
-            return "/signup2";
+            return "signup2";
         }
 
         if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
             signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
             log.warn("Policy not accepted");
-            return "/signup2";
+            return "signup2";
         }
 
         // get form fields
@@ -717,7 +717,7 @@ public class MainController {
                 log.warn("Signup new team error {}", signUpMergedForm.toString());
                 // clear join team name first before submitting the form
                 signUpMergedForm.setJoinTeamName(null);
-                return "/signup2";
+                return "signup2";
             } else {
 
                 teamFields.put("name", signUpMergedForm.getTeamName().trim());
@@ -1418,11 +1418,6 @@ public class MainController {
             redirectAttributes.addFlashAttribute("editDesc", "fail");
         }
 
-        if (editTeam.getWebsite().isEmpty()) {
-            errorsFound = true;
-            redirectAttributes.addFlashAttribute("editWebsite", "fail");
-        }
-
         if (errorsFound) {
             // safer to remove
             session.removeAttribute("originalTeam");
@@ -1435,7 +1430,7 @@ public class MainController {
         teamfields.put("id", teamId);
         teamfields.put("name", editTeam.getName());
         teamfields.put("description", editTeam.getDescription());
-        teamfields.put("website", editTeam.getWebsite());
+        teamfields.put("website", "http://default.com");
         teamfields.put("organisationType", editTeam.getOrganisationType());
         teamfields.put("privacy", "OPEN");
         teamfields.put("status", editTeam.getStatus());
@@ -1448,9 +1443,6 @@ public class MainController {
 
         if (!originalTeam.getDescription().equals(editTeam.getDescription())) {
             redirectAttributes.addFlashAttribute("editDesc", "success");
-        }
-        if (!originalTeam.getWebsite().equals(editTeam.getWebsite())) {
-            redirectAttributes.addFlashAttribute("editWebsite", "success");
         }
 
         // safer to remove
@@ -1988,7 +1980,7 @@ public class MainController {
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
 //                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
-                return "/experiments";
+                return "experiments";
             } else {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
