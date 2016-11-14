@@ -26,9 +26,9 @@ $(document).ready(function() {
 		}, 'slow');
 
 	});
-		
-	
-	/* Register Form */
+
+
+	//-----------------registration page -----------------
 	/* Hide all except first fieldset */
     $('.btn-next').click(function() {
         current_fs = $(this).parent();
@@ -83,6 +83,31 @@ $(document).ready(function() {
         var joinTeamNameField = document.getElementById('joinTeamName');
         joinTeamNameField.value = joinTeamNameField.defaultValue;
     });
+
+	$('#registerApplyNewTeamBtn').on("click", function () {
+		// clear fields for Join Existing Team
+		var joinTeamNameField = document.getElementById('joinTeamName');
+		joinTeamNameField.value = '';
+	});
+
+	$('#registerApplyJoinTeamBtn').on("click", function() {
+		// clear fields for Create New Team
+		var teamNameField = document.getElementById('teamName');
+		teamNameField.value = '';
+		document.getElementById('teamDescription').value = '';
+	});
+
+	// make the tab in the tab group active
+	// when join existing team is selected
+	if (document.getElementById('joinTeamName') != null && document.getElementById('joinTeamName').value) {
+		// change the tab to join team being selected
+		$('#registerApplyJoinTeamTab').addClass('active');
+		$('#registerApplyNewTeamTab').removeClass('active');
+
+		// change the tab-content to the join team
+		$('#registerNewTeamDiv').removeClass('in active');
+		$('#registerJoinTeamDiv').addClass('in active');
+	}
     
     //-----------------experiment page---------------------
     // tooltip hover
@@ -801,7 +826,7 @@ $(document).ready(function() {
 
 // Add show/hide button
 var sShowHideBtn = '<button class="contact-button-link show-hide-contact-bar"><span class="fa fa-angle-left"></span></button>';
-oContainer.append(sShowHideBtn);
+// oContainer.append(sShowHideBtn);
 
 var i;
 for ( i in settings.buttons ) {

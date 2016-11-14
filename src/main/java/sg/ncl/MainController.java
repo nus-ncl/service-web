@@ -67,9 +67,6 @@ public class MainController {
 //    private DatasetManager datasetManager = DatasetManager.getInstance();
 //    private NodeManager nodeManager = NodeManager.getInstance();
 
-    // to know which form fields have been changed
-    private User2 originalUser = null;
-
     private static final String CONTACT_EMAIL = "support@ncl.sg";
 
     // error messages
@@ -341,7 +338,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model model, HttpSession session) {
+    public String login(Model model) {
         model.addAttribute("loginForm", new LoginForm());
         return "login";
     }
@@ -640,7 +637,7 @@ public class MainController {
             @Valid
             @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
-            final RedirectAttributes redirectAttributes, Model model) throws WebServiceRuntimeException {
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             log.warn("Register form has errors {}", signUpMergedForm.toString());
@@ -718,6 +715,8 @@ public class MainController {
 
             if (errorsFound) {
                 log.warn("Signup new team error {}", signUpMergedForm.toString());
+                // clear join team name first before submitting the form
+                signUpMergedForm.setJoinTeamName(null);
                 return "/signup2";
             } else {
 
@@ -819,7 +818,7 @@ public class MainController {
                         throw new ApplyNewProjectException();
                     case REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION:
                         log.warn("Register new users new team request : team name duplicate");
-                        throw new RegisterTeamNameDuplicateException();
+                        throw new RegisterTeamNameDuplicateException("Team name already in use");
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
                         // throw from user service
                     {
@@ -870,7 +869,7 @@ public class MainController {
 
                 if (exceptionState == ExceptionState.TEAM_NOT_FOUND_EXCEPTION) {
                     log.warn("Get team by name : team name error");
-                    throw new TeamNotFoundException("Team name " + teamName + "does not exists");
+                    throw new TeamNotFoundException("Team name " + teamName + " does not exists");
                 } else {
                     log.warn("Team service or adapter connection fail");
                     // possible sio or adapter connection fail
@@ -902,7 +901,8 @@ public class MainController {
                 throw new RestClientException("[" + error.getError() + "] ");
             } else {
                 User2 user2 = extractUserInfo(responseBody);
-                originalUser = user2;
+                // need to do this so that we can compare after submitting the form
+                session.setAttribute(webProperties.getSessionUserAccount(), user2);
                 model.addAttribute("editUser", user2);
                 return "account_settings";
             }
@@ -917,8 +917,6 @@ public class MainController {
             @ModelAttribute("editUser") User2 editUser,
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws WebServiceRuntimeException {
-        // Need to be this way to "edit" details
-        // If not, the form details will overwrite existing user's details
 
         boolean errorsFound = false;
 
@@ -955,52 +953,18 @@ public class MainController {
             errorsFound = true;
         }
 
-        if (errorsFound == false && editUser.getInstitutionAbbreviation().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editInstitutionAbbrev", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getInstitutionWeb().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editInstitutionWeb", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getAddress1().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editAddress1", "fail");
-            errorsFound = true;
-        }
-
         if (errorsFound == false && editUser.getCountry().isEmpty()) {
             redirectAttributes.addFlashAttribute("editCountry", "fail");
             errorsFound = true;
         }
 
-        if (errorsFound == false && editUser.getCity().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editCity", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getRegion().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editProvince", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getPostalCode().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editPostalCode", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && (editUser.getPostalCode().matches("(.*)[a-zA-Z](.*)") || editUser.getPostalCode().length() < 6)) {
-            // previously already check if postal code is empty
-            // now check postal code must contain only digits
-            redirectAttributes.addFlashAttribute("editPostalCode", "fail");
-            errorsFound = true;
-        }
-
         if (errorsFound) {
-            originalUser = null;
+            session.removeAttribute(webProperties.getSessionUserAccount());
             return "redirect:/account_settings";
         } else {
+            // used to compare original and edited User2 objects
+            User2 originalUser = (User2) session.getAttribute(webProperties.getSessionUserAccount());
+
             JSONObject userObject = new JSONObject();
             JSONObject userDetails = new JSONObject();
             JSONObject address = new JSONObject();
@@ -1012,63 +976,40 @@ public class MainController {
             userDetails.put("jobTitle", editUser.getJobTitle());
             userDetails.put("address", address);
             userDetails.put("institution", editUser.getInstitution());
-            userDetails.put("institutionAbbreviation", editUser.getInstitutionAbbreviation());
-            userDetails.put("institutionWeb", editUser.getInstitutionWeb());
+            userDetails.put("institutionAbbreviation", originalUser.getInstitutionAbbreviation());
+            userDetails.put("institutionWeb", originalUser.getInstitutionWeb());
 
-            address.put("address1", editUser.getAddress1());
-            address.put("address2", editUser.getAddress2());
+            address.put("address1", originalUser.getAddress1());
+            address.put("address2", originalUser.getAddress2());
             address.put("country", editUser.getCountry());
-            address.put("city", editUser.getCity());
-            address.put("region", editUser.getRegion());
-            address.put("zipCode", editUser.getPostalCode());
+            address.put("city", originalUser.getCity());
+            address.put("region", originalUser.getRegion());
+            address.put("zipCode", originalUser.getPostalCode());
 
             userObject.put("userDetails", userDetails);
 
-            String userId_uri = properties.getSioUsersUrl() + session.getAttribute("id");
+            String userId_uri = properties.getSioUsersUrl() + session.getAttribute(webProperties.getSessionUserId());
 
             HttpEntity<String> request = createHttpEntityWithBody(userObject.toString());
-            ResponseEntity resp = restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
+            restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
 
-            if (originalUser != null) {
-                if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
-                    redirectAttributes.addFlashAttribute("editFirstName", "success");
-                }
-                if (!originalUser.getLastName().equals(editUser.getLastName())) {
-                    redirectAttributes.addFlashAttribute("editLastName", "success");
-                }
-                if (!originalUser.getPhone().equals(editUser.getPhone())) {
-                    redirectAttributes.addFlashAttribute("editPhone", "success");
-                }
-                if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
-                    redirectAttributes.addFlashAttribute("editJobTitle", "success");
-                }
-                if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
-                    redirectAttributes.addFlashAttribute("editInstitution", "success");
-                }
-                if (!originalUser.getInstitutionAbbreviation().equals(editUser.getInstitutionAbbreviation())) {
-                    redirectAttributes.addFlashAttribute("editInstitutionAbbrev", "success");
-                }
-                if (!originalUser.getInstitutionWeb().equals(editUser.getInstitutionWeb())) {
-                    redirectAttributes.addFlashAttribute("editInstitutionWeb", "success");
-                }
-                if (!originalUser.getAddress1().equals(editUser.getAddress1())) {
-                    redirectAttributes.addFlashAttribute("editAddress1", "success");
-                }
-                if (!originalUser.getAddress2().equals(editUser.getAddress2())) {
-                    redirectAttributes.addFlashAttribute("editAddress2", "success");
-                }
-                if (!originalUser.getCountry().equals(editUser.getCountry())) {
-                    redirectAttributes.addFlashAttribute("editCountry", "success");
-                }
-                if (!originalUser.getCity().equals(editUser.getCity())) {
-                    redirectAttributes.addFlashAttribute("editCity", "success");
-                }
-                if (!originalUser.getRegion().equals(editUser.getRegion())) {
-                    redirectAttributes.addFlashAttribute("editProvince", "success");
-                }
-                if (!originalUser.getPostalCode().equals(editUser.getPostalCode())) {
-                    redirectAttributes.addFlashAttribute("editPostalCode", "success");
-                }
+            if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
+                redirectAttributes.addFlashAttribute("editFirstName", "success");
+            }
+            if (!originalUser.getLastName().equals(editUser.getLastName())) {
+                redirectAttributes.addFlashAttribute("editLastName", "success");
+            }
+            if (!originalUser.getPhone().equals(editUser.getPhone())) {
+                redirectAttributes.addFlashAttribute("editPhone", "success");
+            }
+            if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
+                redirectAttributes.addFlashAttribute("editJobTitle", "success");
+            }
+            if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
+                redirectAttributes.addFlashAttribute("editInstitution", "success");
+            }
+            if (!originalUser.getCountry().equals(editUser.getCountry())) {
+                redirectAttributes.addFlashAttribute("editCountry", "success");
             }
 
             // credential service change password
@@ -1091,7 +1032,7 @@ public class MainController {
                 } catch (IOException e) {
                     throw new WebServiceRuntimeException(e.getMessage());
                 } finally {
-                    originalUser = null;
+                    session.removeAttribute(webProperties.getSessionUserAccount());
                 }
             }
         }
@@ -1219,7 +1160,7 @@ public class MainController {
             return "redirect:/approve_new_user";
         }
         log.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
-        redirectAttributes.addFlashAttribute("message", "Join request has been APPROVED.");
+        redirectAttributes.addFlashAttribute("messageSuccess", "Join request has been APPROVED.");
         return "redirect:/approve_new_user";
     }
 
@@ -3276,6 +3217,4 @@ public class MainController {
         }
         return response.getBody().toString();
     }
-
-
 }

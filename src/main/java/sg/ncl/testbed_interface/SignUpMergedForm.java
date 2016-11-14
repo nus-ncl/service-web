@@ -9,6 +9,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class SignUpMergedForm {
+
+    private static final String DEFAULT = "default";
 	
 	// Account Details Fields
     @Size(min=1, message="Email cannot be empty")
@@ -38,36 +40,35 @@ public class SignUpMergedForm {
     private String institution;
 
     @NotEmpty(message = "Institution Abbreviation cannot be empty")
-    private String institutionAbbreviation;
+    private String institutionAbbreviation = "defaultAbbrev";
 
     @NotEmpty(message = "Website cannot be empty")
-    private String website;
+    private String website = "http://default.com";
 
     @NotEmpty(message = "Address 1 cannot be empty")
-    private String address1;
+    private String address1 = DEFAULT;
 
-    private String address2;
+    private String address2 = DEFAULT;
 
     @NotEmpty(message = "Country cannot be empty")
     private String country;
 
     @NotEmpty(message = "City cannot be empty")
-    private String city;
+    private String city = DEFAULT;
 
     @NotEmpty(message = "Province cannot be empty")
-    private String province;
+    private String province = DEFAULT;
 
     @Pattern(regexp="^[0-9]*$", message = "Postal code cannot have special characters" )
-    @Range(min=6, message="Postal code minimum 6 digits")
-    private String postalCode;
+    private String postalCode = "00000000";
     
     // Create New Team Fields
-    @Pattern(regexp="^[a-zA-Z0-9]*$", message="Team name cannot have special characters")
+    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team name cannot have special characters")
     private String teamName;
 
     private String teamDescription;
     
-    private String teamWebsite;
+    private String teamWebsite = "http://default.com";
     private String teamOrganizationType;
     
     // defaults to public
@@ -76,7 +77,7 @@ public class SignUpMergedForm {
     private boolean hasAcceptTeamOwnerPolicy;
     
     // Join New Team Fields
-    @Pattern(regexp="^[a-zA-Z0-9]*$", message="Team name cannot have special characters")
+    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team name cannot have special characters")
     private String joinTeamName;
 
     // A way to display error messages for create new team form

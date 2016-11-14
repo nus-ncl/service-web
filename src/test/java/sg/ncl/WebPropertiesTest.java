@@ -22,7 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
         "ncl.web.service.shared.sessionEmail=abcde@ncl.sg",
         "ncl.web.service.shared.sessionUserId=123456",
         "ncl.web.service.shared.sessionUserFirstName=hello",
-        "ncl.web.service.shared.sessionJwtToken=token"
+        "ncl.web.service.shared.sessionJwtToken=token",
+        "ncl.web.service.shared.sessionUserAccount=userAccount"
 })
 public class WebPropertiesTest {
 
@@ -54,8 +55,14 @@ public class WebPropertiesTest {
         assertThat(properties.getSessionUserFirstName()).isEqualTo("hello");
     }
 
+
     @Test
     public void testSessionJwtToken() throws Exception {
         assertThat(properties.getSessionJwtToken()).isEqualTo("token");
+    }
+
+    @Test
+    public void testSessionUserAccount() throws Exception {
+        assertThat(properties.getSessionUserAccount()).isEqualTo("userAccount");
     }
 }

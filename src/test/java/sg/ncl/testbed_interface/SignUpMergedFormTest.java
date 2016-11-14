@@ -141,7 +141,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testGetInstitutionAbbreviation() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        assertThat(one.getInstitutionAbbreviation(), is(nullValue()));
+        assertThat(one.getInstitutionAbbreviation(), is("defaultAbbrev"));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testGetWebsite() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        assertThat(one.getWebsite(), is(nullValue()));
+        assertThat(one.getWebsite(), is("http://default.com"));
     }
 
     @Test
@@ -169,7 +169,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testGetAddress1() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        assertThat(one.getAddress1(), is(nullValue()));
+        assertThat(one.getAddress1(), is("default"));
     }
 
     @Test
@@ -183,7 +183,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testGetAddress2() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        assertThat(one.getAddress2(), is(nullValue()));
+        assertThat(one.getAddress2(), is("default"));
     }
 
     @Test
@@ -211,7 +211,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testGetCity() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        assertThat(one.getCity(), is(nullValue()));
+        assertThat(one.getCity(), is("default"));
     }
 
     @Test
@@ -225,7 +225,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testGetProvince() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        assertThat(one.getProvince(), is(nullValue()));
+        assertThat(one.getProvince(), is("default"));
     }
 
     @Test
@@ -239,7 +239,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testGetPostalCode() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        assertThat(one.getPostalCode(), is(nullValue()));
+        assertThat(one.getPostalCode(), is("00000000"));
     }
 
     @Test
@@ -284,7 +284,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testGetTeamWebsite() {
         final SignUpMergedForm one = new SignUpMergedForm();
-        assertThat(one.getTeamWebsite(), is(nullValue()));
+        assertThat(one.getTeamWebsite(), is("http://default.com"));
     }
 
     @Test

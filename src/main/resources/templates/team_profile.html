@@ -54,14 +54,6 @@
                                     <td><input type="text" class="form-control" th:field="*{organisationType}" readonly="readonly"/></td>
                                 </tr>
                                 <tr>
-                                    <td><strong th:text="#{team.profile.website}">Website</strong></td>
-                                    <td>
-                                        <span class="account-change-fail" th:if="${editWebsite eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{team.profile.websiteFail}">TEXT</span></span>
-                                        <span class="account-change-success" th:if="${editWebsite eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{team.profile.websiteSucccess}">TEXT</span></span>
-                                        <input type="text" class="form-control" th:field="*{website}"/>
-                                    </td>
-                                </tr>
-                                <tr>
                                     <td><strong th:text="#{team.profile.visibility}">TEXT</strong></td>
                                     <td th:text="${team.visibility}" th:field="*{visibility}">TEXT</td>
                                 </tr>

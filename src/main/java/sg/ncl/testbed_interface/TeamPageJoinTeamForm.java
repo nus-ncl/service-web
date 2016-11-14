@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 public class TeamPageJoinTeamForm {
     
     @Size(min = 1, message="Team name cannot be empty")
-    @Pattern(regexp="^[a-zA-Z0-9]*$", message="Team name cannot have special characters")
+    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team name cannot have special characters")
     private String teamName;
     
     public TeamPageJoinTeamForm() {
