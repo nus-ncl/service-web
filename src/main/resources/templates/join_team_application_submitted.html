@@ -16,10 +16,12 @@
             <div class="row dashpanel">
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
-                    <h3 th:text="#{joinTeam.appSubmit.header}">Your application has been received.</h3>
-                    <p th:text="#{joinTeam.appSubmit.info}">We have forwarded your application to the team’s owner for review.</p>
+                    <h2 th:text="#{joinTeam.appSubmit.header}">Your application has been received.</h2>
+                    <h3> However, as a new user, you are required to verify your email address first. </h3>
+                    <p> A verification email has been sent to your registered email account. Please kindly check your mail box.</p>
+                    <p> Once verified, we will forward your application to the team owner for review.</p>
                     <p>Please contact the <strong>Team Owner: </strong>&lt;<span th:text="${team.owner.firstName + ' ' + team.owner.lastName}">Team Owner</span>&gt; <strong>Email: </strong>&lt;<span th:text="${team.owner.email}">team-owner@email</span>&gt; for any issues with your application.</p>
-                    <p th:text="#{joinTeam.appSubmit.info2}">We are unable to help in the resolution of your application.</p>
+                    <p> If you do not receive a verification email after 5 business days, please contact us at <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
                 </div> <!-- col -->
                 <div class="col-md-1"></div>
             </div> <!-- row -->
