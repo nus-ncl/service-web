@@ -37,6 +37,6 @@ public class ExceptionHandlingController {
             // for 401, ex class is some json exception error, e.g. JSON['XXX'] not found
             loginForm.setErrorMsg("Your session has expired. Please login again.");
         }
-        return new ModelAndView("/login", "loginForm", loginForm);
+        return new ModelAndView("login", "loginForm", loginForm);
     }
 }

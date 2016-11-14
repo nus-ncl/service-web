@@ -640,7 +640,7 @@ public class MainController {
             @Valid
             @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
-            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+            final RedirectAttributes redirectAttributes, Model model) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             log.warn("Register form has errors {}", signUpMergedForm.toString());
@@ -747,17 +747,17 @@ public class MainController {
         } else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
             log.info("Signup join team name {}", joinNewTeamName);
             // get the team JSON from team name
-            String teamIdToJoin = "";
+            Team2 joinTeamInfo;
 
             try {
-                teamIdToJoin = getTeamIdByName(signUpMergedForm.getJoinTeamName().trim());
+                joinTeamInfo = getTeamIdByName(signUpMergedForm.getJoinTeamName().trim());
             } catch (TeamNotFoundException | AdapterConnectionException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
             }
 
-            teamFields.put("id", teamIdToJoin);
+            teamFields.put("id", joinTeamInfo.getId());
 
             // set the flag to indicate to controller that it is joining an existing team
             mainObject.put("isJoinTeam", true);
@@ -775,8 +775,9 @@ public class MainController {
             }
 
             log.info("Signup join team success");
-            return "redirect:/join_application_submitted/" + signUpMergedForm.getJoinTeamName().trim();
-
+            log.info("jointeam info: {}", joinTeamInfo);
+            redirectAttributes.addFlashAttribute("team", joinTeamInfo);
+            return "redirect:/join_application_submitted";
         } else {
             log.warn("Signup unreachable statement");
             // logic error not suppose to reach here
@@ -853,7 +854,7 @@ public class MainController {
      * @param teamName The team name to join
      * @return the team id from sio
      */
-    private String getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
+    private Team2 getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
         // FIXME check if team name exists
         // FIXME check for general exception?
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
@@ -877,8 +878,7 @@ public class MainController {
                 }
 
             } else {
-                JSONObject object = new JSONObject(responseBody);
-                return object.getString("id");
+                return extractTeamInfo(responseBody);
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2640,44 +2640,24 @@ public class MainController {
     //--------------------------Static pages for sign up--------------------------
 
     @RequestMapping("/team_application_submitted")
-    public String teamAppSubmit(Model model) {
-        model.addAttribute("loginForm", new LoginForm());
-        model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+    public String teamAppSubmit() {
         return "team_application_submitted";
     }
 
-    @RequestMapping("/join_application_submitted/{teamName}")
-    public String joinTeamAppSubmit(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
-        log.info("Register new user join application submitted");
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
-
-        String responseBody = response.getBody().toString();
-
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-
-                switch (exceptionState) {
-                    case TEAM_NOT_FOUND_EXCEPTION:
-                        log.warn("Register new user join application request : team name error");
-                        break;
-                    default:
-                        log.warn("Register new user join application request : some other failure");
-                        // possible sio or adapter connection fail
-                        break;
-                }
-                return "redirect:/signup2";
-            }
-        } catch (IOException e) {
-            throw new WebServiceRuntimeException(e.getMessage());
+    /**
+     * A page to show new users has successfully registered to apply to join an existing team
+     * The page contains the team owner information which the users requested to join
+     * @param model The model which is passed from signup
+     * @return A success page otherwise an error page if the user tries to access this page directly
+     */
+    @RequestMapping("/join_application_submitted")
+    public String joinTeamAppSubmit(Model model) {
+        // model attribute should be passed from /signup2
+        // team is required to display the team owner details
+        if (model.containsAttribute("team")) {
+            return "join_team_application_submitted";
         }
-
-        Team2 one = extractTeamInfo(responseBody);
-        model.addAttribute("team", one);
-        return "join_team_application_submitted";
+        return "error";
     }
 
     @RequestMapping("/email_not_validated")
