@@ -2644,6 +2644,12 @@ public class MainController {
         return "team_application_submitted";
     }
 
+    /**
+     * A page to show new users has successfully registered to apply to join an existing team
+     * The page contains the team owner information which the users requested to join
+     * @param model The model which is passed from signup
+     * @return A success page otherwise an error page if the user tries to access this page directly
+     */
     @RequestMapping("/join_application_submitted")
     public String joinTeamAppSubmit(Model model) {
         // model attribute should be passed from /signup2
@@ -2651,8 +2657,6 @@ public class MainController {
         if (model.containsAttribute("team")) {
             return "join_team_application_submitted";
         }
-        // does not have the attribute
-        // implies users try to access this page directly
         return "error";
     }
 
