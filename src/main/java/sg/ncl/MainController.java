@@ -778,8 +778,6 @@ public class MainController {
             log.info("jointeam info: {}", joinTeamInfo);
             redirectAttributes.addFlashAttribute("team", joinTeamInfo);
             return "redirect:/join_application_submitted";
-//            return "redirect:/join_application_submitted/" + signUpMergedForm.getJoinTeamName().trim();
-
         } else {
             log.warn("Signup unreachable statement");
             // logic error not suppose to reach here
