@@ -2174,6 +2174,10 @@ public class MainController {
                 switch (exceptionState) {
                     case DATASET_NAME_IN_USE_EXCEPTION:
                         model.addAttribute("message", "Error(s):<ul><li>dataset name already exists</li></ul>");
+                        break;
+                    case FORBIDDEN_EXCEPTION:
+                        model.addAttribute("message", "Error(s):<ul><li>saving dataset forbidden</li></ul>");
+                        break;
                 }
 
                 return "data_contribute";
@@ -2186,9 +2190,27 @@ public class MainController {
     }
 
     @RequestMapping("/data/remove/{id}")
-    public String removeDataset(@PathVariable String id) {
+    public String removeDataset(@PathVariable String id, RedirectAttributes redirectAttributes) throws Exception {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getDataset(id), HttpMethod.DELETE, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case FORBIDDEN_EXCEPTION:
+                        redirectAttributes.addFlashAttribute("message", error.getMessage());
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
     	return "redirect:/data";
     }
 
