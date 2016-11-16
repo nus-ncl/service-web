@@ -2804,7 +2804,7 @@ public class MainController {
         try {
             team2.setCreatedDate(formatZonedDateTime(object.get("applicationDate").toString()));
         } catch (Exception e) {
-            log.warn("Error getting team application date {}", e.getMessage());
+            log.warn("Error getting team application date {}", e);
             team2.setCreatedDate(CONNECTION_ERROR);
         }
         team2.setId(object.getString("id"));
