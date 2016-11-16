@@ -729,7 +729,7 @@ public class MainController {
 
                 try {
                     registerUserToDeter(mainObject);
-                } catch (TeamNotFoundException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException e) {
+                } catch (TeamNotFoundException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException e) {
                     redirectAttributes.addFlashAttribute("message", e.getMessage());
                     redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
@@ -763,7 +763,7 @@ public class MainController {
 
             try {
                 registerUserToDeter(mainObject);
-            } catch (TeamNotFoundException | AdapterConnectionException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException e) {
+            } catch (TeamNotFoundException | AdapterConnectionException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
@@ -792,7 +792,15 @@ public class MainController {
      *
      * @param mainObject A JSONObject that contains user's credentials, personal details and team application details
      */
-    private void registerUserToDeter(JSONObject mainObject) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException, ApplyNewProjectException, RegisterTeamNameDuplicateException, UsernameAlreadyExistsException, EmailAlreadyExistsException {
+    private void registerUserToDeter(JSONObject mainObject) throws
+            WebServiceRuntimeException,
+            TeamNotFoundException,
+            AdapterConnectionException,
+            ApplyNewProjectException,
+            RegisterTeamNameDuplicateException,
+            UsernameAlreadyExistsException,
+            EmailAlreadyExistsException,
+            InvalidTeamNameException {
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
@@ -819,6 +827,12 @@ public class MainController {
                     case REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION:
                         log.warn("Register new users new team request : team name duplicate");
                         throw new RegisterTeamNameDuplicateException("Team name already in use");
+                    case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
+                        log.warn("Register new users new team request : team name already exists");
+                        throw new RegisterTeamNameDuplicateException("Team name already in use");
+                    case INVALID_TEAM_NAME_EXCEPTION:
+                        log.warn("Register new users new team request : team name invalid");
+                        throw new InvalidTeamNameException("Invalid team name: must be 6-12 alphanumeric characters only");
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
                         // throw from user service
                     {
