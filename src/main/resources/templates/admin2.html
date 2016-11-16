@@ -105,19 +105,24 @@
 					<p>&nbsp;</p>
 					<table class="table table-responsive">
 						<thead>
+						<th th:text="#{admin.dashboard.registeredDate}">Date</th>
 						<th th:text="#{admin.teams.header.name}">Team</th>
-						<th th:text="#{admin.teams.header.description}">Description</th>
 						<th th:text="#{admin.teams.header.owner}">Owner</th>
-						<!--<th th:text="#{admin.teams.header.institutition}">Institution</th>-->
-						<th th:text="#{admin.teams.header.type}">Type</th>
-						<th th:text="#{admin.teams.header.public}">Publicly Listed</th>
 						<th><!-- Actions --></th>
 						</thead>
 						<tr th:each="team : ${pendingApprovalTeamsList}">
-							<td th:text="${team.name}"></td>
-							<td th:text="${team.description}"></td>
+							<td th:text="${team.createdDate}"></td>
+							<td>
+								<a href="#pendingTeamDetailsModal" data-toggle="modal"
+								   th:attr="data-name=${team.name},
+								   			data-description=${team.description},
+								   			data-organisation=${team.organisationType},
+								   			data-visibility=${team.visibility}"
+								   th:text="${team.name}">Name</a>
+							</td>
 							<td>
 								<a th:href="'#'+${team.owner.id}" data-toggle="modal"><span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></a>
+								<span th:if="${team.owner.status == 'PENDING'}"><a href="#" data-toggle="tooltip" title="Email verified"><i class="fa fa-check-circle blue-tick"></i></a></span>
 								<!-- Modal -->
 								<div class="modal fade admin-modal" th:id="${team.owner.id}" aria-labelledby="ownerId" tabindex="-1" role="dialog" aria-hidden="true">
 									<div class="modal-dialog">
@@ -140,15 +145,32 @@
 									</div>
 								</div>
 							</td>
-							<td th:text="${team.organisationType}"></td>
-							<td th:text="${team.visibility}">Listed Visibility</td>
 							<td>
-								<a href="#" title="Accept" th:href="@{/admin/teams/accept/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard admin-click-once-button"><i class="fa fa-check-circle-o fa-lg btn-fa-green"></i> Accept</button></a>
-								<a href="#" title="Reject" th:href="@{/admin/teams/reject/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard admin-click-once-button"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</button></a>
+								<a href="#" title="Accept" th:href="@{/admin/teams/accept/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard btn-fa-green admin-click-once-button">Accept</button></a>
+								<a href="#" title="Reject" th:href="@{/admin/teams/reject/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard btn-fa-red admin-click-once-button">Reject</button></a>
 							</td>
 						</tr>
 					</table>
 				</th:block>
+			</div>
+
+			<!-- Pending Team Approval - Team Details Modal -->
+			<div class="modal fade" id="pendingTeamDetailsModal" tabindex="-1" role="dialog" aria-labelledby="pendingTeamDetailsModalLabel">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header team-owner-info-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="pendingTeamDetailsLabel">Modal title</h4>
+						</div>
+						<div class="modal-body team-owner-info-body">
+							<ul>
+								<li><strong th:text="#{team.profile.description}"></strong>: <span id="pendingTeamDescription"></span></li>
+								<li><strong th:text="#{team.profile.organizationType}"></strong>: <span id="pendingTeamOrganisationType"></span></li>
+								<li><strong th:text="#{team.profile.visibility}"></strong>: <span id="pendingTeamVisibility"></span></li>
+							</ul>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div id="teamsManagement" class="tab-pane fade">
