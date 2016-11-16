@@ -2102,19 +2102,24 @@ public class MainController {
     }
 
     @RequestMapping(value={"/data/contribute", "/data/contribute/{id}"}, method=RequestMethod.GET)
-    public String contributeData(Model model, @PathVariable Optional<Integer> id) {
+    public String contributeData(Model model, @PathVariable Optional<String> id) throws Exception {
         if (id.isPresent()) {
-            //TODO: get dataset from sio for editing fields
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
+            String dataResponseBody = response.getBody().toString();
+            JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+            Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            model.addAttribute("dataset", dataset);
         } else {
             model.addAttribute("dataset", new Dataset());
         }
     	return "data_contribute";
     }
 
-    @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
+    @RequestMapping(value={"/data/contribute", "/data/contribute/{id}"}, method=RequestMethod.POST)
     public String validateContributeData(@Valid @ModelAttribute("dataset") Dataset dataset,
                                          BindingResult bindingResult,
-                                         Model model,
+                                         Model model, @PathVariable Optional<String> id,
                                          HttpSession session) throws WebServiceRuntimeException {
         if (dataset.getAccessibility() == null) {
             dataset.setAccessibility(DataAccessibility.OPEN);
@@ -2151,7 +2156,14 @@ public class MainController {
 
         HttpEntity<String> request = createHttpEntityWithBody(dataObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getSioDataUrl(), HttpMethod.POST, request, String.class);
+
+        ResponseEntity response;
+        if (!id.isPresent()) {
+            response = restTemplate.exchange(properties.getSioDataUrl(), HttpMethod.POST, request, String.class);
+        } else {
+            response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.PUT, request, String.class);
+        }
+
         String dataResponseBody = response.getBody().toString();
 
         try {
@@ -2173,56 +2185,12 @@ public class MainController {
         return "redirect:/data";
     }
 
-//    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.GET)
-//    public String datasetInfo(@PathVariable Integer datasetId, Model model) {
-//    	Dataset dataset = datasetManager.getDataset(datasetId);
-//    	model.addAttribute("editDataset", dataset);
-//    	return "edit_data";
-//    }
-
-//    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.POST)
-//    public String editDatasetInfo(@PathVariable Integer datasetId, @ModelAttribute("editDataset") Dataset dataset, final RedirectAttributes redirectAttributes) {
-//    	Dataset origDataset = datasetManager.getDataset(datasetId);
-//
-//    	String editedDatasetName = dataset.getDatasetName();
-//    	String editedDatasetDesc = dataset.getDatasetDescription();
-//    	String editedDatasetLicense = dataset.getLicense();
-//    	String editedDatasetPublic = dataset.getIsPublic();
-//    	boolean editedDatasetIsRequiredAuthorization = dataset.getRequireAuthorization();
-//
-//    	System.out.println(origDataset.getDatasetId());
-//    	System.out.println(dataset.getDatasetId());
-//
-//    	if (origDataset.updateName(editedDatasetName) == true) {
-//    		redirectAttributes.addFlashAttribute("editName", "success");
-//    	}
-//
-//    	if (origDataset.updateDescription(editedDatasetDesc) == true) {
-//    		redirectAttributes.addFlashAttribute("editDesc", "success");
-//    	}
-//
-//    	if (origDataset.updateLicense(editedDatasetLicense) == true) {
-//    		redirectAttributes.addFlashAttribute("editLicense", "success");
-//    	}
-//
-//    	if (origDataset.updatePublic(editedDatasetPublic) == true) {
-//    		redirectAttributes.addFlashAttribute("editPublic", "success");
-//    	}
-//
-//    	if (origDataset.updateAuthorization(editedDatasetIsRequiredAuthorization) == true) {
-//    		redirectAttributes.addFlashAttribute("editIsRequiredAuthorization", "success");
-//    	}
-//
-//    	datasetManager.updateDatasetDetails(origDataset);
-//
-//    	return "redirect:/data/edit/{datasetId}";
-//    }
-
-//    @RequestMapping("/data/remove_dataset/{datasetId}")
-//    public String removeDataset(@PathVariable Integer datasetId) {
-//    	datasetManager.removeDataset(datasetId);
-//    	return "redirect:/data";
-//    }
+    @RequestMapping("/data/remove/{id}")
+    public String removeDataset(@PathVariable String id) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(id), HttpMethod.DELETE, request, String.class);
+    	return "redirect:/data";
+    }
 
     @RequestMapping("/data/public")
     public String getPublicDatasets(Model model) throws Exception {

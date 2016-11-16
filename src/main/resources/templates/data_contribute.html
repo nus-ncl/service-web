@@ -17,8 +17,8 @@
                 <div class="alert alert-danger" th:if="${message}">
                     <h4 th:utext="${message}"></h4>
                 </div>
-                <form  method="post" action="#" th:action="@{/data/contribute}" th:object="${dataset}" role="form">
-                    <fieldset th:if="*{id == null}">
+                <form  method="post" action="#" th:action="${dataset.id == null ? '/data/contribute' : '/data/contribute/' + dataset.id}" th:object="${dataset}" role="form">
+                    <fieldset>
                         <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
                         <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? has-error">
                             <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{name}"/>
@@ -45,6 +45,15 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-standard">Save</button>
+                            <button type="button" class="btn btn-danger" th:if="*{id != null}"
+                                    data-toggle="modal" data-target="#deleteModal"
+                                    th:attr="data-name=*{name},
+							            data-desc=*{description},
+                                        data-owner=*{contributor.firstName + ' ' + contributor.lastName},
+                                	    data-release=${dataset.getReleasedDateString()},
+                                        data-visible=${#strings.capitalize(#strings.toLowerCase(dataset.visibility))},
+                                        data-access=${#strings.capitalize(#strings.toLowerCase(dataset.accessibility))},
+                                        data-delete=@{/data/remove/{id}(id=*{id})}">Delete</button>
                         </div>
                     </fieldset>
                 </form>
@@ -67,6 +76,45 @@
                 </div>
             </div>
         </div> <!-- container -->
+
+        <!-- Confirm Delete Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="deleteLabel">Delete?</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">Description:</div>
+                            <div class="col-md-8" id="datasetDesc"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Owner:</div>
+                            <div class="col-md-8" id="datasetOwner"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Release:</div>
+                            <div class="col-md-8" id="datasetRelease"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Visibility:</div>
+                            <div class="col-md-8" id="datasetVisible"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Accessibility:</div>
+                            <div class="col-md-8" id="datasetAccess"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="#" class="btn btn-primary" id="deleteButton">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div th:replace="fragments/footer :: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>

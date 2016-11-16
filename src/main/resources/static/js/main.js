@@ -149,6 +149,7 @@ $(document).ready(function() {
     $('#datasetModal').on('show.bs.modal', function (event) {
         var anchor = $(event.relatedTarget);
         var datasetLabel = anchor.data('name');
+        var datasetDesc = anchor.data('desc');
         var datasetOwner = anchor.data('owner');
         var datasetRelease = anchor.data('release');
         var datasetVisible = anchor.data('visible');
@@ -157,6 +158,7 @@ $(document).ready(function() {
         var modal = $(this);
 		modal.find('#datasetButton').hide();
         modal.find('#datasetLabel').text(datasetLabel);
+        modal.find('#datasetDesc').text(datasetDesc);
         modal.find('#datasetOwner').text(datasetOwner);
         modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);
@@ -189,6 +191,26 @@ $(document).ready(function() {
         var requestLabel = anchor.data('name');
         var modal = $(this);
         modal.find('#requestLabel').text("Resources of " + requestLabel);
+    });
+
+    // modal to show dataset details
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var deleteLabel = anchor.data('name');
+        var datasetDesc = anchor.data('desc');
+        var datasetOwner = anchor.data('owner');
+        var datasetRelease = anchor.data('release');
+        var datasetVisible = anchor.data('visible');
+        var datasetAccess = anchor.data('access');
+        var deleteButton = anchor.data('delete');
+        var modal = $(this);
+        modal.find('#deleteLabel').text("Delete " + deleteLabel + "?");
+        modal.find('#datasetDesc').text(datasetDesc);
+        modal.find('#datasetOwner').text(datasetOwner);
+        modal.find('#datasetRelease').text(datasetRelease);
+        modal.find('#datasetVisible').text(datasetVisible);
+        modal.find('#datasetAccess').text(datasetAccess);
+        modal.find('#deleteButton').attr('href', deleteButton);
     });
 
     //-----------------get topology image-----------------

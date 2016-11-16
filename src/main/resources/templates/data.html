@@ -57,6 +57,7 @@
                     <tr th:each="datasetEntry : ${allDataMap}">
 	                   	<td><a href="#datasetModal" data-toggle="modal"
 							   th:attr="data-name=${datasetEntry.value.name},
+							            data-desc=${datasetEntry.value.description},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                 	    data-release=${datasetEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
@@ -105,9 +106,13 @@
 					</div>
 					<div class="modal-body">
 						<div class="row">
-							<div class="col-md-4">Owner:</div>
-							<div class="col-md-8" id="datasetOwner"></div>
+							<div class="col-md-4">Description:</div>
+							<div class="col-md-8" id="datasetDesc"></div>
 						</div>
+                        <div class="row">
+                            <div class="col-md-4">Owner:</div>
+                            <div class="col-md-8" id="datasetOwner"></div>
+                        </div>
 						<div class="row">
 							<div class="col-md-4">Release:</div>
 							<div class="col-md-8" id="datasetRelease"></div>
