@@ -3,8 +3,14 @@ package sg.ncl.testbed_interface;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.NotEmpty;
+import sg.ncl.domain.DataAccessibility;
+import sg.ncl.domain.DataVisibility;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +20,15 @@ import java.util.List;
 public class Dataset implements Serializable {
 
 	private Integer id;
+    @NotEmpty
 	private String name;
+    @NotEmpty
 	private String description;
 	private String contributorId;
-	private String visibility;
-	private String accessibility;
-	private String releaseDate;
+    @NotNull
+	private DataVisibility visibility = DataVisibility.PUBLIC;
+	private DataAccessibility accessibility;
+    private ZonedDateTime releasedDate;
 	private List<DataResource> dataResources;
 	private List<String> approvedUsers;
 
@@ -31,11 +40,11 @@ public class Dataset implements Serializable {
     }
 
 	public boolean isOpen() {
-	    return accessibility.equalsIgnoreCase("open");
+	    return accessibility == DataAccessibility.OPEN;
     }
 
 	public boolean isPublic() {
-	    return visibility.equalsIgnoreCase("public");
+	    return visibility == DataVisibility.PUBLIC;
     }
 
     public boolean isAccessible() {
@@ -58,6 +67,24 @@ public class Dataset implements Serializable {
 	    dataResources.add(dataResource);
     }
 
+    public void addAccessibility(String accessibility) {
+        if (accessibility.equals(DataAccessibility.OPEN.toString())) {
+            setAccessibility(DataAccessibility.OPEN);
+        } else if (accessibility.equals(DataAccessibility.RESTRICTED.toString())) {
+            setAccessibility(DataAccessibility.RESTRICTED);
+        }
+    }
+
+    public void addVisibility(String visibility) {
+        if (visibility.equals(DataVisibility.PRIVATE.toString())) {
+            setVisibility(DataVisibility.PRIVATE);
+        } else if (visibility.equals(DataVisibility.PROTECTED.toString())) {
+            setVisibility(DataVisibility.PROTECTED);
+        } else if (visibility.equals(DataVisibility.PUBLIC.toString())) {
+            setVisibility(DataVisibility.PUBLIC);
+        }
+    }
+
     public String getResourceIdsInArrayString() {
         List<String> idList = new ArrayList<>();
         dataResources.forEach(temp -> idList.add("\"" + temp.getId() + "\""));
@@ -72,6 +99,11 @@ public class Dataset implements Serializable {
         String uris = uriList.toString();
         log.debug(uris);
         return uris;
+    }
+
+    public String getReleasedDateString() {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
+        return releasedDate.format(format);
     }
 
 }

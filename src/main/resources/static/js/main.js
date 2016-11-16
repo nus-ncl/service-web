@@ -153,12 +153,20 @@ $(document).ready(function() {
         var datasetRelease = anchor.data('release');
         var datasetVisible = anchor.data('visible');
         var datasetAccess = anchor.data('access');
+		var datasetEdit = anchor.data('edit');
         var modal = $(this);
+		modal.find('#datasetButton').hide();
         modal.find('#datasetLabel').text(datasetLabel);
         modal.find('#datasetOwner').text(datasetOwner);
         modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);
         modal.find('#datasetAccess').text(datasetAccess);
+        if (!datasetEdit.trim()) {
+            //empty string
+        } else {
+            modal.find('#datasetButton').attr('href', datasetEdit);
+            modal.find('#datasetButton').show();
+        }
     });
 
     // modal to download dataset resource

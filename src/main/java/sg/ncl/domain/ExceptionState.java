@@ -33,7 +33,8 @@ public enum ExceptionState {
     PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION("PasswordResetRequestNotFoundException"),
     ADAPTER_DETERLAB_CONNECT_EXCEPTION("AdapterDeterlabConnectException"),
     TEAM_NAME_ALREADY_EXISTS_EXCEPTION("TeamNameAlreadyExistsException"),
-    INVALID_TEAM_NAME_EXCEPTION("InvalidTeamNameException");
+    INVALID_TEAM_NAME_EXCEPTION("InvalidTeamNameException"),
+    DATASET_NAME_IN_USE_EXCEPTION("DatasetNameInUseException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 

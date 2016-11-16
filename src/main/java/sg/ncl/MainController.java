@@ -13,6 +13,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -34,16 +36,10 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
-import static sg.ncl.domain.ExceptionState.ADAPTER_DETERLAB_CONNECT_EXCEPTION;
-import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION;
-import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.*;
 
 /**
  * 
@@ -2105,62 +2101,77 @@ public class MainController {
     	return "data";
     }
 
-//    @RequestMapping(value="/data/contribute", method=RequestMethod.GET)
-//    public String contributeData(Model model) {
-//    	model.addAttribute("dataset", new Dataset());
-//
-//    	File rootFolder = new File(App.ROOT);
-//    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
-//    			.map(f -> f.getError())
-//    			.collect(Collectors.toList());
-//
-//    		model.addAttribute("files",
-//    			Arrays.stream(rootFolder.listFiles())
-//    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
-//    					.map(f -> f.getError())
-//    					.collect(Collectors.toList())
-//    		);
-//
-//    	return "contribute_data";
-//    }
+    @RequestMapping(value={"/data/contribute", "/data/contribute/{id}"}, method=RequestMethod.GET)
+    public String contributeData(Model model, @PathVariable Optional<Integer> id) {
+        if (id.isPresent()) {
+            //TODO: get dataset from sio for editing fields
+        } else {
+            model.addAttribute("dataset", new Dataset());
+        }
+    	return "data_contribute";
+    }
 
-//    @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
-//    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
-//    	// TODO
-//    	// validation
-//    	// get file from user upload to server
-//        BufferedOutputStream stream = null;
-//        FileOutputStream fileOutputStream = null;
-//
-//		if (!file.isEmpty()) {
-//			try {
-//				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-//                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
-//				stream = new BufferedOutputStream(fileOutputStream);
-//                FileCopyUtils.copy(file.getInputStream(), stream);
-//				stream.close();
-//				redirectAttributes.addFlashAttribute("message",
-//						"You successfully uploaded " + file.getOriginalFilename() + "!");
-//				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
-//			}
-//			catch (Exception e) {
-//				redirectAttributes.addFlashAttribute("message",
-//						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
-//			} finally {
-//                if (stream != null) {
-//                    stream.close();
-//                }
-//                if (fileOutputStream != null) {
-//                    fileOutputStream.close();
-//                }
-//            }
-//        }
-//		else {
-//			redirectAttributes.addFlashAttribute("message",
-//					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
-//		}
-//    	return "redirect:/data";
-//    }
+    @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
+    public String validateContributeData(@Valid @ModelAttribute("dataset") Dataset dataset,
+                                         BindingResult bindingResult,
+                                         Model model,
+                                         HttpSession session) throws WebServiceRuntimeException {
+        if (dataset.getAccessibility() == null) {
+            dataset.setAccessibility(DataAccessibility.OPEN);
+        }
+        dataset.setReleasedDate(ZonedDateTime.now());
+
+		if (bindingResult.hasErrors()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Error(s):");
+            message.append("<ul class=\"fa-ul\">");
+            for (ObjectError objectError : bindingResult.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+                message.append(fieldError.getField());
+                message.append(" ");
+                message.append(fieldError.getDefaultMessage());
+                message.append("</li>");
+			}
+            message.append("</ul>");
+			model.addAttribute("message", message.toString());
+			return "data_contribute";
+		}
+
+        JSONObject dataObject = new JSONObject();
+        dataObject.put("name", dataset.getName());
+        dataObject.put("description", dataset.getDescription());
+        dataObject.put("contributorId", session.getAttribute("id").toString());
+        dataObject.put("visibility", dataset.getVisibility());
+        dataObject.put("accessibility", dataset.getAccessibility());
+        dataObject.put("resources", new ArrayList());
+        dataObject.put("approvedUsers", new ArrayList());
+        dataObject.put("releasedDate", dataset.getReleasedDate());
+        log.debug("DataObject: {}", dataObject.toString());
+
+        HttpEntity<String> request = createHttpEntityWithBody(dataObject.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getSioDataUrl(), HttpMethod.POST, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case DATASET_NAME_IN_USE_EXCEPTION:
+                        model.addAttribute("message", "Error(s):<ul><li>dataset name already exists</li></ul>");
+                }
+
+                return "data_contribute";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "redirect:/data";
+    }
 
 //    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.GET)
 //    public String datasetInfo(@PathVariable Integer datasetId, Model model) {
@@ -2798,9 +2809,9 @@ public class MainController {
         dataset.setName(object.getString("name"));
         dataset.setDescription(object.getString("description"));
         dataset.setContributorId(object.getString("contributorId"));
-        dataset.setVisibility(object.getString("visibility"));
-        dataset.setAccessibility(object.getString("accessibility"));
-        dataset.setReleaseDate(formatZonedDateTime(object.get("releaseDate").toString()));
+        dataset.addVisibility(object.getString("visibility"));
+        dataset.addAccessibility(object.getString("accessibility"));
+        dataset.setReleasedDate(getZonedDateTime(object.get("releasedDate").toString()));
 
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
 
@@ -3004,11 +3015,15 @@ public class MainController {
      * @return a date in the format MMM-d-yyyy
      */
     private String formatZonedDateTime(String zonedDateTimeJSON) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        ZonedDateTime zonedDateTime = mapper.readValue(zonedDateTimeJSON, ZonedDateTime.class);
+        ZonedDateTime zonedDateTime = getZonedDateTime(zonedDateTimeJSON);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
         return zonedDateTime.format(format);
+    }
+
+    private ZonedDateTime getZonedDateTime(String zonedDateTimeJSON) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper.readValue(zonedDateTimeJSON, ZonedDateTime.class);
     }
 
     /**
