@@ -171,6 +171,21 @@ $(document).ready(function() {
             modal.find('#topoThumb').attr('src', data);
         });
     });
+
+	//-----------------admin page-----------------
+	// modal to show admin - pending teams approval details
+	$('#pendingTeamDetailsModal').on('show.bs.modal', function (event) {
+		var anchor = $(event.relatedTarget);
+		var pendingTeamName = anchor.data('name');
+		var pendingTeamDescription = anchor.data('description');
+		var pendingTeamOrganisationType = anchor.data('organisation');
+		var pendingTeamVisibility = anchor.data('visibility');
+		var modal = $(this);
+		modal.find('#pendingTeamDetailsLabel').text(pendingTeamName);
+		modal.find('#pendingTeamDescription').text(pendingTeamDescription);
+		modal.find('#pendingTeamOrganisationType').text(pendingTeamOrganisationType);
+		modal.find('#pendingTeamVisibility').text(pendingTeamVisibility);
+	});
 });
 
 // display the ns file content when users select the predefined scenarios
