@@ -4,7 +4,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -16,7 +15,6 @@ public class SignUpMergedForm {
     @Size(min=1, message="Email cannot be empty")
     private String email;
 
-//    @Pattern(regexp="^((?=.*\\d))*$", message = "Password must contains alphanumeric characters" )
     @Size(min=8, message="Password must have at least 8 characters")
     @Pattern.List({
             @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit"),
