@@ -2081,6 +2081,7 @@ public class MainController {
     }
 
     //---------------------------------Dataset Page--------------------------
+    private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
 
     @RequestMapping("/data")
     public String data(Model model, HttpSession session) throws Exception {
@@ -2113,7 +2114,7 @@ public class MainController {
         } else {
             model.addAttribute("dataset", new Dataset());
         }
-    	return "data_contribute";
+    	return CONTRIBUTE_DATA_PAGE;
     }
 
     @RequestMapping(value={"/data/contribute", "/data/contribute/{id}"}, method=RequestMethod.POST)
@@ -2140,7 +2141,7 @@ public class MainController {
 			}
             message.append("</ul>");
 			model.addAttribute("message", message.toString());
-			return "data_contribute";
+			return CONTRIBUTE_DATA_PAGE;
 		}
 
         JSONObject dataObject = new JSONObject();
@@ -2157,13 +2158,7 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(dataObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
-        ResponseEntity response;
-        if (!id.isPresent()) {
-            response = restTemplate.exchange(properties.getSioDataUrl(), HttpMethod.POST, request, String.class);
-        } else {
-            response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.PUT, request, String.class);
-        }
-
+        ResponseEntity response = getResponseEntity(id, request);
         String dataResponseBody = response.getBody().toString();
 
         try {
@@ -2173,14 +2168,16 @@ public class MainController {
 
                 switch (exceptionState) {
                     case DATASET_NAME_IN_USE_EXCEPTION:
+                        log.error("Dataset name already exists.");
                         model.addAttribute("message", "Error(s):<ul><li>dataset name already exists</li></ul>");
                         break;
                     case FORBIDDEN_EXCEPTION:
+                        log.error("Saving of dataset forbidden.");
                         model.addAttribute("message", "Error(s):<ul><li>saving dataset forbidden</li></ul>");
                         break;
                 }
 
-                return "data_contribute";
+                return CONTRIBUTE_DATA_PAGE;
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2189,8 +2186,18 @@ public class MainController {
         return "redirect:/data";
     }
 
+    private ResponseEntity getResponseEntity(@PathVariable Optional<String> id, HttpEntity<String> request) {
+        ResponseEntity response;
+        if (!id.isPresent()) {
+            response = restTemplate.exchange(properties.getSioDataUrl(), HttpMethod.POST, request, String.class);
+        } else {
+            response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.PUT, request, String.class);
+        }
+        return response;
+    }
+
     @RequestMapping("/data/remove/{id}")
-    public String removeDataset(@PathVariable String id, RedirectAttributes redirectAttributes) throws Exception {
+    public String removeDataset(@PathVariable String id, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getDataset(id), HttpMethod.DELETE, request, String.class);
@@ -2201,10 +2208,9 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    case FORBIDDEN_EXCEPTION:
-                        redirectAttributes.addFlashAttribute("message", error.getMessage());
-                        break;
+                if (exceptionState == FORBIDDEN_EXCEPTION) {
+                    log.error("Removing of dataset forbidden.");
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
                 }
             }
         } catch (IOException e) {
