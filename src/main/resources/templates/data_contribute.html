@@ -28,18 +28,21 @@
                         </div>
                         <div class="form-group">
                             <div class="radio">
-                                <label><input type="radio" th:field="*{visibility}" th:value="PUBLIC"/><strong><span th:text="#{admin.contributeData.public}">Public</span></strong> <em><span th:text="#{admin.contributeData.publicDesc}">Anyone can view the dataset.</span></em></label>
+                                <label><input type="radio" th:field="*{visibility}" th:value="PUBLIC"/><strong><span th:text="#{admin.contributeData.public}">Public</span></strong> <em><span th:text="#{admin.contributeData.publicDesc}">Dataset info will be shown on "Public Datasets" page.</span></em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{visibility}" th:value="PRIVATE"/><strong><span th:text="#{admin.contributeData.private}">Private</span></strong> <em><span th:text="#{admin.contributeData.privateDesc}">The dataset is private.</span></em></label>
+                                <label><input type="radio" th:field="*{visibility}" th:value="PROTECTED"/><strong><span th:text="#{admin.contributeData.protected}">Protected</span></strong> <em><span th:text="#{admin.contributeData.protectedDesc}">Only logged in users can view this dataset info.</span></em></label>
                             </div>
+                            <!-- div class="radio">
+                                <label><input type="radio" th:field="*{visibility}" th:value="PRIVATE"/><strong><span th:text="#{admin.contributeData.private}">Private</span></strong> <em><span th:text="#{admin.contributeData.privateDesc}">The dataset is private.</span></em></label>
+                            </div -->
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
                                 <label><input type="checkbox" th:field="*{accessibility}" th:value="RESTRICTED"/><strong><span th:text="#{admin.contributeData.auth}">Require Authorization?</span></strong></label>
                                 <p>
-                                	<em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Checked it if you wish other users to require your permission before downloading the dataset.</span>
-                                	<br/><span th:text="#{admin.contributeData.authDesc2}">Otherwise, users can just download your dataset without you authorization</span></em>
+                                	<em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Select it if you want to review every access request to this dataset.</span>
+                                	<br/><!-- span th:text="#{admin.contributeData.authDesc2}">Otherwise, users can just download your dataset without your authorization</span --></em>
                                 </p>
                             </div>
                         </div>
