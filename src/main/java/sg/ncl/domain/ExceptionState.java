@@ -34,6 +34,7 @@ public enum ExceptionState {
     ADAPTER_DETERLAB_CONNECT_EXCEPTION("AdapterDeterlabConnectException"),
     TEAM_NAME_ALREADY_EXISTS_EXCEPTION("TeamNameAlreadyExistsException"),
     INVALID_TEAM_NAME_EXCEPTION("InvalidTeamNameException"),
+    INVALID_PASSWORD_EXCEPTION("InvalidPasswordException"),
     DATASET_NAME_IN_USE_EXCEPTION("DatasetNameInUseException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
