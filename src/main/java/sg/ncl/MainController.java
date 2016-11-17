@@ -86,13 +86,13 @@ public class MainController {
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
 
     @Autowired
-    private RestTemplate restTemplate;
+    protected RestTemplate restTemplate;
 
     @Inject
-    private ObjectMapper objectMapper;
+    protected ObjectMapper objectMapper;
 
     @Inject
-    private ConnectionProperties properties;
+    protected ConnectionProperties properties;
 
     @Inject
     private WebProperties webProperties;
@@ -2081,161 +2081,6 @@ public class MainController {
     }
 
     //---------------------------------Dataset Page--------------------------
-    private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
-
-    @RequestMapping("/data")
-    public String data(Model model, HttpSession session) throws Exception {
-        DatasetManager datasetManager = new DatasetManager();
-
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
-        String dataResponseBody = response.getBody().toString();
-
-        JSONArray dataJsonArray = new JSONArray(dataResponseBody);
-        for (int i = 0; i < dataJsonArray.length(); i++) {
-            JSONObject dataInfoObject = dataJsonArray.getJSONObject(i);
-            Dataset dataset = extractDataInfo(dataInfoObject.toString());
-            datasetManager.addDataset(dataset);
-        }
-
-    	model.addAttribute("allDataMap", datasetManager.getDatasetMap());
-    	return "data";
-    }
-
-    @RequestMapping(value={"/data/contribute", "/data/contribute/{id}"}, method=RequestMethod.GET)
-    public String contributeData(Model model, @PathVariable Optional<String> id) throws Exception {
-        if (id.isPresent()) {
-            HttpEntity<String> request = createHttpEntityHeaderOnly();
-            ResponseEntity response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
-            String dataResponseBody = response.getBody().toString();
-            JSONObject dataInfoObject = new JSONObject(dataResponseBody);
-            Dataset dataset = extractDataInfo(dataInfoObject.toString());
-            model.addAttribute("dataset", dataset);
-        } else {
-            model.addAttribute("dataset", new Dataset());
-        }
-    	return CONTRIBUTE_DATA_PAGE;
-    }
-
-    @RequestMapping(value={"/data/contribute", "/data/contribute/{id}"}, method=RequestMethod.POST)
-    public String validateContributeData(@Valid @ModelAttribute("dataset") Dataset dataset,
-                                         BindingResult bindingResult,
-                                         Model model, @PathVariable Optional<String> id,
-                                         HttpSession session) throws WebServiceRuntimeException {
-		if (bindingResult.hasErrors()) {
-            StringBuilder message = new StringBuilder();
-            message.append("Error(s):");
-            message.append("<ul class=\"fa-ul\">");
-            for (ObjectError objectError : bindingResult.getAllErrors()) {
-                FieldError fieldError = (FieldError) objectError;
-                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
-                message.append(fieldError.getField());
-                message.append(" ");
-                message.append(fieldError.getDefaultMessage());
-                message.append("</li>");
-			}
-            message.append("</ul>");
-			model.addAttribute("message", message.toString());
-			return CONTRIBUTE_DATA_PAGE;
-		}
-
-        JSONObject dataObject = new JSONObject();
-        dataObject.put("name", dataset.getName());
-        dataObject.put("description", dataset.getDescription());
-        dataObject.put("contributorId", session.getAttribute("id").toString());
-        dataObject.put("visibility", dataset.getVisibility());
-        dataObject.put("accessibility", dataset.getAccessibility());
-        dataObject.put("resources", new ArrayList());
-        dataObject.put("approvedUsers", new ArrayList());
-        dataObject.put("releasedDate", dataset.getReleasedDate());
-        log.debug("DataObject: {}", dataObject.toString());
-
-        HttpEntity<String> request = createHttpEntityWithBody(dataObject.toString());
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-
-        ResponseEntity response = getResponseEntity(id, request);
-        String dataResponseBody = response.getBody().toString();
-
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
-                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-
-                switch (exceptionState) {
-                    case DATASET_NAME_IN_USE_EXCEPTION:
-                        log.warn("Dataset name already exists.");
-                        model.addAttribute("message", "Error(s):<ul><li>dataset name already exists</li></ul>");
-                        break;
-                    case FORBIDDEN_EXCEPTION:
-                        log.warn("Saving of dataset forbidden.");
-                        model.addAttribute("message", "Error(s):<ul><li>saving dataset forbidden</li></ul>");
-                        break;
-                }
-
-                return CONTRIBUTE_DATA_PAGE;
-            }
-        } catch (IOException e) {
-            log.error("validateContributeData: {}", e.toString());
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
-
-        return "redirect:/data";
-    }
-
-    private ResponseEntity getResponseEntity(@PathVariable Optional<String> id, HttpEntity<String> request) {
-        ResponseEntity response;
-        if (!id.isPresent()) {
-            response = restTemplate.exchange(properties.getSioDataUrl(), HttpMethod.POST, request, String.class);
-        } else {
-            response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.PUT, request, String.class);
-        }
-        return response;
-    }
-
-    @RequestMapping("/data/remove/{id}")
-    public String removeDataset(@PathVariable String id, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getDataset(id), HttpMethod.DELETE, request, String.class);
-        String dataResponseBody = response.getBody().toString();
-
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
-                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-
-                if (exceptionState == FORBIDDEN_EXCEPTION) {
-                    log.error("Removing of dataset forbidden.");
-                    redirectAttributes.addFlashAttribute("message", error.getMessage());
-                }
-            }
-        } catch (IOException e) {
-            log.error("removeDataset: {}", e.toString());
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
-
-    	return "redirect:/data";
-    }
-
-    @RequestMapping("/data/public")
-    public String getPublicDatasets(Model model) throws Exception {
-        DatasetManager datasetManager = new DatasetManager();
-
-        HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicData(), HttpMethod.GET, dataRequest, String.class);
-        String dataResponseBody = dataResponse.getBody().toString();
-
-        JSONArray dataPublicJsonArray = new JSONArray(dataResponseBody);
-        for (int i = 0; i < dataPublicJsonArray.length(); i++) {
-            JSONObject dataInfoObject = dataPublicJsonArray.getJSONObject(i);
-            Dataset dataset = extractDataInfo(dataInfoObject.toString());
-            datasetManager.addDataset(dataset);
-        }
-
-    	model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
-    	return "data_public";
-    }
-
 //    @RequestMapping("/data/public/request_access/{dataOwnerId}")
 //    public String requestAccessForDataset(@PathVariable Integer dataOwnerId, Model model) {
 //    	// TODO
@@ -2792,39 +2637,6 @@ public class MainController {
         return team2;
     }
 
-    private Dataset extractDataInfo(String json) throws Exception {
-        log.debug(json);
-
-        JSONObject object = new JSONObject(json);
-        Dataset dataset = new Dataset();
-
-        dataset.setId(object.getInt("id"));
-        dataset.setName(object.getString("name"));
-        dataset.setDescription(object.getString("description"));
-        dataset.setContributorId(object.getString("contributorId"));
-        dataset.addVisibility(object.getString("visibility"));
-        dataset.addAccessibility(object.getString("accessibility"));
-        dataset.setReleasedDate(getZonedDateTime(object.get("releasedDate").toString()));
-
-        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
-
-        JSONArray resources = object.getJSONArray("resources");
-        for (int i = 0; i < resources.length(); i++) {
-            JSONObject resource = resources.getJSONObject(i);
-            DataResource dataResource = new DataResource();
-            dataResource.setId(resource.getLong("id"));
-            dataResource.setUri(resource.getString("uri"));
-            dataset.addResource(dataResource);
-        }
-
-        JSONArray approvedUsers = object.getJSONArray("approvedUsers");
-        for (int i =0; i < approvedUsers.length(); i++) {
-            dataset.addApprovedUser(approvedUsers.getString(0));
-        }
-
-        return dataset;
-    }
-
     // use to extract JSON Strings from services
     // in the case where the JSON Strings are null, return "Connection Error"
     private String getJSONStr(String jsonString) {
@@ -2891,7 +2703,7 @@ public class MainController {
         return null;
     }
 
-    private User2 invokeAndExtractUserInfo(String userId) {
+    protected User2 invokeAndExtractUserInfo(String userId) {
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity response;
 
@@ -3007,13 +2819,13 @@ public class MainController {
      * @param zonedDateTimeJSON JSON string
      * @return a date in the format MMM-d-yyyy
      */
-    private String formatZonedDateTime(String zonedDateTimeJSON) throws Exception {
+    protected String formatZonedDateTime(String zonedDateTimeJSON) throws Exception {
         ZonedDateTime zonedDateTime = getZonedDateTime(zonedDateTimeJSON);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
         return zonedDateTime.format(format);
     }
 
-    private ZonedDateTime getZonedDateTime(String zonedDateTimeJSON) throws IOException {
+    protected ZonedDateTime getZonedDateTime(String zonedDateTimeJSON) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         return mapper.readValue(zonedDateTimeJSON, ZonedDateTime.class);
@@ -3026,7 +2838,7 @@ public class MainController {
      * @return A HttpEntity request
      * @see HttpEntity createHttpEntityHeaderOnly() for request with only header
      */
-    private HttpEntity<String> createHttpEntityWithBodyNoAuthHeader(String jsonString) {
+    protected HttpEntity<String> createHttpEntityWithBodyNoAuthHeader(String jsonString) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(jsonString, headers);
@@ -3038,7 +2850,7 @@ public class MainController {
      * @return A HttpEntity request
      * @see HttpEntity createHttpEntityWithBody() for request with both body and header
      */
-    private HttpEntity<String> createHttpEntityHeaderOnlyNoAuthHeader() {
+    protected HttpEntity<String> createHttpEntityHeaderOnlyNoAuthHeader() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(headers);
@@ -3052,7 +2864,7 @@ public class MainController {
      * @implNote Authorization header must be set to the JwTToken in the format [Bearer: TOKEN_ID]
      * @see HttpEntity createHttpEntityHeaderOnly() for request with only header
      */
-    private HttpEntity<String> createHttpEntityWithBody(String jsonString) {
+    protected HttpEntity<String> createHttpEntityWithBody(String jsonString) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
@@ -3066,7 +2878,7 @@ public class MainController {
      * @implNote Authorization header must be set to the JwTToken in the format [Bearer: TOKEN_ID]
      * @see HttpEntity createHttpEntityWithBody() for request with both body and header
      */
-    private HttpEntity<String> createHttpEntityHeaderOnly() {
+    protected HttpEntity<String> createHttpEntityHeaderOnly() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());

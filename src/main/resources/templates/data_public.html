@@ -59,12 +59,12 @@
                         <td><a href="#datasetModal" data-toggle="modal"
                                th:attr="data-name=${publicDataEntry.value.name},
                                         data-owner=${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName},
-                                        data-release=${publicDataEntry.value.releaseDate},
+                                        data-release=${publicDataEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(publicDataEntry.value.visibility))},
                                         data-access=${#strings.capitalize(#strings.toLowerCase(publicDataEntry.value.accessibility))}"
                                th:text="${publicDataEntry.value.name}">Name</a></td>
                         <td th:text="${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName}">Owner</td>
-                        <td th:text="${publicDataEntry.value.releaseDate}">Release Date</td>
+                        <td th:text="${publicDataEntry.value.getReleasedDateString()}">Release Date</td>
                         <td th:text="${#strings.capitalize(#strings.toLowerCase(publicDataEntry.value.accessibility))}">Access</td>
                         <!-- download or request for access -->
                         <!-- td th:if="not ${publicDataEntry.value.isAccessible()}"><a href="#" th:href="@{/data/public/request_access/{dataOwnerId}(dataOwnerId=${publicDataEntry.value.contributorId})}" class="btn btn-standard">Request Access</a></td>

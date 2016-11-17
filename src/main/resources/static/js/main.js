@@ -163,7 +163,7 @@ $(document).ready(function() {
         modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);
         modal.find('#datasetAccess').text(datasetAccess);
-        if (!datasetEdit.trim()) {
+        if (typeof datasetEdit === "undefined" || !datasetEdit.trim()) {
             //empty string
         } else {
             modal.find('#datasetButton').attr('href', datasetEdit);
