@@ -39,9 +39,10 @@ import static sg.ncl.domain.ExceptionState.FORBIDDEN_EXCEPTION;
 public class DataController extends MainController {
 
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
+    private static final String MESSAGE_ATTRIBUTE = "message";
 
     @RequestMapping
-    public String data(Model model, HttpSession session) throws Exception {
+    public String data(Model model, HttpSession session) {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -92,7 +93,7 @@ public class DataController extends MainController {
                 message.append("</li>");
             }
             message.append("</ul>");
-            model.addAttribute("message", message.toString());
+            model.addAttribute(MESSAGE_ATTRIBUTE, message.toString());
             return CONTRIBUTE_DATA_PAGE;
         }
 
@@ -121,11 +122,11 @@ public class DataController extends MainController {
                 switch (exceptionState) {
                     case DATASET_NAME_IN_USE_EXCEPTION:
                         log.warn("Dataset name already exists.");
-                        model.addAttribute("message", "Error(s):<ul><li>dataset name already exists</li></ul>");
+                        model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>dataset name already exists</li></ul>");
                         break;
                     case FORBIDDEN_EXCEPTION:
                         log.warn("Saving of dataset forbidden.");
-                        model.addAttribute("message", "Error(s):<ul><li>saving dataset forbidden</li></ul>");
+                        model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>saving dataset forbidden</li></ul>");
                         break;
                     default:
                         log.warn("Unknown error.");
@@ -155,7 +156,7 @@ public class DataController extends MainController {
 
                 if (exceptionState == FORBIDDEN_EXCEPTION) {
                     log.error("Removing of dataset forbidden.");
-                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
                 }
             }
         } catch (IOException e) {
@@ -167,7 +168,7 @@ public class DataController extends MainController {
     }
 
     @RequestMapping("/public")
-    public String getPublicDatasets(Model model) throws Exception {
+    public String getPublicDatasets(Model model) {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
