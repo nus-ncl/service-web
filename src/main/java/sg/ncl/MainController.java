@@ -832,7 +832,7 @@ public class MainController {
                         throw new InvalidTeamNameException("Invalid team name: must be 6-12 alphanumeric characters only");
                     case INVALID_PASSWORD_EXCEPTION:
                         log.warn("Register new users new team request : invalid password");
-                        throw new InvalidPasswordException("Invalid password");
+                        throw new InvalidPasswordException("Password is too simple");
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
                         // throw from user service
                     {
