@@ -21,7 +21,7 @@
                     <fieldset>
                         <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
                         <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? has-error">
-                            <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{name}"/>
+                            <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{name}"  th:disabled="${dataset.id != null}"/>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? has-error">
                             <input type="text" class="form-control" placeholder="Enter Dataset Description" th:field="*{description}"/>
