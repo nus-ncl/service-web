@@ -27,7 +27,11 @@
                                 <fieldset>
 									<p class="account-change-fail" th:if="${signupError}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signupError}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('email')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{email}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('password')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{password}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('password')}">
+										<span th:each="err : ${#fields.errors('password')}">
+											<i class="fa fa-exclamation-circle"></i> <span th:text="${err}"></span><br/>
+										</span>
+									</p>
 									<p class="account-change-fail" th:if="${(signUpMergedForm.password != null and signUpMergedForm.confirmPassword != null) and (signUpMergedForm.getIsValid() == false)}"><i class="fa fa-exclamation-circle"></i> <span th:text="#{acc.info.pwdMismatch}"></span></p>
 									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamOwnerPolicy != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamOwnerPolicy}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('firstName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{firstName}"></span></p>
