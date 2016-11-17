@@ -16,7 +16,12 @@ public class SignUpMergedForm {
     @Size(min=1, message="Email cannot be empty")
     private String email;
 
-    @Size(min=1, message="Password cannot be empty")
+//    @Pattern(regexp="^((?=.*\\d))*$", message = "Password must contains alphanumeric characters" )
+    @Size(min=8, message="Password must have at least 8 characters")
+    @Pattern.List({
+            @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit"),
+            @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one alphabet")
+    })
     private String password;
 
     private String confirmPassword;
@@ -92,6 +97,15 @@ public class SignUpMergedForm {
 	public SignUpMergedForm() {
 		
 	}
+
+    public SignUpMergedForm(String country, String institution, String jobTitle, String confirmPassword, String password, String postalCode) {
+        this.country = country;
+        this.institution = institution;
+        this.jobTitle = jobTitle;
+        this.confirmPassword = confirmPassword;
+        this.password = password;
+        this.postalCode = postalCode;
+    }
 	
 	//--------------------------------------- Account Details ---------------------------------------
 
