@@ -94,13 +94,14 @@
                                                                     <th th:text="#{experiment.table.header.nodes}">Node</th>
                                                                     <th th:text="#{experiment.table.header.os}">OS</th>
                                                                     <th th:text="#{experiment.table.header.qualifiedName}">Qualified Name</th>
+                                                                    <th>Actions</th>
                                                                 </thead>
                                                                 <th:block th:each="nodesDetailsMap: ${realization.nodesInfoMap}">
                                                                     <tr>
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
-
                                                                         <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
+                                                                        <td th:text="${nodesDetailsMap.value.nodeId}"></td>
                                                                     </tr>
                                                                 </th:block>
                                                             </table>
