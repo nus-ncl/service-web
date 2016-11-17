@@ -2122,11 +2122,6 @@ public class MainController {
                                          BindingResult bindingResult,
                                          Model model, @PathVariable Optional<String> id,
                                          HttpSession session) throws WebServiceRuntimeException {
-        if (dataset.getAccessibility() == null) {
-            dataset.setAccessibility(DataAccessibility.OPEN);
-        }
-        dataset.setReleasedDate(ZonedDateTime.now());
-
 		if (bindingResult.hasErrors()) {
             StringBuilder message = new StringBuilder();
             message.append("Error(s):");
@@ -2168,11 +2163,11 @@ public class MainController {
 
                 switch (exceptionState) {
                     case DATASET_NAME_IN_USE_EXCEPTION:
-                        log.error("Dataset name already exists.");
+                        log.warn("Dataset name already exists.");
                         model.addAttribute("message", "Error(s):<ul><li>dataset name already exists</li></ul>");
                         break;
                     case FORBIDDEN_EXCEPTION:
-                        log.error("Saving of dataset forbidden.");
+                        log.warn("Saving of dataset forbidden.");
                         model.addAttribute("message", "Error(s):<ul><li>saving dataset forbidden</li></ul>");
                         break;
                 }
@@ -2180,6 +2175,7 @@ public class MainController {
                 return CONTRIBUTE_DATA_PAGE;
             }
         } catch (IOException e) {
+            log.error("validateContributeData: {}", e.toString());
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
@@ -2214,6 +2210,7 @@ public class MainController {
                 }
             }
         } catch (IOException e) {
+            log.error("removeDataset: {}", e.toString());
             throw new WebServiceRuntimeException(e.getMessage());
         }
 

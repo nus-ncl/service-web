@@ -7,7 +7,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import sg.ncl.domain.DataAccessibility;
 import sg.ncl.domain.DataVisibility;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,8 +24,7 @@ public class Dataset implements Serializable {
     @NotEmpty
 	private String description;
 	private String contributorId;
-    @NotNull
-	private DataVisibility visibility = DataVisibility.PUBLIC;
+	private DataVisibility visibility;
 	private DataAccessibility accessibility;
     private ZonedDateTime releasedDate;
 	private List<DataResource> dataResources;
@@ -35,8 +33,18 @@ public class Dataset implements Serializable {
 	private User2 contributor;
 	
 	public Dataset() {
+        visibility = DataVisibility.PUBLIC;
+        releasedDate = ZonedDateTime.now();
 	    dataResources = new ArrayList<>();
 	    approvedUsers = new ArrayList<>();
+    }
+
+    public void setAccessibility(DataAccessibility accessibility) {
+        if (accessibility == null) {
+            this.accessibility = DataAccessibility.OPEN;
+        } else {
+            this.accessibility = accessibility;
+        }
     }
 
 	public boolean isOpen() {
