@@ -175,6 +175,14 @@ public class SignUpMergedFormTest {
     }
 
     @Test
+    public void testJobValidate() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "", "1234567a", "1234567a", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations.size(), is(1));
+        constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Job title cannot be empty")));
+    }
+
+    @Test
     public void testGetInstitution() {
         final SignUpMergedForm one = new SignUpMergedForm();
         assertThat(one.getInstitution(), is(nullValue()));
@@ -200,6 +208,14 @@ public class SignUpMergedFormTest {
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setInstitutionAbbreviation(str);
         assertThat(one.getInstitutionAbbreviation(), is(str));
+    }
+
+    @Test
+    public void testInstitutionValidate() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "", "job", "1234567a", "1234567a", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations.size(), is(1));
+        constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Institution cannot be empty")));
     }
 
     @Test
@@ -256,6 +272,14 @@ public class SignUpMergedFormTest {
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setCountry(str);
         assertThat(one.getCountry(), is(str));
+    }
+
+    @Test
+    public void testCountryValidate() {
+        final SignUpMergedForm one = new SignUpMergedForm("", "institution", "job", "1234567a", "1234567a", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations.size(), is(1));
+        constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Country cannot be empty")));
     }
 
     @Test
