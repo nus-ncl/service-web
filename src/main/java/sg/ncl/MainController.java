@@ -731,7 +731,7 @@ public class MainController {
 
                 try {
                     registerUserToDeter(mainObject);
-                } catch (TeamNotFoundException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException e) {
+                } catch (TeamNotFoundException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException | InvalidPasswordException e) {
                     redirectAttributes.addFlashAttribute("message", e.getMessage());
                     redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
@@ -765,7 +765,7 @@ public class MainController {
 
             try {
                 registerUserToDeter(mainObject);
-            } catch (TeamNotFoundException | AdapterConnectionException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException e) {
+            } catch (TeamNotFoundException | AdapterConnectionException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException | InvalidPasswordException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
@@ -802,7 +802,8 @@ public class MainController {
             RegisterTeamNameDuplicateException,
             UsernameAlreadyExistsException,
             EmailAlreadyExistsException,
-            InvalidTeamNameException {
+            InvalidTeamNameException,
+            InvalidPasswordException {
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
@@ -835,6 +836,9 @@ public class MainController {
                     case INVALID_TEAM_NAME_EXCEPTION:
                         log.warn("Register new users new team request : team name invalid");
                         throw new InvalidTeamNameException("Invalid team name: must be 6-12 alphanumeric characters only");
+                    case INVALID_PASSWORD_EXCEPTION:
+                        log.warn("Register new users new team request : invalid password");
+                        throw new InvalidPasswordException("Invalid password");
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
                         // throw from user service
                     {
