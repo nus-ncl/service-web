@@ -1,17 +1,13 @@
 package sg.ncl.testbed_interface;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -98,8 +94,22 @@ public class SignUpMergedFormTest {
     }
 
     @Test
-    public void testPasswordGood() {
+    public void testPasswordUpperCaseGood() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567A", "1234567A", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations, is(empty()));
+    }
+
+    @Test
+    public void testPasswordLowerCaseGood() {
         final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a", "1234567a", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations, is(empty()));
+    }
+
+    @Test
+    public void testPasswordWithSpecialCharacters() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a!", "1234567a!", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations, is(empty()));
     }
