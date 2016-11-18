@@ -80,6 +80,9 @@ public class DataController extends MainController {
                                          BindingResult bindingResult,
                                          Model model, @PathVariable Optional<String> id,
                                          HttpSession session) throws WebServiceRuntimeException {
+        dataset.setContributorId(session.getAttribute("id").toString());
+        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
+
         if (bindingResult.hasErrors()) {
             StringBuilder message = new StringBuilder();
             message.append("Error(s):");
@@ -100,7 +103,7 @@ public class DataController extends MainController {
         JSONObject dataObject = new JSONObject();
         dataObject.put("name", dataset.getName());
         dataObject.put("description", dataset.getDescription());
-        dataObject.put("contributorId", session.getAttribute("id").toString());
+        dataObject.put("contributorId", dataset.getContributorId());
         dataObject.put("visibility", dataset.getVisibility());
         dataObject.put("accessibility", dataset.getAccessibility());
         dataObject.put("resources", new ArrayList());
