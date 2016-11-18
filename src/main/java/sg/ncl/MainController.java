@@ -957,6 +957,11 @@ public class MainController {
             errorsFound = true;
         }
 
+        if (errorsFound == false && !editUser.isPasswordValid()) {
+            redirectAttributes.addFlashAttribute("editPassword", "invalid");
+            errorsFound = true;
+        }
+
         if (errorsFound == false && editUser.getJobTitle().isEmpty()) {
             redirectAttributes.addFlashAttribute("editJobTitle", "fail");
             errorsFound = true;
