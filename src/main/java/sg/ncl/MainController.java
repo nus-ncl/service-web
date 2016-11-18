@@ -34,10 +34,16 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import static sg.ncl.domain.ExceptionState.*;
+import static sg.ncl.domain.ExceptionState.ADAPTER_DETERLAB_CONNECTION_FAILED_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION;
 
 /**
  * 
@@ -564,7 +570,7 @@ public class MainController {
             EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION, "Password reset request timed out. Please request a new reset email.");
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION, "Invalid password reset request. Please request a new reset email.");
-            exceptionMessageMap.put(ADAPTER_DETERLAB_CONNECT_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
+            exceptionMessageMap.put(ADAPTER_DETERLAB_CONNECTION_FAILED_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
 
             MyErrorResource error = objectMapper.readValue(response.getBody().toString(), MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
@@ -1799,7 +1805,6 @@ public class MainController {
                         log.warn("Ns file error");
                         redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
                         break;
-                    case EXP_NAME_ALREADY_EXISTS_EXCEPTION:
                     case EXPERIMENT_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Exp name already exists");
                         redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
@@ -1912,7 +1917,7 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case EXP_DELETE_EXCEPTION:
+                    case EXPERIMENT_DELETE_EXCEPTION:
                     case FORBIDDEN_EXCEPTION:
                         log.warn("remove experiment failed for Team: {}, Exp: {}", teamId, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
@@ -1975,7 +1980,7 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case EXP_START_EXCEPTION:
+                    case EXPERIMENT_START_EXCEPTION:
                     case FORBIDDEN_EXCEPTION:
                         log.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());

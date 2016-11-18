@@ -666,13 +666,13 @@ public class MainControllerTest {
 
         mockServer.expect(requestTo(properties.getPasswordResetURI()))
                 .andExpect(method(HttpMethod.PUT))
-                .andRespond(withServerError().body("{\"error\":\"sg.ncl.service.authentication.exceptions.AdapterDeterlabConnectException\"}").contentType(MediaType.APPLICATION_JSON));
+                .andRespond(withServerError().body("{\"error\":\"sg.ncl.service.authentication.exceptions.AdapterDeterLabConnectionFailedException\"}").contentType(MediaType.APPLICATION_JSON));
 
         mockMvc.perform(
                 post("/password_reset")
                         .param("password1", "password")
                         .param("password2", "password")
-                        .sessionAttr("key", "12345678"))
+                        .param("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
                 .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Server-side error. Please contact support@ncl.sg"))));
