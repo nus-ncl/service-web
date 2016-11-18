@@ -122,7 +122,7 @@
 							</td>
 							<td>
 								<a th:href="'#'+${team.owner.id}" data-toggle="modal"><span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></a>
-								<span th:if="${team.owner.status == 'PENDING'}"><a href="#" data-toggle="tooltip" title="Email verified"><i class="fa fa-check-circle blue-tick"></i></a></span>
+								<span th:if="${team.owner.status == 'PENDING' or team.owner.status == 'APPROVED'}"><a href="#" data-toggle="tooltip" title="Email verified"><i class="fa fa-check-circle blue-tick"></i></a></span>
 								<!-- Modal -->
 								<div class="modal fade admin-modal" th:id="${team.owner.id}" aria-labelledby="ownerId" tabindex="-1" role="dialog" aria-hidden="true">
 									<div class="modal-dialog">
