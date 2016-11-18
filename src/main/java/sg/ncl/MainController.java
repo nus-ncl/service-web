@@ -933,7 +933,7 @@ public class MainController {
             HttpSession session) throws WebServiceRuntimeException {
 
         boolean errorsFound = false;
-        String editPassword = "editPassword";
+        String editPwdStatus = "editPassword";
 
         // check fields first
         if (errorsFound == false && editUser.getFirstName().isEmpty()) {
@@ -959,7 +959,7 @@ public class MainController {
         }
 
         if (errorsFound == false && !editUser.isPasswordValid()) {
-            redirectAttributes.addFlashAttribute(editPassword, "invalid");
+            redirectAttributes.addFlashAttribute(editPwdStatus, "invalid");
             errorsFound = true;
         }
 
@@ -1045,9 +1045,9 @@ public class MainController {
                 try {
                     if (RestUtil.isError(response.getStatusCode())) {
                         MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                        redirectAttributes.addFlashAttribute(editPassword, "fail");
+                        redirectAttributes.addFlashAttribute(editPwdStatus, "fail");
                     } else {
-                        redirectAttributes.addFlashAttribute(editPassword, "success");
+                        redirectAttributes.addFlashAttribute(editPwdStatus, "success");
                     }
                 } catch (IOException e) {
                     throw new WebServiceRuntimeException(e.getMessage());
