@@ -197,4 +197,10 @@ public class User2 implements Serializable {
         }
         return true;
     }
+
+    public boolean isPasswordValid() {
+        return (password.length() >= 8 &&
+                password.matches("(?=.*[0-9]).+") &&
+                password.matches("(?=.*[a-zA-Z]).+"));
+    }
 }
