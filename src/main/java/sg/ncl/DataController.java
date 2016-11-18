@@ -80,8 +80,7 @@ public class DataController extends MainController {
                                          BindingResult bindingResult,
                                          Model model, @PathVariable Optional<String> id,
                                          HttpSession session) throws WebServiceRuntimeException {
-        dataset.setContributorId(session.getAttribute("id").toString());
-        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
+        setContributor(dataset, session);
 
         if (bindingResult.hasErrors()) {
             StringBuilder message = new StringBuilder();
@@ -225,6 +224,13 @@ public class DataController extends MainController {
         }
 
         return dataset;
+    }
+
+    private void setContributor(Dataset dataset, HttpSession session) {
+        if (dataset.getContributorId() == null) {
+            dataset.setContributorId(session.getAttribute("id").toString());
+        }
+        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
     }
 
     private ResponseEntity getResponseEntity(@PathVariable Optional<String> id, HttpEntity<String> request) {

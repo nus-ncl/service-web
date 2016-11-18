@@ -57,6 +57,7 @@
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(dataset.visibility))},
                                         data-access=${#strings.capitalize(#strings.toLowerCase(dataset.accessibility))},
                                         data-delete=@{/data/remove/{id}(id=*{id})}">Delete</button>
+                            <input type="hidden" th:field="*{contributorId}" th:if="*{id != null}"/>
                         </div>
                     </fieldset>
                 </form>
