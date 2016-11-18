@@ -17,12 +17,22 @@ public class PasswordResetForm {
 
     public boolean isPasswordOk() {
         // order of check determines which error message to display first
+        if (!isPasswordMatch() || !isPasswordValid()) {
+            return false;
+        }
+        this.setErrMsg("");
+        return true;
+    }
 
+    private boolean isPasswordMatch() {
         if(!this.getPassword1().equals(this.getPassword2())) {
             this.setErrMsg("Password not match!");
             return false;
         }
+        return true;
+    }
 
+    private boolean isPasswordValid() {
         if(this.getPassword1().trim().length() < 8) {
             this.setErrMsg("Password too short! Minimal 8 characters.");
             return false;
@@ -42,8 +52,6 @@ public class PasswordResetForm {
             this.setErrMsg("Password must contain at least 1 alphabet.");
             return false;
         }
-
-        this.setErrMsg("");
         return true;
     }
 }
