@@ -199,8 +199,13 @@ public class User2 implements Serializable {
     }
 
     public boolean isPasswordValid() {
+        // more than 8 characters
+        // contain at least 1 digit
+        // contain at least 1 alphabet
+        // does not contain whitespace
         return (password.length() >= 8 &&
                 password.matches("(?=.*[0-9]).+") &&
-                password.matches("(?=.*[a-zA-Z]).+"));
+                password.matches("(?=.*[a-zA-Z]).+") &&
+                password.matches("[^\\s]+"));
     }
 }

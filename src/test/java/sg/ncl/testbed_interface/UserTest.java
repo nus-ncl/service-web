@@ -285,6 +285,13 @@ public class UserTest {
     }
 
     @Test
+    public void testIsPasswordValidNoWhitespace() {
+        final User2 user = new User2();
+        user.setPassword("1234 5678");
+        assertThat(user.isPasswordValid(), is(false));
+    }
+
+    @Test
     public void testIsPasswordValidLowerCase() {
         final User2 user = new User2();
         user.setPassword("aaaaaaa1");
