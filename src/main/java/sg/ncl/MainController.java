@@ -933,7 +933,7 @@ public class MainController {
             HttpSession session) throws WebServiceRuntimeException {
 
         boolean errorsFound = false;
-        String editPwdStatus = "editPassword";
+        String editPwdStatus = "editPwdStatus";
 
         // check fields first
         if (errorsFound == false && editUser.getFirstName().isEmpty()) {
