@@ -17,11 +17,6 @@
 				<div th:if="${message}">
 					<h4 th:text="${message}"></h4>
 				</div>
-				<div>
-					<ul>
-						<li th:each="file : ${files}" th:text="${file}"></li>
-					</ul>
-				</div>
             	<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.header}"></h2>
                 <table class="table table-responsive">
                     <thead>
@@ -62,24 +57,25 @@
                     <tr th:each="datasetEntry : ${allDataMap}">
 	                   	<td><a href="#datasetModal" data-toggle="modal"
 							   th:attr="data-name=${datasetEntry.value.name},
+							            data-desc=${datasetEntry.value.description},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
-                                	    data-release=${datasetEntry.value.releaseDate},
+                                	    data-release=${datasetEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
-                                        data-access=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))}"
+                                        data-access=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))},
+                                        data-edit=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/contribute/' + datasetEntry.value.id : ''}"
 							   th:text="${datasetEntry.value.name}">Name</a></td>
 	                   	<td th:text="${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName}">Owner</td>
-                        <td th:text="${datasetEntry.value.releaseDate}"></td>
+                        <td th:text="${datasetEntry.value.getReleasedDateString()}"></td>
 					    <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))}">Access</td>
 	                   	<td>
 	                   		<a th:if="${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#downloadModal" class="btn btn-primary" data-toggle="modal"
-                               th:attr="data-id=${datasetEntry.value.id}, data-name=${datasetEntry.value.name}, data-resources=${datasetEntry.value.getResourceIdsInArrayString()}">Download</a>
+                               th:attr="data-id=${datasetEntry.value.id}, data-name=${datasetEntry.value.name}, data-resources=${datasetEntry.value.getResourceIdsInArrayString()}"><i class="fa fa-download"></i> Download</a>
                             <a th:if="not ${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#requestModal" class="btn btn-primary" data-toggle="modal"
-                               th:attr="data-name=${datasetEntry.value.name}">Request</a>
+                               th:attr="data-name=${datasetEntry.value.name}"><i class="fa fa-commenting"></i> Request</a>
 	                   	</td>
                    </tr>
                 </table>
-				<!--p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
-				<p>&nbsp;</p -->
+				<p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
             </div> <!-- row -->
 			<div class="cc-wraper">
 				<div class="cc-contactpop fixed">
@@ -110,9 +106,13 @@
 					</div>
 					<div class="modal-body">
 						<div class="row">
-							<div class="col-md-4">Owner:</div>
-							<div class="col-md-8" id="datasetOwner"></div>
+							<div class="col-md-4">Description:</div>
+							<div class="col-md-8" id="datasetDesc"></div>
 						</div>
+                        <div class="row">
+                            <div class="col-md-4">Owner:</div>
+                            <div class="col-md-8" id="datasetOwner"></div>
+                        </div>
 						<div class="row">
 							<div class="col-md-4">Release:</div>
 							<div class="col-md-8" id="datasetRelease"></div>
@@ -128,6 +128,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="#" class="btn btn-primary" id="datasetButton">Edit/Delete</a>
 					</div>
 				</div>
 			</div>

@@ -34,16 +34,10 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
-import static sg.ncl.domain.ExceptionState.ADAPTER_DETERLAB_CONNECT_EXCEPTION;
-import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION;
-import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.*;
 
 /**
  * 
@@ -90,13 +84,13 @@ public class MainController {
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
 
     @Autowired
-    private RestTemplate restTemplate;
+    protected RestTemplate restTemplate;
 
     @Inject
-    private ObjectMapper objectMapper;
+    protected ObjectMapper objectMapper;
 
     @Inject
-    private ConnectionProperties properties;
+    protected ConnectionProperties properties;
 
     @Inject
     private WebProperties webProperties;
@@ -2085,153 +2079,6 @@ public class MainController {
     }
 
     //---------------------------------Dataset Page--------------------------
-
-    @RequestMapping("/data")
-    public String data(Model model, HttpSession session) throws Exception {
-        DatasetManager datasetManager = new DatasetManager();
-
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
-        String dataResponseBody = response.getBody().toString();
-
-        JSONArray dataJsonArray = new JSONArray(dataResponseBody);
-        for (int i = 0; i < dataJsonArray.length(); i++) {
-            JSONObject dataInfoObject = dataJsonArray.getJSONObject(i);
-            Dataset dataset = extractDataInfo(dataInfoObject.toString());
-            datasetManager.addDataset(dataset);
-        }
-
-    	model.addAttribute("allDataMap", datasetManager.getDatasetMap());
-    	return "data";
-    }
-
-//    @RequestMapping(value="/data/contribute", method=RequestMethod.GET)
-//    public String contributeData(Model model) {
-//    	model.addAttribute("dataset", new Dataset());
-//
-//    	File rootFolder = new File(App.ROOT);
-//    	List<String> fileNames = Arrays.stream(rootFolder.listFiles())
-//    			.map(f -> f.getError())
-//    			.collect(Collectors.toList());
-//
-//    		model.addAttribute("files",
-//    			Arrays.stream(rootFolder.listFiles())
-//    					.sorted(Comparator.comparingLong(f -> -1 * f.lastModified()))
-//    					.map(f -> f.getError())
-//    					.collect(Collectors.toList())
-//    		);
-//
-//    	return "contribute_data";
-//    }
-
-//    @RequestMapping(value="/data/contribute", method=RequestMethod.POST)
-//    public String validateContributeData(@ModelAttribute("dataset") Dataset dataset, HttpSession session, @RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
-//    	// TODO
-//    	// validation
-//    	// get file from user upload to server
-//        BufferedOutputStream stream = null;
-//        FileOutputStream fileOutputStream = null;
-//
-//		if (!file.isEmpty()) {
-//			try {
-//				String fileName = getSessionIdOfLoggedInUser(session) + "-" + file.getOriginalFilename();
-//                fileOutputStream = new FileOutputStream(new File(App.ROOT + "/" + fileName));
-//				stream = new BufferedOutputStream(fileOutputStream);
-//                FileCopyUtils.copy(file.getInputStream(), stream);
-//				stream.close();
-//				redirectAttributes.addFlashAttribute("message",
-//						"You successfully uploaded " + file.getOriginalFilename() + "!");
-//				datasetManager.addDataset(getSessionIdOfLoggedInUser(session), dataset, file.getOriginalFilename());
-//			}
-//			catch (Exception e) {
-//				redirectAttributes.addFlashAttribute("message",
-//						"You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
-//			} finally {
-//                if (stream != null) {
-//                    stream.close();
-//                }
-//                if (fileOutputStream != null) {
-//                    fileOutputStream.close();
-//                }
-//            }
-//        }
-//		else {
-//			redirectAttributes.addFlashAttribute("message",
-//					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
-//		}
-//    	return "redirect:/data";
-//    }
-
-//    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.GET)
-//    public String datasetInfo(@PathVariable Integer datasetId, Model model) {
-//    	Dataset dataset = datasetManager.getDataset(datasetId);
-//    	model.addAttribute("editDataset", dataset);
-//    	return "edit_data";
-//    }
-
-//    @RequestMapping(value="/data/edit/{datasetId}", method=RequestMethod.POST)
-//    public String editDatasetInfo(@PathVariable Integer datasetId, @ModelAttribute("editDataset") Dataset dataset, final RedirectAttributes redirectAttributes) {
-//    	Dataset origDataset = datasetManager.getDataset(datasetId);
-//
-//    	String editedDatasetName = dataset.getDatasetName();
-//    	String editedDatasetDesc = dataset.getDatasetDescription();
-//    	String editedDatasetLicense = dataset.getLicense();
-//    	String editedDatasetPublic = dataset.getIsPublic();
-//    	boolean editedDatasetIsRequiredAuthorization = dataset.getRequireAuthorization();
-//
-//    	System.out.println(origDataset.getDatasetId());
-//    	System.out.println(dataset.getDatasetId());
-//
-//    	if (origDataset.updateName(editedDatasetName) == true) {
-//    		redirectAttributes.addFlashAttribute("editName", "success");
-//    	}
-//
-//    	if (origDataset.updateDescription(editedDatasetDesc) == true) {
-//    		redirectAttributes.addFlashAttribute("editDesc", "success");
-//    	}
-//
-//    	if (origDataset.updateLicense(editedDatasetLicense) == true) {
-//    		redirectAttributes.addFlashAttribute("editLicense", "success");
-//    	}
-//
-//    	if (origDataset.updatePublic(editedDatasetPublic) == true) {
-//    		redirectAttributes.addFlashAttribute("editPublic", "success");
-//    	}
-//
-//    	if (origDataset.updateAuthorization(editedDatasetIsRequiredAuthorization) == true) {
-//    		redirectAttributes.addFlashAttribute("editIsRequiredAuthorization", "success");
-//    	}
-//
-//    	datasetManager.updateDatasetDetails(origDataset);
-//
-//    	return "redirect:/data/edit/{datasetId}";
-//    }
-
-//    @RequestMapping("/data/remove_dataset/{datasetId}")
-//    public String removeDataset(@PathVariable Integer datasetId) {
-//    	datasetManager.removeDataset(datasetId);
-//    	return "redirect:/data";
-//    }
-
-    @RequestMapping("/data/public")
-    public String getPublicDatasets(Model model) throws Exception {
-        DatasetManager datasetManager = new DatasetManager();
-
-        HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicData(), HttpMethod.GET, dataRequest, String.class);
-        String dataResponseBody = dataResponse.getBody().toString();
-
-        JSONArray dataPublicJsonArray = new JSONArray(dataResponseBody);
-        for (int i = 0; i < dataPublicJsonArray.length(); i++) {
-            JSONObject dataInfoObject = dataPublicJsonArray.getJSONObject(i);
-            Dataset dataset = extractDataInfo(dataInfoObject.toString());
-            datasetManager.addDataset(dataset);
-        }
-
-    	model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
-    	return "data_public";
-    }
-
 //    @RequestMapping("/data/public/request_access/{dataOwnerId}")
 //    public String requestAccessForDataset(@PathVariable Integer dataOwnerId, Model model) {
 //    	// TODO
@@ -2788,39 +2635,6 @@ public class MainController {
         return team2;
     }
 
-    private Dataset extractDataInfo(String json) throws Exception {
-        log.debug(json);
-
-        JSONObject object = new JSONObject(json);
-        Dataset dataset = new Dataset();
-
-        dataset.setId(object.getInt("id"));
-        dataset.setName(object.getString("name"));
-        dataset.setDescription(object.getString("description"));
-        dataset.setContributorId(object.getString("contributorId"));
-        dataset.setVisibility(object.getString("visibility"));
-        dataset.setAccessibility(object.getString("accessibility"));
-        dataset.setReleaseDate(formatZonedDateTime(object.get("releaseDate").toString()));
-
-        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
-
-        JSONArray resources = object.getJSONArray("resources");
-        for (int i = 0; i < resources.length(); i++) {
-            JSONObject resource = resources.getJSONObject(i);
-            DataResource dataResource = new DataResource();
-            dataResource.setId(resource.getLong("id"));
-            dataResource.setUri(resource.getString("uri"));
-            dataset.addResource(dataResource);
-        }
-
-        JSONArray approvedUsers = object.getJSONArray("approvedUsers");
-        for (int i =0; i < approvedUsers.length(); i++) {
-            dataset.addApprovedUser(approvedUsers.getString(0));
-        }
-
-        return dataset;
-    }
-
     // use to extract JSON Strings from services
     // in the case where the JSON Strings are null, return "Connection Error"
     private String getJSONStr(String jsonString) {
@@ -2887,7 +2701,7 @@ public class MainController {
         return null;
     }
 
-    private User2 invokeAndExtractUserInfo(String userId) {
+    protected User2 invokeAndExtractUserInfo(String userId) {
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity response;
 
@@ -3003,12 +2817,16 @@ public class MainController {
      * @param zonedDateTimeJSON JSON string
      * @return a date in the format MMM-d-yyyy
      */
-    private String formatZonedDateTime(String zonedDateTimeJSON) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        ZonedDateTime zonedDateTime = mapper.readValue(zonedDateTimeJSON, ZonedDateTime.class);
+    protected String formatZonedDateTime(String zonedDateTimeJSON) throws Exception {
+        ZonedDateTime zonedDateTime = getZonedDateTime(zonedDateTimeJSON);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
         return zonedDateTime.format(format);
+    }
+
+    protected ZonedDateTime getZonedDateTime(String zonedDateTimeJSON) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper.readValue(zonedDateTimeJSON, ZonedDateTime.class);
     }
 
     /**
@@ -3018,7 +2836,7 @@ public class MainController {
      * @return A HttpEntity request
      * @see HttpEntity createHttpEntityHeaderOnly() for request with only header
      */
-    private HttpEntity<String> createHttpEntityWithBodyNoAuthHeader(String jsonString) {
+    protected HttpEntity<String> createHttpEntityWithBodyNoAuthHeader(String jsonString) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(jsonString, headers);
@@ -3030,7 +2848,7 @@ public class MainController {
      * @return A HttpEntity request
      * @see HttpEntity createHttpEntityWithBody() for request with both body and header
      */
-    private HttpEntity<String> createHttpEntityHeaderOnlyNoAuthHeader() {
+    protected HttpEntity<String> createHttpEntityHeaderOnlyNoAuthHeader() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(headers);
@@ -3044,7 +2862,7 @@ public class MainController {
      * @implNote Authorization header must be set to the JwTToken in the format [Bearer: TOKEN_ID]
      * @see HttpEntity createHttpEntityHeaderOnly() for request with only header
      */
-    private HttpEntity<String> createHttpEntityWithBody(String jsonString) {
+    protected HttpEntity<String> createHttpEntityWithBody(String jsonString) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
@@ -3058,7 +2876,7 @@ public class MainController {
      * @implNote Authorization header must be set to the JwTToken in the format [Bearer: TOKEN_ID]
      * @see HttpEntity createHttpEntityWithBody() for request with both body and header
      */
-    private HttpEntity<String> createHttpEntityHeaderOnly() {
+    protected HttpEntity<String> createHttpEntityHeaderOnly() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());

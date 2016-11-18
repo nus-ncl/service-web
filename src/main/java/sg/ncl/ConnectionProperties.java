@@ -261,6 +261,10 @@ public class ConnectionProperties {
         return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint;
     }
 
+    public String getDataset(String dataId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId;
+    }
+
     //-------------------------------------
     // TELEMETRY
     //-------------------------------------
