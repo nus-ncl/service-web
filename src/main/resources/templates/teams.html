@@ -88,12 +88,10 @@
                                     <th th:text="#{team.table.header.team}">Team</th>
                                     <th th:text="#{team.table.header.description}">Description</th>
                                     <!--<th th:text="#{team.table.header.institution}">Institution</th>-->
-                                    <th th:text="#{team.table.header.actions}">Actions</th>
                                 </thead>
                                 <tr th:each="team : ${userJoinRequestMap}">
                                    <td th:text="${team.value.name}">Name</td>
                                    <td th:text="${team.value.description}">Description</td>
-                                   <td></td>
                                 </tr>
                                 <!--<tr>-->
                                     <!--<td height="700"></td>-->
