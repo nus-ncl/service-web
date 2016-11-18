@@ -24,9 +24,9 @@
                         <div class="form-group">
                             <label for="password"><span th:text="#{acc.info.password}">Password</span>:</label>
                             <input type="password" class="form-control" th:field="*{password}"/>
-                            <span class="account-change-success" th:if="${editPwdStatus eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.pwdSuccess}">TEXT</span></span>
-                            <span class="account-change-fail" th:if="${editPwdStatus eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{acc.info.pwdFail}">TEXT</span></span>
-                            <span class="account-change-fail" th:if="${editPwdStatus eq 'invalid'}"><i class="fa fa-times"></i> <span th:text="#{acc.info.pwdInvalid}">TEXT</span></span>
+                            <span class="account-change-success" th:if="${editPhrase eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.pwdSuccess}">TEXT</span></span>
+                            <span class="account-change-fail" th:if="${editPhrase eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{acc.info.pwdFail}">TEXT</span></span>
+                            <span class="account-change-fail" th:if="${editPhrase eq 'invalid'}"><i class="fa fa-times"></i> <span th:text="#{acc.info.pwdInvalid}">TEXT</span></span>
                         </div>
                         <div class="form-group">
                             <label for="confirmPassword"><span th:text="#{acc.info.confirmPassword}">Confirm Password</span>:</label>
