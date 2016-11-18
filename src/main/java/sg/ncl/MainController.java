@@ -2798,7 +2798,7 @@ public class MainController {
 
         log.info("exp detail object: {}", expDetailsObject);
 
-        if (expDetailsObject == JSONObject.NULL) {
+        if (expDetailsObject == JSONObject.NULL || expDetailsObject.toString().isEmpty()) {
             log.info("set details empty");
             realization.setDetails("");
         } else {
