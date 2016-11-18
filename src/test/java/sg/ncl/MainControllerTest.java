@@ -453,8 +453,8 @@ public class MainControllerTest {
         MvcResult result = mockMvc.perform(
                 post("/signup2")
                         .param("email", "apple@nus.edu.sg")
-                        .param("password", "appleP@ssword")
-                        .param("confirmPassword", "appleP@ssword")
+                        .param("password", "appleP@ssword1")
+                        .param("confirmPassword", "appleP@ssword1")
                         .param("firstName", "apple")
                         .param("lastName", "orange")
                         .param("phone", "12345678")
@@ -619,8 +619,8 @@ public class MainControllerTest {
 
         mockMvc.perform(
                 post("/password_reset")
-                        .param("password1", "password")
-                        .param("password2", "password")
+                        .param("password1", "password1")
+                        .param("password2", "password1")
         .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_success"));
@@ -635,8 +635,8 @@ public class MainControllerTest {
 
         mockMvc.perform(
                 post("/password_reset")
-                        .param("password1", "password")
-                        .param("password2", "password")
+                        .param("password1", "password1")
+                        .param("password2", "password1")
                         .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
@@ -653,8 +653,8 @@ public class MainControllerTest {
 
         mockMvc.perform(
                 post("/password_reset")
-                        .param("password1", "password")
-                        .param("password2", "password")
+                        .param("password1", "password1")
+                        .param("password2", "password1")
                         .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
@@ -670,8 +670,8 @@ public class MainControllerTest {
 
         mockMvc.perform(
                 post("/password_reset")
-                        .param("password1", "password")
-                        .param("password2", "password")
+                        .param("password1", "password1")
+                        .param("password2", "password1")
                         .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))

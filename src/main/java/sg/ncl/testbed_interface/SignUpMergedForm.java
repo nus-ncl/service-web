@@ -4,7 +4,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -16,7 +15,12 @@ public class SignUpMergedForm {
     @Size(min=1, message="Email cannot be empty")
     private String email;
 
-    @Size(min=1, message="Password cannot be empty")
+    @Size(min=8, message="Password must have at least 8 characters")
+    @Pattern.List({
+            @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit"),
+            @Pattern(regexp = "(?=.*[a-zA-Z]).+", message = "Password must contain one alphabet"),
+            @Pattern(regexp = "[^\\s]+", message = "Password cannot contain whitespace")
+    })
     private String password;
 
     private String confirmPassword;
@@ -92,6 +96,15 @@ public class SignUpMergedForm {
 	public SignUpMergedForm() {
 		
 	}
+
+    public SignUpMergedForm(String country, String institution, String jobTitle, String confirmPassword, String password, String postalCode) {
+        this.country = country;
+        this.institution = institution;
+        this.jobTitle = jobTitle;
+        this.confirmPassword = confirmPassword;
+        this.password = password;
+        this.postalCode = postalCode;
+    }
 	
 	//--------------------------------------- Account Details ---------------------------------------
 
