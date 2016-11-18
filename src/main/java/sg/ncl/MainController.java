@@ -1358,7 +1358,7 @@ public class MainController {
 //        return "redirect:/teams";
 //    }
 
-    @RequestMapping("/withdraw/{teamId}")
+//    @RequestMapping("/withdraw/{teamId}")
     public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
         // get user team request
         // remove this user id from the user's request list
