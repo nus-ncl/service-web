@@ -94,6 +94,14 @@ public class SignUpMergedFormTest {
     }
 
     @Test
+    public void testPasswordWithWhitespace() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a ", "1234567a ", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations.size(), is(1));
+        constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain whitespace")));
+    }
+
+    @Test
     public void testPasswordUpperCaseGood() {
         final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567A", "1234567A", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
