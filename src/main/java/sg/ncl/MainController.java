@@ -1977,6 +1977,8 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
+                log.info("start experiment: {}", error.getError());
+                log.info("start experiment: {}", exceptionState);
                 switch (exceptionState) {
                     case EXP_START_EXCEPTION:
                     case FORBIDDEN_EXCEPTION:
@@ -1998,6 +2000,7 @@ public class MainController {
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
+            log.warn("start experiment error: {]", e.getMessage());
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
