@@ -34,10 +34,16 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import static sg.ncl.domain.ExceptionState.*;
+import static sg.ncl.domain.ExceptionState.ADAPTER_DETERLAB_CONNECTION_FAILED_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION;
 
 /**
  * 
