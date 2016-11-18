@@ -263,4 +263,39 @@ public class UserTest {
         assertThat(user.getRoles(), is(str));
     }
 
+    @Test
+    public void testIsPasswordValidMinimumLength() {
+        final User2 user = new User2();
+        user.setPassword("");
+        assertThat(user.isPasswordValid(), is(false));
+    }
+
+    @Test
+    public void testIsPasswordValidNoDigit() {
+        final User2 user = new User2();
+        user.setPassword("aaaaaaaa");
+        assertThat(user.isPasswordValid(), is(false));
+    }
+
+    @Test
+    public void testIsPasswordValidNoAlphabet() {
+        final User2 user = new User2();
+        user.setPassword("12345678");
+        assertThat(user.isPasswordValid(), is(false));
+    }
+
+    @Test
+    public void testIsPasswordValidLowerCase() {
+        final User2 user = new User2();
+        user.setPassword("aaaaaaa1");
+        assertThat(user.isPasswordValid(), is(true));
+    }
+
+    @Test
+    public void testIsPasswordValidUpperCase() {
+        final User2 user = new User2();
+        user.setPassword("AAAAAAA1");
+        assertThat(user.isPasswordValid(), is(true));
+    }
+
 }
