@@ -1977,18 +1977,21 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                log.info("start experiment: {}", error.getError());
-                log.info("start experiment: {}", exceptionState);
                 switch (exceptionState) {
                     case EXP_START_EXCEPTION:
                     case FORBIDDEN_EXCEPTION:
                         log.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         return "redirect:/experiments";
+                    case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
+                        // do nothing
+                        log.info("start experiment database locking failure");
+                        break;
                     default:
                         // do nothing
                         break;
                 }
+                log.warn("start experiment some other error occurred exception: {}", exceptionState);
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
 //                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
@@ -2065,6 +2068,9 @@ public class MainController {
                 if (exceptionState == ExceptionState.FORBIDDEN_EXCEPTION) {
                     log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
                     redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
+                }
+                if (exceptionState == ExceptionState.OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION) {
+                    log.info("stop experiment database locking failure");
                 }
             } else {
                 // everything ok
