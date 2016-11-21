@@ -1359,7 +1359,7 @@ public class MainController {
 //    }
 
 //    @RequestMapping("/withdraw/{teamId}")
-    public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
+    public String withdrawnJoinRequest(@PathVariable Integer teamId, HttpSession session) {
         // get user team request
         // remove this user id from the user's request list
         String teamName = teamManager.getTeamNameByTeamId(teamId);
@@ -1933,6 +1933,7 @@ public class MainController {
                     case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
                         // do nothing
                         log.info("remove experiment database locking failure");
+                        break;
                     default:
                         // do nothing
                         break;
