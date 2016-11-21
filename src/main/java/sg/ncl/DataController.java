@@ -122,7 +122,7 @@ public class DataController extends MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case DATASET_NAME_IN_USE_EXCEPTION:
+                    case DATA_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Dataset name already exists.");
                         model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>dataset name already exists</li></ul>");
                         break;
