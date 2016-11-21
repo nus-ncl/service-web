@@ -1930,6 +1930,9 @@ public class MainController {
                         log.warn("remove experiment failed for Team: {}, Exp: {}", teamId, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         break;
+                    case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
+                        // do nothing
+                        log.info("remove experiment database locking failure");
                     default:
                         // do nothing
                         break;
