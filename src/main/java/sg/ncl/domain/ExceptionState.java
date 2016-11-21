@@ -14,6 +14,7 @@ public enum ExceptionState {
     APPLY_NEW_PROJECT_EXCEPTION("ApplyNewProjectException"),
     CREDENTIALS_NOT_FOUND_EXCEPTION("CredentialsNotFoundException"),
     CREDENTIALS_UPDATE_EXCEPTION("CredentialsUpdateException"),
+    DATA_NAME_ALREADY_EXISTS_EXCEPTION("DataNameAlreadyExistsException"),
     EMAIL_ALREADY_EXISTS_EXCEPTION("EmailAlreadyExistsException"),
     EXPERIMENT_NAME_ALREADY_EXISTS_EXCEPTION("ExperimentNameAlreadyExistsException"),
     EXPERIMENT_DELETE_EXCEPTION("ExperimentDeleteException"),
@@ -32,8 +33,7 @@ public enum ExceptionState {
     TEAM_NOT_FOUND_EXCEPTION("TeamNotFoundException"),
     USERNAME_ALREADY_EXISTS_EXCEPTION("UsernameAlreadyExistsException"),
     USER_ID_NULL_OR_EMPTY_EXCEPTION("UserIdNullOrEmptyException"),
-    USER_NOT_FOUND_EXCEPTION("UserNotFoundException"),
-    DATASET_NAME_IN_USE_EXCEPTION("DatasetNameInUseException");
+    USER_NOT_FOUND_EXCEPTION("UserNotFoundException");
 
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
