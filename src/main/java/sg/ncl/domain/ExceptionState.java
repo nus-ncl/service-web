@@ -15,6 +15,7 @@ public enum ExceptionState {
     CREDENTIALS_NOT_FOUND_EXCEPTION("CredentialsNotFoundException"),
     CREDENTIALS_UPDATE_EXCEPTION("CredentialsUpdateException"),
     DATASET_NAME_IN_USE_EXCEPTION("DatasetNameInUseException"),
+    DETERLAB_OPERATION_FAILED_EXCEPTION("DeterLabOperationFailedException"),
     EMAIL_ALREADY_EXISTS_EXCEPTION("EmailAlreadyExistsException"),
     EMAIL_NOT_VERIFIED_EXCEPTION("EmailNotVerifiedException"),
     EXP_DELETE_EXCEPTION("ExpDeleteException"),
