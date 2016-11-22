@@ -1358,8 +1358,8 @@ public class MainController {
 //        return "redirect:/teams";
 //    }
 
-    @RequestMapping("/withdraw/{teamId}")
-    public String withdrawnJoinRequest(@PathVariable Integer teamId, Model model, HttpSession session) {
+//    @RequestMapping("/withdraw/{teamId}")
+    public String withdrawnJoinRequest(@PathVariable Integer teamId, HttpSession session) {
         // get user team request
         // remove this user id from the user's request list
         String teamName = teamManager.getTeamNameByTeamId(teamId);
@@ -1930,6 +1930,10 @@ public class MainController {
                         log.warn("remove experiment failed for Team: {}, Exp: {}", teamId, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         break;
+                    case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
+                        // do nothing
+                        log.info("remove experiment database locking failure");
+                        break;
                     default:
                         // do nothing
                         break;
@@ -1993,10 +1997,15 @@ public class MainController {
                         log.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         return "redirect:/experiments";
+                    case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
+                        // do nothing
+                        log.info("start experiment database locking failure");
+                        break;
                     default:
                         // do nothing
                         break;
                 }
+                log.warn("start experiment some other error occurred exception: {}", exceptionState);
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
 //                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
@@ -2008,6 +2017,7 @@ public class MainController {
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
+            log.warn("start experiment error: {]", e.getMessage());
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
@@ -2072,6 +2082,9 @@ public class MainController {
                 if (exceptionState == ExceptionState.FORBIDDEN_EXCEPTION) {
                     log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
                     redirectAttributes.addFlashAttribute("message", permissionDeniedMessage);
+                }
+                if (exceptionState == ExceptionState.OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION) {
+                    log.info("stop experiment database locking failure");
                 }
             } else {
                 // everything ok
@@ -2798,7 +2811,7 @@ public class MainController {
 
         log.info("exp detail object: {}", expDetailsObject);
 
-        if (expDetailsObject == JSONObject.NULL) {
+        if (expDetailsObject == JSONObject.NULL || expDetailsObject.toString().isEmpty()) {
             log.info("set details empty");
             realization.setDetails("");
         } else {

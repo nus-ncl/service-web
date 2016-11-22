@@ -35,7 +35,8 @@ public enum ExceptionState {
     TEAM_NAME_ALREADY_EXISTS_EXCEPTION("TeamNameAlreadyExistsException"),
     INVALID_TEAM_NAME_EXCEPTION("InvalidTeamNameException"),
     INVALID_PASSWORD_EXCEPTION("InvalidPasswordException"),
-    DATASET_NAME_IN_USE_EXCEPTION("DatasetNameInUseException");
+    DATASET_NAME_IN_USE_EXCEPTION("DatasetNameInUseException"),
+    OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION("ObjectOptimisticLockingFailureException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 
