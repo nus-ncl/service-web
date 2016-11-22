@@ -1225,8 +1225,18 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                log.warn("Server side error: {}", error.getError());
-                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                        log.warn("Reject join request: User {}, Team {} fail", userId, teamId);
+                        redirectAttributes.addFlashAttribute("message", "Reject join request fail");
+                        break;
+                    default:
+                        log.warn("Server side error: {}", error.getError());
+                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                        break;
+                }
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
                 log.warn("IOException {}", ioe);
