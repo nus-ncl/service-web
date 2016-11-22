@@ -2246,6 +2246,10 @@ public class MainController {
                     log.warn("Approve team: Team {} not found", teamId);
                     redirectAttributes.addFlashAttribute("message", "Team does not exist");
                     break;
+                case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    log.warn("Approve team: Team {} fail", teamId);
+                    redirectAttributes.addFlashAttribute("message", "Approve team request fail on Deterlab");
+                    break;
                 default:
                     log.warn("Approve team : sio or deterlab adapter connection error");
                     // possible sio or adapter connection fail
