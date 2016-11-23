@@ -2089,7 +2089,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute("exp_message", "Team: " + teamName + " has stopped Exp: " + realization.getExperimentName());
+                redirectAttributes.addFlashAttribute("exp_message", "Exp: " + realization.getExperimentName() + " in Team: " + teamName + " is stopping. Please reload this page in a few minutes.");
             }
             return "redirect:/experiments";
         } catch (IOException e) {
