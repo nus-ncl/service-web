@@ -1186,12 +1186,6 @@ public class MainController {
             }
         }
         // everything looks OK?
-        String msg = new JSONObject(responseBody).getString("msg");
-        if (!"process join request OK".equals(msg)) {
-            log.warn("Cannot process join request: {}", msg);
-            redirectAttributes.addFlashAttribute("message", "Cannot process join request: " + msg);
-            return "redirect:/approve_new_user";
-        }
         log.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
         redirectAttributes.addFlashAttribute("messageSuccess", "Join request has been APPROVED.");
         return "redirect:/approve_new_user";
