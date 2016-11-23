@@ -2013,7 +2013,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute("exp_message", "Exp: " + realization.getExperimentName() + " in Team: " + teamName + " is starting. This may take up to 10 minutes. Please refresh the page after a while.");
+                redirectAttributes.addFlashAttribute("exp_message", "Exp: " + realization.getExperimentName() + " in Team: " + teamName + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please reload this page in a few minutes.");
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
