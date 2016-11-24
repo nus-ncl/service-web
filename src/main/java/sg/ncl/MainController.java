@@ -34,10 +34,16 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import static sg.ncl.domain.ExceptionState.*;
+import static sg.ncl.domain.ExceptionState.ADAPTER_DETERLAB_CONNECTION_FAILED_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION;
 
 /**
  * 
@@ -564,7 +570,7 @@ public class MainController {
             EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION, "Password reset request timed out. Please request a new reset email.");
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION, "Invalid password reset request. Please request a new reset email.");
-            exceptionMessageMap.put(ADAPTER_DETERLAB_CONNECT_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
+            exceptionMessageMap.put(ADAPTER_DETERLAB_CONNECTION_FAILED_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
 
             MyErrorResource error = objectMapper.readValue(response.getBody().toString(), MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
@@ -725,7 +731,7 @@ public class MainController {
 
                 try {
                     registerUserToDeter(mainObject);
-                } catch (TeamNotFoundException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException | InvalidPasswordException e) {
+                } catch (TeamNotFoundException | ApplyNewProjectException | TeamNameAlreadyExistsException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException | InvalidPasswordException e) {
                     redirectAttributes.addFlashAttribute("message", e.getMessage());
                     redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
@@ -759,7 +765,7 @@ public class MainController {
 
             try {
                 registerUserToDeter(mainObject);
-            } catch (TeamNotFoundException | AdapterConnectionException | ApplyNewProjectException | RegisterTeamNameDuplicateException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException | InvalidPasswordException e) {
+            } catch (TeamNotFoundException | AdapterConnectionException | ApplyNewProjectException | TeamNameAlreadyExistsException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException | InvalidPasswordException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
@@ -793,7 +799,7 @@ public class MainController {
             TeamNotFoundException,
             AdapterConnectionException,
             ApplyNewProjectException,
-            RegisterTeamNameDuplicateException,
+            TeamNameAlreadyExistsException,
             UsernameAlreadyExistsException,
             EmailAlreadyExistsException,
             InvalidTeamNameException,
@@ -821,12 +827,9 @@ public class MainController {
                     case APPLY_NEW_PROJECT_EXCEPTION:
                         log.warn("Register new users new team request : team name error");
                         throw new ApplyNewProjectException();
-                    case REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION:
-                        log.warn("Register new users new team request : team name duplicate");
-                        throw new RegisterTeamNameDuplicateException("Team name already in use");
                     case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Register new users new team request : team name already exists");
-                        throw new RegisterTeamNameDuplicateException("Team name already in use");
+                        throw new TeamNameAlreadyExistsException("Team name already exists");
                     case INVALID_TEAM_NAME_EXCEPTION:
                         log.warn("Register new users new team request : team name invalid");
                         throw new InvalidTeamNameException("Invalid team name: must be 6-12 alphanumeric characters only");
@@ -1571,7 +1574,7 @@ public class MainController {
                         log.info("Apply new team fail at adapter deterlab");
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         break;
-                    case REGISTER_TEAM_NAME_DUPLICATE_EXCEPTION:
+                    case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
                         redirectAttributes.addFlashAttribute("message", "Team name already exists.");
                         break;
@@ -1812,8 +1815,7 @@ public class MainController {
                         log.warn("Ns file error");
                         redirectAttributes.addFlashAttribute("message", "There is an error when parsing the NS File.");
                         break;
-                    case EXP_NAME_ALREADY_EXISTS_EXCEPTION:
-                    case EXPERIMENT_NAME_IN_USE_EXCEPTION:
+                    case EXPERIMENT_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Exp name already exists");
                         redirectAttributes.addFlashAttribute("message", "Experiment name already exists.");
                         break;
@@ -1925,7 +1927,7 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case EXP_DELETE_EXCEPTION:
+                    case EXPERIMENT_DELETE_EXCEPTION:
                     case FORBIDDEN_EXCEPTION:
                         log.warn("remove experiment failed for Team: {}, Exp: {}", teamId, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
@@ -1992,7 +1994,7 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case EXP_START_EXCEPTION:
+                    case EXPERIMENT_START_EXCEPTION:
                     case FORBIDDEN_EXCEPTION:
                         log.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
@@ -2226,10 +2228,15 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
             switch (exceptionState) {
-                case ID_NULL_OR_EMPTY_EXCEPTION:
-                    log.warn("Approve team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
-                            teamId, teamOwnerId);
-                    redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
+                case TEAM_ID_NULL_OR_EMPTY_EXCEPTION:
+                    log.warn("Approve team: TeamId cannot be null or empty: {}",
+                            teamId);
+                    redirectAttributes.addFlashAttribute("message", "TeamId cannot be null or empty");
+                    break;
+                case USER_ID_NULL_OR_EMPTY_EXCEPTION:
+                    log.warn("Approve team: UserId cannot be null or empty: {}",
+                            teamOwnerId);
+                    redirectAttributes.addFlashAttribute("message", "UserId cannot be null or empty");
                     break;
                 case INVALID_TEAM_STATUS_EXCEPTION:
                     log.warn("Approve team: TeamStatus is invalid");
@@ -2290,10 +2297,15 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
             switch (exceptionState) {
-                case ID_NULL_OR_EMPTY_EXCEPTION:
-                    log.warn("Reject team: TeamId or UserId cannot be null or empty. TeamId: {}, UserId: {}",
-                            teamId, teamOwnerId);
-                    redirectAttributes.addFlashAttribute("message", "TeamId or UserId cannot be null or empty");
+                case TEAM_ID_NULL_OR_EMPTY_EXCEPTION:
+                    log.warn("Reject team: TeamId cannot be null or empty: {}",
+                            teamId);
+                    redirectAttributes.addFlashAttribute("message", "TeamId cannot be null or empty");
+                    break;
+                case USER_ID_NULL_OR_EMPTY_EXCEPTION:
+                    log.warn("Reject team: UserId cannot be null or empty: {}",
+                            teamOwnerId);
+                    redirectAttributes.addFlashAttribute("message", "UserId cannot be null or empty");
                     break;
                 case INVALID_TEAM_STATUS_EXCEPTION:
                     log.warn("Reject team: TeamStatus is invalid");
