@@ -1167,8 +1167,18 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                log.warn("Server side error: {}", error.getError());
-                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                        log.warn("Approve join request: User {}, Team {} fail", userId, teamId);
+                        redirectAttributes.addFlashAttribute("message", "Approve join request fail");
+                        break;
+                    default:
+                        log.warn("Server side error: {}", error.getError());
+                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                        break;
+                }
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
                 log.warn("IOException {}", ioe);
@@ -1176,12 +1186,6 @@ public class MainController {
             }
         }
         // everything looks OK?
-        String msg = new JSONObject(responseBody).getString("msg");
-        if (!"process join request OK".equals(msg)) {
-            log.warn("Cannot process join request: {}", msg);
-            redirectAttributes.addFlashAttribute("message", "Cannot process join request: " + msg);
-            return "redirect:/approve_new_user";
-        }
         log.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
         redirectAttributes.addFlashAttribute("messageSuccess", "Join request has been APPROVED.");
         return "redirect:/approve_new_user";
@@ -1215,8 +1219,18 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             try {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                log.warn("Server side error: {}", error.getError());
-                redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                        log.warn("Reject join request: User {}, Team {} fail", userId, teamId);
+                        redirectAttributes.addFlashAttribute("message", "Reject join request fail");
+                        break;
+                    default:
+                        log.warn("Server side error: {}", error.getError());
+                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                        break;
+                }
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
                 log.warn("IOException {}", ioe);
@@ -1224,12 +1238,6 @@ public class MainController {
             }
         }
         // everything looks OK?
-        String msg = new JSONObject(responseBody).getString("msg");
-        if (!"process join request OK".equals(msg)) {
-            log.warn("Cannot process join request: {}", msg);
-            redirectAttributes.addFlashAttribute("message", "Cannot process join request: " + msg);
-            return "redirect:/approve_new_user";
-        }
         log.info("Join request has been REJECTED, User {}, Team {}", userId, teamId);
         redirectAttributes.addFlashAttribute("message", "Join request has been REJECTED.");
         return "redirect:/approve_new_user";
@@ -2246,6 +2254,10 @@ public class MainController {
                     log.warn("Approve team: Team {} not found", teamId);
                     redirectAttributes.addFlashAttribute("message", "Team does not exist");
                     break;
+                case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    log.warn("Approve team: Team {} fail", teamId);
+                    redirectAttributes.addFlashAttribute("message", "Approve team request fail on Deterlab");
+                    break;
                 default:
                     log.warn("Approve team : sio or deterlab adapter connection error");
                     // possible sio or adapter connection fail
@@ -2314,6 +2326,10 @@ public class MainController {
                 case TEAM_NOT_FOUND_EXCEPTION:
                     log.warn("Reject team: Team {} not found", teamId);
                     redirectAttributes.addFlashAttribute("message", "Team does not exist");
+                    break;
+                case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    log.warn("Reject team: Team {} fail", teamId);
+                    redirectAttributes.addFlashAttribute("message", "Reject team request fail on Deterlab");
                     break;
                 default:
                     log.warn("Reject team : sio or deterlab adapter connection error");
