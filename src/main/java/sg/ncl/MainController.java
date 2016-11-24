@@ -1170,7 +1170,7 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Approve join request: User {}, Team {} fail", userId, teamId);
                         redirectAttributes.addFlashAttribute("message", "Approve join request fail");
                         break;
@@ -1222,7 +1222,7 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Reject join request: User {}, Team {} fail", userId, teamId);
                         redirectAttributes.addFlashAttribute("message", "Reject join request fail");
                         break;
@@ -2254,7 +2254,7 @@ public class MainController {
                     log.warn("Approve team: Team {} not found", teamId);
                     redirectAttributes.addFlashAttribute("message", "Team does not exist");
                     break;
-                case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
                     log.warn("Approve team: Team {} fail", teamId);
                     redirectAttributes.addFlashAttribute("message", "Approve team request fail on Deterlab");
                     break;
@@ -2327,7 +2327,7 @@ public class MainController {
                     log.warn("Reject team: Team {} not found", teamId);
                     redirectAttributes.addFlashAttribute("message", "Team does not exist");
                     break;
-                case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
                     log.warn("Reject team: Team {} fail", teamId);
                     redirectAttributes.addFlashAttribute("message", "Reject team request fail on Deterlab");
                     break;
