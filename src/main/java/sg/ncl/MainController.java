@@ -731,7 +731,14 @@ public class MainController {
 
                 try {
                     registerUserToDeter(mainObject);
-                } catch (TeamNotFoundException | ApplyNewProjectException | TeamNameAlreadyExistsException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException | InvalidPasswordException e) {
+                } catch (
+                        TeamNotFoundException |
+                        TeamNameAlreadyExistsException |
+                        UsernameAlreadyExistsException |
+                        EmailAlreadyExistsException |
+                        InvalidTeamNameException |
+                        InvalidPasswordException |
+                        DeterLabOperationFailedException e) {
                     redirectAttributes.addFlashAttribute("message", e.getMessage());
                     redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
@@ -765,7 +772,15 @@ public class MainController {
 
             try {
                 registerUserToDeter(mainObject);
-            } catch (TeamNotFoundException | AdapterConnectionException | ApplyNewProjectException | TeamNameAlreadyExistsException | UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidTeamNameException | InvalidPasswordException e) {
+            } catch (
+                    TeamNotFoundException |
+                    AdapterConnectionException |
+                    TeamNameAlreadyExistsException |
+                    UsernameAlreadyExistsException |
+                    EmailAlreadyExistsException |
+                    InvalidTeamNameException |
+                    InvalidPasswordException |
+                    DeterLabOperationFailedException e) {
                 redirectAttributes.addFlashAttribute("message", e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
@@ -798,12 +813,12 @@ public class MainController {
             WebServiceRuntimeException,
             TeamNotFoundException,
             AdapterConnectionException,
-            ApplyNewProjectException,
             TeamNameAlreadyExistsException,
             UsernameAlreadyExistsException,
             EmailAlreadyExistsException,
             InvalidTeamNameException,
-            InvalidPasswordException {
+            InvalidPasswordException,
+            DeterLabOperationFailedException {
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
@@ -820,13 +835,12 @@ public class MainController {
 
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
+                final String errorPrefix = "Error: ";
+
                 switch (exceptionState) {
-                    case JOIN_PROJECT_EXCEPTION:
-                        log.warn("Register new users join team request : team name error");
-                        throw new TeamNotFoundException("Team name does not exists");
-                    case APPLY_NEW_PROJECT_EXCEPTION:
-                        log.warn("Register new users new team request : team name error");
-                        throw new ApplyNewProjectException();
+                    case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                        log.warn("Register new user failed on DeterLab: {}", error.getMessage());
+                        throw new DeterLabOperationFailedException(errorPrefix + (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
                     case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Register new users new team request : team name already exists");
                         throw new TeamNameAlreadyExistsException("Team name already exists");
@@ -841,14 +855,14 @@ public class MainController {
                     {
                         String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
                         log.warn("Register new users : email already exists: {}", email);
-                        throw new UsernameAlreadyExistsException("Error: " + email + " already in use.");
+                        throw new UsernameAlreadyExistsException(errorPrefix + email + " already in use.");
                     }
                     case EMAIL_ALREADY_EXISTS_EXCEPTION:
                         // throw from adapter deterlab
                     {
                         String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
                         log.warn("Register new users : email already exists: {}", email);
-                        throw new EmailAlreadyExistsException("Error: " + email + " already in use.");
+                        throw new EmailAlreadyExistsException(errorPrefix + email + " already in use.");
                     }
                     default:
                         log.warn("Registration or adapter connection fail");
