@@ -1,7 +1,5 @@
 package sg.ncl.exceptions;
 
-import sg.ncl.domain.ExceptionState;
-
 /**
  * Created by dcszwang on 11/25/2016.
  */
