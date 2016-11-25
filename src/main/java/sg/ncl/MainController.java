@@ -2013,7 +2013,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute("exp_message", "Exp: " + realization.getExperimentName() + " in Team: " + teamName + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please reload this page in a few minutes.");
+                redirectAttributes.addFlashAttribute("exp_message", "Experiment " + realization.getExperimentName() + " in team " + teamName + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please refresh this page later.");
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
@@ -2089,7 +2089,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute("exp_message", "Exp: " + realization.getExperimentName() + " in Team: " + teamName + " is stopping. Please reload this page in a few minutes.");
+                redirectAttributes.addFlashAttribute("exp_message", "Experiment " + realization.getExperimentName() + " in team " + teamName + " is stopping. Please refresh this page in a few minutes.");
             }
             return "redirect:/experiments";
         } catch (IOException e) {
