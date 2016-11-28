@@ -41,7 +41,24 @@
 						</td>
 					</tr>
 				</table>
-				<p><a href="#" th:href="${'/data/' + dataset.id + '/resources/upload'}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Upload Resource</button></a></p>
+                <div class="row">
+                    <div class="col-md-4"><button type="button" class="btn btn-standard resumable-browse"><i class="fa fa-plus"></i> Upload Resource</button></div>
+                    <div class="col-md-8">
+                        <div class="resumable-error">
+                            Your browser does not support Resumable.js. The library requires support for <a href="http://www.w3.org/TR/FileAPI/">the HTML5 File API</a> along with <a href="http://www.w3.org/TR/FileAPI/#normalization-of-params">file slicing</a>.
+                        </div>
+                        <table>
+                            <tr class="resumable-progress">
+                                <td width="100%"><div class="progress-container"><div class="progress-bar"></div></div></td>
+                                <td class="progress-text" nowrap="nowrap"></td>
+                                <td class="progress-pause" nowrap="nowrap">
+                                    <a href="#" onclick="r.upload(); return(false);" class="progress-resume-link"><img src="images/resume.png" title="Resume upload" /></a>
+                                    <a href="#" onclick="r.pause(); return(false);" class="progress-pause-link"><img src="images/pause.png" title="Pause upload" /></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 			</div> <!-- row -->
 			<div class="cc-wraper">
 				<div class="cc-contactpop fixed">
@@ -64,5 +81,66 @@
 
 		<div th:replace="fragments/footer :: footer"></div>
 		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+
+        <script th:inline="javascript">
+            var r = new Resumable({
+                /*<![CDATA[*/
+                target: /*[[${'/data/' + dataset.id + '/resources/upload'}]]*/ '/data/0/resources/upload',
+                simultaneousUploads: 1
+                /*]]>*/
+            });
+            // Resumable.js isn't supported, fall back on a different method
+            if (!r.support) {
+                $('.resumable-browse').hide();
+                $('.resumable-error').show();
+            } else {
+                r.assignBrowse($('.resumable-browse'));
+
+                r.on('fileSuccess', function(file){
+                    console.debug('fileSuccess', file);
+                });
+                r.on('fileProgress', function(file){
+                    console.debug('fileProgress', file);
+                });
+                r.on('fileAdded', function(file, event){
+                    $('.resumable-browse').prop('disabled', true);
+                    r.upload();
+                    console.debug('fileAdded', event);
+                });
+                r.on('fileRetry', function(file){
+                    console.debug(file);
+                });
+                r.on('fileError', function(file, message){
+                    console.debug('fileError', file, message);
+                });
+                r.on('uploadStart', function(){
+                    // Show pause, hide resume
+                    $('.resumable-progress .progress-resume-link').hide();
+                    $('.resumable-progress .progress-pause-link').show();
+                    console.debug('uploadStart');
+                });
+                r.on('complete', function(){
+                    $('.resumable-progress .progress-resume-link, .resumable-progress .progress-pause-link').hide();
+                    console.debug('complete');
+                });
+                r.on('progress', function(){
+                    $('.progress-bar').css({width:Math.floor(r.progress()*100) + '%'});
+                    console.debug('progress');
+                });
+                r.on('error', function(message, file){
+                    $('.progress-text').text(message);
+                    console.debug('error', message, file);
+                });
+                r.on('pause', function(){
+                    // Show resume, hide pause
+                    $('.resumable-progress .progress-resume-link').show();
+                    $('.resumable-progress .progress-pause-link').hide();
+                    console.debug('pause');
+                });
+                r.on('cancel', function(){
+                    console.debug('cancel');
+                });
+            }
+        </script>
 	</body>
 </html>
