@@ -2612,10 +2612,6 @@ public class MainController {
     @RequestMapping("/email_checklist")
     public String email_checklist(@ModelAttribute("statuschecklist") String status) {return "email_checklist";}
 
-
-    @RequestMapping("/team_review_checklist")
-    public String team_review_checklist() {return "team_review_checklist";}
-
     @RequestMapping("/join_application_awaiting_approval")
     public String joinTeamAppAwaitingApproval(Model model) {
         model.addAttribute("loginForm", new LoginForm());
