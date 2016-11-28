@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Email checklist</title>
+        <object th:include="fragments/header :: header" th:remove="tag" />
+    </head>
+    <body class="mybg ">
+        <div th:replace="fragments/login_navigation :: loginnav"></div>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <div class="container">
+
+            <p>&nbsp;</p>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10 tutorialbackground">
+                    <div class="col-sm-1 col-sm-offset-0 "><img src="images/checklist.png" width="52" height="43"/>
+                    </div>
+                    <h2 th:text="#{email.checklist}">Some checks have not completed yet</h2>
+                    <hr />
+                    <!--<p th:text="${userStatus}"></p>-->
+                        <div class="col-sm-8">
+                            <p th:if="${statuschecklist=='CREATED'}"><span class="fa fa-times  times" data-toggle="tooltip"> </span>User email has been verified</p>
+                            <p th:if="${statuschecklist=='PENDING'}"><span class="fa fa-check check" data-toggle="tooltip"></span>  User email has been verified</p>
+                            <p th:unless="${statuschecklist}"><span class="fa fa-check  check" data-toggle="tooltip"></span> User email verified</p>
+                        </div>
+                    <div class="col-sm-8">
+                        <p th:if="${emailchecklist=='CREATED'}"><span class="fa fa-check " data-toggle="tooltip"></span>  Team application successfully review</p>
+                        <p th:unless="${emailchecklist}"><span class="fa fa-times  times" data-toggle="tooltip"></span> Team application under review</p>
+                    </div>
+
+
+                    <!--<p th:if="${!emailVerified.value.isUserStatus(statuschecklist)=='CREATED'}"><span class="fa fa-times" data-toggle="tooltip"></span></p>-->
+                    <!--<p th:unless="${emailVerified.value.isUserStatus(statuschecklist)}"><span class="fa fa-times times" data-toggle="tooltip"></span></p>-->
+
+                    <!--<p th:if="${!emailVerified.value.isUserStatus(statuschecklist)} == 'CREATED'"><span class="fa fa-times check" data-toggle="tooltip"></span></p>-->
+
+
+                    <!--<tr th:each="UserStatus : ${userStatus}">-->
+                        <!--<td th:if="${UserStatus.value.isUserStatus(emailchecklist)} == true"><span class="fa fa-times check" data-toggle="tooltip"></span>gggghhghggg</td>-->
+                        <!--<td th:unless="${UserStatus.value.isUserStatus(emailchecklist)}"><span class="fa fa-times times" data-toggle="tooltip"></span>gghghghghg</td>-->
+                    <!--</tr>-->
+
+
+                    <!--<p><i class="fa fa-times times"></i> User email verified</p>-->
+                   <!--<p><i class="fa fa-check check" ></i> Team application under review</p><hr />-->
+                    <!--<p>Please kindly check your mail box to verify your email.You may need to check your spam folder.</p>-->
+                    <!--<p>If you do not receive a verification email after 5 business days, please contact us at <a th:href="#{support.email.link}" th:text="#{support.email}"></a>.</p>-->
+                    <!--<p>&nbsp;</p>-->
+                    <!--<p>&nbsp;</p>-->
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+                    <br/>
+
+                </div> <!-- col -->
+                <div class="col-md-1"></div>
+            </div> <!-- row -->
+            <div class="cc-wraper">
+                <div class="cc-contactpop fixed">
+                    <h1>Do you need Help? <span>Get in touch.</span></h1>
+                    <div class="renseignement">
+                        <i class="fa fa-times"></i>
+                        <p>We will get back to you as soon as possible. </p>
+                    </div>
+                    <form>
+                        <ul>
+                            <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+                            <li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
+                            <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                        </ul>
+                        <p>&nbsp;</p>
+                    </form>
+                </div>
+            </div>
+        </div> <!-- container -->
+        <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+    </body>
+</html>
