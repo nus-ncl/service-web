@@ -15,7 +15,7 @@
 			<p>&nbsp;</p>
             <div class="row dashpanel">
 				<div th:if="${message}">
-					<h4 th:text="${message}"></h4>
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 				</div>
             	<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.header}"></h2>
                 <table class="table table-responsive">
@@ -69,7 +69,11 @@
 					    <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))}">Access</td>
 	                   	<td>
 	                   		<a th:if="${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#downloadModal" class="btn btn-primary" data-toggle="modal"
-                               th:attr="data-id=${datasetEntry.value.id}, data-name=${datasetEntry.value.name}, data-resources=${datasetEntry.value.getResourceIdsInArrayString()}"><i class="fa fa-download"></i> Download</a>
+                               th:attr="data-id=${datasetEntry.value.id},
+                               	        data-name=${datasetEntry.value.name},
+                               	        data-resources=${datasetEntry.value.getResourceIdsInArrayString()},
+                                        data-upload=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/' + datasetEntry.value.id + '/resources' : ''}">
+                                <i class="fa fa-download"></i> Download</a>
                             <a th:if="not ${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#requestModal" class="btn btn-primary" data-toggle="modal"
                                th:attr="data-name=${datasetEntry.value.name}"><i class="fa fa-commenting"></i> Request</a>
 	                   	</td>
@@ -147,6 +151,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<a href="#" class="btn btn-primary" id="uploadButton">Upload</a>
                     </div>
                 </div>
             </div>

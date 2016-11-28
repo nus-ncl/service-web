@@ -40,9 +40,11 @@ public class DataController extends MainController {
 
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
     private static final String MESSAGE_ATTRIBUTE = "message";
+    private static final String EDIT_DISALLOWED = "Edit/delete of dataset disallowed as user is not contributor";
+    private static final String UPLOAD_DISALLOWED = "Upload of data resource disallowed as user is not contributor";
 
     @RequestMapping
-    public String data(Model model, HttpSession session) {
+    public String data(Model model) {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -60,14 +62,19 @@ public class DataController extends MainController {
         return "data";
     }
 
-    @RequestMapping(value={"/contribute", "/contribute/{id}"}, method= RequestMethod.GET)
-    public String contributeData(Model model, @PathVariable Optional<String> id) throws Exception {
+    @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
+    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
         if (id.isPresent()) {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
             ResponseEntity response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
             String dataResponseBody = response.getBody().toString();
             JSONObject dataInfoObject = new JSONObject(dataResponseBody);
             Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+                log.warn(EDIT_DISALLOWED);
+                redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, EDIT_DISALLOWED);
+                return "redirect:/data";
+            }
             model.addAttribute("dataset", dataset);
         } else {
             model.addAttribute("dataset", new Dataset());
@@ -187,6 +194,43 @@ public class DataController extends MainController {
         model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
         return "data_public";
     }
+
+    @RequestMapping("{datasetId}/resources")
+    public String getResources(Model model, @PathVariable String datasetId, HttpSession session, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+        if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+            log.warn(UPLOAD_DISALLOWED);
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, UPLOAD_DISALLOWED);
+            return "redirect:/data";
+        }
+        model.addAttribute("dataset", dataset);
+        return "data_resources";
+    }
+
+    @RequestMapping(value="{datasetId}/resources/upload", method=RequestMethod.GET)
+    public String uploadResource(Model model, @PathVariable String datasetId, HttpSession session, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+        if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+            log.warn(UPLOAD_DISALLOWED);
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, UPLOAD_DISALLOWED);
+            return "redirect:/data";
+        }
+        model.addAttribute("dataset", dataset);
+        return "data_upload";
+    }
+
+    /**
+     * References:
+     * [1] https://github.com/23/resumable.js/blob/master/samples/java/src/main/java/resumable/js/upload/UploadServlet.java
+     */
 
     private Dataset extractDataInfo(String json) {
         log.debug(json);

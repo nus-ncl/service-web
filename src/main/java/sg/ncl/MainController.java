@@ -235,12 +235,6 @@ public class MainController {
         return "TestbedInformation";
     }
 
-
-//    @RequestMapping("/dataresource")
-//    public String dataresource() {
-//        return "dataresource";
-//    }
-
 //    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
 //    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
 //        InputStream stream = null;
