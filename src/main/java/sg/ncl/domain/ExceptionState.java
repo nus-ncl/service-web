@@ -9,12 +9,13 @@ import java.util.Map;
  * @author Te Ye
  */
 public enum ExceptionState {
-    ADAPTER_DETERLAB_CONNECTION_FAILED_EXCEPTION("AdapterDeterLabConnectionFailedException"),
-    ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION("AdapterDeterLabOperationFailedException"),
+    ADAPTER_CONNECTION_EXCEPTION("AdapterConnectionException"),
+    ADAPTER_INTERNAL_ERROR_EXCEPTION("AdapterInternalErrorException"),
     APPLY_NEW_PROJECT_EXCEPTION("ApplyNewProjectException"),
     CREDENTIALS_NOT_FOUND_EXCEPTION("CredentialsNotFoundException"),
     CREDENTIALS_UPDATE_EXCEPTION("CredentialsUpdateException"),
     DATA_NAME_ALREADY_EXISTS_EXCEPTION("DataNameAlreadyExistsException"),
+    DETERLAB_OPERATION_FAILED_EXCEPTION("DeterLabOperationFailedException"),
     EMAIL_ALREADY_EXISTS_EXCEPTION("EmailAlreadyExistsException"),
     EXPERIMENT_NAME_ALREADY_EXISTS_EXCEPTION("ExperimentNameAlreadyExistsException"),
     EXPERIMENT_DELETE_EXCEPTION("ExperimentDeleteException"),

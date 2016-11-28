@@ -666,7 +666,7 @@ public class MainControllerTest {
 
         mockServer.expect(requestTo(properties.getPasswordResetURI()))
                 .andExpect(method(HttpMethod.PUT))
-                .andRespond(withServerError().body("{\"error\":\"sg.ncl.service.authentication.exceptions.AdapterDeterLabConnectionFailedException\"}").contentType(MediaType.APPLICATION_JSON));
+                .andRespond(withServerError().body("{\"error\":\"sg.ncl.service.authentication.exceptions.AdapterConnectionException\"}").contentType(MediaType.APPLICATION_JSON));
 
         mockMvc.perform(
                 post("/password_reset")
