@@ -143,6 +143,7 @@ $(document).ready(function() {
     }, {
     	offset: '75%'
     });
+	
 
     //-----------------data page-----------------
     // modal to show dataset details
@@ -443,11 +444,11 @@ function _MakePWDWidget()
 	var code="";
 	var pwdname = this.pwdobjname;
 
-	this.pwdfieldid = pwdname+"_id";
+	this.pwdfieldid = pwdname;
 
-	code += "<div class='form-group'><input th:field='*{password}' type='password' class='form-control pwdfield' name='"+pwdname+"' id='"+this.pwdfieldid+"'  placeholder='Password'></div>";
+	code += "<div class='form-group'><input th:field='*{password}' type='password' class='form-control pwdfield' name='"+pwdname+"' id='"+this.pwdfieldid+"'  placeholder='Password' ></div>";
 
-	code += "<div class='form-group'><input type='password' class='form-control' placeholder='Confirm Password' th:field='*{confirmPassword}' name='confirmPassword'/></div>";
+	code += "<div class='form-group'><input type='password' class='form-control' placeholder='Confirm Password' th:field='*{confirmPassword}' name='confirmPassword' id='confirmPassword' onkeyup='checkPass();'/></div>";
 
 	this.pwdtxtfield=pwdname+"_text";
 
@@ -889,3 +890,5 @@ function displayDefaultNsContent() {
 	var basic = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	document.getElementById("networkConfig").innerHTML = basic;
 }
+
+

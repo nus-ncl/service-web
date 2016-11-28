@@ -1,147 +1,324 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>National Cybersecurity Laboratories - Signup</title>
-		<object th:include="fragments/header :: header" th:remove="tag" />
-		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
-	</head>
-	<body class="mybg registerback">
-        <div th:replace="fragments/login_navigation :: loginnav"></div>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-10">
-                    <div class="panel panel-default registration-panel2">
-						 <h3 class="dashhead loginpanel" th:text="#{signup.header}">Registration</h3>
-                      <!-- panel-heading -->
-						<div class="welcome">
-							<p> <b>Come join NCL. Let's set up your account.</b></p>
-						</div>
-                        <div class="panel-body">
-							<div th:if="${message}">
-								<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
-							</div>
-                            <form action="#" th:action="@{/signup2}" method="post" role="form" th:object="${signUpMergedForm}">
-                                <!-- Account Details -->
-                                <fieldset>
-									<p class="account-change-fail" th:if="${signupError}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signupError}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('email')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{email}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('password')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{password}"></span></p>
-									<p class="account-change-fail" th:if="${(signUpMergedForm.password != null and signUpMergedForm.confirmPassword != null) and (signUpMergedForm.getIsValid() == false)}"><i class="fa fa-exclamation-circle"></i> <span th:text="#{acc.info.pwdMismatch}"></span></p>
-									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamOwnerPolicy != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamOwnerPolicy}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('firstName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{firstName}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('lastName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{lastName}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('phone')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{phone}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('jobTitle')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{jobTitle}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('institution')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institution}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('country')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{country}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></p>
-									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamName != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamName}"></span></p>
-									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamDescription != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamDescription}"></span></p>
-									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamWebsite != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamWebsite}"></span></p>
-									<p class="account-change-fail" th:if="${#fields.hasErrors('joinTeamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{joinTeamName}"></span></p>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>National Cybersecurity Laboratories - Signup</title>
+	<object th:include="fragments/header :: header" th:remove="tag" />
+	<object th:include="fragments/javascript :: javascript" th:remove="tag" />
 
-									<h3 th:text="#{signup.createAcc.header}">Create Your Account</h3>
-	                                <div class="form-group">
-	                                    <input type="text" class="form-control" placeholder="Email" th:field="*{email}"/>
-	                                </div>
-	                                <div class="form-group">
-										<div class='pwdwidgetdiv' id='thepwddiv'>
-										</div>
-										<noscript>
-											<div>
-												<input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>
-											</div>
-										</noscript>
-										<script  type="text/javascript" >
-											var pwdwidget = new PasswordWidget('thepwddiv','password');
-											pwdwidget.MakePWDWidget();
-										</script>
-									</div>
-									<div class="form-group">
-										<div class="checkbox">
-											<label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> I accept the <a href="acceptable_usage_policy" th:src="@{/acceptable_usage_policy}" th:text="#{signup.acceptableUsagePolicy}">Acceptable Usage Policy</a> and <a href="terms_and_conditions" th:text="#{signup.termsAndCondition}">Terms and Conditions</a></label>
-										</div>
-									</div>
 
-									<!-- personal details -->
-									<p>&nbsp;</p>
-									<h3 th:text="#{signup.personalDetails.header}">Personal Details</h3>
-									<div class="form-group row">
-										<div class="col-xs-6">
-											<input type="text" class="form-control" placeholder="First Name" th:field="*{firstName}"/>
-										</div>
-										<div class="col-xs-6">
-											<input type="text" class="form-control" placeholder="Last Name" th:field="*{lastName}"/>
-										</div>
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Phone (numbers Only)" th:field="*{phone}"/>
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Job Title" th:field="*{jobTitle}"/>
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Institution/Employer" th:field="*{institution}"/>
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Country" th:field="*{country}"/>
-									</div>
+</head>
+<body class="mybg registerback">
+<div th:replace="fragments/login_navigation :: loginnav"></div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<div class="panel panel-default registration-panel2">
+				<h3 class="dashhead loginpanel" th:text="#{signup.header}">Registration</h3>
+				<!-- panel-heading -->
+				<div class="welcome">
+					<p> <b>Come join NCL. Let's set up your account.</b></p>
+				</div>
+				<div class="panel-body">
+					<div th:if="${message}">
+						<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}" onsubmit="return validateForm()"/></p>
+					</div>
+					<form  action="#" th:action="@{/signup2}" method="post" role="form" th:object="${signUpMergedForm}" >
+						<!-- Account Details -->
+						<fieldset>
+							<p class="account-change-fail" th:if="${signupError}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signupError}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('email')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{email}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('password')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{password}"></span></p>
+							<p class="account-change-fail" th:if="${(signUpMergedForm.password != null and signUpMergedForm.confirmPassword != null) and (signUpMergedForm.getIsValid() == false)}"><i class="fa fa-exclamation-circle"></i> <span th:text="#{acc.info.pwdMismatch}"></span></p>
+							<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamOwnerPolicy != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamOwnerPolicy}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('firstName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{firstName}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('lastName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{lastName}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('phone')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{phone}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('jobTitle')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{jobTitle}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('institution')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institution}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('country')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{country}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></p>
+							<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamName != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamName}"></span></p>
+							<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamDescription != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamDescription}"></span></p>
+							<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamWebsite != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamWebsite}"></span></p>
+							<p class="account-change-fail" th:if="${#fields.hasErrors('joinTeamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{joinTeamName}"></span></p>
 
-									<!-- select to apply new team or join team -->
-									<p>&nbsp;</p>
-									<h3 th:text="#{signup.noTeam}">text from message.properties</h3>
-									<ul class="tab-group">
-										<li id="registerApplyNewTeamTab" class="active"><a id="registerApplyNewTeamBtn" data-toggle="tab" href="#registerNewTeamDiv">Apply a new team</a></li>
-										<li id="registerApplyJoinTeamTab"><a id="registerApplyJoinTeamBtn" data-toggle="tab" href="#registerJoinTeamDiv">Apply to join an existing team</a></li>
-									</ul>
-
-									<div class="tab-content">
-										<p>&nbsp;</p>
-										<div id="registerNewTeamDiv" class="tab-pane fade in active">
-											<div class="form-group">
-												<input type="text" class="form-control" th:placeholder="#{form.teamName}" th:field="*{teamName}"/>
-											</div>
-											<div class="form-group">
-												<input data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the description" type="text" class="form-control" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
-											</div>
-											<div class="form-group">
-												<label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
-												<select class="form-control" th:field="*{teamOrganizationType}">
-													<option value="Academic" th:text="#{signup.academia}">Academic</option>
-													<option value="Government" th:text="#{signup.government}">Government</option>
-													<option value="Industry" th:text="#{signup.industry}">Industry</option>
-												</select>
-											</div>
-											<div class="form-group">
-												<div class="radio">
-													<label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
-												</div>
-												<div class="radio">
-													<label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
-												</div>
-											</div>
-										</div>
-										<div id="registerJoinTeamDiv" class="tab-pane fade">
-											<div class="form-group">
-												<input type="text" class="form-control" placeholder="Team Name to Join" th:field="*{joinTeamName}"/>
-											</div>
-										</div>
-									</div>
-								</fieldset>
-								<p>&nbsp;</p>
-								<div class="form-group">
-									<button type="submit" class="btn btn-special">Submit</button>
+							<h3 th:text="#{signup.createAcc.header}">Create Your Account</h3>
+							<div class="form-group row">
+								<div class="col-xs-6">
+									<input type="text" class="form-control" placeholder="First Name" th:field="*{firstName}" onblur="validateName(name)"/>
+									<span id="firstNameError" style="display: none;"><h34>You can only use alphabetic characters, hyphens and apostrophes</h34></span>
 								</div>
-                            </form>
-                        </div> <!-- panel-body -->
-                        
-                    </div> <!-- panel -->
-                </div> <!-- col -->
-                <div class="col-md-1"></div>
-            </div> <!-- row -->
-        </div> <!-- container -->
-		<div th:replace="fragments/footer :: footer"></div>
-	</body>
+								<div class="col-xs-6">
+									<input type="text" class="form-control" placeholder="Last Name" th:field="*{lastName}" onblur="validateName(name)"/>
+									<span id="lastNameError" style="display: none;"><h34>You can only use alphabetic characters, hyphens and apostrophes</h34></span>
+								</div>
+								<!--<div class="col-xs-6">-->
+								<!--<input type="text" class="form-control" placeholder="Last Name" th:field="*{lastName}"/>-->
+								<!--</div>-->
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" th:field="*{email}" placeholder="Email" onblur="validateEmail(name)"/>
+								<span id="emailError" style="display: none;"><h34>You can must enter a valid email address</h34></span>
+							</div>
+							<div class="form-group">
+								<div class='pwdwidgetdiv' id='thepwddiv'/>
+								<span id="confirmMessage" class="confirmMessage"></span></div>
+									<noscript>
+									<div>
+										<input type="password" class="form-control" placeholder="Password"/>
+									</div>
+								</noscript>
+								<script  type="text/javascript" >
+									var pwdwidget = new PasswordWidget('thepwddiv','password');
+									pwdwidget.MakePWDWidget();
+								</script>
+							<div class="form-group">
+								<input type="text" class="form-control"  placeholder="Phone (numbers Only)" th:field="*{phone}" onblur="validatePhone(name)"/>
+								<span id="phoneError" style="display: none;"><h34>The number you entered is not valid.</h34></span>
+
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" name="job" id="job"  placeholder="Job Title" onblur="validateJob(name)"/>
+								<span class="validateJob" id="jobError" style="display: none;"><h34>Please fill in the blanks.</h34></span>
+								<!---->
+								<!--<input type="text" class="form-control" th:field="*{jobTitle}" onblur="validateJob(name)" placeholder="Job Title"/>-->
+								<!--<span class="jobError" id="jobError" style="display: none;">Please fill in the blank.</span>-->
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" name="institution" id="institution"  placeholder="Institution/Employers" onblur="validateinstitution(name)"/>
+								<span class="validateinstitution" id="institutionError" style="display: none;"><h34>Please fill in the blanks.</h34></span>
+								<!---->
+								<!--<input type="text" class="form-control" placeholder="Institution/Employer" th:field="*{institution}"/>-->
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Country" th:field="*{country}"/>
+							</div>
+							<p>&nbsp;</p>
+
+							<div class="form-group">
+								<div class="checkbox">
+									<label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> I accept the <a href="acceptable_usage_policy" th:src="@{/acceptable_usage_policy}" th:text="#{signup.acceptableUsagePolicy}">Acceptable Usage Policy</a> and <a href="terms_and_conditions" th:text="#{signup.termsAndCondition}">Terms and Conditions</a></label>
+								</div>
+							</div>
+							<hr/>
+							<!-- select to apply new team or join team -->
+							<p>&nbsp;</p>
+							<h3 th:text="#{signup.noTeam}">text from message.properties</h3>
+							<ul class="tab-group">
+								<li id="registerApplyNewTeamTab" class="active"><a id="registerApplyNewTeamBtn" data-toggle="tab" href="#registerNewTeamDiv">Apply a new team</a></li>
+								<li id="registerApplyJoinTeamTab"><a id="registerApplyJoinTeamBtn" data-toggle="tab" href="#registerJoinTeamDiv">Apply to join an existing team</a></li>
+							</ul>
+
+							<div class="tab-content">
+								<p>&nbsp;</p>
+								<div id="registerNewTeamDiv" class="tab-pane fade in active">
+									<div class="form-group">
+										<input type="text" class="form-control" th:placeholder="#{form.teamName}"  th:field="*{teamName}" onblur="validateteamName(name)"/>
+										<span id="teamNameError" style="display: none;"><h34>You can only use alphabetic character and numbers only</h34></span>
+									</div>
+									<div class="form-group">
+										<input data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the description" type="text" class="form-control" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
+									</div>
+									<div class="form-group">
+										<label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
+										<select class="form-control" th:field="*{teamOrganizationType}">
+											<option value="Academic" th:text="#{signup.academia}">Academic</option>
+											<option value="Government" th:text="#{signup.government}">Government</option>
+											<option value="Industry" th:text="#{signup.industry}">Industry</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<div class="radio">
+											<label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
+										</div>
+										<div class="radio">
+											<label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
+										</div>
+									</div>
+								</div>
+								<div id="registerJoinTeamDiv" class="tab-pane fade">
+									<div class="form-group">
+										<input type="text" class="form-control" th:placeholder="#{form.teamName}"  th:field="*{joinTeamName}" onblur="validatejoinTeamName(name)"/>
+										<span id="joinTeamNameError" style="display: none;"><h34>You can only use alphabetic character and numbers only</h34></span>
+									</div>
+
+								</div>
+							</div>
+						</fieldset>
+						<p>&nbsp;</p>
+						<div class="form-group">
+							<button type="submit" class="btn btn-special">Submit</button>
+						</div>
+					</form>
+				</div> <!-- panel-body -->
+
+			</div> <!-- panel -->
+		</div> <!-- col -->
+		<div class="col-md-1"></div>
+	</div> <!-- row -->
+</div> <!-- container -->
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+	// Validate name
+	function validateName(x){
+		// Validation rule
+		var re = /[A-Za-z -']$/;
+		// Check input
+		if(re.test(document.getElementById(x).value)){
+			// Style green
+			document.getElementById(x).style.borderBottomColor ='#fff';
+			// Hide error prompt
+			document.getElementById(x + 'Error').style.display = "none";
+			return true;
+		}else{
+			// Style red
+			document.getElementById(x).style.borderBottomColor ='#c9302c';
+			// Show error prompt
+			document.getElementById(x + 'Error').style.display = "block";
+			return false;
+		}
+	}
+
+	// Validate email
+	function validateEmail(email){
+		var re = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		if (re.test(document.getElementById(email).value)){
+			document.getElementById(email).style.borderBottomColor ='#fff';
+			document.getElementById(email + 'Error').style.display = "none";
+			return true;
+		} else {
+			document.getElementById(email).style.borderBottomColor ='#c9302c';
+			document.getElementById(email + 'Error').style.display = "block";
+			return false;
+		}
+	}
+
+
+	//Validate phone
+	function validatePhone(phone){
+		var re = /[0-9-']$/;
+		if(re.test(document.getElementById(phone).value)){
+			document.getElementById(phone).style.borderBottomColor ='#fff';
+			document.getElementById(phone + 'Error').style.display = "none";
+			return true;
+		} else {
+			document.getElementById(phone).style.borderBottomColor ='#c9302c';
+			document.getElementById(phone + 'Error').style.display = "block";
+			return false;
+		}
+	}
+
+
+	//Validate Comments
+	function validateJob(job){
+		var re = /[A-Za-z -']$/;
+		if (re.test(document.getElementById(job).value)){
+			document.getElementById(job).style.borderBottomColor ='#fff';
+			document.getElementById(job + 'Error').style.display = "none";
+			return true;
+		} else {
+			document.getElementById(job).style.borderBottomColor ='#c9302c';
+			document.getElementById(job + 'Error').style.display = "block";
+			return false;
+		}
+	}
+
+	//Validate institution
+	function validateinstitution(institution){
+		var re = /[A-Za-z -']$/;
+		if (re.test(document.getElementById(institution).value)){
+			document.getElementById(institution).style.borderBottomColor ='#fff';
+			document.getElementById(institution + 'Error').style.display = "none";
+			return true;
+		} else {
+			document.getElementById(institution).style.borderBottomColor ='#c9302c';
+			document.getElementById(institution + 'Error').style.display = "block";
+			return false;
+		}
+	}
+
+	// Validate team name
+	function validateteamName(teamName){
+		var re = /^([a-zA-Z0-9_\.\-])/;
+		if (re.test(document.getElementById(teamName).value)){
+			document.getElementById(teamName).style.borderBottomColor ='#fff';
+			document.getElementById(teamName + 'Error').style.display = "none";
+			return true;
+		} else {
+			document.getElementById(teamName).style.borderBottomColor ='#c9302c';
+			document.getElementById(teamName + 'Error').style.display = "block";
+			return false;
+		}
+	}
+
+
+	// Validate team name
+	function validatejoinTeamName(joinTeamName){
+		var re = /^([a-zA-Z0-9_\.\-])/;
+		if (re.test(document.getElementById(joinTeamName).value)){
+			document.getElementById(joinTeamName).style.borderBottomColor ='#fff';
+			document.getElementById(joinTeamName + 'Error').style.display = "none";
+			return true;
+		} else {
+			document.getElementById(joinTeamName).style.borderBottomColor ='#c9302c';
+			document.getElementById(joinTeamName + 'Error').style.display = "block";
+			return false;
+		}
+	}
+
+
+
+	function checkPass()
+	{
+		//Store the password field objects into variables ...
+		var pass1 = document.getElementById('password');
+		var pass2 = document.getElementById('confirmPassword');
+		//Store the Confimation Message Object ...
+		var message = document.getElementById('confirmMessage');
+		//Set the colors we will be using ...
+		var goodColor = "#fff";
+		var badColor = "#c9302c";
+		//Compare the values in the password field
+		//and the confirmation field
+
+
+		if(pass1.value.length > 8)
+		{
+			pass1.style.borderBottomColor ='#fff';
+			message.style.color = goodColor;
+			message.innerHTML = "Character number ok"
+		}
+		else
+		{
+			pass1.style.borderBottomColor ='#c9302c';
+			message.style.color = badColor;
+			message.innerHTML = "You have to enter at least 8 digit"
+			return;
+		}
+
+		if(pass1.value == pass2.value){
+			//The passwords match.
+			//Set the color to the good color and inform
+			//the user that they have entered the correct password
+			pass2.style.backgroundColor ='#fff';
+			message.style.color = goodColor;
+			message.innerHTML = "Passwords Match!"
+		}else {
+			//The passwords do not match.
+			//Set the color to the bad color and
+			//notify the user.
+			pass2.style.backgroundColor = '#c9302c';
+			message.style.color = badColor;
+			message.innerHTML = "Passwords Do Not Match!"
+		}
+
+	}
+
+
+</script>
+</body>
 </html>
