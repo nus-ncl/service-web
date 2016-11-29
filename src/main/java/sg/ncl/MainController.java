@@ -1435,17 +1435,28 @@ public class MainController {
         String responseBody = response.getBody().toString();
 
         Team2 team = extractTeamInfo(responseBody);
-
-//        model.addAttribute("currentLoggedInUserId", getSessionIdOfLoggedInUser(session));
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
         model.addAttribute("membersList", team.getMembersList());
         session.setAttribute("originalTeam", team);
-//        model.addAttribute("team", teamManager.getTeamByTeamId(teamId));
-//        model.addAttribute("membersMap", teamManager.getTeamByTeamId(teamId).getMembersMap());
-//        model.addAttribute("userManager", userManager);
-//        model.addAttribute("teamExpMap", experimentManager.getTeamExperimentsMap(teamId));
-        // model add attribute team is correct
+
+        request = createHttpEntityHeaderOnly();
+        response = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, request, String.class);
+        JSONArray experimentsArray = new JSONArray(response.getBody().toString());
+
+        List<Experiment2> experimentList = new ArrayList<>();
+        Map<Long, Realization> realizationMap = new HashMap<>();
+
+        for (int k = 0; k < experimentsArray.length(); k++) {
+            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+            realizationMap.put(experiment2.getId(), realization);
+            experimentList.add(experiment2);
+        }
+
+        model.addAttribute("experimentList", experimentList);
+        model.addAttribute("realizationMap", realizationMap);
+
         return "team_profile";
     }
 
