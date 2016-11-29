@@ -52,8 +52,8 @@
                                 <td width="100%"><div class="progress-container"><div class="progress-bar"></div></div></td>
                                 <td class="progress-text" nowrap="nowrap"></td>
                                 <td class="progress-pause" nowrap="nowrap">
-                                    <a href="#" onclick="r.upload(); return(false);" class="progress-resume-link"><img src="images/resume.png" title="Resume upload" /></a>
-                                    <a href="#" onclick="r.pause(); return(false);" class="progress-pause-link"><img src="images/pause.png" title="Pause upload" /></a>
+                                    <a href="#" onclick="r.upload(); return(false);" class="progress-resume-link"><img src="/images/resume.png" title="Resume upload" /></a>
+                                    <a href="#" onclick="r.pause(); return(false);" class="progress-pause-link"><img src="/images/pause.png" title="Pause upload" /></a>
                                 </td>
                             </tr>
                         </table>
@@ -83,11 +83,14 @@
 		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
 
         <script th:inline="javascript">
+            /*<![CDATA[*/
+            var upload_url = /*[[${'/data/' + dataset.id + '/resources/upload'}]]*/ '/data/0/resources/upload';
+            var redirect_url = /*[[${'/data/' + dataset.id + '/resources'}]]*/ '/data/0';
+            /*]]>*/
             var r = new Resumable({
-                /*<![CDATA[*/
-                target: /*[[${'/data/' + dataset.id + '/resources/upload'}]]*/ '/data/0/resources/upload',
-                simultaneousUploads: 1
-                /*]]>*/
+                target: upload_url,
+                simultaneousUploads: 1,
+				maxFiles: 1
             });
             // Resumable.js isn't supported, fall back on a different method
             if (!r.support) {
@@ -98,14 +101,15 @@
 
                 r.on('fileSuccess', function(file){
                     console.debug('fileSuccess', file);
+                    location.reload();
                 });
                 r.on('fileProgress', function(file){
                     console.debug('fileProgress', file);
                 });
                 r.on('fileAdded', function(file, event){
+                    console.debug('fileAdded', event);
                     $('.resumable-browse').prop('disabled', true);
                     r.upload();
-                    console.debug('fileAdded', event);
                 });
                 r.on('fileRetry', function(file){
                     console.debug(file);
@@ -114,28 +118,29 @@
                     console.debug('fileError', file, message);
                 });
                 r.on('uploadStart', function(){
+                    console.debug('uploadStart');
                     // Show pause, hide resume
                     $('.resumable-progress .progress-resume-link').hide();
                     $('.resumable-progress .progress-pause-link').show();
-                    console.debug('uploadStart');
                 });
                 r.on('complete', function(){
-                    $('.resumable-progress .progress-resume-link, .resumable-progress .progress-pause-link').hide();
                     console.debug('complete');
+                    $('.resumable-progress .progress-resume-link, .resumable-progress .progress-pause-link').hide();
                 });
                 r.on('progress', function(){
-                    $('.progress-bar').css({width:Math.floor(r.progress()*100) + '%'});
                     console.debug('progress');
+                    $('.progress-bar').css({width:Math.floor(r.progress()*100) + '%'});
                 });
                 r.on('error', function(message, file){
-                    $('.progress-text').text(message);
                     console.debug('error', message, file);
+                    $('.progress-text').text(message);
+                    r.cancel();
                 });
                 r.on('pause', function(){
+                    console.debug('pause');
                     // Show resume, hide pause
                     $('.resumable-progress .progress-resume-link').show();
                     $('.resumable-progress .progress-pause-link').hide();
-                    console.debug('pause');
                 });
                 r.on('cancel', function(){
                     console.debug('cancel');
