@@ -309,6 +309,10 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint + "?teamId=" + teamId;
     }
 
+    public String getTeamSavedImages(String teamId) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint + "/teams/" + teamId;
+    }
+
     //-------------------------------------
     // USAGE STATISTICS
     //-------------------------------------
