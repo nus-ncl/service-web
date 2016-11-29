@@ -1273,22 +1273,42 @@ public class MainController {
             }
 
             HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
-            ResponseEntity imageResponse = restTemplate.exchange(properties.getAllImages(), HttpMethod.GET, imageRequest, String.class);
+            ResponseEntity imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
             String imageResponseBody = imageResponse.getBody().toString();
 
-            JSONArray imageJsonArray = new JSONArray(imageResponseBody);
-            log.info("{}", imageJsonArray);
-            for (int k = 0; k < imageJsonArray.length(); k++) {
-                JSONObject imageJsonObject = imageJsonArray.getJSONObject(k);
-                if (imageJsonObject != null) {
-                    log.info("{}", imageJsonObject);
+            String osImageList = new JSONObject(imageResponseBody).getString(teamId);
+            JSONObject osImageObject = new JSONObject(osImageList);
+
+            log.info("osImageList: {}", osImageList);
+            log.info("osImageObject: {}", osImageObject);
+
+            for (int k = 0; k < osImageObject.names().length(); k++) {
+                String imageName = osImageObject.names().getString(k);
+                String imageStatus = osImageObject.getString(imageName);
+
+                log.info("image name: {} image status: {}", imageName, imageStatus);
+
+                if (imageStatus.equals("created")) {
                     Image image = new Image();
-                    image.setImageName(imageJsonObject.getString("imageName"));
-                    image.setDescription(imageJsonObject.getString("description"));
-                    image.setTeamId(imageJsonObject.getString("teamId"));
+                    image.setImageName(imageName);
+                    image.setDescription("-");
+                    image.setTeamId(teamId);
                     savedImageList.add(image);
                 }
             }
+//            JSONArray imageJsonArray = new JSONArray(imageResponseBody);
+//            log.info("{}", imageJsonArray);
+//            for (int k = 0; k < imageJsonArray.length(); k++) {
+//                JSONObject imageJsonObject = imageJsonArray.getJSONObject(k);
+//                if (imageJsonObject != null) {
+//                    log.info("{}", imageJsonObject);
+//                    Image image = new Image();
+//                    image.setImageName(imageJsonObject.getString("imageName"));
+//                    image.setDescription(imageJsonObject.getString("description"));
+//                    image.setTeamId(imageJsonObject.getString("teamId"));
+//                    savedImageList.add(image);
+//                }
+//            }
         }
 
         // get public teams
