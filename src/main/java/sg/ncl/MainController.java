@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static sg.ncl.domain.ExceptionState.ADAPTER_DETERLAB_CONNECTION_FAILED_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.ADAPTER_CONNECTION_EXCEPTION;
 import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION;
 import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION;
 
@@ -570,7 +570,7 @@ public class MainController {
             EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION, "Password reset request timed out. Please request a new reset email.");
             exceptionMessageMap.put(PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION, "Invalid password reset request. Please request a new reset email.");
-            exceptionMessageMap.put(ADAPTER_DETERLAB_CONNECTION_FAILED_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
+            exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
 
             MyErrorResource error = objectMapper.readValue(response.getBody().toString(), MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
@@ -838,7 +838,7 @@ public class MainController {
                 final String errorPrefix = "Error: ";
 
                 switch (exceptionState) {
-                    case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Register new user failed on DeterLab: {}", error.getMessage());
                         throw new DeterLabOperationFailedException(errorPrefix + (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
                     case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
@@ -1184,7 +1184,7 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Approve join request: User {}, Team {} fail", userId, teamId);
                         redirectAttributes.addFlashAttribute("message", "Approve join request fail");
                         break;
@@ -1236,7 +1236,7 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Reject join request: User {}, Team {} fail", userId, teamId);
                         redirectAttributes.addFlashAttribute("message", "Reject join request fail");
                         break;
@@ -1686,7 +1686,12 @@ public class MainController {
                 if (exceptionState == ExceptionState.TEAM_NOT_FOUND_EXCEPTION) {
                     log.warn("join team request : team name error");
                     redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
-                } else {
+                }
+                else if(exceptionState == ExceptionState.DETERLAB_OPERATION_FAILED_EXCEPTION) {
+                    log.warn("join team request: operation failed on DeterLab");
+                    redirectAttributes.addFlashAttribute("message", "Error: " + (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
+                }
+                else {
                     log.warn("join team request : some other failure");
                     // possible sio or adapter connection fail
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
@@ -2279,7 +2284,7 @@ public class MainController {
                     log.warn("Approve team: Team {} not found", teamId);
                     redirectAttributes.addFlashAttribute("message", "Team does not exist");
                     break;
-                case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                case DETERLAB_OPERATION_FAILED_EXCEPTION:
                     log.warn("Approve team: Team {} fail", teamId);
                     redirectAttributes.addFlashAttribute("message", "Approve team request fail on Deterlab");
                     break;
@@ -2352,7 +2357,7 @@ public class MainController {
                     log.warn("Reject team: Team {} not found", teamId);
                     redirectAttributes.addFlashAttribute("message", "Team does not exist");
                     break;
-                case ADAPTER_DETERLAB_OPERATION_FAILED_EXCEPTION:
+                case DETERLAB_OPERATION_FAILED_EXCEPTION:
                     log.warn("Reject team: Team {} fail", teamId);
                     redirectAttributes.addFlashAttribute("message", "Reject team request fail on Deterlab");
                     break;
