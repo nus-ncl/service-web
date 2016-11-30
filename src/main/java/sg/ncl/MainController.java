@@ -1319,63 +1319,51 @@ public class MainController {
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
             }
 
-            HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
-            ResponseEntity imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
-            String imageResponseBody = imageResponse.getBody().toString();
-
-            String osImageList = new JSONObject(imageResponseBody).getString(teamId);
-            JSONObject osImageObject = new JSONObject(osImageList);
-
-            log.info("osImageList: {}", osImageList);
-            log.info("osImageObject: {}", osImageObject);
-
-            for (int k = 0; k < osImageObject.names().length(); k++) {
-                String imageName = osImageObject.names().getString(k);
-                String imageStatus = osImageObject.getString(imageName);
-
-                log.info("image name: {} image status: {}", imageName, imageStatus);
-
-                if (imageStatus.equals("created")) {
-                    Image image = new Image();
-                    image.setImageName(imageName);
-                    image.setDescription("-");
-                    image.setTeamId(teamId);
-                    savedImageList.add(image);
-                }
-            }
-//            JSONArray imageJsonArray = new JSONArray(imageResponseBody);
-//            log.info("{}", imageJsonArray);
-//            for (int k = 0; k < imageJsonArray.length(); k++) {
-//                JSONObject imageJsonObject = imageJsonArray.getJSONObject(k);
-//                if (imageJsonObject != null) {
-//                    log.info("{}", imageJsonObject);
-//                    Image image = new Image();
-//                    image.setImageName(imageJsonObject.getString("imageName"));
-//                    image.setDescription(imageJsonObject.getString("description"));
-//                    image.setTeamId(imageJsonObject.getString("teamId"));
-//                    savedImageList.add(image);
-//                }
-//            }
+            savedImageList.addAll(invokeAndGetImageList(teamId));
         }
 
-        // get public teams
-//        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
-//        ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
-//        String teamResponseBody = teamResponse.getBody().toString();
-//
-//        JSONArray teamPublicJsonArray = new JSONArray(teamResponseBody);
-//        for (int i = 0; i < teamPublicJsonArray.length(); i++) {
-//            JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
-//            Team2 team2 = extractTeamInfo(teamInfoObject.toString());
-//            teamManager2.addTeamToPublicTeamMap(team2);
-//        }
 
         model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
-//        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
         model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
         model.addAttribute("savedImageList", savedImageList);
         return "teams";
+    }
+
+    private List<Image> invokeAndGetImageList(String teamId) {
+        List<Image> result = new ArrayList<>();
+
+        HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
+        ResponseEntity imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
+        String imageResponseBody = imageResponse.getBody().toString();
+
+        String osImageList = new JSONObject(imageResponseBody).getString(teamId);
+        JSONObject osImageObject = new JSONObject(osImageList);
+
+        log.info("osImageList: {}", osImageList);
+        log.info("osImageObject: {}", osImageObject);
+
+        if (osImageObject == JSONObject.NULL || osImageObject.length() == 0) {
+            log.info("Image list for Team: {} is empty.", teamId);
+            return result;
+        }
+
+        for (int k = 0; k < osImageObject.names().length(); k++) {
+            String imageName = osImageObject.names().getString(k);
+            String imageStatus = osImageObject.getString(imageName);
+
+            log.info("image name: {} image status: {}", imageName, imageStatus);
+
+            if (imageStatus.equals("created")) {
+                Image image = new Image();
+                image.setImageName(imageName);
+                image.setDescription("-");
+                image.setTeamId(teamId);
+                result.add(image);
+            }
+        }
+
+        return result;
     }
 
 //    @RequestMapping("/accept_participation/{teamId}")
@@ -1788,7 +1776,6 @@ public class MainController {
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
-
         return "experiments";
     }
 
@@ -1936,6 +1923,11 @@ public class MainController {
 //        teamManager.incrementExperimentCount(experiment.getTeamId());
 
         return "redirect:/experiments";
+    }
+
+    @RequestMapping("/experiments/save_image/{teamId}/{nodeId}")
+    public String saveExperimentImage(@PathVariable String teamId, @PathVariable String nodeId) {
+        return "save_experiment_image";
     }
 
 //    @RequestMapping("/experiments/configuration/{expId}")
