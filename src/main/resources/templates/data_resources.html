@@ -24,39 +24,32 @@
 						<th width="50%">URI</th>
 						<th width="30%">Action</th>
 					</tr>
-					<tr>
-						<td>1</td>
-						<td>DNS AMPL DDOS DEC2015 </td>
+					<tr th:each="dataresource : ${dataset.dataResources}">
+						<td th:text="${dataresource.id}">ID</td>
+						<td th:text="${dataresource.uri}">URI</td>
 						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td>SSDP DDoS attack 2015</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Request Access</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
+							<button type="button" class="btn btn-primary"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
 						</td>
 					</tr>
 				</table>
                 <div class="row">
-                    <div class="col-md-4"><button type="button" class="btn btn-standard resumable-browse"><i class="fa fa-plus"></i> Upload Resource</button></div>
+                    <div class="col-md-4"><button type="button" class="btn btn-standard resumable-browse"><i class="fa fa-plus" aria-hidden="true"></i> Upload Resource</button></div>
                     <div class="col-md-8">
                         <div class="resumable-error">
                             Your browser does not support Resumable.js. The library requires support for <a href="http://www.w3.org/TR/FileAPI/">the HTML5 File API</a> along with <a href="http://www.w3.org/TR/FileAPI/#normalization-of-params">file slicing</a>.
                         </div>
-                        <table>
-                            <tr class="resumable-progress">
-                                <td width="100%"><div class="progress-container"><div class="progress-bar"></div></div></td>
-                                <td class="progress-text" nowrap="nowrap"></td>
-                                <td class="progress-pause" nowrap="nowrap">
-                                    <a href="#" onclick="r.upload(); return(false);" class="progress-resume-link"><img src="/images/resume.png" title="Resume upload" /></a>
-                                    <a href="#" onclick="r.pause(); return(false);" class="progress-pause-link"><img src="/images/pause.png" title="Pause upload" /></a>
-                                </td>
-                            </tr>
-                        </table>
+                        <div class="resumable-progress">
+                            <table>
+                                <tr>
+                                    <td width="100%"><div class="progress-container"><div class="progress-bar"></div></div></td>
+                                    <td class="progress-text" nowrap="nowrap"></td>
+                                    <td class="progress-pause" nowrap="nowrap">
+                                        <a href="#" onclick="r.upload(); return(false);" class="progress-resume-link"><img src="/images/resume.png" title="Resume upload" /></a>
+                                        <a href="#" onclick="r.pause(); return(false);" class="progress-pause-link"><img src="/images/pause.png" title="Pause upload" /></a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
 			</div> <!-- row -->
@@ -90,7 +83,9 @@
             var r = new Resumable({
                 target: upload_url,
                 simultaneousUploads: 1,
-				maxFiles: 1
+				maxFiles: 1,
+                throttleProgressCallbacks: 1,
+                method: "octet"
             });
             // Resumable.js isn't supported, fall back on a different method
             if (!r.support) {
@@ -109,6 +104,9 @@
                 r.on('fileAdded', function(file, event){
                     console.debug('fileAdded', event);
                     $('.resumable-browse').prop('disabled', true);
+                    $('.resumable-progress').show();
+                    $('.resumable-progress .progress-resume-link').show();
+                    $('.resumable-progress .progress-pause-link').hide();
                     r.upload();
                 });
                 r.on('fileRetry', function(file){
