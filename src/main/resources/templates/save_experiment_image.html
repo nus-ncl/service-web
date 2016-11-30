@@ -11,23 +11,30 @@
             <p>&nbsp;</p>
             <p>&nbsp;</p>
             <p>&nbsp;</p>
+            <p>&nbsp;</p>
             <div class="row dashpanel">
                 <h2 class="team-heading team-heading-current-team" th:text="#{exp.saveImage}">Save Experiment Image</h2>
                 <p>&nbsp;</p>
                 <div th:if="${message}">
                     <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
                 </div>
-                <!--<form  method="post" action="#" th:action="@{/teams/join_team}" th:object="${teamPageJoinTeamForm}" role="form">-->
-                    <!--<fieldset>-->
-                        <!--<div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">-->
-                            <!--<input type="text" class="form-control" id="inputTeam" placeholder="Team Name to Join" name="" th:field="*{teamName}"/>-->
-                            <!--<span class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></span>-->
-                        <!--</div>-->
-                        <!--<div class="form-group">-->
-                            <!--<button type="submit" class="btn btn-standard">Submit</button>-->
-                        <!--</div>-->
-                    <!--</fieldset>-->
-                <!--</form>-->
+                <p>This is for saving a particular node operating system image. Please be advice that the process may take up to <strong>10 minutes</strong>. Meanwhile, please do not stop your experiment.</p>
+                <form  method="post" action="#" th:action="@{/teams/join_team}" th:object="${saveImageForm}" role="form">
+                    <fieldset>
+                        <input type="hidden" id="nodeid" th:field="*{nodeId}"/>
+                        <div class="form-group">
+                            <label for="teamName"><span th:text="#{team.table.header.team}">Team</span></label>
+                            <input type="text" class="form-control" id="teamName" th:value="${teamName}" readonly="readonly"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="imageName"><span th:text="#{team.table.header.imageName}">Image Name</span></label>
+                            <input type="text" class="form-control" id="imageName" th:field="*{imageName}" th:maxlength="20"/>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-standard">Save</button>
+                        </div>
+                    </fieldset>
+                </form>
             </div> <!-- row -->
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">
