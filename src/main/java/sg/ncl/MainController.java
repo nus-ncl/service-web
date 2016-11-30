@@ -1675,7 +1675,12 @@ public class MainController {
                 if (exceptionState == ExceptionState.TEAM_NOT_FOUND_EXCEPTION) {
                     log.warn("join team request : team name error");
                     redirectAttributes.addFlashAttribute("message", "Team name does not exists.");
-                } else {
+                }
+                else if(exceptionState == ExceptionState.DETERLAB_OPERATION_FAILED_EXCEPTION) {
+                    log.warn("join team request: operation failed on DeterLab");
+                    redirectAttributes.addFlashAttribute("message", "Error: " + (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
+                }
+                else {
                     log.warn("join team request : some other failure");
                     // possible sio or adapter connection fail
                     redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
