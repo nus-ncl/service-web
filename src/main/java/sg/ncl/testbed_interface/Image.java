@@ -18,7 +18,6 @@ public class Image {
     private String teamId;
     private String nodeId;
 
-    @NotEmpty(message = "Image Name cannot be empty")
     @Size(min = 2, message = "Image Name minimum 2 characters")
     private String imageName;
 
