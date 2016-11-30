@@ -1925,14 +1925,26 @@ public class MainController {
         return "redirect:/experiments";
     }
 
-    @RequestMapping("/experiments/save_image/{teamId}/{nodeId}")
-    public String saveExperimentImage(@PathVariable String teamId, @PathVariable String nodeId, Model model) {
+    @RequestMapping(value = "/experiments/save_image/{teamId}/{expName}/{nodeId}", method = RequestMethod.GET)
+    public String saveExperimentImage(@PathVariable String teamId, @PathVariable String experimentName, @PathVariable String nodeId, Model model) {
         Image saveImageForm = new Image();
         saveImageForm.setTeamId(teamId);
         saveImageForm.setNodeId(nodeId);
         model.addAttribute("teamName", invokeAndExtractTeamInfo(teamId).getName());
+        model.addAttribute("experimentName", experimentName);
         model.addAttribute("saveImageForm", saveImageForm);
         return "save_experiment_image";
+    }
+
+    @RequestMapping(value = "/experiments/save_image", method = RequestMethod.POST)
+    public String saveExperimentImage(@Valid @ModelAttribute("saveImageForm") Image saveImageForm, final BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (saveImageForm.getImageName().length() < 2) {
+            log.info("Save image form has errors {}", saveImageForm);
+            redirectAttributes.addFlashAttribute("message", "Image Name minimum 2 characters");
+            return "redirect:/experiments/save_image/" + saveImageForm.getTeamId() + "/" + saveImageForm.getNodeId();
+        }
+        // call image endpoint here and invoke save image curl
+        return "redirect:/experiments";
     }
 
 //    @RequestMapping("/experiments/configuration/{expId}")

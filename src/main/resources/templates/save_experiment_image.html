@@ -19,12 +19,18 @@
                     <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
                 </div>
                 <p>This is for saving a particular node operating system image. Please be advice that the process may take up to <strong>10 minutes</strong>. Meanwhile, please do not stop your experiment.</p>
-                <form  method="post" action="#" th:action="@{/teams/join_team}" th:object="${saveImageForm}" role="form">
+                <form  method="post" action="#" th:action="@{/experiments/save_image}" th:object="${saveImageForm}" role="form">
                     <fieldset>
-                        <input type="hidden" id="nodeid" th:field="*{nodeId}"/>
+                        <p class="account-change-fail" th:if="${#fields.hasErrors('imageName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{imageName}"></span></p>
+                        <input type="hidden" id="teamId" th:field="*{teamId}"/>
+                        <input type="hidden" id="nodeId" th:field="*{nodeId}"/>
                         <div class="form-group">
                             <label for="teamName"><span th:text="#{team.table.header.team}">Team</span></label>
                             <input type="text" class="form-control" id="teamName" th:value="${teamName}" readonly="readonly"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="experimentName"><span th:text="#{experiment.table.header.experiment}">Experiment</span></label>
+                            <input type="text" class="form-control" id="experimentName" th:value="${experimentName}" readonly="readonly"/>
                         </div>
                         <div class="form-group">
                             <label for="imageName"><span th:text="#{team.table.header.imageName}">Image Name</span></label>
