@@ -1926,7 +1926,12 @@ public class MainController {
     }
 
     @RequestMapping("/experiments/save_image/{teamId}/{nodeId}")
-    public String saveExperimentImage(@PathVariable String teamId, @PathVariable String nodeId) {
+    public String saveExperimentImage(@PathVariable String teamId, @PathVariable String nodeId, Model model) {
+        Image saveImageForm = new Image();
+        saveImageForm.setTeamId(teamId);
+        saveImageForm.setNodeId(nodeId);
+        model.addAttribute("teamName", invokeAndExtractTeamInfo(teamId).getName());
+        model.addAttribute("saveImageForm", saveImageForm);
         return "save_experiment_image";
     }
 
