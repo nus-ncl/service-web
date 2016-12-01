@@ -18,8 +18,11 @@
                 <div th:if="${message}">
                     <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
                 </div>
+                <th:block th:if="${singleNodeInfoMap.isEmpty()}">
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="#{exp.nodeNotRunning}"></span></p>
+                </th:block>
                 <p>This is for saving a particular node operating system image. Please be advice that the process may take up to <strong>10 minutes</strong>. Meanwhile, please do not stop your experiment.</p>
-                <form  method="post" action="#" th:action="@{/experiments/save_image}" th:object="${saveImageForm}" role="form">
+                <form  method="post" action="#" th:action="@{/experiments/save_image/{saveImageTeamId}/{saveImageExpId}/{saveImageNodeId}(saveImageTeamId = ${pathTeamId}, saveImageExpId = ${pathExperimentId}, saveImageNodeId = ${pathNodeId})}" th:object="${saveImageForm}" role="form">
                     <fieldset>
                         <p class="account-change-fail" th:if="${#fields.hasErrors('imageName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{imageName}"></span></p>
                         <input type="hidden" id="teamId" th:field="*{teamId}"/>
@@ -32,6 +35,20 @@
                             <label for="experimentName"><span th:text="#{experiment.table.header.experiment}">Experiment</span></label>
                             <input type="text" class="form-control" id="experimentName" th:value="${experimentName}" readonly="readonly"/>
                         </div>
+                        <th:block th:each="singleNodeInfo: ${singleNodeInfoMap}">
+                            <div class="form-group">
+                                <label for="nodeName"><span th:text="#{experiment.table.header.nodes}">Node</span></label>
+                                <input type="text" class="form-control" id="nodeName" th:value="${singleNodeInfo.key}" readonly="readonly"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="nodeOS"><span th:text="#{experiment.table.header.os}">OS</span></label>
+                                <input type="text" class="form-control" id="nodeOS" th:value="${singleNodeInfo.value.os}" readonly="readonly"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="nodeQualifiedName"><span th:text="#{experiment.table.header.qualifiedName}">Qualified Name</span></label>
+                                <input type="text" class="form-control" id="nodeQualifiedName" th:value="${singleNodeInfo.value.qualifiedName}" readonly="readonly"/>
+                            </div>
+                        </th:block>
                         <div class="form-group">
                             <label for="imageName"><span th:text="#{team.table.header.imageName}">Image Name</span></label>
                             <input type="text" class="form-control" id="imageName" th:field="*{imageName}" th:maxlength="20"/>

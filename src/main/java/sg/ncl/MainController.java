@@ -1925,23 +1925,50 @@ public class MainController {
         return "redirect:/experiments";
     }
 
-    @RequestMapping(value = "/experiments/save_image/{teamId}/{expName}/{nodeId}", method = RequestMethod.GET)
-    public String saveExperimentImage(@PathVariable String teamId, @PathVariable String experimentName, @PathVariable String nodeId, Model model) {
+    @RequestMapping(value = "/experiments/save_image/{teamId}/{expId}/{nodeId}", method = RequestMethod.GET)
+    public String saveExperimentImage(@PathVariable String teamId, @PathVariable String expId, @PathVariable String nodeId, Model model) {
+        Map<String, Map<String, String>> singleNodeInfoMap = new HashMap<>();
         Image saveImageForm = new Image();
+
+        String teamName = invokeAndExtractTeamInfo(teamId).getName();
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        // experiment may have many nodes
+        // extract just the particular node details to display
+        for (Map.Entry<String, Map<String, String>> nodesInfo : realization.getNodesInfoMap().entrySet()) {
+            String nodeName = nodesInfo.getKey();
+            Map<String, String> singleNodeDetailsMap = nodesInfo.getValue();
+            if (singleNodeDetailsMap.get("nodeId").equals(nodeId)) {
+                singleNodeInfoMap.put(nodeName, singleNodeDetailsMap);
+            }
+        }
+
         saveImageForm.setTeamId(teamId);
         saveImageForm.setNodeId(nodeId);
-        model.addAttribute("teamName", invokeAndExtractTeamInfo(teamId).getName());
-        model.addAttribute("experimentName", experimentName);
+
+        model.addAttribute("teamName", teamName);
+        model.addAttribute("singleNodeInfoMap", singleNodeInfoMap);
+        model.addAttribute("pathTeamId", teamId);
+        model.addAttribute("pathExperimentId", expId);
+        model.addAttribute("pathNodeId", nodeId);
+        model.addAttribute("experimentName", realization.getExperimentName());
         model.addAttribute("saveImageForm", saveImageForm);
         return "save_experiment_image";
     }
 
-    @RequestMapping(value = "/experiments/save_image", method = RequestMethod.POST)
-    public String saveExperimentImage(@Valid @ModelAttribute("saveImageForm") Image saveImageForm, final BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    @RequestMapping(value = "/experiments/save_image/{teamId}/{expId}/{nodeId}", method = RequestMethod.POST)
+    public String saveExperimentImage(
+            @Valid @ModelAttribute("saveImageForm") Image saveImageForm,
+            final BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            @PathVariable String teamId,
+            @PathVariable String expId,
+            @PathVariable String nodeId)
+    {
         if (saveImageForm.getImageName().length() < 2) {
             log.info("Save image form has errors {}", saveImageForm);
             redirectAttributes.addFlashAttribute("message", "Image Name minimum 2 characters");
-            return "redirect:/experiments/save_image/" + saveImageForm.getTeamId() + "/" + saveImageForm.getNodeId();
+            return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/"  + nodeId;
         }
         // call image endpoint here and invoke save image curl
         return "redirect:/experiments";
