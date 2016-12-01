@@ -102,7 +102,7 @@
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
                                                                         <!--<td th:text="${nodesDetailsMap.value.nodeId}"></td>-->
-                                                                        <td><a th:href="@{/experiments/save_image/{teamId}/{nodeId}(teamId = ${expEntry.teamId}, nodeId = ${nodesDetailsMap.value.nodeId})}">Save</a></td>
+                                                                        <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${realization.experimentId}, nodeId = ${nodesDetailsMap.value.nodeId})}">Save</a></td>
                                                                     </tr>
                                                                 </th:block>
                                                             </table>
