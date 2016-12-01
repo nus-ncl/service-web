@@ -302,11 +302,15 @@ public class ConnectionProperties {
     }
 
     public String getTeamImages(String teamId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint + "?teamId=" + teamId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint + "?teamId=" + teamId;
     }
 
     public String getTeamSavedImages(String teamId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint + "/teams/" + teamId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint + "/teams/" + teamId;
+    }
+
+    public String saveImage() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint;
     }
 
     //-------------------------------------

@@ -243,6 +243,17 @@ public class ConnectionPropertiesTest {
     }
 
     @Test
+    public void testGetTeamSavedImages() throws Exception {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getTeamSavedImages(teamId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint() + "/teams/" + teamId);
+    }
+
+    @Test
+    public void testSaveImage() throws Exception {
+        assertThat(properties.saveImage()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint());
+    }
+
+    @Test
     public void testGetPasswordResetRequestURI() {
         assertThat(properties.getPasswordResetRequestURI()).isEqualTo("http://"  + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getCredEndpoint() + "/password/resets");
     }
