@@ -22,6 +22,7 @@ public class Image {
     private String imageName;
 
     private String description;
+    private String currentOS;
     private ImageVisibility visibility;
 
 }

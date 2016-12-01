@@ -95,4 +95,18 @@ public class ImageTest {
         one.setVisibility(ImageVisibility.PUBLIC);
         assertThat(one.getVisibility(), is(ImageVisibility.PUBLIC));
     }
+
+    @Test
+    public void testGetCurrentOS() {
+        final Image one = new Image();
+        assertThat(one.getCurrentOS(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetCurrentOS() {
+        final Image one = new Image();
+        final String str = RandomStringUtils.randomAlphanumeric(20);
+        one.setCurrentOS(str);
+        assertThat(one.getCurrentOS(), is(str));
+    }
 }
