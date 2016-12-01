@@ -1878,6 +1878,9 @@ public class MainController {
             Map<String, String> singleNodeDetailsMap = nodesInfo.getValue();
             if (singleNodeDetailsMap.get("nodeId").equals(nodeId)) {
                 singleNodeInfoMap.put(nodeName, singleNodeDetailsMap);
+                // store the current os of the node into the form also
+                // have to pass the the services
+                saveImageForm.setCurrentOS(singleNodeDetailsMap.get("os"));
             }
         }
 
