@@ -1962,19 +1962,54 @@ public class MainController {
     @RequestMapping(value = "/experiments/save_image/{teamId}/{expId}/{nodeId}", method = RequestMethod.POST)
     public String saveExperimentImage(
             @Valid @ModelAttribute("saveImageForm") Image saveImageForm,
-            final BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             @PathVariable String teamId,
             @PathVariable String expId,
-            @PathVariable String nodeId)
-    {
+            @PathVariable String nodeId) throws WebServiceRuntimeException {
+
         if (saveImageForm.getImageName().length() < 2) {
             log.info("Save image form has errors {}", saveImageForm);
             redirectAttributes.addFlashAttribute("message", "Image Name minimum 2 characters");
             return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/"  + nodeId;
         }
         // call image endpoint here and invoke save image curl
-        return "redirect:/experiments";
+        JSONObject imageJSONObject = new JSONObject();
+        imageJSONObject.put("teamId", saveImageForm.getTeamId());
+        imageJSONObject.put("imageName", saveImageForm.getImageName());
+        imageJSONObject.put("nodeId", saveImageForm.getNodeId());
+        imageJSONObject.put("currentOS", saveImageForm.getCurrentOS());
+
+        HttpEntity<String> request = createHttpEntityWithBody(imageJSONObject.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.saveImage(), HttpMethod.POST, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case ADAPTER_DETERLAB_CONNECT_EXCEPTION:
+                        log.warn("adapter deterlab operation failed exception");
+                        redirectAttributes.addFlashAttribute("message", error.getMessage());
+                        break;
+                    default:
+                        log.warn("Image service or adapter fail");
+                        // possible sio or adapter connection fail
+                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                        break;
+                }
+                return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
+            } else {
+                // everything ok
+                return "redirect:/experiments";
+            }
+        } catch (IOException ioe) {
+            log.warn("IOException {}", ioe);
+            throw new WebServiceRuntimeException(ioe.getMessage());
+        }
     }
 
 //    @RequestMapping("/experiments/configuration/{expId}")
