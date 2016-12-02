@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -1959,13 +1960,15 @@ public class MainController {
         return "save_experiment_image";
     }
 
+    // bindingResult is required in the method signature to perform the JSR303 validation for Image object
     @RequestMapping(value = "/experiments/save_image/{teamId}/{expId}/{nodeId}", method = RequestMethod.POST)
     public String saveExperimentImage(
             @Valid @ModelAttribute("saveImageForm") Image saveImageForm,
+            BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             @PathVariable String teamId,
             @PathVariable String expId,
-            @PathVariable String nodeId) throws WebServiceRuntimeException {
+            @PathVariable String nodeId) throws WebServiceRuntimeException, JsonProcessingException {
 
         if (saveImageForm.getImageName().length() < 2) {
             log.info("Save image form has errors {}", saveImageForm);
@@ -1978,8 +1981,11 @@ public class MainController {
         imageJSONObject.put("imageName", saveImageForm.getImageName());
         imageJSONObject.put("nodeId", saveImageForm.getNodeId());
         imageJSONObject.put("currentOS", saveImageForm.getCurrentOS());
+        imageJSONObject.put("visibility", saveImageForm.getVisibility());
 
-        HttpEntity<String> request = createHttpEntityWithBody(imageJSONObject.toString());
+        ObjectMapper mapper = new ObjectMapper();
+
+        HttpEntity<String> request = createHttpEntityWithBody(mapper.writeValueAsString(saveImageForm));
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.saveImage(), HttpMethod.POST, request, String.class);
 
