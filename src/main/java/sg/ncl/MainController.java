@@ -468,9 +468,6 @@ public class MainController {
                 redirectAttributes.addAttribute("statuschecklist", userStatus);
                 log.info("User {} not approved, redirected to application pending page", id);
                 return "redirect:/email_checklist";
-//            } else if ((UserStatus.PENDING.toString()).equals(userStatus)) {
-//                log.info("User {} not approved, redirected to application pending page", id);
-//                return "redirect:/team_application_under_review";
             } else if ((UserStatus.APPROVED.toString()).equals(userStatus)) {
                 // set session variables
                 setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), role, token);
@@ -2554,7 +2551,7 @@ public class MainController {
 
     // model attribute name come from /login
     @RequestMapping("/email_checklist")
-    public String email_checklist(@ModelAttribute("statuschecklist") String status) {return "email_checklist";}
+    public String emailChecklist(@ModelAttribute("statuschecklist") String status) {return "email_checklist";}
 
     @RequestMapping("/join_application_awaiting_approval")
     public String joinTeamAppAwaitingApproval(Model model) {
