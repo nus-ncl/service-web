@@ -1913,13 +1913,6 @@ public class MainController {
             redirectAttributes.addFlashAttribute("message", "Image Name minimum 2 characters");
             return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/"  + nodeId;
         }
-        // call image endpoint here and invoke save image curl
-        JSONObject imageJSONObject = new JSONObject();
-        imageJSONObject.put("teamId", saveImageForm.getTeamId());
-        imageJSONObject.put("imageName", saveImageForm.getImageName());
-        imageJSONObject.put("nodeId", saveImageForm.getNodeId());
-        imageJSONObject.put("currentOS", saveImageForm.getCurrentOS());
-        imageJSONObject.put("visibility", saveImageForm.getVisibility());
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -1948,6 +1941,7 @@ public class MainController {
                 return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
             } else {
                 // everything ok
+                log.info("Image service in progress for Team: {}, Exp: {}, Node: {}, Image: {}", teamId, expId, nodeId, saveImageForm.getImageName());
                 return "redirect:/experiments";
             }
         } catch (IOException ioe) {
