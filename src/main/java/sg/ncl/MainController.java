@@ -99,10 +99,10 @@ public class MainController {
     protected ConnectionProperties properties;
 
     @Inject
-    private WebProperties webProperties;
+    protected WebProperties webProperties;
 
     @Inject
-    private HttpSession httpScopedSession;
+    protected HttpSession httpScopedSession;
 
     @RequestMapping("/")
     public String index() {

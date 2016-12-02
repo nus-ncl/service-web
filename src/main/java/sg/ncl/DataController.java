@@ -1,13 +1,11 @@
 package sg.ncl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,19 +15,28 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sg.ncl.domain.ExceptionState;
 import sg.ncl.exceptions.WebServiceRuntimeException;
 import sg.ncl.testbed_interface.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static sg.ncl.domain.ExceptionState.FORBIDDEN_EXCEPTION;
 
@@ -280,6 +287,44 @@ public class DataController extends MainController {
         } catch (Exception e) {
             log.error("Error sending upload chunk for dataset " + datasetId);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending upload chunk");
+        }
+    }
+
+    /**
+     * References:
+     * [1] http://stackoverflow.com/questions/25854077/calling-a-servlet-from-another-servlet-after-the-request-dispatcher-forward-meth
+     * [2] http://stackoverflow.com/questions/29712554/how-to-download-a-file-using-a-java-rest-service-and-a-data-stream
+     * [3] http://stackoverflow.com/questions/32988370/download-large-file-from-server-using-rest-template-java-spring-mvc
+     */
+    @RequestMapping(value="{datasetId}/resources/{resourceId}", method=RequestMethod.GET)
+    public void getResource(@PathVariable String datasetId,
+                            @PathVariable String resourceId,
+                            final HttpServletResponse httpResponse) throws UnsupportedEncodingException {
+        try {
+            // Optional Accept header
+            RequestCallback requestCallback = request -> {
+                request.getHeaders().setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
+                request.getHeaders().set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
+            };
+
+            // Streams the response instead of loading it all in memory
+            ResponseExtractor<Void> responseExtractor = response -> {
+                // Here I write the response to a file but do what you like
+                String content = response.getHeaders().get("Content-Disposition").get(0);
+                Pattern pattern = Pattern.compile("'(.*?)'");
+                Matcher matcher = pattern.matcher(content);
+                if (matcher.find()) {
+                    Path path = Paths.get("some/path", matcher.group(1));
+                    httpResponse.setContentType("application/octet-stream");
+                    httpResponse.setHeader("Content-Disposition", content);
+                    IOUtils.copy(response.getBody(), httpResponse.getOutputStream());
+                }
+                return null;
+            };
+
+            restTemplate.execute(properties.downloadResource(datasetId, resourceId), HttpMethod.GET, requestCallback, responseExtractor);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

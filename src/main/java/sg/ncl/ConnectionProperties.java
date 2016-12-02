@@ -265,6 +265,10 @@ public class ConnectionProperties {
         return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId;
     }
 
+    public String downloadResource(String dataId, String resourceId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download";
+    }
+
     //-------------------------------------
     // TELEMETRY
     //-------------------------------------
