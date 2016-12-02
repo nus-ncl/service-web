@@ -48,6 +48,8 @@ import static sg.ncl.domain.ExceptionState.FORBIDDEN_EXCEPTION;
 @Slf4j
 public class DataController extends MainController {
 
+    private static final String REDIRECT_DATA = "redirect:/data";
+    private static final String DATASET = "dataset";
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
     private static final String MESSAGE_ATTRIBUTE = "message";
     private static final String EDIT_DISALLOWED = "Edit/delete of dataset disallowed as user is not contributor";
@@ -83,11 +85,11 @@ public class DataController extends MainController {
             if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
                 log.warn(EDIT_DISALLOWED);
                 redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, EDIT_DISALLOWED);
-                return "redirect:/data";
+                return REDIRECT_DATA;
             }
-            model.addAttribute("dataset", dataset);
+            model.addAttribute(DATASET, dataset);
         } else {
-            model.addAttribute("dataset", new Dataset());
+            model.addAttribute(DATASET, new Dataset());
         }
         return CONTRIBUTE_DATA_PAGE;
     }
@@ -158,7 +160,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return "redirect:/data";
+        return REDIRECT_DATA;
     }
 
     @RequestMapping("/remove/{id}")
@@ -183,7 +185,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return "redirect:/data";
+        return REDIRECT_DATA;
     }
 
     @RequestMapping("/public")
@@ -215,9 +217,9 @@ public class DataController extends MainController {
         if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
             log.warn(UPLOAD_DISALLOWED);
             redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, UPLOAD_DISALLOWED);
-            return "redirect:/data";
+            return REDIRECT_DATA;
         }
-        model.addAttribute("dataset", dataset);
+        model.addAttribute(DATASET, dataset);
         return "data_resources";
     }
 
@@ -285,7 +287,7 @@ public class DataController extends MainController {
             }
             return ResponseEntity.ok(body);
         } catch (Exception e) {
-            log.error("Error sending upload chunk for dataset " + datasetId);
+            log.error("Error sending upload chunk: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending upload chunk");
         }
     }
@@ -324,7 +326,7 @@ public class DataController extends MainController {
 
             restTemplate.execute(properties.downloadResource(datasetId, resourceId), HttpMethod.GET, requestCallback, responseExtractor);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error transferring download: {}", e.getMessage());
         }
     }
 
