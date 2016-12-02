@@ -379,7 +379,7 @@ public class MainController {
             @ModelAttribute("loginForm") LoginForm loginForm,
             BindingResult bindingResult,
             Model model,
-            HttpSession session) throws WebServiceRuntimeException {
+            HttpSession session, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
             loginForm.setErrorMsg("Login failed: Invalid email/password.");
@@ -461,11 +461,13 @@ public class MainController {
             String userStatus = user.getStatus();
             boolean emailVerified = user.getEmailVerified();
             if (!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
+                redirectAttributes.addAttribute("statuschecklist", userStatus);
                 log.info("User {} not validated, redirected to email verification page", id);
-                return "redirect:/email_not_validated";
+                return "redirect:/email_checklist";
             } else if ((UserStatus.PENDING.toString()).equals(userStatus)) {
+                redirectAttributes.addAttribute("statuschecklist", userStatus);
                 log.info("User {} not approved, redirected to application pending page", id);
-                return "redirect:/team_application_under_review";
+                return "redirect:/email_checklist";
             } else if ((UserStatus.APPROVED.toString()).equals(userStatus)) {
                 // set session variables
                 setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), role, token);
@@ -2546,6 +2548,10 @@ public class MainController {
     public String teamAppUnderReview() {
         return "team_application_under_review";
     }
+
+    // model attribute name come from /login
+    @RequestMapping("/email_checklist")
+    public String emailChecklist(@ModelAttribute("statuschecklist") String status) {return "email_checklist";}
 
     @RequestMapping("/join_application_awaiting_approval")
     public String joinTeamAppAwaitingApproval(Model model) {
