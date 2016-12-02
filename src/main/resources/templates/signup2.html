@@ -56,9 +56,6 @@
 									<input type="text" class="form-control" placeholder="Last Name" th:field="*{lastName}" onblur="validateName(name)"/>
 									<span id="lastNameError" style="display: none;"><h34>You can only use alphabetic characters, hyphens and apostrophes</h34></span>
 								</div>
-								<!--<div class="col-xs-6">-->
-								<!--<input type="text" class="form-control" placeholder="Last Name" th:field="*{lastName}"/>-->
-								<!--</div>-->
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" th:field="*{email}" placeholder="Email" onblur="validateEmail(name)"/>
@@ -72,7 +69,7 @@
 										<input type="password" class="form-control" placeholder="Password"/>
 									</div>
 								</noscript>
-								<script  type="text/javascript" >
+								<script  type="text/javascript">
 									var pwdwidget = new PasswordWidget('thepwddiv','password');
 									pwdwidget.MakePWDWidget();
 								</script>
@@ -82,17 +79,12 @@
 
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" name="job" id="job"  placeholder="Job Title" onblur="validateJob(name)"/>
+								<input type="text" class="form-control" name="job" id="job" th:field="*{jobTitle}" placeholder="Job Title" onblur="validateJob(name)"/>
 								<span class="validateJob" id="jobError" style="display: none;"><h34>Please fill in the blanks.</h34></span>
-								<!---->
-								<!--<input type="text" class="form-control" th:field="*{jobTitle}" onblur="validateJob(name)" placeholder="Job Title"/>-->
-								<!--<span class="jobError" id="jobError" style="display: none;">Please fill in the blank.</span>-->
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" name="institution" id="institution"  placeholder="Institution/Employers" onblur="validateinstitution(name)"/>
+								<input type="text" class="form-control" name="institution" id="institution"  th:field="*{institution}" placeholder="Institution/Employers" onblur="validateinstitution(name)"/>
 								<span class="validateinstitution" id="institutionError" style="display: none;"><h34>Please fill in the blanks.</h34></span>
-								<!---->
-								<!--<input type="text" class="form-control" placeholder="Institution/Employer" th:field="*{institution}"/>-->
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" placeholder="Country" th:field="*{country}"/>
@@ -178,7 +170,7 @@
 			return true;
 		}else{
 			// Style red
-			document.getElementById(x).style.borderBottomColor ='#c9302c';
+			document.getElementById(x).style.borderBottomColor ='#dd4b39';
 			// Show error prompt
 			document.getElementById(x + 'Error').style.display = "block";
 			return false;
@@ -193,7 +185,7 @@
 			document.getElementById(email + 'Error').style.display = "none";
 			return true;
 		} else {
-			document.getElementById(email).style.borderBottomColor ='#c9302c';
+			document.getElementById(email).style.borderBottomColor ='#dd4b39';
 			document.getElementById(email + 'Error').style.display = "block";
 			return false;
 		}
@@ -208,7 +200,7 @@
 			document.getElementById(phone + 'Error').style.display = "none";
 			return true;
 		} else {
-			document.getElementById(phone).style.borderBottomColor ='#c9302c';
+			document.getElementById(phone).style.borderBottomColor ='#dd4b39';
 			document.getElementById(phone + 'Error').style.display = "block";
 			return false;
 		}
@@ -223,7 +215,7 @@
 			document.getElementById(job + 'Error').style.display = "none";
 			return true;
 		} else {
-			document.getElementById(job).style.borderBottomColor ='#c9302c';
+			document.getElementById(job).style.borderBottomColor ='#dd4b39';
 			document.getElementById(job + 'Error').style.display = "block";
 			return false;
 		}
@@ -237,7 +229,7 @@
 			document.getElementById(institution + 'Error').style.display = "none";
 			return true;
 		} else {
-			document.getElementById(institution).style.borderBottomColor ='#c9302c';
+			document.getElementById(institution).style.borderBottomColor ='#dd4b39';
 			document.getElementById(institution + 'Error').style.display = "block";
 			return false;
 		}
@@ -251,7 +243,7 @@
 			document.getElementById(teamName + 'Error').style.display = "none";
 			return true;
 		} else {
-			document.getElementById(teamName).style.borderBottomColor ='#c9302c';
+			document.getElementById(teamName).style.borderBottomColor ='#dd4b39';
 			document.getElementById(teamName + 'Error').style.display = "block";
 			return false;
 		}
@@ -266,7 +258,7 @@
 			document.getElementById(joinTeamName + 'Error').style.display = "none";
 			return true;
 		} else {
-			document.getElementById(joinTeamName).style.borderBottomColor ='#c9302c';
+			document.getElementById(joinTeamName).style.borderBottomColor ='#dd4b39';
 			document.getElementById(joinTeamName + 'Error').style.display = "block";
 			return false;
 		}
@@ -283,7 +275,7 @@
 		var message = document.getElementById('confirmMessage');
 		//Set the colors we will be using ...
 		var goodColor = "#fff";
-		var badColor = "#c9302c";
+		var badColor = "#dd4b39";
 		//Compare the values in the password field
 		//and the confirmation field
 
@@ -296,7 +288,7 @@
 		}
 		else
 		{
-			pass1.style.borderBottomColor ='#c9302c';
+			pass1.style.borderBottomColor = badColor;
 			message.style.color = badColor;
 			message.innerHTML = "You have to enter at least 8 digit"
 			return;
@@ -313,7 +305,7 @@
 			//The passwords do not match.
 			//Set the color to the bad color and
 			//notify the user.
-			pass2.style.backgroundColor = '#c9302c';
+			pass2.style.backgroundColor = badColor;
 			message.style.color = badColor;
 			message.innerHTML = "Passwords Do Not Match!"
 		}
