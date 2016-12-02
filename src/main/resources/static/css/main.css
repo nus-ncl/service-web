@@ -2512,3 +2512,8 @@ h37{
     margin: 10px;
     width: 700px;
 }
+
+.footnote {
+    font-size: 13px;
+    font-style: italic;
+}
