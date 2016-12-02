@@ -72,7 +72,7 @@ public class ImageTest {
     @Test
     public void testGetDescription() {
         final Image one = new Image();
-        assertThat(one.getDescription(), is(nullValue()));
+        assertThat(one.getDescription(), is("default"));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ImageTest {
     @Test
     public void testGetVisibility() {
         final Image one = new Image();
-        assertThat(one.getVisibility(), is(nullValue()));
+        assertThat(one.getVisibility(), is(ImageVisibility.PRIVATE));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class ImageTest {
     @Test
     public void testGetCurrentOS() {
         final Image one = new Image();
-        assertThat(one.getCurrentOS(), is(nullValue()));
+        assertThat(one.getCurrentOS(), is("Ubuntu1404-64-STD"));
     }
 
     @Test

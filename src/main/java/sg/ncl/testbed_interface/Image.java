@@ -2,7 +2,6 @@ package sg.ncl.testbed_interface;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotEmpty;
 import sg.ncl.domain.ImageVisibility;
 
 import javax.validation.constraints.Size;
@@ -21,8 +20,8 @@ public class Image {
     @Size(min = 2, message = "Image Name minimum 2 characters")
     private String imageName;
 
-    private String description;
-    private String currentOS;
-    private ImageVisibility visibility;
+    private String description = "default";
+    private String currentOS = "Ubuntu1404-64-STD";
+    private ImageVisibility visibility = ImageVisibility.PRIVATE;
 
 }
