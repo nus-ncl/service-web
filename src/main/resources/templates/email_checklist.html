@@ -12,22 +12,23 @@
         <div class="container">
 
             <p>&nbsp;</p>
-            <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-10 tutorialbackground">
-                    <div class="col-sm-1 col-sm-offset-0 "><img src="images/checklist.png" width="52" height="43"/>
-                    </div>
-                    <h2 th:text="#{email.checklist}">Some checks have not completed yet</h2>
-                    <hr />
-                    <!--<p th:text="${userStatus}"></p>-->
-                        <div class="col-sm-8">
-                            <p th:if="${statuschecklist=='CREATED'}"><span class="fa fa-times  times" data-toggle="tooltip"> </span>User email has been verified</p>
-                            <p th:if="${statuschecklist=='PENDING'}"><span class="fa fa-check check" data-toggle="tooltip"></span>  User email has been verified</p>
-                            <p th:unless="${statuschecklist}"><span class="fa fa-check  check" data-toggle="tooltip"></span> User email verified</p>
+            <div class="col-sm-12 col-sm-offset-1 ">
+            <div class="row checkbackground">
+                <div class="col-md-10">  <p>&nbsp;</p>
+                    <h36 th:text="#{email.checklist}">Some checks have not completed yet</h36>
+                    <p>&nbsp;</p>
+                    <p th:text="${userStatus}"></p>
+                    <div class="col-sm-8 h35">
+                        <p><h35><span class="fa fa-check check" data-toggle="tooltip"> </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Online application has been submitted</h35></p>
                         </div>
-                    <div class="col-sm-8">
-                        <p th:if="${emailchecklist=='CREATED'}"><span class="fa fa-check " data-toggle="tooltip"></span>  Team application successfully review</p>
-                        <p th:unless="${emailchecklist}"><span class="fa fa-times  times" data-toggle="tooltip"></span> Team application under review</p>
+                        <div class="col-sm-8 h35">
+                            <p th:if="${statuschecklist=='CREATED'}"><h35><span class="fa fa-minus-square  times" data-toggle="tooltip"> </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User email has been verified</h35></p>
+                            <p th:if="${statuschecklist=='PENDING'}"> <h35><span class="fa fa-check-square-o check" data-toggle="tooltip"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User email has been verified</h35></p>
+                            <p th:unless="${statuschecklist}"><h35><span class="fa fa-check  check" data-toggle="tooltip"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User email verified</h35></p>
+                        </div>
+                    <div class="col-sm-8 h35">
+                        <p th:if="${emailchecklist=='CREATED'}"> <h35><span class="fa fa-check-square-o " data-toggle="tooltip"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Team application successfully review</h35></p>
+                        <p th:unless="${emailchecklist}"><h35> <span class="fa fa-minus-square times" data-toggle="tooltip"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Team application under review</h35></p>
                     </div>
 
 
@@ -49,12 +50,15 @@
                     <!--<p>If you do not receive a verification email after 5 business days, please contact us at <a th:href="#{support.email.link}" th:text="#{support.email}"></a>.</p>-->
                     <!--<p>&nbsp;</p>-->
                     <!--<p>&nbsp;</p>-->
+
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                        <h37>* Required statuses must pass before log in to testbed.ncl.sg. </h37>
                     <p>&nbsp;</p>
 
-                    <br/>
-
+</div>
                 </div> <!-- col -->
                 <div class="col-md-1"></div>
             </div> <!-- row -->
