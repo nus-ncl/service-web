@@ -108,7 +108,6 @@
                         <table class="table table-responsive" th:if="${isInnerImageMapPresent} == true">
                             <thead>
                                 <th th:text="#{team.table.header.imageName}">Image Name</th>
-                                <th th:text="#{team.table.header.description}">Description</th>
                                 <th th:text="#{team.table.header.team}">Team</th>
                                 <th th:text="#{team.table.header.imageStatus}">Status</th>
                             </thead>
@@ -116,7 +115,6 @@
                                 <tr th:each="imageList : ${perTeamImageMap.value.get('created')}">
                                     <th:block th:each="image : ${imageList}">
                                         <td th:text="${image}"></td>
-                                        <td th:text="${image.description}"></td>
                                         <td th:text="${perTeamImageMap.key}"></td>
                                         <td th:text="#{team.table.header.imageCreated}"></td>
                                     </th:block>
@@ -124,7 +122,6 @@
                                 <tr th:each="imageList : ${perTeamImageMap.value.get('inProgress')}">
                                     <th:block th:each="image : ${imageList}">
                                         <td th:text="${image.imageName}"></td>
-                                        <td th:text="${image.description}"></td>
                                         <td th:text="${perTeamImageMap.key}"></td>
                                         <td th:text="#{team.table.header.imageInProgress}"></td>
                                     </th:block>
