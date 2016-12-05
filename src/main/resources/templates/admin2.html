@@ -157,6 +157,7 @@
 					<th th:text="#{admin.users.header.name}">Full Name</th>
 					<th th:text="#{admin.users.header.email}">Email</th>
 					<th th:text="#{admin.users.header.team}">Team</th>
+					<th><!-- Actions --></th>
 					</thead>
 					<tr th:each="user : ${usersList}">
 						<td>
@@ -189,6 +190,10 @@
 								</div>
 							</th:block>
 							<p th:if="${#lists.isEmpty(userToTeamMap.get(user.id))}">Not in any teams yet.</p>
+						</td>
+						<td>
+							<a href="#">Ban</a>
+							<a href="#">Unban</a>
 						</td>
 					</tr>
 				</table>
