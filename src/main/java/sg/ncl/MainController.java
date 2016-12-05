@@ -1247,7 +1247,10 @@ public class MainController {
 
         TeamManager2 teamManager2 = new TeamManager2();
 
-        List<Image> savedImageList = new ArrayList<>();
+        // stores the list of images created or in progress of creation by teams
+        // e.g. teamNameA : "created" : [imageA, imageB], "inProgress" : [imageC, imageD]
+        Map<String, Map<String, List<Image>>> imageMap = new HashMap<>();
+        boolean isInnerImageMapPresent = false;
 
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -1273,19 +1276,32 @@ public class MainController {
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
             }
 
-            savedImageList.addAll(invokeAndGetImageList(teamId));
+            imageMap.put(team2.getName(), invokeAndGetImageList(teamId));
         }
 
+        // check if inner image map is empty, have to do it via this manner
+        // returns true if the team contains an image list
+        isInnerImageMapPresent = imageMap.values().stream().filter(perTeamImageMap -> !perTeamImageMap.isEmpty()).findFirst().isPresent();
 
         model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
         model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
-        model.addAttribute("savedImageList", savedImageList);
+        model.addAttribute("isInnerImageMapPresent", isInnerImageMapPresent);
+        model.addAttribute("imageMap", imageMap);
         return "teams";
     }
 
-    private List<Image> invokeAndGetImageList(String teamId) {
-        List<Image> result = new ArrayList<>();
+    /**
+     * Exectues the service-image and returns a Map containing the list of images in two partitions.
+     * One partition contains the list of already created images.
+     * The other partition contains the list of currently saving in progress images.
+     * @param teamId The ncl team id to retrieve the list of images from.
+     * @return Returns a Map containing the list of images in two partitions.
+     */
+    private Map<String, List<Image>> invokeAndGetImageList(String teamId) {
+        Map<String, List<Image>> resultMap = new HashMap<>();
+        List<Image> createdImageList = new ArrayList<>();
+        List<Image> inProgressImageList = new ArrayList<>();
 
         HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
         ResponseEntity imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
@@ -1299,7 +1315,7 @@ public class MainController {
 
         if (osImageObject == JSONObject.NULL || osImageObject.length() == 0) {
             log.info("Image list for Team: {} is empty.", teamId);
-            return result;
+            return resultMap;
         }
 
         for (int k = 0; k < osImageObject.names().length(); k++) {
@@ -1308,16 +1324,22 @@ public class MainController {
 
             log.info("image name: {} image status: {}", imageName, imageStatus);
 
+            Image image = new Image();
+            image.setImageName(imageName);
+            image.setDescription("-");
+            image.setTeamId(teamId);
+
             if (imageStatus.equals("created")) {
-                Image image = new Image();
-                image.setImageName(imageName);
-                image.setDescription("-");
-                image.setTeamId(teamId);
-                result.add(image);
+                createdImageList.add(image);
+            } else if (imageStatus.equals("notfound")) {
+                inProgressImageList.add(image);
             }
         }
 
-        return result;
+        resultMap.put("created", createdImageList);
+        resultMap.put("inProgress", inProgressImageList);
+
+        return resultMap;
     }
 
 //    @RequestMapping("/accept_participation/{teamId}")
