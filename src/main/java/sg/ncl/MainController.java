@@ -1989,7 +1989,7 @@ public class MainController {
             RedirectAttributes redirectAttributes,
             @PathVariable String teamId,
             @PathVariable String expId,
-            @PathVariable String nodeId) throws Exception {
+            @PathVariable String nodeId) throws WebServiceRuntimeException {
 
         if (saveImageForm.getImageName().length() < 2) {
             log.info("Save image form has errors {}", saveImageForm);
@@ -1999,7 +1999,15 @@ public class MainController {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        HttpEntity<String> request = createHttpEntityWithBody(mapper.writeValueAsString(saveImageForm));
+        HttpEntity<String> request;
+
+        try {
+            request = createHttpEntityWithBody(mapper.writeValueAsString(saveImageForm));
+        } catch (JsonProcessingException e) {
+            log.warn("JsonProcessingException {}", e);
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.saveImage(), HttpMethod.POST, request, String.class);
 
