@@ -114,7 +114,7 @@
                             <th:block th:each="perTeamImageMap : ${imageMap}">
                                 <tr th:each="imageList : ${perTeamImageMap.value.get('created')}">
                                     <th:block th:each="image : ${imageList}">
-                                        <td th:text="${image}"></td>
+                                        <td th:text="${image.imageName}"></td>
                                         <td th:text="${perTeamImageMap.key}"></td>
                                         <td th:text="#{team.table.header.imageCreated}"></td>
                                     </th:block>
