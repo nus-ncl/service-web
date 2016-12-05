@@ -90,6 +90,9 @@ public class MainController {
     private static final String FORGET_PSWD_PAGE = "password_reset_email";
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
 
+    private static final String TEAM_NAME = "teamName";
+    private static final String NODE_ID = "nodeId";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -1859,7 +1862,7 @@ public class MainController {
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
         experimentObject.put("teamId", experimentForm.getTeamId());
-        experimentObject.put("teamName", experimentForm.getTeamName());
+        experimentObject.put(TEAM_NAME, experimentForm.getTeamName());
         experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
         experimentObject.put("description", experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
@@ -1960,7 +1963,7 @@ public class MainController {
         for (Map.Entry<String, Map<String, String>> nodesInfo : realization.getNodesInfoMap().entrySet()) {
             String nodeName = nodesInfo.getKey();
             Map<String, String> singleNodeDetailsMap = nodesInfo.getValue();
-            if (singleNodeDetailsMap.get("nodeId").equals(nodeId)) {
+            if (singleNodeDetailsMap.get(NODE_ID).equals(nodeId)) {
                 singleNodeInfoMap.put(nodeName, singleNodeDetailsMap);
                 // store the current os of the node into the form also
                 // have to pass the the services
@@ -2941,7 +2944,7 @@ public class MainController {
         experiment2.setId(object.getLong("id"));
         experiment2.setUserId(object.getString("userId"));
         experiment2.setTeamId(object.getString("teamId"));
-        experiment2.setTeamName(object.getString("teamName"));
+        experiment2.setTeamName(object.getString(TEAM_NAME));
         experiment2.setName(object.getString("name"));
         experiment2.setDescription(object.getString("description"));
         experiment2.setNsFile(object.getString("nsFile"));
@@ -3016,7 +3019,7 @@ public class MainController {
                 JSONObject nodeDetailsJson = new JSONObject(nodesInfoObject.get(nodeName).toString());
                 nodeDetails.put("os", nodeDetailsJson.getString("os"));
                 nodeDetails.put("qualifiedName", nodeDetailsJson.getString("qualifiedName"));
-                nodeDetails.put("nodeId", nodeDetailsJson.getString("nodeId"));
+                nodeDetails.put(NODE_ID, nodeDetailsJson.getString(NODE_ID));
                 realization.addNodeDetails(nodeName, nodeDetails);
             }
             log.info("nodes info object: {}", nodesInfoObject);
