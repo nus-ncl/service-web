@@ -2011,8 +2011,10 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
+                log.warn("Save image exception: {}", exceptionState);
+
                 switch (exceptionState) {
-                    case ADAPTER_DETERLAB_CONNECT_EXCEPTION:
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("adapter deterlab operation failed exception");
                         redirectAttributes.addFlashAttribute("message", error.getMessage());
                         break;
