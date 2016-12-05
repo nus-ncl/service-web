@@ -2017,32 +2017,36 @@ public class MainController {
         String responseBody = response.getBody().toString();
 
         try {
-            if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-
-                log.warn("Save image exception: {}", exceptionState);
-
-                switch (exceptionState) {
-                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
-                        log.warn("adapter deterlab operation failed exception");
-                        redirectAttributes.addFlashAttribute("message", error.getMessage());
-                        break;
-                    default:
-                        log.warn("Image service or adapter fail");
-                        // possible sio or adapter connection fail
-                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
-                        break;
-                }
-                return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
-            } else {
-                // everything ok
-                log.info("Image service in progress for Team: {}, Exp: {}, Node: {}, Image: {}", teamId, expId, nodeId, saveImageForm.getImageName());
-                return "redirect:/experiments";
-            }
+            return processSaveImageRequest(saveImageForm, redirectAttributes, teamId, expId, nodeId, response, responseBody);
         } catch (IOException ioe) {
             log.warn("IOException {}", ioe);
             throw new WebServiceRuntimeException(ioe.getMessage());
+        }
+    }
+
+    private String processSaveImageRequest(@Valid @ModelAttribute("saveImageForm") Image saveImageForm, RedirectAttributes redirectAttributes, @PathVariable String teamId, @PathVariable String expId, @PathVariable String nodeId, ResponseEntity response, String responseBody) throws IOException {
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            log.warn("Save image exception: {}", exceptionState);
+
+            switch (exceptionState) {
+                case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    log.warn("adapter deterlab operation failed exception");
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                    break;
+                default:
+                    log.warn("Image service or adapter fail");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                    break;
+            }
+            return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
+        } else {
+            // everything ok
+            log.info("Image service in progress for Team: {}, Exp: {}, Node: {}, Image: {}", teamId, expId, nodeId, saveImageForm.getImageName());
+            return "redirect:/experiments";
         }
     }
 
