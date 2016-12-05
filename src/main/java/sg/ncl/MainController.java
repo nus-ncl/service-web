@@ -1297,7 +1297,6 @@ public class MainController {
         // stores the list of images created or in progress of creation by teams
         // e.g. teamNameA : "created" : [imageA, imageB], "inProgress" : [imageC, imageD]
         Map<String, Map<String, List<Image>>> imageMap = new HashMap<>();
-        boolean isInnerImageMapPresent = false;
 
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -1328,7 +1327,7 @@ public class MainController {
 
         // check if inner image map is empty, have to do it via this manner
         // returns true if the team contains an image list
-        isInnerImageMapPresent = imageMap.values().stream().filter(perTeamImageMap -> !perTeamImageMap.isEmpty()).findFirst().isPresent();
+        boolean isInnerImageMapPresent = imageMap.values().stream().filter(perTeamImageMap -> !perTeamImageMap.isEmpty()).findFirst().isPresent();
 
         model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
@@ -1376,9 +1375,9 @@ public class MainController {
             image.setDescription("-");
             image.setTeamId(teamId);
 
-            if (imageStatus.equals("created")) {
+            if ("created".equals(imageStatus)) {
                 createdImageList.add(image);
-            } else if (imageStatus.equals("notfound")) {
+            } else if ("notfound".equals(imageStatus)) {
                 inProgressImageList.add(image);
             }
         }
@@ -1990,7 +1989,7 @@ public class MainController {
             RedirectAttributes redirectAttributes,
             @PathVariable String teamId,
             @PathVariable String expId,
-            @PathVariable String nodeId) throws WebServiceRuntimeException, JsonProcessingException {
+            @PathVariable String nodeId) throws Exception {
 
         if (saveImageForm.getImageName().length() < 2) {
             log.info("Save image form has errors {}", saveImageForm);
