@@ -2383,6 +2383,11 @@ public class MainController {
         return "redirect:/admin";
     }
 
+    @RequestMapping("/admin/users/{userId}")
+    public String freezeUnfreezeUsers(@PathVariable String userId, @RequestParam(value = "action", required = true) String action) {
+        return "redirect:/admin";
+    }
+
 //    @RequestMapping("/admin/users/ban/{userId}")
 //    public String banUser(@PathVariable Integer userId) {
 //    	// TODO
