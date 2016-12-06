@@ -25,6 +25,9 @@
 		<div th:if="${message}">
 			<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 		</div>
+		<div th:if="${messageSuccess}">
+			<p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+		</div>
 		<div class="tab-content col-sm-10 dashpanel_admin">
 			<div id="newTeamsApproval" class="tab-pane fade in active">
 				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.teams.header.pending}">Teams Pending for Approval</h2>
@@ -192,8 +195,8 @@
 							<p th:if="${#lists.isEmpty(userToTeamMap.get(user.id))}">Not in any teams yet.</p>
 						</td>
 						<td>
-							<a href="#">Ban</a>
-							<a href="#">Unban</a>
+							<a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = freeze)}" th:if="${user.status} == 'APPROVED'">Ban</a>
+							<a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = unfreeze)}" th:if="${user.status} == 'FROZEN'">Unban</a>
 						</td>
 					</tr>
 				</table>
