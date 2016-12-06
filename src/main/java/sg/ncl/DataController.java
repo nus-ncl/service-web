@@ -30,13 +30,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static sg.ncl.domain.ExceptionState.FORBIDDEN_EXCEPTION;
 
@@ -313,14 +309,9 @@ public class DataController extends MainController {
             ResponseExtractor<Void> responseExtractor = response -> {
                 // Here I write the response to a file but do what you like
                 String content = response.getHeaders().get("Content-Disposition").get(0);
-                Pattern pattern = Pattern.compile("'(.*?)'");
-                Matcher matcher = pattern.matcher(content);
-                if (matcher.find()) {
-                    Path path = Paths.get("some/path", matcher.group(1));
-                    httpResponse.setContentType("application/octet-stream");
-                    httpResponse.setHeader("Content-Disposition", content);
-                    IOUtils.copy(response.getBody(), httpResponse.getOutputStream());
-                }
+                httpResponse.setContentType("application/octet-stream");
+                httpResponse.setHeader("Content-Disposition", content);
+                IOUtils.copy(response.getBody(), httpResponse.getOutputStream());
                 return null;
             };
 

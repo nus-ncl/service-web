@@ -82,6 +82,7 @@
             /*]]>*/
             var r = new Resumable({
                 target: upload_url,
+                chunkSize: 50*1024*1024,
                 simultaneousUploads: 1,
 				maxFiles: 1,
                 throttleProgressCallbacks: 1,
