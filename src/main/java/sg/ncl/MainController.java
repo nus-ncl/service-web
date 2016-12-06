@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -460,7 +461,12 @@ public class MainController {
         try {
             String userStatus = user.getStatus();
             boolean emailVerified = user.getEmailVerified();
-            if (!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
+
+            if (UserStatus.FROZEN.toString().equals(userStatus)) {
+                log.warn("User {} has been frozen", id);
+                loginForm.setErrorMsg("Login Failed: Account Frozen. Please contact " + CONTACT_EMAIL);
+                return "login";
+            } else if (!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
                 redirectAttributes.addAttribute("statuschecklist", userStatus);
                 log.info("User {} not validated, redirected to email verification page", id);
                 return "redirect:/email_checklist";
@@ -2384,17 +2390,69 @@ public class MainController {
     }
 
     @RequestMapping("/admin/users/{userId}")
-    public String freezeUnfreezeUsers(@PathVariable String userId, @RequestParam(value = "action", required = true) String action) {
-        return "redirect:/admin";
-    }
+    public String freezeUnfreezeUsers(@PathVariable String userId, @RequestParam(value = "action", required = true) String action, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
+        User2 user = invokeAndExtractUserInfo(userId);
 
-//    @RequestMapping("/admin/users/ban/{userId}")
-//    public String banUser(@PathVariable Integer userId) {
-//    	// TODO
-//    	// perform ban action here
-//    	// need to cleanly remove user info from teams, user. etc
-//    	return "redirect:/admin";
-//    }
+        // check if admin
+        if (!validateIfAdmin(session)) {
+            log.warn("Access denied: user {} try to modify user status", userId);
+            return "nopermission";
+        }
+
+        // check if user status is approved before freeze
+        if (!user.getStatus().equals(UserStatus.APPROVED.toString()) && "freeze".equals(action)) {
+            log.warn("Failed to freeze user: {} as user is not approved yet.", userId);
+            redirectAttributes.addFlashAttribute("message", "Error: failed to " + action + " " + userId + " ; User not yet approved.");
+            return "redirect:/admin";
+        }
+
+        // check if user status is frozen before unfreeze
+        if (!user.getStatus().equals(UserStatus.FROZEN.toString()) && "unfreeze".equals(action)) {
+            log.warn("Failed to unfreeze user: {} as user is not frozen yet.", userId);
+            redirectAttributes.addFlashAttribute("message", "Error: failed to " + action + " " + userId + " ; User not yet frozen.");
+            return "redirect:/admin";
+        }
+
+        if ("freeze".equals(action)) {
+            user.setStatus(UserStatus.FROZEN.toString());
+        } else if ("unfreeze".equals(action)) {
+            user.setStatus(UserStatus.APPROVED.toString());
+        } else {
+            log.warn("Trying to perform illegal action: {} on user: {} while freeze/unfreeze", action, userId);
+            throw new WebServiceRuntimeException("Trying to perform illegal action while freeze/unfreeze users");
+        }
+
+        JSONObject userObject = new JSONObject();
+        userObject.put("status", user.getStatus());
+
+        HttpEntity<String> request = createHttpEntityWithBody(userObject.toString());
+        ResponseEntity response = restTemplate.exchange(properties.getSioUsersUrl() + userId, HttpMethod.PUT, request, String.class);
+
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    default:
+                        log.warn("User service fail to change user: {} status", userId);
+                        // possible sio or adapter connection fail
+                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                        break;
+                }
+                return "redirect:/admin";
+            } else {
+                // good
+                log.info("User: {} status changed: {}", userId, user.getStatus());
+                redirectAttributes.addFlashAttribute("messageSuccess", "User: " + user.getEmail() + " status changed: " + user.getStatus());
+                return "redirect:/admin";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+    }
 
 //    @RequestMapping("/admin/experiments/remove/{expId}")
 //    public String adminRemoveExp(@PathVariable Integer expId) {
