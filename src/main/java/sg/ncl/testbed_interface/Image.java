@@ -17,7 +17,7 @@ public class Image {
     private String teamId;
     private String nodeId;
 
-    @Size(min = 2, message = "Image Name minimum 2 characters")
+    @Size(min = 2, message = "Image name too short, minimum 2 characters")
     private String imageName;
 
     private String description = "default";

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -1348,22 +1349,31 @@ public class MainController {
      * @return Returns a Map containing the list of images in two partitions.
      */
     private Map<String, List<Image>> invokeAndGetImageList(String teamId) {
+        log.info("Getting list of saved images for team {}", teamId);
+
         Map<String, List<Image>> resultMap = new HashMap<>();
         List<Image> createdImageList = new ArrayList<>();
         List<Image> inProgressImageList = new ArrayList<>();
 
         HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
-        ResponseEntity imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
+        ResponseEntity imageResponse;
+        try {
+            imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
+        } catch (ResourceAccessException e) {
+            log.warn("Error connecting to image service!");
+            return new HashMap<>();
+        }
+
         String imageResponseBody = imageResponse.getBody().toString();
 
         String osImageList = new JSONObject(imageResponseBody).getString(teamId);
         JSONObject osImageObject = new JSONObject(osImageList);
 
-        log.info("osImageList: {}", osImageList);
-        log.info("osImageObject: {}", osImageObject);
+        log.debug("osImageList: {}", osImageList);
+        log.debug("osImageObject: {}", osImageObject);
 
         if (osImageObject == JSONObject.NULL || osImageObject.length() == 0) {
-            log.info("Image list for Team: {} is empty.", teamId);
+            log.info("List of saved images for team {} is empty.", teamId);
             return resultMap;
         }
 
@@ -1371,7 +1381,7 @@ public class MainController {
             String imageName = osImageObject.names().getString(k);
             String imageStatus = osImageObject.getString(imageName);
 
-            log.info("image name: {} image status: {}", imageName, imageStatus);
+            log.info("Image list for team {}: image name {}, status {}", teamId, imageName, imageStatus);
 
             Image image = new Image();
             image.setImageName(imageName);
@@ -1992,37 +2002,56 @@ public class MainController {
             RedirectAttributes redirectAttributes,
             @PathVariable String teamId,
             @PathVariable String expId,
-            @PathVariable String nodeId) throws WebServiceRuntimeException {
+            @PathVariable String nodeId)
+            throws WebServiceRuntimeException, IOException {
 
         if (saveImageForm.getImageName().length() < 2) {
-            log.info("Save image form has errors {}", saveImageForm);
-            redirectAttributes.addFlashAttribute("message", "Image Name minimum 2 characters");
+            log.warn("Save image form has errors {}", saveImageForm);
+            redirectAttributes.addFlashAttribute("message", "Image name too short, minimum 2 characters");
             return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/"  + nodeId;
         }
 
+        log.info("Saving image: team {}, experiment {}, node {}", teamId, expId, nodeId);
+
         ObjectMapper mapper = new ObjectMapper();
-
-        HttpEntity<String> request;
-
-        try {
-            request = createHttpEntityWithBody(mapper.writeValueAsString(saveImageForm));
-        } catch (JsonProcessingException e) {
-            log.warn("JsonProcessingException {}", e);
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
+        HttpEntity<String> request = createHttpEntityWithBody(mapper.writeValueAsString(saveImageForm));
 
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.saveImage(), HttpMethod.POST, request, String.class);
-
         String responseBody = response.getBody().toString();
 
-        try {
-            return processSaveImageRequest(saveImageForm, redirectAttributes, teamId, expId, nodeId, response, responseBody);
-        } catch (IOException ioe) {
-            log.warn("IOException {}", ioe);
-            throw new WebServiceRuntimeException(ioe.getMessage());
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            log.warn("Save image: error with exception {}", exceptionState);
+
+            switch (exceptionState) {
+                case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    log.warn("Save image: error, operation failed on DeterLab");
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                    break;
+                case ADAPTER_CONNECTION_EXCEPTION:
+                    log.warn("Save image: error, cannot connect to adapter");
+                    redirectAttributes.addFlashAttribute("message", "connection to adapter failed");
+                    break;
+                case ADAPTER_INTERNAL_ERROR_EXCEPTION:
+                    log.warn("Save image: error, adapter internal server error");
+                    redirectAttributes.addFlashAttribute("message", "internal error was found on the adapter");
+                    break;
+                default:
+                    log.warn("Save image: other error");
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            }
+
+            return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
         }
+
+        // everything looks ok
+        log.info("Save image in progress: team {}, experiment {}, node {}, image {}", teamId, expId, nodeId, saveImageForm.getImageName());
+        return "redirect:/experiments";
     }
+/*
 
     private String processSaveImageRequest(@Valid @ModelAttribute("saveImageForm") Image saveImageForm, RedirectAttributes redirectAttributes, @PathVariable String teamId, @PathVariable String expId, @PathVariable String nodeId, ResponseEntity response, String responseBody) throws IOException {
         if (RestUtil.isError(response.getStatusCode())) {
@@ -2049,6 +2078,7 @@ public class MainController {
             return "redirect:/experiments";
         }
     }
+*/
 
 //    @RequestMapping("/experiments/configuration/{expId}")
 //    public String viewExperimentConfiguration(@PathVariable Integer expId, Model model) {
