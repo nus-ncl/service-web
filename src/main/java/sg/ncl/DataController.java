@@ -307,11 +307,12 @@ public class DataController extends MainController {
 
             // Streams the response instead of loading it all in memory
             ResponseExtractor<Void> responseExtractor = response -> {
-                // Here I write the response to a file but do what you like
                 String content = response.getHeaders().get("Content-Disposition").get(0);
                 httpResponse.setContentType("application/octet-stream");
+                httpResponse.setContentLengthLong(Long.parseLong(response.getHeaders().get("Content-Length").get(0)));
                 httpResponse.setHeader("Content-Disposition", content);
                 IOUtils.copy(response.getBody(), httpResponse.getOutputStream());
+                httpResponse.flushBuffer();
                 return null;
             };
 
