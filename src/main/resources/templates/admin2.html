@@ -4,7 +4,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<title>National Cybersecurity Laboratories - Admin</title>
 	<object th:include="fragments/header :: header" th:remove="tag" />
+	<link rel="stylesheet" href="http://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
 </head>
+
 <body class="mybg loginbackground">
 <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
 <div class="container">
@@ -26,11 +28,11 @@
 			<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 		</div>
 		<div class="tab-content col-sm-10 dashpanel_admin">
-			<div id="newTeamsApproval" class="tab-pane fade in active">
+				<div id="newTeamsApproval" class="tab-pane fade in active">
 				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.teams.header.pending}">Teams Pending for Approval</h2>
 				<th:block th:if="not ${#lists.isEmpty(pendingApprovalTeamsList)}">
 					<p>&nbsp;</p>
-					<table class="table table-responsive">
+					<table id="myTable" class="table table-responsive">
 						<thead>
 						<th th:text="#{admin.dashboard.registeredDate}">Date</th>
 						<th th:text="#{admin.teams.header.name}">Team</th>
@@ -106,7 +108,7 @@
 				<th:block th:if="${teamsMap.isEmpty()}">
 					<p>There is no teams in the system</p>
 				</th:block>
-				<table class="table table-responsive" th:if="not ${teamsMap.isEmpty()}">
+				<table id="myTable1"  class="table table-responsive" th:if="not ${teamsMap.isEmpty()}">
 					<thead>
 					<th th:text="#{admin.teams.header.name}">Team</th>
 					<th th:text="#{admin.teams.header.description}">Description</th>
@@ -152,7 +154,7 @@
 				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.users.header}">Users Management</h2>
 				<p>&nbsp;</p>
 				<p th:if="${#lists.isEmpty(usersList)}">There are no users in the system</p>
-				<table class="table table-responsive" th:if="${not #lists.isEmpty(usersList)}">
+				<table id="myTable2" class="table table-responsive" th:if="${not #lists.isEmpty(usersList)}">
 					<thead>
 					<th th:text="#{admin.users.header.name}">Full Name</th>
 					<th th:text="#{admin.users.header.email}">Email</th>
@@ -326,25 +328,46 @@
 
 		</div> <!-- tab content -->
 	</div> <!-- row -->
-	<div class="cc-wraper">
-		<div class="cc-contactpop fixed">
-			<h1>Do you need Help? <span>Get in touch.</span></h1>
-			<div class="renseignement">
-				<i class="fa fa-times"></i>
-				<p>We will get back to you as soon as possible. </p>
-			</div>
-			<form>
-				<ul>
-					<li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
-					<li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
-					<li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
-				</ul>
-				<p>&nbsp;</p>
-			</form>
+</div>
+<div class="cc-wraper">
+	<div class="cc-contactpop fixed">
+		<h1>Do you need Help? <span>Get in touch.</span></h1>
+		<div class="renseignement">
+			<i class="fa fa-times"></i>
+			<p>We will get back to you as soon as possible. </p>
 		</div>
+		<form>
+			<ul>
+				<li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+				<li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
+				<li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+			</ul>
+			<p>&nbsp;</p>
+		</form>
 	</div>
-</div> <!-- container -->
+</div>
 <div th:replace="fragments/footer:: footer"></div>
-<object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
+
+<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+<script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+<script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+<script type="text/javascript" src="static/js/smoothscroll.js" th:src="@{~/js/smoothscroll.js}"></script>
+<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+<script>
+$(document).ready(function () {
+	//-----------------admin sort table -------------
+	$('#myTable').dataTable();
+	$('#myTable1').dataTable();
+	$('#myTable2').dataTable();
+})
+</script>
 </html>
