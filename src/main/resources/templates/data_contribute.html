@@ -24,7 +24,8 @@
                             <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{name}"  th:readonly="${dataset.id != null}"/>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? has-error">
-                            <input type="text" class="form-control" placeholder="Enter Dataset Description" th:field="*{description}"/>
+                            <!-- input type="text" class="form-control" placeholder="Enter Dataset Description" th:field="*{description}"/ -->
+                            <textarea class="form-control" rows="5" placeholder="Enter Dataset Name" th:field="*{description}"></textarea>
                         </div>
                         <div class="form-group">
                             <div class="radio">
