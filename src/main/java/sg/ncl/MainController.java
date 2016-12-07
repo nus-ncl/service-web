@@ -99,10 +99,10 @@ public class MainController {
     protected ConnectionProperties properties;
 
     @Inject
-    private WebProperties webProperties;
+    protected WebProperties webProperties;
 
     @Inject
-    private HttpSession httpScopedSession;
+    protected HttpSession httpScopedSession;
 
     @RequestMapping("/")
     public String index() {
@@ -234,12 +234,6 @@ public class MainController {
     public String TestbedInformation() {
         return "TestbedInformation";
     }
-
-
-//    @RequestMapping("/dataresource")
-//    public String dataresource() {
-//        return "dataresource";
-//    }
 
 //    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
 //    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {

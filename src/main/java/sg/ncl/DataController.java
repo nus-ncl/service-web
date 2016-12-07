@@ -1,11 +1,11 @@
 package sg.ncl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,17 +15,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sg.ncl.domain.ExceptionState;
 import sg.ncl.exceptions.WebServiceRuntimeException;
-import sg.ncl.testbed_interface.DataResource;
-import sg.ncl.testbed_interface.Dataset;
-import sg.ncl.testbed_interface.RestUtil;
+import sg.ncl.testbed_interface.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static sg.ncl.domain.ExceptionState.FORBIDDEN_EXCEPTION;
@@ -38,11 +44,15 @@ import static sg.ncl.domain.ExceptionState.FORBIDDEN_EXCEPTION;
 @Slf4j
 public class DataController extends MainController {
 
+    private static final String REDIRECT_DATA = "redirect:/data";
+    private static final String DATASET = "dataset";
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
     private static final String MESSAGE_ATTRIBUTE = "message";
+    private static final String EDIT_DISALLOWED = "Edit/delete of dataset disallowed as user is not contributor";
+    private static final String UPLOAD_DISALLOWED = "Upload of data resource disallowed as user is not contributor";
 
     @RequestMapping
-    public String data(Model model, HttpSession session) {
+    public String data(Model model) {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -60,17 +70,22 @@ public class DataController extends MainController {
         return "data";
     }
 
-    @RequestMapping(value={"/contribute", "/contribute/{id}"}, method= RequestMethod.GET)
-    public String contributeData(Model model, @PathVariable Optional<String> id) throws Exception {
+    @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
+    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
         if (id.isPresent()) {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
             ResponseEntity response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
             String dataResponseBody = response.getBody().toString();
             JSONObject dataInfoObject = new JSONObject(dataResponseBody);
             Dataset dataset = extractDataInfo(dataInfoObject.toString());
-            model.addAttribute("dataset", dataset);
+            if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+                log.warn(EDIT_DISALLOWED);
+                redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, EDIT_DISALLOWED);
+                return REDIRECT_DATA;
+            }
+            model.addAttribute(DATASET, dataset);
         } else {
-            model.addAttribute("dataset", new Dataset());
+            model.addAttribute(DATASET, new Dataset());
         }
         return CONTRIBUTE_DATA_PAGE;
     }
@@ -141,7 +156,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return "redirect:/data";
+        return REDIRECT_DATA;
     }
 
     @RequestMapping("/remove/{id}")
@@ -166,7 +181,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return "redirect:/data";
+        return REDIRECT_DATA;
     }
 
     @RequestMapping("/public")
@@ -186,6 +201,125 @@ public class DataController extends MainController {
 
         model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
         return "data_public";
+    }
+
+    @RequestMapping("{datasetId}/resources")
+    public String getResources(Model model, @PathVariable String datasetId, HttpSession session, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+        if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+            log.warn(UPLOAD_DISALLOWED);
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, UPLOAD_DISALLOWED);
+            return REDIRECT_DATA;
+        }
+        model.addAttribute(DATASET, dataset);
+        return "data_resources";
+    }
+
+    /**
+     * References:
+     * [1] https://github.com/23/resumable.js/blob/master/samples/java/src/main/java/resumable/js/upload/UploadServlet.java
+     */
+    @RequestMapping(value="{datasetId}/resources/upload", method=RequestMethod.GET)
+    public ResponseEntity<String> checkChunk(@PathVariable String datasetId, HttpServletRequest request) {
+        int resumableChunkNumber = getResumableChunkNumber(request);
+        ResumableInfo info = getResumableInfo(request);
+
+        String url = properties.checkUploadChunk(datasetId, resumableChunkNumber, info.resumableIdentifier);
+        log.debug("URL: {}", url);
+        HttpEntity<String> httpEntity = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+        String body = responseEntity.getBody().toString();
+        log.debug(body);
+        if (body.equals("Not found")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+        }
+        return ResponseEntity.ok(body);
+    }
+
+    @RequestMapping(value="{datasetId}/resources/upload", method=RequestMethod.POST)
+    public ResponseEntity<String> uploadChunk(@PathVariable String datasetId, HttpServletRequest request) {
+        int resumableChunkNumber = getResumableChunkNumber(request);
+        ResumableInfo info = getResumableInfo(request);
+
+        try {
+            InputStream is = request.getInputStream();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            long readed = 0;
+            long content_length = request.getContentLength();
+            byte[] bytes = new byte[1024 * 100];
+            while (readed < content_length) {
+                int r = is.read(bytes);
+                if (r < 0)  {
+                    break;
+                }
+                os.write(bytes, 0, r);
+                readed += r;
+            }
+
+            JSONObject resumableObject = new JSONObject();
+            resumableObject.put("resumableChunkSize", info.resumableChunkSize);
+            resumableObject.put("resumableTotalSize", info.resumableTotalSize);
+            resumableObject.put("resumableIdentifier", info.resumableIdentifier);
+            resumableObject.put("resumableFilename", info.resumableFilename);
+            resumableObject.put("resumableRelativePath", info.resumableRelativePath);
+
+            String resumableChunk = Base64.encodeBase64String(os.toByteArray());
+            log.debug(resumableChunk);
+            resumableObject.put("resumableChunk", resumableChunk);
+
+            String url = properties.sendUploadChunk(datasetId, resumableChunkNumber);
+            log.debug("URL: {}", url);
+            HttpEntity<String> httpEntity = createHttpEntityWithBody(resumableObject.toString());
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+            ResponseEntity responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+            String body = responseEntity.getBody().toString();
+
+            if (RestUtil.isError(responseEntity.getStatusCode())) {
+                throw new Exception();
+            }
+            return ResponseEntity.ok(body);
+        } catch (Exception e) {
+            log.error("Error sending upload chunk: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending upload chunk");
+        }
+    }
+
+    /**
+     * References:
+     * [1] http://stackoverflow.com/questions/25854077/calling-a-servlet-from-another-servlet-after-the-request-dispatcher-forward-meth
+     * [2] http://stackoverflow.com/questions/29712554/how-to-download-a-file-using-a-java-rest-service-and-a-data-stream
+     * [3] http://stackoverflow.com/questions/32988370/download-large-file-from-server-using-rest-template-java-spring-mvc
+     */
+    @RequestMapping(value="{datasetId}/resources/{resourceId}", method=RequestMethod.GET)
+    public void getResource(@PathVariable String datasetId,
+                            @PathVariable String resourceId,
+                            final HttpServletResponse httpResponse) throws UnsupportedEncodingException {
+        try {
+            // Optional Accept header
+            RequestCallback requestCallback = request -> {
+                request.getHeaders().setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
+                request.getHeaders().set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
+            };
+
+            // Streams the response instead of loading it all in memory
+            ResponseExtractor<Void> responseExtractor = response -> {
+                String content = response.getHeaders().get("Content-Disposition").get(0);
+                httpResponse.setContentType("application/octet-stream");
+                httpResponse.setContentLengthLong(Long.parseLong(response.getHeaders().get("Content-Length").get(0)));
+                httpResponse.setHeader("Content-Disposition", content);
+                IOUtils.copy(response.getBody(), httpResponse.getOutputStream());
+                httpResponse.flushBuffer();
+                return null;
+            };
+
+            restTemplate.execute(properties.downloadResource(datasetId, resourceId), HttpMethod.GET, requestCallback, responseExtractor);
+        } catch (Exception e) {
+            log.error("Error transferring download: {}", e.getMessage());
+        }
     }
 
     private Dataset extractDataInfo(String json) {
@@ -241,6 +375,20 @@ public class DataController extends MainController {
             response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.PUT, request, String.class);
         }
         return response;
+    }
+
+    private int getResumableChunkNumber(HttpServletRequest request) {
+        return HttpUtils.toInt(request.getParameter("resumableChunkNumber"), -1);
+    }
+
+    private ResumableInfo getResumableInfo(HttpServletRequest request) {
+        ResumableInfo info = new ResumableInfo();
+        info.resumableChunkSize          = HttpUtils.toInt(request.getParameter("resumableChunkSize"), -1);
+        info.resumableTotalSize         = HttpUtils.toLong(request.getParameter("resumableTotalSize"), -1);
+        info.resumableIdentifier      = request.getParameter("resumableIdentifier");
+        info.resumableFilename        = request.getParameter("resumableFilename");
+        info.resumableRelativePath    = request.getParameter("resumableRelativePath");
+        return info;
     }
 
 }

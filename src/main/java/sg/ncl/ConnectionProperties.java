@@ -265,6 +265,10 @@ public class ConnectionProperties {
         return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId;
     }
 
+    public String downloadResource(String dataId, String resourceId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download";
+    }
+
     //-------------------------------------
     // TELEMETRY
     //-------------------------------------
@@ -325,5 +329,16 @@ public class ConnectionProperties {
 
     public String getPasswordResetURI() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" +credEndpoint + "/password";
+    }
+
+    //-------------------------------------
+    // DATA RESOURCE UPLOAD
+    //-------------------------------------
+    public String checkUploadChunk(String dataId, Integer chunkNumber, String identifier) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber + "/files/" + identifier;
+    }
+
+    public String sendUploadChunk(String dataId, Integer chunkNumber) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber;
     }
 }

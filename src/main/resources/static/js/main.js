@@ -178,11 +178,19 @@ $(document).ready(function() {
         var dataId = anchor.data('id');
         var downloadLabel = anchor.data('name');
         var resources = anchor.data('resources');
+        var upload = anchor.data('upload');
         var modal = $(this);
+        modal.find('#uploadButton').hide();
         modal.find('#downloadLabel').text("Resources of " + downloadLabel);
         modal.find('ul').empty();
         for (i = 0; i < resources.length; i++) {
             modal.find('ul').append("<li><a href='/data/" + dataId + "/resources/" + resources[i] + "'>" + resources[i] + "</a></li>");
+        }
+        if (typeof upload === "undefined" || !upload.trim()) {
+            //empty string
+        } else {
+            modal.find('#uploadButton').attr('href', upload);
+            modal.find('#uploadButton').show();
         }
     });
 

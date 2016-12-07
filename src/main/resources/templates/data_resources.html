@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>National Cybersecurity Laboratories - Resources</title>
+		<object th:include="fragments/header :: header" th:remove="tag" />
+	</head>
+	<body class="mybg loginbackground">
+		<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<div class="container ">
+
+			<p>&nbsp;</p>
+			<div class="row dashpanel">
+				<div th:if="${message}">
+					<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+				</div>
+				<h2 class="team-heading team-heading-current-team" th:text="${'Resources of ' + dataset.name}"></h2>
+				<table class="table table-responsive">
+					<tr>
+						<th width="20%">ID</th>
+						<th width="50%">URI</th>
+						<th width="30%">Action</th>
+					</tr>
+					<tr th:each="dataresource : ${dataset.dataResources}">
+						<td th:text="${dataresource.id}">ID</td>
+						<td th:text="${dataresource.uri}">URI</td>
+						<td>
+							<button type="button" class="btn btn-primary"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+						</td>
+					</tr>
+				</table>
+                <div class="row">
+                    <div class="col-md-4"><button type="button" class="btn btn-standard resumable-browse"><i class="fa fa-plus" aria-hidden="true"></i> Upload Resource</button></div>
+                    <div class="col-md-8">
+                        <div class="resumable-error">
+                            Your browser does not support Resumable.js. The library requires support for <a href="http://www.w3.org/TR/FileAPI/">the HTML5 File API</a> along with <a href="http://www.w3.org/TR/FileAPI/#normalization-of-params">file slicing</a>.
+                        </div>
+                        <div class="resumable-progress">
+                            <table>
+                                <tr>
+                                    <td width="100%"><div class="progress-container"><div class="progress-bar"></div></div></td>
+                                    <td class="progress-text" nowrap="nowrap"></td>
+                                    <td class="progress-pause" nowrap="nowrap">
+                                        <a href="#" onclick="r.upload(); return(false);" class="progress-resume-link"><img src="/images/resume.png" title="Resume upload" /></a>
+                                        <a href="#" onclick="r.pause(); return(false);" class="progress-pause-link"><img src="/images/pause.png" title="Pause upload" /></a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+			</div> <!-- row -->
+			<div class="cc-wraper">
+				<div class="cc-contactpop fixed">
+					<h1>Do you need Help? <span>Get in touch.</span></h1>
+					<div class="renseignement">
+						<i class="fa fa-times"></i>
+						<p>We will get back to you as soon as possible. </p>
+					</div>
+					<form>
+						<ul>
+							<li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+							<li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
+							<li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+						</ul>
+						<p>&nbsp;</p>
+					</form>
+				</div>
+			</div>
+		</div> <!-- container -->
+
+		<div th:replace="fragments/footer :: footer"></div>
+		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var upload_url = /*[[${'/data/' + dataset.id + '/resources/upload'}]]*/ '/data/0/resources/upload';
+            var redirect_url = /*[[${'/data/' + dataset.id + '/resources'}]]*/ '/data/0';
+            /*]]>*/
+            var r = new Resumable({
+                target: upload_url,
+                chunkSize: 50*1024*1024,
+                simultaneousUploads: 1,
+				maxFiles: 1,
+                throttleProgressCallbacks: 1,
+                method: "octet"
+            });
+            // Resumable.js isn't supported, fall back on a different method
+            if (!r.support) {
+                $('.resumable-browse').hide();
+                $('.resumable-error').show();
+            } else {
+                r.assignBrowse($('.resumable-browse'));
+
+                r.on('fileSuccess', function(file){
+                    console.debug('fileSuccess', file);
+                    location.reload();
+                });
+                r.on('fileProgress', function(file){
+                    console.debug('fileProgress', file);
+                });
+                r.on('fileAdded', function(file, event){
+                    console.debug('fileAdded', event);
+                    $('.resumable-browse').prop('disabled', true);
+                    $('.resumable-progress').show();
+                    $('.resumable-progress .progress-resume-link').show();
+                    $('.resumable-progress .progress-pause-link').hide();
+                    r.upload();
+                });
+                r.on('fileRetry', function(file){
+                    console.debug(file);
+                });
+                r.on('fileError', function(file, message){
+                    console.debug('fileError', file, message);
+                });
+                r.on('uploadStart', function(){
+                    console.debug('uploadStart');
+                    // Show pause, hide resume
+                    $('.resumable-progress .progress-resume-link').hide();
+                    $('.resumable-progress .progress-pause-link').show();
+                });
+                r.on('complete', function(){
+                    console.debug('complete');
+                    $('.resumable-progress .progress-resume-link, .resumable-progress .progress-pause-link').hide();
+                });
+                r.on('progress', function(){
+                    console.debug('progress');
+                    $('.progress-bar').css({width:Math.floor(r.progress()*100) + '%'});
+                });
+                r.on('error', function(message, file){
+                    console.debug('error', message, file);
+                    $('.progress-text').text(message);
+                    r.cancel();
+                });
+                r.on('pause', function(){
+                    console.debug('pause');
+                    // Show resume, hide pause
+                    $('.resumable-progress .progress-resume-link').show();
+                    $('.resumable-progress .progress-pause-link').hide();
+                });
+                r.on('cancel', function(){
+                    console.debug('cancel');
+                });
+            }
+        </script>
+	</body>
+</html>
