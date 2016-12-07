@@ -21,8 +21,9 @@
                 <th:block th:if="${singleNodeInfoMap.isEmpty()}">
                     <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="#{exp.nodeNotRunning}"></span></p>
                 </th:block>
-                <p>This is for saving a particular node operating system image. Please be advice that the process may take up to <strong>10 minutes</strong>.</p>
-                <p>Meanwhile, please do not stop your experiment. Once the image has been saved, the image name will be displayed on the <a th:href="@{/teams}" th:text="#{nav.teams}">Teams</a> page</p>
+                <p>This is for creation of new disk image. Once ready, you can use this disk image in your experiments.</p>
+                <p>Please be patient that the process may take up to <strong>10 minutes</strong>. <strong>DO NOT</strong> touch your experiment nodes in this process.</p>
+                <p>You can check the status of the new disk image on the <a th:href="@{/teams}" th:text="#{nav.teams}">Teams</a> page</p>
                 <form  method="post" action="#" th:action="@{/experiments/save_image/{saveImageTeamId}/{saveImageExpId}/{saveImageNodeId}(saveImageTeamId = ${pathTeamId}, saveImageExpId = ${pathExperimentId}, saveImageNodeId = ${pathNodeId})}" th:object="${saveImageForm}" role="form">
                     <fieldset>
                         <p class="account-change-fail" th:if="${#fields.hasErrors('imageName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{imageName}"></span></p>

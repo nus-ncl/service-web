@@ -1,6 +1,5 @@
 package sg.ncl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -1360,7 +1359,7 @@ public class MainController {
         try {
             imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
         } catch (ResourceAccessException e) {
-            log.warn("Error connecting to image service!");
+            log.warn("Error connecting to image service: {}", e);
             return new HashMap<>();
         }
 
@@ -2002,8 +2001,7 @@ public class MainController {
             RedirectAttributes redirectAttributes,
             @PathVariable String teamId,
             @PathVariable String expId,
-            @PathVariable String nodeId)
-            throws WebServiceRuntimeException, IOException {
+            @PathVariable String nodeId) throws IOException {
 
         if (saveImageForm.getImageName().length() < 2) {
             log.warn("Save image form has errors {}", saveImageForm);
