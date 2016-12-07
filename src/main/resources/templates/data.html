@@ -4,6 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>National Cybersecurity Laboratories - Data</title>
 		<object th:include="fragments/header :: header" th:remove="tag" />
+		<link rel="stylesheet" href="http://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
 	</head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
@@ -18,7 +19,7 @@
                     <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 				</div>
             	<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.header}"></h2>
-                <table class="table table-responsive">
+                <table id="myTable" class="table table-responsive">
                     <thead>
                         <th>
                         	<span th:text="#{data.header.name}">Name</span>
@@ -79,6 +80,9 @@
 	                   	</td>
                    </tr>
                 </table>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+
 				<p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
             </div> <!-- row -->
 			<div class="cc-wraper">
@@ -178,4 +182,23 @@
 		<div th:replace="fragments/footer :: footer"></div>
 		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
+	<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+	<script type="text/javascript" src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+	<script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+	<script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+	<script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+	<script type="text/javascript" src="static/js/smoothscroll.js" th:src="@{~/js/smoothscroll.js}"></script>
+	<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+	<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+	<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+	<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+	<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+	<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+	<script>
+		$(document).ready(function () {
+			//-----------------admin sort table -------------
+			$('#myTable').dataTable();
+		})
+	</script>
 </html>
