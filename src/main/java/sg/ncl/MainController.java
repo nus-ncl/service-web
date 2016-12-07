@@ -975,7 +975,7 @@ public class MainController {
             errorsFound = true;
         }
 
-        if (errorsFound == false && !editUser.isPasswordValid()) {
+        if (errorsFound == false && !editUser.getConfirmPassword().isEmpty() && !editUser.isPasswordValid()) {
             redirectAttributes.addFlashAttribute(editPhrase, "invalid");
             errorsFound = true;
         }
