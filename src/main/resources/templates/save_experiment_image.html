@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Save Experiment Image</title>
+        <object th:include="fragments/header :: header" th:remove="tag" />
+    </head>
+    <body class="mybg loginbackground">
+        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+        <div class="container">
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
+                <h2 class="team-heading team-heading-current-team" th:text="#{exp.saveImage}">Save Experiment Image</h2>
+                <p>&nbsp;</p>
+                <div th:if="${message}">
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+                </div>
+                <th:block th:if="${singleNodeInfoMap.isEmpty()}">
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="#{exp.nodeNotRunning}"></span></p>
+                </th:block>
+                <p>This is for creation of new disk image. Once ready, you can use this disk image in your experiments.</p>
+                <p>Please be patient that the process may take up to <strong>10 minutes</strong>. <strong>DO NOT</strong> touch your experiment nodes in this process.</p>
+                <p>You can check the status of the new disk image on the <a th:href="@{/teams}" th:text="#{nav.teams}">Teams</a> page</p>
+                <form  method="post" action="#" th:action="@{/experiments/save_image/{saveImageTeamId}/{saveImageExpId}/{saveImageNodeId}(saveImageTeamId = ${pathTeamId}, saveImageExpId = ${pathExperimentId}, saveImageNodeId = ${pathNodeId})}" th:object="${saveImageForm}" role="form">
+                    <fieldset>
+                        <p class="account-change-fail" th:if="${#fields.hasErrors('imageName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{imageName}"></span></p>
+                        <input type="hidden" id="teamId" th:field="*{teamId}"/>
+                        <input type="hidden" id="nodeId" th:field="*{nodeId}"/>
+                        <div class="form-group">
+                            <label for="teamName"><span th:text="#{team.table.header.team}">Team</span></label>
+                            <input type="text" class="form-control" id="teamName" th:value="${teamName}" readonly="readonly"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="experimentName"><span th:text="#{experiment.table.header.experiment}">Experiment</span></label>
+                            <input type="text" class="form-control" id="experimentName" th:value="${experimentName}" readonly="readonly"/>
+                        </div>
+                        <th:block th:each="singleNodeInfo: ${singleNodeInfoMap}">
+                            <div class="form-group">
+                                <label for="nodeName"><span th:text="#{experiment.table.header.nodes}">Node</span></label>
+                                <input type="text" class="form-control" id="nodeName" th:value="${singleNodeInfo.key}" readonly="readonly"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="nodeOS"><span th:text="#{experiment.table.header.os}">OS</span></label>
+                                <input type="text" class="form-control" id="nodeOS" th:field="*{currentOS}" readonly="readonly"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="nodeQualifiedName"><span th:text="#{experiment.table.header.qualifiedName}">Qualified Name</span></label>
+                                <input type="text" class="form-control" id="nodeQualifiedName" th:value="${singleNodeInfo.value.qualifiedName}" readonly="readonly"/>
+                            </div>
+                        </th:block>
+                        <div class="form-group">
+                            <label for="imageName"><span th:text="#{team.table.header.imageName}">Image Name</span></label>
+                            <input type="text" class="form-control" id="imageName" th:field="*{imageName}" th:maxlength="20"/>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-standard">Save</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div> <!-- row -->
+            <div class="cc-wraper">
+                <div class="cc-contactpop fixed">
+                    <h1>Do you need Help? <span>Get in touch.</span></h1>
+                    <div class="renseignement">
+                        <i class="fa fa-times"></i>
+                        <p>We will get back to you as soon as possible. </p>
+                    </div>
+                    <form>
+                        <ul>
+                            <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+                            <li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
+                            <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                        </ul>
+                        <p>&nbsp;</p>
+                    </form>
+                </div>
+            </div>
+        </div> <!-- container -->
+
+        <div th:replace="fragments/footer:: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+    </body>
+</html>

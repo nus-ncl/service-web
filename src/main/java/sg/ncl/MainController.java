@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -88,6 +89,9 @@ public class MainController {
 
     private static final String FORGET_PSWD_PAGE = "password_reset_email";
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
+
+    private static final String TEAM_NAME = "teamName";
+    private static final String NODE_ID = "nodeId";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -1287,7 +1291,9 @@ public class MainController {
 
         TeamManager2 teamManager2 = new TeamManager2();
 
-        List<Image> savedImageList = new ArrayList<>();
+        // stores the list of images created or in progress of creation by teams
+        // e.g. teamNameA : "created" : [imageA, imageB], "inProgress" : [imageC, imageD]
+        Map<String, Map<String, List<Image>>> imageMap = new HashMap<>();
 
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -1313,43 +1319,79 @@ public class MainController {
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
             }
 
-            HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
-            ResponseEntity imageResponse = restTemplate.exchange(properties.getAllImages(), HttpMethod.GET, imageRequest, String.class);
-            String imageResponseBody = imageResponse.getBody().toString();
-
-            JSONArray imageJsonArray = new JSONArray(imageResponseBody);
-            log.info("{}", imageJsonArray);
-            for (int k = 0; k < imageJsonArray.length(); k++) {
-                JSONObject imageJsonObject = imageJsonArray.getJSONObject(k);
-                if (imageJsonObject != null) {
-                    log.info("{}", imageJsonObject);
-                    Image image = new Image();
-                    image.setImageName(imageJsonObject.getString("imageName"));
-                    image.setDescription(imageJsonObject.getString("description"));
-                    image.setTeamId(imageJsonObject.getString("teamId"));
-                    savedImageList.add(image);
-                }
-            }
+            imageMap.put(team2.getName(), invokeAndGetImageList(teamId));
         }
 
-        // get public teams
-//        HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
-//        ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamsByVisibility(TeamVisibility.PUBLIC.toString()), HttpMethod.GET, teamRequest, String.class);
-//        String teamResponseBody = teamResponse.getBody().toString();
-//
-//        JSONArray teamPublicJsonArray = new JSONArray(teamResponseBody);
-//        for (int i = 0; i < teamPublicJsonArray.length(); i++) {
-//            JSONObject teamInfoObject = teamPublicJsonArray.getJSONObject(i);
-//            Team2 team2 = extractTeamInfo(teamInfoObject.toString());
-//            teamManager2.addTeamToPublicTeamMap(team2);
-//        }
+        // check if inner image map is empty, have to do it via this manner
+        // returns true if the team contains an image list
+        boolean isInnerImageMapPresent = imageMap.values().stream().filter(perTeamImageMap -> !perTeamImageMap.isEmpty()).findFirst().isPresent();
 
         model.addAttribute("userEmail", userEmail);
         model.addAttribute("teamMap2", teamManager2.getTeamMap());
-//        model.addAttribute("publicTeamMap2", teamManager2.getPublicTeamMap());
         model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
-        model.addAttribute("savedImageList", savedImageList);
+        model.addAttribute("isInnerImageMapPresent", isInnerImageMapPresent);
+        model.addAttribute("imageMap", imageMap);
         return "teams";
+    }
+
+    /**
+     * Exectues the service-image and returns a Map containing the list of images in two partitions.
+     * One partition contains the list of already created images.
+     * The other partition contains the list of currently saving in progress images.
+     * @param teamId The ncl team id to retrieve the list of images from.
+     * @return Returns a Map containing the list of images in two partitions.
+     */
+    private Map<String, List<Image>> invokeAndGetImageList(String teamId) {
+        log.info("Getting list of saved images for team {}", teamId);
+
+        Map<String, List<Image>> resultMap = new HashMap<>();
+        List<Image> createdImageList = new ArrayList<>();
+        List<Image> inProgressImageList = new ArrayList<>();
+
+        HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
+        ResponseEntity imageResponse;
+        try {
+            imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
+        } catch (ResourceAccessException e) {
+            log.warn("Error connecting to image service: {}", e);
+            return new HashMap<>();
+        }
+
+        String imageResponseBody = imageResponse.getBody().toString();
+
+        String osImageList = new JSONObject(imageResponseBody).getString(teamId);
+        JSONObject osImageObject = new JSONObject(osImageList);
+
+        log.debug("osImageList: {}", osImageList);
+        log.debug("osImageObject: {}", osImageObject);
+
+        if (osImageObject == JSONObject.NULL || osImageObject.length() == 0) {
+            log.info("List of saved images for team {} is empty.", teamId);
+            return resultMap;
+        }
+
+        for (int k = 0; k < osImageObject.names().length(); k++) {
+            String imageName = osImageObject.names().getString(k);
+            String imageStatus = osImageObject.getString(imageName);
+
+            log.info("Image list for team {}: image name {}, status {}", teamId, imageName, imageStatus);
+
+            Image image = new Image();
+            image.setImageName(imageName);
+            image.setDescription("-");
+            image.setTeamId(teamId);
+
+            if ("created".equals(imageStatus)) {
+                createdImageList.add(image);
+            } else if ("notfound".equals(imageStatus)) {
+                inProgressImageList.add(image);
+            }
+        }
+
+        resultMap.put("created", createdImageList);
+        resultMap.put("inProgress", inProgressImageList);
+
+        return resultMap;
     }
 
 //    @RequestMapping("/accept_participation/{teamId}")
@@ -1762,7 +1804,6 @@ public class MainController {
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
-
         return "experiments";
     }
 
@@ -1824,7 +1865,7 @@ public class MainController {
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
         experimentObject.put("teamId", experimentForm.getTeamId());
-        experimentObject.put("teamName", experimentForm.getTeamName());
+        experimentObject.put(TEAM_NAME, experimentForm.getTeamName());
         experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
         experimentObject.put("description", experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
@@ -1911,6 +1952,125 @@ public class MainController {
 
         return "redirect:/experiments";
     }
+
+    @RequestMapping(value = "/experiments/save_image/{teamId}/{expId}/{nodeId}", method = RequestMethod.GET)
+    public String saveExperimentImage(@PathVariable String teamId, @PathVariable String expId, @PathVariable String nodeId, Model model) {
+        Map<String, Map<String, String>> singleNodeInfoMap = new HashMap<>();
+        Image saveImageForm = new Image();
+
+        String teamName = invokeAndExtractTeamInfo(teamId).getName();
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        // experiment may have many nodes
+        // extract just the particular node details to display
+        for (Map.Entry<String, Map<String, String>> nodesInfo : realization.getNodesInfoMap().entrySet()) {
+            String nodeName = nodesInfo.getKey();
+            Map<String, String> singleNodeDetailsMap = nodesInfo.getValue();
+            if (singleNodeDetailsMap.get(NODE_ID).equals(nodeId)) {
+                singleNodeInfoMap.put(nodeName, singleNodeDetailsMap);
+                // store the current os of the node into the form also
+                // have to pass the the services
+                saveImageForm.setCurrentOS(singleNodeDetailsMap.get("os"));
+            }
+        }
+
+        saveImageForm.setTeamId(teamId);
+        saveImageForm.setNodeId(nodeId);
+
+        model.addAttribute("teamName", teamName);
+        model.addAttribute("singleNodeInfoMap", singleNodeInfoMap);
+        model.addAttribute("pathTeamId", teamId);
+        model.addAttribute("pathExperimentId", expId);
+        model.addAttribute("pathNodeId", nodeId);
+        model.addAttribute("experimentName", realization.getExperimentName());
+        model.addAttribute("saveImageForm", saveImageForm);
+        return "save_experiment_image";
+    }
+
+    // bindingResult is required in the method signature to perform the JSR303 validation for Image object
+    @RequestMapping(value = "/experiments/save_image/{teamId}/{expId}/{nodeId}", method = RequestMethod.POST)
+    public String saveExperimentImage(
+            @Valid @ModelAttribute("saveImageForm") Image saveImageForm,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            @PathVariable String teamId,
+            @PathVariable String expId,
+            @PathVariable String nodeId) throws IOException {
+
+        if (saveImageForm.getImageName().length() < 2) {
+            log.warn("Save image form has errors {}", saveImageForm);
+            redirectAttributes.addFlashAttribute("message", "Image name too short, minimum 2 characters");
+            return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/"  + nodeId;
+        }
+
+        log.info("Saving image: team {}, experiment {}, node {}", teamId, expId, nodeId);
+
+        ObjectMapper mapper = new ObjectMapper();
+        HttpEntity<String> request = createHttpEntityWithBody(mapper.writeValueAsString(saveImageForm));
+
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.saveImage(), HttpMethod.POST, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            log.warn("Save image: error with exception {}", exceptionState);
+
+            switch (exceptionState) {
+                case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    log.warn("Save image: error, operation failed on DeterLab");
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                    break;
+                case ADAPTER_CONNECTION_EXCEPTION:
+                    log.warn("Save image: error, cannot connect to adapter");
+                    redirectAttributes.addFlashAttribute("message", "connection to adapter failed");
+                    break;
+                case ADAPTER_INTERNAL_ERROR_EXCEPTION:
+                    log.warn("Save image: error, adapter internal server error");
+                    redirectAttributes.addFlashAttribute("message", "internal error was found on the adapter");
+                    break;
+                default:
+                    log.warn("Save image: other error");
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+            }
+
+            return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
+        }
+
+        // everything looks ok
+        log.info("Save image in progress: team {}, experiment {}, node {}, image {}", teamId, expId, nodeId, saveImageForm.getImageName());
+        return "redirect:/experiments";
+    }
+/*
+
+    private String processSaveImageRequest(@Valid @ModelAttribute("saveImageForm") Image saveImageForm, RedirectAttributes redirectAttributes, @PathVariable String teamId, @PathVariable String expId, @PathVariable String nodeId, ResponseEntity response, String responseBody) throws IOException {
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            log.warn("Save image exception: {}", exceptionState);
+
+            switch (exceptionState) {
+                case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    log.warn("adapter deterlab operation failed exception");
+                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                    break;
+                default:
+                    log.warn("Image service or adapter fail");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                    break;
+            }
+            return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
+        } else {
+            // everything ok
+            log.info("Image service in progress for Team: {}, Exp: {}, Node: {}, Image: {}", teamId, expId, nodeId, saveImageForm.getImageName());
+            return "redirect:/experiments";
+        }
+    }
+*/
 
 //    @RequestMapping("/experiments/configuration/{expId}")
 //    public String viewExperimentConfiguration(@PathVariable Integer expId, Model model) {
@@ -2810,7 +2970,7 @@ public class MainController {
         experiment2.setId(object.getLong("id"));
         experiment2.setUserId(object.getString("userId"));
         experiment2.setTeamId(object.getString("teamId"));
-        experiment2.setTeamName(object.getString("teamName"));
+        experiment2.setTeamName(object.getString(TEAM_NAME));
         experiment2.setName(object.getString("name"));
         experiment2.setDescription(object.getString("description"));
         experiment2.setNsFile(object.getString("nsFile"));
@@ -2885,7 +3045,7 @@ public class MainController {
                 JSONObject nodeDetailsJson = new JSONObject(nodesInfoObject.get(nodeName).toString());
                 nodeDetails.put("os", nodeDetailsJson.getString("os"));
                 nodeDetails.put("qualifiedName", nodeDetailsJson.getString("qualifiedName"));
-                nodeDetails.put("nodeId", nodeDetailsJson.getString("nodeId"));
+                nodeDetails.put(NODE_ID, nodeDetailsJson.getString(NODE_ID));
                 realization.addNodeDetails(nodeName, nodeDetails);
             }
             log.info("nodes info object: {}", nodesInfoObject);

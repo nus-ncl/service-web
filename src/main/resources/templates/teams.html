@@ -102,21 +102,31 @@
                 <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
                     <h2 class="team-heading team-heading-current-team" th:text="#{team.savedOSImages}">text heading from .properties</h2>
                     <div class="panel-body">
-                        <div th:if="${#lists.isEmpty(savedImageList)}">
+                        <div th:if="${isInnerImageMapPresent} == false">
                             <p th:text="#{team.noSavedOSImages}">text heading from .properties</p>
                         </div>
-                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(savedImageList)}">
+                        <table class="table table-responsive" th:if="${isInnerImageMapPresent} == true">
                             <thead>
                                 <th th:text="#{team.table.header.imageName}">Image Name</th>
-                                <th th:text="#{team.table.header.description}">Description</th>
                                 <th th:text="#{team.table.header.team}">Team</th>
+                                <th th:text="#{team.table.header.imageStatus}">Status</th>
                             </thead>
-                            <tr th:each="image : ${savedImageList}">
-                                <td th:text="${image.imageName}">Name</td>
-                                <td th:text="${image.description}">Description</td>
-                                <td th:text="${teamMap2.get(image.teamId)} ? ${teamMap2.get(image.teamId).name} : '-'">
-                                </td>
-                            </tr>
+                            <th:block th:each="perTeamImageMap : ${imageMap}">
+                                <tr th:each="imageList : ${perTeamImageMap.value.get('created')}">
+                                    <th:block th:each="image : ${imageList}">
+                                        <td th:text="${image.imageName}"></td>
+                                        <td th:text="${perTeamImageMap.key}"></td>
+                                        <td th:text="#{team.table.header.imageCreated}"></td>
+                                    </th:block>
+                                </tr>
+                                <tr th:each="imageList : ${perTeamImageMap.value.get('inProgress')}">
+                                    <th:block th:each="image : ${imageList}">
+                                        <td th:text="${image.imageName}"></td>
+                                        <td th:text="${perTeamImageMap.key}"></td>
+                                        <td th:text="#{team.table.header.imageInProgress}"></td>
+                                    </th:block>
+                                </tr>
+                            </th:block>
                         </table>
                     </div> <!-- panel body -->
                 </div> <!-- panel -->

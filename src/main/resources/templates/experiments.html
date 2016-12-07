@@ -94,13 +94,15 @@
                                                                     <th th:text="#{experiment.table.header.nodes}">Node</th>
                                                                     <th th:text="#{experiment.table.header.os}">OS</th>
                                                                     <th th:text="#{experiment.table.header.qualifiedName}">Qualified Name</th>
+                                                                    <th>Actions</th>
                                                                 </thead>
                                                                 <th:block th:each="nodesDetailsMap: ${realization.nodesInfoMap}">
                                                                     <tr>
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
-
                                                                         <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
+                                                                        <!--<td th:text="${nodesDetailsMap.value.nodeId}"></td>-->
+                                                                        <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${realization.experimentId}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
                                                                     </tr>
                                                                 </th:block>
                                                             </table>
@@ -177,16 +179,16 @@
         </div> <!-- container -->
 
         <!-- topo thumbnail modal -->
-        <div class="modal fade" id="topoModal" tabindex="-1" role="dialog" aria-labelledby="topoModalLabel">
+        <div class="modal fade exp-modal" id="topoModal" tabindex="-1" role="dialog" aria-labelledby="topoModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header team-owner-info-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="topoModalLabel"></h4>
                     </div>
                     <div class="modal-body">
                         <span id="loading">Loading...</span>
-                        <img id="topoThumb" src=""/>
+                        <img id="topoThumb" class="center-block" src=""/>
                     </div>
                 </div>
             </div>
