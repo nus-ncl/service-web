@@ -123,6 +123,10 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/";
     }
 
+    public String getSioUsersStatusUrl(final String id, final String status) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/status/" + status;
+    }
+
     public String getSioTeamsUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
     }

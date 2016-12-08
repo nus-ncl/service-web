@@ -23,6 +23,7 @@ public enum ExceptionState {
     FORBIDDEN_EXCEPTION("ForbiddenException"),
     INVALID_CREDENTIALS_EXCEPTION("InvalidCredentialsException"),
     INVALID_PASSWORD_EXCEPTION("InvalidPasswordException"),
+    INVALID_STATUS_TRANSITION_EXCEPTION("InvalidStatusTransitionException"),
     INVALID_TEAM_NAME_EXCEPTION("InvalidTeamNameException"),
     INVALID_TEAM_STATUS_EXCEPTION("InvalidTeamStatusException"),
     INVALID_USER_STATUS_EXCEPTION("InvalidUserStatusException"),
