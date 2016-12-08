@@ -1212,7 +1212,7 @@ public class MainController {
         }
         // everything looks OK?
         log.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
-        redirectAttributes.addFlashAttribute("messageSuccess", "Join request has been APPROVED.");
+        redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Join request has been APPROVED.");
         return "redirect:/approve_new_user";
     }
 
