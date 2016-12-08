@@ -1,6 +1,5 @@
 package sg.ncl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -71,6 +70,9 @@ public class MainController {
     private static final String CONTACT_EMAIL = "support@ncl.sg";
 
     private static final String UNKNOWN = "?";
+    private static final String MESSAGE = "message";
+    private static final String MESSAGE_SUCCESS = "messageSuccess";
+    private static final String ERROR_PREFIX = "Error: ";
 
     // error messages
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
@@ -89,6 +91,7 @@ public class MainController {
 
     private static final String FORGET_PSWD_PAGE = "password_reset_email";
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
+    private static final String NO_PERMISSION_PAGE = "nopermission";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -463,7 +466,7 @@ public class MainController {
             boolean emailVerified = user.getEmailVerified();
 
             if (UserStatus.FROZEN.toString().equals(userStatus)) {
-                log.warn("User {} has been frozen", id);
+                log.warn("User {} login failed: account has been frozen", id);
                 loginForm.setErrorMsg("Login Failed: Account Frozen. Please contact " + CONTACT_EMAIL);
                 return "login";
             } else if (!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
@@ -2169,7 +2172,7 @@ public class MainController {
     public String admin(Model model, HttpSession session) {
 
         if (!validateIfAdmin(session)) {
-            return "nopermission";
+            return NO_PERMISSION_PAGE;
         }
 
         TeamManager2 teamManager2 = new TeamManager2();
@@ -2253,7 +2256,7 @@ public class MainController {
     ) throws WebServiceRuntimeException {
 
         if (!validateIfAdmin(session)) {
-            return "nopermission";
+            return NO_PERMISSION_PAGE;
         }
 
         //FIXME require approver info
@@ -2325,7 +2328,7 @@ public class MainController {
     ) throws WebServiceRuntimeException {
 
         if (!validateIfAdmin(session)) {
-            return "nopermission";
+            return NO_PERMISSION_PAGE;
         }
 
         //FIXME require approver info
@@ -2390,67 +2393,120 @@ public class MainController {
     }
 
     @RequestMapping("/admin/users/{userId}")
-    public String freezeUnfreezeUsers(@PathVariable String userId, @RequestParam(value = "action", required = true) String action, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
+    public String freezeUnfreezeUsers(
+            @PathVariable final String userId,
+            @RequestParam(value = "action", required = true) final String action,
+            final RedirectAttributes redirectAttributes,
+            HttpSession session) throws IOException
+    {
         User2 user = invokeAndExtractUserInfo(userId);
 
         // check if admin
         if (!validateIfAdmin(session)) {
-            log.warn("Access denied: user {} try to modify user status", userId);
-            return "nopermission";
+            log.warn("Access denied when trying to freeze/unfreeze user {}: must be admin!", userId);
+            return NO_PERMISSION_PAGE;
         }
 
         // check if user status is approved before freeze
-        if (!user.getStatus().equals(UserStatus.APPROVED.toString()) && "freeze".equals(action)) {
-            log.warn("Failed to freeze user: {} as user is not approved yet.", userId);
-            redirectAttributes.addFlashAttribute("message", "Error: failed to " + action + " " + userId + " ; User not yet approved.");
-            return "redirect:/admin";
-        }
-
-        // check if user status is frozen before unfreeze
-        if (!user.getStatus().equals(UserStatus.FROZEN.toString()) && "unfreeze".equals(action)) {
-            log.warn("Failed to unfreeze user: {} as user is not frozen yet.", userId);
-            redirectAttributes.addFlashAttribute("message", "Error: failed to " + action + " " + userId + " ; User not yet frozen.");
-            return "redirect:/admin";
-        }
-
         if ("freeze".equals(action)) {
-            user.setStatus(UserStatus.FROZEN.toString());
-        } else if ("unfreeze".equals(action)) {
-            user.setStatus(UserStatus.APPROVED.toString());
-        } else {
-            log.warn("Trying to perform illegal action: {} on user: {} while freeze/unfreeze", action, userId);
-            throw new WebServiceRuntimeException("Trying to perform illegal action while freeze/unfreeze users");
+            return freezeUser(user, redirectAttributes);
         }
+        // check if user status is frozen before unfreeze
+        else if("unfreeze".equals(action)) {
+            return unfreezeUser(user, redirectAttributes);
+        }
+        else {
+            log.warn("Error in freeze/unfreeze user {}: invalid action {}", userId, action);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "action " + action + " was not recognized.");
+            return "redirect:/admin";
+        }
+    }
 
-        JSONObject userObject = new JSONObject();
-        userObject.put("status", user.getStatus());
+    private String freezeUser(final User2 user, RedirectAttributes redirectAttributes) throws IOException {
+        log.info("Freezing user {}, email {}", user.getId(), user.getEmail());
 
-        HttpEntity<String> request = createHttpEntityWithBody(userObject.toString());
-        ResponseEntity response = restTemplate.exchange(properties.getSioUsersUrl() + userId, HttpMethod.PUT, request, String.class);
-
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(
+                properties.getSioUsersStatusUrl(user.getId(), UserStatus.FROZEN.toString()),
+                HttpMethod.PUT, request, String.class);
         String responseBody = response.getBody().toString();
 
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    default:
-                        log.warn("User service fail to change user: {} status", userId);
-                        // possible sio or adapter connection fail
-                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
-                        break;
-                }
-                return "redirect:/admin";
-            } else {
-                // good
-                log.info("User: {} status changed: {}", userId, user.getStatus());
-                redirectAttributes.addFlashAttribute("messageSuccess", "User: " + user.getEmail() + " status changed: " + user.getStatus());
-                return "redirect:/admin";
+            switch (exceptionState) {
+                case USER_NOT_FOUND_EXCEPTION:
+                    log.warn("Failed to freeze user {}: user not found", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " not found.");
+                    break;
+                case INVALID_STATUS_TRANSITION_EXCEPTION:
+                    log.warn("Failed to freeze user {}: invalid status transition {}", user.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not allowed.");
+                    break;
+                case INVALID_USER_STATUS_EXCEPTION:
+                    log.warn("Failed to freeze user {}: invalid user status {}", user.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not a valid status.");
+                    break;
+                case FORBIDDEN_EXCEPTION:
+                    log.warn("Failed to freeze user {}: must be an Admin", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " permission denied.");
+                    break;
+                default:
+                    log.warn("Failed to freeze user {}: {}", user.getId(), exceptionState.getExceptionName());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
             }
-        } catch (IOException e) {
-            throw new WebServiceRuntimeException(e.getMessage());
+            return "redirect:/admin";
+        } else {
+            // good
+            log.info("User {} has been frozen", user.getId());
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + user.getEmail() + " has been banned.");
+            return "redirect:/admin";
+        }
+    }
+
+    private String unfreezeUser(final User2 user, RedirectAttributes redirectAttributes) throws IOException {
+        log.info("Unfreezing user {}, email {}", user.getId(), user.getEmail());
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(
+                properties.getSioUsersStatusUrl(user.getId(), UserStatus.APPROVED.toString()),
+                HttpMethod.PUT, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            switch (exceptionState) {
+                case USER_NOT_FOUND_EXCEPTION:
+                    log.warn("Failed to unfreeze user {}: user not found", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " not found.");
+                    break;
+                case INVALID_STATUS_TRANSITION_EXCEPTION:
+                    log.warn("Failed to unfreeze user {}: invalid status transition {}", user.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not allowed.");
+                    break;
+                case INVALID_USER_STATUS_EXCEPTION:
+                    log.warn("Failed to unfreeze user {}: invalid user status {}", user.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not a valid status.");
+                    break;
+                case FORBIDDEN_EXCEPTION:
+                    log.warn("Failed to unfreeze user {}: must be an Admin", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " permission denied.");
+                    break;
+                default:
+                    log.warn("Failed to unfreeze user {}: {}", user.getId(), exceptionState.getExceptionName());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+            return "redirect:/admin";
+        } else {
+            // good
+            log.info("User {} has been unfrozen", user.getId());
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + user.getEmail() + " has been unbanned.");
+            return "redirect:/admin";
         }
     }
 
@@ -3054,7 +3110,7 @@ public class MainController {
     }
 
     private boolean validateIfAdmin(HttpSession session) {
-        log.info("User: {} is logged on as: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionRoles()));
+        //log.info("User: {} is logged on as: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionRoles()));
         return session.getAttribute(webProperties.getSessionRoles()).equals(UserType.ADMIN.toString());
     }
 
