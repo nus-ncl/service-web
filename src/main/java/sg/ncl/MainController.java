@@ -72,6 +72,7 @@ public class MainController {
     private static final String UNKNOWN = "?";
     private static final String MESSAGE = "message";
     private static final String MESSAGE_SUCCESS = "messageSuccess";
+    private static final String EXPERIMENT_MESSAGE = "exp_message";
     private static final String ERROR_PREFIX = "Error: ";
 
     // error messages
@@ -2059,12 +2060,12 @@ public class MainController {
                 log.warn("start experiment some other error occurred exception: {}", exceptionState);
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
-//                model.addAttribute("exp_message", "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
+//                model.addAttribute(EXPERIMENT_MESSAGE, "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
                 return "experiments";
             } else {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute("exp_message", "Experiment " + realization.getExperimentName() + " in team " + teamName + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please refresh this page later.");
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + realization.getExperimentName() + " in team " + teamName + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please refresh this page later.");
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
@@ -2140,7 +2141,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute("exp_message", "Experiment " + realization.getExperimentName() + " in team " + teamName + " is stopping. Please refresh this page in a few minutes.");
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + realization.getExperimentName() + " in team " + teamName + " is stopping. Please refresh this page in a few minutes.");
             }
             return "redirect:/experiments";
         } catch (IOException e) {
