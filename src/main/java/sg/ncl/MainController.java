@@ -70,7 +70,7 @@ public class MainController {
     private static final String CONTACT_EMAIL = "support@ncl.sg";
 
     private static final String UNKNOWN = "?";
-    private static final String MESSAGE = "messageX";
+    private static final String MESSAGE = "message";
     private static final String MESSAGE_SUCCESS = "messageSuccess";
     private static final String ERROR_PREFIX = "Error: ";
 
