@@ -51,7 +51,7 @@ import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPT
  * Spring Controller
  * Direct the views to appropriate locations and invoke the respective REST API
  *
- * @author Cassie, Desmond, Te Ye
+ * @author Cassie, Desmond, Te Ye, Vu
  */
 @Controller
 @Slf4j
@@ -1651,13 +1651,21 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
-                    case APPLY_NEW_PROJECT_EXCEPTION:
-                        log.info("Apply new team fail at adapter deterlab");
+                    case ADAPTER_CONNECTION_EXCEPTION:
+                        log.info("DeterLab connection error");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
-                    case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
-                        log.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
-                        redirectAttributes.addFlashAttribute(MESSAGE, "Team name already exists.");
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                        log.info("Apply new team fail at adapter Deterlab");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+                   // case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
+                    //    log.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
+                     //   redirectAttributes.addFlashAttribute(MESSAGE, "Team name already exists.");
+                     //   break;
+                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
+                        log.info("Apply new team fail:  Adapter connection error ");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
                     default:
                         log.info("Apply new team fail: registration service or adapter fail");
