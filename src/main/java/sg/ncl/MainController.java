@@ -2408,26 +2408,16 @@ public class MainController {
         }
 
         // check if user status is approved before freeze
-        if ("freeze".equals(action)) {
-            if(user.getStatus().equals(UserStatus.APPROVED.toString())) {
-                return freezeUser(user, redirectAttributes);
-            }
-            log.warn("Failed to freeze user {}: invalid user status {}", user.getId(), user.getStatus());
-            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX  + "cannot freeze user " + user.getEmail() + " with status " + user.getStatus());
-            return "redirect:/admin";
+        if ("freeze".equals(action) && user.getStatus().equals(UserStatus.APPROVED.toString())) {
+            return freezeUser(user, redirectAttributes);
         }
         // check if user status is frozen before unfreeze
-        else if("unfreeze".equals(action)) {
-            if(user.getStatus().equals(UserStatus.FROZEN.toString())) {
-                return unfreezeUser(user, redirectAttributes);
-            }
-            log.warn("Failed to unfreeze user {}: invalid user status {}", user.getId(), user.getStatus());
-            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX  + "cannot unfreeze user " + user.getEmail() + " with status " + user.getStatus());
-            return "redirect:/admin";
+        else if("unfreeze".equals(action) && user.getStatus().equals(UserStatus.FROZEN.toString())) {
+            return unfreezeUser(user, redirectAttributes);
         }
         else {
-            log.warn("Error in freeze/unfreeze user {}: invalid action {}", userId, action);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "invalid action " + action);
+            log.warn("Error in freeze/unfreeze user {}: failed to {} user with status {}", userId, action, user.getStatus());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "failed to " + action + " user " + user.getEmail() + " with status " + user.getStatus());
             return "redirect:/admin";
         }
     }
