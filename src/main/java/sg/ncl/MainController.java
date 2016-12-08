@@ -2409,15 +2409,25 @@ public class MainController {
 
         // check if user status is approved before freeze
         if ("freeze".equals(action)) {
-            return freezeUser(user, redirectAttributes);
+            if(user.getStatus().equals(UserStatus.APPROVED.toString())) {
+                return freezeUser(user, redirectAttributes);
+            }
+            log.warn("Failed to freeze user {}: invalid user status {}", user.getId(), user.getStatus());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX  + "cannot freeze user " + user.getEmail() + " with status " + user.getStatus());
+            return "redirect:/admin";
         }
         // check if user status is frozen before unfreeze
         else if("unfreeze".equals(action)) {
-            return unfreezeUser(user, redirectAttributes);
+            if(user.getStatus().equals(UserStatus.FROZEN.toString())) {
+                return unfreezeUser(user, redirectAttributes);
+            }
+            log.warn("Failed to unfreeze user {}: invalid user status {}", user.getId(), user.getStatus());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX  + "cannot unfreeze user " + user.getEmail() + " with status " + user.getStatus());
+            return "redirect:/admin";
         }
         else {
             log.warn("Error in freeze/unfreeze user {}: invalid action {}", userId, action);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "action " + action + " was not recognized.");
+            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "invalid action " + action);
             return "redirect:/admin";
         }
     }
