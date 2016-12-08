@@ -28,7 +28,9 @@
 						<td th:text="${dataresource.id}">ID</td>
 						<td th:text="${dataresource.uri}">URI</td>
 						<td>
-							<button type="button" class="btn btn-primary"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+							<a th:href="@{/data/{did}/resources/{rid}/delete(did=${dataset.id},rid=${dataresource.id})}">
+								<button type="button" class="btn btn-primary"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+                            </a>
 						</td>
 					</tr>
 				</table>

@@ -322,6 +322,31 @@ public class DataController extends MainController {
         }
     }
 
+    @RequestMapping(value = "{datasetId}/resources/{resourceId}/delete", method = RequestMethod.GET)
+    public String removeResource(@PathVariable String datasetId, @PathVariable String resourceId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getResource(datasetId, resourceId), HttpMethod.DELETE, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                if (exceptionState == FORBIDDEN_EXCEPTION) {
+                    log.error("Removing of data resource forbidden.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            log.error("removeResource: {}", e.toString());
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "redirect:/data/" + datasetId + "/resources";
+    }
+
     private Dataset extractDataInfo(String json) {
         log.debug(json);
 
