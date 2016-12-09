@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static sg.ncl.domain.ExceptionState.FORBIDDEN_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.*;
 
 /**
  * Created by dcsjnh on 11/17/2016.
@@ -174,6 +174,8 @@ public class DataController extends MainController {
                 if (exceptionState == FORBIDDEN_EXCEPTION) {
                     log.error("Removing of dataset forbidden.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else {
+                    log.warn("Unknown error.");
                 }
             }
         } catch (IOException e) {
@@ -337,6 +339,17 @@ public class DataController extends MainController {
                 if (exceptionState == FORBIDDEN_EXCEPTION) {
                     log.error("Removing of data resource forbidden.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_NOT_FOUND_EXCEPTION) {
+                    log.error("Dataset not found for removing resource.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_RESOURCE_NOT_FOUND_EXCEPTION) {
+                    log.error("Data resource not found for removing.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_RESOURCE_DELETE_EXCEPTION) {
+                    log.error("Error when removing data resource file.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else {
+                    log.warn("Unknown error.");
                 }
             }
         } catch (IOException e) {
