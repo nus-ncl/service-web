@@ -146,7 +146,7 @@ public class DataController extends MainController {
                         model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>saving dataset forbidden</li></ul>");
                         break;
                     default:
-                        log.warn("Unknown error.");
+                        log.warn("Unknown error for validating data contribution.");
                 }
 
                 return CONTRIBUTE_DATA_PAGE;
@@ -175,7 +175,7 @@ public class DataController extends MainController {
                     log.error("Removing of dataset forbidden.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
                 } else {
-                    log.warn("Unknown error.");
+                    log.warn("Unknown error for removing dataset.");
                 }
             }
         } catch (IOException e) {
@@ -349,11 +349,11 @@ public class DataController extends MainController {
                     log.error("Error when removing data resource file.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
                 } else {
-                    log.warn("Unknown error.");
+                    log.warn("Unknown error for removing data resource.");
                 }
             }
         } catch (IOException e) {
-            log.error("removeResource: {}", e.toString());
+            log.error("removeResource: {}", e.getMessage());
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
