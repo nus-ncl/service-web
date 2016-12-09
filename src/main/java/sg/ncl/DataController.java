@@ -156,6 +156,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
+        log.info("Dataset saved.");
         return REDIRECT_DATA;
     }
 
@@ -172,7 +173,7 @@ public class DataController extends MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 if (exceptionState == FORBIDDEN_EXCEPTION) {
-                    log.error("Removing of dataset forbidden.");
+                    log.warn("Removing of dataset forbidden.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
                 } else {
                     log.warn("Unknown error for removing dataset.");
@@ -183,6 +184,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
+        log.info("Dataset removed: /remove/{}", id);
         return REDIRECT_DATA;
     }
 
@@ -337,16 +339,16 @@ public class DataController extends MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 if (exceptionState == FORBIDDEN_EXCEPTION) {
-                    log.error("Removing of data resource forbidden.");
+                    log.warn("Removing of data resource forbidden.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
                 } else if (exceptionState == DATA_NOT_FOUND_EXCEPTION) {
-                    log.error("Dataset not found for removing resource.");
+                    log.warn("Dataset not found for removing resource.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
                 } else if (exceptionState == DATA_RESOURCE_NOT_FOUND_EXCEPTION) {
-                    log.error("Data resource not found for removing.");
+                    log.warn("Data resource not found for removing.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
                 } else if (exceptionState == DATA_RESOURCE_DELETE_EXCEPTION) {
-                    log.error("Error when removing data resource file.");
+                    log.warn("Error when removing data resource file.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
                 } else {
                     log.warn("Unknown error for removing data resource.");
@@ -357,6 +359,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
+        log.info("Data resource removed: {}/resources/{}/delete", datasetId, resourceId);
         return "redirect:/data/" + datasetId + "/resources";
     }
 
