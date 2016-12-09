@@ -1651,24 +1651,24 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
+
                     case ADAPTER_CONNECTION_EXCEPTION:
-                        log.info("DeterLab connection error");
+                        log.info("Apply team request : DeterLab connection error");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
+
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
-                        log.info("Apply new team fail at adapter Deterlab");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        log.info("Apply team request : operation failed at adapter Deterlab");
+                        redirectAttributes.addFlashAttribute(MESSAGE, (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
                         break;
-                   // case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
-                    //    log.info("Apply new team fail: team name already exists", teamPageApplyTeamForm.getTeamName());
-                     //   redirectAttributes.addFlashAttribute(MESSAGE, "Team name already exists.");
-                     //   break;
+
                     case ADAPTER_INTERNAL_ERROR_EXCEPTION:
-                        log.info("Apply new team fail:  Adapter connection error ");
+                        log.info("Apply team request :  Adapter connection error ");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
+
                     default:
-                        log.info("Apply new team fail: registration service or adapter fail");
+                        log.info("Apply team request : registration service or adapter fail");
                         // possible sio or adapter connection fail
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                         break;
@@ -1739,18 +1739,28 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (exceptionState == ExceptionState.TEAM_NOT_FOUND_EXCEPTION) {
-                    log.warn("join team request : team name error");
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Team name does not exists.");
-                }
-                else if(exceptionState == ExceptionState.DETERLAB_OPERATION_FAILED_EXCEPTION) {
-                    log.warn("join team request: operation failed on DeterLab");
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Error: " + (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
-                }
-                else {
-                    log.warn("join team request : some other failure");
-                    // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                switch (exceptionState) {
+
+                    case ADAPTER_CONNECTION_EXCEPTION:
+                        log.info("Join team request : DeterLab connection error");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                        log.warn("Join team request: operation failed on DeterLab");
+                        redirectAttributes.addFlashAttribute(MESSAGE, (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
+                        break;
+
+                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
+                        log.info("Apply team request :  Adapter connection error ");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    default:
+                        log.warn("Join team request : some other failure");
+                        // possible sio or adapter connection fail
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                        break;
                 }
                 return "redirect:/teams/join_team";
             }
@@ -1758,7 +1768,7 @@ public class MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        log.info("Completed invoking the join team request service for Team: {}", teamPageJoinForm.getTeamName());
+        log.info("Completed invoking the join team request service for team: {}", teamPageJoinForm.getTeamName());
         return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
     }
 
