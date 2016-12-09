@@ -33,6 +33,7 @@ public enum ExceptionState {
     PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION("PasswordResetRequestNotFoundException"),
     PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION("PasswordResetRequestTimeoutException"),
     TEAM_ID_NULL_OR_EMPTY_EXCEPTION("TeamIdNullOrEmptyException"),
+    TEAM_NAME_NULL_OR_EMPTY_EXCEPTION("TeamNameNullOrEmptyException"),
     TEAM_NAME_ALREADY_EXISTS_EXCEPTION("TeamNameAlreadyExistsException"),
     TEAM_NOT_FOUND_EXCEPTION("TeamNotFoundException"),
     USERNAME_ALREADY_EXISTS_EXCEPTION("UsernameAlreadyExistsException"),

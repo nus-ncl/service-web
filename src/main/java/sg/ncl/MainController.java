@@ -1652,6 +1652,21 @@ public class MainController {
 
                 switch (exceptionState) {
 
+                    case TEAM_NAME_NULL_OR_EMPTY_EXCEPTION:
+                        log.info("Apply team request : Team name is empty or null");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    case USER_ID_NULL_OR_EMPTY_EXCEPTION:
+                        log.info("Apply team request : User id is empty or null");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    case USER_NOT_FOUND_EXCEPTION:
+                        log.info("Apply team request : User not found");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
                     case ADAPTER_CONNECTION_EXCEPTION:
                         log.info("Apply team request : DeterLab connection error");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
@@ -1741,19 +1756,34 @@ public class MainController {
 
                 switch (exceptionState) {
 
+                    case TEAM_NAME_NULL_OR_EMPTY_EXCEPTION:
+                        log.info("Join team request : Team name is empty or null");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    case USER_ID_NULL_OR_EMPTY_EXCEPTION:
+                        log.info("Join team request : User id is empty or null");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        log.info("Join team request : team not found");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
                     case ADAPTER_CONNECTION_EXCEPTION:
-                        log.info("Join team request : DeterLab connection error");
+                        log.info("Join team request : Adapter connection error");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
+                        log.info("Apply team request :  Adapter internal error ");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Join team request: operation failed on DeterLab");
                         redirectAttributes.addFlashAttribute(MESSAGE, (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
-                        break;
-
-                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
-                        log.info("Apply team request :  Adapter connection error ");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
                     default:
