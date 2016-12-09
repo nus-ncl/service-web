@@ -1640,10 +1640,14 @@ public class MainController {
         teamFields.put("organisationType", teamPageApplyTeamForm.getTeamOrganizationType());
         teamFields.put("visibility", teamPageApplyTeamForm.getIsPublic());
 
+        String nclUserId = session.getAttribute("id").toString();
+
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
-        ResponseEntity response = restTemplate.exchange(properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()), HttpMethod.POST, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getRegisterRequestToApplyTeam(nclUserId), HttpMethod.POST, request, String.class);
 
         String responseBody = response.getBody().toString();
+
+
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
@@ -1663,7 +1667,7 @@ public class MainController {
                         break;
 
                     case USER_NOT_FOUND_EXCEPTION:
-                        log.info("Apply team request : User not found");
+                        log.info("Apply team request : User not found: {}", nclUserId);
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
@@ -1736,10 +1740,12 @@ public class MainController {
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
         JSONObject userFields = new JSONObject();
+
         mainObject.put("team", teamFields);
         mainObject.put("user", userFields);
 
         userFields.put("id", session.getAttribute("id")); // ncl-id
+
         teamFields.put("name", teamPageJoinForm.getTeamName());
 
         log.info("Calling the registration service to do join team request");
@@ -1767,7 +1773,7 @@ public class MainController {
                         break;
 
                     case TEAM_NOT_FOUND_EXCEPTION:
-                        log.info("Join team request : team not found");
+                        log.info("Join team request : Team not found");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
@@ -1782,12 +1788,12 @@ public class MainController {
                         break;
 
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
-                        log.warn("Join team request: operation failed on DeterLab");
+                        log.warn("Join team request: Operation failed on DeterLab");
                         redirectAttributes.addFlashAttribute(MESSAGE, (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
                         break;
 
                     default:
-                        log.warn("Join team request : some other failure");
+                        log.warn("Join team request : Some other failure");
                         // possible sio or adapter connection fail
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                         break;
