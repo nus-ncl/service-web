@@ -3410,26 +3410,24 @@ public class MainController {
     }
 
     private String checkUserException(ExceptionState exceptionState, MyErrorResource error) {
-        if (exceptionState == USER_ID_NULL_OR_EMPTY_EXCEPTION || exceptionState == USER_NOT_FOUND_EXCEPTION) {
-            return error.getMessage();
-        }
+
+        if (exceptionState == USER_ID_NULL_OR_EMPTY_EXCEPTION || exceptionState == USER_NOT_FOUND_EXCEPTION) return error.getMessage();
         else return null;
 
     }
 
     private String checkTeamException(ExceptionState exceptionState, MyErrorResource error) {
-        if (exceptionState == TEAM_NAME_NULL_OR_EMPTY_EXCEPTION || exceptionState == TEAM_NAME_NULL_OR_EMPTY_EXCEPTION || exceptionState == TEAM_NOT_FOUND_EXCEPTION) {
-            return error.getMessage();
-        }
+
+        if (exceptionState == TEAM_NAME_NULL_OR_EMPTY_EXCEPTION || exceptionState == TEAM_NAME_ALREADY_EXISTS_EXCEPTION || exceptionState == TEAM_NOT_FOUND_EXCEPTION) return error.getMessage();
         else return null;
+
     }
 
     private String checkDeterlabException(ExceptionState exceptionState, MyErrorResource error) {
-        if (exceptionState == ADAPTER_CONNECTION_EXCEPTION || exceptionState == DETERLAB_OPERATION_FAILED_EXCEPTION || exceptionState == ADAPTER_INTERNAL_ERROR_EXCEPTION) {
-            return error.getMessage();
 
-        }
+        if (exceptionState == ADAPTER_CONNECTION_EXCEPTION || exceptionState == DETERLAB_OPERATION_FAILED_EXCEPTION || exceptionState == ADAPTER_INTERNAL_ERROR_EXCEPTION) return error.getMessage();
         else return null;
+
     }
 
 }
