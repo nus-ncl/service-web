@@ -1783,7 +1783,8 @@ public class MainController {
                         break;
 
                     case TEAM_NOT_FOUND_EXCEPTION:
-                        log.info("Join team request : Team name is not found");
+                        String team = teamPageJoinForm.getTeamName();
+                        log.info("Join team request : Team name is not found: {}", team);
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
