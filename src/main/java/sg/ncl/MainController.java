@@ -1682,7 +1682,7 @@ public class MainController {
 
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.info("Apply team request : Operation failed at adapter Deterlab");
-                        redirectAttributes.addFlashAttribute(MESSAGE, (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage());
                         break;
 
                     case ADAPTER_INTERNAL_ERROR_EXCEPTION:
@@ -1795,7 +1795,7 @@ public class MainController {
 
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Join team request: Operation failed on DeterLab");
-                        redirectAttributes.addFlashAttribute(MESSAGE, (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage());
                         break;
 
                     case ADAPTER_INTERNAL_ERROR_EXCEPTION:
