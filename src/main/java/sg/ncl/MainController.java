@@ -42,9 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static sg.ncl.domain.ExceptionState.ADAPTER_CONNECTION_EXCEPTION;
-import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION;
-import static sg.ncl.domain.ExceptionState.PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION;
+import static sg.ncl.domain.ExceptionState.*;
 
 /**
  * 
@@ -209,7 +207,7 @@ public class MainController {
         return "error_openstack";
     }
 
-//    @RequestMapping("/resource2")
+    //    @RequestMapping("/resource2")
 //    public String resource2() {
 //        return "resource2";
 //    }
@@ -505,10 +503,9 @@ public class MainController {
     @PostMapping("/password_reset_request")
     public String sendPasswordResetRequest(
             @ModelAttribute("passwordResetRequestForm") PasswordResetRequestForm passwordResetRequestForm
-    ) throws WebServiceRuntimeException
-    {
+    ) throws WebServiceRuntimeException {
         String email = passwordResetRequestForm.getEmail();
-        if(!VALID_EMAIL_ADDRESS_REGEX.matcher(email).matches()) {
+        if (!VALID_EMAIL_ADDRESS_REGEX.matcher(email).matches()) {
             passwordResetRequestForm.setErrMsg("Please provide a valid email address");
             return FORGET_PSWD_PAGE;
         }
@@ -552,9 +549,8 @@ public class MainController {
 
     // actual call to sio to reset password
     @RequestMapping(path = "/password_reset")
-    public String resetPassword(@ModelAttribute("passwordResetForm") PasswordResetForm passwordResetForm) throws IOException
-    {
-        if(!passwordResetForm.isPasswordOk()) {
+    public String resetPassword(@ModelAttribute("passwordResetForm") PasswordResetForm passwordResetForm) throws IOException {
+        if (!passwordResetForm.isPasswordOk()) {
             return FORGET_PSWD_NEW_PSWD_PAGE;
         }
 
@@ -606,7 +602,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 log.error("No user exists : {}", session.getAttribute(webProperties.getSessionUserId()));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                model.addAttribute(DETER_UID,  CONNECTION_ERROR);
+                model.addAttribute(DETER_UID, CONNECTION_ERROR);
             } else {
                 log.info("Show the deter user id: {}", responseBody);
                 model.addAttribute(DETER_UID, responseBody);
@@ -743,12 +739,12 @@ public class MainController {
                     registerUserToDeter(mainObject);
                 } catch (
                         TeamNotFoundException |
-                        TeamNameAlreadyExistsException |
-                        UsernameAlreadyExistsException |
-                        EmailAlreadyExistsException |
-                        InvalidTeamNameException |
-                        InvalidPasswordException |
-                        DeterLabOperationFailedException e) {
+                                TeamNameAlreadyExistsException |
+                                UsernameAlreadyExistsException |
+                                EmailAlreadyExistsException |
+                                InvalidTeamNameException |
+                                InvalidPasswordException |
+                                DeterLabOperationFailedException e) {
                     redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                     redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
@@ -784,13 +780,13 @@ public class MainController {
                 registerUserToDeter(mainObject);
             } catch (
                     TeamNotFoundException |
-                    AdapterConnectionException |
-                    TeamNameAlreadyExistsException |
-                    UsernameAlreadyExistsException |
-                    EmailAlreadyExistsException |
-                    InvalidTeamNameException |
-                    InvalidPasswordException |
-                    DeterLabOperationFailedException e) {
+                            AdapterConnectionException |
+                            TeamNameAlreadyExistsException |
+                            UsernameAlreadyExistsException |
+                            EmailAlreadyExistsException |
+                            InvalidTeamNameException |
+                            InvalidPasswordException |
+                            DeterLabOperationFailedException e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
@@ -850,7 +846,7 @@ public class MainController {
                 switch (exceptionState) {
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Register new user failed on DeterLab: {}", error.getMessage());
-                        throw new DeterLabOperationFailedException(errorPrefix + (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
+                        throw new DeterLabOperationFailedException(errorPrefix + (error.getMessage().contains("unknown error") ? ERR_SERVER_OVERLOAD : error.getMessage()));
                     case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Register new users new team request : team name already exists");
                         throw new TeamNameAlreadyExistsException("Team name already exists");
@@ -1348,6 +1344,7 @@ public class MainController {
      * Exectues the service-image and returns a Map containing the list of images in two partitions.
      * One partition contains the list of already created images.
      * The other partition contains the list of currently saving in progress images.
+     *
      * @param teamId The ncl team id to retrieve the list of images from.
      * @return Returns a Map containing the list of images in two partitions.
      */
@@ -1431,7 +1428,7 @@ public class MainController {
 //        return "redirect:/teams";
 //    }
 
-//    @RequestMapping("/withdraw/{teamId}")
+    //    @RequestMapping("/withdraw/{teamId}")
     public String withdrawnJoinRequest(@PathVariable Integer teamId, HttpSession session) {
         // get user team request
         // remove this user id from the user's request list
@@ -1653,49 +1650,15 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-
-                    case USER_ID_NULL_OR_EMPTY_EXCEPTION:
-                        log.info("Apply team request : User id is empty or null");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case USER_NOT_FOUND_EXCEPTION:
-                        log.info("Apply team request : User id is not found: {}", nclUserId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case TEAM_NAME_NULL_OR_EMPTY_EXCEPTION:
-                        log.info("Apply team request : Team name is empty or null");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
-                        log.info("Apply team request : Team name already exists");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case ADAPTER_CONNECTION_EXCEPTION:
-                        log.info("Apply team request : DeterLab connection error");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
-                        log.info("Apply team request : Operation failed at adapter Deterlab");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage());
-                        break;
-
-                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
-                        log.info("Apply team request :  Adapter internal error ");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    default:
-                        log.info("Apply team request : Other failure");
-                        // possible sio or adapter connection fail
-                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                        break;
+                if (checkUserException(exceptionState, error) != null || checkTeamException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null) {
+                    log.info("Apply team request : " + error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                } else {
+                    log.info("Apply team request : Other failure");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                 }
+
                 return "redirect:/teams/apply_team";
 
             } else {
@@ -1703,6 +1666,7 @@ public class MainController {
                 log.info("Completed invoking the apply team request service for Team: {}", teamPageApplyTeamForm.getTeamName());
                 return "redirect:/teams/team_application_submitted";
             }
+
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
@@ -1764,50 +1728,14 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-
-                    case USER_ID_NULL_OR_EMPTY_EXCEPTION:
-                        log.info("Join team request : User id is empty or null");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case USER_NOT_FOUND_EXCEPTION:
-                        String nclUserId = session.getAttribute("id").toString();
-                        log.info("Join team request : User id is not found: {}", nclUserId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case TEAM_NAME_NULL_OR_EMPTY_EXCEPTION:
-                        log.info("Join team request : Team name is empty or null");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case TEAM_NOT_FOUND_EXCEPTION:
-                        String team = teamPageJoinForm.getTeamName();
-                        log.info("Join team request : Team name is not found: {}", team);
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case ADAPTER_CONNECTION_EXCEPTION:
-                        log.info("Join team request : Adapter connection error");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
-                        log.warn("Join team request: Operation failed on DeterLab");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage());
-                        break;
-
-                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
-                        log.info("Apply team request :  Adapter internal error ");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
-                    default:
-                        log.warn("Join team request : Other failure");
-                        // possible sio or adapter connection fail
-                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                        break;
+                if(checkUserException(exceptionState, error) != null || checkTeamException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null){
+                    log.info("Join team request : " + error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                }
+                else {
+                    log.info("Join team request : Other failure");
+                    // possible sio or adapter connection fail
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                 }
                 return "redirect:/teams/join_team";
             }
@@ -1822,7 +1750,7 @@ public class MainController {
     //--------------------------Experiment Page--------------------------
 
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
-    public String experiments(Model model, HttpSession session)throws WebServiceRuntimeException {
+    public String experiments(Model model, HttpSession session) throws WebServiceRuntimeException {
 //        long start = System.currentTimeMillis();
         List<Experiment2> experimentList = new ArrayList<>();
         Map<Long, Realization> realizationMap = new HashMap<>();
@@ -2075,7 +2003,7 @@ public class MainController {
         if (saveImageForm.getImageName().length() < 2) {
             log.warn("Save image form has errors {}", saveImageForm);
             redirectAttributes.addFlashAttribute("message", "Image name too short, minimum 2 characters");
-            return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/"  + nodeId;
+            return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
         }
 
         log.info("Saving image: team {}, experiment {}, node {}", teamId, expId, nodeId);
@@ -2617,8 +2545,7 @@ public class MainController {
             @PathVariable final String userId,
             @RequestParam(value = "action", required = true) final String action,
             final RedirectAttributes redirectAttributes,
-            HttpSession session) throws IOException
-    {
+            HttpSession session) throws IOException {
         User2 user = invokeAndExtractUserInfo(userId);
 
         // check if admin
@@ -2632,10 +2559,9 @@ public class MainController {
             return freezeUser(user, redirectAttributes);
         }
         // check if user status is frozen before unfreeze
-        else if("unfreeze".equals(action) && user.getStatus().equals(UserStatus.FROZEN.toString())) {
+        else if ("unfreeze".equals(action) && user.getStatus().equals(UserStatus.FROZEN.toString())) {
             return unfreezeUser(user, redirectAttributes);
-        }
-        else {
+        } else {
             log.warn("Error in freeze/unfreeze user {}: failed to {} user with status {}", userId, action, user.getStatus());
             redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "failed to " + action + " user " + user.getEmail() + " with status " + user.getStatus());
             return "redirect:/admin";
@@ -2865,6 +2791,7 @@ public class MainController {
     /**
      * A page to show new users has successfully registered to apply to join an existing team
      * The page contains the team owner information which the users requested to join
+     *
      * @param model The model which is passed from signup
      * @return A success page otherwise an error page if the user tries to access this page directly
      */
@@ -2890,7 +2817,9 @@ public class MainController {
 
     // model attribute name come from /login
     @RequestMapping("/email_checklist")
-    public String emailChecklist(@ModelAttribute("statuschecklist") String status) {return "email_checklist";}
+    public String emailChecklist(@ModelAttribute("statuschecklist") String status) {
+        return "email_checklist";
+    }
 
     @RequestMapping("/join_application_awaiting_approval")
     public String joinTeamAppAwaitingApproval(Model model) {
@@ -3258,6 +3187,7 @@ public class MainController {
     /**
      * Creates a HttpEntity with a request body and header but no authorization header
      * To solve the expired jwt token
+     *
      * @param jsonString The JSON request converted to string
      * @return A HttpEntity request
      * @see HttpEntity createHttpEntityHeaderOnly() for request with only header
@@ -3271,6 +3201,7 @@ public class MainController {
     /**
      * Creates a HttpEntity that contains only a header and empty body but no authorization header
      * To solve the expired jwt token
+     *
      * @return A HttpEntity request
      * @see HttpEntity createHttpEntityWithBody() for request with both body and header
      */
@@ -3337,6 +3268,7 @@ public class MainController {
     /**
      * Ensure that only users of the team can realize or un-realize experiment
      * A pre-condition is that the users must be approved.
+     *
      * @return the main experiment page
      */
     private boolean checkPermissionRealizeExperiment(Realization realization, HttpSession session) {
@@ -3371,6 +3303,7 @@ public class MainController {
 
     /**
      * Computes the number of teams that the user is in and the number of running experiments to populate data for the user dashboard
+     *
      * @return a map in the form teams: numberOfTeams, experiments: numberOfExperiments
      */
     private Map<String, Integer> getUserDashboardStats(String userId) {
@@ -3475,4 +3408,28 @@ public class MainController {
         }
         return response.getBody().toString();
     }
+
+    private String checkUserException(ExceptionState exceptionState, MyErrorResource error) {
+        if (exceptionState == USER_ID_NULL_OR_EMPTY_EXCEPTION || exceptionState == USER_NOT_FOUND_EXCEPTION) {
+            return error.getMessage();
+        }
+        else return null;
+
+    }
+
+    private String checkTeamException(ExceptionState exceptionState, MyErrorResource error) {
+        if (exceptionState == TEAM_NAME_NULL_OR_EMPTY_EXCEPTION || exceptionState == TEAM_NAME_NULL_OR_EMPTY_EXCEPTION || exceptionState == TEAM_NOT_FOUND_EXCEPTION) {
+            return error.getMessage();
+        }
+        else return null;
+    }
+
+    private String checkDeterlabException(ExceptionState exceptionState, MyErrorResource error) {
+        if (exceptionState == ADAPTER_CONNECTION_EXCEPTION || exceptionState == DETERLAB_OPERATION_FAILED_EXCEPTION || exceptionState == ADAPTER_INTERNAL_ERROR_EXCEPTION) {
+            return error.getMessage();
+
+        }
+        else return null;
+    }
+
 }
