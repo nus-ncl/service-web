@@ -1656,10 +1656,6 @@ public class MainController {
 
                 switch (exceptionState) {
 
-                    case TEAM_NAME_NULL_OR_EMPTY_EXCEPTION:
-                        log.info("Apply team request : Team name is empty or null");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
 
                     case USER_ID_NULL_OR_EMPTY_EXCEPTION:
                         log.info("Apply team request : User id is empty or null");
@@ -1668,6 +1664,16 @@ public class MainController {
 
                     case USER_NOT_FOUND_EXCEPTION:
                         log.info("Apply team request : User not found: {}", nclUserId);
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    case TEAM_NAME_NULL_OR_EMPTY_EXCEPTION:
+                        log.info("Apply team request : Team name is empty or null");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
+                        log.info("Apply team request : Team name already exists");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
@@ -1762,18 +1768,24 @@ public class MainController {
 
                 switch (exceptionState) {
 
-                    case TEAM_NAME_NULL_OR_EMPTY_EXCEPTION:
-                        log.info("Join team request : Team name is empty or null");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
                     case USER_ID_NULL_OR_EMPTY_EXCEPTION:
                         log.info("Join team request : User id is empty or null");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
+                    case USER_NOT_FOUND_EXCEPTION:
+                        String nclUserId = session.getAttribute("id").toString();
+                        log.info("Join team request : User not found: {}", nclUserId);
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
+                    case TEAM_NAME_NULL_OR_EMPTY_EXCEPTION:
+                        log.info("Join team request : Team name is empty or null");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
                     case TEAM_NOT_FOUND_EXCEPTION:
-                        log.info("Join team request : Team not found");
+                        log.info("Join team request : Team name is not found");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
