@@ -1648,7 +1648,6 @@ public class MainController {
         String responseBody = response.getBody().toString();
 
 
-
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
@@ -1656,14 +1655,13 @@ public class MainController {
 
                 switch (exceptionState) {
 
-
                     case USER_ID_NULL_OR_EMPTY_EXCEPTION:
                         log.info("Apply team request : User id is empty or null");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
                     case USER_NOT_FOUND_EXCEPTION:
-                        log.info("Apply team request : User not found: {}", nclUserId);
+                        log.info("Apply team request : User id is not found: {}", nclUserId);
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
@@ -1683,17 +1681,17 @@ public class MainController {
                         break;
 
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
-                        log.info("Apply team request : operation failed at adapter Deterlab");
+                        log.info("Apply team request : Operation failed at adapter Deterlab");
                         redirectAttributes.addFlashAttribute(MESSAGE, (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
                         break;
 
                     case ADAPTER_INTERNAL_ERROR_EXCEPTION:
-                        log.info("Apply team request :  Adapter connection error ");
+                        log.info("Apply team request :  Adapter internal error ");
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
                     default:
-                        log.info("Apply team request : registration service or adapter fail");
+                        log.info("Apply team request : Other failure");
                         // possible sio or adapter connection fail
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                         break;
@@ -1775,7 +1773,7 @@ public class MainController {
 
                     case USER_NOT_FOUND_EXCEPTION:
                         String nclUserId = session.getAttribute("id").toString();
-                        log.info("Join team request : User not found: {}", nclUserId);
+                        log.info("Join team request : User id is not found: {}", nclUserId);
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
@@ -1794,18 +1792,18 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
 
-                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
-                        log.info("Apply team request :  Adapter internal error ");
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        break;
-
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Join team request: Operation failed on DeterLab");
                         redirectAttributes.addFlashAttribute(MESSAGE, (error.getMessage().contains("unknown error")? ERR_SERVER_OVERLOAD : error.getMessage()));
                         break;
 
+                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
+                        log.info("Apply team request :  Adapter internal error ");
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+
                     default:
-                        log.warn("Join team request : Some other failure");
+                        log.warn("Join team request : Other failure");
                         // possible sio or adapter connection fail
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                         break;
