@@ -138,7 +138,7 @@ public class DataController extends MainController {
 
                 switch (exceptionState) {
                     case DATA_NAME_ALREADY_EXISTS_EXCEPTION:
-                        log.warn("Dataset name already exists.");
+                        log.warn("Dataset name already exists: {}", dataset.getName());
                         model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>dataset name already exists</li></ul>");
                         break;
                     case FORBIDDEN_EXCEPTION:
@@ -156,7 +156,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        log.info("Dataset saved.");
+        log.info("Dataset saved: {}", dataResponseBody);
         return REDIRECT_DATA;
     }
 
@@ -284,6 +284,8 @@ public class DataController extends MainController {
 
             if (RestUtil.isError(responseEntity.getStatusCode())) {
                 throw new Exception();
+            } else if (body.equals("All finished.")) {
+                log.info("Data resource uploaded.");
             }
             return ResponseEntity.ok(body);
         } catch (Exception e) {
