@@ -1650,7 +1650,7 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (checkUserException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null) {
+                if (true) {
                     log.info("Apply team request : " + error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                 } else if (exceptionState == TEAM_NAME_ALREADY_EXISTS_EXCEPTION ) {
