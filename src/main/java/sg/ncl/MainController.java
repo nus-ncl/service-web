@@ -1650,7 +1650,13 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (checkUserException(exceptionState, error) != null || checkTeamException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null) {
+                if (checkUserException(exceptionState, error) != null) {
+                    log.info("Apply team request : " + error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                } else if (checkTeamException(exceptionState, error) != null ) {
+                    log.info("Apply team request : " + error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                } else if (checkDeterlabException(exceptionState, error) != null) {
                     log.info("Apply team request : " + error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                 } else {
@@ -1728,11 +1734,16 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if(checkUserException(exceptionState, error) != null || checkTeamException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null){
+                if(checkUserException(exceptionState, error) != null) {
                     log.info("Join team request : " + error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                }
-                else {
+                } else if (checkTeamException(exceptionState, error) != null) {
+                    log.info("Join team request : " + error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                } else if (checkDeterlabException(exceptionState, error) != null) {
+                    log.info("Join team request : " + error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                } else {
                     log.info("Join team request : Other failure");
                     // possible sio or adapter connection fail
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
