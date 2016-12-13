@@ -1619,16 +1619,15 @@ public class MainController {
             HttpSession session,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
-        final String log_prefix = "Existing user apply for new team: {}";
+        final String logPrefix = "Existing user apply for new team: {}";
 
         if (bindingResult.hasErrors()) {
-            log.warn(log_prefix, "error in application form " + teamPageApplyTeamForm.toString());
-            // return "redirect:/teams/apply_team";
+            log.warn(logPrefix, "Application form error " + teamPageApplyTeamForm.toString());
             return "team_page_apply_team";
         }
         // log data to ensure data has been parsed
-        log.info(log_prefix, properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
-        log.info(log_prefix, "Team application form: " + teamPageApplyTeamForm.toString());
+        log.debug(logPrefix, properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
+        log.info(logPrefix, teamPageApplyTeamForm.toString());
 
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
@@ -1649,49 +1648,32 @@ public class MainController {
             String responseBody = response.getBody().toString();
 
             if (RestUtil.isError(response.getStatusCode())) {
+                // prepare the exception mapping
+                EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
+                exceptionMessageMap.put(INVALID_TEAM_NAME_EXCEPTION, "Team name contains invalid characters");
+                exceptionMessageMap.put(TEAM_NAME_ALREADY_EXISTS_EXCEPTION, "Team name already exists");
+                exceptionMessageMap.put(USER_NOT_FOUND_EXCEPTION, "User not found");
+                exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Connection to adapter failed");
+                exceptionMessageMap.put(ADAPTER_INTERNAL_ERROR_EXCEPTION, "Internal server error on adapter");
+                exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
+
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    case INVALID_TEAM_NAME_EXCEPTION:
-                        log.warn(log_prefix, "error, team name contains invalid characters");
-                        redirectAttributes.addFlashAttribute("message", error.getMessage());
-                        break;
-                    case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
-                        log.warn(log_prefix, "error, team name " + teamPageApplyTeamForm.getTeamName() + " already exists");
-                        redirectAttributes.addFlashAttribute("message", error.getMessage());
-                        break;
-                    case USER_NOT_FOUND_EXCEPTION:
-                        log.warn(log_prefix, "error, user " + nclUserId + " not found in sio database");
-                        redirectAttributes.addFlashAttribute("message", "You don't seem to be a registered user. Please create an account first!");
-                        break;
-                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
-                        log.warn(log_prefix, "operation failed on DeterLab " + error.getMessage());
-                        redirectAttributes.addFlashAttribute("message", error.getMessage());
-                        break;
-                    case ADAPTER_CONNECTION_EXCEPTION:
-                        log.warn(log_prefix, "error, cannot connect to adapter");
-                        redirectAttributes.addFlashAttribute("message", "connection to adapter failed");
-                        break;
-                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
-                        log.warn(log_prefix, "error, adapter internal server error");
-                        redirectAttributes.addFlashAttribute("message", "internal error was found on the adapter");
-                        break;
-                    default:
-                        log.warn(log_prefix, "error, " + error.getMessage());
-                        redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
-                }
+                final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
 
+                log.warn(logPrefix, responseBody);
+                redirectAttributes.addFlashAttribute("message", errorMessage);
                 return "redirect:/teams/apply_team";
 
             } else {
                 // no errors, everything ok
-                log.info (log_prefix, "application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
+                log.info (logPrefix, "Application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
                 return "redirect:/teams/team_application_submitted";
             }
 
         } catch (ResourceAccessException | IOException e) {
-            log.error(log_prefix, e);
+            log.error(logPrefix, e);
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
