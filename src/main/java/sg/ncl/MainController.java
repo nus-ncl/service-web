@@ -2550,7 +2550,7 @@ public class MainController {
     @RequestMapping("/admin/teams/{teamId}")
     public String restrictFreeTeams(
             @PathVariable final String teamId,
-            @RequestParam(value = "action", required=true) final TeamStatus status,
+            @RequestParam(value = "action", required=true) final String status,
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException
     {
@@ -2560,9 +2560,17 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
+        TeamStatus newStatus;
+
+        if (status.equals("restrict")) {
+            newStatus = TeamStatus.RESTRICTED;
+        } else {
+            newStatus = TeamStatus.APPROVED;
+        }
+
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(
-                properties.getSioTeamsStatusUrl(teamId, TeamStatus.RESTRICTED),
+                properties.getSioTeamsStatusUrl(teamId, newStatus),
                 HttpMethod.PUT, request, String.class);
         String responseBody = response.getBody().toString();
 
@@ -2572,7 +2580,7 @@ public class MainController {
         } else {
             // good
             log.info("Team {} has been restricted", teamId);
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + teamId + " has been restricted.");
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + teamId + " has been ." + status);
             return "redirect:/admin";
         }
         return "redirect:/admin";
