@@ -1654,9 +1654,10 @@ public class MainController {
                 exceptionMessageMap.put(TEAM_NAME_NULL_OR_EMPTY_EXCEPTION, "Team name is null or empty ");
                 exceptionMessageMap.put(USER_NOT_FOUND_EXCEPTION, "User not found");
                 exceptionMessageMap.put(TEAM_NAME_ALREADY_EXISTS_EXCEPTION, "Team name already exists");
+
                 exceptionMessageMap.put(INVALID_TEAM_NAME_EXCEPTION, "Team name contains invalid characters");
                 exceptionMessageMap.put(TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION, "Team member already exists");
-                exceptionMessageMap.put(TEAM_NOT_FOUND_EXCEPTION, "Team name not found");
+
                 exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Connection to adapter failed");
                 exceptionMessageMap.put(ADAPTER_INTERNAL_ERROR_EXCEPTION, "Internal server error on adapter");
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
@@ -1745,7 +1746,10 @@ public class MainController {
                 exceptionMessageMap.put(USER_ID_NULL_OR_EMPTY_EXCEPTION, "User id is null or empty");
                 exceptionMessageMap.put(TEAM_NOT_FOUND_EXCEPTION, "Team name not found");
                 exceptionMessageMap.put(TEAM_NAME_NULL_OR_EMPTY_EXCEPTION, "Team name is null or empty");
+
+                exceptionMessageMap.put(USER_ALREADY_IN_TEAM_EXCEPTION, "User already in team");
                 exceptionMessageMap.put(TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION, "Team member already exists");
+
                 exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Connection to adapter failed");
                 exceptionMessageMap.put(ADAPTER_INTERNAL_ERROR_EXCEPTION, "Internal server error on adapter");
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
@@ -1761,7 +1765,7 @@ public class MainController {
 
             } else {
                 log.info(logPrefix, "Joining for team " + teamPageJoinForm.getTeamName()+ " submitted");
-                return "redirect:/teams/join_application_submitted/" ;
+                return "redirect:/teams/join_application_submitted" ;
             }
 
         } catch (ResourceAccessException | IOException e) {
