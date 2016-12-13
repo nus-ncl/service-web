@@ -136,23 +136,7 @@ public class DataController extends MainController {
                 MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    case DATA_NAME_ALREADY_EXISTS_EXCEPTION:
-                        log.warn("Dataset name already exists: {}", dataset.getName());
-                        model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>dataset name already exists</li></ul>");
-                        break;
-                    case DATA_NOT_FOUND_EXCEPTION:
-                        log.warn("Dataset not found for updating.");
-                        model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>dataset not found for editing</li></ul>");
-                        break;
-                    case FORBIDDEN_EXCEPTION:
-                        log.warn("Saving of dataset forbidden.");
-                        model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>saving dataset forbidden</li></ul>");
-                        break;
-                    default:
-                        log.warn("Unknown error for validating data contribution.");
-                }
-
+                checkExceptionState(dataset, model, exceptionState);
                 return CONTRIBUTE_DATA_PAGE;
             }
         } catch (IOException e) {
@@ -162,6 +146,26 @@ public class DataController extends MainController {
 
         log.info("Dataset saved: {}", dataResponseBody);
         return REDIRECT_DATA;
+    }
+
+    private void checkExceptionState(@Valid @ModelAttribute("dataset") Dataset dataset, Model model, ExceptionState exceptionState) {
+        switch (exceptionState) {
+            case DATA_NAME_ALREADY_EXISTS_EXCEPTION:
+                log.warn("Dataset name already exists: {}", dataset.getName());
+                model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>dataset name already exists</li></ul>");
+                break;
+            case DATA_NOT_FOUND_EXCEPTION:
+                log.warn("Dataset not found for updating.");
+                model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>dataset not found for editing</li></ul>");
+                break;
+            case FORBIDDEN_EXCEPTION:
+                log.warn("Saving of dataset forbidden.");
+                model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>saving dataset forbidden</li></ul>");
+                break;
+            default:
+                log.warn("Unknown error for validating data contribution.");
+                model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>unknown error for validating data contribution</li></ul>");
+        }
     }
 
     @RequestMapping("/remove/{id}")
@@ -291,7 +295,23 @@ public class DataController extends MainController {
             String body = responseEntity.getBody().toString();
 
             if (RestUtil.isError(responseEntity.getStatusCode())) {
-                throw new Exception();
+                MyErrorResource error = objectMapper.readValue(body, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case DATA_NOT_FOUND_EXCEPTION:
+                        log.warn("Dataset not found for uploading resource.");
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dataset not found for uploading resource.");
+                    case DATA_RESOURCE_ALREADY_EXISTS_EXCEPTION:
+                        log.warn("Data resource already exist.");
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body("Data resource already exist");
+                    case FORBIDDEN_EXCEPTION:
+                        log.warn("Uploading of dataset resource forbidden.");
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Uploading of dataset resource forbidden.");
+                    default:
+                        log.warn("Unknown exception while uploading resource.");
+                        throw new Exception();
+                }
             } else if (body.equals("All finished.")) {
                 log.info("Data resource uploaded.");
             }
@@ -367,7 +387,7 @@ public class DataController extends MainController {
                 log.info("Data resource removed: {}", dataResponseBody);
             }
         } catch (IOException e) {
-            log.error("removeResource: {}", e.getMessage());
+            log.error("removeResource: {}", e);
             throw new WebServiceRuntimeException(e.getMessage());
         }
 

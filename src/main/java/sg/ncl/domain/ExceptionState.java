@@ -16,6 +16,7 @@ public enum ExceptionState {
     CREDENTIALS_UPDATE_EXCEPTION("CredentialsUpdateException"),
     DATA_NAME_ALREADY_EXISTS_EXCEPTION("DataNameAlreadyExistsException"),
     DATA_NOT_FOUND_EXCEPTION("DataNotFoundException"),
+    DATA_RESOURCE_ALREADY_EXISTS_EXCEPTION("DataResourceAlreadyExistsException"),
     DATA_RESOURCE_NOT_FOUND_EXCEPTION("DataResourceNotFoundException"),
     DATA_RESOURCE_DELETE_EXCEPTION("DataResourceDeleteException"),
     DETERLAB_OPERATION_FAILED_EXCEPTION("DeterLabOperationFailedException"),
