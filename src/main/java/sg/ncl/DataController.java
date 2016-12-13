@@ -304,7 +304,7 @@ public class DataController extends MainController {
             }
             return ResponseEntity.ok(body);
         } catch (Exception e) {
-            log.error("Error sending upload chunk: {}", e.getMessage());
+            log.error("Error sending upload chunk: {}", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending upload chunk");
         }
     }
@@ -320,6 +320,9 @@ public class DataController extends MainController {
             case FORBIDDEN_EXCEPTION:
                 log.warn("Uploading of dataset resource forbidden.");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Uploading of dataset resource forbidden.");
+            case UPLOAD_ALREADY_EXISTS_EXCEPTION:
+                log.warn("Upload of data resource already exist.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Upload of data resource already exist.");
             default:
                 log.warn("Unknown exception while uploading resource.");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unknown exception while uploading resource.");

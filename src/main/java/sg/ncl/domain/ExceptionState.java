@@ -38,6 +38,7 @@ public enum ExceptionState {
     TEAM_ID_NULL_OR_EMPTY_EXCEPTION("TeamIdNullOrEmptyException"),
     TEAM_NAME_ALREADY_EXISTS_EXCEPTION("TeamNameAlreadyExistsException"),
     TEAM_NOT_FOUND_EXCEPTION("TeamNotFoundException"),
+    UPLOAD_ALREADY_EXISTS_EXCEPTION("UploadAlreadyExistsException"),
     USERNAME_ALREADY_EXISTS_EXCEPTION("UsernameAlreadyExistsException"),
     USER_ID_NULL_OR_EMPTY_EXCEPTION("UserIdNullOrEmptyException"),
     USER_NOT_FOUND_EXCEPTION("UserNotFoundException");

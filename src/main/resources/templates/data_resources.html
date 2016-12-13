@@ -88,7 +88,8 @@
                 simultaneousUploads: 1,
 				maxFiles: 1,
                 throttleProgressCallbacks: 1,
-                method: "octet"
+                method: "octet",
+                permanentErrors:[400, 403, 404, 409, 415, 500, 501]
             });
             // Resumable.js isn't supported, fall back on a different method
             if (!r.support) {
@@ -145,6 +146,7 @@
                 });
                 r.on('cancel', function(){
                     console.debug('cancel');
+                    $('.resumable-browse').prop('disabled', false);
                 });
             }
         </script>
