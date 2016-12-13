@@ -298,20 +298,7 @@ public class DataController extends MainController {
                 MyErrorResource error = objectMapper.readValue(body, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                switch (exceptionState) {
-                    case DATA_NOT_FOUND_EXCEPTION:
-                        log.warn("Dataset not found for uploading resource.");
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dataset not found for uploading resource.");
-                    case DATA_RESOURCE_ALREADY_EXISTS_EXCEPTION:
-                        log.warn("Data resource already exist.");
-                        return ResponseEntity.status(HttpStatus.CONFLICT).body("Data resource already exist");
-                    case FORBIDDEN_EXCEPTION:
-                        log.warn("Uploading of dataset resource forbidden.");
-                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Uploading of dataset resource forbidden.");
-                    default:
-                        log.warn("Unknown exception while uploading resource.");
-                        throw new Exception();
-                }
+                return getStringResponseEntity(exceptionState);
             } else if (body.equals("All finished.")) {
                 log.info("Data resource uploaded.");
             }
@@ -319,6 +306,23 @@ public class DataController extends MainController {
         } catch (Exception e) {
             log.error("Error sending upload chunk: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending upload chunk");
+        }
+    }
+
+    private ResponseEntity<String> getStringResponseEntity(ExceptionState exceptionState) {
+        switch (exceptionState) {
+            case DATA_NOT_FOUND_EXCEPTION:
+                log.warn("Dataset not found for uploading resource.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dataset not found for uploading resource.");
+            case DATA_RESOURCE_ALREADY_EXISTS_EXCEPTION:
+                log.warn("Data resource already exist.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Data resource already exist");
+            case FORBIDDEN_EXCEPTION:
+                log.warn("Uploading of dataset resource forbidden.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Uploading of dataset resource forbidden.");
+            default:
+                log.warn("Unknown exception while uploading resource.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unknown exception while uploading resource.");
         }
     }
 
