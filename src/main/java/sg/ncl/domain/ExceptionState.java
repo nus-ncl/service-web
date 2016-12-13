@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Te Ye
+ * @author Te Ye, Vu
  */
 public enum ExceptionState {
     ADAPTER_CONNECTION_EXCEPTION("AdapterConnectionException"),
