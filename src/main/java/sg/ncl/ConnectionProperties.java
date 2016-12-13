@@ -131,6 +131,10 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
     }
 
+    public String getSioTeamsStatusUrl(final String id, final TeamStatus status) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + id + "/status/" + status;
+    }
+
     public String getSioAuthUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + authEndpoint;
     }
