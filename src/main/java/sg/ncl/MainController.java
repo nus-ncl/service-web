@@ -1654,10 +1654,8 @@ public class MainController {
                 exceptionMessageMap.put(TEAM_NAME_NULL_OR_EMPTY_EXCEPTION, "Team name is null or empty ");
                 exceptionMessageMap.put(USER_NOT_FOUND_EXCEPTION, "User not found");
                 exceptionMessageMap.put(TEAM_NAME_ALREADY_EXISTS_EXCEPTION, "Team name already exists");
-
                 exceptionMessageMap.put(INVALID_TEAM_NAME_EXCEPTION, "Team name contains invalid characters");
                 exceptionMessageMap.put(TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION, "Team member already exists");
-
                 exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Connection to adapter failed");
                 exceptionMessageMap.put(ADAPTER_INTERNAL_ERROR_EXCEPTION, "Internal server error on adapter");
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
@@ -1712,11 +1710,9 @@ public class MainController {
         final String logPrefix = "Existing user join team: {}";
 
         if (bindingResult.hasErrors()) {
-            log.info("join team request form for team page has errors");
+            log.warn(logPrefix, "Application form error " + teamPageJoinForm.toString());
             return "team_page_join_team";
         }
-        // log data to ensure data has been parsed
-        log.info("--------Join team---------");
 
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
@@ -1729,7 +1725,7 @@ public class MainController {
 
         teamFields.put("name", teamPageJoinForm.getTeamName());
 
-        log.info("Calling the registration service to do join team request");
+        log.info(logPrefix, "User " + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity response;
@@ -1746,10 +1742,8 @@ public class MainController {
                 exceptionMessageMap.put(USER_ID_NULL_OR_EMPTY_EXCEPTION, "User id is null or empty");
                 exceptionMessageMap.put(TEAM_NOT_FOUND_EXCEPTION, "Team name not found");
                 exceptionMessageMap.put(TEAM_NAME_NULL_OR_EMPTY_EXCEPTION, "Team name is null or empty");
-
                 exceptionMessageMap.put(USER_ALREADY_IN_TEAM_EXCEPTION, "User already in team");
                 exceptionMessageMap.put(TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION, "Team member already exists");
-
                 exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Connection to adapter failed");
                 exceptionMessageMap.put(ADAPTER_INTERNAL_ERROR_EXCEPTION, "Internal server error on adapter");
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
@@ -1764,8 +1758,8 @@ public class MainController {
                 return "redirect:/teams/join_team";
 
             } else {
-                log.info(logPrefix, "Joining for team " + teamPageJoinForm.getTeamName()+ " submitted");
-                return "redirect:/teams/join_application_submitted" ;
+                log.info(logPrefix, "Application for join team " + teamPageJoinForm.getTeamName()+ " submitted");
+                return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
             }
 
         } catch (ResourceAccessException | IOException e) {
@@ -2775,7 +2769,7 @@ public class MainController {
 
     @RequestMapping("/teams/join_application_submitted/{teamName}")
     public String teamAppJoinFromTeamsPage(@PathVariable String teamName, Model model) throws WebServiceRuntimeException {
-        log.info("Join application submitted");
+        log.info("Redirecting to join application submitted page");
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
