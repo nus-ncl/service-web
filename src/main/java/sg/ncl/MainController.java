@@ -1650,10 +1650,10 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (checkUserException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null) {
-                    log.info("Apply team request : " + error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                } else if (exceptionState == TEAM_NAME_ALREADY_EXISTS_EXCEPTION ) {
+                checkUserException(exceptionState, error, redirectAttributes) ;
+                checkDeterlabException(exceptionState, error, redirectAttributes) ;
+
+                if (exceptionState == TEAM_NAME_ALREADY_EXISTS_EXCEPTION ) {
                     log.info("Apply team request : " + error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                 } else {
@@ -1731,10 +1731,10 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (checkUserException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null) {
-                    log.info("Join team request : " + error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                } else if (exceptionState == TEAM_NOT_FOUND_EXCEPTION) {
+                checkUserException(exceptionState, error, redirectAttributes);
+                checkDeterlabException(exceptionState, error, redirectAttributes);
+
+               if (exceptionState == TEAM_NOT_FOUND_EXCEPTION) {
                     log.info("Join team request : " + error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                 } else {
@@ -3414,20 +3414,20 @@ public class MainController {
         return response.getBody().toString();
     }
 
-    private String checkUserException(ExceptionState exceptionState, MyErrorResource error) {
+    private static void checkUserException(ExceptionState exceptionState, MyErrorResource error, final RedirectAttributes redirectAttributes) {
 
-        if (exceptionState == USER_NOT_FOUND_EXCEPTION) {
-            return error.getMessage();
-        }  else return null;
+        if (exceptionState == USER_ID_NULL_OR_EMPTY_EXCEPTION || exceptionState == USER_NOT_FOUND_EXCEPTION) {
+            log.info(error.getMessage());
+            redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+        }
 
     }
 
-    private String checkDeterlabException(ExceptionState exceptionState, MyErrorResource error) {
-
+    private static void checkDeterlabException(ExceptionState exceptionState, MyErrorResource error, final RedirectAttributes redirectAttributes) {
         if (exceptionState == ADAPTER_CONNECTION_EXCEPTION || exceptionState == DETERLAB_OPERATION_FAILED_EXCEPTION || exceptionState == ADAPTER_INTERNAL_ERROR_EXCEPTION) {
-            return error.getMessage();
-        }  else return null;
-
+            log.info(error.getMessage());
+            redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+        }
     }
 
 }
