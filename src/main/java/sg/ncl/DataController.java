@@ -141,6 +141,10 @@ public class DataController extends MainController {
                         log.warn("Dataset name already exists: {}", dataset.getName());
                         model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>dataset name already exists</li></ul>");
                         break;
+                    case DATA_NOT_FOUND_EXCEPTION:
+                        log.warn("Dataset not found for updating.");
+                        model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>dataset not found for editing</li></ul>");
+                        break;
                     case FORBIDDEN_EXCEPTION:
                         log.warn("Saving of dataset forbidden.");
                         model.addAttribute(MESSAGE_ATTRIBUTE, "Error(s):<ul><li>saving dataset forbidden</li></ul>");
@@ -175,16 +179,20 @@ public class DataController extends MainController {
                 if (exceptionState == FORBIDDEN_EXCEPTION) {
                     log.warn("Removing of dataset forbidden.");
                     redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_NOT_FOUND_EXCEPTION) {
+                    log.warn("Dataset not found for removing.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
                 } else {
                     log.warn("Unknown error for removing dataset.");
                 }
+            }
+            else {
+                log.info("Dataset removed: {}", dataResponseBody);
             }
         } catch (IOException e) {
             log.error("removeDataset: {}", e.toString());
             throw new WebServiceRuntimeException(e.getMessage());
         }
-
-        log.info("Dataset removed: /remove/{}", id);
         return REDIRECT_DATA;
     }
 
@@ -355,13 +363,14 @@ public class DataController extends MainController {
                 } else {
                     log.warn("Unknown error for removing data resource.");
                 }
+            } else {
+                log.info("Data resource removed: {}", dataResponseBody);
             }
         } catch (IOException e) {
             log.error("removeResource: {}", e.getMessage());
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        log.info("Data resource removed: {}/resources/{}/delete", datasetId, resourceId);
         return "redirect:/data/" + datasetId + "/resources";
     }
 
