@@ -2547,6 +2547,37 @@ public class MainController {
         return "redirect:/admin";
     }
 
+    @RequestMapping("/admin/teams/{teamId}")
+    public String restrictFreeTeams(
+            @PathVariable final String teamId,
+            @RequestParam(value = "action", required=true) final TeamStatus status,
+            final RedirectAttributes redirectAttributes,
+            HttpSession session) throws IOException
+    {
+        // check if admin
+        if (!validateIfAdmin(session)) {
+            log.warn("Access denied when trying to restrict/free team {}: must be admin!", session.getAttribute(webProperties.getSessionUserId()));
+            return NO_PERMISSION_PAGE;
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(
+                properties.getSioTeamsStatusUrl(teamId, TeamStatus.RESTRICTED),
+                HttpMethod.PUT, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+        } else {
+            // good
+            log.info("Team {} has been restricted", teamId);
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + teamId + " has been restricted.");
+            return "redirect:/admin";
+        }
+        return "redirect:/admin";
+    }
+
     @RequestMapping("/admin/users/{userId}")
     public String freezeUnfreezeUsers(
             @PathVariable final String userId,
