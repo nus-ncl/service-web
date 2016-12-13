@@ -1650,9 +1650,13 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 // prepare the exception mapping
                 EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
-                exceptionMessageMap.put(INVALID_TEAM_NAME_EXCEPTION, "Team name contains invalid characters");
-                exceptionMessageMap.put(TEAM_NAME_ALREADY_EXISTS_EXCEPTION, "Team name already exists");
+                exceptionMessageMap.put(USER_ID_NULL_OR_EMPTY_EXCEPTION, "User id is null or empty ");
+                exceptionMessageMap.put(TEAM_NAME_NULL_OR_EMPTY_EXCEPTION, "Team name is null or empty ");
                 exceptionMessageMap.put(USER_NOT_FOUND_EXCEPTION, "User not found");
+                exceptionMessageMap.put(TEAM_NAME_ALREADY_EXISTS_EXCEPTION, "Team name already exists");
+                exceptionMessageMap.put(INVALID_TEAM_NAME_EXCEPTION, "Team name contains invalid characters");
+                exceptionMessageMap.put(TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION, "Team member already exists");
+                exceptionMessageMap.put(TEAM_NOT_FOUND_EXCEPTION, "Team name not found");
                 exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Connection to adapter failed");
                 exceptionMessageMap.put(ADAPTER_INTERNAL_ERROR_EXCEPTION, "Internal server error on adapter");
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
@@ -1704,6 +1708,8 @@ public class MainController {
             HttpSession session,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
+        final String logPrefix = "Existing user join team: {}";
+
         if (bindingResult.hasErrors()) {
             log.info("join team request form for team page has errors");
             return "team_page_join_team";
@@ -1723,36 +1729,44 @@ public class MainController {
         teamFields.put("name", teamPageJoinForm.getTeamName());
 
         log.info("Calling the registration service to do join team request");
-        HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getJoinRequestExistingUser(), HttpMethod.POST, request, String.class);
 
-        String responseBody = response.getBody().toString();
+        HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
+        ResponseEntity response;
 
         try {
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+            response = restTemplate.exchange(properties.getJoinRequestExistingUser(), HttpMethod.POST, request, String.class);
+            String responseBody = response.getBody().toString();
+
             if (RestUtil.isError(response.getStatusCode())) {
+                // prepare the exception mapping
+                EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
+                exceptionMessageMap.put(USER_NOT_FOUND_EXCEPTION, "User not found");
+                exceptionMessageMap.put(USER_ID_NULL_OR_EMPTY_EXCEPTION, "User id is null or empty");
+                exceptionMessageMap.put(TEAM_NOT_FOUND_EXCEPTION, "Team name not found");
+                exceptionMessageMap.put(TEAM_NAME_NULL_OR_EMPTY_EXCEPTION, "Team name is null or empty");
+                exceptionMessageMap.put(TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION, "Team member already exists");
+                exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Connection to adapter failed");
+                exceptionMessageMap.put(ADAPTER_INTERNAL_ERROR_EXCEPTION, "Internal server error on adapter");
+                exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
+
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (checkUserException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null) {
-                    log.info("Join team request : " + error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                } else if (exceptionState == TEAM_NOT_FOUND_EXCEPTION) {
-                    log.info("Join team request : " + error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                } else {
-                    log.info("Join team request : Other failure");
-                    // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                }
+                final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
+
+                log.warn(logPrefix, responseBody);
+                redirectAttributes.addFlashAttribute("message", errorMessage);
                 return "redirect:/teams/join_team";
+
+            } else {
+                log.info(logPrefix, "Joining for team " + teamPageJoinForm.getTeamName()+ " submitted");
+                return "redirect:/teams/join_application_submitted/" ;
             }
-        } catch (IOException e) {
+
+        } catch (ResourceAccessException | IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
-
-        log.info("Completed invoking the join team request service for team: {}", teamPageJoinForm.getTeamName());
-        return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
     }
 
     //--------------------------Experiment Page--------------------------
@@ -3415,22 +3429,6 @@ public class MainController {
             return "?";
         }
         return response.getBody().toString();
-    }
-
-    private String checkUserException(ExceptionState exceptionState, MyErrorResource error) {
-
-        if (exceptionState == USER_NOT_FOUND_EXCEPTION) {
-            return error.getMessage();
-        }  else return null;
-
-    }
-
-    private String checkDeterlabException(ExceptionState exceptionState, MyErrorResource error) {
-
-        if (exceptionState == ADAPTER_CONNECTION_EXCEPTION || exceptionState == DETERLAB_OPERATION_FAILED_EXCEPTION || exceptionState == ADAPTER_INTERNAL_ERROR_EXCEPTION) {
-            return error.getMessage();
-        }  else return null;
-
     }
 
 }
