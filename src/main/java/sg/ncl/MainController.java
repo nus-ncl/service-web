@@ -1650,26 +1650,23 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if (checkUserException(exceptionState, error) != null) {
+                if (checkUserException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null) {
                     log.info("Apply team request : " + error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                } else if (checkTeamException(exceptionState, error) != null ) {
-                    log.info("Apply team request : " + error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                } else if (checkDeterlabException(exceptionState, error) != null) {
+                } else if (exceptionState == TEAM_NAME_ALREADY_EXISTS_EXCEPTION ) {
                     log.info("Apply team request : " + error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                 } else {
                     log.info("Apply team request : Other failure");
                     // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    redirectAttributes.addFlashAttribute (MESSAGE, ERR_SERVER_OVERLOAD);
                 }
 
                 return "redirect:/teams/apply_team";
 
             } else {
                 // no errors, everything ok
-                log.info("Completed invoking the apply team request service for Team: {}", teamPageApplyTeamForm.getTeamName());
+                log.info ("Completed invoking the apply team request service for Team: {}", teamPageApplyTeamForm.getTeamName());
                 return "redirect:/teams/team_application_submitted";
             }
 
@@ -1734,13 +1731,10 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                if(checkUserException(exceptionState, error) != null) {
+                if (checkUserException(exceptionState, error) != null || checkDeterlabException(exceptionState, error) != null) {
                     log.info("Join team request : " + error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                } else if (checkTeamException(exceptionState, error) != null) {
-                    log.info("Join team request : " + error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                } else if (checkDeterlabException(exceptionState, error) != null) {
+                } else if (exceptionState == TEAM_NOT_FOUND_EXCEPTION) {
                     log.info("Join team request : " + error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                 } else {
@@ -3422,15 +3416,7 @@ public class MainController {
 
     private String checkUserException(ExceptionState exceptionState, MyErrorResource error) {
 
-        if (exceptionState == USER_ID_NULL_OR_EMPTY_EXCEPTION || exceptionState == USER_NOT_FOUND_EXCEPTION) {
-            return error.getMessage();
-        }  else return null;
-
-    }
-
-    private String checkTeamException(ExceptionState exceptionState, MyErrorResource error) {
-
-        if (exceptionState == TEAM_NAME_NULL_OR_EMPTY_EXCEPTION || exceptionState == TEAM_NAME_ALREADY_EXISTS_EXCEPTION || exceptionState == TEAM_NOT_FOUND_EXCEPTION) {
+        if (exceptionState == USER_NOT_FOUND_EXCEPTION) {
             return error.getMessage();
         }  else return null;
 
