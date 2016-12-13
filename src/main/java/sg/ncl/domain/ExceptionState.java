@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Te Ye
+ * @author Te Ye, Vu
  */
 public enum ExceptionState {
     ADAPTER_CONNECTION_EXCEPTION("AdapterConnectionException"),
@@ -33,9 +33,12 @@ public enum ExceptionState {
     PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION("PasswordResetRequestNotFoundException"),
     PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION("PasswordResetRequestTimeoutException"),
     TEAM_ID_NULL_OR_EMPTY_EXCEPTION("TeamIdNullOrEmptyException"),
+    TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION("TeamMemberAlreadyExistsException"),
+    TEAM_NAME_NULL_OR_EMPTY_EXCEPTION("TeamNameNullOrEmptyException"),
     TEAM_NAME_ALREADY_EXISTS_EXCEPTION("TeamNameAlreadyExistsException"),
     TEAM_NOT_FOUND_EXCEPTION("TeamNotFoundException"),
     USERNAME_ALREADY_EXISTS_EXCEPTION("UsernameAlreadyExistsException"),
+    USER_ALREADY_IN_TEAM_EXCEPTION("UserAlreadyInTeamException"),
     USER_ID_NULL_OR_EMPTY_EXCEPTION("UserIdNullOrEmptyException"),
     USER_NOT_FOUND_EXCEPTION("UserNotFoundException");
 
