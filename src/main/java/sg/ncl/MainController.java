@@ -2550,8 +2550,8 @@ public class MainController {
     @RequestMapping("/admin/teams/{teamId}")
     public String restrictFreeTeams(
             @PathVariable final String teamId,
-            @RequestParam(value = "action", required=true) final String status,
-            final RedirectAttributes redirectAttributes,
+            @RequestParam(value = "action", required=true) final String action,
+            RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException
     {
         // check if admin
@@ -2560,30 +2560,108 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-        TeamStatus newStatus;
+        Team2 team = invokeAndExtractTeamInfo(teamId);
 
-        if (status.equals("restrict")) {
-            newStatus = TeamStatus.RESTRICTED;
-        } else {
-            newStatus = TeamStatus.APPROVED;
+        // check if team is approved before restricted
+        if ("restrict".equals(action) && team.getStatus().equals(TeamStatus.APPROVED.name())) {
+            return restrictTeam(team, redirectAttributes);
         }
+        // check if team is restricted before freeing it back to approved
+        else if ("free".equals(action) && team.getStatus().equals(TeamStatus.RESTRICTED.name())) {
+            return freeTeam(team, redirectAttributes);
+        } else {
+            log.warn("Error in restrict/free team {}: failed to {} team with status {}", teamId, action, team.getStatus());
+            redirectAttributes.addAttribute(MESSAGE, ERROR_PREFIX + "failed to " + action + " team " + team.getName() + " with status " + team.getStatus());
+            return "redirect:/admin";
+        }
+    }
+
+    private String restrictTeam(final Team2 team, RedirectAttributes redirectAttributes) throws IOException {
+        log.info("Restricting team {}", team.getId());
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(
-                properties.getSioTeamsStatusUrl(teamId, newStatus),
+                properties.getSioTeamsStatusUrl(team.getId(), TeamStatus.RESTRICTED),
                 HttpMethod.PUT, request, String.class);
         String responseBody = response.getBody().toString();
 
         if (RestUtil.isError(response.getStatusCode())) {
             MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            switch (exceptionState) {
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    log.warn("Failed to restrict team {}: team not found", team.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " team " + team.getName() + " not found.");
+                    break;
+                case INVALID_STATUS_TRANSITION_EXCEPTION:
+                    log.warn("Failed to restrict team {}: invalid status transition {}", team.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not allowed.");
+                    break;
+                case INVALID_TEAM_STATUS_EXCEPTION:
+                    log.warn("Failed to restrict team {}: invalid team status {}", team.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not a valid status.");
+                    break;
+                case FORBIDDEN_EXCEPTION:
+                    log.warn("Failed to restrict team {}: must be an Admin", team.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " permission denied.");
+                    break;
+                default:
+                    log.warn("Failed to restrict team {}: {}", team.getId(), exceptionState.getExceptionName());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+            return "redirect:/admin";
         } else {
             // good
-            log.info("Team {} has been restricted", teamId);
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + teamId + " has been ." + status);
+            log.info("Team {} has been restricted.", team.getId());
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + team.getName() + " has been restricted to start experiments.");
             return "redirect:/admin";
         }
-        return "redirect:/admin";
+    }
+
+    private String freeTeam(final Team2 team, RedirectAttributes redirectAttributes) throws IOException {
+        log.info("Freeing team {}", team.getId());
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(
+                properties.getSioTeamsStatusUrl(team.getId(), TeamStatus.APPROVED),
+                HttpMethod.PUT, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            switch (exceptionState) {
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    log.warn("Failed to free team {}: team not found", team.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " team " + team.getName() + " not found.");
+                    break;
+                case INVALID_STATUS_TRANSITION_EXCEPTION:
+                    log.warn("Failed to free team {}: invalid status transition {}", team.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not allowed.");
+                    break;
+                case INVALID_TEAM_STATUS_EXCEPTION:
+                    log.warn("Failed to free team {}: invalid team status {}", team.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not a valid status.");
+                    break;
+                case FORBIDDEN_EXCEPTION:
+                    log.warn("Failed to free team {}: must be an Admin", team.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " permission denied.");
+                    break;
+                default:
+                    log.warn("Failed to free team {}: {}", team.getId(), exceptionState.getExceptionName());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+            return "redirect:/admin";
+        } else {
+            // good
+            log.info("Team {} has been freed.", team.getId());
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + team.getName() + " has been freed to start experiments.");
+            return "redirect:/admin";
+        }
     }
 
     @RequestMapping("/admin/users/{userId}")
