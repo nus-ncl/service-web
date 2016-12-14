@@ -2392,10 +2392,25 @@ public class MainController {
             }
         }
 
+        //------------------------------------
+        // get list of datasets
+        //------------------------------------
+        ResponseEntity response3 = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
+        String responseBody3 = response3.getBody().toString();
+
+        List<Dataset> datasetsList = new ArrayList<>();
+        JSONArray dataJsonArray = new JSONArray(responseBody3);
+        for (int i = 0; i < dataJsonArray.length(); i++) {
+            JSONObject dataInfoObject = dataJsonArray.getJSONObject(i);
+            Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            datasetsList.add(dataset);
+        }
+
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
         model.addAttribute("usersList", usersList);
         model.addAttribute("userToTeamMap", userToTeamMap);
+        model.addAttribute("dataList", datasetsList);
         return "admin2";
     }
 
@@ -3076,6 +3091,44 @@ public class MainController {
         return null;
     }
 
+    protected Dataset extractDataInfo(String json) {
+        log.debug(json);
+
+        JSONObject object = new JSONObject(json);
+        Dataset dataset = new Dataset();
+
+        dataset.setId(object.getInt("id"));
+        dataset.setName(object.getString("name"));
+        dataset.setDescription(object.getString("description"));
+        dataset.setContributorId(object.getString("contributorId"));
+        dataset.addVisibility(object.getString("visibility"));
+        dataset.addAccessibility(object.getString("accessibility"));
+        try {
+            dataset.setReleasedDate(getZonedDateTime(object.get("releasedDate").toString()));
+        } catch (IOException e) {
+            log.warn("Error getting released date {}", e);
+            dataset.setReleasedDate(null);
+        }
+
+        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
+
+        JSONArray resources = object.getJSONArray("resources");
+        for (int i = 0; i < resources.length(); i++) {
+            JSONObject resource = resources.getJSONObject(i);
+            DataResource dataResource = new DataResource();
+            dataResource.setId(resource.getLong("id"));
+            dataResource.setUri(resource.getString("uri"));
+            dataset.addResource(dataResource);
+        }
+
+        JSONArray approvedUsers = object.getJSONArray("approvedUsers");
+        for (int i =0; i < approvedUsers.length(); i++) {
+            dataset.addApprovedUser(approvedUsers.getString(0));
+        }
+
+        return dataset;
+    }
+
     protected User2 invokeAndExtractUserInfo(String userId) {
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity response;
@@ -3280,7 +3333,7 @@ public class MainController {
         session.invalidate();
     }
 
-    private boolean validateIfAdmin(HttpSession session) {
+    protected boolean validateIfAdmin(HttpSession session) {
         //log.info("User: {} is logged on as: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionRoles()));
         return session.getAttribute(webProperties.getSessionRoles()).equals(UserType.ADMIN.toString());
     }

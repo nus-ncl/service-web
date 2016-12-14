@@ -168,8 +168,8 @@ public class DataController extends MainController {
         }
     }
 
-    @RequestMapping("/remove/{id}")
-    public String removeDataset(@PathVariable String id, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    @RequestMapping(value={"/remove/{id}", "/remove/{id}/{admin}"})
+    public String removeDataset(@PathVariable String id, @PathVariable Optional<String> admin, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getDataset(id), HttpMethod.DELETE, request, String.class);
@@ -189,13 +189,16 @@ public class DataController extends MainController {
                 } else {
                     log.warn("Unknown error for removing dataset.");
                 }
-            }
-            else {
+            } else {
                 log.info("Dataset removed: {}", dataResponseBody);
             }
         } catch (IOException e) {
             log.error("removeDataset: {}", e.toString());
             throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        if (admin.isPresent()) {
+            return "redirect:/admin#dataManagement";
         }
         return REDIRECT_DATA;
     }
@@ -399,44 +402,6 @@ public class DataController extends MainController {
         }
 
         return "redirect:/data/" + datasetId + "/resources";
-    }
-
-    private Dataset extractDataInfo(String json) {
-        log.debug(json);
-
-        JSONObject object = new JSONObject(json);
-        Dataset dataset = new Dataset();
-
-        dataset.setId(object.getInt("id"));
-        dataset.setName(object.getString("name"));
-        dataset.setDescription(object.getString("description"));
-        dataset.setContributorId(object.getString("contributorId"));
-        dataset.addVisibility(object.getString("visibility"));
-        dataset.addAccessibility(object.getString("accessibility"));
-        try {
-            dataset.setReleasedDate(getZonedDateTime(object.get("releasedDate").toString()));
-        } catch (IOException e) {
-            log.warn("Error getting released date {}", e);
-            dataset.setReleasedDate(null);
-        }
-
-        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
-
-        JSONArray resources = object.getJSONArray("resources");
-        for (int i = 0; i < resources.length(); i++) {
-            JSONObject resource = resources.getJSONObject(i);
-            DataResource dataResource = new DataResource();
-            dataResource.setId(resource.getLong("id"));
-            dataResource.setUri(resource.getString("uri"));
-            dataset.addResource(dataResource);
-        }
-
-        JSONArray approvedUsers = object.getJSONArray("approvedUsers");
-        for (int i =0; i < approvedUsers.length(); i++) {
-            dataset.addApprovedUser(approvedUsers.getString(0));
-        }
-
-        return dataset;
     }
 
     private void setContributor(Dataset dataset, HttpSession session) {

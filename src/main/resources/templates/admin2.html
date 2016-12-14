@@ -22,7 +22,7 @@
 			<li class="active"><a data-toggle="pill" href="#newTeamsApproval"><span th:text="#{admin.dashboard.nav.teamsApproval}">New Teams Approval</span></a></li>
 			<li><a data-toggle="pill" href="#teamsManagement"><span th:text="#{admin.dashboard.nav.teams}">Teams management</span></a></li>
 			<li><a data-toggle="pill" href="#usersManagement"><span th:text="#{admin.dashboard.nav.users}">Users management</span></a></li>
-			<!--<li><a data-toggle="pill" href="#resourcesManagement"><span th:text="#{admin.dashboard.nav.resources}">Resources management</span></a></li>-->
+			<li><a data-toggle="pill" href="#dataManagement"><span th:text="#{admin.dashboard.nav.data}">Data management</span></a></li>
 		</ul>
 		<div th:if="${message}">
 			<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
@@ -204,6 +204,80 @@
 				</table>
 			</div>
 
+			<div id="dataManagement" class="tab-pane fade">
+				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.data.header}">Data Management</h2>
+				<p>&nbsp;</p>
+				<p th:if="${#lists.isEmpty(dataList)}">There are no data in the system</p>
+				<table id="myTable3" class="table table-responsive" th:if="${not #lists.isEmpty(dataList)}">
+					<thead>
+					<tr>
+						<th th:text="#{data.header.name}">Name</th>
+						<th th:text="#{data.header.owner}">Owner</th>
+						<th th:text="#{data.header.releaseDate}">Release Date</th>
+                        <th th:text="#{data.header.downloads}">Number of Downloads</th>
+						<th><!-- Actions --></th>
+					</tr>
+					</thead>
+                    <tbody>
+                    <tr th:each="dataEntry : ${dataList}">
+                        <td th:text="${dataEntry.name}">Name</td>
+                        <td th:text="${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName}">Owner</td>
+                        <td th:text="${dataEntry.getReleasedDateString()}"></td>
+                        <td></td>
+                        <td>
+                            <button type="button" class="btn btn-primary"
+                                    data-toggle="modal" data-target="#deleteModal"
+                                    th:attr="data-name=${dataEntry.name},
+							            data-desc=${dataEntry.description},
+                                        data-owner=${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName},
+                                	    data-release=${dataEntry.getReleasedDateString()},
+                                        data-visible=${#strings.capitalize(#strings.toLowerCase(dataEntry.visibility))},
+                                        data-access=${#strings.capitalize(#strings.toLowerCase(dataEntry.accessibility))},
+                                        data-delete=@{/data/remove/{id}/admin(id=${dataEntry.id})}"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+                        </td>
+					</tr>
+                    </tbody>
+				</table>
+			</div>
+
+            <!-- Confirm Delete Modal -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="deleteLabel">Delete?</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-4">Description:</div>
+                                <div class="col-md-8" id="datasetDesc"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">Owner:</div>
+                                <div class="col-md-8" id="datasetOwner"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">Release:</div>
+                                <div class="col-md-8" id="datasetRelease"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">Visibility:</div>
+                                <div class="col-md-8" id="datasetVisible"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">Accessibility:</div>
+                                <div class="col-md-8" id="datasetAccess"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <a href="#" class="btn btn-primary" id="deleteButton">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 			<!--<div id="usersManagement" class="tab-pane fade">-->
 			<!--<h3 th:text="#{admin.users.header}">Users Management</h3>-->
 			<!--<table class="table table-responsive table-striped">-->
@@ -242,17 +316,6 @@
 			<!--</table>-->
 			<!--</div> &lt;!&ndash; usersManagement &ndash;&gt;-->
 
-			<!--<div id="resourcesManagement" class="tab-pane fade">-->
-			<!--<div class="panel panel-primary">-->
-			<!--<div class="panel-body">-->
-			<!--<h3 th:text="#{admin.resc.header}">Resources Management</h3>-->
-			<!--<p>&nbsp;</p>-->
-			<!--<ul class="nav nav-tabs">-->
-			<!--<li class="active"><a data-toggle="tab" href="#nodeStatistics"><span th:text="#{admin.resc.nav.nodeStats}">Node Statistics</span></a></li>-->
-			<!--<li><a data-toggle="tab" href="#datasets"><span th:text="#{admin.resc.nav.datasets}">Datasets</span></a></li>-->
-			<!--<li><a data-toggle="tab" href="#experiments"><span th:text="#{admin.resc.nav.exp}">Experiments</span></a></li>-->
-			<!--</ul>-->
-
 			<!--<div class="tab-content">-->
 			<!-- nodeStatistics -->
 			<!--<div id="nodeStatistics" class="tab-pane fade in active">-->
@@ -273,30 +336,6 @@
 			<!--</th:block>-->
 			<!--</table>-->
 			<!--<p><a href="#" th:href="@{/admin/node/add}"><button type="button" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Add Node</button></a></p>-->
-			<!--</div>-->
-
-			<!-- datasets -->
-			<!--<div id="datasets" class="tab-pane fade">-->
-			<!--<p>&nbsp;</p>-->
-			<!--<table class="table table-responsive">-->
-			<!--<thead>-->
-			<!--<th th:text="#{data.header.name}">Name</th>-->
-			<!--<th th:text="#{data.header.releaseDate}">Release Date</th>-->
-			<!--<th th:text="#{data.header.owner}">Owner</th>-->
-			<!--<th>&lt;!&ndash; Actions &ndash;&gt;</th>-->
-			<!--</thead>-->
-			<!--<th:block th:each="dataEntry : ${datasetMap}">-->
-			<!--<tr>-->
-			<!--<td th:text="${dataEntry.value.datasetName}">Name</td>-->
-			<!--<td th:text="${dataEntry.value.releaseDate}">Release Date</td>-->
-			<!--<td th:text="${userManager.getNameByUserId(dataEntry.value.ownerId)}">Owner</td>-->
-			<!--<td>-->
-			<!--<a href="#" th:href="@{/admin/data/remove/{datasetId}(datasetId=${dataEntry.key})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to permanently delete this dataset?"><i class="fa fa-trash"></i></a>-->
-			<!--</td>-->
-			<!--</tr>-->
-			<!--</th:block>-->
-			<!--</table>-->
-			<!--<p><a href="#" th:href="@{/admin/data/contribute}"><button type="button" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>-->
 			<!--</div>-->
 
 			<!-- experiments -->
@@ -376,6 +415,7 @@ $(document).ready(function () {
 	$('#myTable').dataTable();
 	$('#myTable1').dataTable();
 	$('#myTable2').dataTable();
+    $('#myTable3').dataTable();
 })
 </script>
 </html>
