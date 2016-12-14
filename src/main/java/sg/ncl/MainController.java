@@ -2551,7 +2551,7 @@ public class MainController {
     public String restrictFreeTeams(
             @PathVariable final String teamId,
             @RequestParam(value = "action", required=true) final String action,
-            RedirectAttributes redirectAttributes,
+            final RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException
     {
         // check if admin
@@ -2600,7 +2600,7 @@ public class MainController {
                     break;
                 case INVALID_TEAM_STATUS_EXCEPTION:
                     log.warn("Failed to restrict team {}: invalid team status {}", team.getId(), error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not a valid status.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not a valid team status.");
                     break;
                 case FORBIDDEN_EXCEPTION:
                     log.warn("Failed to restrict team {}: must be an Admin", team.getId());
@@ -2644,7 +2644,7 @@ public class MainController {
                     break;
                 case INVALID_TEAM_STATUS_EXCEPTION:
                     log.warn("Failed to free team {}: invalid team status {}", team.getId(), error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not a valid status.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage() + " is not a valid team status.");
                     break;
                 case FORBIDDEN_EXCEPTION:
                     log.warn("Failed to free team {}: must be an Admin", team.getId());
