@@ -207,7 +207,7 @@ public class MainController {
         return "error_openstack";
     }
 
-    //    @RequestMapping("/resource2")
+//    @RequestMapping("/resource2")
 //    public String resource2() {
 //        return "resource2";
 //    }
@@ -739,12 +739,12 @@ public class MainController {
                     registerUserToDeter(mainObject);
                 } catch (
                         TeamNotFoundException |
-                                TeamNameAlreadyExistsException |
-                                UsernameAlreadyExistsException |
-                                EmailAlreadyExistsException |
-                                InvalidTeamNameException |
-                                InvalidPasswordException |
-                                DeterLabOperationFailedException e) {
+                        TeamNameAlreadyExistsException |
+                        UsernameAlreadyExistsException |
+                        EmailAlreadyExistsException |
+                        InvalidTeamNameException |
+                        InvalidPasswordException |
+                        DeterLabOperationFailedException e) {
                     redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                     redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
@@ -780,13 +780,13 @@ public class MainController {
                 registerUserToDeter(mainObject);
             } catch (
                     TeamNotFoundException |
-                            AdapterConnectionException |
-                            TeamNameAlreadyExistsException |
-                            UsernameAlreadyExistsException |
-                            EmailAlreadyExistsException |
-                            InvalidTeamNameException |
-                            InvalidPasswordException |
-                            DeterLabOperationFailedException e) {
+                    AdapterConnectionException |
+                    TeamNameAlreadyExistsException |
+                    UsernameAlreadyExistsException |
+                    EmailAlreadyExistsException |
+                    InvalidTeamNameException |
+                    InvalidPasswordException |
+                    DeterLabOperationFailedException e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
@@ -1428,7 +1428,7 @@ public class MainController {
 //        return "redirect:/teams";
 //    }
 
-    //    @RequestMapping("/withdraw/{teamId}")
+//    @RequestMapping("/withdraw/{teamId}")
     public String withdrawnJoinRequest(@PathVariable Integer teamId, HttpSession session) {
         // get user team request
         // remove this user id from the user's request list
@@ -2604,7 +2604,8 @@ public class MainController {
             @PathVariable final String userId,
             @RequestParam(value = "action", required = true) final String action,
             final RedirectAttributes redirectAttributes,
-            HttpSession session) throws IOException {
+            HttpSession session) throws IOException
+    {
         User2 user = invokeAndExtractUserInfo(userId);
 
         // check if admin
@@ -3327,6 +3328,7 @@ public class MainController {
     /**
      * Ensure that only users of the team can realize or un-realize experiment
      * A pre-condition is that the users must be approved.
+     * Teams must also be approved.
      *
      * @return the main experiment page
      */
@@ -3341,7 +3343,13 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
             if (teamId.equals(realization.getTeamId())) {
-                return true;
+                Team2 team = invokeAndExtractTeamInfo(teamId);
+                if (team.getStatus().equals(TeamStatus.APPROVED)) {
+                    return true;
+                } else {
+                    log.warn("Error: trying to realize/unrealize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, team.getStatus());
+                    return false;
+                }
             }
         }
         return false;
@@ -3467,5 +3475,4 @@ public class MainController {
         }
         return response.getBody().toString();
     }
-
 }
