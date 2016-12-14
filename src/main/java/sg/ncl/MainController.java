@@ -3311,6 +3311,7 @@ public class MainController {
     /**
      * Ensure that only users of the team can realize or un-realize experiment
      * A pre-condition is that the users must be approved.
+     * Teams must also be approved.
      * @return the main experiment page
      */
     private boolean checkPermissionRealizeExperiment(Realization realization, HttpSession session) {
@@ -3324,7 +3325,13 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
             if (teamId.equals(realization.getTeamId())) {
-                return true;
+                Team2 team = invokeAndExtractTeamInfo(teamId);
+                if (team.getStatus().equals(TeamStatus.APPROVED)) {
+                    return true;
+                } else {
+                    log.warn("Error: trying to realize/unrealize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, team.getStatus());
+                    return false;
+                }
             }
         }
         return false;
