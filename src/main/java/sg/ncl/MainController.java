@@ -2571,7 +2571,7 @@ public class MainController {
             return freeTeam(team, redirectAttributes);
         } else {
             log.warn("Error in restrict/free team {}: failed to {} team with status {}", teamId, action, team.getStatus());
-            redirectAttributes.addAttribute(MESSAGE, ERROR_PREFIX + "failed to " + action + " team " + team.getName() + " with status " + team.getStatus());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "failed to " + action + " team " + team.getName() + " with status " + team.getStatus());
             return "redirect:/admin";
         }
     }
