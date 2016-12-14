@@ -2348,7 +2348,7 @@ public class MainController {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             Team2 one = extractTeamInfo(jsonObject.toString());
             teamManager2.addTeamToTeamMap(one);
-            if (one.getStatus().equals(TeamStatus.PENDING.toString())) {
+            if (one.getStatus().equals(TeamStatus.PENDING.name())) {
                 pendingApprovalTeamsList.add(one);
             }
         }
@@ -3326,7 +3326,7 @@ public class MainController {
             String teamId = teamIdsJsonArray.get(i).toString();
             if (teamId.equals(realization.getTeamId())) {
                 Team2 team = invokeAndExtractTeamInfo(teamId);
-                if (team.getStatus().equals(TeamStatus.APPROVED)) {
+                if (team.getStatus().equals(TeamStatus.APPROVED.name())) {
                     return true;
                 } else {
                     log.warn("Error: trying to realize/unrealize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, team.getStatus());
