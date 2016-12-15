@@ -2179,11 +2179,17 @@ public class MainController {
 
         // ensure experiment is stopped first before starting
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+        String teamStatus = getTeamStatus(realization.getTeamId());
 
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
             return "redirect:/experiments";
+        }
+
+        if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
+            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), realization.getId(), teamStatus);
+            redirectAttributes.addFlashAttribute(MESSAGE, "Team " + teamName + " is currently " + teamStatus + " and does not have permission to start experiment " + realization.getExperimentName() + " Please contact " + CONTACT_EMAIL);
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
@@ -3423,16 +3429,15 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
             if (teamId.equals(realization.getTeamId())) {
-                Team2 team = invokeAndExtractTeamInfo(teamId);
-                if (team.getStatus().equals(TeamStatus.APPROVED.name())) {
-                    return true;
-                } else {
-                    log.warn("Error: trying to realize/unrealize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, team.getStatus());
-                    return false;
-                }
+                return true;
             }
         }
         return false;
+    }
+
+    private String getTeamStatus(String teamId) {
+        Team2 team = invokeAndExtractTeamInfo(teamId);
+        return team.getStatus();
     }
 
     private Realization getCleanRealization() {
