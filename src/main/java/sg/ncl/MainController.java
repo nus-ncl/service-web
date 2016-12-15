@@ -95,6 +95,8 @@ public class MainController {
 
     private static final String TEAM_NAME = "teamName";
     private static final String NODE_ID = "nodeId";
+    private static final String PERMISSION_DENIED = "Permission denied";
+    private static final String TEAM_NOT_FOUND = "Team not found";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -207,7 +209,7 @@ public class MainController {
         return "error_openstack";
     }
 
-    //    @RequestMapping("/resource2")
+//    @RequestMapping("/resource2")
 //    public String resource2() {
 //        return "resource2";
 //    }
@@ -739,12 +741,12 @@ public class MainController {
                     registerUserToDeter(mainObject);
                 } catch (
                         TeamNotFoundException |
-                                TeamNameAlreadyExistsException |
-                                UsernameAlreadyExistsException |
-                                EmailAlreadyExistsException |
-                                InvalidTeamNameException |
-                                InvalidPasswordException |
-                                DeterLabOperationFailedException e) {
+                        TeamNameAlreadyExistsException |
+                        UsernameAlreadyExistsException |
+                        EmailAlreadyExistsException |
+                        InvalidTeamNameException |
+                        InvalidPasswordException |
+                        DeterLabOperationFailedException e) {
                     redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                     redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
@@ -780,13 +782,13 @@ public class MainController {
                 registerUserToDeter(mainObject);
             } catch (
                     TeamNotFoundException |
-                            AdapterConnectionException |
-                            TeamNameAlreadyExistsException |
-                            UsernameAlreadyExistsException |
-                            EmailAlreadyExistsException |
-                            InvalidTeamNameException |
-                            InvalidPasswordException |
-                            DeterLabOperationFailedException e) {
+                    AdapterConnectionException |
+                    TeamNameAlreadyExistsException |
+                    UsernameAlreadyExistsException |
+                    EmailAlreadyExistsException |
+                    InvalidTeamNameException |
+                    InvalidPasswordException |
+                    DeterLabOperationFailedException e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
@@ -1428,7 +1430,7 @@ public class MainController {
 //        return "redirect:/teams";
 //    }
 
-    //    @RequestMapping("/withdraw/{teamId}")
+//    @RequestMapping("/withdraw/{teamId}")
     public String withdrawnJoinRequest(@PathVariable Integer teamId, HttpSession session) {
         // get user team request
         // remove this user id from the user's request list
@@ -2178,9 +2180,18 @@ public class MainController {
         // ensure experiment is stopped first before starting
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
+
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
+            return "redirect:/experiments";
+        }
+
+        String teamStatus = getTeamStatus(realization.getTeamId());
+
+        if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
+            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), realization.getTeamId(), teamStatus);
+            redirectAttributes.addFlashAttribute(MESSAGE, teamName + " is in " + teamStatus + " status and does not have permission to start experiment. Please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
 
@@ -2361,7 +2372,7 @@ public class MainController {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             Team2 one = extractTeamInfo(jsonObject.toString());
             teamManager2.addTeamToTeamMap(one);
-            if (one.getStatus().equals(TeamStatus.PENDING.toString())) {
+            if (one.getStatus().equals(TeamStatus.PENDING.name())) {
                 pendingApprovalTeamsList.add(one);
             }
         }
@@ -2560,12 +2571,130 @@ public class MainController {
         return "redirect:/admin";
     }
 
+    @RequestMapping("/admin/teams/{teamId}")
+    public String setupTeamRestriction(
+            @PathVariable final String teamId,
+            @RequestParam(value = "action", required=true) final String action,
+            final RedirectAttributes redirectAttributes,
+            HttpSession session) throws IOException
+    {
+        final String logMessage = "Updating restriction settings for team {}: {}";
+
+        // check if admin
+        if (!validateIfAdmin(session)) {
+            log.warn(logMessage, teamId, PERMISSION_DENIED);
+            return NO_PERMISSION_PAGE;
+        }
+
+        Team2 team = invokeAndExtractTeamInfo(teamId);
+
+        // check if team is approved before restricted
+        if ("restrict".equals(action) && team.getStatus().equals(TeamStatus.APPROVED.name())) {
+            return restrictTeam(team, redirectAttributes);
+        }
+        // check if team is restricted before freeing it back to approved
+        else if ("free".equals(action) && team.getStatus().equals(TeamStatus.RESTRICTED.name())) {
+            return freeTeam(team, redirectAttributes);
+        } else {
+            log.warn(logMessage, teamId, "Cannot " + action + " team with status " + team.getStatus());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "Cannot " + action + " team " + team.getName() + " with status " + team.getStatus());
+            return "redirect:/admin";
+        }
+    }
+
+    private String restrictTeam(final Team2 team, RedirectAttributes redirectAttributes) throws IOException {
+        log.info("Restricting team {}", team.getId());
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(
+                properties.getSioTeamsStatusUrl(team.getId(), TeamStatus.RESTRICTED),
+                HttpMethod.PUT, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            String logMessage = "Failed to restrict team {}: {}";
+            switch (exceptionState) {
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    log.warn(logMessage, team.getId(), TEAM_NOT_FOUND);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + TEAM_NOT_FOUND);
+                    break;
+                case INVALID_STATUS_TRANSITION_EXCEPTION:
+                    log.warn(logMessage, team.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
+                    break;
+                case INVALID_TEAM_STATUS_EXCEPTION:
+                    log.warn(logMessage, team.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
+                    break;
+                case FORBIDDEN_EXCEPTION:
+                    log.warn(logMessage, team.getId(), PERMISSION_DENIED);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + PERMISSION_DENIED);
+                    break;
+                default:
+                    log.warn(logMessage, team.getId(), exceptionState.getExceptionName());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            }
+            return "redirect:/admin";
+        } else {
+            // good
+            log.info("Team {} has been restricted", team.getId());
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + team.getName() + " status has been changed to " + TeamStatus.RESTRICTED.name());
+            return "redirect:/admin";
+        }
+    }
+
+    private String freeTeam(final Team2 team, RedirectAttributes redirectAttributes) throws IOException {
+        log.info("Freeing team {}", team.getId());
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(
+                properties.getSioTeamsStatusUrl(team.getId(), TeamStatus.APPROVED),
+                HttpMethod.PUT, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            String logMessage = "Failed to free team {}: {}";
+            switch (exceptionState) {
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    log.warn(logMessage, team.getId(), TEAM_NOT_FOUND);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + TEAM_NOT_FOUND);
+                    break;
+                case INVALID_STATUS_TRANSITION_EXCEPTION:
+                    log.warn(logMessage, team.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
+                    break;
+                case INVALID_TEAM_STATUS_EXCEPTION:
+                    log.warn(logMessage, team.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
+                    break;
+                case FORBIDDEN_EXCEPTION:
+                    log.warn(logMessage, team.getId(), PERMISSION_DENIED);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + PERMISSION_DENIED);
+                    break;
+                default:
+                    log.warn(logMessage, team.getId(), exceptionState.getExceptionName());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            }
+            return "redirect:/admin";
+        } else {
+            // good
+            log.info("Team {} has been freed", team.getId());
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + team.getName() + " status has been changed to " + TeamStatus.APPROVED.name());
+            return "redirect:/admin";
+        }
+    }
+
     @RequestMapping("/admin/users/{userId}")
     public String freezeUnfreezeUsers(
             @PathVariable final String userId,
             @RequestParam(value = "action", required = true) final String action,
             final RedirectAttributes redirectAttributes,
-            HttpSession session) throws IOException {
+            HttpSession session) throws IOException
+    {
         User2 user = invokeAndExtractUserInfo(userId);
 
         // check if admin
@@ -3288,6 +3417,7 @@ public class MainController {
     /**
      * Ensure that only users of the team can realize or un-realize experiment
      * A pre-condition is that the users must be approved.
+     * Teams must also be approved.
      *
      * @return the main experiment page
      */
@@ -3306,6 +3436,11 @@ public class MainController {
             }
         }
         return false;
+    }
+
+    private String getTeamStatus(String teamId) {
+        Team2 team = invokeAndExtractTeamInfo(teamId);
+        return team.getStatus();
     }
 
     private Realization getCleanRealization() {
@@ -3428,5 +3563,4 @@ public class MainController {
         }
         return response.getBody().toString();
     }
-
 }

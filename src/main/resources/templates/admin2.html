@@ -119,6 +119,7 @@
 					<!--<th th:text="#{admin.teams.header.institutition}">Institution</th>-->
 					<th th:text="#{admin.teams.header.type}">Type</th>
 					<th th:text="#{admin.teams.header.public}">Visibility</th>
+					<th><!--Actions--></th>
 					</thead>
 					<tr th:each="team : ${teamsMap}">
 						<td th:text="${team.value.name}"></td>
@@ -149,6 +150,10 @@
 						</td>
 						<td th:text="${team.value.organisationType}"></td>
 						<td th:text="${team.value.visibility}">Visibility</td>
+						<td>
+							<a th:href="@{/admin/teams/{teamId}/(teamId=${team.value.id}, action = restrict)}" th:if="${team.value.status} == 'APPROVED'">Restrict</a>
+							<a th:href="@{/admin/teams/{teamId}/(teamId=${team.value.id}, action = free)}" th:if="${team.value.status} == 'RESTRICTED'">Free</a>
+						</td>
 					</tr>
 				</table>
 			</div>
