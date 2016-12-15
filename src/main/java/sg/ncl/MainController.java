@@ -2190,7 +2190,7 @@ public class MainController {
         String teamStatus = getTeamStatus(realization.getTeamId());
 
         if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
-            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), realization.getId(), teamStatus);
+            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), realization.getTeamId(), teamStatus);
             redirectAttributes.addFlashAttribute(MESSAGE, teamName + " is in " + teamStatus + " status and does not have permission to start experiment. Please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
