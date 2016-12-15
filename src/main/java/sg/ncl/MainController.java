@@ -96,6 +96,7 @@ public class MainController {
     private static final String TEAM_NAME = "teamName";
     private static final String NODE_ID = "nodeId";
     private static final String PERMISSION_DENIED = "Permission denied";
+    private static final String TEAM_NOT_FOUND = "Team not found";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -2607,8 +2608,8 @@ public class MainController {
             String logMessage = "Failed to restrict team {}: {}";
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
-                    log.warn(logMessage, team.getId(), "Team not found");
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "Team not found");
+                    log.warn(logMessage, team.getId(), TEAM_NOT_FOUND);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + TEAM_NOT_FOUND);
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
                     log.warn(logMessage, team.getId(), error.getMessage());
@@ -2619,7 +2620,7 @@ public class MainController {
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
                     break;
                 case FORBIDDEN_EXCEPTION:
-                    log.warn(logMessage, team.getId(), "Permission denied");
+                    log.warn(logMessage, team.getId(), PERMISSION_DENIED);
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + PERMISSION_DENIED);
                     break;
                 default:
@@ -2650,8 +2651,8 @@ public class MainController {
             String logMessage = "Failed to free team {}: {}";
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
-                    log.warn(logMessage, team.getId(), "Team not found");
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "Team not found");
+                    log.warn(logMessage, team.getId(), TEAM_NOT_FOUND);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + TEAM_NOT_FOUND);
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
                     log.warn(logMessage, team.getId(), error.getMessage());
@@ -2662,7 +2663,7 @@ public class MainController {
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
                     break;
                 case FORBIDDEN_EXCEPTION:
-                    log.warn(logMessage, team.getId(), "Permission denied");
+                    log.warn(logMessage, team.getId(), PERMISSION_DENIED);
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + PERMISSION_DENIED);
                     break;
                 default:
