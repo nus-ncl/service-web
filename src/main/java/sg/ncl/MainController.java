@@ -2569,7 +2569,7 @@ public class MainController {
     {
         // check if admin
         if (!validateIfAdmin(session)) {
-            log.warn("Access denied when trying to restrict/free team {}: must be admin!", session.getAttribute(webProperties.getSessionUserId()));
+            log.warn("Access denied when trying to restrict/free team {}: must be admin!", teamId);
             return NO_PERMISSION_PAGE;
         }
 
