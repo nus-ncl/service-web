@@ -2179,7 +2179,7 @@ public class MainController {
 
         // ensure experiment is stopped first before starting
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
-        String teamStatus = getTeamStatus(realization.getTeamId());
+
 
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
@@ -2187,9 +2187,11 @@ public class MainController {
             return "redirect:/experiments";
         }
 
+        String teamStatus = getTeamStatus(realization.getTeamId());
+
         if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
             log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), realization.getId(), teamStatus);
-            redirectAttributes.addFlashAttribute(MESSAGE, "Team " + teamName + " is currently " + teamStatus + " and does not have permission to start experiment " + realization.getExperimentName() + " Please contact " + CONTACT_EMAIL);
+            redirectAttributes.addFlashAttribute(MESSAGE, teamName + " is in " + teamStatus + " status and does not have permission to start experiment. Please contact " + CONTACT_EMAIL);
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
