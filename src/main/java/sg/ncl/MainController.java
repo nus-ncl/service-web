@@ -95,7 +95,6 @@ public class MainController {
 
     private static final String TEAM_NAME = "teamName";
     private static final String NODE_ID = "nodeId";
-    private static final String NOT_FOUND = "not found";
     private static final String PERMISSION_DENIED = "Permission denied";
 
     @Autowired
@@ -2605,26 +2604,26 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-
+            String logMessage = "Failed to restrict team {}: {}";
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
-                    log.warn("Failed to restrict team {}: Team not found", team.getId());
+                    log.warn(logMessage, team.getId(), "Team not found");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "Team not found");
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
-                    log.warn("Failed to restrict team {}: {}", team.getId(), error.getMessage());
+                    log.warn(logMessage, team.getId(), error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
                     break;
                 case INVALID_TEAM_STATUS_EXCEPTION:
-                    log.warn("Failed to restrict team {}: {}", team.getId(), error.getMessage());
+                    log.warn(logMessage, team.getId(), error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
                     break;
                 case FORBIDDEN_EXCEPTION:
-                    log.warn("Failed to restrict team {}: Permission denied", team.getId());
+                    log.warn(logMessage, team.getId(), "Permission denied");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + PERMISSION_DENIED);
                     break;
                 default:
-                    log.warn("Failed to restrict team {}: {}", team.getId(), exceptionState.getExceptionName());
+                    log.warn(logMessage, team.getId(), exceptionState.getExceptionName());
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             }
             return "redirect:/admin";
@@ -2648,26 +2647,26 @@ public class MainController {
         if (RestUtil.isError(response.getStatusCode())) {
             MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-
+            String logMessage = "Failed to free team {}: {}";
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
-                    log.warn("Failed to free team {}: Team not found", team.getId());
+                    log.warn(logMessage, team.getId(), "Team not found");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "Team not found");
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
-                    log.warn("Failed to free team {}: {}", team.getId(), error.getMessage());
+                    log.warn(logMessage, team.getId(), error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
                     break;
                 case INVALID_TEAM_STATUS_EXCEPTION:
-                    log.warn("Failed to free team {}: {}", team.getId(), error.getMessage());
+                    log.warn(logMessage, team.getId(), error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
                     break;
                 case FORBIDDEN_EXCEPTION:
-                    log.warn("Failed to free team {}: Permission denied", team.getId());
+                    log.warn(logMessage, team.getId(), "Permission denied");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + PERMISSION_DENIED);
                     break;
                 default:
-                    log.warn("Failed to free team {}: {}", team.getId(), exceptionState.getExceptionName());
+                    log.warn(logMessage, team.getId(), exceptionState.getExceptionName());
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             }
             return "redirect:/admin";
