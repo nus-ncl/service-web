@@ -228,7 +228,7 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetFreeNodes() throws Exception {
-        assertThat(properties.getFreeNodes()).isEqualTo("http://" + properties.getTelemetryAddress() + ":" + properties.getTelemetryPort() + "/" + properties.getTelemetryEndpoint());
+        assertThat(properties.getFreeNodes()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint());
     }
 
     @Test
