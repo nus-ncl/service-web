@@ -123,8 +123,16 @@ public class ConnectionProperties {
         return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/";
     }
 
+    public String getSioUsersStatusUrl(final String id, final String status) {
+        return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/status/" + status;
+    }
+
     public String getSioTeamsUrl() {
         return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
+    }
+
+    public String getSioTeamsStatusUrl(final String id, final TeamStatus status) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + id + "/status/" + status;
     }
 
     public String getSioAuthUrl() {
@@ -263,6 +271,10 @@ public class ConnectionProperties {
 
     public String getDataset(String dataId) {
         return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId;
+    }
+
+    public String getResource(String dataId, String resourceId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId;
     }
 
     public String downloadResource(String dataId, String resourceId) {

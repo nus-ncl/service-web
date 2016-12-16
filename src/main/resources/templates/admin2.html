@@ -27,6 +27,9 @@
 		<div th:if="${message}">
 			<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 		</div>
+		<div th:if="${messageSuccess}">
+			<p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+		</div>
 		<div class="tab-content col-sm-10 dashpanel_admin">
 				<div id="newTeamsApproval" class="tab-pane fade in active">
 				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.teams.header.pending}">Teams Pending for Approval</h2>
@@ -116,6 +119,7 @@
 					<!--<th th:text="#{admin.teams.header.institutition}">Institution</th>-->
 					<th th:text="#{admin.teams.header.type}">Type</th>
 					<th th:text="#{admin.teams.header.public}">Visibility</th>
+					<th><!--Actions--></th>
 					</thead>
 					<tr th:each="team : ${teamsMap}">
 						<td th:text="${team.value.name}"></td>
@@ -146,6 +150,10 @@
 						</td>
 						<td th:text="${team.value.organisationType}"></td>
 						<td th:text="${team.value.visibility}">Visibility</td>
+						<td>
+							<a th:href="@{/admin/teams/{teamId}/(teamId=${team.value.id}, action = restrict)}" th:if="${team.value.status} == 'APPROVED'">Restrict</a>
+							<a th:href="@{/admin/teams/{teamId}/(teamId=${team.value.id}, action = free)}" th:if="${team.value.status} == 'RESTRICTED'">Free</a>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -159,6 +167,7 @@
 					<th th:text="#{admin.users.header.name}">Full Name</th>
 					<th th:text="#{admin.users.header.email}">Email</th>
 					<th th:text="#{admin.users.header.team}">Team</th>
+					<th><!-- Actions --></th>
 					</thead>
 					<tr th:each="user : ${usersList}">
 						<td>
@@ -191,6 +200,10 @@
 								</div>
 							</th:block>
 							<p th:if="${#lists.isEmpty(userToTeamMap.get(user.id))}">Not in any teams yet.</p>
+						</td>
+						<td>
+							<a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = freeze)}" th:if="${user.status} == 'APPROVED'">Ban</a>
+							<a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = unfreeze)}" th:if="${user.status} == 'FROZEN'">Unban</a>
 						</td>
 					</tr>
 				</table>

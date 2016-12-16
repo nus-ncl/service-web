@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Te Ye
+ * @author Te Ye, Vu
  */
 public enum ExceptionState {
     ADAPTER_CONNECTION_EXCEPTION("AdapterConnectionException"),
@@ -15,6 +15,10 @@ public enum ExceptionState {
     CREDENTIALS_NOT_FOUND_EXCEPTION("CredentialsNotFoundException"),
     CREDENTIALS_UPDATE_EXCEPTION("CredentialsUpdateException"),
     DATA_NAME_ALREADY_EXISTS_EXCEPTION("DataNameAlreadyExistsException"),
+    DATA_NOT_FOUND_EXCEPTION("DataNotFoundException"),
+    DATA_RESOURCE_ALREADY_EXISTS_EXCEPTION("DataResourceAlreadyExistsException"),
+    DATA_RESOURCE_NOT_FOUND_EXCEPTION("DataResourceNotFoundException"),
+    DATA_RESOURCE_DELETE_EXCEPTION("DataResourceDeleteException"),
     DETERLAB_OPERATION_FAILED_EXCEPTION("DeterLabOperationFailedException"),
     EMAIL_ALREADY_EXISTS_EXCEPTION("EmailAlreadyExistsException"),
     EXPERIMENT_NAME_ALREADY_EXISTS_EXCEPTION("ExperimentNameAlreadyExistsException"),
@@ -23,6 +27,7 @@ public enum ExceptionState {
     FORBIDDEN_EXCEPTION("ForbiddenException"),
     INVALID_CREDENTIALS_EXCEPTION("InvalidCredentialsException"),
     INVALID_PASSWORD_EXCEPTION("InvalidPasswordException"),
+    INVALID_STATUS_TRANSITION_EXCEPTION("InvalidStatusTransitionException"),
     INVALID_TEAM_NAME_EXCEPTION("InvalidTeamNameException"),
     INVALID_TEAM_STATUS_EXCEPTION("InvalidTeamStatusException"),
     INVALID_USER_STATUS_EXCEPTION("InvalidUserStatusException"),
@@ -32,9 +37,13 @@ public enum ExceptionState {
     PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION("PasswordResetRequestNotFoundException"),
     PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION("PasswordResetRequestTimeoutException"),
     TEAM_ID_NULL_OR_EMPTY_EXCEPTION("TeamIdNullOrEmptyException"),
+    TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION("TeamMemberAlreadyExistsException"),
+    TEAM_NAME_NULL_OR_EMPTY_EXCEPTION("TeamNameNullOrEmptyException"),
     TEAM_NAME_ALREADY_EXISTS_EXCEPTION("TeamNameAlreadyExistsException"),
     TEAM_NOT_FOUND_EXCEPTION("TeamNotFoundException"),
+    UPLOAD_ALREADY_EXISTS_EXCEPTION("UploadAlreadyExistsException"),
     USERNAME_ALREADY_EXISTS_EXCEPTION("UsernameAlreadyExistsException"),
+    USER_ALREADY_IN_TEAM_EXCEPTION("UserAlreadyInTeamException"),
     USER_ID_NULL_OR_EMPTY_EXCEPTION("UserIdNullOrEmptyException"),
     USER_NOT_FOUND_EXCEPTION("UserNotFoundException");
 
