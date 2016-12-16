@@ -3511,8 +3511,9 @@ public class MainController {
         String freeNodes;
         log.info("Retrieving number of free nodes from: {}", properties.getFreeNodes());
         try {
-            String jsonResult = restTemplate.getForObject(properties.getFreeNodes(), String.class);
-            JSONObject object = new JSONObject(jsonResult);
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity response = restTemplate.exchange(properties.getFreeNodes(), HttpMethod.GET, request, String.class);
+            JSONObject object = new JSONObject(response.getBody().toString());
             freeNodes = object.getString("numberOfFreeNodes");
         } catch (RestClientException e) {
             log.warn("Error connecting to service-telemetry: {}", e);
