@@ -214,11 +214,10 @@ public class ConnectionPropertiesTest {
         assertThat(properties.getTelemetryAddress()).isEqualTo(one);
     }
 
-    @Ignore
     @Test
     public void testGetTelemetryPort() throws Exception {
-        assertThat(properties.getTelemetryPort()).isNotNull();
-        assertThat(properties.getTelemetryPort()).isInstanceOf(String.class);
+        // null because not configured in application.properties
+        assertThat(properties.getTelemetryPort()).isNull();
     }
 
     @Test
