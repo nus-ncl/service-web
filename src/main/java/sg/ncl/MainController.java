@@ -1824,7 +1824,6 @@ public class MainController {
             }
         }
 
-//        model.addAttribute("qn", )
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
@@ -2444,12 +2443,10 @@ public class MainController {
         Map<Long, Realization> realizationMap = new HashMap<>();
 
         for (int i = 0; i < jsonExpArray.length(); i++) {
-            JSONObject expObject = jsonExpArray.getJSONObject(i);
             Experiment2 experiment2 = extractExperiment(jsonExpArray.getJSONObject(i).toString());
             Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
             realizationMap.put(experiment2.getId(), realization);
             experimentList.add(experiment2);
-            System.out.println(expObject.toString());
         }
 
         model.addAttribute("experimentList", experimentList);
