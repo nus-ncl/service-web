@@ -2458,9 +2458,7 @@ public class MainController {
     @RequestMapping(value = "/admin/{teamId}", method = RequestMethod.GET)
     public String admin(@PathVariable String teamId, Model model, HttpSession session) {
         HttpEntity<String> exprequest = createHttpEntityHeaderOnly();
-        ResponseEntity expresponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, exprequest, String.class);
-        exprequest = createHttpEntityHeaderOnly();
-        expresponse = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, exprequest, String.class);
+        ResponseEntity expresponse = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, exprequest, String.class);
         JSONArray experimentsArray = new JSONArray(expresponse.getBody().toString());
 
         List<Experiment2> experimentList = new ArrayList<>();
