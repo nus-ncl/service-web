@@ -202,7 +202,7 @@ $(document).ready(function() {
         modal.find('#requestLabel').text("Resources of " + requestLabel);
     });
 
-    // modal to show dataset details
+    // modal to confirm dataset delete
     $('#deleteModal').on('show.bs.modal', function (event) {
         var anchor = $(event.relatedTarget);
         var deleteLabel = anchor.data('name');
@@ -219,6 +219,18 @@ $(document).ready(function() {
         modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);
         modal.find('#datasetAccess').text(datasetAccess);
+        modal.find('#deleteButton').attr('href', deleteButton);
+    });
+
+    // modal to confirm dataset resource delete
+    $('#deleteResourceModal').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var deleteLabel = anchor.data('id');
+        var resourceUri = anchor.data('uri');
+        var deleteButton = anchor.data('delete');
+        var modal = $(this);
+        modal.find('#deleteLabel').text("Delete " + deleteLabel + "?");
+        modal.find('#resourceUri').text(resourceUri);
         modal.find('#deleteButton').attr('href', deleteButton);
     });
 
