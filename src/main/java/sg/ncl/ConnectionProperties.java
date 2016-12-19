@@ -258,7 +258,7 @@ public class ConnectionProperties {
     }
 
     public String getAllExperiment() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/experiments";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
 
     //-------------------------------------
