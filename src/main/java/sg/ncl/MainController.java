@@ -228,7 +228,6 @@ public class MainController {
 //        return "admin2";
 //    }
 
-
     @RequestMapping("/tutorials")
     public String tutorials() {
         return "tutorials";
@@ -2417,11 +2416,70 @@ public class MainController {
             datasetsList.add(dataset);
         }
 
+
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
         model.addAttribute("usersList", usersList);
         model.addAttribute("userToTeamMap", userToTeamMap);
         model.addAttribute("dataList", datasetsList);
+
+        return "admin2";
+    }
+
+    @RequestMapping("/admin/experiments")
+    public String exp_dashboard(Model model, HttpSession session) {
+
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        //------------------------------------
+        // get list of experiments
+        //------------------------------------
+        HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
+        ResponseEntity expResponseEntity = restTemplate.exchange(properties.getAllExperiment(), HttpMethod.GET, expRequest, String.class);
+        JSONArray jsonExpArray = new JSONArray(expResponseEntity.getBody().toString());
+
+        List<Experiment2> experimentList = new ArrayList<>();
+        Map<Long, Realization> realizationMap = new HashMap<>();
+
+        for (int i = 0; i < jsonExpArray.length(); i++) {
+            JSONObject expObject = jsonExpArray.getJSONObject(i);
+            Experiment2 experiment2 = extractExperiment(jsonExpArray.getJSONObject(i).toString());
+            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+            realizationMap.put(experiment2.getId(), realization);
+            experimentList.add(experiment2);
+            System.out.println(expObject.toString());
+        }
+
+        model.addAttribute("experimentList", experimentList);
+        model.addAttribute("realizationMap", realizationMap);
+
+        return "experiment_dashboard";
+    }
+
+    @RequestMapping(value = "/admin/{teamId}", method = RequestMethod.GET)
+    public String admin(@PathVariable String teamId, Model model, HttpSession session) {
+        HttpEntity<String> exprequest = createHttpEntityHeaderOnly();
+        ResponseEntity expresponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, exprequest, String.class);
+        String responseBody = expresponse.getBody().toString();
+        exprequest = createHttpEntityHeaderOnly();
+        expresponse = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, exprequest, String.class);
+        JSONArray experimentsArray = new JSONArray(expresponse.getBody().toString());
+
+        List<Experiment2> experimentList = new ArrayList<>();
+        Map<Long, Realization> realizationMap = new HashMap<>();
+
+        for (int k = 0; k < experimentsArray.length(); k++) {
+            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+            realizationMap.put(experiment2.getId(), realization);
+            experimentList.add(experiment2);
+        }
+
+        model.addAttribute("experimentList", experimentList);
+        model.addAttribute("realizationMap", realizationMap);
+
         return "admin2";
     }
 //
@@ -2483,6 +2541,7 @@ public class MainController {
     }
 
 
+
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
 //    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
 //    	if (bindingResult.hasErrors()) {
@@ -2498,6 +2557,8 @@ public class MainController {
 //    	domainManager.removeDomains(domainKey);
 //    	return "redirect:/admin";
 //    }
+
+
 
     @RequestMapping("/admin/teams/accept/{teamId}/{teamOwnerId}")
     public String approveTeam(
@@ -2877,6 +2938,8 @@ public class MainController {
             return "redirect:/admin";
         }
     }
+
+
 
 //    @RequestMapping("/admin/experiments/remove/{expId}")
 //    public String adminRemoveExp(@PathVariable Integer expId) {

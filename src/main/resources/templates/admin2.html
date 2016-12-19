@@ -121,7 +121,7 @@
 					<!--<th th:text="#{admin.teams.header.public}">Visibility</th>-->
 					<th th:text="#{admin.teams.header.status}">Status</th>
 					<th><!--Actions--></th>
-						</thead>
+					</thead>
 					<tr th:each="team : ${teamsMap}">
 						<td>
 							<a th:href="'#'+${team.value.name}" data-toggle="modal"><span th:text="${team.value.name}"></span></a>
@@ -140,7 +140,6 @@
 											<li><strong>Decription : </strong> <span th:text="${team.value.description}"></span></li>
 											<li><strong>Type : </strong> <span th:text="${team.value.organisationType}"></span></li>
 											<li><strong>Visibility : </strong> <span th:text="${team.value.visibility}"></span></li>
-
 										</ul>
 									</div>
 								</div>
@@ -172,7 +171,6 @@
 								</div>
 							</div>
 						</td>
-
 						<td th:text="${team.value.status}">Status</td>
 						<td>
 							<a th:href="@{/admin/teams/{teamId}/(teamId=${team.value.id}, action = restrict)}" th:if="${team.value.status} == 'APPROVED'">Restrict</a>
@@ -193,7 +191,6 @@
 					<th th:text="#{admin.users.header.team}">Team</th>
 					<th th:text="#{admin.users.header.status}">Status</th>
 					<th><!-- Actions --></th>
-
 					</thead>
 					<tr th:each="user : ${usersList}">
 						<td>
@@ -232,7 +229,6 @@
 							<a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = freeze)}" th:if="${user.status} == 'APPROVED'">Ban</a>
 							<a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = unfreeze)}" th:if="${user.status} == 'FROZEN'">Unban</a>
 						</td>
-
 					</tr>
 				</table>
 			</div>
