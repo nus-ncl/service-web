@@ -1500,8 +1500,8 @@ public class MainController {
             experimentList.add(experiment2);
         }
 
-        model.addAttribute("experimentList", experimentList);
-        model.addAttribute("realizationMap", realizationMap);
+        model.addAttribute("teamExperimentList", experimentList);
+        model.addAttribute("teamRealizationMap", realizationMap);
 
         return "team_profile";
     }
