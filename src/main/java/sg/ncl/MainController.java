@@ -264,6 +264,27 @@ public class MainController {
 //        }
 //    }
 
+//        @RequestMapping(value="/terms_and_conditions/view", method=RequestMethod.GET)
+//    public void terms_and_conditionsView(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
+//        InputStream stream = null;
+//        response.setContentType("application/pdf");
+//        try {
+//            stream = getClass().getClassLoader().getResourceAsStream("downloads/future_plan.pdf");
+//            response.setContentType("application/force-download");
+//            response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
+//            IOUtils.copy(stream, response.getOutputStream());
+//            response.flushBuffer();
+//        } catch (Exception ex) {
+//            logger.info("Error writing file to output stream.");
+//            throw new FuturePlanDownloadException("IOError writing file to output stream");
+//        } finally {
+//            if (stream != null) {
+//                stream.close();
+//            }
+//        }
+////    }
+
+
     @RequestMapping(value = "/orderform/download", method = RequestMethod.GET)
     public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
         InputStream stream = null;
