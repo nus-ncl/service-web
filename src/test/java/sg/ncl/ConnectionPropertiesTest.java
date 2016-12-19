@@ -1,6 +1,7 @@
 package sg.ncl;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -215,8 +216,8 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetTelemetryPort() throws Exception {
-        assertThat(properties.getTelemetryPort()).isNotNull();
-        assertThat(properties.getTelemetryPort()).isInstanceOf(String.class);
+        // null because not configured in application.properties
+        assertThat(properties.getTelemetryPort()).isNull();
     }
 
     @Test
@@ -228,7 +229,7 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetFreeNodes() throws Exception {
-        assertThat(properties.getFreeNodes()).isEqualTo("http://" + properties.getTelemetryAddress() + ":" + properties.getTelemetryPort() + "/" + properties.getTelemetryEndpoint());
+        assertThat(properties.getFreeNodes()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint());
     }
 
     @Test

@@ -310,7 +310,7 @@ public class ConnectionProperties {
     }
 
     public String getFreeNodes() {
-        return "http://" + telemetryAddress + ":" + telemetryPort + "/" + telemetryEndpoint;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint;
     }
     
     //-------------------------------------
