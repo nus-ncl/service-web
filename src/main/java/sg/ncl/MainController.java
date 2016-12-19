@@ -2426,7 +2426,7 @@ public class MainController {
     }
 
     @RequestMapping("/admin/experiments")
-    public String exp_dashboard(Model model, HttpSession session) {
+    public String adminExperimentsManagement(Model model, HttpSession session) {
 
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
@@ -2449,8 +2449,8 @@ public class MainController {
             experimentList.add(experiment2);
         }
 
-        model.addAttribute("experimentList", experimentList);
-        model.addAttribute("realizationMap", realizationMap);
+        model.addAttribute("adminExpList", experimentList);
+        model.addAttribute("adminRealizationMap", realizationMap);
 
         return "experiment_dashboard";
     }
@@ -2459,7 +2459,6 @@ public class MainController {
     public String admin(@PathVariable String teamId, Model model, HttpSession session) {
         HttpEntity<String> exprequest = createHttpEntityHeaderOnly();
         ResponseEntity expresponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, exprequest, String.class);
-        String responseBody = expresponse.getBody().toString();
         exprequest = createHttpEntityHeaderOnly();
         expresponse = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, exprequest, String.class);
         JSONArray experimentsArray = new JSONArray(expresponse.getBody().toString());
