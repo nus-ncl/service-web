@@ -257,6 +257,10 @@ public class ConnectionProperties {
         return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiments/" + expId + "/topology";
     }
 
+    public String getAllExperiment() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/experiments";
+    }
+
     //-------------------------------------
     // DATA
     //-------------------------------------

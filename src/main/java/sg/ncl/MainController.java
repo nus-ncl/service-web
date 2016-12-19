@@ -2424,6 +2424,64 @@ public class MainController {
         model.addAttribute("dataList", datasetsList);
         return "admin2";
     }
+//
+    @RequestMapping("/admin/experiments")
+    public String exp_dashboard(Model model, HttpSession session) {
+
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        //------------------------------------
+        // get list of experiments
+        //------------------------------------
+        HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
+        ResponseEntity expResponseEntity = restTemplate.exchange(properties.getAllExperiment(), HttpMethod.GET, expRequest, String.class);
+        JSONArray jsonExpArray = new JSONArray(expResponseEntity.getBody().toString());
+
+        List<Experiment2> experimentList = new ArrayList<>();
+        Map<Long, Realization> realizationMap = new HashMap<>();
+
+        for (int i = 0; i < jsonExpArray.length(); i++) {
+            JSONObject expObject = jsonExpArray.getJSONObject(i);
+            Experiment2 experiment2 = extractExperiment(jsonExpArray.getJSONObject(i).toString());
+            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+            realizationMap.put(experiment2.getId(), realization);
+            experimentList.add(experiment2);
+            System.out.println(expObject.toString());
+        }
+
+        model.addAttribute("experimentList", experimentList);
+        model.addAttribute("realizationMap", realizationMap);
+
+        return "experiment_dashboard";
+    }
+
+    @RequestMapping(value = "/admin/{teamId}", method = RequestMethod.GET)
+    public String admin(@PathVariable String teamId, Model model, HttpSession session) {
+        HttpEntity<String> exprequest = createHttpEntityHeaderOnly();
+        ResponseEntity expresponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, exprequest, String.class);
+        String responseBody = expresponse.getBody().toString();
+        exprequest = createHttpEntityHeaderOnly();
+        expresponse = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, exprequest, String.class);
+        JSONArray experimentsArray = new JSONArray(expresponse.getBody().toString());
+
+        List<Experiment2> experimentList = new ArrayList<>();
+        Map<Long, Realization> realizationMap = new HashMap<>();
+
+        for (int k = 0; k < experimentsArray.length(); k++) {
+            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+            realizationMap.put(experiment2.getId(), realization);
+            experimentList.add(experiment2);
+        }
+
+        model.addAttribute("experimentList", experimentList);
+        model.addAttribute("realizationMap", realizationMap);
+
+        return "admin2";
+    }
+
 
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
 //    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
@@ -3348,6 +3406,7 @@ public class MainController {
         if (expDetailsObject == JSONObject.NULL || expDetailsObject.toString().isEmpty()) {
             log.info("set details empty");
             realization.setDetails("");
+            realization.setNumberOfNodes(0);
         } else {
             log.info("exp report to string: {}", expDetailsObject.toString());
             exp_report = expDetailsObject.toString();
@@ -3365,6 +3424,7 @@ public class MainController {
                 realization.addNodeDetails(nodeName, nodeDetails);
             }
             log.info("nodes info object: {}", nodesInfoObject);
+            realization.setNumberOfNodes(nodesInfoObject.keySet().size());
         }
 
         return realization;
@@ -3505,6 +3565,7 @@ public class MainController {
         realization.setTeamId("");
         realization.setState(RealizationState.ERROR.toString());
         realization.setDetails("");
+        realization.setNumberOfNodes(0);
 
         return realization;
     }
