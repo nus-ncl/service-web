@@ -205,8 +205,39 @@ public class DataController extends MainController {
     }
 
     @RequestMapping(value = "/request/{id}", method = RequestMethod.POST)
-    public String requestDataset(@PathVariable String id, @ModelAttribute DataRequestForm requestForm, BindingResult bindingResult) {
-        log.info("Reason: {}", requestForm.getReason());
+    public String requestDataset(@PathVariable String id,
+                                 @ModelAttribute DataRequestForm requestForm,
+                                 RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("reason", requestForm.getReason());
+
+        HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.requestDataset(id), HttpMethod.POST, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                if (exceptionState == FORBIDDEN_EXCEPTION) {
+                    log.warn("Requesting of dataset access forbidden.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_NOT_FOUND_EXCEPTION) {
+                    log.warn("Dataset not found for requesting access.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else {
+                    log.warn("Unknown error for requesting dataset access.");
+                }
+            } else {
+                log.info("Dataset access requested: {}", dataResponseBody);
+            }
+        } catch (IOException e) {
+            log.error("requestDataset: {}", e.toString());
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
         return REDIRECT_DATA;
     }
 
