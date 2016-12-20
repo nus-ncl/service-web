@@ -67,6 +67,7 @@ public class DataController extends MainController {
         }
 
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
+        model.addAttribute("requestForm", new DataRequestForm());
         return "data";
     }
 
@@ -200,6 +201,12 @@ public class DataController extends MainController {
         if (admin.isPresent()) {
             return "redirect:/admin#dataManagement";
         }
+        return REDIRECT_DATA;
+    }
+
+    @RequestMapping(value = "/request/{id}", method = RequestMethod.POST)
+    public String requestDataset(@PathVariable String id, @ModelAttribute DataRequestForm requestForm, BindingResult bindingResult) {
+        log.info("Reason: {}", requestForm.getReason());
         return REDIRECT_DATA;
     }
 

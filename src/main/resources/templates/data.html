@@ -21,6 +21,7 @@
             	<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.header}"></h2>
                 <table id="myTable" class="table table-responsive">
                     <thead>
+                    <tr>
                         <th>
                         	<span th:text="#{data.header.name}">Name</span>
 							<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
@@ -54,7 +55,9 @@
                             </a>
                         </th>
                         <th><!-- Actions --></th>
+                    </tr>
                     </thead>
+                    <tbody>
                     <tr th:each="datasetEntry : ${allDataMap}">
 	                   	<td><a href="#datasetModal" data-toggle="modal"
 							   th:attr="data-name=${datasetEntry.value.name},
@@ -76,9 +79,12 @@
                                         data-upload=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/' + datasetEntry.value.id + '/resources' : ''}">
                                 <i class="fa fa-download"></i> Download</a>
                             <a th:if="not ${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#requestModal" class="btn btn-primary" data-toggle="modal"
-                               th:attr="data-name=${datasetEntry.value.name}"><i class="fa fa-commenting"></i> Request</a>
+                               th:attr="data-name=${datasetEntry.value.name},
+                                        data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
+                                        data-request=${'/data/request/' + datasetEntry.value.id}"><i class="fa fa-commenting"></i> Request</a>
 	                   	</td>
-                   </tr>
+                    </tr>
+                    </tbody>
                 </table>
 				<p>&nbsp;</p>
 				<p>&nbsp;</p>
@@ -165,16 +171,25 @@
         <div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
+                    <form method="post" action="#" role="form" id="requestForm" th:object="${requestForm}">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="requestLabel">Resources</h4>
                     </div>
                     <div class="modal-body">
-                        <span th:text="#{dataset.user.contactAdmin}"></span>
+                        <!-- span th:text="#{dataset.user.contactAdmin}"></span -->
+                        <div class="form-group">
+                            <label for="reason" class="control-label">
+                                Please state the reason for your request to the owner <u><span id="owner"></span></u> for access to the resources of dataset <u><span id="dataset"></span></u>:
+                            </label>
+                            <textarea class="form-control" rows="5" th:field="*{reason}"></textarea>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="requestButton">Request</button>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>
