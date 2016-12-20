@@ -170,6 +170,10 @@ public class ConnectionProperties {
     // DATA
     //-------------------------------------
 
+    public String requestDataset(String dataId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests";
+    }
+
     public String getPublicData() {
         return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";
     }
