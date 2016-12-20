@@ -198,8 +198,13 @@ $(document).ready(function() {
     $('#requestModal').on('show.bs.modal', function (event) {
         var anchor = $(event.relatedTarget);
         var requestLabel = anchor.data('name');
+        var owner = anchor.data('owner');
+        var request = anchor.data('request');
         var modal = $(this);
         modal.find('#requestLabel').text("Resources of " + requestLabel);
+        modal.find('#owner').text(owner);
+        modal.find('#dataset').text(requestLabel);
+        modal.find('#requestForm').attr('action', request);
     });
 
     // modal to confirm dataset delete
