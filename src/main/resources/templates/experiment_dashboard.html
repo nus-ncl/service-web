@@ -27,10 +27,10 @@
 			<th th:text="#{admin.users.header.action}">Action</th>
 			</thead>
 			<tbody>
-			<tr th:each="expEntry : ${adminExpList}" >
-				<td th:text="${expEntry.name}">Name</td>
-				<td th:text="${expEntry.teamName}">Team</td>
-				<th:block th:each="realization : ${adminRealizationMap.get(expEntry.id)}">
+			<tr th:each="expEntry : ${experimentMap}" >
+				<td th:text="${expEntry.value.name}">Name</td>
+				<td th:text="${expEntry.value.teamName}">Team</td>
+				<th:block th:each="realization : ${realizationMap.get(expEntry.key)}">
 					<td th:text="${realization.numberOfNodes}"></td>
 				</th:block>
 				<td></td>
