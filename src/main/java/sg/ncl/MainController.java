@@ -2451,7 +2451,7 @@ public class MainController {
 
         for (int k = 0; k < jsonRealizationArray.length(); k++) {
             Realization realization = extractRealization(jsonRealizationArray.getJSONObject(k).toString());
-            if (realization.getState().equals(RealizationState.NOT_RUNNING.name())) {
+            if (realization.getState().equals(RealizationState.RUNNING.name())) {
                 realizationMap.put(realization.getExperimentId(), realization);
             }
         }
