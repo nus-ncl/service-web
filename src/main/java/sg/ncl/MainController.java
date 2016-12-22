@@ -2437,20 +2437,34 @@ public class MainController {
         //------------------------------------
         HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
         ResponseEntity expResponseEntity = restTemplate.exchange(properties.getAllExperiment(), HttpMethod.GET, expRequest, String.class);
-        JSONArray jsonExpArray = new JSONArray(expResponseEntity.getBody().toString());
 
-        List<Experiment2> experimentList = new ArrayList<>();
-        Map<Long, Realization> realizationMap = new HashMap<>();
+        //------------------------------------
+        // get list of realizations
+        //------------------------------------
+        HttpEntity<String> realizationRequest = createHttpEntityHeaderOnly();
+        ResponseEntity realizationResponseEntity = restTemplate.exchange(properties.getAllRealizations(), HttpMethod.GET, realizationRequest, String.class);
+
+        JSONArray jsonExpArray = new JSONArray(expResponseEntity.getBody().toString());
+        JSONArray jsonRealizationArray = new JSONArray(realizationResponseEntity.getBody().toString());
+        Map<Long, Experiment2> experiment2Map = new HashMap<>(); // exp id, experiment
+        Map<Long, Realization> realizationMap = new HashMap<>(); // exp id, realization
+
+        for (int k = 0; k < jsonRealizationArray.length(); k++) {
+            Realization realization = extractRealization(jsonRealizationArray.getJSONObject(k).toString());
+            if (realization.getState().equals(RealizationState.NOT_RUNNING.name())) {
+                realizationMap.put(realization.getExperimentId(), realization);
+            }
+        }
 
         for (int i = 0; i < jsonExpArray.length(); i++) {
             Experiment2 experiment2 = extractExperiment(jsonExpArray.getJSONObject(i).toString());
-            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-            realizationMap.put(experiment2.getId(), realization);
-            experimentList.add(experiment2);
+            if (realizationMap.containsKey(experiment2.getId())) {
+                experiment2Map.put(experiment2.getId(), experiment2);
+            }
         }
 
-        model.addAttribute("adminExpList", experimentList);
-        model.addAttribute("adminRealizationMap", realizationMap);
+        model.addAttribute("experimentMap", experiment2Map);
+        model.addAttribute("realizationMap", realizationMap);
 
         return "experiment_dashboard";
     }
