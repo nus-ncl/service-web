@@ -2436,7 +2436,7 @@ public class MainController {
         // get list of experiments
         //------------------------------------
         HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
-        ResponseEntity expResponseEntity = restTemplate.exchange(properties.getAllExperiment(), HttpMethod.GET, expRequest, String.class);
+        ResponseEntity expResponseEntity = restTemplate.exchange(properties.getAllExperiments(), HttpMethod.GET, expRequest, String.class);
 
         //------------------------------------
         // get list of realizations
@@ -2446,7 +2446,7 @@ public class MainController {
 
         JSONArray jsonExpArray = new JSONArray(expResponseEntity.getBody().toString());
         JSONArray jsonRealizationArray = new JSONArray(realizationResponseEntity.getBody().toString());
-        Map<Long, Experiment2> experiment2Map = new HashMap<>(); // exp id, experiment
+        Map<Experiment2, Realization> experiment2Map = new HashMap<>(); // exp id, experiment
         Map<Long, Realization> realizationMap = new HashMap<>(); // exp id, realization
 
         for (int k = 0; k < jsonRealizationArray.length(); k++) {
@@ -2459,12 +2459,11 @@ public class MainController {
         for (int i = 0; i < jsonExpArray.length(); i++) {
             Experiment2 experiment2 = extractExperiment(jsonExpArray.getJSONObject(i).toString());
             if (realizationMap.containsKey(experiment2.getId())) {
-                experiment2Map.put(experiment2.getId(), experiment2);
+                experiment2Map.put(experiment2, realizationMap.get(experiment2.getId()));
             }
         }
 
-        model.addAttribute("experimentMap", experiment2Map);
-        model.addAttribute("realizationMap", realizationMap);
+        model.addAttribute("runningExpMap", experiment2Map);
 
         return "experiment_dashboard";
     }
