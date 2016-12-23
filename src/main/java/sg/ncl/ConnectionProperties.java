@@ -37,15 +37,15 @@ public class ConnectionProperties {
 
 
     public String getSioUsersUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/";
     }
 
     public String getSioUsersStatusUrl(final String id, final String status) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/status/" + status;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/status/" + status;
     }
 
     public String getSioTeamsUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
     }
 
     public String getSioTeamsStatusUrl(final String id, final TeamStatus status) {
@@ -53,42 +53,30 @@ public class ConnectionProperties {
     }
 
     public String getSioAuthUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + authEndpoint;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + authEndpoint;
     }
 
     public String getSioCredUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + credEndpoint + "/";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/";
     }
 
     public String getSioDataUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/";
     }
 
     public String getSioRegUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint;
-    }
-
-    public String getTeamVisibilityEndpoint() {
-        return teamVisibilityEndpoint;
-    }
-
-    public void setTeamVisibilityEndpoint(String teamVisibilityEndpoint) {
-        this.teamVisibilityEndpoint = teamVisibilityEndpoint;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint;
     }
 
     public String getSioExpUrl() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/";
-    }
-
-    public void setApproveJoinRequest(String approveJoinRequest) {
-        this.approveJoinRequest = approveJoinRequest;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/";
     }
 
     //-------------------------------------
     // CREDENTIALS
     //-------------------------------------
     public String getUpdateCredentials(String id) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + credEndpoint + "/" + id;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/" + id;
     }
 
     //-------------------------------------
@@ -96,30 +84,30 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String getDeterUid(String id) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/user/" + id;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/user/" + id;
     }
 
     public String getRejectJoinRequest(String teamId, String userId) {
         // same but REST API is DELETE
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
     }
 
     // for existing users
     public String getRegisterRequestToApplyTeam(String nclUserId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/newTeam/" + nclUserId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/newTeam/" + nclUserId;
     }
 
     // for existing users
     public String getJoinRequestExistingUser() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/joinApplications";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/joinApplications";
     }
 
     public String getApproveTeam(String teamId, String ownerId, TeamStatus teamStatus) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
     }
 
     public String getApproveJoinRequest(String teamId, String userId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
     }
 
     //-------------------------------------
@@ -127,15 +115,15 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String getTeamByName(String name) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "?name=" + name;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "?name=" + name;
     }
 
     public String getTeamById(String id) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + id;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + id;
     }
 
     public String getTeamsByVisibility(String visibility) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + teamEndpoint + "?visibility=" + visibility;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "?visibility=" + visibility;
     }
 
     //-------------------------------------
@@ -143,7 +131,7 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String getUser(String id) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id;
     }
 
     //-------------------------------------
@@ -151,30 +139,30 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String getExpListByTeamId(String teamId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId;
     }
 
     public String getRealizationByTeam(String teamName, String expId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + "/experiment/" + expId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + "/experiment/" + expId;
     }
 
     public String getDeleteExperiment(String teamId, String expId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId;
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId;
     }
 
     public String getStartExperiment(String teamName, String expId) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + realEndpoint + "/start/team/" + teamName + "/experiment/" + expId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/start/team/" + teamName + "/experiment/" + expId;
     }
 
     public String getStopExperiment(String teamName, String expId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
     }
 
     public String getTopology(String teamName, String expId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiments/" + expId + "/topology";
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiments/" + expId + "/topology";
     }
 
-    public String getAllExperiment() {
+    public String getAllExperiments() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
 
@@ -187,23 +175,23 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String getPublicData() {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";
     }
 
     public String getData() {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint;
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint;
     }
 
     public String getDataset(String dataId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId;
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId;
     }
 
     public String getResource(String dataId, String resourceId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId;
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId;
     }
 
     public String downloadResource(String dataId, String resourceId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download";
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download";
     }
 
     //-------------------------------------
@@ -235,7 +223,7 @@ public class ConnectionProperties {
     }
 
     public String getFreeNodes() {
-        return "http://" + telemetryAddress + ":" + telemetryPort + "/" + telemetryEndpoint;
+        return HTTP_MODE + telemetryAddress + ":" + telemetryPort + "/" + telemetryEndpoint;
     }
     
     //-------------------------------------
@@ -243,7 +231,7 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String getAllImages() {
-        return "http://" + sioAddress + ":" + sioPort + "/" + imageEndpoint;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint;
     }
 
     public String getTeamImages(String teamId) {
@@ -280,10 +268,10 @@ public class ConnectionProperties {
     // DATA RESOURCE UPLOAD
     //-------------------------------------
     public String checkUploadChunk(String dataId, Integer chunkNumber, String identifier) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber + "/files/" + identifier;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber + "/files/" + identifier;
     }
 
     public String sendUploadChunk(String dataId, Integer chunkNumber) {
-        return "http://" + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber;
     }
 }
