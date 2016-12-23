@@ -69,7 +69,7 @@ public class ConnectionProperties {
     }
 
     public String getSioExpUrl() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
 
     //-------------------------------------
@@ -160,10 +160,6 @@ public class ConnectionProperties {
 
     public String getTopology(String teamName, String expId) {
         return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiments/" + expId + "/topology";
-    }
-
-    public String getAllExperiments() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
 
     public String getAllRealizations() {

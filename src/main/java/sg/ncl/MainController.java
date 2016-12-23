@@ -2436,7 +2436,7 @@ public class MainController {
         // get list of experiments
         //------------------------------------
         HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
-        ResponseEntity expResponseEntity = restTemplate.exchange(properties.getAllExperiments(), HttpMethod.GET, expRequest, String.class);
+        ResponseEntity expResponseEntity = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.GET, expRequest, String.class);
 
         //------------------------------------
         // get list of realizations

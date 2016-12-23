@@ -104,7 +104,7 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetSioExpUrl() throws Exception {
-        assertThat(properties.getSioExpUrl()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/");
+        assertThat(properties.getSioExpUrl()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint());
     }
 
     @Test
@@ -275,11 +275,6 @@ public class ConnectionPropertiesTest {
     @Test
     public void testGetPasswordResetURI() {
         assertThat(properties.getPasswordResetURI()).isEqualTo("http://"  + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getCredEndpoint() + "/password");
-    }
-
-    @Test
-    public void testGetAllExperiments() throws Exception {
-        assertThat(properties.getAllExperiments()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint());
     }
 
     @Test
