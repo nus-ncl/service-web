@@ -2490,6 +2490,7 @@ public class MainController {
         return "admin2";
     }
 
+
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
 //    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
 //    	if (bindingResult.hasErrors()) {
