@@ -274,7 +274,7 @@ public class DataController extends MainController {
                 model.addAttribute("dataAccessRequest", dataAccessRequest);
             }
         } catch (IOException e) {
-            log.error("requestDataset: {}", e.toString());
+            log.error("getRequest: {}", e.toString());
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
@@ -315,7 +315,7 @@ public class DataController extends MainController {
                 redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "Request Approved");
             }
         } catch (IOException e) {
-            log.error("requestDataset: {}", e.toString());
+            log.error("approveRequest: {}", e.toString());
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
