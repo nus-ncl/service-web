@@ -81,7 +81,7 @@
                             <a th:if="not ${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#requestModal" class="btn btn-primary" data-toggle="modal"
                                th:attr="data-name=${datasetEntry.value.name},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
-                                        data-request=${'/data/request/' + datasetEntry.value.id}"><i class="fa fa-commenting"></i> Request</a>
+                                        data-request=${'/data/' + datasetEntry.value.id + '/request'}"><i class="fa fa-commenting"></i> Request</a>
 	                   	</td>
                     </tr>
                     </tbody>

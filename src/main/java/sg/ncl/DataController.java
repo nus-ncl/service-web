@@ -204,7 +204,7 @@ public class DataController extends MainController {
         return REDIRECT_DATA;
     }
 
-    @RequestMapping(value = "/request/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/request", method = RequestMethod.POST)
     public String requestDataset(@PathVariable String id,
                                  @ModelAttribute DataRequestForm requestForm,
                                  RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
@@ -239,6 +239,51 @@ public class DataController extends MainController {
         }
 
         return REDIRECT_DATA;
+    }
+
+    @RequestMapping(value = "{did}/requests/{rid}", method = RequestMethod.GET)
+    public String getRequest(Model model, @PathVariable String did, @PathVariable String rid) throws WebServiceRuntimeException {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getRequest(did, rid), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                if (exceptionState == FORBIDDEN_EXCEPTION) {
+                    log.warn("Requesting of dataset access forbidden.");
+                    model.addAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_ACCESS_REQUEST_NOT_FOUND_EXCEPTION) {
+                    log.warn("Dataset access request not found.");
+                    model.addAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_NOT_MATCH_EXCEPTION) {
+                    log.warn("Dataset access request does not have matching parent.");
+                    model.addAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_NOT_FOUND_EXCEPTION) {
+                    log.warn("Dataset not found for requesting access.");
+                    model.addAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else {
+                    log.warn("Unknown error for getting dataset access request.");
+                }
+            } else {
+                log.info("Dataset access request retrieved: {}", dataResponseBody);
+                DataAccessRequest dataAccessRequest = extractDataAccessRequest(dataResponseBody);
+                model.addAttribute("dataAccessRequest", dataAccessRequest);
+            }
+        } catch (IOException e) {
+            log.error("requestDataset: {}", e.toString());
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "data_request_access";
+    }
+
+    @RequestMapping("{did}/requests/{rid}/approve")
+    public String approveRequest(@PathVariable String did, @PathVariable String rid, RedirectAttributes redirectAttributes) {
+        return "redirect:/data/" + did + "/requests/" + rid;
     }
 
     @RequestMapping("/public")
@@ -471,6 +516,41 @@ public class DataController extends MainController {
         info.resumableFilename        = request.getParameter("resumableFilename");
         info.resumableRelativePath    = request.getParameter("resumableRelativePath");
         return info;
+    }
+
+    private DataAccessRequest extractDataAccessRequest(String json) {
+        log.debug(json);
+
+        DataAccessRequest dataAccessRequest = new DataAccessRequest();
+        JSONObject object = new JSONObject(json);
+
+        dataAccessRequest.setId(object.getLong("id"));
+        dataAccessRequest.setDataId(object.getLong("dataId"));
+        dataAccessRequest.setRequesterId(object.getString("requesterId"));
+        dataAccessRequest.setReason(object.getString("reason"));
+        try {
+            dataAccessRequest.setRequestDate(getZonedDateTime(object.get("requestDate").toString()));
+        } catch (IOException e) {
+            log.warn("Error getting request date {}", e);
+            dataAccessRequest.setRequestDate(null);
+        }
+        try {
+            dataAccessRequest.setApprovedDate(getZonedDateTime(object.get("approvedDate").toString()));
+        } catch (IOException e) {
+            log.warn("Error getting approved date {}", e);
+            dataAccessRequest.setApprovedDate(null);
+        }
+
+        dataAccessRequest.setRequester(invokeAndExtractUserInfo(dataAccessRequest.getRequesterId()));
+        dataAccessRequest.setDataset(invokeAndExtractDataInfo(dataAccessRequest.getDataId()));
+
+        return dataAccessRequest;
+    }
+
+    private Dataset invokeAndExtractDataInfo(Long dataId) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(dataId.toString()), HttpMethod.GET, request, String.class);
+        return extractDataInfo(response.getBody().toString());
     }
 
 }
