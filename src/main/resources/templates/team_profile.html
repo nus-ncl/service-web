@@ -112,10 +112,10 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="expEntry : ${experimentList}">
+                            <tr th:each="expEntry : ${teamExperimentList}">
                                 <td th:text="${expEntry.name}">Name</td>
                                 <td th:text="${expEntry.description}">Description</td>
-                                <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
+                                <th:block th:each="realization : ${teamRealizationMap.get(expEntry.id)}">
                                     <span th:if="${realization.state == 'STARTING'}">
                                         <td th:text="'Starting'"></td>
                                     </span>

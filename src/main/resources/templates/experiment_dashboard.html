@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>National Cybersecurity Laboratories - Admin</title>
+	<object th:include="fragments/header :: header" th:remove="tag" />
+	<link rel="stylesheet" href="http://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+</head>
+
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<div class="container">
+	<div class="row">
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+	<div id="expManagement" class="tab-pane fade in active">
+		<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.users.dashboard}">Experiment Dashboard</h2>
+		<p>&nbsp;</p>
+		<table id="myTable" class="table table-responsive">
+			<thead>
+			<th th:text="#{admin.users.header.runningExp}">Running Experiment</th>
+			<th th:text="#{admin.users.teamname}">Team Name</th>
+			<th th:text="#{admin.users.header.nodes}">No.of Nodes</th>
+			<th th:text="#{admin.users.header.action}">Action</th>
+			</thead>
+			<tbody>
+			<tr th:each="expEntry : ${runningExpMap}" >
+				<td th:text="${expEntry.key.name}">Name</td>
+				<td th:text="${expEntry.key.teamName}">Team</td>
+				<td th:text="${expEntry.value.numberOfNodes}"></td>
+				<td></td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+</div>
+</div>
+<div th:replace="fragments/footer:: footer"></div>
+</body>
+
+<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+<script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+<script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+<script type="text/javascript" src="static/js/smoothscroll.js" th:src="@{~/js/smoothscroll.js}"></script>
+<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+<script>
+	$(document).ready(function () {
+		//-----------------admin sort table -------------
+		$('#myTable').dataTable();
+	})
+</script>
+</html>

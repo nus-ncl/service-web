@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import sg.ncl.domain.UserStatus;
 import sg.ncl.testbed_interface.TeamStatus;
 import sg.ncl.testbed_interface.TeamVisibility;
 
@@ -103,7 +104,7 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetSioExpUrl() throws Exception {
-        assertThat(properties.getSioExpUrl()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/");
+        assertThat(properties.getSioExpUrl()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint());
     }
 
     @Test
@@ -165,6 +166,12 @@ public class ConnectionPropertiesTest {
     public void testGetUser() throws Exception {
         String userId = RandomStringUtils.randomAlphanumeric(20);
         assertThat(properties.getUser(userId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getUserEndpoint() + "/" + userId);
+    }
+
+    @Test
+    public void testGetUserStatus() throws Exception {
+        String id = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getSioUsersStatusUrl(id, UserStatus.APPROVED.name())).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getUserEndpoint() + "/" + id + "/status/" + UserStatus.APPROVED);
     }
 
     @Test
@@ -250,6 +257,12 @@ public class ConnectionPropertiesTest {
     }
 
     @Test
+    public void testGetTeamStatus() throws Exception {
+        String id = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getSioTeamsStatusUrl(id, TeamStatus.APPROVED)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + id + "/status/" + TeamStatus.APPROVED);
+    }
+
+    @Test
     public void testSaveImage() throws Exception {
         assertThat(properties.saveImage()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint());
     }
@@ -262,5 +275,80 @@ public class ConnectionPropertiesTest {
     @Test
     public void testGetPasswordResetURI() {
         assertThat(properties.getPasswordResetURI()).isEqualTo("http://"  + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getCredEndpoint() + "/password");
+    }
+
+    @Test
+    public void testGetAllRealizations() throws Exception {
+        assertThat(properties.getAllRealizations()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRealEndpoint());
+    }
+
+    @Test
+    public void testGetData() throws Exception {
+        assertThat(properties.getData()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint());
+    }
+
+    @Test
+    public void testGetDataset() throws Exception {
+        String id = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getDataset(id)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "/" + id);
+
+    }
+
+    @Test
+    public void testGetDeterUid() throws Exception {
+        String id = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getDeterUid(id)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/user/" + id);
+    }
+
+    @Test
+    public void testGetPublicData() throws Exception {
+        assertThat(properties.getPublicData()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "?visibility=PUBLIC");
+    }
+
+    @Test
+    public void testDownloadResource() throws Exception {
+        String dataId = RandomStringUtils.randomAlphanumeric(20);
+        String resourceId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.downloadResource(dataId, resourceId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "/" + dataId + "/resources/" + resourceId + "/download");
+    }
+
+    @Test
+    public void testGetResource() throws Exception {
+        String dataId = RandomStringUtils.randomAlphanumeric(20);
+        String resourceId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getResource(dataId, resourceId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "/" + dataId + "/resources/" + resourceId);
+    }
+
+    @Test
+    public void testGetSioDataUrl() throws Exception {
+        assertThat(properties.getSioDataUrl()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "/");
+    }
+
+    @Test
+    public void testGetTopology() throws Exception {
+        String name = RandomStringUtils.randomAlphanumeric(20);
+        String id = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getTopology(name, id)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/teams/" + name + "/experiments/" + id + "/topology");
+    }
+
+    @Test
+    public void testGetUsageStatisticsByTeamId() throws Exception {
+        String id = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getUsageStatisticsByTeamId(id)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRealEndpoint() + "/teams/" + id + "/usage");
+    }
+
+    @Test
+    public void testCheckUploadChunk() throws Exception {
+        Integer chunkNumber = Integer.parseInt(RandomStringUtils.randomNumeric(8));
+        String dataId = RandomStringUtils.randomAlphanumeric(20);
+        String identifier = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.checkUploadChunk(dataId, chunkNumber, identifier)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "/" + dataId + "/chunks/" + chunkNumber + "/files/" + identifier);
+    }
+
+    @Test
+    public void testSendUploadChunk() throws Exception {
+        Integer chunkNumber = Integer.parseInt(RandomStringUtils.randomNumeric(8));
+        String dataId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.sendUploadChunk(dataId, chunkNumber)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "/" + dataId + "/chunks/" + chunkNumber);
     }
 }
