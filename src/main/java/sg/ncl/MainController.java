@@ -2468,27 +2468,27 @@ public class MainController {
         return "experiment_dashboard";
     }
 
-    @RequestMapping(value = "/admin/{teamId}", method = RequestMethod.GET)
-    public String admin(@PathVariable String teamId, Model model, HttpSession session) {
-        HttpEntity<String> exprequest = createHttpEntityHeaderOnly();
-        ResponseEntity expresponse = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, exprequest, String.class);
-        JSONArray experimentsArray = new JSONArray(expresponse.getBody().toString());
-
-        List<Experiment2> experimentList = new ArrayList<>();
-        Map<Long, Realization> realizationMap = new HashMap<>();
-
-        for (int k = 0; k < experimentsArray.length(); k++) {
-            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-            realizationMap.put(experiment2.getId(), realization);
-            experimentList.add(experiment2);
-        }
-
-        model.addAttribute("experimentList", experimentList);
-        model.addAttribute("realizationMap", realizationMap);
-
-        return "admin2";
-    }
+//    @RequestMapping(value = "/admin/{teamId}", method = RequestMethod.GET)
+//    public String admin(@PathVariable String teamId, Model model, HttpSession session) {
+//        HttpEntity<String> exprequest = createHttpEntityHeaderOnly();
+//        ResponseEntity expresponse = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, exprequest, String.class);
+//        JSONArray experimentsArray = new JSONArray(expresponse.getBody().toString());
+//
+//        List<Experiment2> experimentList = new ArrayList<>();
+//        Map<Long, Realization> realizationMap = new HashMap<>();
+//
+//        for (int k = 0; k < experimentsArray.length(); k++) {
+//            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+//            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+//            realizationMap.put(experiment2.getId(), realization);
+//            experimentList.add(experiment2);
+//        }
+//
+//        model.addAttribute("experimentList", experimentList);
+//        model.addAttribute("realizationMap", realizationMap);
+//
+//        return "admin2";
+//    }
 
 
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
