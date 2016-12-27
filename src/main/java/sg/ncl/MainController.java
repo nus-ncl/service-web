@@ -228,7 +228,6 @@ public class MainController {
 //        return "admin2";
 //    }
 
-
     @RequestMapping("/tutorials")
     public String tutorials() {
         return "tutorials";
@@ -1501,8 +1500,8 @@ public class MainController {
             experimentList.add(experiment2);
         }
 
-        model.addAttribute("experimentList", experimentList);
-        model.addAttribute("realizationMap", realizationMap);
+        model.addAttribute("teamExperimentList", experimentList);
+        model.addAttribute("teamRealizationMap", realizationMap);
 
         return "team_profile";
     }
@@ -1825,7 +1824,6 @@ public class MainController {
             }
         }
 
-//        model.addAttribute("qn", )
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
@@ -2405,13 +2403,81 @@ public class MainController {
             datasetsList.add(dataset);
         }
 
+
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
         model.addAttribute("usersList", usersList);
         model.addAttribute("userToTeamMap", userToTeamMap);
         model.addAttribute("dataList", datasetsList);
+
         return "admin2";
     }
+
+    @RequestMapping("/admin/experiments")
+    public String adminExperimentsManagement(Model model, HttpSession session) {
+
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        //------------------------------------
+        // get list of experiments
+        //------------------------------------
+        HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
+        ResponseEntity expResponseEntity = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.GET, expRequest, String.class);
+
+        //------------------------------------
+        // get list of realizations
+        //------------------------------------
+        HttpEntity<String> realizationRequest = createHttpEntityHeaderOnly();
+        ResponseEntity realizationResponseEntity = restTemplate.exchange(properties.getAllRealizations(), HttpMethod.GET, realizationRequest, String.class);
+
+        JSONArray jsonExpArray = new JSONArray(expResponseEntity.getBody().toString());
+        JSONArray jsonRealizationArray = new JSONArray(realizationResponseEntity.getBody().toString());
+        Map<Experiment2, Realization> experiment2Map = new HashMap<>(); // exp id, experiment
+        Map<Long, Realization> realizationMap = new HashMap<>(); // exp id, realization
+
+        for (int k = 0; k < jsonRealizationArray.length(); k++) {
+            Realization realization = extractRealization(jsonRealizationArray.getJSONObject(k).toString());
+            if (realization.getState().equals(RealizationState.RUNNING.name())) {
+                realizationMap.put(realization.getExperimentId(), realization);
+            }
+        }
+
+        for (int i = 0; i < jsonExpArray.length(); i++) {
+            Experiment2 experiment2 = extractExperiment(jsonExpArray.getJSONObject(i).toString());
+            if (realizationMap.containsKey(experiment2.getId())) {
+                experiment2Map.put(experiment2, realizationMap.get(experiment2.getId()));
+            }
+        }
+
+        model.addAttribute("runningExpMap", experiment2Map);
+
+        return "experiment_dashboard";
+    }
+
+//    @RequestMapping(value = "/admin/{teamId}", method = RequestMethod.GET)
+//    public String admin(@PathVariable String teamId, Model model, HttpSession session) {
+//        HttpEntity<String> exprequest = createHttpEntityHeaderOnly();
+//        ResponseEntity expresponse = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, exprequest, String.class);
+//        JSONArray experimentsArray = new JSONArray(expresponse.getBody().toString());
+//
+//        List<Experiment2> experimentList = new ArrayList<>();
+//        Map<Long, Realization> realizationMap = new HashMap<>();
+//
+//        for (int k = 0; k < experimentsArray.length(); k++) {
+//            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
+//            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+//            realizationMap.put(experiment2.getId(), realization);
+//            experimentList.add(experiment2);
+//        }
+//
+//        model.addAttribute("experimentList", experimentList);
+//        model.addAttribute("realizationMap", realizationMap);
+//
+//        return "admin2";
+//    }
+
 
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
 //    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
@@ -2428,6 +2494,8 @@ public class MainController {
 //    	domainManager.removeDomains(domainKey);
 //    	return "redirect:/admin";
 //    }
+
+
 
     @RequestMapping("/admin/teams/accept/{teamId}/{teamOwnerId}")
     public String approveTeam(
@@ -2807,6 +2875,8 @@ public class MainController {
             return "redirect:/admin";
         }
     }
+
+
 
 //    @RequestMapping("/admin/experiments/remove/{expId}")
 //    public String adminRemoveExp(@PathVariable Integer expId) {
@@ -3336,6 +3406,7 @@ public class MainController {
         if (expDetailsObject == JSONObject.NULL || expDetailsObject.toString().isEmpty()) {
             log.info("set details empty");
             realization.setDetails("");
+            realization.setNumberOfNodes(0);
         } else {
             log.info("exp report to string: {}", expDetailsObject.toString());
             exp_report = expDetailsObject.toString();
@@ -3353,6 +3424,7 @@ public class MainController {
                 realization.addNodeDetails(nodeName, nodeDetails);
             }
             log.info("nodes info object: {}", nodesInfoObject);
+            realization.setNumberOfNodes(nodesInfoObject.keySet().size());
         }
 
         return realization;
@@ -3493,6 +3565,7 @@ public class MainController {
         realization.setTeamId("");
         realization.setState(RealizationState.ERROR.toString());
         realization.setDetails("");
+        realization.setNumberOfNodes(0);
 
         return realization;
     }

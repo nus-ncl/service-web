@@ -114,16 +114,34 @@
 				<table id="myTable1"  class="table table-responsive" th:if="not ${teamsMap.isEmpty()}">
 					<thead>
 					<th th:text="#{admin.teams.header.name}">Team</th>
-					<th th:text="#{admin.teams.header.description}">Description</th>
 					<th th:text="#{admin.teams.header.owner}">Owner</th>
-					<!--<th th:text="#{admin.teams.header.institutition}">Institution</th>-->
-					<th th:text="#{admin.teams.header.type}">Type</th>
-					<th th:text="#{admin.teams.header.public}">Visibility</th>
+					<th th:text="#{admin.teams.header.status}">Status</th>
 					<th><!--Actions--></th>
 					</thead>
 					<tr th:each="team : ${teamsMap}">
-						<td th:text="${team.value.name}"></td>
-						<td th:text="${team.value.description}"></td>
+						<td>
+							<a th:href="'#'+${team.value.name}" data-toggle="modal"><span th:text="${team.value.name}"></span></a>
+							<div class="modal fade admin-modal" th:id="${team.value.name}" aria-labelledby="ownerId2" tabindex="-1" role="dialog" aria-hidden="true">
+							<!-- Modal -->
+								<div class="modal-dialog">
+									<!-- Modal content-->
+									<div class="modal-content">
+									<div class="modal-header team-owner-info-header">
+										<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+										<h4 class="modal-title"><span th:text="#{admin.teams.header.descriptions}">Team Info</span></h4>
+									</div>
+									<div class="modal-body team-owner-info-body">
+										<ul>
+											<li><strong>Team Name : </strong> <span th:text="${team.value.name}"></span></li>
+											<li><strong>Decription : </strong> <span th:text="${team.value.description}"></span></li>
+											<li><strong>Type : </strong> <span th:text="${team.value.organisationType}"></span></li>
+											<li><strong>Visibility : </strong> <span th:text="${team.value.visibility}"></span></li>
+										</ul>
+									</div>
+								</div>
+								</div>
+							</div>
+						</td>
 						<td>
 							<a th:href="'#'+${team.value.id}" data-toggle="modal"><span th:text="${team.value.owner.firstName + ' ' + team.value.owner.lastName}"></span></a>
 							<!-- Modal -->
@@ -148,8 +166,7 @@
 								</div>
 							</div>
 						</td>
-						<td th:text="${team.value.organisationType}"></td>
-						<td th:text="${team.value.visibility}">Visibility</td>
+						<td th:text="${team.value.status}">Status</td>
 						<td>
 							<a th:href="@{/admin/teams/{teamId}/(teamId=${team.value.id}, action = restrict)}" th:if="${team.value.status} == 'APPROVED'">Restrict</a>
 							<a th:href="@{/admin/teams/{teamId}/(teamId=${team.value.id}, action = free)}" th:if="${team.value.status} == 'RESTRICTED'">Free</a>
@@ -167,6 +184,7 @@
 					<th th:text="#{admin.users.header.name}">Full Name</th>
 					<th th:text="#{admin.users.header.email}">Email</th>
 					<th th:text="#{admin.users.header.team}">Team</th>
+					<th th:text="#{admin.users.header.status}">Status</th>
 					<th><!-- Actions --></th>
 					</thead>
 					<tr th:each="user : ${usersList}">
@@ -201,6 +219,7 @@
 							</th:block>
 							<p th:if="${#lists.isEmpty(userToTeamMap.get(user.id))}">Not in any teams yet.</p>
 						</td>
+						<td th:text="${user.status}"></td>
 						<td>
 							<a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = freeze)}" th:if="${user.status} == 'APPROVED'">Ban</a>
 							<a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = unfreeze)}" th:if="${user.status} == 'FROZEN'">Unban</a>
@@ -282,101 +301,6 @@
                     </div>
                 </div>
             </div>
-
-			<!--<div id="usersManagement" class="tab-pane fade">-->
-			<!--<h3 th:text="#{admin.users.header}">Users Management</h3>-->
-			<!--<table class="table table-responsive table-striped">-->
-			<!--<thead>-->
-			<!--<th th:text="#{admin.users.header.name}">Full Name</th>-->
-			<!--<th th:text="#{admin.users.header.email}">Email</th>-->
-			<!--<th th:text="#{admin.users.header.team}">Team</th>-->
-			<!--<th th:text="#{admin.users.header.ban}">Ban</th>-->
-			<!--</thead>-->
-			<!--<tr th:each="usersEntry : ${usersMap}">-->
-			<!--<td th:text="${usersEntry.value.name}">Full Name</td>-->
-			<!--<td th:text="${usersEntry.value.email}">Email</td>-->
-			<!--<td th:if="${usersEntry.value.isEmailVerified}">-->
-			<!--<span th:if="not ${teamManager.getTeamMap(usersEntry.key).isEmpty()}" th:each="teamsEntry : ${teamManager.getTeamMap(usersEntry.key)}">-->
-			<!--<i class="fa fa-heart text-primary"></i> <span th:text="${teamsEntry.value.name + '-' + teamsEntry.key}"></span><br/>-->
-			<!--</span>-->
-			<!--<span th:if="${teamManager.getTeamMap(usersEntry.key).isEmpty()}">-->
-			<!--<p><i class="fa fa-exclamation-triangle text-warning"></i> <span th:text="#{admin.users.noTeam}">user has no team</span></p>-->
-			<!--</span>-->
-			<!--</td>-->
-			<!--<td th:if="not ${usersEntry.value.isEmailVerified}">-->
-			<!--<i class="fa fa-exclamation-triangle text-warning"></i> <span th:text="#{admin.users.emailNotValid}">email not validated</span>-->
-			<!--</td>-->
-			<!--<td th:if="${usersEntry.value.role != 'admin'}">-->
-			<!--<a href="#" th:href="@{/admin/users/ban/{userId}(userId=${usersEntry.key})}" data-toggle="tooltip" data-placement="bottom" title="ban this user">-->
-			<!--<span class="fa-stack fa-lg">-->
-			<!--<i class="fa fa-user fa-stack-1x"></i>-->
-			<!--<i class="fa fa-ban fa-stack-2x text-danger"></i>-->
-			<!--</span>-->
-			<!--</a>-->
-			<!--</td>-->
-			<!--<td th:if="${usersEntry.value.role == 'admin'}">-->
-			<!--<p>&#45;&#45;&#45;&#45;&#45;&#45;</p>-->
-			<!--</td>-->
-			<!--</tr>-->
-			<!--</table>-->
-			<!--</div> &lt;!&ndash; usersManagement &ndash;&gt;-->
-
-			<!--<div class="tab-content">-->
-			<!-- nodeStatistics -->
-			<!--<div id="nodeStatistics" class="tab-pane fade in active">-->
-			<!--<p>&nbsp;</p>-->
-			<!--<table class="table table-responsive">-->
-			<!--<thead>-->
-			<!--<th th:text="#{admin.nodes.header.name}">Node</th>-->
-			<!--<th th:text="#{admin.nodes.header.allocated}">Allocated</th>-->
-			<!--<th th:text="#{admin.nodes.header.diskHealth}">Disk Health Status</th>-->
-			<!--<th>&lt;!&ndash; Actions &ndash;&gt;</th>-->
-			<!--</thead>-->
-			<!--<th:block th:each="nodeEntry : ${nodeMap}">-->
-			<!--<tr>-->
-			<!--<td th:text="${nodeEntry.value.nodeType}">Node</td>-->
-			<!--<td><span th:text="${nodeEntry.value.allocatedCount}">Allocated Count</span>/<span th:text="${nodeEntry.value.virtMachinesPerNode}">Max Count</span></td>-->
-			<!--<td th:text="${nodeEntry.value.diskHealth}">Disk Health Status</td>-->
-			<!--</tr>-->
-			<!--</th:block>-->
-			<!--</table>-->
-			<!--<p><a href="#" th:href="@{/admin/node/add}"><button type="button" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Add Node</button></a></p>-->
-			<!--</div>-->
-
-			<!-- experiments -->
-			<!--<div id="experiments" class="tab-pane fade">-->
-			<!--<p>&nbsp;</p>-->
-			<!--<table class="table table-responsive">-->
-			<!--<thead>-->
-			<!--<th th:text="#{admin.overview.header.experiment}">Experiment</th>-->
-			<!--<th th:text="#{admin.overview.header.team}">Team</th>-->
-			<!--<th th:text="#{admin.overview.header.status}">Status</th>-->
-			<!--<th th:text="#{admin.overview.header.nodesUtilized}">Nodes Utilized</th>-->
-			<!--<th th:text="#{admin.overview.header.hours}">Hours</th>-->
-			<!--<th>&lt;!&ndash; Actions &ndash;&gt;</th>-->
-			<!--</thead>-->
-			<!--<th:block th:each="expList : ${experimentMap}">-->
-			<!--<th:block th:each="expEntry : ${expList.value}">-->
-			<!--<tr th:if="${expEntry.status == 'READY'}">-->
-			<!--<td th:text="${expEntry.name}"></td>-->
-			<!--<td th:text="${teamManager.getTeamNameByTeamId(expEntry.teamId)}"></td>-->
-			<!--<td th:text="${expEntry.status}"></td>-->
-			<!--<td th:text="${expEntry.nodesCount}"></td>-->
-			<!--<td th:text="${expEntry.hoursRunning}"></td>-->
-			<!--<td>-->
-			<!--<a href="#" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="Alert the experiment starter by sending email"><i class="fa fa-envelope-o"></i></a>-->
-			<!--<a href="#" th:href="@{/admin/experiments/remove/{expId}(expId=${expEntry.experimentId})}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to permanently delete the experiment?"><i class="fa fa-trash"></i></a>-->
-			<!--</td>-->
-			<!--</tr>-->
-			<!--</th:block>-->
-			<!--</th:block>-->
-			<!--</table>-->
-			<!--</div>-->
-			<!--</div> &lt;!&ndash; tab content &ndash;&gt;-->
-			<!---->
-			<!--</div> &lt;!&ndash; panel body &ndash;&gt;-->
-			<!--</div> &lt;!&ndash; panel primary &ndash;&gt;-->
-			<!--</div> &lt;!&ndash; resourcesManagement &ndash;&gt;-->
 
 		</div> <!-- tab content -->
 	</div> <!-- row -->

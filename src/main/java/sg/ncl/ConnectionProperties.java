@@ -1,5 +1,7 @@
 package sg.ncl;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import sg.ncl.testbed_interface.TeamStatus;
 
@@ -7,6 +9,8 @@ import sg.ncl.testbed_interface.TeamStatus;
  * Created by Te Ye
  */
 @ConfigurationProperties(prefix = ConnectionProperties.PREFIX)
+@Getter
+@Setter
 public class ConnectionProperties {
 
     private static final String HTTP_MODE = "http://";
@@ -31,93 +35,6 @@ public class ConnectionProperties {
     private String telemetryPort;
     private String telemetryEndpoint;
 
-    public String getSioAddress() {
-        return sioAddress;
-    }
-
-    public void setSioAddress(String sioAddress) {
-        this.sioAddress = sioAddress;
-    }
-
-    public String getSioPort() {
-        return sioPort;
-    }
-
-    public void setSioPort(String sioPort) {
-        this.sioPort = sioPort;
-    }
-
-    public String getAuthEndpoint() {
-        return authEndpoint;
-    }
-
-    public void setAuthEndpoint(String authEndpoint) {
-        this.authEndpoint = authEndpoint;
-    }
-
-    public String getCredEndpoint() {
-        return credEndpoint;
-    }
-
-    public void setCredEndpoint(String credEndpoint) {
-        this.credEndpoint = credEndpoint;
-    }
-
-    public String getDataEndpoint() {
-        return dataEndpoint;
-    }
-
-    public void setDataEndpoint(String dataEndpoint) {
-        this.dataEndpoint = dataEndpoint;
-    }
-
-    public String getRegEndpoint() {
-        return regEndpoint;
-    }
-
-    public void setRegEndpoint(String regEndpoint) {
-        this.regEndpoint = regEndpoint;
-    }
-
-    public String getUserEndpoint() {
-        return userEndpoint;
-    }
-
-    public void setUserEndpoint(String userEndpoint) {
-        this.userEndpoint = userEndpoint;
-    }
-
-    public String getTeamEndpoint() {
-        return teamEndpoint;
-    }
-
-    public void setTeamEndpoint(String teamEndpoint) {
-        this.teamEndpoint = teamEndpoint;
-    }
-
-    public String getExpEndpoint() {
-        return expEndpoint;
-    }
-
-    public void setExpEndpoint(String expEndpoint) {
-        this.expEndpoint = expEndpoint;
-    }
-
-    public String getRealEndpoint() {
-        return realEndpoint;
-    }
-
-    public void setRealEndpoint(String realEndpoint) {
-        this.realEndpoint = realEndpoint;
-    }
-
-    public String getImageEndpoint() {
-        return imageEndpoint;
-    }
-
-    public void setImageEndpoint(String imageEndpoint) {
-        this.imageEndpoint = imageEndpoint;
-    }
 
     public String getSioUsersUrl() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/";
@@ -151,20 +68,8 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint;
     }
 
-    public String getTeamVisibilityEndpoint() {
-        return teamVisibilityEndpoint;
-    }
-
-    public void setTeamVisibilityEndpoint(String teamVisibilityEndpoint) {
-        this.teamVisibilityEndpoint = teamVisibilityEndpoint;
-    }
-
     public String getSioExpUrl() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/";
-    }
-
-    public void setApproveJoinRequest(String approveJoinRequest) {
-        this.approveJoinRequest = approveJoinRequest;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
 
     //-------------------------------------
