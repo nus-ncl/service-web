@@ -163,7 +163,7 @@ public class ConnectionProperties {
     }
 
     public String getAllRealizations() {
-        return  HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint;
     }
 
     //-------------------------------------
