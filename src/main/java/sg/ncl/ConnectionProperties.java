@@ -265,6 +265,10 @@ public class ConnectionProperties {
         return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests";
     }
 
+    public String getRequest(String dataId, String requestId) {
+        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests/" + requestId;
+    }
+
     public String getPublicData() {
         return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";
     }
