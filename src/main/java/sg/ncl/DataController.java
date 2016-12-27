@@ -282,7 +282,43 @@ public class DataController extends MainController {
     }
 
     @RequestMapping("{did}/requests/{rid}/approve")
-    public String approveRequest(@PathVariable String did, @PathVariable String rid, RedirectAttributes redirectAttributes) {
+    public String approveRequest(@PathVariable String did,
+                                 @PathVariable String rid,
+                                 RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getRequest(did, rid), HttpMethod.PUT, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(dataResponseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                if (exceptionState == FORBIDDEN_EXCEPTION) {
+                    log.warn("Approving of dataset access request forbidden.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_ACCESS_REQUEST_NOT_FOUND_EXCEPTION) {
+                    log.warn("Dataset access request not found.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_NOT_MATCH_EXCEPTION) {
+                    log.warn("Dataset access request does not have matching parent.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else if (exceptionState == DATA_NOT_FOUND_EXCEPTION) {
+                    log.warn("Dataset not found for approving request.");
+                    redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, error.getMessage());
+                } else {
+                    log.warn("Unknown error for approving dataset access request.");
+                }
+            } else {
+                log.info("Dataset access request approved: {}", dataResponseBody);
+                redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "Request Approved");
+            }
+        } catch (IOException e) {
+            log.error("requestDataset: {}", e.toString());
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
         return "redirect:/data/" + did + "/requests/" + rid;
     }
 
