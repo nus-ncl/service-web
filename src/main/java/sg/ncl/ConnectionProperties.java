@@ -171,11 +171,11 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String requestDataset(String dataId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests";
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests";
     }
 
     public String getRequest(String dataId, String requestId) {
-        return "http://" +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests/" + requestId;
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests/" + requestId;
     }
 
     public String getPublicData() {
