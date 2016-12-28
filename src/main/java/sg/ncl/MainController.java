@@ -1483,7 +1483,7 @@ public class MainController {
         Team2 team = extractTeamInfo(responseBody);
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
-        model.addAttribute("membersList", team.getMembersList());
+        model.addAttribute("membersList", team.getMembersStatusMap().get(MemberStatus.APPROVED));
         session.setAttribute("originalTeam", team);
 
         request = createHttpEntityHeaderOnly();
@@ -1553,12 +1553,22 @@ public class MainController {
     }
 
     @RequestMapping("/remove_member/{teamId}/{userId}")
-    public String removeMember(@PathVariable Integer teamId, @PathVariable Integer userId, Model model) {
+    public String removeMember(@PathVariable String teamId, @PathVariable String userId, Model model) {
         // TODO check if user is indeed in the team
         // TODO what happens to active experiments of the user?
         // remove member from the team
         // reduce the team count
-        teamManager.removeMembers(userId, teamId);
+        // FIXME invoke rest API
+        JSONObject teamMemberFields = new JSONObject();
+        teamMemberFields.put("userId", userId);
+        teamMemberFields.put("memberType", "MEMBER");
+        teamMemberFields.put("memberStatus", "APPROVED");
+
+        HttpEntity<String> request = createHttpEntityWithBody(teamMemberFields.toString());
+        ResponseEntity response = restTemplate.exchange(properties.removeUserFromTeam(teamId), HttpMethod.DELETE, request, String.class);
+
+        log.info("Remove team member: {}", response.getBody().toString());
+
         return "redirect:/team_profile/{teamId}";
     }
 
@@ -3207,20 +3217,21 @@ public class MainController {
             String teamMemberStatus = memberObject.getString("memberStatus");
 
             User2 myUser = invokeAndExtractUserInfo(userId);
-            if (teamMemberType.equals(MemberType.MEMBER.toString())) {
-                team2.addMembers(myUser);
+            if (teamMemberType.equals(MemberType.MEMBER.name())) {
 
                 // add to pending members list for Members Awaiting Approval function
-                if (teamMemberStatus.equals(MemberStatus.PENDING.toString())) {
+                if (teamMemberStatus.equals(MemberStatus.PENDING.name())) {
                     team2.addPendingMembers(myUser);
                 }
 
-            } else if (teamMemberType.equals(MemberType.OWNER.toString())) {
+                team2.addMembersToStatusMap(MemberStatus.valueOf(teamMemberStatus), myUser);
+
+            } else if (teamMemberType.equals(MemberType.OWNER.name())) {
                 // explicit safer check
                 team2.setOwner(myUser);
             }
         }
-        team2.setMembersCount(membersArray.length());
+        team2.setMembersCount(team2.getMembersStatusMap().get(MemberStatus.APPROVED).size());
         return team2;
     }
 

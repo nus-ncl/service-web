@@ -134,6 +134,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id;
     }
 
+    public String removeUserFromTeam(String teamId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/members";
+    }
+
     //-------------------------------------
     // EXPERIMENTS
     //-------------------------------------

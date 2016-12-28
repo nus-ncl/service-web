@@ -87,7 +87,7 @@
                                 <td th:text="#{team.members.memberType.member}">MEMBER TYPE</td>
                                 <td>
                                     <th:block th:if="${owner.getId() == session.id}">
-                                        <a href="#" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
+                                        <a href="#" th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.id}, userId=${members.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
                                     </th:block>
                                 </td>
                             </tr>
