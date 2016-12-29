@@ -312,7 +312,7 @@ public class DataController extends MainController {
                 }
             } else {
                 log.info("Dataset access request approved: {}", dataResponseBody);
-                redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "Request Approved");
+                redirectAttributes.addFlashAttribute("approved_message", "Request Approved");
             }
         } catch (IOException e) {
             log.error("approveRequest: {}", e.toString());
