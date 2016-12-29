@@ -193,6 +193,16 @@ public class MainController {
         return "createexperiment";
     }
 
+    @RequestMapping("/loadimage")
+    public String loadimage() {
+        return "loadimage";
+    }
+
+    @RequestMapping("/saveimage")
+    public String saveimage() {
+        return "saveimage";
+    }
+
     @RequestMapping("/applyteam")
     public String applyteam() {
         return "applyteam";
@@ -281,46 +291,7 @@ public class MainController {
                 stream.close();
             }
         }
-    }
 
-    @RequestMapping(value = "/SubscriptionAgreement/download", method = RequestMethod.GET)
-    public void subscriptionAgreementDownload(HttpServletResponse response) throws MasterSubscriptionAgreementDownloadException, IOException {
-        InputStream stream = null;
-        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        try {
-            stream = getClass().getClassLoader().getResourceAsStream("downloads/SubscriptionAgreement.pdf");
-            response.setContentType(APPLICATION_FORCE_DOWNLOAD);
-            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=SubscriptionAgreement.pdf");
-            IOUtils.copy(stream, response.getOutputStream());
-            response.flushBuffer();
-        } catch (IOException ex) {
-            log.info("Error for subscription download." + ex.getMessage());
-            throw new MasterSubscriptionAgreementDownloadException("Error for subscription download.");
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-        }
-    }
-
-    @RequestMapping(value = "/UsagePolicy/download", method = RequestMethod.GET)
-    public void usagePolicyDownload(HttpServletResponse response) throws UsagePolicyDownloadException, IOException {
-        InputStream stream = null;
-        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        try {
-            stream = getClass().getClassLoader().getResourceAsStream("downloads/UsagePolicy.pdf");
-            response.setContentType(APPLICATION_FORCE_DOWNLOAD);
-            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=UsagePolicy.pdf");
-            IOUtils.copy(stream, response.getOutputStream());
-            response.flushBuffer();
-        } catch (IOException ex) {
-            log.info("Error for usage policy download." + ex.getMessage());
-            throw new UsagePolicyDownloadException("Error for usage policy download.");
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-        }
     }
 
     @RequestMapping("/contactus")

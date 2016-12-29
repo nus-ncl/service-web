@@ -24,42 +24,34 @@
                 <div class="col-sm-6">
                     <p>&nbsp;</p>
                     <h2>Step 1 </h2>
-                    <p>	After logging in, click on “Experiment” on the navigation bar at the top.</p>
-                    <p> This page provides an overview of your experiments. You can view the status, details, as well as start, stop, terminate or create an experiment.</p>
-                    <p> To create an experiment, click on “Create Experiment”.</p>
-                    <p> To view details of an experiment, click on “View”.</p>
+                    <p>At the Teams page, under the section “Your teams’ saved operating system images”, pick an image that you have saved previously.</p>
+                     <p>Ensure that the image is of “Ready to Use” state.</p>
                 </div>
                 <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="images/experiment_pages.png" src="images/experiment_pages.png" width="500" height="325" alt="screenshot"/></div>
+                    <img class="img-responsive" preload="true" minimal-lightbox="images/experiment_save_image_ready_to_use.png" src="images/experiment_save_image_ready_to_use.png" width="500" height="325" alt="screenshot"/></div>
 
             </div>
             <div class="heading col-sm-12 tutorialbackground">
                 <div class="col-sm-6">
                     <h2>Step 2 </h2>
-                    <p> To create an experiment : </p>
-                    <p> -Fill in team info</p>
-                    <p> -Fill in name of experiment</p>
-                    <p> -Give a description of the experiment</p>
-                    <p> -Select your preferred scenario from the drop down menu</p>
-                    <p> -Click on submit </p>
+                    <p>Go to Experiment page and click on “Create Experiment”. </p>
                 </div>
                 <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="images/createexperiment1.png" src="images/createexperiment1.png" width="500" height="355" alt="screenshot"/></div>
+                    <img class="img-responsive" preload="true" minimal-lightbox="images/experiment_page.png" src="images/experiment_page.png" width="500" height="455" alt="screenshot"/></div>
             </div>
 
 
             <div class="heading col-sm-12 tutorialbackground">
                 <div class="col-sm-6">
                     <h2>Step 3</h2>
-                    <p>Clicking on “View” brings up this page with details on your experiment and instructions on how to access experiment nodes. The fully qualified name can be found here as well.</p>
-                    <p>Instructions to Access Nodes :</p>
-                    <p> - SSH into <strong>users.v1.ncl.sg</strong> by using your <strong>USERNAME</strong> located on the details page or the dashboard.</p>
-                    <p> - SSH into the node by using its Qualified Name, e.g. n0.demoexp.project.ncl.sg </p></div>
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="images/experiment_details.png" src="images/experiment_details.png" width="500" height="455" alt="screenshot"/>
+                    <p>At the “Create Experiment” page, modify the “Network Configuration” to load your saved image.</p>
+                    <p>For example, the saved image is named “demo”, modify the line “tb-set-node-os $node UbuntuXX...” to “tb-set-node-os $node demo”.</p>
+                    <p>The newly created experiment is now configured to use the saved image, “demo”!</p>
                 </div>
-
-            </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="images/experiment_create_use_custom_image.png" src="images/experiment_create_use_custom_image.png" width="500" height="345" alt="screenshot"/>
+                </div>
+                </div>
         </div>
     </div> <!-- container -->
     <p>&nbsp;</p>
