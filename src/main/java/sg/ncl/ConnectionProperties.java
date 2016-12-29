@@ -163,12 +163,20 @@ public class ConnectionProperties {
     }
 
     public String getAllRealizations() {
-        return  HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint;
     }
 
     //-------------------------------------
     // DATA
     //-------------------------------------
+
+    public String requestDataset(String dataId) {
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests";
+    }
+
+    public String getRequest(String dataId, String requestId) {
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests/" + requestId;
+    }
 
     public String getPublicData() {
         return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";

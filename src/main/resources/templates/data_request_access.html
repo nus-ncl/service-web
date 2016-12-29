@@ -13,12 +13,85 @@
         <p>&nbsp;</p>
         <div class="container ">
 
-            <div class="row boxes responsive dashpanel">
-                <h2 class="form" th:text="#{dataset.request.sent}">Your requested has been submit.</h2>
-                <p th:text="#{dataset.request.info}">We have forwarded your request to the data’s owner for review.</p>
-                <p>Please contact the <strong>Data Owner: </strong>&lt;<span th:text="${ownerName}">Data Owner</span>&gt; <strong>Email: </strong>&lt;<span th:text="${ownerEmail}">team-owner@email</span>&gt; for any issues.</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <div class="row dashpanel">
+                <div th:if="${message}">
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+                </div>
+                <div th:if="${approved_message}" class="alert alert-success">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Success!</strong> <p th:text="${approved_message}"></p>
+                </div>
+                <form class="form-horizontal" method="get" action="#" th:action="${'/data/' + dataAccessRequest.getDataId() + '/requests/' + dataAccessRequest.getId() + '/approve'}" role="form">
+                    <fieldset>
+                        <h2 class="team-heading team-heading-current-team" th:text="#{dataset.request.header}">Dataset Access Request</h2>
+                        <div class="form-group">
+                            <label for="dataset_name" class="col-sm-2 control-label">Dataset Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Dataset Name" id="dataset_name" th:value="${dataAccessRequest.getDataset().getName()}" disabled="disabled"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="requester_name" class="col-sm-2 control-label">Requester Details</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Requester Name" id="requester_name" th:value="${dataAccessRequest.getRequester().getFirstName() + ' ' + dataAccessRequest.getRequester().getLastName()}" disabled="disabled"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="requester_email" class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Requester Email" id="requester_email" th:value="${dataAccessRequest.getRequester().getEmail()}" disabled="disabled"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="requester_phone" class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Requester Phone" id="requester_phone" th:value="${dataAccessRequest.getRequester().getPhone()}" disabled="disabled"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="requester_job" class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Requester Job" id="requester_job" th:value="${dataAccessRequest.getRequester().getJobTitle()}" disabled="disabled"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="requester_institution" class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Requester Institution" id="requester_institution" th:value="${dataAccessRequest.getRequester().getInstitution()}" disabled="disabled"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="requester_country" class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Requester Country" id="requester_country" th:value="${dataAccessRequest.getRequester().getCountry()}" disabled="disabled"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="request_reason" class="col-sm-2 control-label">Request Reason</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" rows="5" placeholder="Request Reason" id="request_reason" th:text="${dataAccessRequest.getReason()}" disabled="disabled"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="request_date" class="col-sm-2 control-label">Request Date</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Request Date" id="request_date" th:value="${dataAccessRequest.getRequestDateString()}" disabled="disabled"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="approved_date" class="col-sm-2 control-label">Approved Date</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Approved Date" id="approved_date" th:value="${dataAccessRequest.getApprovedDateString()}" disabled="disabled"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-standard" th:disabled="!${dataAccessRequest.getApprovedDate() == null}">Approve</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
             </div> <!-- row -->
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">

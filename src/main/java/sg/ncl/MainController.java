@@ -2300,18 +2300,6 @@ public class MainController {
         return !validateIfAdmin(session) && !checkPermissionRealizeExperiment(realization, session);
     }
 
-    //---------------------------------Dataset Page--------------------------
-//    @RequestMapping("/data/public/request_access/{dataOwnerId}")
-//    public String requestAccessForDataset(@PathVariable Integer dataOwnerId, Model model) {
-//    	// TODO
-//    	// send reuqest to team owner
-//    	// show feedback to users
-//    	User rv = userManager.getUserById(dataOwnerId);
-//    	model.addAttribute("ownerName", rv.getError());
-//    	model.addAttribute("ownerEmail", rv.getEmail());
-//    	return "data_request_access";
-//    }
-
     //-----------------------------------------------------------------------
     //--------------------------Admin Revamp---------------------------------
     //-----------------------------------------------------------------------
