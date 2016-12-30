@@ -32,7 +32,7 @@
 		</div>
 		<div class="tab-content col-sm-10 dashpanel_admin">
 				<div id="newTeamsApproval" class="tab-pane fade in active">
-				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.teams.header.pending}">Teams Pending for Approval</h2>
+				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.teams.header.pending}">Pending Request to Join Your Team</h2>
 				<th:block th:if="not ${#lists.isEmpty(pendingApprovalTeamsList)}">
 					<p>&nbsp;</p>
 					<table id="myTable" class="table table-responsive">

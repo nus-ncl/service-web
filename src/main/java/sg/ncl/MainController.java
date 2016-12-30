@@ -183,15 +183,27 @@ public class MainController {
         return "tools";
     }
 
-    @RequestMapping("/createaccount")
+    @RequestMapping("/tutorials/createaccount")
     public String createAccount() {
         return "createaccount";
+    }
+
+    @RequestMapping("/tutorials/createaccount1")
+    public String createAccount1() {
+        return "createaccount1";
+    }
+
+    @RequestMapping("/tutorials1")
+    public String tutorials1() {
+        return "tutorials1";
     }
 
     @RequestMapping("/createexperiment")
     public String createExperimentTutorial() {
         return "createexperiment";
     }
+
+
 
     @RequestMapping("/loadimage")
     public String loadimage() {
@@ -251,6 +263,11 @@ public class MainController {
     @RequestMapping("/TestbedInformation")
     public String TestbedInformation() {
         return "TestbedInformation";
+    }
+
+    @RequestMapping("/TestbedInformation1")
+    public String TestbedInformation1() {
+        return "TestbedInformation1";
     }
 
 //    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
