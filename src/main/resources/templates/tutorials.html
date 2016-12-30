@@ -10,6 +10,7 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+
     <div class="container">
 
         <div class="heading h15 text-center">
@@ -36,7 +37,7 @@
                 <div class="col-sm-6">
                     <h2>How to Create an Experiment </h2>
                     <p> You can create an experiment here. After that, access the node and started your experiment. </p>
-                    <a href="createexperiment.html" th:href="@{~/createexperiment}"> <h18>Learn More >>> </h18></a>
+                    <a href="/tutorials/createexperiment.html" th:href="@{/tutorials/createexperiment}"> <h18>Learn More >>> </h18></a>
                 </div>
             </div>
 
@@ -45,7 +46,7 @@
                 <div class="col-sm-6">
                     <h2>How to Join a Team </h2>
                     <p> You can view information about your team as well as pending requests for participation and join a new team.  </p>
-                    <a href="jointeam.html" th:href="@{~/jointeam}"><h18>Learn More >>> </h18></a>
+                    <a href="/tutorials/jointeam.html" th:href="@{/tutorials/jointeam}"><h18>Learn More >>> </h18></a>
                 </div>
                 <div class="col-sm-6">
                     <img class="img-responsive" preload="true" minimal-lightbox="images/join1.png" src="images/join1.png" width="500" height="315" alt="screenshot"/>
@@ -59,14 +60,14 @@
                 <div class="col-sm-6">
                     <h2>How to Apply a Team </h2>
                     <p>Do you have a dedicated group of like-minded people with similar goals? Start a team today!  </p>
-                    <a href="applyteam.html" th:href="@{~/applyteam}"><h18>Learn More >>> </h18></a></div>
+                    <a href="/tutorials/applyteam.html" th:href="@{/tutorials/applyteam}"><h18>Learn More >>> </h18></a></div>
             </div>
 
 
             <div class="heading col-sm-12 tutorialbackground">
                 <div class="col-sm-6">
                     <h2>How to Save an Image for an Experiment Node</h2>
-                    <a href="saveimage.html" th:href="@{~/saveimage}"><h18>Learn More >>> </h18></a>
+                    <a href="/tutorials/saveimage.html" th:href="@{/tutorials/saveimage}"><h18>Learn More >>> </h18></a>
                 </div>
                 <div class="col-sm-6">
                     <img class="img-responsive" preload="true" minimal-lightbox="images/experiment_details.png" src="images/experiment_details.png" width="500" height="315" alt="screenshot"/>
@@ -80,7 +81,7 @@
                 </div>
                 <div class="col-sm-6">
                     <h2>How to Load a Saved Image into an Experiment</h2>
-                    <a href="loadimage.html" th:href="@{~/loadimage}"><h18>Learn More >>> </h18></a>
+                    <a href="/tutorials/loadimage.html" th:href="@{/tutorials/loadimage}"><h18>Learn More >>> </h18></a>
                 </div>
             </div>
 
@@ -89,23 +90,7 @@
     <p>&nbsp;</p>
     <p>&nbsp;</p>
 
-<!--[if lt IE 9]>
-<script type="text/javascript" src="../static/js/html5shiv.js"></script>
-<script type="text/javascript" src="../static/js/respond.min.js"></script>
-<![endif]-->
-
-<script type="text/javascript" src="../static/js/jquery.min.js"></script>
-<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-<!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>-->
-<script type="text/javascript" src="../static/js/jquery.inview.min.js"></script>
-<script type="text/javascript" src="../static/js/wow.min.js"></script>
-<script type="text/javascript" src="../static/js/mousescroll.js"></script>
-<script type="text/javascript" src="../static/js/smoothscroll.js"></script>
-<script type="text/javascript" src="../static/js/jquery.countTo.js"></script>
-<script type="text/javascript" src="../static/js/lightbox.min.js"></script>
-<script type="text/javascript" src="../static/js/main.js"></script>
-<script type="text/javascript" src="../static/js/waypoints.min.js"></script>
-<script type="text/javascript" src="../static/js/minimal.lightbox.js"></script>
-<script type="text/javascript" src="../static/js/jquery.flexslider.js"></script>
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
 </html>

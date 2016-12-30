@@ -6,73 +6,87 @@
     <object th:include="fragments/header :: header" th:remove="tag" />
 </head>
 <body class="mybg loginbackground">
-<div th:replace="fragments/login_navigation :: loginnav"></div>
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-    <div class="container">
-        <h1 class="dashhead">Tutorials</h1>
-        <p>&nbsp;</p>
 
-        <div class="row ">
+<div class="container">
+    <h1 class="dashhead">Tutorials</h1>
+    <p>&nbsp;</p>
+    <div class="row ">
 
-            <div class="heading col-sm-12 tutorialbackground">
-                <div class="col-sm-6">
-                    <p>&nbsp;</p>
-                    <h2>How to Create an Account </h2>
-                    <p> To get started, just create an account with NCL, click on “Create account” button on the top right of the screen. </p>
-                    <a th:href="@{/tutorials/createaccount}"> <h18>Learn More >>> </h18></a>
-                </div>
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="images/create1.png" src="images/create1.png" width="500" height="305" alt="screenshot"/></div>
-
+        <div class="heading col-sm-12 tutorialbackground">
+            <div class="col-sm-6">
+                <p>&nbsp;</p>
+                <h2>How to Create an Account </h2>
+                <p> To get started, just create an account with NCL, click on “Create account” button on the top right of the screen. </p>
+                <a th:href="@{/tutorials1/createaccount1}"> <h18>Learn More >>> </h18></a>
             </div>
+            <div class="col-sm-6">
+                <img class="img-responsive" preload="true" minimal-lightbox="images/create1.png" src="images/create1.png" width="500" height="305" alt="screenshot"/></div>
 
-            <div class="heading col-sm-12 tutorialbackground">
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="images/createexp1.png" src="images/createexp1.png" width="500" height="305" alt="screenshot"/></div>
-                <div class="col-sm-6">
-                    <h2>How to Create an Experiment </h2>
-                    <p> You can create an experiment here. After that, access the node and started your experiment. </p>
-                    <a href="createexperiment.html" th:href="@{~/createexperiment}"> <h18>Learn More >>> </h18></a>
-                </div>
-            </div>
+        </div>
 
-
-            <div class="heading col-sm-12 tutorialbackground">
-                <div class="col-sm-6">
-                    <h2>How to Join a Team </h2>
-                    <p> You can view information about your team as well as pending requests for participation and join a new team.  </p>
-                    <a href="jointeam.html" th:href="@{~/jointeam}"><h18>Learn More >>> </h18></a>
-                </div>
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="images/join1.png" src="images/join1.png" width="500" height="315" alt="screenshot"/>
-                </div>
-
-            </div>
-            <div class="heading col-sm-12 tutorialbackground">
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="images/apply.png" src="images/apply.png" width="500" height="315" alt="screenshot"/>
-                </div>
-                <div class="col-sm-6">
-                    <h2>How to Apply a Team </h2>
-                    <p>Do you have a dedicated group of like-minded people with similar goals? Start a team today!  </p>
-                    <a href="applyteam.html" th:href="@{~/applyteam}"><h18>Learn More >>> </h18></a></div>
-            </div>
-
-            <div class="heading col-sm-12 tutorialbackground">
-                <div class="col-sm-6">
-                    <h2>How to Access Experiment</h2>
-                    <p> Once you create an experiment, you can access the experiment anytime. </p>
-                    <a href="accessexperiment.html" th:href="@{~/accessexperiment}"><h18>Learn More >>> </h18></a>
-                </div>
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="images/11login.png" src="images/11login.png" width="500" height="315" alt="screenshot"/>
-                </div>
-
+        <div class="heading col-sm-12 tutorialbackground">
+            <div class="col-sm-6">
+                <img class="img-responsive" preload="true" minimal-lightbox="images/createexp1.png" src="images/createexp1.png" width="500" height="305" alt="screenshot"/></div>
+            <div class="col-sm-6">
+                <h2>How to Create an Experiment </h2>
+                <p> You can create an experiment here. After that, access the node and started your experiment. </p>
+                <a href="/tutorials1/createexperiment1.html" th:href="@{/tutorials1/createexperiment1}"> <h18>Learn More >>> </h18></a>
             </div>
         </div>
-    </div> <!-- container -->
+
+
+        <div class="heading col-sm-12 tutorialbackground">
+            <div class="col-sm-6">
+                <h2>How to Join a Team </h2>
+                <p> You can view information about your team as well as pending requests for participation and join a new team.  </p>
+                <a href="/tutorials1/jointeam1.html" th:href="@{/tutorials1/jointeam1}"><h18>Learn More >>> </h18></a>
+            </div>
+            <div class="col-sm-6">
+                <img class="img-responsive" preload="true" minimal-lightbox="images/join1.png" src="images/join1.png" width="500" height="315" alt="screenshot"/>
+            </div>
+
+        </div>
+        <div class="heading col-sm-12 tutorialbackground">
+            <div class="col-sm-6">
+                <img class="img-responsive" preload="true" minimal-lightbox="images/apply.png" src="images/apply.png" width="500" height="315" alt="screenshot"/>
+            </div>
+            <div class="col-sm-6">
+                <h2>How to Apply a Team </h2>
+                <p>Do you have a dedicated group of like-minded people with similar goals? Start a team today!  </p>
+                <a href="/tutorials1/applyteam1.html" th:href="@{/tutorials1/applyteam1}"><h18>Learn More >>> </h18></a></div>
+        </div>
+
+
+        <div class="heading col-sm-12 tutorialbackground">
+            <div class="col-sm-6">
+                <h2>How to Save an Image for an Experiment Node</h2>
+                <a href="/tutorials1/saveimage1.html" th:href="@{/tutorials1/saveimage1}"><h18>Learn More >>> </h18></a>
+            </div>
+            <div class="col-sm-6">
+                <img class="img-responsive" preload="true" minimal-lightbox="images/experiment_details.png" src="images/experiment_details.png" width="500" height="315" alt="screenshot"/>
+            </div>
+        </div>
+
+
+        <div class="heading col-sm-12 tutorialbackground">
+            <div class="col-sm-6">
+                <img class="img-responsive" preload="true" minimal-lightbox="images/experiment_create_use_custom_image.png" src="images/experiment_create_use_custom_image.png" width="500" height="315" alt="screenshot"/>
+            </div>
+            <div class="col-sm-6">
+                <h2>How to Load a Saved Image into an Experiment</h2>
+                <a href="/tutorials1/loadimage1.html" th:href="@{/tutorials1/loadimage1}"><h18>Learn More >>> </h18></a>
+            </div>
+        </div>
+
+    </div>
+</div> <!-- container -->
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
 <div th:replace="fragments/footer :: footer"></div>
 <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>

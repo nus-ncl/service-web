@@ -188,7 +188,7 @@ public class MainController {
         return "createaccount";
     }
 
-    @RequestMapping("/tutorials/createaccount1")
+    @RequestMapping("/tutorials1/createaccount1")
     public String createAccount1() {
         return "createaccount1";
     }
@@ -198,33 +198,55 @@ public class MainController {
         return "tutorials1";
     }
 
-    @RequestMapping("/createexperiment")
+    @RequestMapping("/tutorials/createexperiment")
     public String createExperimentTutorial() {
         return "createexperiment";
     }
 
+    @RequestMapping("/tutorials1/createexperiment1")
+    public String createExperiment1Tutorial() {
+        return "createexperiment1";
+    }
 
-
-    @RequestMapping("/loadimage")
+    @RequestMapping("/tutorials/loadimage")
     public String loadimage() {
         return "loadimage";
     }
 
-    @RequestMapping("/saveimage")
+    @RequestMapping("/tutorials1/loadimage1")
+    public String loadimage1() {
+        return "loadimage1";
+    }
+
+    @RequestMapping("/tutorials1/saveimage1")
+    public String saveimage1() {
+        return "saveimage1";
+    }
+
+    @RequestMapping("/tutorials/saveimage")
     public String saveimage() {
         return "saveimage";
     }
 
-    @RequestMapping("/applyteam")
+    @RequestMapping("/tutorials/applyteam")
     public String applyteam() {
         return "applyteam";
     }
 
-    @RequestMapping("/jointeam")
+    @RequestMapping("/tutorials1/applyteam1")
+    public String applyteam1() {
+        return "applyteam1";
+    }
+
+    @RequestMapping("/tutorials/jointeam")
     public String jointeam() {
         return "jointeam";
     }
 
+    @RequestMapping("/tutorials1/jointeam1")
+    public String jointeam1() {
+        return "jointeam1";
+    }
 
     @RequestMapping("/error_openstack")
     public String error_openstack() {
@@ -260,12 +282,12 @@ public class MainController {
         return "maintainance";
     }
 
-    @RequestMapping("/TestbedInformation")
+    @RequestMapping("/testbedInformation")
     public String TestbedInformation() {
         return "TestbedInformation";
     }
 
-    @RequestMapping("/TestbedInformation1")
+    @RequestMapping("/testbedInformation1")
     public String TestbedInformation1() {
         return "TestbedInformation1";
     }
