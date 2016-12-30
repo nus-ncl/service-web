@@ -283,12 +283,12 @@ public class MainController {
     }
 
     @RequestMapping("/testbedInformation")
-    public String TestbedInformation() {
+    public String testbedInformation() {
         return "TestbedInformation";
     }
 
     @RequestMapping("/testbedInformation1")
-    public String TestbedInformation1() {
+    public String testbedInformation1() {
         return "TestbedInformation1";
     }
 
