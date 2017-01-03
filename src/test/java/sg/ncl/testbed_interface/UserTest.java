@@ -305,4 +305,46 @@ public class UserTest {
         assertThat(user.isPasswordValid(), is(true));
     }
 
+    @Test
+    public void testIsPasswordValidPlus() {
+        final User2 user = new User2();
+        user.setPassword("AAAAAAA1+");
+        assertThat(user.isPasswordValid(), is(true));
+    }
+
+    @Test
+    public void testIsPasswordValidPlusAmpersands() {
+        final User2 user = new User2();
+        user.setPassword("AAAAAAA1+&");
+        assertThat(user.isPasswordValid(), is(false));
+    }
+
+    @Test
+    public void testIsPasswordValidAmpersands() {
+        final User2 user = new User2();
+        user.setPassword("AAAAAAA1&");
+        assertThat(user.isPasswordValid(), is(false));
+    }
+
+    @Test
+    public void testIsPasswordValidLessThanSign() {
+        final User2 user = new User2();
+        user.setPassword("AAAAAAA1<");
+        assertThat(user.isPasswordValid(), is(false));
+    }
+
+    @Test
+    public void testIsPasswordValidGreaterThanSign() {
+        final User2 user = new User2();
+        user.setPassword("AAAAAAA1>");
+        assertThat(user.isPasswordValid(), is(false));
+    }
+
+    @Test
+    public void testIsPasswordValidDoubleQuote() {
+        final User2 user = new User2();
+        user.setPassword("AAAAAAA1\"");
+        assertThat(user.isPasswordValid(), is(false));
+    }
+
 }

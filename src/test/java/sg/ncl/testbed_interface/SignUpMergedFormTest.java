@@ -123,6 +123,45 @@ public class SignUpMergedFormTest {
     }
 
     @Test
+    public void testPasswordWithPlus() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a+", "1234567a+", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations, is(empty()));
+    }
+
+    @Test
+    public void testPasswordWithAmpersands() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a&", "1234567a&", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations.size(), is(1));
+        constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain '&', '<', '>', '\"'")));
+    }
+
+    @Test
+    public void testPasswordWithLessThanSign() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a<", "1234567a<", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations.size(), is(1));
+        constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain '&', '<', '>', '\"'")));
+    }
+
+    @Test
+    public void testPasswordWithGreaterThanSign() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a>", "1234567a>", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations.size(), is(1));
+        constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain '&', '<', '>', '\"'")));
+    }
+
+    @Test
+    public void testPasswordWithDoubleQuote() {
+        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a\"", "1234567a\"", "123456");
+        Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
+        assertThat(constraintViolations.size(), is(1));
+        constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain '&', '<', '>', '\"'")));
+    }
+
+    @Test
     public void testGetErrorMsg() {
         final SignUpMergedForm one = new SignUpMergedForm();
         assertThat(one.getErrorMsg(), is(nullValue()));
