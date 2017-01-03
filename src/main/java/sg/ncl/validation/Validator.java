@@ -31,10 +31,10 @@ public class Validator {
         // contain at least 1 digit
         // contain at least 1 alphabet
         // does not contain whitespace
-        return (str.length() >= 8 &&
+        return str.length() >= 8 &&
                 str.matches("(?=.*[0-9]).+") &&
                 str.matches("(?=.*[a-zA-Z]).+") &&
-                str.matches("[^\\s]+"));
+                str.matches("[^\\s]+");
     }
 
 }

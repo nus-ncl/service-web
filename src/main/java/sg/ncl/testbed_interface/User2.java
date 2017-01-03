@@ -1,7 +1,5 @@
 package sg.ncl.testbed_interface;
 
-import sg.ncl.validation.Validator;
-
 import java.io.Serializable;
 
 import static sg.ncl.validation.Validator.checkHtmlSpecialCharacters;
