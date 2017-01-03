@@ -247,7 +247,7 @@
                         <td th:text="${dataEntry.name}">Name</td>
                         <td th:text="${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName}">Owner</td>
                         <td th:text="${dataEntry.getReleasedDateString()}"></td>
-                        <td></td>
+                        <td th:text="${downloadStats.containsKey(dataEntry.id) ? downloadStats.get(dataEntry.id) : 0}"></td>
                         <td>
                             <button type="button" class="btn btn-primary"
                                     data-toggle="modal" data-target="#deleteModal"

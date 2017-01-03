@@ -2374,12 +2374,23 @@ public class MainController {
             datasetsList.add(dataset);
         }
 
+        ResponseEntity response4 = restTemplate.exchange(properties.getDownloadStat(), HttpMethod.GET, request, String.class);
+        String responseBody4 = response4.getBody().toString();
+
+        Map<Integer, Long> dataDownloadStats = new HashMap<>();
+        JSONArray statJsonArray = new JSONArray(responseBody4);
+        for (int i = 0; i < statJsonArray.length(); i++) {
+            JSONObject statInfoObject = statJsonArray.getJSONObject(i);
+            dataDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+        }
+        log.info("download stats: {}", dataDownloadStats);
 
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
         model.addAttribute("usersList", usersList);
         model.addAttribute("userToTeamMap", userToTeamMap);
         model.addAttribute("dataList", datasetsList);
+        model.addAttribute("downloadStats", dataDownloadStats);
 
         return "admin2";
     }

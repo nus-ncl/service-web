@@ -29,6 +29,7 @@ public class ConnectionProperties {
     private String approveJoinRequest;
     private String realEndpoint;
     private String imageEndpoint;
+    private String analyticsEndpoint;
 
     // service-telemetry
     private String telemetryAddress;
@@ -278,4 +279,12 @@ public class ConnectionProperties {
     public String sendUploadChunk(String dataId, Integer chunkNumber) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber;
     }
+
+    //-------------------------------------
+    // ANALYTICS (DATA DOWNLOADS)
+    //-------------------------------------
+    public String getDownloadStat() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads";
+    }
+
 }
