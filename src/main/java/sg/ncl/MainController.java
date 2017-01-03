@@ -153,11 +153,6 @@ public class MainController {
         return "pricing";
     }
 
-    @RequestMapping("/resources1")
-    public String resources1() {
-        return "resources1";
-    }
-
     @RequestMapping("/resources")
     public String resources() {
         return "resources";
@@ -173,10 +168,6 @@ public class MainController {
         return "calendar";
     }
 
-    @RequestMapping("/calendar1")
-    public String calendar1() {
-        return "calendar1";
-    }
 
     @RequestMapping("/tools")
     public String tools() {
@@ -188,39 +179,16 @@ public class MainController {
         return "createaccount";
     }
 
-    @RequestMapping("/tutorials1/createaccount1")
-    public String createAccount1() {
-        return "createaccount1";
-    }
-
-    @RequestMapping("/tutorials1")
-    public String tutorials1() {
-        return "tutorials1";
-    }
 
     @RequestMapping("/tutorials/createexperiment")
     public String createExperimentTutorial() {
         return "createexperiment";
     }
 
-    @RequestMapping("/tutorials1/createexperiment1")
-    public String createExperiment1Tutorial() {
-        return "createexperiment1";
-    }
 
     @RequestMapping("/tutorials/loadimage")
     public String loadimage() {
         return "loadimage";
-    }
-
-    @RequestMapping("/tutorials1/loadimage1")
-    public String loadimage1() {
-        return "loadimage1";
-    }
-
-    @RequestMapping("/tutorials1/saveimage1")
-    public String saveimage1() {
-        return "saveimage1";
     }
 
     @RequestMapping("/tutorials/saveimage")
@@ -233,20 +201,12 @@ public class MainController {
         return "applyteam";
     }
 
-    @RequestMapping("/tutorials1/applyteam1")
-    public String applyteam1() {
-        return "applyteam1";
-    }
 
     @RequestMapping("/tutorials/jointeam")
     public String jointeam() {
         return "jointeam";
     }
 
-    @RequestMapping("/tutorials1/jointeam1")
-    public String jointeam1() {
-        return "jointeam1";
-    }
 
     @RequestMapping("/error_openstack")
     public String error_openstack() {
@@ -287,10 +247,6 @@ public class MainController {
         return "TestbedInformation";
     }
 
-    @RequestMapping("/testbedInformation1")
-    public String testbedInformation1() {
-        return "TestbedInformation1";
-    }
 
 //    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
 //    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
