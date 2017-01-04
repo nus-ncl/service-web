@@ -213,10 +213,7 @@ public class MainController {
         return "error_openstack";
     }
 
-//    @RequestMapping("/resource2")
-//    public String resource2() {
-//        return "resource2";
-//    }
+
     @RequestMapping("/accessexperiment")
     public String accessexperiment() {
         return "accessexperiment";
@@ -244,7 +241,7 @@ public class MainController {
 
     @RequestMapping("/testbedInformation")
     public String testbedInformation() {
-        return "TestbedInformation";
+        return "testbedInformation";
     }
 
 
