@@ -1553,21 +1553,60 @@ public class MainController {
     }
 
     @RequestMapping("/remove_member/{teamId}/{userId}")
-    public String removeMember(@PathVariable String teamId, @PathVariable String userId, Model model) {
-        // TODO check if user is indeed in the team
-        // TODO what happens to active experiments of the user?
-        // remove member from the team
-        // reduce the team count
-        // FIXME invoke rest API
+    public String removeMember(@PathVariable String teamId, @PathVariable String userId, final RedirectAttributes redirectAttributes) throws IOException {
+
         JSONObject teamMemberFields = new JSONObject();
         teamMemberFields.put("userId", userId);
-        teamMemberFields.put("memberType", "MEMBER");
-        teamMemberFields.put("memberStatus", "APPROVED");
+        teamMemberFields.put("memberType", MemberType.MEMBER.name());
+        teamMemberFields.put("memberStatus", MemberStatus.APPROVED.name());
 
         HttpEntity<String> request = createHttpEntityWithBody(teamMemberFields.toString());
-        ResponseEntity response = restTemplate.exchange(properties.removeUserFromTeam(teamId), HttpMethod.DELETE, request, String.class);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
 
-        log.info("Remove team member: {}", response.getBody().toString());
+        try {
+            response = restTemplate.exchange(properties.removeUserFromTeam(teamId), HttpMethod.DELETE, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/team_profile/{teamId}";
+        }
+
+        String responseBody = response.getBody().toString();
+
+        User2 user = invokeAndExtractUserInfo(userId);
+        String name = user.getFirstName() + " " + user.getLastName();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            switch (exceptionState) {
+                case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    // two subcases when fail to remove users from team
+                    log.warn("Remove user from team: User {}, Team {} fail - {}", userId, teamId, error.getMessage());
+
+                    if (error.getMessage().equals("user has experiments")) {
+                        // case 1 - user has experiments
+                        // display the list of experiments that have to be terminated first
+                        redirectAttributes.addFlashAttribute("demo", "yes");
+                        return "redirect:/experiments";
+                    } else {
+                        // case 2 - deterlab operation failure
+                        log.warn("Remove user from team: deterlab operation failed");
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " User " + name + " cannot be removed.");
+                        break;
+                    }
+                default:
+                    log.warn("Server side error: {}", error.getError());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+        } else {
+            log.info("Remove team member: {}", response.getBody().toString());
+            // add success message
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + name + " has been removed.");
+        }
 
         return "redirect:/team_profile/{teamId}";
     }
