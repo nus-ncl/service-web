@@ -11,10 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -356,9 +353,19 @@ public class DataController extends MainController {
     }
 
     @RequestMapping("{datasetId}/stats")
-    public String getStatistics(Model model, @PathVariable String datasetId, HttpSession session) {
+    public String getStatistics(Model model,
+                                @PathVariable String datasetId,
+                                @RequestParam(value = "start", required = false) String start,
+                                @RequestParam(value = "end", required = false) String end,
+                                HttpSession session) {
         if (!validateIfAdmin(session)) {
             return "nopermission";
+        }
+        if (start == null) {
+            start = "";
+        }
+        if (end == null) {
+            end = "";
         }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -367,11 +374,19 @@ public class DataController extends MainController {
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
 
-        ResponseEntity response4 = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId), HttpMethod.GET, request, String.class);
-        String responseBody4 = response4.getBody().toString();
+        if (start.isEmpty() && end.isEmpty()) {
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId), HttpMethod.GET, request, String.class);
+        } else if (end.isEmpty()) {
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "startDate=" + start), HttpMethod.GET, request, String.class);
+        } else if (start.isEmpty()) {
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "endDate=" + end), HttpMethod.GET, request, String.class);
+        } else {
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+        }
+        String responseBody = response.getBody().toString();
 
         Map<Integer, Long> downloadStats = new HashMap<>();
-        JSONArray statJsonArray = new JSONArray(responseBody4);
+        JSONArray statJsonArray = new JSONArray(responseBody);
         for (int i = 0; i < statJsonArray.length(); i++) {
             JSONObject statInfoObject = statJsonArray.getJSONObject(i);
             downloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
@@ -379,6 +394,8 @@ public class DataController extends MainController {
 
         model.addAttribute(DATASET, dataset);
         model.addAttribute("downloadStats", downloadStats);
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
         return "data_statistics";
     }
 
