@@ -3,8 +3,8 @@ package sg.ncl.testbed_interface;
 import lombok.Getter;
 import lombok.Setter;
 
-import static sg.ncl.validation.Validator.checkHtmlSpecialCharacters;
-import static sg.ncl.validation.Validator.checkValidPassword;
+import static sg.ncl.validation.Validator.isSafeHtmlCharacters;
+import static sg.ncl.validation.Validator.isValidPassword;
 
 /**
  * Created by dcszwang on 11/7/2016.
@@ -36,12 +36,12 @@ public class PasswordResetForm {
     }
 
     private boolean isPasswordValid() {
-        if (!checkValidPassword(this.getPassword1())) {
+        if (!isValidPassword(this.getPassword1())) {
             this.setErrMsg("Password must be at least 8 characters with at least one of digit and alphabet and cannot contain any whitespaces");
             return false;
         }
 
-        if (!checkHtmlSpecialCharacters(this.getPassword1())) {
+        if (!isSafeHtmlCharacters(this.getPassword1())) {
             this.setErrMsg("Password cannot contain &, <, >, \"");
             return false;
         }

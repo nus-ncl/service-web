@@ -2,8 +2,8 @@ package sg.ncl.testbed_interface;
 
 import java.io.Serializable;
 
-import static sg.ncl.validation.Validator.checkHtmlSpecialCharacters;
-import static sg.ncl.validation.Validator.checkValidPassword;
+import static sg.ncl.validation.Validator.isSafeHtmlCharacters;
+import static sg.ncl.validation.Validator.isValidPassword;
 
 /**
  * @author Te Ye
@@ -206,6 +206,6 @@ public class User2 implements Serializable {
         // contain at least 1 digit
         // contain at least 1 alphabet
         // does not contain whitespace
-        return checkValidPassword(password) && checkHtmlSpecialCharacters(password);
+        return isValidPassword(password) && isSafeHtmlCharacters(password);
     }
 }
