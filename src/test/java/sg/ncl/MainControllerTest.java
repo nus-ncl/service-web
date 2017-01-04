@@ -684,7 +684,8 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/about")))
                 .andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
-                .andExpect(content().string(containsString("Fill in all required information here. ALL fields are required.")));
+                .andExpect(content().string(containsString("Fill in all required information here. ALL fields are required.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
     @Test
@@ -706,7 +707,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/account_settings")))
                 .andExpect(content().string(containsString("/logout")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")))
-                .andExpect(content().string(containsString("Fill in all required information here. ALL fields are required.")));
+                .andExpect(content().string(containsString("Fill in all required information here. ALL fields are required.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 }
