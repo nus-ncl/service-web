@@ -30,9 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 
 import static sg.ncl.domain.ExceptionState.*;
 
@@ -355,6 +353,33 @@ public class DataController extends MainController {
         }
         model.addAttribute(DATASET, dataset);
         return "data_resources";
+    }
+
+    @RequestMapping("{datasetId}/stats")
+    public String getStatistics(Model model, @PathVariable String datasetId, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+
+        ResponseEntity response4 = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId), HttpMethod.GET, request, String.class);
+        String responseBody4 = response4.getBody().toString();
+
+        Map<Integer, Long> downloadStats = new HashMap<>();
+        JSONArray statJsonArray = new JSONArray(responseBody4);
+        for (int i = 0; i < statJsonArray.length(); i++) {
+            JSONObject statInfoObject = statJsonArray.getJSONObject(i);
+            downloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+        }
+
+        model.addAttribute(DATASET, dataset);
+        model.addAttribute("downloadStats", downloadStats);
+        return "data_statistics";
     }
 
     /**

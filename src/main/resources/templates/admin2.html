@@ -244,8 +244,8 @@
 					</thead>
                     <tbody>
                     <tr th:each="dataEntry : ${dataList}">
-                        <td th:text="${dataEntry.name}">Name</td>
-                        <td th:text="${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName}">Owner</td>
+						<td><a href="#" th:href="@{/data/{id}/stats(id=${dataEntry.id})}" th:text="${dataEntry.name}">Name</a></td>
+                        <td th:text="${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName}"></td>
                         <td th:text="${dataEntry.getReleasedDateString()}"></td>
                         <td th:text="${downloadStats.containsKey(dataEntry.id) ? downloadStats.get(dataEntry.id) : 0}"></td>
                         <td>

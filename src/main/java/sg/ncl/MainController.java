@@ -2383,7 +2383,6 @@ public class MainController {
             JSONObject statInfoObject = statJsonArray.getJSONObject(i);
             dataDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
         }
-        log.info("download stats: {}", dataDownloadStats);
 
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);

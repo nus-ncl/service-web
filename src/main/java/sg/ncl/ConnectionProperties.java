@@ -283,8 +283,16 @@ public class ConnectionProperties {
     //-------------------------------------
     // ANALYTICS (DATA DOWNLOADS)
     //-------------------------------------
-    public String getDownloadStat() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads";
+    public String getDownloadStat(String... paramString) {
+        String params = "";
+        for (int i = 0; i < paramString.length; i++) {
+            if (i == 0) {
+                params += "?" + paramString[i];
+            } else {
+                params += "&" + paramString[i];
+            }
+        }
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads" + params;
     }
 
 }
