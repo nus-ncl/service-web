@@ -1,14 +1,9 @@
 package sg.ncl.testbed_interface;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 
-import javax.validation.ConstraintViolation;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Te Ye
@@ -20,8 +15,8 @@ public class PasswordResetFormTest {
         final PasswordResetForm passwordResetForm = new PasswordResetForm();
         passwordResetForm.setPassword1("1234567a");
         passwordResetForm.setPassword2("1234567b");
-        assertThat(passwordResetForm.isPasswordOk(), is(false));
-        assertThat(passwordResetForm.getErrMsg(), is("Password not match!"));
+        assertThat(passwordResetForm.isPasswordOk()).isFalse();
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password not match!");
     }
 
     @Test
@@ -29,8 +24,8 @@ public class PasswordResetFormTest {
         final PasswordResetForm passwordResetForm = new PasswordResetForm();
         passwordResetForm.setPassword1("1234567");
         passwordResetForm.setPassword2("1234567");
-        assertThat(passwordResetForm.isPasswordOk(), is(false));
-        assertThat(passwordResetForm.getErrMsg(), is("Password too short! Minimal 8 characters."));
+        assertThat(passwordResetForm.isPasswordOk()).isFalse();
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password must be at least 8 characters with at least one of digit and alphabet and cannot contain any whitespaces");
     }
 
     @Test
@@ -38,8 +33,8 @@ public class PasswordResetFormTest {
         final PasswordResetForm passwordResetForm = new PasswordResetForm();
         passwordResetForm.setPassword1("12345678 ");
         passwordResetForm.setPassword2("12345678 ");
-        assertThat(passwordResetForm.isPasswordOk(), is(false));
-        assertThat(passwordResetForm.getErrMsg(), is("Password cannot contain whitespace!"));
+        assertThat(passwordResetForm.isPasswordOk()).isFalse();
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password must be at least 8 characters with at least one of digit and alphabet and cannot contain any whitespaces");
     }
 
     @Test
@@ -47,8 +42,8 @@ public class PasswordResetFormTest {
         final PasswordResetForm passwordResetForm = new PasswordResetForm();
         passwordResetForm.setPassword1("aaaaaaaa");
         passwordResetForm.setPassword2("aaaaaaaa");
-        assertThat(passwordResetForm.isPasswordOk(), is(false));
-        assertThat(passwordResetForm.getErrMsg(), is("Password must contain at least 1 digit."));
+        assertThat(passwordResetForm.isPasswordOk()).isFalse();
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password must be at least 8 characters with at least one of digit and alphabet and cannot contain any whitespaces");
     }
 
     @Test
@@ -56,8 +51,8 @@ public class PasswordResetFormTest {
         final PasswordResetForm passwordResetForm = new PasswordResetForm();
         passwordResetForm.setPassword1("12345678");
         passwordResetForm.setPassword2("12345678");
-        assertThat(passwordResetForm.isPasswordOk(), is(false));
-        assertThat(passwordResetForm.getErrMsg(), is("Password must contain at least 1 alphabet."));
+        assertThat(passwordResetForm.isPasswordOk()).isFalse();
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password must be at least 8 characters with at least one of digit and alphabet and cannot contain any whitespaces");
     }
 
     @Test
@@ -65,7 +60,7 @@ public class PasswordResetFormTest {
         final PasswordResetForm passwordResetForm = new PasswordResetForm();
         passwordResetForm.setPassword1("1234567a");
         passwordResetForm.setPassword2("1234567a");
-        assertThat(passwordResetForm.isPasswordOk(), is(true));
+        assertThat(passwordResetForm.isPasswordOk()).isTrue();
     }
 
     @Test
@@ -73,6 +68,42 @@ public class PasswordResetFormTest {
         final PasswordResetForm passwordResetForm = new PasswordResetForm();
         passwordResetForm.setPassword1("1234567A");
         passwordResetForm.setPassword2("1234567A");
-        assertThat(passwordResetForm.isPasswordOk(), is(true));
+        assertThat(passwordResetForm.isPasswordOk()).isTrue();
+    }
+
+    @Test
+    public void testPasswordWithAmpersands() {
+        final PasswordResetForm passwordResetForm = new PasswordResetForm();
+        passwordResetForm.setPassword1("1234567A&");
+        passwordResetForm.setPassword2("1234567A&");
+        assertThat(passwordResetForm.isPasswordOk()).isFalse();
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain &, <, >, \"");
+    }
+
+    @Test
+    public void testPasswordWithLessThanSign() {
+        final PasswordResetForm passwordResetForm = new PasswordResetForm();
+        passwordResetForm.setPassword1("1234567A<");
+        passwordResetForm.setPassword2("1234567A<");
+        assertThat(passwordResetForm.isPasswordOk()).isFalse();
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain &, <, >, \"");
+    }
+
+    @Test
+    public void testPasswordWithGreaterThanSign() {
+        final PasswordResetForm passwordResetForm = new PasswordResetForm();
+        passwordResetForm.setPassword1("1234567A>");
+        passwordResetForm.setPassword2("1234567A>");
+        assertThat(passwordResetForm.isPasswordOk()).isFalse();
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain &, <, >, \"");
+    }
+
+    @Test
+    public void testPasswordWithDoubleQuote() {
+        final PasswordResetForm passwordResetForm = new PasswordResetForm();
+        passwordResetForm.setPassword1("1234567A\"");
+        passwordResetForm.setPassword2("1234567A\"");
+        assertThat(passwordResetForm.isPasswordOk()).isFalse();
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain &, <, >, \"");
     }
 }
