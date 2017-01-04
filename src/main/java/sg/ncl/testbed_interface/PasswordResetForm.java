@@ -2,7 +2,6 @@ package sg.ncl.testbed_interface;
 
 import lombok.Getter;
 import lombok.Setter;
-import sg.ncl.validation.Validator;
 
 import static sg.ncl.validation.Validator.checkHtmlSpecialCharacters;
 import static sg.ncl.validation.Validator.checkValidPassword;
