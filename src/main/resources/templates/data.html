@@ -75,7 +75,8 @@
 	                   		<a th:if="${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#downloadModal" class="btn btn-primary" data-toggle="modal"
                                th:attr="data-id=${datasetEntry.value.id},
                                	        data-name=${datasetEntry.value.name},
-                               	        data-resources=${datasetEntry.value.getResourceIdsInArrayString()},
+                               	        data-resourceuris=${datasetEntry.value.getResourceUrisInArrayString()},
+                               	        data-resourceids=${datasetEntry.value.getResourceIdsInArrayString()},
                                         data-upload=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/' + datasetEntry.value.id + '/resources' : ''}">
                                 <i class="fa fa-download"></i> Download</a>
                             <a th:if="not ${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#requestModal" class="btn btn-primary" data-toggle="modal"

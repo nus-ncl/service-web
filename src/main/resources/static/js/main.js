@@ -177,14 +177,15 @@ $(document).ready(function() {
         var anchor = $(event.relatedTarget);
         var dataId = anchor.data('id');
         var downloadLabel = anchor.data('name');
-        var resources = anchor.data('resources');
+        var resourceuris = anchor.data('resourceuris');
+        var resourceids = anchor.data('resourceids');
         var upload = anchor.data('upload');
         var modal = $(this);
         modal.find('#uploadButton').hide();
         modal.find('#downloadLabel').text("Resources of " + downloadLabel);
         modal.find('ul').empty();
-        for (i = 0; i < resources.length; i++) {
-            modal.find('ul').append("<li><a href='/data/" + dataId + "/resources/" + resources[i] + "'>" + resources[i] + "</a></li>");
+        for (i = 0; i < resourceids.length; i++) {
+            modal.find('ul').append("<li><a href='/data/" + dataId + "/resources/" + resourceids[i] + "'>" + resourceuris[i] + "</a></li>");
         }
         if (typeof upload === "undefined" || !upload.trim()) {
             //empty string
