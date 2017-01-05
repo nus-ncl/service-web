@@ -194,7 +194,7 @@ public class DataController extends MainController {
         }
 
         if (admin.isPresent()) {
-            return "redirect:/admin#dataManagement";
+            return "redirect:/admin/data";
         }
         return REDIRECT_DATA;
     }
