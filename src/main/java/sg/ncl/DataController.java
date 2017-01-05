@@ -11,10 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,9 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 
 import static sg.ncl.domain.ExceptionState.*;
 
@@ -355,6 +350,53 @@ public class DataController extends MainController {
         }
         model.addAttribute(DATASET, dataset);
         return "data_resources";
+    }
+
+    @RequestMapping("{datasetId}/stats")
+    public String getStatistics(Model model,
+                                @PathVariable String datasetId,
+                                @RequestParam(value = "start", required = false) String start,
+                                @RequestParam(value = "end", required = false) String end,
+                                HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return "nopermission";
+        }
+        if (start == null) {
+            start = "";
+        }
+        if (end == null) {
+            end = "";
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+
+        if (start.isEmpty() && end.isEmpty()) {
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId), HttpMethod.GET, request, String.class);
+        } else if (end.isEmpty()) {
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "startDate=" + start), HttpMethod.GET, request, String.class);
+        } else if (start.isEmpty()) {
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "endDate=" + end), HttpMethod.GET, request, String.class);
+        } else {
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+        }
+        String responseBody = response.getBody().toString();
+
+        Map<Integer, Long> downloadStats = new HashMap<>();
+        JSONArray statJsonArray = new JSONArray(responseBody);
+        for (int i = 0; i < statJsonArray.length(); i++) {
+            JSONObject statInfoObject = statJsonArray.getJSONObject(i);
+            downloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+        }
+
+        model.addAttribute(DATASET, dataset);
+        model.addAttribute("downloadStats", downloadStats);
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
+        return "data_statistics";
     }
 
     /**

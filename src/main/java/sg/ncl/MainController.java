@@ -2360,28 +2360,49 @@ public class MainController {
             }
         }
 
+        model.addAttribute("teamsMap", teamManager2.getTeamMap());
+        model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
+        model.addAttribute("usersList", usersList);
+        model.addAttribute("userToTeamMap", userToTeamMap);
+
+        return "admin2";
+    }
+
+    @RequestMapping("/admin/data")
+    public String adminDataManagement(Model model, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
         //------------------------------------
         // get list of datasets
         //------------------------------------
-        ResponseEntity response3 = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
-        String responseBody3 = response3.getBody().toString();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
 
         List<Dataset> datasetsList = new ArrayList<>();
-        JSONArray dataJsonArray = new JSONArray(responseBody3);
+        JSONArray dataJsonArray = new JSONArray(responseBody);
         for (int i = 0; i < dataJsonArray.length(); i++) {
             JSONObject dataInfoObject = dataJsonArray.getJSONObject(i);
             Dataset dataset = extractDataInfo(dataInfoObject.toString());
             datasetsList.add(dataset);
         }
 
+        ResponseEntity response4 = restTemplate.exchange(properties.getDownloadStat(), HttpMethod.GET, request, String.class);
+        String responseBody4 = response4.getBody().toString();
 
-        model.addAttribute("teamsMap", teamManager2.getTeamMap());
-        model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
-        model.addAttribute("usersList", usersList);
-        model.addAttribute("userToTeamMap", userToTeamMap);
+        Map<Integer, Long> dataDownloadStats = new HashMap<>();
+        JSONArray statJsonArray = new JSONArray(responseBody4);
+        for (int i = 0; i < statJsonArray.length(); i++) {
+            JSONObject statInfoObject = statJsonArray.getJSONObject(i);
+            dataDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+        }
+
         model.addAttribute("dataList", datasetsList);
+        model.addAttribute("downloadStats", dataDownloadStats);
 
-        return "admin2";
+        return "data_dashboard";
     }
 
     @RequestMapping("/admin/experiments")
