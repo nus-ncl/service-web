@@ -15,40 +15,31 @@
             <p>&nbsp;</p>
             <div class="row dashpanel">
                 <h2><span th:text="#{teamProfile.nav.header}">Team:</span> <span th:text="${team.name}" style="color:#00C7BA;"></span></h2>
+
+                <div th:if="${removeMemberUid}" class="alert alert-warning">
+                    <p>There are some remaining experiments created by the user!</p>
+                    <p>Please delete the following experiments before removing the user from the team.</p>
+                    <th:block th:if="${not #lists.isEmpty(teamExperimentList)}">
+                        <table class="table table-responsive table-striped">
+                            <tr>
+                                <th th:text="#{experiment.table.header.nodes}">Experiment</th>
+                                <th th:text="#{experiment.table.header.description}">Description</th>
+                            </tr>
+                            <th:block th:each="expEntry: ${teamExperimentList}">
+                                <tr th:if="${expEntry.userId.equals(removeMemberUid)}">
+                                    <td th:text="${expEntry.name}"></td>
+                                    <td th:text="${expEntry.description}"></td>
+                                </tr>
+                            </th:block>
+                        </table>
+                    </th:block>
+                </div>
+
                 <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
                     <li class="active"><a data-toggle="pill" href="#profile"><span th:text="#{teamProfile.nav.profile}">Profile</span></a></li>
                     <li><a data-toggle="pill" href="#members"><span th:text="#{teamProfile.nav.members}">Members</span></a></li>
                     <li><a data-toggle="pill" href="#experiments"><span th:text="#{teamProfile.nav.exp}">Experiments</span></a></li>
                 </ul>
-
-                    <!--<div class="modal exp-modal" id="leftOverExpModal" aria-labelledby="leftOverExpModalLabel" tabindex="-1" role="dialog" aria-hidden="true">-->
-                        <!--<div class="modal-dialog">-->
-                            <!--<div class="modal-content">-->
-                                <!--<div class="modal-header team-owner-info-header">-->
-                                    <!--<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>-->
-                                    <!--<h4 class="modal-title"><span th:text="#{admin.teams.header.modal}">Team Owner Info</span></h4>-->
-                                <!--</div>-->
-                                <!--<div class="modal-body team-owner-info-body">-->
-                                    <!--<p>There are experiments created by the user!</p>-->
-                                    <!--<p>Please delete these experiments before removing the user from the team.</p>-->
-                                    <!--<th:block th:if="${not #lists.isEmpty(teamExperimentList)}">-->
-                                        <!--<table class="table table-responsive table-striped">-->
-                                            <!--<thead>-->
-                                            <!--<th th:text="#{experiment.table.header.nodes}">Experiment</th>-->
-                                            <!--<th th:text="#{experiment.table.header.description}">Description</th>-->
-                                            <!--</thead>-->
-                                            <!--<th:block th:each="expEntry: ${teamExperimentList}">-->
-                                                <!--<tr th:if="${expEntry.userId.equals(removeMemberUid)}">-->
-                                                    <!--<td th:text="${expEntry.name}"></td>-->
-                                                    <!--<td th:text="${expEntry.description}"></td>-->
-                                                <!--</tr>-->
-                                            <!--</th:block>-->
-                                        <!--</table>-->
-                                    <!--</th:block>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
 
                 <div th:if="${message}">
                     <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
