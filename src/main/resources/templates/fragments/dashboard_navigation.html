@@ -81,8 +81,11 @@
 				</li>
 			</ul>
 	 <!-- navigation links -->
-</div>
+		</div>
 	</div> <!-- container -->
+	<div class="container-fluid">
+		<div class="row maintenance-navbar" th:text="#{nav.maintenance}">MAINTENANCE NOTICE</div>
+	</div>
 </div> <!-- main-nav -->
 <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
