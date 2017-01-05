@@ -21,6 +21,14 @@
     background-color: #FFF !important;
 }
 
+.maintenance-navbar {
+    background-color: #fde073;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 2.5;
+    text-align: center;
+}
+
 /* login page */
 #login-dp {
     border-radius: 10px;

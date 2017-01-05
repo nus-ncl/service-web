@@ -48,8 +48,10 @@
 						<li><a href="#" th:href="@{/login}">Log In</a></li>
 					</ul>
 				</div> <!-- navigation links -->
-   				
    			</div> <!-- container -->
+			<div class="container-fluid">
+				<div class="row maintenance-navbar" th:text="#{nav.maintenance}">MAINTENANCE NOTICE</div>
+			</div>
    		</div> <!-- main-nav -->
 	  <object th:include="fragments/javascript :: javascript" th:remove="tag" />
   </body>
