@@ -221,20 +221,6 @@ public class MainControllerTest {
     }
 
     @Test
-    public void testCalendar1Page() throws Exception {
-        // calendar page display AFTER login
-        // navigation bar is different so need another html file
-        mockMvc.perform(get("/calendar1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("main.css")))
-                .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("navbar-header")))
-                .andExpect(content().string(containsString("href=\"/teams\""))) // ensure this is indeed the after login navigation bar
-                .andExpect(content().string(containsString("iframe src=\"https://calendar.google.com/calendar/embed")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")));
-    }
-
-    @Test
     public void testContactUsPage() throws Exception {
         // calendar page display BEFORE login
         mockMvc.perform(get("/contactus"))
@@ -532,7 +518,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/teams")))
                 .andExpect(content().string(containsString("/experiments")))
-                .andExpect(content().string(containsString("/calendar1")))
+                .andExpect(content().string(containsString("/calendar")))
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/account_settings")))
@@ -551,7 +537,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/teams")))
                 .andExpect(content().string(containsString("/experiments")))
-                .andExpect(content().string(containsString("/calendar1")))
+                .andExpect(content().string(containsString("/calendar")))
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/account_settings")))
@@ -676,5 +662,391 @@ public class MainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
                 .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Server-side error. Please contact support@ncl.sg"))));
+    }
+
+    @Test
+    public void testTutorialsCreateAccountNoLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/createaccount"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("createaccount"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/plan")))
+                .andExpect(content().string(containsString("/tools")))
+                .andExpect(content().string(containsString("/research")))
+                .andExpect(content().string(containsString("/pricing")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/contactus")))
+                .andExpect(content().string(containsString("/event")))
+                .andExpect(content().string(containsString("/about")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("Fill in all required information here. ALL fields are required.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsCreateAccountLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/createaccount").sessionAttr("id", "id"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("createaccount"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/data")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("/admin/experiments")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("Fill in all required information here. ALL fields are required.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsCreateExperimentNoLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/createexperiment"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("createexperiment"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/plan")))
+                .andExpect(content().string(containsString("/tools")))
+                .andExpect(content().string(containsString("/research")))
+                .andExpect(content().string(containsString("/pricing")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/contactus")))
+                .andExpect(content().string(containsString("/event")))
+                .andExpect(content().string(containsString("/about")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("After logging in, click on “Experiment” on the navigation bar at the top")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsCreateExperimentLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/createexperiment").sessionAttr("id", "id"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("createexperiment"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/data")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("/admin/experiments")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("After logging in, click on “Experiment” on the navigation bar at the top")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsLoadImageNoLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/loadimage"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("loadimage"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/plan")))
+                .andExpect(content().string(containsString("/tools")))
+                .andExpect(content().string(containsString("/research")))
+                .andExpect(content().string(containsString("/pricing")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/contactus")))
+                .andExpect(content().string(containsString("/event")))
+                .andExpect(content().string(containsString("/about")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("At the Teams page, under the section “Your teams’ saved operating system images”, pick an image that you have saved previously.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsLoadImageLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/loadimage").sessionAttr("id", "id"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("loadimage"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/data")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("/admin/experiments")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("At the Teams page, under the section “Your teams’ saved operating system images”, pick an image that you have saved previously.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsSaveImageNoLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/saveimage"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("saveimage"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/plan")))
+                .andExpect(content().string(containsString("/tools")))
+                .andExpect(content().string(containsString("/research")))
+                .andExpect(content().string(containsString("/pricing")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/contactus")))
+                .andExpect(content().string(containsString("/event")))
+                .andExpect(content().string(containsString("/about")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("Click on “View” under Details to see more details about the started experiment")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsSaveImageLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/saveimage").sessionAttr("id", "id"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("saveimage"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/data")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("/admin/experiments")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("Click on “View” under Details to see more details about the started experiment")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsApplyTeamNoLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/applyteam"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("applyteam"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/plan")))
+                .andExpect(content().string(containsString("/tools")))
+                .andExpect(content().string(containsString("/research")))
+                .andExpect(content().string(containsString("/pricing")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/contactus")))
+                .andExpect(content().string(containsString("/event")))
+                .andExpect(content().string(containsString("/about")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("Go to team dashboard and click the apply a team button.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsApplyTeamLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/applyteam").sessionAttr("id", "id"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("applyteam"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/data")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("/admin/experiments")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("Go to team dashboard and click the apply a team button.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsJoinTeamNoLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/jointeam"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("jointeam"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/plan")))
+                .andExpect(content().string(containsString("/tools")))
+                .andExpect(content().string(containsString("/research")))
+                .andExpect(content().string(containsString("/pricing")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/contactus")))
+                .andExpect(content().string(containsString("/event")))
+                .andExpect(content().string(containsString("/about")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("Go to team dashboard and click the join a team button.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsJoinTeamLogin() throws Exception {
+        mockMvc.perform(get("/tutorials/jointeam").sessionAttr("id", "id"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("jointeam"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/data")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("/admin/experiments")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("Go to team dashboard and click the join a team button.")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsNoLogin() throws Exception {
+        mockMvc.perform(get("/tutorials"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("tutorials"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/plan")))
+                .andExpect(content().string(containsString("/tools")))
+                .andExpect(content().string(containsString("/research")))
+                .andExpect(content().string(containsString("/pricing")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/contactus")))
+                .andExpect(content().string(containsString("/event")))
+                .andExpect(content().string(containsString("/about")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("How to Create an Account")))
+                .andExpect(content().string(containsString("How to Create an Experiment")))
+                .andExpect(content().string(containsString("How to Join a Team")))
+                .andExpect(content().string(containsString("How to Apply a Team")))
+                .andExpect(content().string(containsString("How to Save an Image for an Experiment Node")))
+                .andExpect(content().string(containsString("How to Load a Saved Image into an Experiment")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTutorialsLogin() throws Exception {
+        mockMvc.perform(get("/tutorials").sessionAttr("id", "id"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("tutorials"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/data")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("/admin/experiments")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("How to Create an Account")))
+                .andExpect(content().string(containsString("How to Create an Experiment")))
+                .andExpect(content().string(containsString("How to Join a Team")))
+                .andExpect(content().string(containsString("How to Apply a Team")))
+                .andExpect(content().string(containsString("How to Save an Image for an Experiment Node")))
+                .andExpect(content().string(containsString("How to Load a Saved Image into an Experiment")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTestbedInformationNoLogin() throws Exception {
+        mockMvc.perform(get("/testbedInformation"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("testbedInformation"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/plan")))
+                .andExpect(content().string(containsString("/tools")))
+                .andExpect(content().string(containsString("/research")))
+                .andExpect(content().string(containsString("/pricing")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/contactus")))
+                .andExpect(content().string(containsString("/event")))
+                .andExpect(content().string(containsString("/about")))
+                .andExpect(content().string(containsString("/signup2")))
+                .andExpect(content().string(containsString("/login")))
+                .andExpect(content().string(containsString("Reserved for : 60% nodes for research, 40% nodes for education")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
+    }
+
+    @Test
+    public void testTestbedInformationLogin() throws Exception {
+        mockMvc.perform(get("/testbedInformation").sessionAttr("id", "id"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("testbedInformation"))
+                .andExpect(content().string(containsString("main.css")))
+                .andExpect(content().string(containsString("main.js")))
+                .andExpect(content().string(containsString("/teams")))
+                .andExpect(content().string(containsString("/experiments")))
+                .andExpect(content().string(containsString("/data")))
+                .andExpect(content().string(containsString("/admin")))
+                .andExpect(content().string(containsString("/admin/experiments")))
+                .andExpect(content().string(containsString("/tutorials")))
+                .andExpect(content().string(containsString("/resources")))
+                .andExpect(content().string(containsString("/testbedInformation")))
+                .andExpect(content().string(containsString("/calendar")))
+                .andExpect(content().string(containsString("/approve_new_user")))
+                .andExpect(content().string(containsString("/account_settings")))
+                .andExpect(content().string(containsString("/logout")))
+                .andExpect(content().string(containsString("Reserved for : 60% nodes for research, 40% nodes for education")))
+                .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 }

@@ -52,15 +52,14 @@
 					</ul>
 				</li>
 
-				<!--<li th:if="${(session.roles != null) and (session.roles == 'ADMIN')}">-->
-				<!--<a href="/admin" th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span></a>-->
-				<!--</li>-->
 				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="#{nav.help}">Support</span> <span class="caret"></span></a>
 					<ul class="dropdown-menu ">
 						<!--<li><a href="http://ncl.sg/docs-ncl/">Tutorial</a></li>-->
-						<li><a href="resources1.html" th:href="@{/resources1}">External Links</a></li>
-						<li><a href="calendar1.html" th:href="@{/calendar1}">Usage Calendar</a></li>
-						<li><a href="TestbedInformation.html" th:href="@{/TestbedInformation}">Testbed Info</a></li>
+						<li><a href="tutorials.html" th:href="@{/tutorials}">Tutorials</a></li>
+						<li><a href="resources.html" th:href="@{/resources}">External Links</a></li>
+						<li><a href="TestbedInformation1.html" th:href="@{/testbedInformation}">Testbed Info</a></li>
+						<li><a href="calendar.html" th:href="@{/calendar}">Usage Calendar</a></li>
+
 					</ul>
 				</li>
 				<li><a href="http://openstack.ncl.sg/horizon"><navsmall>Switch to OpenStack</navsmall></a></li>
@@ -75,8 +74,8 @@
 									<p th:if="${session.name != null}" style="margin-left: 10px">Signed in as <strong><span th:text="${session.name}" class="h13"></span></strong></p>
 									<p th:if="${session.name == null}" style="margin-left: 10px">Signed in as <strong><span th:text="#{nav.error}" class="h13"></span></strong></p>
 								</li>
-								<li><a href="/approve_new_user" th:href="@{/approve_new_user}"><span th:text="#{nav.approveNewUser}">Approve New User</span></a></li>
-								<li><a href="/account_settings" th:href="@{/account_settings}"><span th:text="#{nav.editAccount}">Edit Account Settings</span></a></li>
+								<li><a href="/approve_new_user" th:href="@{/approve_new_user}"><span th:text="#{nav.approveNewUser}">Pending Requests</span></a></li>
+								<li><a href="/account_settings" th:href="@{/account_settings}"><span th:text="#{nav.editAccount}">Account Settings</span></a></li>
 						<li><a href="/logout" th:href="@{/logout}"><i class="fa fa-sign-out"></i> <span th:text="#{nav.signOut}">Sign Out</span></a></li>
 					</ul>
 				</li>

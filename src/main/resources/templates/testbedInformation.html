@@ -2,22 +2,29 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>National Cybersecurity Laboratories - Dashboard</title>
+    <title>National Cybersecurity Laboratories - Team Application</title>
     <object th:include="fragments/header :: header" th:remove="tag" />
 </head>
 <body class="mybg loginbackground">
-<!-- for importing the navigation template -->
-<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<th:block th:if="${session.id == null}">
+    <div th:replace="fragments/login_navigation :: loginnav"></div>
+</th:block>
+<th:block th:if="${session.id != null}">
+    <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</th:block>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+
 <div class="container">
     <div class="row">
+        <div class="heading h15 text-center">
+            <p>Testbed Info</p>
+        </div>
         <p>&nbsp;</p>
-        <h1 class="dashhead">Testbed Info</h1>
-        <p>&nbsp;</p>
-        <!--<div class="panel panel-primary dashpanel">-->
-        <!--<h2 class="team-heading team-heading-current-team" >Overview</h2>-->
         <div class="panel panel-primary dashpanel">
 
                 <div class="col-sm-12">
@@ -40,8 +47,6 @@
 
     <div class="row">
         <p>&nbsp;</p>
-        <!--<div class="panel panel-primary dashpanel">-->
-        <!--<h2 class="team-heading team-heading-current-team" >Overview</h2>-->
 
         <div class="panel panel-primary dashpanel">
             <h2 class="team-heading team-heading-current-team" th:text="#{OSImage}">text heading from .properties</h2>
