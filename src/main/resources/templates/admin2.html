@@ -17,12 +17,9 @@
 		<h1 class="dashhead" th:text="#{admin.dashboard.header}">Admin Dashboard</h1>
 		<p>&nbsp;</p>
 		<ul class="nav nav-pills col-sm-2 text-left">
-			<!--<li class="active"><a data-toggle="pill" href="#overview"><span th:text="#{admin.dashboard.nav.overview}">Overview</span></a></li>-->
-			<!--<li><a data-toggle="pill" href="#domainsManagement"><span th:text="#{admin.dashboard.nav.domains}">Domains management</span></a></li>-->
 			<li class="active"><a data-toggle="pill" href="#newTeamsApproval"><span th:text="#{admin.dashboard.nav.teamsApproval}">New Teams Approval</span></a></li>
 			<li><a data-toggle="pill" href="#teamsManagement"><span th:text="#{admin.dashboard.nav.teams}">Teams management</span></a></li>
 			<li><a data-toggle="pill" href="#usersManagement"><span th:text="#{admin.dashboard.nav.users}">Users management</span></a></li>
-			<li><a data-toggle="pill" href="#dataManagement"><span th:text="#{admin.dashboard.nav.data}">Data management</span></a></li>
 		</ul>
 		<div th:if="${message}">
 			<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
@@ -227,81 +224,6 @@
 					</tr>
 				</table>
 			</div>
-
-			<div id="dataManagement" class="tab-pane fade">
-				<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.data.header}">Data Management</h2>
-				<p>&nbsp;</p>
-				<p th:if="${#lists.isEmpty(dataList)}">There are no data in the system</p>
-				<table id="myTable3" class="table table-responsive" th:if="${not #lists.isEmpty(dataList)}">
-					<thead>
-					<tr>
-						<th th:text="#{data.header.name}">Name</th>
-						<th th:text="#{data.header.owner}">Owner</th>
-						<th th:text="#{data.header.releaseDate}">Release Date</th>
-                        <th th:text="#{data.header.downloads}">Number of Downloads</th>
-						<th><!-- Actions --></th>
-					</tr>
-					</thead>
-                    <tbody>
-                    <tr th:each="dataEntry : ${dataList}">
-						<td><a href="#" th:href="@{/data/{id}/stats(id=${dataEntry.id})}" th:text="${dataEntry.name}">Name</a></td>
-                        <td th:text="${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName}"></td>
-                        <td th:text="${dataEntry.getReleasedDateString()}"></td>
-                        <td th:text="${downloadStats.containsKey(dataEntry.id) ? downloadStats.get(dataEntry.id) : 0}"></td>
-                        <td>
-                            <button type="button" class="btn btn-primary"
-                                    data-toggle="modal" data-target="#deleteModal"
-                                    th:attr="data-name=${dataEntry.name},
-							            data-desc=${dataEntry.description},
-                                        data-owner=${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName},
-                                	    data-release=${dataEntry.getReleasedDateString()},
-                                        data-visible=${#strings.capitalize(#strings.toLowerCase(dataEntry.visibility))},
-                                        data-access=${#strings.capitalize(#strings.toLowerCase(dataEntry.accessibility))},
-                                        data-delete=@{/data/remove/{id}/admin(id=${dataEntry.id})}"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
-                        </td>
-					</tr>
-                    </tbody>
-				</table>
-			</div>
-
-            <!-- Confirm Delete Modal -->
-            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="deleteLabel">Delete?</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-4">Description:</div>
-                                <div class="col-md-8" id="datasetDesc"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">Owner:</div>
-                                <div class="col-md-8" id="datasetOwner"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">Release:</div>
-                                <div class="col-md-8" id="datasetRelease"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">Visibility:</div>
-                                <div class="col-md-8" id="datasetVisible"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">Accessibility:</div>
-                                <div class="col-md-8" id="datasetAccess"></div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <a href="#" class="btn btn-primary" id="deleteButton">Delete</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
 		</div> <!-- tab content -->
 	</div> <!-- row -->
 </div>
