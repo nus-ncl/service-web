@@ -98,6 +98,9 @@ public class MainController {
     private static final String PERMISSION_DENIED = "Permission denied";
     private static final String TEAM_NOT_FOUND = "Team not found";
 
+    // remove members from team profile; to display the list of experiments created by user
+    private static final String REMOVE_MEMBER_UID = "removeMemberUid";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -1589,8 +1592,12 @@ public class MainController {
                     if (error.getMessage().equals("user has experiments")) {
                         // case 1 - user has experiments
                         // display the list of experiments that have to be terminated first
-                        redirectAttributes.addFlashAttribute("demo", "yes");
-                        return "redirect:/experiments";
+
+                        // since the team profile page has experiments already, we don't have to retrieve them again
+                        // use the userid to filter out the experiment list at the web pages
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " User " + name + " has experiments.");
+                        redirectAttributes.addFlashAttribute(REMOVE_MEMBER_UID, userId);
+                        break;
                     } else {
                         // case 2 - deterlab operation failure
                         log.warn("Remove user from team: deterlab operation failed");
