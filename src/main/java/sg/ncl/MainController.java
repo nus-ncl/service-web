@@ -100,6 +100,7 @@ public class MainController {
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
+    private static final String REMOVE_MEMBER_NAME = "removeMemberName";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -1595,13 +1596,14 @@ public class MainController {
 
                         // since the team profile page has experiments already, we don't have to retrieve them again
                         // use the userid to filter out the experiment list at the web pages
-                        redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " User " + name + " has experiments.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " Member " + name + " has experiments.");
                         redirectAttributes.addFlashAttribute(REMOVE_MEMBER_UID, userId);
+                        redirectAttributes.addFlashAttribute(REMOVE_MEMBER_NAME, name);
                         break;
                     } else {
                         // case 2 - deterlab operation failure
                         log.warn("Remove user from team: deterlab operation failed");
-                        redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " User " + name + " cannot be removed.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " Member " + name + " cannot be removed.");
                         break;
                     }
                 default:
@@ -1612,7 +1614,7 @@ public class MainController {
         } else {
             log.info("Remove team member: {}", response.getBody().toString());
             // add success message
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + name + " has been removed.");
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Member " + name + " has been removed.");
         }
 
         return "redirect:/team_profile/{teamId}";
