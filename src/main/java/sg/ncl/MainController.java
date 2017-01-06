@@ -83,6 +83,7 @@ public class MainController {
     private static final String USER_DASHBOARD_TEAMS = "teams";
     private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "runningExperiments";
     private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
+    private static final String USER_DASHBOARD_TOTAL_NODES = "totalNodes";
 
     private static final String DETER_UID = "deterUid";
 
@@ -240,7 +241,8 @@ public class MainController {
     }
 
     @RequestMapping("/testbedInformation")
-    public String testbedInformation() {
+    public String testbedInformation(Model model) {
+        model.addAttribute(USER_DASHBOARD_TOTAL_NODES, getNodes(NodeType.TOTAL));
         return "testbedInformation";
     }
 
@@ -3590,7 +3592,7 @@ public class MainController {
 
         userDashboardStats.put(USER_DASHBOARD_TEAMS, teamIdsJsonArray.length());
         userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
-        userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNumberOfFreeNodes());
+        userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNodes(NodeType.FREE));
         return userDashboardStats;
     }
 
@@ -3605,19 +3607,19 @@ public class MainController {
         return numberOfRunningExperiments;
     }
 
-    private int getNumberOfFreeNodes() {
-        String freeNodes;
-        log.info("Retrieving number of free nodes from: {}", properties.getFreeNodes());
+    private int getNodes(NodeType nodeType) {
+        String nodesCount;
+        log.info("Retrieving number of " + nodeType + " nodes from: {}", properties.getNodes(nodeType));
         try {
-            HttpEntity<String> request = createHttpEntityHeaderOnly();
-            ResponseEntity response = restTemplate.exchange(properties.getFreeNodes(), HttpMethod.GET, request, String.class);
+            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+            ResponseEntity response = restTemplate.exchange(properties.getNodes(nodeType), HttpMethod.GET, request, String.class);
             JSONObject object = new JSONObject(response.getBody().toString());
-            freeNodes = object.getString("free");
+            nodesCount = object.getString(nodeType.name());
         } catch (RestClientException e) {
             log.warn("Error connecting to service-telemetry: {}", e);
-            freeNodes = "0";
+            nodesCount = "0";
         }
-        return Integer.parseInt(freeNodes);
+        return Integer.parseInt(nodesCount);
     }
 
     private List<TeamUsageInfo> getTeamsUsageStatisticsForUser(String userId) {

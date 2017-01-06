@@ -3,6 +3,7 @@ package sg.ncl;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import sg.ncl.domain.NodeType;
 import sg.ncl.testbed_interface.TeamStatus;
 
 /**
@@ -227,8 +228,8 @@ public class ConnectionProperties {
         this.telemetryEndpoint = telemetryEndpoint;
     }
 
-    public String getFreeNodes() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint;
+    public String getNodes(NodeType nodeType) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "?type=" + nodeType;
     }
     
     //-------------------------------------

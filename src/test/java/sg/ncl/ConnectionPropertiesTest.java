@@ -1,7 +1,6 @@
 package sg.ncl;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -236,7 +235,7 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetFreeNodes() throws Exception {
-        assertThat(properties.getFreeNodes()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint());
+        assertThat(properties.getNodes()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint());
     }
 
     @Test
