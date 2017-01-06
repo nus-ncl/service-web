@@ -2164,12 +2164,14 @@ public class MainController {
 
     @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}")
     public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId, @PathVariable String expId, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
-        // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
+        Team2 team = invokeAndExtractTeamInfo(teamId);
+
         // check valid authentication to remove experiments
-        if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString())) {
+        // either admin, experiment creator or experiment owner
+        if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString()) && !team.getOwner().getId().equals(session.getAttribute(webProperties.getSessionUserId()))) {
             log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
             redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to remove experiment;" + permissionDeniedMessage);
             return "redirect:/experiments";
