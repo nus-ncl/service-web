@@ -3274,12 +3274,11 @@ public class MainController {
                     team2.addPendingMembers(myUser);
                 }
 
-                team2.addMembersToStatusMap(MemberStatus.valueOf(teamMemberStatus), myUser);
-
             } else if (teamMemberType.equals(MemberType.OWNER.name())) {
                 // explicit safer check
                 team2.setOwner(myUser);
             }
+            team2.addMembersToStatusMap(MemberStatus.valueOf(teamMemberStatus), myUser);
         }
         team2.setMembersCount(team2.getMembersStatusMap().get(MemberStatus.APPROVED).size());
         return team2;
