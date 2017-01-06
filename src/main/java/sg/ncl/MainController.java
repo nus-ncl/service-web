@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static sg.ncl.domain.ExceptionState.*;
 
 /**
@@ -2440,28 +2442,49 @@ public class MainController {
         return "experiment_dashboard";
     }
 
-//    @RequestMapping(value = "/admin/{teamId}", method = RequestMethod.GET)
-//    public String admin(@PathVariable String teamId, Model model, HttpSession session) {
-//        HttpEntity<String> exprequest = createHttpEntityHeaderOnly();
-//        ResponseEntity expresponse = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, exprequest, String.class);
-//        JSONArray experimentsArray = new JSONArray(expresponse.getBody().toString());
-//
-//        List<Experiment2> experimentList = new ArrayList<>();
-//        Map<Long, Realization> realizationMap = new HashMap<>();
-//
-//        for (int k = 0; k < experimentsArray.length(); k++) {
-//            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-//            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-//            realizationMap.put(experiment2.getId(), realization);
-//            experimentList.add(experiment2);
-//        }
-//
-//        model.addAttribute("experimentList", experimentList);
-//        model.addAttribute("realizationMap", realizationMap);
-//
-//        return "admin2";
-//    }
+    @RequestMapping("/admin/usage")
+    public String adminTeamUsage(Model model,
+                                 @RequestParam(value = "team", required = false) String team,
+                                 @RequestParam(value = "start", required = false) String start,
+                                 @RequestParam(value = "end", required = false) String end,
+                                 HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        ZonedDateTime now = ZonedDateTime.now();
+        if (start == null) {
+            ZonedDateTime startDate = now.with(firstDayOfMonth());
+            start = startDate.format(formatter);
+        }
+        if (end == null) {
+            ZonedDateTime endDate = now.with(lastDayOfMonth());
+            end = endDate.format(formatter);
+        }
 
+        // get list of teamids
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        TeamManager2 teamManager2 = new TeamManager2();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+        }
+
+        if (team != null) {
+            responseEntity = restTemplate.exchange(properties.getUsageStat(team, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+            String usage = responseEntity.getBody().toString();
+            model.addAttribute("usage", usage);
+        }
+
+        model.addAttribute("teamsMap", teamManager2.getTeamMap());
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
+        return "usage_statistics";
+    }
 
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
 //    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
