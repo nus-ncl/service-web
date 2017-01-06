@@ -133,7 +133,7 @@
                                 <td th:text="#{team.members.memberType.owner}">MEMBER TYPE</td>
                                 <td></td>
                             </tr>
-                            <tr th:each="members : ${membersList}">
+                            <tr th:if="${members.id != owner.getId()}" th:each="members : ${membersList}">
                                 <td th:text="${members.firstName + ' ' + members.lastName}">Name</td>
                                 <td th:text="${members.institution}">TEXT</td>
                                 <td th:text="#{team.members.memberType.member}">MEMBER TYPE</td>
