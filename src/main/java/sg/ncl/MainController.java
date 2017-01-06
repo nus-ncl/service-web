@@ -3678,7 +3678,7 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response;
         try {
-            response = restTemplate.exchange(properties.getUsageStatisticsByTeamId(id), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getUsageStat(id), HttpMethod.GET, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio get usage statistics {}", e);
             return "?";
