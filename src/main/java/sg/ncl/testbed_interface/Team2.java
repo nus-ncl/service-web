@@ -5,8 +5,8 @@ import sg.ncl.domain.MemberStatus;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.lang.reflect.Member;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,12 +33,12 @@ public class Team2 implements Serializable {
     private User2 owner;
     private List<User2> membersList;
     private List<User2> pendingMembersList;
-    private HashMap<MemberStatus, List<User2>> membersStatusMap; // membership status, list of members with the specific status, e.g. APPROVED -> [UserA, UserB ...]
+    private EnumMap<MemberStatus, List<User2>> membersStatusMap; // membership status, list of members with the specific status, e.g. APPROVED -> [UserA, UserB ...]
 
     public Team2() {
         pendingMembersList = new ArrayList<>();
         membersList = new ArrayList<>();
-        membersStatusMap = new HashMap<>();
+        membersStatusMap = new EnumMap<>(MemberStatus.class);
         membersStatusMap.put(MemberStatus.APPROVED, new ArrayList<>());
         membersStatusMap.put(MemberStatus.PENDING, new ArrayList<>());
         membersStatusMap.put(MemberStatus.REJECTED, new ArrayList<>());
@@ -105,7 +105,7 @@ public class Team2 implements Serializable {
         return false;
     }
 
-    public void setMembersStatusMap(HashMap<MemberStatus, List<User2>> membersStatusMap) {
+    public void setMembersStatusMap(EnumMap<MemberStatus, List<User2>> membersStatusMap) {
         this.membersStatusMap = membersStatusMap;
     }
 

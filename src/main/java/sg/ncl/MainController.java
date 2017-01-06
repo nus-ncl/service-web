@@ -102,6 +102,8 @@ public class MainController {
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
     private static final String REMOVE_MEMBER_NAME = "removeMemberName";
 
+    private static final String MEMBER_TYPE = "memberType";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -1127,7 +1129,7 @@ public class MainController {
             for (int j = 0; j < membersArray.length(); j++) {
                 JSONObject memberObject = membersArray.getJSONObject(j);
                 String userId = memberObject.getString("userId");
-                String teamMemberType = memberObject.getString("memberType");
+                String teamMemberType = memberObject.getString(MEMBER_TYPE);
                 String teamMemberStatus = memberObject.getString("memberStatus");
                 String teamJoinedDate = formatZonedDateTime(memberObject.get("joinedDate").toString());
 
@@ -1561,7 +1563,7 @@ public class MainController {
 
         JSONObject teamMemberFields = new JSONObject();
         teamMemberFields.put("userId", userId);
-        teamMemberFields.put("memberType", MemberType.MEMBER.name());
+        teamMemberFields.put(MEMBER_TYPE, MemberType.MEMBER.name());
         teamMemberFields.put("memberStatus", MemberStatus.APPROVED.name());
 
         HttpEntity<String> request = createHttpEntityWithBody(teamMemberFields.toString());
@@ -1571,7 +1573,7 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.removeUserFromTeam(teamId), HttpMethod.DELETE, request, String.class);
         } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service: {}", e);
+            log.warn("Error connecting to sio team service for remove user: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             return "redirect:/team_profile/{teamId}";
         }
@@ -1588,9 +1590,9 @@ public class MainController {
             switch (exceptionState) {
                 case DETERLAB_OPERATION_FAILED_EXCEPTION:
                     // two subcases when fail to remove users from team
-                    log.warn("Remove user from team: User {}, Team {} fail - {}", userId, teamId, error.getMessage());
+                    log.warn("Remove member from team: User {}, Team {} fail - {}", userId, teamId, error.getMessage());
 
-                    if (error.getMessage().equals("user has experiments")) {
+                    if ("user has experiments".equals(error.getMessage())) {
                         // case 1 - user has experiments
                         // display the list of experiments that have to be terminated first
 
@@ -1602,17 +1604,17 @@ public class MainController {
                         break;
                     } else {
                         // case 2 - deterlab operation failure
-                        log.warn("Remove user from team: deterlab operation failed");
+                        log.warn("Remove member from team: deterlab operation failed");
                         redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " Member " + name + " cannot be removed.");
                         break;
                     }
                 default:
-                    log.warn("Server side error: {}", error.getError());
+                    log.warn("Server side error for remove members: {}", error.getError());
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
             }
         } else {
-            log.info("Remove team member: {}", response.getBody().toString());
+            log.info("Remove member: {}", response.getBody().toString());
             // add success message
             redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Member " + name + " has been removed.");
         }
@@ -3263,7 +3265,7 @@ public class MainController {
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
             String userId = memberObject.getString("userId");
-            String teamMemberType = memberObject.getString("memberType");
+            String teamMemberType = memberObject.getString(MEMBER_TYPE);
             String teamMemberStatus = memberObject.getString("memberStatus");
 
             User2 myUser = invokeAndExtractUserInfo(userId);

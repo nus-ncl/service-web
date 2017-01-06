@@ -5,6 +5,7 @@ import org.junit.Test;
 import sg.ncl.Util;
 import sg.ncl.domain.MemberStatus;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -204,12 +205,12 @@ public class TeamTest {
     @Test
     public void testSetMembersStatusMap() {
         final Team2 one = new Team2();
-        HashMap<MemberStatus, List<User2>> membersStatusMap = new HashMap<>();
+        EnumMap<MemberStatus, List<User2>> membersStatusMap = new EnumMap<>(MemberStatus.class);
         List<User2> approvedMembersList = Util.getMembersList();
         membersStatusMap.put(MemberStatus.APPROVED, approvedMembersList);
         one.setMembersStatusMap(membersStatusMap);
 
-        HashMap<MemberStatus, List<User2>> resultMap = one.getMembersStatusMap();
+        EnumMap<MemberStatus, List<User2>> resultMap = one.getMembersStatusMap();
 
         assertThat(resultMap).isNotEmpty();
         assertThat(membersStatusMap).isEqualTo(resultMap);
