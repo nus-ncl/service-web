@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
+import sg.ncl.domain.NodeType;
 import sg.ncl.domain.UserType;
 import sg.ncl.testbed_interface.User2;
 
@@ -32,6 +33,9 @@ import javax.servlet.http.HttpSession;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -1005,6 +1009,14 @@ public class MainControllerTest {
 
     @Test
     public void testTestbedInformationNoLogin() throws Exception {
+
+        JSONObject predefinedResultJson = new JSONObject();
+        predefinedResultJson.put(NodeType.TOTAL.name(), "99");
+
+        mockServer.expect(requestTo(properties.getNodes(NodeType.TOTAL)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
+
         mockMvc.perform(get("/testbedInformation"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("testbedInformation"))
@@ -1029,6 +1041,14 @@ public class MainControllerTest {
 
     @Test
     public void testTestbedInformationLogin() throws Exception {
+
+        JSONObject predefinedResultJson = new JSONObject();
+        predefinedResultJson.put(NodeType.TOTAL.name(), "99");
+
+        mockServer.expect(requestTo(properties.getNodes(NodeType.TOTAL)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
+
         mockMvc.perform(get("/testbedInformation").sessionAttr("id", "id"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("testbedInformation"))
