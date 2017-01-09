@@ -3,15 +3,14 @@ package sg.ncl.testbed_interface;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import sg.ncl.Util;
+import sg.ncl.domain.MemberStatus;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Te Ye
@@ -21,7 +20,7 @@ public class TeamTest {
     @Test
     public void testGetId() {
         final Team2 one = new Team2();
-        assertThat(one.getId(), is(nullValue()));
+        assertThat(one.getId()).isNull();
     }
 
     @Test
@@ -29,13 +28,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setId(str);
-        assertThat(one.getId(), is(str));
+        assertThat(one.getId()).isEqualTo(str);
     }
 
     @Test
     public void testGetName() {
         final Team2 one = new Team2();
-        assertThat(one.getName(), is(nullValue()));
+        assertThat(one.getName()).isNull();
     }
 
     @Test
@@ -43,13 +42,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setName(str);
-        assertThat(one.getName(), is(str));
+        assertThat(one.getName()).isEqualTo(str);
     }
 
     @Test
     public void testGetDescription() {
         final Team2 one = new Team2();
-        assertThat(one.getDescription(), is(nullValue()));
+        assertThat(one.getDescription()).isNull();
     }
 
     @Test
@@ -57,13 +56,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setDescription(str);
-        assertThat(one.getDescription(), is(str));
+        assertThat(one.getDescription()).isEqualTo(str);
     }
 
     @Test
     public void testGetWebsite() {
         final Team2 one = new Team2();
-        assertThat(one.getWebsite(), is(nullValue()));
+        assertThat(one.getWebsite()).isNull();
     }
 
     @Test
@@ -71,13 +70,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setWebsite(str);
-        assertThat(one.getWebsite(), is(str));
+        assertThat(one.getWebsite()).isEqualTo(str);
     }
 
     @Test
     public void testGetOrganisationType() {
         final Team2 one = new Team2();
-        assertThat(one.getOrganisationType(), is(nullValue()));
+        assertThat(one.getOrganisationType()).isNull();
     }
 
     @Test
@@ -85,13 +84,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setOrganisationType(str);
-        assertThat(one.getOrganisationType(), is(str));
+        assertThat(one.getOrganisationType()).isEqualTo(str);
     }
 
     @Test
     public void testGetStatus() {
         final Team2 one = new Team2();
-        assertThat(one.getStatus(), is(nullValue()));
+        assertThat(one.getStatus()).isNull();
     }
 
     @Test
@@ -99,13 +98,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setStatus(str);
-        assertThat(one.getStatus(), is(str));
+        assertThat(one.getStatus()).isEqualTo(str);
     }
 
     @Test
     public void testGetCreatedDate() {
         final Team2 one = new Team2();
-        assertThat(one.getCreatedDate(), is(nullValue()));
+        assertThat(one.getCreatedDate()).isNull();
     }
 
     @Test
@@ -113,13 +112,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setCreatedDate(str);
-        assertThat(one.getCreatedDate(), is(str));
+        assertThat(one.getCreatedDate()).isEqualTo(str);
     }
 
     @Test
     public void testGetVisibility() {
         final Team2 one = new Team2();
-        assertThat(one.getVisibility(), is(nullValue()));
+        assertThat(one.getVisibility()).isNull();
     }
 
     @Test
@@ -127,13 +126,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final String str = RandomStringUtils.randomAlphanumeric(20);
         one.setVisibility(str);
-        assertThat(one.getVisibility(), is(str));
+        assertThat(one.getVisibility()).isEqualTo(str);
     }
 
     @Test
     public void testGetMembersCount() {
         final Team2 one = new Team2();
-        assertThat(one.getMembersCount(), is(0));
+        assertThat(one.getMembersCount()).isEqualTo(0);
     }
 
     @Test
@@ -141,13 +140,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final int random = new Random(20).nextInt();
         one.setMembersCount(random);
-        assertThat(one.getMembersCount(), is(random));
+        assertThat(one.getMembersCount()).isEqualTo(random);
     }
 
     @Test
     public void testGetOwner() {
         final Team2 one = new Team2();
-        assertThat(one.getOwner(), is(nullValue()));
+        assertThat(one.getOwner()).isNull();
     }
 
     @Test
@@ -155,13 +154,13 @@ public class TeamTest {
         final Team2 one = new Team2();
         final User2 user = Util.getUser();
         one.setOwner(user);
-        assertThat(one.getOwner().getId(), is(user.getId()));
+        assertThat(one.getOwner().getId()).isEqualTo(user.getId());
     }
 
     @Test
     public void testGetMembersList() {
         final Team2 one = new Team2();
-        assertThat(one.getMembersList().size(), is(0));
+        assertThat(one.getMembersList().size()).isEqualTo(0);
     }
 
     @Test
@@ -171,15 +170,16 @@ public class TeamTest {
         one.setMembersList(membersList);
 
         List<User2> result = one.getMembersList();
-        for (User2 members : result) {
-            assertThat(members.getId(), is(membersList.get(0).getId()));
-        }
+
+        assertThat(result).isNotEmpty();
+        assertThat(membersList.size()).isEqualTo(result.size());
+        assertThat(membersList).isEqualTo(result);
     }
 
     @Test
     public void testGetPendingMembersList() {
         final Team2 one = new Team2();
-        assertThat(one.getPendingMembersList().size(), is(0));
+        assertThat(one.getPendingMembersList().size()).isEqualTo(0);
     }
 
     @Test
@@ -189,34 +189,31 @@ public class TeamTest {
         one.setPendingMembersList(membersList);
 
         List<User2> result = one.getPendingMembersList();
-        for (User2 members : result) {
-            assertThat(members.getId(), is(membersList.get(0).getId()));
-        }
+
+        assertThat(result).isNotEmpty();
+        assertThat(membersList.size()).isEqualTo(result.size());
+        assertThat(membersList).isEqualTo(result);
     }
 
     @Test
     public void testGetMembersStatusMap() {
         final Team2 one = new Team2();
-        assertThat(one.getMembersStatusMap().size(), is(0));
+        assertThat(one.getMembersStatusMap().size()).isEqualTo(3);
+        assertThat(one.getMembersStatusMap()).containsKeys(MemberStatus.APPROVED, MemberStatus.PENDING, MemberStatus.REJECTED);
     }
 
     @Test
     public void testSetMembersStatusMap() {
         final Team2 one = new Team2();
-        HashMap<String, String> membersStatusMap = new HashMap<>();
-        String key = RandomStringUtils.randomAlphanumeric(20);
-        String value = RandomStringUtils.randomAlphanumeric(20);
-        membersStatusMap.put(key, value);
+        EnumMap<MemberStatus, List<User2>> membersStatusMap = new EnumMap<>(MemberStatus.class);
+        List<User2> approvedMembersList = Util.getMembersList();
+        membersStatusMap.put(MemberStatus.APPROVED, approvedMembersList);
         one.setMembersStatusMap(membersStatusMap);
 
-        HashMap<String, String> resultMap = one.getMembersStatusMap();
+        EnumMap<MemberStatus, List<User2>> resultMap = one.getMembersStatusMap();
 
-        for (Map.Entry<String,String> entry : resultMap.entrySet()) {
-            String resultKey = entry.getKey();
-            String resultValue = entry.getValue();
-            assertThat(resultKey, is(key));
-            assertThat(resultValue, is(value));
-        }
+        assertThat(resultMap).isNotEmpty();
+        assertThat(membersStatusMap).isEqualTo(resultMap);
 
     }
 

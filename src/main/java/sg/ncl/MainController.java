@@ -100,6 +100,12 @@ public class MainController {
     private static final String PERMISSION_DENIED = "Permission denied";
     private static final String TEAM_NOT_FOUND = "Team not found";
 
+    // remove members from team profile; to display the list of experiments created by user
+    private static final String REMOVE_MEMBER_UID = "removeMemberUid";
+    private static final String REMOVE_MEMBER_NAME = "removeMemberName";
+
+    private static final String MEMBER_TYPE = "memberType";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -1088,7 +1094,7 @@ public class MainController {
             for (int j = 0; j < membersArray.length(); j++) {
                 JSONObject memberObject = membersArray.getJSONObject(j);
                 String userId = memberObject.getString("userId");
-                String teamMemberType = memberObject.getString("memberType");
+                String teamMemberType = memberObject.getString(MEMBER_TYPE);
                 String teamMemberStatus = memberObject.getString("memberStatus");
                 String teamJoinedDate = formatZonedDateTime(memberObject.get("joinedDate").toString());
 
@@ -1448,7 +1454,7 @@ public class MainController {
         Team2 team = extractTeamInfo(responseBody);
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
-        model.addAttribute("membersList", team.getMembersList());
+        model.addAttribute("membersList", team.getMembersStatusMap().get(MemberStatus.APPROVED));
         session.setAttribute("originalTeam", team);
 
         request = createHttpEntityHeaderOnly();
@@ -1518,12 +1524,66 @@ public class MainController {
     }
 
     @RequestMapping("/remove_member/{teamId}/{userId}")
-    public String removeMember(@PathVariable Integer teamId, @PathVariable Integer userId, Model model) {
-        // TODO check if user is indeed in the team
-        // TODO what happens to active experiments of the user?
-        // remove member from the team
-        // reduce the team count
-        teamManager.removeMembers(userId, teamId);
+    public String removeMember(@PathVariable String teamId, @PathVariable String userId, final RedirectAttributes redirectAttributes) throws IOException {
+
+        JSONObject teamMemberFields = new JSONObject();
+        teamMemberFields.put("userId", userId);
+        teamMemberFields.put(MEMBER_TYPE, MemberType.MEMBER.name());
+        teamMemberFields.put("memberStatus", MemberStatus.APPROVED.name());
+
+        HttpEntity<String> request = createHttpEntityWithBody(teamMemberFields.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.removeUserFromTeam(teamId), HttpMethod.DELETE, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for remove user: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/team_profile/{teamId}";
+        }
+
+        String responseBody = response.getBody().toString();
+
+        User2 user = invokeAndExtractUserInfo(userId);
+        String name = user.getFirstName() + " " + user.getLastName();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            switch (exceptionState) {
+                case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                    // two subcases when fail to remove users from team
+                    log.warn("Remove member from team: User {}, Team {} fail - {}", userId, teamId, error.getMessage());
+
+                    if ("user has experiments".equals(error.getMessage())) {
+                        // case 1 - user has experiments
+                        // display the list of experiments that have to be terminated first
+
+                        // since the team profile page has experiments already, we don't have to retrieve them again
+                        // use the userid to filter out the experiment list at the web pages
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " Member " + name + " has experiments.");
+                        redirectAttributes.addFlashAttribute(REMOVE_MEMBER_UID, userId);
+                        redirectAttributes.addFlashAttribute(REMOVE_MEMBER_NAME, name);
+                        break;
+                    } else {
+                        // case 2 - deterlab operation failure
+                        log.warn("Remove member from team: deterlab operation failed");
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " Member " + name + " cannot be removed.");
+                        break;
+                    }
+                default:
+                    log.warn("Server side error for remove members: {}", error.getError());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+        } else {
+            log.info("Remove member: {}", response.getBody().toString());
+            // add success message
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Member " + name + " has been removed.");
+        }
+
         return "redirect:/team_profile/{teamId}";
     }
 
@@ -2071,12 +2131,14 @@ public class MainController {
 
     @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}")
     public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId, @PathVariable String expId, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
-        // TODO check userid is indeed the experiment owner or team owner
         // ensure experiment is stopped first
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
+        Team2 team = invokeAndExtractTeamInfo(teamId);
+
         // check valid authentication to remove experiments
-        if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString())) {
+        // either admin, experiment creator or experiment owner
+        if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString()) && !team.getOwner().getId().equals(session.getAttribute(webProperties.getSessionUserId()))) {
             log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
             redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to remove experiment;" + permissionDeniedMessage);
             return "redirect:/experiments";
@@ -3199,24 +3261,24 @@ public class MainController {
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
             String userId = memberObject.getString("userId");
-            String teamMemberType = memberObject.getString("memberType");
+            String teamMemberType = memberObject.getString(MEMBER_TYPE);
             String teamMemberStatus = memberObject.getString("memberStatus");
 
             User2 myUser = invokeAndExtractUserInfo(userId);
-            if (teamMemberType.equals(MemberType.MEMBER.toString())) {
-                team2.addMembers(myUser);
+            if (teamMemberType.equals(MemberType.MEMBER.name())) {
 
                 // add to pending members list for Members Awaiting Approval function
-                if (teamMemberStatus.equals(MemberStatus.PENDING.toString())) {
+                if (teamMemberStatus.equals(MemberStatus.PENDING.name())) {
                     team2.addPendingMembers(myUser);
                 }
 
-            } else if (teamMemberType.equals(MemberType.OWNER.toString())) {
+            } else if (teamMemberType.equals(MemberType.OWNER.name())) {
                 // explicit safer check
                 team2.setOwner(myUser);
             }
+            team2.addMembersToStatusMap(MemberStatus.valueOf(teamMemberStatus), myUser);
         }
-        team2.setMembersCount(membersArray.length());
+        team2.setMembersCount(team2.getMembersStatusMap().get(MemberStatus.APPROVED).size());
         return team2;
     }
 

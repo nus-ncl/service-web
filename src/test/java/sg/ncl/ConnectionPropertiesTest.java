@@ -351,4 +351,10 @@ public class ConnectionPropertiesTest {
         String dataId = RandomStringUtils.randomAlphanumeric(20);
         assertThat(properties.sendUploadChunk(dataId, chunkNumber)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "/" + dataId + "/chunks/" + chunkNumber);
     }
+
+    @Test
+    public void testRemoveUserFromTeam() throws Exception {
+        String id = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.removeUserFromTeam(id)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + id + "/members");
+    }
 }

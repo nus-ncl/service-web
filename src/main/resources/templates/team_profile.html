@@ -15,11 +15,63 @@
             <p>&nbsp;</p>
             <div class="row dashpanel">
                 <h2><span th:text="#{teamProfile.nav.header}">Team:</span> <span th:text="${team.name}" style="color:#00C7BA;"></span></h2>
+
+                <div th:if="${removeMemberUid}">
+                    <script type="text/javascript">
+                        document.addEventListener("DOMContentLoaded", function(event) {
+                            loadLeftOverExp();
+                        });
+                    </script>
+
+                    <!-- Modal -->
+                    <div class="modal fade exp-modal" id="leftOverExpModal" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header team-owner-info-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title" th:text="#{team.profile.removeMember}">Remove Member</h4>
+                                </div>
+                                <div class="modal-body team-owner-info-body">
+                                    <p>There are some experiments which are created by <strong><span th:text="${removeMemberName}"></span></strong> !</p>
+                                    <p>Please delete the following experiments before removing this member from the team.</p>
+                                    <th:block th:if="${not #lists.isEmpty(teamExperimentList)}">
+                                        <table class="table table-responsive">
+                                            <tr>
+                                                <th th:text="#{experiment.table.header.experiment}">Experiment</th>
+                                                <th th:text="#{experiment.table.header.description}">Description</th>
+                                            </tr>
+                                            <th:block th:each="expEntry: ${teamExperimentList}">
+                                                <tr th:if="${expEntry.userId.equals(removeMemberUid)}">
+                                                    <td th:text="${expEntry.name}"></td>
+                                                    <td th:text="${expEntry.description}"></td>
+                                                </tr>
+                                            </th:block>
+                                        </table>
+                                    </th:block>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
                 <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
                     <li class="active"><a data-toggle="pill" href="#profile"><span th:text="#{teamProfile.nav.profile}">Profile</span></a></li>
                     <li><a data-toggle="pill" href="#members"><span th:text="#{teamProfile.nav.members}">Members</span></a></li>
                     <li><a data-toggle="pill" href="#experiments"><span th:text="#{teamProfile.nav.exp}">Experiments</span></a></li>
                 </ul>
+
+                <div th:if="${message}">
+                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+                </div>
+                <div th:if="${messageSuccess}">
+                    <p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+                </div>
                 <div class="tab-content col-sm-10">
                     <div id="profile" class="tab-pane fade in active">
                         <h3 th:text="#{teamProfile.nav.profile}">Profile</h3>
@@ -81,13 +133,13 @@
                                 <td th:text="#{team.members.memberType.owner}">MEMBER TYPE</td>
                                 <td></td>
                             </tr>
-                            <tr th:each="members : ${membersList}">
+                            <tr th:if="${members.id != owner.getId()}" th:each="members : ${membersList}">
                                 <td th:text="${members.firstName + ' ' + members.lastName}">Name</td>
                                 <td th:text="${members.institution}">TEXT</td>
                                 <td th:text="#{team.members.memberType.member}">MEMBER TYPE</td>
                                 <td>
                                     <th:block th:if="${owner.getId() == session.id}">
-                                        <a href="#" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
+                                        <a th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.id}, userId=${members.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
                                     </th:block>
                                 </td>
                             </tr>
@@ -168,5 +220,10 @@
         </div> <!-- container -->
         <div th:replace="fragments/footer:: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+        <script type="text/javascript">
+            function loadLeftOverExp() {
+                $('#leftOverExpModal').modal('toggle');
+            }
+        </script>
     </body>
 </html>
