@@ -1,12 +1,12 @@
 package sg.ncl;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import sg.ncl.domain.NodeType;
 import sg.ncl.domain.UserStatus;
 import sg.ncl.testbed_interface.TeamStatus;
 import sg.ncl.testbed_interface.TeamVisibility;
@@ -236,7 +236,12 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetFreeNodes() throws Exception {
-        assertThat(properties.getFreeNodes()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint());
+        assertThat(properties.getNodes(NodeType.FREE)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint() + "/nodes/counts?type=" + NodeType.FREE);
+    }
+
+    @Test
+    public void testGetTotalNodes() throws Exception {
+        assertThat(properties.getNodes(NodeType.TOTAL)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint() + "/nodes/counts?type=" + NodeType.TOTAL);
     }
 
     @Test
