@@ -239,6 +239,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint;
     }
 
+    public String getGlobalImages() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint + "/global";
+    }
+
     public String getTeamImages(String teamId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint + "?teamId=" + teamId;
     }
