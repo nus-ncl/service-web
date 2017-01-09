@@ -49,22 +49,47 @@
         <p>&nbsp;</p>
 
         <div class="panel panel-primary dashpanel">
-            <h2 class="team-heading team-heading-current-team" th:text="#{OSImage}">text heading from .properties</h2>
+            <h2 class="team-heading team-heading-current-team" th:text="#{image.heading.global}">text heading from .properties</h2>
             <p></p>
 
             <div class="table-responsive">
                 <table class="table1">
                     <thead BGCOLOR="#E0E0E0">
-                    <th width="30%"><p><h4><b>Name</b></h4></p></th>
-                    <th width="20%"><p><h4><b>OS</b></h4></p></th>
-                    <th width="50%"><p><h4><b>Description</b></h4></p></th>
+                    <th width="30%"><p><h4><strong th:text="#{image.name}">Name</strong></h4></p></th>
+                    <th width="20%"><p><h4><strong th:text="#{image.OS}">OS</strong></h4></p></th>
+                    <th width="50%"><p><h4><strong th:text="#{image.description}">Description</strong></h4></p></th>
                     </thead>
                     <tr BGCOLOR="#fff">
                         <td><div align="center">Ubuntu1404-64-STD</div></td>
                         <td><div align="center">Linux</div></td>
                         <td><div align="center">Ubuntu 14.04 LTS 64 bit Standard Image</div></td>
                     </tr>
-                    </table>
+                </table>
+            </div>
+        </div> <!-- panel -->
+    </div>
+
+    <div class="row">
+        <p>&nbsp;</p>
+
+        <div class="panel panel-primary dashpanel">
+            <h2 class="team-heading team-heading-current-team" th:text="#{image.heading.cve}">text heading from .properties</h2>
+            <p></p>
+
+            <div class="table-responsive">
+                <table class="table1" th:if="not ${globalImagesMap.isEmpty()}">
+                    <tr BGCOLOR="#E0E0E0">
+                        <th width="30%"><p><h4><strong th:text="#{image.name}">Name</strong></h4></p></th>
+                        <th width="20%"><p><h4><strong th:text="#{image.OS}">OS</strong></h4></p></th>
+                        <th width="50%"><p><h4><strong th:text="#{image.description}">Description</strong></h4></p></th>
+                    </tr>
+                    <tr BGCOLOR="#fff" th:each="imageMap : ${globalImagesMap}">
+                        <td><div align="center" th:text="${imageMap.key}">Name</div></td>
+                        <td><div align="center" th:text="${imageMap.value.osname}">OS</div></td>
+                        <td><div align="center" th:text="${imageMap.value.description}">Description</div></td>
+                    </tr>
+                </table>
+                <p th:if="${globalImagesMap.isEmpty()}" th:text="#{image.noCveImages}">There is no pre-compiled host vulnerability environment at the moment.</p>
             </div>
         </div> <!-- panel -->
     </div>

@@ -33,9 +33,6 @@ import javax.servlet.http.HttpSession;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -1009,9 +1006,18 @@ public class MainControllerTest {
 
     @Test
     public void testTestbedInformationNoLogin() throws Exception {
+        // mock two REST calls
+        // mockServer order is important here, the web service first invokes the get global image follow by get total nodes
 
         JSONObject predefinedResultJson = new JSONObject();
         predefinedResultJson.put(NodeType.TOTAL.name(), "99");
+
+        JSONObject predefinedResultJson2 = new JSONObject();
+        predefinedResultJson2.put("images", "{\"imageA\": {\"osname\": \"Linux\", \"description\": \"image description\"}}");
+
+        mockServer.expect(requestTo(properties.getGlobalImages()))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(predefinedResultJson2.toString(), MediaType.APPLICATION_JSON));
 
         mockServer.expect(requestTo(properties.getNodes(NodeType.TOTAL)))
                 .andExpect(method(HttpMethod.GET))
@@ -1041,9 +1047,18 @@ public class MainControllerTest {
 
     @Test
     public void testTestbedInformationLogin() throws Exception {
+        // mock two REST calls
+        // mockServer order is important here, the web service first invokes the get global image follow by get total nodes
 
         JSONObject predefinedResultJson = new JSONObject();
         predefinedResultJson.put(NodeType.TOTAL.name(), "99");
+
+        JSONObject predefinedResultJson2 = new JSONObject();
+        predefinedResultJson2.put("images", "{\"imageA\": {\"osname\": \"Linux\", \"description\": \"image description\"}}");
+
+        mockServer.expect(requestTo(properties.getGlobalImages()))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(predefinedResultJson2.toString(), MediaType.APPLICATION_JSON));
 
         mockServer.expect(requestTo(properties.getNodes(NodeType.TOTAL)))
                 .andExpect(method(HttpMethod.GET))
