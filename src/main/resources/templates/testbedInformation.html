@@ -77,19 +77,19 @@
             <p></p>
 
             <div class="table-responsive">
-                <table class="table1" th:if="not ${globalImageMap.isEmpty()}">
+                <table class="table1" th:if="not ${globalImagesMap.isEmpty()}">
                     <tr BGCOLOR="#E0E0E0">
                         <th width="30%"><p><h4><strong th:text="#{image.name}">Name</strong></h4></p></th>
                         <th width="20%"><p><h4><strong th:text="#{image.OS}">OS</strong></h4></p></th>
                         <th width="50%"><p><h4><strong th:text="#{image.description}">Description</strong></h4></p></th>
                     </tr>
-                    <tr BGCOLOR="#fff" th:each="imageMap : ${globalImageMap}">
+                    <tr BGCOLOR="#fff" th:each="imageMap : ${globalImagesMap}">
                         <td><div align="center" th:text="${imageMap.key}">Name</div></td>
                         <td><div align="center" th:text="${imageMap.value.osname}">OS</div></td>
                         <td><div align="center" th:text="${imageMap.value.description}">Description</div></td>
                     </tr>
                 </table>
-                <p th:if="${globalImageMap.isEmpty()}" th:text="#{image.noCveImages}">There are no pre-compiled host vulnerability environment at the moment.</p>
+                <p th:if="${globalImagesMap.isEmpty()}" th:text="#{image.noCveImages}">There are no pre-compiled host vulnerability environment at the moment.</p>
             </div>
         </div> <!-- panel -->
     </div>

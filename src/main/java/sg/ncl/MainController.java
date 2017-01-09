@@ -239,21 +239,22 @@ public class MainController {
 
     @RequestMapping("/testbedInformation")
     public String testbedInformation(Model model) throws IOException {
-        SortedMap<String, Map<String, String>> globalImageMap = new TreeMap<>();
+        SortedMap<String, Map<String, String>> globalImagesMap = new TreeMap<>();
 
         log.info("Retrieving list of global images from: {}", properties.getGlobalImages());
 
         try {
-            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
             ResponseEntity response = restTemplate.exchange(properties.getGlobalImages(), HttpMethod.GET, request, String.class);
             ObjectMapper mapper = new ObjectMapper();
             String json = new JSONObject(response.getBody().toString()).getString("images");
-            globalImageMap = mapper.readValue(json, new TypeReference<SortedMap<String, Map<String, String>>>(){});
+            log.info("{}", json);
+            globalImagesMap = mapper.readValue(json, new TypeReference<SortedMap<String, Map<String, String>>>(){});
         } catch (RestClientException e) {
             log.warn("Error connecting to service-image: {}", e);
         }
 
-        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, globalImageMap);
+        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, globalImagesMap);
         return "testbedInformation";
     }
 
