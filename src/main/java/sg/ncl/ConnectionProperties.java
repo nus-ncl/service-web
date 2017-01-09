@@ -229,7 +229,7 @@ public class ConnectionProperties {
     }
 
     public String getNodes(NodeType nodeType) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "?type=" + nodeType;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/nodes/counts?type=" + nodeType;
     }
     
     //-------------------------------------

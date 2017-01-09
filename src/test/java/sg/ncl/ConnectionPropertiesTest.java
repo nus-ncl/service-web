@@ -236,12 +236,12 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetFreeNodes() throws Exception {
-        assertThat(properties.getNodes(NodeType.FREE)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint() + "?type=" + NodeType.FREE);
+        assertThat(properties.getNodes(NodeType.FREE)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint() + "/nodes/counts?type=" + NodeType.FREE);
     }
 
     @Test
     public void testGetTotalNodes() throws Exception {
-        assertThat(properties.getNodes(NodeType.TOTAL)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint() + "?type=" + NodeType.TOTAL);
+        assertThat(properties.getNodes(NodeType.TOTAL)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint() + "/nodes/counts?type=" + NodeType.TOTAL);
     }
 
     @Test
