@@ -2483,6 +2483,7 @@ public class MainController {
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("start", start);
         model.addAttribute("end", end);
+        model.addAttribute("team", team);
         return "usage_statistics";
     }
 
