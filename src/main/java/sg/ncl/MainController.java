@@ -248,7 +248,6 @@ public class MainController {
             ResponseEntity response = restTemplate.exchange(properties.getGlobalImages(), HttpMethod.GET, request, String.class);
             ObjectMapper mapper = new ObjectMapper();
             String json = new JSONObject(response.getBody().toString()).getString("images");
-            log.info("{}", json);
             globalImagesMap = mapper.readValue(json, new TypeReference<SortedMap<String, Map<String, String>>>(){});
         } catch (RestClientException e) {
             log.warn("Error connecting to service-image: {}", e);
