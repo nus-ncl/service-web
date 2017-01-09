@@ -1005,6 +1005,13 @@ public class MainControllerTest {
 
     @Test
     public void testTestbedInformationNoLogin() throws Exception {
+        JSONObject predefinedResultJson = new JSONObject();
+        predefinedResultJson.put("images", "{\"imageA\": {\"osname\": \"Linux\", \"description\": \"image description\"}}");
+
+        mockServer.expect(requestTo(properties.getGlobalImages()))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
+
         mockMvc.perform(get("/testbedInformation"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("testbedInformation"))
@@ -1029,6 +1036,13 @@ public class MainControllerTest {
 
     @Test
     public void testTestbedInformationLogin() throws Exception {
+        JSONObject predefinedResultJson = new JSONObject();
+        predefinedResultJson.put("images", "{\"imageA\": {\"osname\": \"Linux\", \"description\": \"image description\"}}");
+
+        mockServer.expect(requestTo(properties.getGlobalImages()))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
+
         mockMvc.perform(get("/testbedInformation").sessionAttr("id", "id"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("testbedInformation"))

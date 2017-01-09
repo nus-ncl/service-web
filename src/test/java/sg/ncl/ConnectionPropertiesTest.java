@@ -245,6 +245,11 @@ public class ConnectionPropertiesTest {
     }
 
     @Test
+    public void testGetGlobalImages() throws Exception {
+        assertThat(properties.getGlobalImages()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint() + "/global");
+    }
+
+    @Test
     public void testGetTeamImages() throws Exception {
         String teamId = RandomStringUtils.randomAlphanumeric(20);
         assertThat(properties.getTeamImages(teamId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint() + "?teamId=" + teamId);
