@@ -295,4 +295,16 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads" + params;
     }
 
+    public String getUsageStat(String teamId, String... paramString) {
+        String params = "";
+        for (int i = 0; i < paramString.length; i++) {
+            if (i == 0) {
+                params += "?" + paramString[i];
+            } else {
+                params += "&" + paramString[i];
+            }
+        }
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + params;
+    }
+
 }
