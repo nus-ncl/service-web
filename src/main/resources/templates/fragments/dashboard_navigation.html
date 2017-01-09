@@ -84,8 +84,8 @@
 	 <!-- navigation links -->
 		</div>
 	</div> <!-- container -->
-	<div class="container-fluid">
-		<div class="row maintenance-navbar" th:text="#{nav.maintenance}">MAINTENANCE NOTICE</div>
+	<div class="container-fluid" th:if="${@environment.getProperty('ncl.web.service.maintenance.enabled')}">
+		<div class="row maintenance-navbar" th:text="#{nav.maintenance(#{nav.maintenance.date}, #{nav.maintenance.startTime}, #{nav.maintenance.endTime})}">MAINTENANCE NOTICE</div>
 	</div>
 </div> <!-- main-nav -->
 <object th:include="fragments/javascript :: javascript" th:remove="tag" />
