@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -35,11 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static sg.ncl.domain.ExceptionState.*;
@@ -83,6 +80,7 @@ public class MainController {
     private static final String USER_DASHBOARD_TEAMS = "teams";
     private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "runningExperiments";
     private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
+    private static final String USER_DASHBOARD_GLOBAL_IMAGES = "globalImagesMap";
 
     private static final String DETER_UID = "deterUid";
 
@@ -240,7 +238,22 @@ public class MainController {
     }
 
     @RequestMapping("/testbedInformation")
-    public String testbedInformation() {
+    public String testbedInformation(Model model) throws IOException {
+        SortedMap<String, Map<String, String>> globalImageMap = new TreeMap<>();
+
+        log.info("Retrieving list of global images from: {}", properties.getGlobalImages());
+
+        try {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity response = restTemplate.exchange(properties.getGlobalImages(), HttpMethod.GET, request, String.class);
+            ObjectMapper mapper = new ObjectMapper();
+            String json = new JSONObject(response.getBody().toString()).getString("images");
+            globalImageMap = mapper.readValue(json, new TypeReference<SortedMap<String, Map<String, String>>>(){});
+        } catch (RestClientException e) {
+            log.warn("Error connecting to service-image: {}", e);
+        }
+
+        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, globalImageMap);
         return "testbedInformation";
     }
 
