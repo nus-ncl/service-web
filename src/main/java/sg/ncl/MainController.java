@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -2487,7 +2488,13 @@ public class MainController {
         Map<Long, Realization> realizationMap = new HashMap<>(); // exp id, realization
 
         for (int k = 0; k < jsonRealizationArray.length(); k++) {
-            Realization realization = extractRealization(jsonRealizationArray.getJSONObject(k).toString());
+            Realization realization;
+            try {
+                realization = extractRealization(jsonRealizationArray.getJSONObject(k).toString());
+            } catch (JSONException e) {
+                log.debug("Admin extract realization {}", e);
+                realization = getCleanRealization();
+            }
             if (realization.getState().equals(RealizationState.RUNNING.name())) {
                 realizationMap.put(realization.getExperimentId(), realization);
             }
@@ -3451,9 +3458,11 @@ public class MainController {
                 log.warn("error in retrieving realization for team: {}, realization: {}", teamName, id);
                 return getCleanRealization();
             } else {
+                // will throw JSONException if the format return by sio is not a valid JSOn format
+                // will occur if the realization details are still in the old format
                 return extractRealization(responseBody);
             }
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             return getCleanRealization();
         }
     }
