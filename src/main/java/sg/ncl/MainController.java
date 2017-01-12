@@ -3467,7 +3467,7 @@ public class MainController {
         }
     }
 
-    private Realization extractRealization(String json) throws JSONException {
+    private Realization extractRealization(String json) {
         log.info("extracting realization: {}", json);
         Realization realization = new Realization();
         JSONObject object = new JSONObject(json);
