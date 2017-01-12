@@ -27,11 +27,4 @@ public class AppConfig {
     public LayoutDialect layoutDialect() {
         return new LayoutDialect();
     }
-
-    @Bean
-    public MessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasenames(getClass().getClassLoader().toString() + "messages.properties");
-        return messageSource;
-    }
 }
