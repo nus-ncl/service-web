@@ -2,11 +2,8 @@ package sg.ncl;
 
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.validation.constraints.NotNull;
 
