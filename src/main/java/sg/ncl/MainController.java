@@ -733,6 +733,7 @@ public class MainController {
             }
 
         } else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
+
             log.info("Signup join team name {}", joinNewTeamName);
             // get the team JSON from team name
             Team2 joinTeamInfo;
@@ -746,6 +747,7 @@ public class MainController {
             }
 
             teamFields.put("id", joinTeamInfo.getId());
+            teamFields.put("reason", signUpMergedForm.getJoinTeamReason());
 
             // set the flag to indicate to controller that it is joining an existing team
             mainObject.put("isJoinTeam", true);
