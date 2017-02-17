@@ -747,7 +747,7 @@ public class MainController {
             }
 
             teamFields.put("id", joinTeamInfo.getId());
-            teamFields.put("reason", signUpMergedForm.getJoinTeamReason());
+            teamFields.put("notes", signUpMergedForm.getJoinTeamReason());
 
             // set the flag to indicate to controller that it is joining an existing team
             mainObject.put("isJoinTeam", true);
@@ -1754,6 +1754,7 @@ public class MainController {
         userFields.put("id", session.getAttribute("id")); // ncl-id
 
         teamFields.put("name", teamPageJoinForm.getTeamName());
+        teamFields.put("notes", teamPageJoinForm.getJoinTeamReason());
 
         log.info(logPrefix, "User " + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
 

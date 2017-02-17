@@ -26,6 +26,8 @@
                             <input type="text" class="form-control" id="inputTeam" placeholder="Team Name to Join" name="" th:field="*{teamName}"/>
                             <span class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></span>
                         </div>
+                            <textarea data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the reason" class="form-control" th:placeholder="#{form.teamReason}" th:field="*{joinTeamReason}">
+										</textarea>
                         <div class="form-group">
                             <button type="submit" class="btn btn-standard">Submit</button>
                         </div>
