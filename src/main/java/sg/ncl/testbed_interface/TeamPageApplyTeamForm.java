@@ -23,6 +23,16 @@ public class TeamPageApplyTeamForm {
     
     @NotNull(message="Please select one of them")
     private String isPublic = TeamVisibility.PUBLIC.toString();
+
+    public String getJoinTeamReason() {
+        return joinTeamReason;
+    }
+
+    public void setJoinTeamReason(String joinTeamReason) {
+        this.joinTeamReason = joinTeamReason;
+    }
+
+    private String joinTeamReason;
     
     public TeamPageApplyTeamForm() {   
     }

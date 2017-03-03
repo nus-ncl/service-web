@@ -58,7 +58,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" th:field="*{email}" placeholder="Email" onblur="validateEmail(name)"/>
+								<input type="text" data-toggle="tooltip" data-placement="bottom" title="An organization-affiliated email address is required. Other email addresses (Gmail, Hotmail, email addresses from ISPs) are not accepted." class="form-control" th:field="*{email}" placeholder="Email" onblur="validateEmail(name)"/>
 								<span id="emailError" style="display: none;"><h34>You must enter a valid email address</h34></span>
 							</div>
 							<div class="form-group">
@@ -109,6 +109,9 @@
 								<p>&nbsp;</p>
 								<div id="registerNewTeamDiv" class="tab-pane fade in active">
 									<div class="form-group">
+										<span>Applicable to faculty members, or the equivalent R&D, teaching and management staff of an admissible organization.</span>
+									</div>
+									<div class="form-group">
 										<input type="text" class="form-control" th:placeholder="#{form.teamName}"  th:field="*{teamName}" onblur="validateteamName(name)"/>
 										<span id="teamNameError" style="display: none;"><h34>You can only use alphabetic character and numbers only</h34></span>
 									</div>
@@ -118,7 +121,7 @@
 									</div>
 									<div class="form-group">
 										<label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
-										<select class="form-control" th:field="*{teamOrganizationType}">
+										<select id="organizationType" class="form-control" th:field="*{teamOrganizationType}">
 											<option value="Academic" th:text="#{signup.academia}">Academic</option>
 											<option value="Government" th:text="#{signup.government}">Government</option>
 											<option value="Industry" th:text="#{signup.industry}">Industry</option>
@@ -134,6 +137,9 @@
 									</div>
 								</div>
 								<div id="registerJoinTeamDiv" class="tab-pane fade">
+									<div class="form-group">
+										<span>Applicabke to research associates/assistants, research engineers, students and etc.</span>
+									</div>
 									<div class="form-group">
 										<input type="text" class="form-control" th:placeholder="#{form.teamName}"  th:field="*{joinTeamName}" onblur="validatejoinTeamName(name)"/>
 										<span id="joinTeamNameError" style="display: none;"><h34>You can only use alphabetic character and numbers only</h34></span>

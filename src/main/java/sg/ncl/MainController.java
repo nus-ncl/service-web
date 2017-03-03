@@ -1667,6 +1667,7 @@ public class MainController {
         teamFields.put("website", teamPageApplyTeamForm.getTeamWebsite());
         teamFields.put("organisationType", teamPageApplyTeamForm.getTeamOrganizationType());
         teamFields.put("visibility", teamPageApplyTeamForm.getIsPublic());
+        teamFields.put("notes", teamPageApplyTeamForm.getJoinTeamReason());
 
         String nclUserId = session.getAttribute("id").toString();
 
