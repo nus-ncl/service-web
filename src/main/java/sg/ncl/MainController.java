@@ -670,6 +670,7 @@ public class MainController {
         mainObject.put("credentials", credentialsFields);
         mainObject.put("user", userFields);
         mainObject.put("team", teamFields);
+        mainObject.put("notes", signUpMergedForm.getJoinTeamReason());
 
         // check if user chose create new team or join existing team by checking team name
         String createNewTeamName = signUpMergedForm.getTeamName().trim();
@@ -747,7 +748,6 @@ public class MainController {
             }
 
             teamFields.put("id", joinTeamInfo.getId());
-            teamFields.put("notes", signUpMergedForm.getJoinTeamReason());
 
             // set the flag to indicate to controller that it is joining an existing team
             mainObject.put("isJoinTeam", true);
@@ -1751,11 +1751,11 @@ public class MainController {
 
         mainObject.put("team", teamFields);
         mainObject.put("user", userFields);
+        mainObject.put("notes", teamPageJoinForm.getJoinTeamReason());
 
         userFields.put("id", session.getAttribute("id")); // ncl-id
 
         teamFields.put("name", teamPageJoinForm.getTeamName());
-        teamFields.put("notes", teamPageJoinForm.getJoinTeamReason());
 
         log.info(logPrefix, "User " + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
 
