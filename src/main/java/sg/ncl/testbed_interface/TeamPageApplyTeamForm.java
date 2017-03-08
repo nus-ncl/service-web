@@ -20,6 +20,8 @@ public class TeamPageApplyTeamForm {
     private String teamWebsite = "http://default.com";
 
     private String teamOrganizationType;
+
+    private String joinTeamReason;
     
     @NotNull(message="Please select one of them")
     private String isPublic = TeamVisibility.PUBLIC.toString();
@@ -32,8 +34,6 @@ public class TeamPageApplyTeamForm {
         this.joinTeamReason = joinTeamReason;
     }
 
-    private String joinTeamReason;
-    
     public TeamPageApplyTeamForm() {   
     }
     
