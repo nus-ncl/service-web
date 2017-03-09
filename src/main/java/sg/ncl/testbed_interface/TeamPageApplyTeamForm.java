@@ -26,14 +26,6 @@ public class TeamPageApplyTeamForm {
     @NotNull(message="Please select one of them")
     private String isPublic = TeamVisibility.PUBLIC.toString();
 
-    public String getJoinTeamReason() {
-        return joinTeamReason;
-    }
-
-    public void setJoinTeamReason(String joinTeamReason) {
-        this.joinTeamReason = joinTeamReason;
-    }
-
     public TeamPageApplyTeamForm() {   
     }
     
@@ -76,7 +68,13 @@ public class TeamPageApplyTeamForm {
     public void setIsPublic(String isPublic) {
         this.isPublic = isPublic;
     }
+    public String getJoinTeamReason() {
+        return joinTeamReason;
+    }
 
+    public void setJoinTeamReason(String joinTeamReason) {
+        this.joinTeamReason = joinTeamReason;
+    }
     
     @Override
     public String toString() {
