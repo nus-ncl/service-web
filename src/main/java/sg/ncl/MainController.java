@@ -99,6 +99,7 @@ public class MainController {
     private static final String NODE_ID = "nodeId";
     private static final String PERMISSION_DENIED = "Permission denied";
     private static final String TEAM_NOT_FOUND = "Team not found";
+    private static final String NOTES = "notes";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -670,7 +671,7 @@ public class MainController {
         mainObject.put("credentials", credentialsFields);
         mainObject.put("user", userFields);
         mainObject.put("team", teamFields);
-        mainObject.put("notes", signUpMergedForm.getJoinTeamReason());
+        mainObject.put(NOTES, signUpMergedForm.getJoinTeamReason());
 
         // check if user chose create new team or join existing team by checking team name
         String createNewTeamName = signUpMergedForm.getTeamName().trim();
@@ -1662,7 +1663,7 @@ public class MainController {
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
 
-        mainObject.put("notes", teamPageApplyTeamForm.getJoinTeamReason());
+        mainObject.put(NOTES, teamPageApplyTeamForm.getJoinTeamReason());
         mainObject.put("team", teamFields);
 
         teamFields.put("name", teamPageApplyTeamForm.getTeamName());
@@ -1755,7 +1756,7 @@ public class MainController {
 
         mainObject.put("team", teamFields);
         mainObject.put("user", userFields);
-        mainObject.put("notes", teamPageJoinForm.getJoinTeamReason());
+        mainObject.put(NOTES, teamPageJoinForm.getJoinTeamReason());
 
         userFields.put("id", session.getAttribute("id")); // ncl-id
 
