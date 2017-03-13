@@ -27,13 +27,20 @@
         <p>&nbsp;</p>
         <div class="panel panel-primary dashpanel">
 
-                <div class="col-sm-12">
-                    <p>&nbsp;</p>
-                    <h12> Total Number of Nodes : </h12> <h11 th:text="${totalNodes}">0</h11> <h13>*( Reserved for : 60% nodes for research, 40% nodes for education )
-</h13>
-                </div>
-            <p></p>
+            <div class="col-sm-12">
+                <p>&nbsp;</p>
+                <h12> Logged In Users : </h12> <h11 th:text="${loggedInUsersCount}">0</h11>
+                <p>&nbsp;</p>
+                <h12> Running Experiments : </h12> <h11 th:text="${runningExperimentsCount}">0</h11>
+                <p>&nbsp;</p>
+                <h12> Total Number of Nodes : </h12> <h11 th:text="${totalNodes}">0</h11> <h13>*( Reserved for : 60% nodes for research, 40% nodes for education )</h13>
+            </div>
             <p>&nbsp;</p>
+        </div> <!-- panel -->
+    </div>
+
+    <div class="row">
+        <div class="panel panel-primary dashpanel">
             <h2 class="team-heading team-heading-current-team" th:text="#{Nodes.Specification}">text heading from .properties</h2>
             <p> Each node has the following specifications:</p>
             <p><i class="fa fa-check"></i>Include two (2) Intel Xeon Processor E5-2620 V3 2.40GHz, 15M Cache, 8GT/s QPI, Turbo, 6C, 85W</p>
