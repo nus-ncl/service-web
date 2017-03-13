@@ -1006,14 +1006,18 @@ public class MainControllerTest {
 
     @Test
     public void testTestbedInformationNoLogin() throws Exception {
-        // mock two REST calls
-        // mockServer order is important here, the web service first invokes the get global image follow by get total nodes
+        // mock three REST calls
+        // mockServer order is important here, the web service first invokes the get global image follow by get total nodes, get testbed stats
 
         JSONObject predefinedResultJson = new JSONObject();
         predefinedResultJson.put(NodeType.TOTAL.name(), "99");
 
         JSONObject predefinedResultJson2 = new JSONObject();
         predefinedResultJson2.put("images", "{\"imageA\": {\"osname\": \"Linux\", \"description\": \"image description\"}}");
+
+        JSONObject predefinedResultJson3 = new JSONObject();
+        predefinedResultJson3.put("users", "10");
+        predefinedResultJson3.put("experiments", "20");
 
         mockServer.expect(requestTo(properties.getGlobalImages()))
                 .andExpect(method(HttpMethod.GET))
@@ -1022,6 +1026,10 @@ public class MainControllerTest {
         mockServer.expect(requestTo(properties.getNodes(NodeType.TOTAL)))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
+
+        mockServer.expect(requestTo(properties.getTestbedStats()))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(predefinedResultJson3.toString(), MediaType.APPLICATION_JSON));
 
         mockMvc.perform(get("/testbedInformation"))
                 .andExpect(status().isOk())
@@ -1047,14 +1055,18 @@ public class MainControllerTest {
 
     @Test
     public void testTestbedInformationLogin() throws Exception {
-        // mock two REST calls
-        // mockServer order is important here, the web service first invokes the get global image follow by get total nodes
+        // mock three REST calls
+        // mockServer order is important here, the web service first invokes the get global image follow by get total nodes, testbed stats
 
         JSONObject predefinedResultJson = new JSONObject();
         predefinedResultJson.put(NodeType.TOTAL.name(), "99");
 
         JSONObject predefinedResultJson2 = new JSONObject();
         predefinedResultJson2.put("images", "{\"imageA\": {\"osname\": \"Linux\", \"description\": \"image description\"}}");
+
+        JSONObject predefinedResultJson3 = new JSONObject();
+        predefinedResultJson3.put("users", "10");
+        predefinedResultJson3.put("experiments", "20");
 
         mockServer.expect(requestTo(properties.getGlobalImages()))
                 .andExpect(method(HttpMethod.GET))
@@ -1063,6 +1075,10 @@ public class MainControllerTest {
         mockServer.expect(requestTo(properties.getNodes(NodeType.TOTAL)))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
+
+        mockServer.expect(requestTo(properties.getTestbedStats()))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(predefinedResultJson3.toString(), MediaType.APPLICATION_JSON));
 
         mockMvc.perform(get("/testbedInformation").sessionAttr("id", "id"))
                 .andExpect(status().isOk())

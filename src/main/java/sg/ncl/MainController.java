@@ -266,10 +266,11 @@ public class MainController {
     @RequestMapping("/testbedInformation")
     public String testbedInformation(Model model) throws IOException {
 
-        Map<String, String> testbedStatsMap = getTestbedStats();
-
         model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
         model.addAttribute(USER_DASHBOARD_TOTAL_NODES, getNodes(NodeType.TOTAL));
+
+        Map<String, String> testbedStatsMap = getTestbedStats();
+
         model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
         model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
         return "testbedInformation";
@@ -4021,7 +4022,6 @@ public class MainController {
             HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
             ResponseEntity response = restTemplate.exchange(properties.getTestbedStats(), HttpMethod.GET, request, String.class);
             JSONObject object = new JSONObject(response.getBody().toString());
-            System.out.println(object);
             statsMap.put(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, object.getString("users"));
             statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, object.getString("experiments"));
 
