@@ -85,6 +85,8 @@ public class MainController {
     private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
     private static final String USER_DASHBOARD_TOTAL_NODES = "totalNodes";
     private static final String USER_DASHBOARD_GLOBAL_IMAGES = "globalImagesMap";
+    private static final String USER_DASHBOARD_LOGGED_IN_USERS_COUNT = "loggedInUsersCount";
+    private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT = "runningExperimentsCount";
 
     private static final String DETER_UID = "deterUid";
 
@@ -249,8 +251,13 @@ public class MainController {
 
     @RequestMapping("/testbedInformation")
     public String testbedInformation(Model model) throws IOException {
+
+        Map<String, String> testbedStatsMap = getTestbedStats();
+
         model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
         model.addAttribute(USER_DASHBOARD_TOTAL_NODES, getNodes(NodeType.TOTAL));
+        model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
+        model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
         return "testbedInformation";
     }
 
@@ -3774,5 +3781,25 @@ public class MainController {
             return "?";
         }
         return response.getBody().toString();
+    }
+
+    private Map<String,String> getTestbedStats() {
+        Map<String, String> statsMap = new HashMap<>();
+
+        log.info("Retrieving number of logged in users and running experiments from: {}", properties.getTestbedStats());
+        try {
+            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+            ResponseEntity response = restTemplate.exchange(properties.getTestbedStats(), HttpMethod.GET, request, String.class);
+            JSONObject object = new JSONObject(response.getBody().toString());
+            System.out.println(object);
+            statsMap.put(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, object.getString("users"));
+            statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, object.getString("experiments"));
+
+        } catch (RestClientException e) {
+            log.warn("Error connecting to service-telemetry: {}", e);
+            statsMap.put(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, "0");
+            statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, "0");
+        }
+        return statsMap;
     }
 }
