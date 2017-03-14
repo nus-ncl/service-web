@@ -239,6 +239,10 @@ public class ConnectionProperties {
     public String getNodes(NodeType nodeType) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/nodes/counts?type=" + nodeType;
     }
+
+    public String getNodesStatus() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/nodes/status";
+    }
     
     //-------------------------------------
     // IMAGES
@@ -319,5 +323,4 @@ public class ConnectionProperties {
         }
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + params;
     }
-
 }
