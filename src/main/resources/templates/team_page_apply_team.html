@@ -30,12 +30,12 @@
                             </div>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamDescription')}? 'has-error'">
-                            <input data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the description" type="text" class="form-control" id="inputDescription" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}"/>
-                            <span class="account-change-fail" th:if="${#fields.hasErrors('teamDescription')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamDescription}"></span></span>
+                          <textarea data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the description" class="form-control" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}">
+                          </textarea>
                         </div>
                         <div class="form-group">
                             <label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
-                            <select class="form-control" th:field="*{teamOrganizationType}">
+                            <select id="organizationType" class="form-control" th:field="*{teamOrganizationType}">
                                 <option value="Academic" th:text="#{signup.academia}">Academia</option>
                                 <option value="Government" th:text="#{signup.government}">Government</option>
                                 <option value="Industry" th:text="#{signup.industry}">Industry</option>
@@ -44,10 +44,10 @@
                         <div class="form-group">
                             <span class="text-danger" th:if="${#fields.hasErrors('isPublic')}" th:errors="*{isPublic}">Public or Private</span>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span th:text="#{signup.publicTeam.desc}">Anyone can view the team.</span></em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span>Include your team info in the <a th:href="@{/public_teams}">Public List</a> of NCL teams.</span></em></label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only people explicitly granted permission can access.</span></em></label>
+                                <label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only members in the team can view team info.</span></em></label>
                             </div>
                         </div>
                         <div class="form-group">
