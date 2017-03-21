@@ -24,6 +24,11 @@ public class WebApplication {
         return new WebProperties();
     }
 
+    @Bean
+    AccountingProperties accountingProperties() {
+        return new AccountingProperties();
+    }
+
     public static void main(String[] args) {
         final SpringApplication application = new SpringApplication(WebApplication.class);
         application.addListeners(new ApplicationPidFileWriter());

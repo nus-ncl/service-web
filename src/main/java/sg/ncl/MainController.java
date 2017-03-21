@@ -122,6 +122,9 @@ public class MainController {
     protected WebProperties webProperties;
 
     @Inject
+    protected AccountingProperties accountingProperties;
+
+    @Inject
     protected HttpSession httpScopedSession;
 
     @RequestMapping("/")
@@ -3832,11 +3835,12 @@ public class MainController {
 
         JSONObject object = new JSONObject(responseBody);
         TeamQuota teamQuota = new TeamQuota();
+        Double charges = Double.parseDouble(accountingProperties.getCharges());
 
         // amountUsed from SIO will never be null => not checking for null value
         String usage = object.getString("usage");                 // getting usage in String
         BigDecimal amountUsed =new BigDecimal(usage);                //  using BigDecimal to handle currency
-        amountUsed = amountUsed.multiply(new BigDecimal(0.12));
+        amountUsed = amountUsed.multiply(new BigDecimal(charges));   // usage X charges
 
         //quota passed from SIO can be null , so we have to check for null value
         if (object.has("quota")){
@@ -3845,13 +3849,12 @@ public class MainController {
                 teamQuota.setBudget("");                  // there is placeholder here
                 teamQuota.setResourcesLeft("Unlimited"); // not placeholder so can pass string over
             } else {
-
                 Double budgetInDouble = object.getDouble("quota");          // retrieve budget from SIO in Double
                 BigDecimal budgetInBD = BigDecimal.valueOf(budgetInDouble);     // handling currency using BigDecimal
 
                 // calculate resoucesLeft
                 BigDecimal resourceLeftInBD = budgetInBD.subtract(amountUsed);
-                resourceLeftInBD = resourceLeftInBD.divide(new BigDecimal(0.12), 2, BigDecimal.ROUND_HALF_UP);
+                resourceLeftInBD = resourceLeftInBD.divide(new BigDecimal(charges), 2, BigDecimal.ROUND_HALF_UP);
 
                 // set budget and resourceLeft
                 budgetInBD = budgetInBD.setScale(2, BigDecimal.ROUND_HALF_UP);

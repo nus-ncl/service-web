@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:display="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>National Cybersecurity Laboratories - Team Profile</title>
@@ -245,7 +246,9 @@
                                     <input type="text" class="form-control" th:field="*{resourcesLeft}" readonly="readonly"/>
                                     <div class="input-group-addon">node X hours * </div>
                                 </div>
-                                <div>*Currently usage is charged at $0.12 per node per hour.</div>
+                                <div >
+                                  *Currently usage is charged at $<span th:text="${@environment.getProperty('ncl.web.service.accounting.charges')}">CHARGES</span> per node per hour.
+                                </div>
                             </td>
                         </tr>
                     </table>
