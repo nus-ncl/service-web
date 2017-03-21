@@ -1553,20 +1553,18 @@ public class MainController {
         //check if budget input is positive
         if (Double.parseDouble(editTeamQuota.getBudget()) < 0) {
             redirectAttributes.addFlashAttribute("editBudget", "negativeError");
-            return "redirect:/team_profile/" + teamId;
+            return "redirect:/team_profile/" + teamId + "#quota";
         }
 
         //check if budget input exceed database limit of 99999999.99
         if (Double.parseDouble(editTeamQuota.getBudget()) > 99999999.99) {
             redirectAttributes.addFlashAttribute("editBudget", "exceedingLimit");
-            return "redirect:/team_profile/" + teamId;
+            return "redirect:/team_profile/" + teamId + "#quota";
         }
 
         teamQuotaJSONObject.put("quota", editTeamQuota.getBudget());
-
         HttpEntity<String> request = createHttpEntityWithBody(teamQuotaJSONObject.toString());
         ResponseEntity response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.PUT, request, String.class);
-
         String originalBudget = (String) session.getAttribute("originalBudget");
 
         //check if new budget is different in order to display successful message to user
@@ -1577,7 +1575,7 @@ public class MainController {
         // safer to remove
         session.removeAttribute("originalBudget");
 
-        return "redirect:/team_profile/" + teamId;
+        return "redirect:/team_profile/" + teamId + "#quota";
     }
 
     @RequestMapping("/remove_member/{teamId}/{userId}")

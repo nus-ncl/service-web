@@ -287,6 +287,11 @@
         function loadLeftOverExp() {
             $('#leftOverExpModal').modal('toggle');
         }
+        $(document).ready(function() {
+            var href = window.location.href;
+            var res = href.split("#");
+            $('.nav-pills a[href="#' + res[res.length - 1] + '"]').tab('show');
+        });
     </script>
 </body>
 </html>
