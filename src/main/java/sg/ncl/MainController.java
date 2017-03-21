@@ -34,7 +34,10 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -1543,6 +1546,19 @@ public class MainController {
 
         JSONObject teamQuotaJSONObject = new JSONObject();
         teamQuotaJSONObject.put("teamId", teamId);
+
+        //check if budget input is positive
+        if (Double.parseDouble(editTeamQuota.getBudget()) < 0) {
+            redirectAttributes.addFlashAttribute("editBudget", "negativeError");
+            return "redirect:/team_profile/" + teamId;
+        }
+
+        //check if budget input exceed database limit of 99999999.99
+        if (Double.parseDouble(editTeamQuota.getBudget()) > 99999999.99) {
+            redirectAttributes.addFlashAttribute("editBudget", "exceedingLimit");
+            return "redirect:/team_profile/" + teamId;
+        }
+
         teamQuotaJSONObject.put("quota", editTeamQuota.getBudget());
 
         HttpEntity<String> request = createHttpEntityWithBody(teamQuotaJSONObject.toString());
@@ -3816,25 +3832,37 @@ public class MainController {
 
         JSONObject object = new JSONObject(responseBody);
         TeamQuota teamQuota = new TeamQuota();
-        teamQuota.setTeamId(object.getString("teamId"));
 
-        // amountUsed from SIO will never be null
-        Double amountUsed = Double.parseDouble(object.getString("amountUsed")) * 0.12 ;
-        teamQuota.setAmountUsed(Double.toString(amountUsed));
+        // amountUsed from SIO will never be null => not checking for null value
+        String usage = object.getString("usage");                 // getting usage in String
+        BigDecimal amountUsed =new BigDecimal(usage);                //  using BigDecimal to handle currency
+        amountUsed = amountUsed.multiply(new BigDecimal(0.12));
 
-        //quota passed from SIO can be null , so we have to check
+        //quota passed from SIO can be null , so we have to check for null value
         if (object.has("quota")){
             Object budgetObject = object.optString("quota",null);
             if (budgetObject == null) {
-                teamQuota.setBudget("");
-                teamQuota.setResourcesLeft("Unlimited");
+                teamQuota.setBudget("");                  // there is placeholder here
+                teamQuota.setResourcesLeft("Unlimited"); // not placeholder so can pass string over
             } else {
-                teamQuota.setBudget(Double.toString(object.getDouble("quota")));
-                Double budget = object.getDouble("quota");
-                Double resourcesLeft = (budget - amountUsed) / 0.12;
-                teamQuota.setResourcesLeft(Double.toString(resourcesLeft));
+
+                Double budgetInDouble = object.getDouble("quota");          // retrieve budget from SIO in Double
+                BigDecimal budgetInBD = BigDecimal.valueOf(budgetInDouble);     // handling currency using BigDecimal
+
+                // calculate resoucesLeft
+                BigDecimal resourceLeftInBD = budgetInBD.subtract(amountUsed);
+                resourceLeftInBD = resourceLeftInBD.divide(new BigDecimal(0.12), 2, BigDecimal.ROUND_HALF_UP);
+
+                // set budget and resourceLeft
+                budgetInBD = budgetInBD.setScale(2, BigDecimal.ROUND_HALF_UP);
+                teamQuota.setBudget(budgetInBD.toString());
+                teamQuota.setResourcesLeft(resourceLeftInBD.toString());
             }
         }
+
+        teamQuota.setTeamId(object.getString("teamId"));
+        amountUsed = amountUsed.setScale(2, BigDecimal.ROUND_HALF_UP);
+        teamQuota.setAmountUsed(amountUsed.toString());
         return teamQuota;
     }
 }
