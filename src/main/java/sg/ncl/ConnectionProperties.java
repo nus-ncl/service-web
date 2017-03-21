@@ -128,6 +128,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "?visibility=" + visibility;
     }
 
+    public String getQuotaByTeamId(String teamId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/quota" ;
+    }
+
     //-------------------------------------
     // USERS
     //-------------------------------------

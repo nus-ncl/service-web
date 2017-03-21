@@ -1449,6 +1449,7 @@ public class MainController {
 
     @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
     public String teamProfile(@PathVariable String teamId, Model model, HttpSession session) {
+
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody().toString();
@@ -1475,6 +1476,14 @@ public class MainController {
 
         model.addAttribute("teamExperimentList", experimentList);
         model.addAttribute("teamRealizationMap", realizationMap);
+
+        //get quota
+        response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.GET, request, String.class);
+        String responseBodyForBudget  = response.getBody().toString();
+        TeamQuota teamQuota = extractTeamQuotaInfo(responseBodyForBudget);
+
+        model.addAttribute("teamQuota", teamQuota);
+        session.setAttribute("originalBudget", teamQuota.getBudget()); // this is to check if budget changed later
 
         return "team_profile";
     }
@@ -1522,6 +1531,33 @@ public class MainController {
 
         // safer to remove
         session.removeAttribute("originalTeam");
+        return "redirect:/team_profile/" + teamId;
+    }
+
+    @RequestMapping(value = "/team_quota/{teamId}", method = RequestMethod.POST)
+    public String editTeamQuota(
+            @PathVariable String teamId,
+            @ModelAttribute("teamQuota") TeamQuota editTeamQuota,
+            final RedirectAttributes redirectAttributes,
+            HttpSession session) {
+
+        JSONObject teamQuotaJSONObject = new JSONObject();
+        teamQuotaJSONObject.put("teamId", teamId);
+        teamQuotaJSONObject.put("quota", editTeamQuota.getBudget());
+
+        HttpEntity<String> request = createHttpEntityWithBody(teamQuotaJSONObject.toString());
+        ResponseEntity response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.PUT, request, String.class);
+
+        String originalBudget = (String) session.getAttribute("originalBudget");
+
+        //check if new budget is different in order to display successful message to user
+        if (!originalBudget.equals(editTeamQuota.getBudget())) {
+            redirectAttributes.addFlashAttribute("editBudget", "success");
+        }
+
+        // safer to remove
+        session.removeAttribute("originalBudget");
+
         return "redirect:/team_profile/" + teamId;
     }
 
@@ -3774,5 +3810,31 @@ public class MainController {
             return "?";
         }
         return response.getBody().toString();
+    }
+
+    private TeamQuota extractTeamQuotaInfo (String responseBody) {
+
+        JSONObject object = new JSONObject(responseBody);
+        TeamQuota teamQuota = new TeamQuota();
+        teamQuota.setTeamId(object.getString("teamId"));
+
+        // amountUsed from SIO will never be null
+        Double amountUsed = Double.parseDouble(object.getString("amountUsed")) * 0.12 ;
+        teamQuota.setAmountUsed(Double.toString(amountUsed));
+
+        //quota passed from SIO can be null , so we have to check
+        if (object.has("quota")){
+            Object budgetObject = object.optString("quota",null);
+            if (budgetObject == null) {
+                teamQuota.setBudget("");
+                teamQuota.setResourcesLeft("Unlimited");
+            } else {
+                teamQuota.setBudget(Double.toString(object.getDouble("quota")));
+                Double budget = object.getDouble("quota");
+                Double resourcesLeft = (budget - amountUsed) / 0.12;
+                teamQuota.setResourcesLeft(Double.toString(resourcesLeft));
+            }
+        }
+        return teamQuota;
     }
 }
