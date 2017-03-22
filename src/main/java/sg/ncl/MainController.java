@@ -35,9 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -99,9 +97,13 @@ public class MainController {
     private static final String NO_PERMISSION_PAGE = "nopermission";
 
     private static final String TEAM_NAME = "teamName";
+    private static final String TEAM_ID = "teamId";
     private static final String NODE_ID = "nodeId";
     private static final String PERMISSION_DENIED = "Permission denied";
     private static final String TEAM_NOT_FOUND = "Team not found";
+
+    private static final String EDIT_BUDGET = "editBudget";
+    private static final String ORIGINAL_BUDGET = "originalBudget";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -1501,6 +1503,7 @@ public class MainController {
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
                     log.warn("Get team quota: Team {} not found", teamId);
+                    break;
                 default:
                     log.warn("Get team quota : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -1510,7 +1513,7 @@ public class MainController {
 
         TeamQuota teamQuota = extractTeamQuotaInfo(responseBody);
         model.addAttribute("teamQuota", teamQuota);
-        session.setAttribute("originalBudget", teamQuota.getBudget()); // this is to check if budget changed later
+        session.setAttribute(ORIGINAL_BUDGET, teamQuota.getBudget()); // this is to check if budget changed later
         return "team_profile";
     }
 
@@ -1568,17 +1571,17 @@ public class MainController {
             HttpSession session) throws IOException {
 
         JSONObject teamQuotaJSONObject = new JSONObject();
-        teamQuotaJSONObject.put("teamId", teamId);
+        teamQuotaJSONObject.put(TEAM_ID, teamId);
 
         //check if budget input is positive
         if (Double.parseDouble(editTeamQuota.getBudget()) < 0) {
-            redirectAttributes.addFlashAttribute("editBudget", "negativeError");
+            redirectAttributes.addFlashAttribute(EDIT_BUDGET, "negativeError");
             return "redirect:/team_profile/" + teamId + "#quota";
         }
 
         //check if budget input exceed database limit of 99999999.99
         if (Double.parseDouble(editTeamQuota.getBudget()) > 99999999.99) {
-            redirectAttributes.addFlashAttribute("editBudget", "exceedingLimit");
+            redirectAttributes.addFlashAttribute(EDIT_BUDGET, "exceedingLimit");
             return "redirect:/team_profile/" + teamId + "#quota";
         }
 
@@ -1601,6 +1604,7 @@ public class MainController {
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
                     log.warn("Get team quota: Team {} not found", teamId);
+                    break;
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
                     return "redirect:/team_profile/" + teamId + "#quota";
@@ -1613,13 +1617,13 @@ public class MainController {
 
 
         //check if new budget is different in order to display successful message to user
-        String originalBudget = (String) session.getAttribute("originalBudget");
+        String originalBudget = (String) session.getAttribute(ORIGINAL_BUDGET);
         if (!originalBudget.equals(editTeamQuota.getBudget())) {
-            redirectAttributes.addFlashAttribute("editBudget", "success");
+            redirectAttributes.addFlashAttribute(EDIT_BUDGET, "success");
         }
 
         // safer to remove
-        session.removeAttribute("originalBudget");
+        session.removeAttribute(ORIGINAL_BUDGET);
 
         return "redirect:/team_profile/" + teamId + "#quota";
     }
