@@ -719,12 +719,12 @@ public class MainController {
                     registerUserToDeter(mainObject);
                 } catch (
                         TeamNotFoundException |
-                        TeamNameAlreadyExistsException |
-                        UsernameAlreadyExistsException |
-                        EmailAlreadyExistsException |
-                        InvalidTeamNameException |
-                        InvalidPasswordException |
-                        DeterLabOperationFailedException e) {
+                                TeamNameAlreadyExistsException |
+                                UsernameAlreadyExistsException |
+                                EmailAlreadyExistsException |
+                                InvalidTeamNameException |
+                                InvalidPasswordException |
+                                DeterLabOperationFailedException e) {
                     redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                     redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                     return "redirect:/signup2";
@@ -760,13 +760,13 @@ public class MainController {
                 registerUserToDeter(mainObject);
             } catch (
                     TeamNotFoundException |
-                    AdapterConnectionException |
-                    TeamNameAlreadyExistsException |
-                    UsernameAlreadyExistsException |
-                    EmailAlreadyExistsException |
-                    InvalidTeamNameException |
-                    InvalidPasswordException |
-                    DeterLabOperationFailedException e) {
+                            AdapterConnectionException |
+                            TeamNameAlreadyExistsException |
+                            UsernameAlreadyExistsException |
+                            EmailAlreadyExistsException |
+                            InvalidTeamNameException |
+                            InvalidPasswordException |
+                            DeterLabOperationFailedException e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
                 return "redirect:/signup2";
@@ -1408,7 +1408,7 @@ public class MainController {
 //        return "redirect:/teams";
 //    }
 
-//    @RequestMapping("/withdraw/{teamId}")
+    //    @RequestMapping("/withdraw/{teamId}")
     public String withdrawnJoinRequest(@PathVariable Integer teamId, HttpSession session) {
         // get user team request
         // remove this user id from the user's request list
@@ -1454,7 +1454,7 @@ public class MainController {
     //--------------------------Team Profile Page--------------------------
 
     @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
-    public String teamProfile(@PathVariable String teamId, Model model, HttpSession session) {
+    public String teamProfile(@PathVariable String teamId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws IOException {
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, request, String.class);
@@ -1483,14 +1483,34 @@ public class MainController {
         model.addAttribute("teamExperimentList", experimentList);
         model.addAttribute("teamRealizationMap", realizationMap);
 
-        //get quota
-        response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.GET, request, String.class);
-        String responseBodyForBudget  = response.getBody().toString();
-        TeamQuota teamQuota = extractTeamQuotaInfo(responseBodyForBudget);
+        //Starting to get quota
+        try {
+            response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.GET, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for display team quota: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/team_profile/{teamId}";
+        }
 
+        responseBody = response.getBody().toString();
+
+        // handling exceptions from SIO
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            switch (exceptionState) {
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    log.warn("Get team quota: Team {} not found", teamId);
+                default:
+                    log.warn("Get team quota : sio or deterlab adapter connection error");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+        }
+
+        TeamQuota teamQuota = extractTeamQuotaInfo(responseBody);
         model.addAttribute("teamQuota", teamQuota);
         session.setAttribute("originalBudget", teamQuota.getBudget()); // this is to check if budget changed later
-
         return "team_profile";
     }
 
@@ -1545,7 +1565,7 @@ public class MainController {
             @PathVariable String teamId,
             @ModelAttribute("teamQuota") TeamQuota editTeamQuota,
             final RedirectAttributes redirectAttributes,
-            HttpSession session) {
+            HttpSession session) throws IOException {
 
         JSONObject teamQuotaJSONObject = new JSONObject();
         teamQuotaJSONObject.put("teamId", teamId);
@@ -1564,10 +1584,36 @@ public class MainController {
 
         teamQuotaJSONObject.put("quota", editTeamQuota.getBudget());
         HttpEntity<String> request = createHttpEntityWithBody(teamQuotaJSONObject.toString());
-        ResponseEntity response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.PUT, request, String.class);
-        String originalBudget = (String) session.getAttribute("originalBudget");
+        ResponseEntity response;
+        try {
+            response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.PUT, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for display team quota: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/team_profile/{teamId}";
+        }
+
+        String responseBody = response.getBody().toString();
+        // handling exceptions from SIO
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            switch (exceptionState) {
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    log.warn("Get team quota: Team {} not found", teamId);
+                case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
+                    log.warn("Get team quota: Budget is out of range");
+                    return "redirect:/team_profile/" + teamId + "#quota";
+                default:
+                    log.warn("Get team quota : sio or deterlab adapter connection error");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+        }
+
 
         //check if new budget is different in order to display successful message to user
+        String originalBudget = (String) session.getAttribute("originalBudget");
         if (!originalBudget.equals(editTeamQuota.getBudget())) {
             redirectAttributes.addFlashAttribute("editBudget", "success");
         }
@@ -1752,7 +1798,7 @@ public class MainController {
 
             } else {
                 // no errors, everything ok
-                log.info (logPrefix, "Application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
+                log.info(logPrefix, "Application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
                 return "redirect:/teams/team_application_submitted";
             }
 
@@ -1839,7 +1885,7 @@ public class MainController {
                 return "redirect:/teams/join_team";
 
             } else {
-                log.info(logPrefix, "Application for join team " + teamPageJoinForm.getTeamName()+ " submitted");
+                log.info(logPrefix, "Application for join team " + teamPageJoinForm.getTeamName() + " submitted");
                 return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
             }
 
@@ -2627,7 +2673,6 @@ public class MainController {
 //    }
 
 
-
     @RequestMapping("/admin/teams/accept/{teamId}/{teamOwnerId}")
     public String approveTeam(
             @PathVariable String teamId,
@@ -2776,10 +2821,9 @@ public class MainController {
     @RequestMapping("/admin/teams/{teamId}")
     public String setupTeamRestriction(
             @PathVariable final String teamId,
-            @RequestParam(value = "action", required=true) final String action,
+            @RequestParam(value = "action", required = true) final String action,
             final RedirectAttributes redirectAttributes,
-            HttpSession session) throws IOException
-    {
+            HttpSession session) throws IOException {
         final String logMessage = "Updating restriction settings for team {}: {}";
 
         // check if admin
@@ -2895,8 +2939,7 @@ public class MainController {
             @PathVariable final String userId,
             @RequestParam(value = "action", required = true) final String action,
             final RedirectAttributes redirectAttributes,
-            HttpSession session) throws IOException
-    {
+            HttpSession session) throws IOException {
         User2 user = invokeAndExtractUserInfo(userId);
 
         // check if admin
@@ -3006,7 +3049,6 @@ public class MainController {
             return "redirect:/admin";
         }
     }
-
 
 
 //    @RequestMapping("/admin/experiments/remove/{expId}")
@@ -3440,7 +3482,7 @@ public class MainController {
         }
 
         JSONArray approvedUsers = object.getJSONArray("approvedUsers");
-        for (int i =0; i < approvedUsers.length(); i++) {
+        for (int i = 0; i < approvedUsers.length(); i++) {
             dataset.addApprovedUser(approvedUsers.getString(0));
         }
 
@@ -3764,7 +3806,8 @@ public class MainController {
             ResponseEntity response = restTemplate.exchange(properties.getGlobalImages(), HttpMethod.GET, request, String.class);
             ObjectMapper mapper = new ObjectMapper();
             String json = new JSONObject(response.getBody().toString()).getString("images");
-            globalImagesMap = mapper.readValue(json, new TypeReference<SortedMap<String, Map<String, String>>>(){});
+            globalImagesMap = mapper.readValue(json, new TypeReference<SortedMap<String, Map<String, String>>>() {
+            });
         } catch (RestClientException e) {
             log.warn("Error connecting to service-image: {}", e);
         }
@@ -3829,20 +3872,19 @@ public class MainController {
         return response.getBody().toString();
     }
 
-    private TeamQuota extractTeamQuotaInfo (String responseBody) {
-
+    private TeamQuota extractTeamQuotaInfo(String responseBody) {
         JSONObject object = new JSONObject(responseBody);
         TeamQuota teamQuota = new TeamQuota();
         Double charges = Double.parseDouble(accountingProperties.getCharges());
 
         // amountUsed from SIO will never be null => not checking for null value
         String usage = object.getString("usage");                 // getting usage in String
-        BigDecimal amountUsed =new BigDecimal(usage);                //  using BigDecimal to handle currency
+        BigDecimal amountUsed = new BigDecimal(usage);                //  using BigDecimal to handle currency
         amountUsed = amountUsed.multiply(new BigDecimal(charges));   // usage X charges
 
         //quota passed from SIO can be null , so we have to check for null value
-        if (object.has("quota")){
-            Object budgetObject = object.optString("quota",null);
+        if (object.has("quota")) {
+            Object budgetObject = object.optString("quota", null);
             if (budgetObject == null) {
                 teamQuota.setBudget("");                  // there is placeholder here
                 teamQuota.setResourcesLeft("Unlimited"); // not placeholder so can pass string over
