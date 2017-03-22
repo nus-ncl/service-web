@@ -106,6 +106,7 @@ public class MainController {
     private static final String ORIGINAL_BUDGET = "originalBudget";
 
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
+    private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -1511,6 +1512,8 @@ public class MainController {
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
             }
+        } else {
+            log.info("Get team quota info : {}", responseBody);
         }
 
         TeamQuota teamQuota = extractTeamQuotaInfo(responseBody);
@@ -1536,7 +1539,7 @@ public class MainController {
         if (errorsFound) {
             // safer to remove
             session.removeAttribute("originalTeam");
-            return "redirect:/team_profile/" + editTeam.getId();
+            return REDIRECT_TEAM_PROFILE + editTeam.getId();
         }
 
         // can edit team description and team website for now
@@ -1562,7 +1565,7 @@ public class MainController {
 
         // safer to remove
         session.removeAttribute("originalTeam");
-        return "redirect:/team_profile/" + teamId;
+        return REDIRECT_TEAM_PROFILE + teamId;
     }
 
     @RequestMapping(value = "/team_quota/{teamId}", method = RequestMethod.POST)
@@ -1580,13 +1583,13 @@ public class MainController {
         //check if budget input is positive
         if (Double.parseDouble(editTeamQuota.getBudget()) < 0) {
             redirectAttributes.addFlashAttribute(EDIT_BUDGET, "negativeError");
-            return "redirect:/team_profile/" + teamId + QUOTA;
+            return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
         }
 
         //check if budget input exceed database limit of 99999999.99
         if (Double.parseDouble(editTeamQuota.getBudget()) > 99999999.99) {
             redirectAttributes.addFlashAttribute(EDIT_BUDGET, "exceedingLimit");
-            return "redirect:/team_profile/" + teamId + QUOTA;
+            return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
         }
 
         teamQuotaJSONObject.put("quota", editTeamQuota.getBudget());
@@ -1611,12 +1614,14 @@ public class MainController {
                     break;
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
-                    return "redirect:/team_profile/" + teamId + QUOTA;
+                    return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
                 default:
                     log.warn("Get team quota : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
             }
+        }  else {
+            log.info("Edit team quota info : {}", responseBody);
         }
 
 
@@ -1629,7 +1634,7 @@ public class MainController {
         // safer to remove
         session.removeAttribute(ORIGINAL_BUDGET);
 
-        return "redirect:/team_profile/" + teamId + QUOTA;
+        return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
     }
 
     @RequestMapping("/remove_member/{teamId}/{userId}")
