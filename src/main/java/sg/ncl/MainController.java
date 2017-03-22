@@ -1580,16 +1580,16 @@ public class MainController {
         JSONObject teamQuotaJSONObject = new JSONObject();
         teamQuotaJSONObject.put(TEAM_ID, teamId);
 
-        //check if budget input is positive
-        if (Double.parseDouble(editTeamQuota.getBudget()) < 0) {
-            redirectAttributes.addFlashAttribute(EDIT_BUDGET, "negativeError");
-            return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
-        }
 
-        //check if budget input exceed database limit of 99999999.99
-        if (Double.parseDouble(editTeamQuota.getBudget()) > 99999999.99) {
-            redirectAttributes.addFlashAttribute(EDIT_BUDGET, "exceedingLimit");
-            return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+        // check if budget is negative or exceeding limit
+        if (!editTeamQuota.getBudget().equals("")) {
+            if (Double.parseDouble(editTeamQuota.getBudget()) < 0) {
+                redirectAttributes.addFlashAttribute(EDIT_BUDGET, "negativeError");
+                return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+            } else if(Double.parseDouble(editTeamQuota.getBudget()) > 99999999.99) {
+                redirectAttributes.addFlashAttribute(EDIT_BUDGET, "exceedingLimit");
+                return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+            }
         }
 
         teamQuotaJSONObject.put("quota", editTeamQuota.getBudget());
