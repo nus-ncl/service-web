@@ -105,6 +105,8 @@ public class MainController {
     private static final String EDIT_BUDGET = "editBudget";
     private static final String ORIGINAL_BUDGET = "originalBudget";
 
+    private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
+
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
     private static final String REMOVE_MEMBER_NAME = "removeMemberName";
@@ -1491,7 +1493,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for display team quota: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/team_profile/{teamId}";
+            return REDIRECT_TEAM_PROFILE_TEAM_ID;
         }
 
         responseBody = response.getBody().toString();
@@ -1570,19 +1572,21 @@ public class MainController {
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException {
 
+        final String QUOTA = "#quota";
+
         JSONObject teamQuotaJSONObject = new JSONObject();
         teamQuotaJSONObject.put(TEAM_ID, teamId);
 
         //check if budget input is positive
         if (Double.parseDouble(editTeamQuota.getBudget()) < 0) {
             redirectAttributes.addFlashAttribute(EDIT_BUDGET, "negativeError");
-            return "redirect:/team_profile/" + teamId + "#quota";
+            return "redirect:/team_profile/" + teamId + QUOTA;
         }
 
         //check if budget input exceed database limit of 99999999.99
         if (Double.parseDouble(editTeamQuota.getBudget()) > 99999999.99) {
             redirectAttributes.addFlashAttribute(EDIT_BUDGET, "exceedingLimit");
-            return "redirect:/team_profile/" + teamId + "#quota";
+            return "redirect:/team_profile/" + teamId + QUOTA;
         }
 
         teamQuotaJSONObject.put("quota", editTeamQuota.getBudget());
@@ -1593,7 +1597,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for display team quota: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/team_profile/{teamId}";
+            return REDIRECT_TEAM_PROFILE_TEAM_ID;
         }
 
         String responseBody = response.getBody().toString();
@@ -1607,7 +1611,7 @@ public class MainController {
                     break;
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
-                    return "redirect:/team_profile/" + teamId + "#quota";
+                    return "redirect:/team_profile/" + teamId + QUOTA;
                 default:
                     log.warn("Get team quota : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -1625,7 +1629,7 @@ public class MainController {
         // safer to remove
         session.removeAttribute(ORIGINAL_BUDGET);
 
-        return "redirect:/team_profile/" + teamId + "#quota";
+        return "redirect:/team_profile/" + teamId + QUOTA;
     }
 
     @RequestMapping("/remove_member/{teamId}/{userId}")
@@ -1645,7 +1649,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for remove user: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/team_profile/{teamId}";
+            return REDIRECT_TEAM_PROFILE_TEAM_ID;
         }
 
         String responseBody = response.getBody().toString();
@@ -1689,7 +1693,7 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Member " + name + " has been removed.");
         }
 
-        return "redirect:/team_profile/{teamId}";
+        return REDIRECT_TEAM_PROFILE_TEAM_ID;
     }
 
 //    @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
@@ -2017,7 +2021,7 @@ public class MainController {
 
         JSONObject experimentObject = new JSONObject();
         experimentObject.put("userId", session.getAttribute("id").toString());
-        experimentObject.put("teamId", experimentForm.getTeamId());
+        experimentObject.put(TEAM_ID, experimentForm.getTeamId());
         experimentObject.put(TEAM_NAME, experimentForm.getTeamName());
         experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
         experimentObject.put("description", experimentForm.getDescription());
@@ -3520,7 +3524,7 @@ public class MainController {
 
         experiment2.setId(object.getLong("id"));
         experiment2.setUserId(object.getString("userId"));
-        experiment2.setTeamId(object.getString("teamId"));
+        experiment2.setTeamId(object.getString(TEAM_ID));
         experiment2.setTeamName(object.getString(TEAM_NAME));
         experiment2.setName(object.getString("name"));
         experiment2.setDescription(object.getString("description"));
@@ -3574,7 +3578,7 @@ public class MainController {
         realization.setExperimentId(object.getLong("experimentId"));
         realization.setExperimentName(object.getString("experimentName"));
         realization.setUserId(object.getString("userId"));
-        realization.setTeamId(object.getString("teamId"));
+        realization.setTeamId(object.getString(TEAM_ID));
         realization.setState(object.getString("state"));
 
         String exp_report = "";
@@ -3907,7 +3911,7 @@ public class MainController {
             }
         }
 
-        teamQuota.setTeamId(object.getString("teamId"));
+        teamQuota.setTeamId(object.getString(TEAM_ID));
         amountUsed = amountUsed.setScale(2, BigDecimal.ROUND_HALF_UP);
         teamQuota.setAmountUsed(amountUsed.toString());
         return teamQuota;
