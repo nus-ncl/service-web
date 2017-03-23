@@ -1506,7 +1506,7 @@ public class MainController {
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
                     log.warn("Get team quota: Team {} not found", teamId);
-                    break;
+                    return "redirect:/";
                 default:
                     log.warn("Get team quota : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -1609,7 +1609,7 @@ public class MainController {
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
                     log.warn("Get team quota: Team {} not found", teamId);
-                    break;
+                    return "redirect:/";
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
                     return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
