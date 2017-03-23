@@ -24,6 +24,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import sg.ncl.domain.*;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
+import sg.ncl.testbed_interface.Image;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -38,6 +40,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
@@ -264,7 +267,7 @@ public class MainController {
     public String testbedNodesStatus(Model model) throws Exception {
         Map<MachineType, List> nodesStatus = getNodesStatus();
         model.addAttribute("nodesStatus", nodesStatus);
-        return "testbednodesstatus";
+    return "testbednodesstatus";
     }
 
 
