@@ -2025,19 +2025,6 @@ public class MainController {
             return "redirect:/experiments/create";
         }
 
-        ResponseEntity response;
-        try {
-            HttpEntity<String> request = createHttpEntityHeaderOnly();
-            response = restTemplate.exchange(properties.getQuotaByTeamId(experimentForm.getTeamId()), HttpMethod.GET, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service for display team quota: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/experiments/create";
-        }
-
-        String responseBody = response.getBody().toString();
-
-
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
         JSONObject experimentObject = new JSONObject();
@@ -2054,9 +2041,9 @@ public class MainController {
         log.info("Calling service to create experiment");
         HttpEntity<String> request = createHttpEntityWithBody(experimentObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
 
-        responseBody = response.getBody().toString();
+        String responseBody = response.getBody().toString();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
@@ -2335,14 +2322,14 @@ public class MainController {
         // ensure experiment is stopped first before starting
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
-
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
             return "redirect:/experiments";
         }
 
-        String teamStatus = getTeamStatus(realization.getTeamId());
+        String teamId = realization.getTeamId();
+        String teamStatus = getTeamStatus(teamId);
 
         if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
             log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), realization.getTeamId(), teamStatus);
@@ -2356,10 +2343,31 @@ public class MainController {
             return "redirect:/experiments";
         }
 
-        log.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
+        //checking quota at WS
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
+        try {
+            response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.GET, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for display team quota: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String responseBody = response.getBody().toString();
+        TeamQuota teamQuota = extractTeamQuotaInfo(responseBody);
+        if (!teamQuota.getBudget.equals("") ) {
+            BigDecimal budget = new BigDecimal(teamQuota.getBudget());
+            BigDecimal amountUsed = new BigDecimal(teamQuota.getAmountUsed());
+            if (budget.compareTo(amountUsed) <= 0) {
+                redirectAttributes.addFlashAttribute(MESSAGE, "There is insufficient quota for you to start this experiment. Please contact your team leader for more details.”");
+                return "redirect:/experiments";
+            }
+        }
+
+        //start experiment
+        log.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
         try {
             response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
@@ -2369,7 +2377,7 @@ public class MainController {
             return "redirect:/experiments";
         }
 
-        String responseBody = response.getBody().toString();
+        responseBody = response.getBody().toString();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
