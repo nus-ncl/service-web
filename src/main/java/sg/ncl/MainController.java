@@ -2025,6 +2025,19 @@ public class MainController {
             return "redirect:/experiments/create";
         }
 
+        ResponseEntity response;
+        try {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            response = restTemplate.exchange(properties.getQuotaByTeamId(experimentForm.getTeamId()), HttpMethod.GET, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for display team quota: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments/create";
+        }
+
+        String responseBody = response.getBody().toString();
+
+
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
         JSONObject experimentObject = new JSONObject();
@@ -2041,9 +2054,9 @@ public class MainController {
         log.info("Calling service to create experiment");
         HttpEntity<String> request = createHttpEntityWithBody(experimentObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
+        response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
 
-        String responseBody = response.getBody().toString();
+        responseBody = response.getBody().toString();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
