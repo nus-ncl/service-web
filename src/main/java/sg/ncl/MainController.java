@@ -107,6 +107,7 @@ public class MainController {
 
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
+    private static final String REDIRECT_INDEX_PAGE = "redirect:/";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -321,7 +322,7 @@ public class MainController {
         } else {
             // user have not logged on before
             // redirect to home page
-            return "redirect:/";
+            return REDIRECT_INDEX_PAGE;
         }
     }
 
@@ -607,7 +608,7 @@ public class MainController {
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logout(HttpSession session) {
         removeSessionVariables(session);
-        return "redirect:/";
+        return REDIRECT_INDEX_PAGE;
     }
 
     //--------------------------Sign Up Page--------------------------
@@ -1506,7 +1507,7 @@ public class MainController {
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
                     log.warn("Get team quota: Team {} not found", teamId);
-                    return "redirect:/";
+                    return REDIRECT_INDEX_PAGE;
                 default:
                     log.warn("Get team quota : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -1609,7 +1610,7 @@ public class MainController {
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
                     log.warn("Get team quota: Team {} not found", teamId);
-                    return "redirect:/";
+                    return REDIRECT_INDEX_PAGE;
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
                     return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
