@@ -1576,10 +1576,8 @@ public class MainController {
             HttpSession session) throws IOException {
 
         final String QUOTA = "#quota";
-
         JSONObject teamQuotaJSONObject = new JSONObject();
         teamQuotaJSONObject.put(TEAM_ID, teamId);
-
 
         // check if budget is negative or exceeding limit
         if (!editTeamQuota.getBudget().equals("")) {
@@ -1614,6 +1612,10 @@ public class MainController {
                     break;
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
+                    return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                case TEAM_OWNER_EXCEPTION:
+                    log.warn("Get team quota: Budget can only be updated by team owner.");
+                    redirectAttributes.addFlashAttribute(EDIT_BUDGET, "editDeny");
                     return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
                 default:
                     log.warn("Get team quota : sio or deterlab adapter connection error");
@@ -3907,15 +3909,21 @@ public class MainController {
 
                 // calculate resoucesLeft
                 BigDecimal resourceLeftInBD = budgetInBD.subtract(amountUsed);
-                resourceLeftInBD = resourceLeftInBD.divide(new BigDecimal(charges), 2, BigDecimal.ROUND_HALF_UP);
-
-                // set budget and resourceLeft
+                resourceLeftInBD = resourceLeftInBD.divide(new BigDecimal(charges), 0, BigDecimal.ROUND_DOWN);
                 budgetInBD = budgetInBD.setScale(2, BigDecimal.ROUND_HALF_UP);
+
+                // set budget
                 teamQuota.setBudget(budgetInBD.toString());
-                teamQuota.setResourcesLeft(resourceLeftInBD.toString());
+
+                //set resroucesLeft
+                if (resourceLeftInBD.compareTo(BigDecimal.valueOf(0)) < 0)
+                    teamQuota.setResourcesLeft("0");
+                else
+                    teamQuota.setResourcesLeft(resourceLeftInBD.toString());
             }
         }
 
+        //set teamId and amountUsed
         teamQuota.setTeamId(object.getString(TEAM_ID));
         amountUsed = amountUsed.setScale(2, BigDecimal.ROUND_HALF_UP);
         teamQuota.setAmountUsed(amountUsed.toString());

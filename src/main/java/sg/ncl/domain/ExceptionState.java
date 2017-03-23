@@ -43,12 +43,13 @@ public enum ExceptionState {
     TEAM_NAME_NULL_OR_EMPTY_EXCEPTION("TeamNameNullOrEmptyException"),
     TEAM_NAME_ALREADY_EXISTS_EXCEPTION("TeamNameAlreadyExistsException"),
     TEAM_NOT_FOUND_EXCEPTION("TeamNotFoundException"),
+    TEAM_OWNER_EXCEPTION("TeamOwnerException"),
+    TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION("TeamQuotaOutOfRangeException"),
     UPLOAD_ALREADY_EXISTS_EXCEPTION("UploadAlreadyExistsException"),
     USERNAME_ALREADY_EXISTS_EXCEPTION("UsernameAlreadyExistsException"),
     USER_ALREADY_IN_TEAM_EXCEPTION("UserAlreadyInTeamException"),
     USER_ID_NULL_OR_EMPTY_EXCEPTION("UserIdNullOrEmptyException"),
-    USER_NOT_FOUND_EXCEPTION("UserNotFoundException"),
-    TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION("TeamQuotaOutOfRangeException");
+    USER_NOT_FOUND_EXCEPTION("UserNotFoundException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 

@@ -223,6 +223,7 @@
                             <td>
                                 <span class="account-change-fail" th:if="${editBudget eq 'negativeError'}"><i class="fa fa-times"></i> <span th:text="#{team.quota.budgetNegativeError}">TEXT</span></span>
                                 <span class="account-change-fail" th:if="${editBudget eq 'exceedingLimit'}"><i class="fa fa-times"></i> <span th:text="#{team.quota.budgetExceedingLimit}">TEXT</span></span>
+                                <span class="account-change-fail" th:if="${editBudget eq 'editDeny'}"><i class="fa fa-times"></i> <span th:text="#{team.quota.budgetEditDeny}">TEXT</span></span>
                                 <span class="account-change-success" th:if="${editBudget eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{team.quota.budgetSuccess}">TEXT</span></span>
                                 <div class="input-group">
                                     <div class="input-group-addon">$</div>
