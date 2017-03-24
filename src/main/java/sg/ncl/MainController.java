@@ -3819,9 +3819,9 @@ public class MainController {
                     output.put(MachineType.valueOf(currentMachineType), nodesList);
                 }
             }
-
         } catch (RestClientException e) {
             log.warn("Error connecting to service-telemetry: {}", e);
+            return new EnumMap<>(MachineType.class);
         }
 
         log.info("Finish getting all nodes: {}", output);
