@@ -3983,41 +3983,4 @@ public class MainController {
 
         return output;
     }
-
-    /**
-     * Invokes the get nodes status in the telemetry service
-     * @return a map containing a list of nodes status by their type
-     */
-    private Map<MachineType, List> getNodesStatus() throws IOException {
-        log.info("Getting all nodes' status from: {}", properties.getNodesStatus());
-
-        EnumMap<MachineType, List> output = new EnumMap<>(MachineType.class);
-
-        try {
-            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
-            ResponseEntity response = restTemplate.exchange(properties.getNodesStatus(), HttpMethod.GET, request, String.class);
-            JSONObject object = new JSONObject(response.getBody().toString());
-
-            if (object == JSONObject.NULL || object.length() == 0) {
-                return output;
-            } else {
-                // loop through the object as there may be more than one machine type
-                for (int i = 0; i < object.names().length(); i++) {
-                    // for each machine type, get all the current nodes status
-                    String currentMachineType = object.names().getString(i);
-
-                    // converts the JSON Array of the form [ { id : A, status : B, type : C } ] into a proper list of map
-                    List<Map<String, String>> nodesList = objectMapper.readValue(object.getJSONArray(MachineType.valueOf(currentMachineType).name()).toString(), new TypeReference<List<Map>>(){});
-                    output.put(MachineType.valueOf(currentMachineType), nodesList);
-                }
-            }
-        } catch (RestClientException e) {
-            log.warn("Error connecting to service-telemetry: {}", e);
-            return new EnumMap<>(MachineType.class);
-        }
-
-        log.info("Finish getting all nodes: {}", output);
-
-        return output;
-    }
 }
