@@ -25,64 +25,27 @@
             <p>Testbed Nodes Status</p>
         </div>
         <div class="col-sm-10 col-sm-offset-1">
-        <ul th:each="nodesStatus : ${nodesStatus}" class="nodes-list">
-            <div class="col-sm-10 col-sm-offset-2 nodebackground1">
-            <th:block th:each="nodes : ${nodesStatus.value}">
-                <li style="display:inline-block; margin: 10px; padding: 15px; width: 10%;">
-                    <span th:if="${nodes.status == 'up'}">
-                        <img src="images/ServerInuse.png" width="35" height="35" class="nowrap"/>
-                    </span>
-                        <span th:if="${nodes.status == 'down'}">
-                           <!--<div class="down"><i class="fa fa-desktop  fa-3x" aria-hidden="true"></i></div>-->
-                            <img src="images/ServerFree.png" width="35" height="35" class="nowrap"/>
-                        </span>
-                     <span th:if="${nodes.status == 'possibly down'}">
-                        <img src="images/ServerFree.png" width="35" height="35" class="nowrap"/>
-                        </span>
-                        <span th:if="${nodes.status == 'unpingable'}">
-                            <img src="images/ServerUn.png" width="35" height="35" class="nowrap"/>
-                        </span>
-                    <br/>
-                    <span th:text="${nodes.id}">pc00</span>
-                </li>
-                <!--<li th:text="${nodes.status}" style="display:none;margin:0px; padding: 10px"/>-->
-
-            </th:block>   <p>&nbsp;</p> <hr/>
-                <div class="col-sm-8 col-sm-offset-7 nowrap" >
-                    <img src="images/ServerInuse.png" width="19" height="19" class="nowrap"/>  <h19>In Used </h19>
-                    <img src="images/ServerFree.png" width="19" height="19" class="nowrap"/> <h19>Free </h19>
-                    <!--<img src="images/ServerPD.png" width="19" height="19" class="nowrap"/> <h19>Possibly Up</h19>-->
-                    <img src="images/ServerUn.png" width="19" height="19" class="nowrap"/><h19> Unpingable</h19>
+            <ul th:each="nodesStatus : ${nodesStatus}" class="nodes-list">
+                <div class="col-sm-10 col-sm-offset-2 nodebackground1">
+                    <th:block th:each="nodes : ${nodesStatus.value}">
+                        <li style="display:inline-block; margin: 10px; padding: 15px; width: 10%;">
+                            <img th:if="${nodes.status == 'up'}" src="images/ServerInuse.png" width="35" height="35" class="nowrap"/>
+                            <img th:if="${nodes.status == 'down' or nodes.status == 'possibly down'}" src="images/ServerFree.png" width="35" height="35" class="nowrap"/>
+                            <img th:if="${nodes.status == 'unpingable'}" src="images/ServerUn.png" width="35" height="35" class="nowrap"/>
+                            <br/>
+                            <span th:text="${nodes.id}">pc00</span>
+                        </li>
+                    </th:block>
+                    <p>&nbsp;</p>
+                    <hr/>
+                    <div class="col-sm-8 col-sm-offset-7 nowrap" >
+                        <img src="images/ServerInuse.png" width="19" height="19" class="nowrap"/>  <h19>In Used </h19>
+                        <img src="images/ServerFree.png" width="19" height="19" class="nowrap"/> <h19>Free </h19>
+                        <img src="images/ServerUn.png" width="19" height="19" class="nowrap"/><h19> Down</h19>
+                    </div>
                 </div>
-            </div>
-
-
-
-        </ul></div>
-
-        <!---->
-
-        <!--<td th:if="${nodes.status.isUp(nodesStatusStat)} == true"><span class="glyphicon glyphicon-king" data-toggle="tooltip" data-placement="bottom"></span></td>-->
-        <!--<td th:unless="${nodes.status.isUp(nodesStatusStat)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom"></span></td>-->
-
-
-        <!--<thead>-->
-        <!--<th th:text="#{nodesStatus}">Status</th>-->
-        <!--</thead>-->
-          <!-- loop through each machine type to get a list of the nodes -->
-        <!-- loop through the list -->
-        <!-- check if status is up display red color -->
-        <!-- check if down display green color -->
-        <!--<th:block th:each="realization : ${realizationMap.get(expEntry.id)}">-->
-        <!--<th:block th:each="nodesStatus : ${testbedNodesStatus.get(nodesStatus.id)}">-->
-                                    <!--<span th:if="${nodesStatus.status == 'UP'}">-->
-                                        <!--<td th:text="'RED'"></td>-->
-                                    <!--</span>-->
-                                    <!--<span th:if="${nodesStatus.status == 'DOWN'}">-->
-                                        <!--<td th:text="'BlUE'"></td>-->
-                                    <!--</span>-->
-
-     <!--   </th:block>-->
+            </ul>
+        </div>
 
         <div class="cc-wraper">
             <div class="cc-contactpop fixed">
@@ -103,24 +66,6 @@
         </div>
     </div>
 </div> <!-- container -->
-
-<!--<script>-->
-    <!--function checkNodesStatus()-->
-    <!--{-->
-        <!--var up = "#fff";-->
-        <!--var down = "#dd4b39";-->
-
-        <!--if(nodesStatus = up)-->
-        <!--{-->
-            <!--pass1.style.borderBottomColor ='#fff';-->
-        <!--}-->
-        <!--else-->
-        <!--{-->
-            <!--pass1.style.borderBottomColor = badColor;-->
-            <!--return;-->
-        <!--}-->
-    <!--}-->
-<!--</script>-->
 
 <div th:replace="fragments/footer :: footer"></div>
 <object th:include="fragments/javascript :: javascript" th:remove="tag" />
