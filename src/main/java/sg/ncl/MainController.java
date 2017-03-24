@@ -275,7 +275,7 @@ public class MainController {
     // "in_use" : node is in use
     // "reload" : node is in process of freeing
     @RequestMapping("/testbedNodesStatus")
-    public String testbedNodesStatus(Model model) throws Exception {
+    public String testbedNodesStatus(Model model) throws IOException {
         Map<MachineType, List> nodesStatus = getNodesStatus();
         model.addAttribute("nodesStatus", nodesStatus);
     return "testbednodesstatus";
