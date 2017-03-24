@@ -1614,7 +1614,7 @@ public class MainController {
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
                     return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
-                case UNAUTHORIZED_EXCEPTION:
+                case FORBIDDEN_EXCEPTION:
                     log.warn("Get team quota: Budget can only be updated by team owner.");
                     redirectAttributes.addFlashAttribute(EDIT_BUDGET, "editDeny");
                     return REDIRECT_TEAM_PROFILE + teamId + QUOTA;

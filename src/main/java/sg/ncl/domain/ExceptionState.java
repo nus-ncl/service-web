@@ -44,7 +44,6 @@ public enum ExceptionState {
     TEAM_NAME_ALREADY_EXISTS_EXCEPTION("TeamNameAlreadyExistsException"),
     TEAM_NOT_FOUND_EXCEPTION("TeamNotFoundException"),
     TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION("TeamQuotaOutOfRangeException"),
-    UNAUTHORIZED_EXCEPTION("UnauthorizedException"),
     UPLOAD_ALREADY_EXISTS_EXCEPTION("UploadAlreadyExistsException"),
     USERNAME_ALREADY_EXISTS_EXCEPTION("UsernameAlreadyExistsException"),
     USER_ALREADY_IN_TEAM_EXCEPTION("UserAlreadyInTeamException"),
