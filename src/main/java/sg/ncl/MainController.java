@@ -258,11 +258,10 @@ public class MainController {
     }
 
     // get all the nodes' status
-    // there are four types of status
-    // "up" : node in use
-    // "down" : node is free
-    // "possibly down" : node is in process of freeing
-    // "unpingagble" : node maybe dead
+    // there are three types of status
+    // "free" : node is free
+    // "in_use" : node is in use
+    // "reload" : node is in process of freeing
     @RequestMapping("/testbedNodesStatus")
     public String testbedNodesStatus(Model model) throws Exception {
         Map<MachineType, List> nodesStatus = getNodesStatus();
