@@ -1614,14 +1614,14 @@ public class MainController {
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
                     return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
-                case TEAM_OWNER_EXCEPTION:
+                case UNAUTHORIZED_EXCEPTION:
                     log.warn("Get team quota: Budget can only be updated by team owner.");
                     redirectAttributes.addFlashAttribute(EDIT_BUDGET, "editDeny");
                     return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
                 default:
                     log.warn("Get team quota : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    break;
+                    return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
             }
         }  else {
             log.info("Edit team quota info : {}", responseBody);
