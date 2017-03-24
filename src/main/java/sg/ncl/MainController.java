@@ -3953,7 +3953,7 @@ public class MainController {
     private Map<MachineType, List> getNodesStatus() throws IOException {
         log.info("Getting all nodes' status from: {}", properties.getNodesStatus());
 
-        Map<MachineType, List> output = new HashMap<>();
+        EnumMap<MachineType, List> output = new EnumMap<>(MachineType.class);
 
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
