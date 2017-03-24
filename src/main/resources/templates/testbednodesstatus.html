@@ -32,6 +32,7 @@
                         <li style="display:inline-block; margin: 10px; padding: 15px; width: 10%;">
                             <img th:if="${nodes.status == 'in_use'}" src="images/ServerInuse.png" width="35" height="35" class="nowrap"/>
                             <img th:if="${nodes.status == 'free'}" src="images/ServerFree.png" width="35" height="35" class="nowrap"/>
+                            <img th:if="${nodes.status == 'reserved'}" src="images/ServerReserved.png" width="35" height="35" class="nowrap"/>
                             <img th:if="${nodes.status == 'reload'}" src="images/ServerUn.png" width="35" height="35" class="nowrap"/>
                             <br/>
                             <span th:text="${nodes.id}">pc00</span>
@@ -39,10 +40,12 @@
                     </th:block>
                     <p>&nbsp;</p>
                     <hr/>
-                    <div class="col-sm-8 col-sm-offset-7 nowrap" >
-                        <img src="images/ServerInuse.png" width="19" height="19" class="nowrap"/>  <h19>In Used </h19>
+                    <div class="col-sm-4 col-sm-offset-8">
                         <img src="images/ServerFree.png" width="19" height="19" class="nowrap"/> <h19>Free </h19>
-                        <img src="images/ServerUn.png" width="19" height="19" class="nowrap"/><h19> Reload</h19>
+                        <img src="images/ServerInuse.png" width="19" height="19" class="nowrap"/>  <h19>In Use </h19>
+                        <br/>
+                        <img src="images/ServerUn.png" width="19" height="19" class="nowrap"/><h19> Reloading</h19>
+                        <img src="images/ServerReserved.png" width="19" height="19" class="nowrap"/><h19> Reserved</h19>
                     </div>
                 </div>
             </ul>
