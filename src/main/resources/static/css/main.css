@@ -2397,12 +2397,8 @@ h18{
 .nodebackground1{
     border: 2px solid #ccc ;
     padding:30px;
-    margin: 20px;
+    margin: 20px 20px 60px 20px;
     alignment: center;
-
-
-    /*border-bottom: 2px solid #ccc ;*/
-
 }
 
 
