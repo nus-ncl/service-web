@@ -279,7 +279,7 @@ public class MainController {
     public String testbedNodesStatus(Model model) throws IOException {
         Map<MachineType, List> nodesStatus = getNodesStatus();
         model.addAttribute("nodesStatus", nodesStatus);
-    return "testbednodesstatus";
+    return "testbed_nodes_status";
     }
 
 
