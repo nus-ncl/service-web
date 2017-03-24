@@ -2562,6 +2562,27 @@ h17{
 
 }
 
+.active-users {
+    border-radius: 10px;
+    background: #1eafbb;
+    padding: 20px;
+    font-size: 2em;
+    color: #FFF;
+    margin-right: 10px;
+}
+
+.stats {
+    border-top: 1px solid #EEE;
+    border-right: 1px solid #EEE;
+    border-left: 1px solid #EEE;
+    border-bottom: 3px solid #CCC;
+    background: #FFF;
+    padding: 20px;
+    margin-right: 40px;
+    width: auto;
+    height: 120px;
+}
+
 
 
 .up {
