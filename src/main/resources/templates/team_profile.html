@@ -1,229 +1,298 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Team Profile</title>
-        <object th:include="fragments/header :: header" th:remove="tag" />
-    </head>
-    <body class="mybg loginbackground">
-        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <div class="container">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:display="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Team Profile</title>
+    <object th:include="fragments/header :: header" th:remove="tag"/>
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="container">
 
-            <p>&nbsp;</p>
-            <div class="row dashpanel">
-                <h2><span th:text="#{teamProfile.nav.header}">Team:</span> <span th:text="${team.name}" style="color:#00C7BA;"></span></h2>
+    <p>&nbsp;</p>
+    <div class="row dashpanel">
+        <h2><span th:text="#{teamProfile.nav.header}">Team:</span> <span th:text="${team.name}"
+                                                                         style="color:#00C7BA;"></span></h2>
 
-                <div th:if="${removeMemberUid}">
-                    <script type="text/javascript">
-                        document.addEventListener("DOMContentLoaded", function(event) {
-                            loadLeftOverExp();
-                        });
-                    </script>
+        <div th:if="${removeMemberUid}">
+            <script type="text/javascript">
+                document.addEventListener("DOMContentLoaded", function (event) {
+                    loadLeftOverExp();
+                });
+            </script>
 
-                    <!-- Modal -->
-                    <div class="modal fade exp-modal" id="leftOverExpModal" role="dialog">
-                        <div class="modal-dialog">
+            <!-- Modal -->
+            <div class="modal fade exp-modal" id="leftOverExpModal" role="dialog">
+                <div class="modal-dialog">
 
-                            <!-- Modal content-->
-                            <div class="modal-content">
-                                <div class="modal-header team-owner-info-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title" th:text="#{team.profile.removeMember}">Remove Member</h4>
-                                </div>
-                                <div class="modal-body team-owner-info-body">
-                                    <p>There are some experiments which are created by <strong><span th:text="${removeMemberName}"></span></strong> !</p>
-                                    <p>Please delete the following experiments before removing this member from the team.</p>
-                                    <th:block th:if="${not #lists.isEmpty(teamExperimentList)}">
-                                        <table class="table table-responsive">
-                                            <tr>
-                                                <th th:text="#{experiment.table.header.experiment}">Experiment</th>
-                                                <th th:text="#{experiment.table.header.description}">Description</th>
-                                            </tr>
-                                            <th:block th:each="expEntry: ${teamExperimentList}">
-                                                <tr th:if="${expEntry.userId.equals(removeMemberUid)}">
-                                                    <td th:text="${expEntry.name}"></td>
-                                                    <td th:text="${expEntry.description}"></td>
-                                                </tr>
-                                            </th:block>
-                                        </table>
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header team-owner-info-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" th:text="#{team.profile.removeMember}">Remove Member</h4>
+                        </div>
+                        <div class="modal-body team-owner-info-body">
+                            <p>There are some experiments which are created by <strong><span
+                                    th:text="${removeMemberName}"></span></strong> !</p>
+                            <p>Please delete the following experiments before removing this member from the team.</p>
+                            <th:block th:if="${not #lists.isEmpty(teamExperimentList)}">
+                                <table class="table table-responsive">
+                                    <tr>
+                                        <th th:text="#{experiment.table.header.experiment}">Experiment</th>
+                                        <th th:text="#{experiment.table.header.description}">Description</th>
+                                    </tr>
+                                    <th:block th:each="expEntry: ${teamExperimentList}">
+                                        <tr th:if="${expEntry.userId.equals(removeMemberUid)}">
+                                            <td th:text="${expEntry.name}"></td>
+                                            <td th:text="${expEntry.description}"></td>
+                                        </tr>
                                     </th:block>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-
+                                </table>
+                            </th:block>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
-                </div>
 
-                <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
-                    <li class="active"><a data-toggle="pill" href="#profile"><span th:text="#{teamProfile.nav.profile}">Profile</span></a></li>
-                    <li><a data-toggle="pill" href="#members"><span th:text="#{teamProfile.nav.members}">Members</span></a></li>
-                    <li><a data-toggle="pill" href="#experiments"><span th:text="#{teamProfile.nav.exp}">Experiments</span></a></li>
-                </ul>
+                </div>
+            </div>
+        </div>
 
-                <div th:if="${message}">
-                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
-                </div>
-                <div th:if="${messageSuccess}">
-                    <p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
-                </div>
-                <div class="tab-content col-sm-10">
-                    <div id="profile" class="tab-pane fade in active">
-                        <h3 th:text="#{teamProfile.nav.profile}">Profile</h3>
-                        <form  method="post" action="#" th:action="@{/team_profile/{teamId}(teamId=${team.id})}" th:object="${team}" role="form">
-                            <table class="table table-responsive">
-                                <tr>
-                                    <td><strong th:text="#{team.profile.id}">ID</strong></td>
-                                    <td><input type="text" class="form-control" th:field="*{id}" readonly="readonly"/></td>
-                                </tr>
-                                <tr>
-                                    <td><strong th:text="#{team.profile.status}">STATUS</strong></td>
-                                    <td><input type="text" class="form-control" th:field="*{status}" readonly="readonly"/></td>
-                                </tr>
-                                <tr>
-                                    <td><strong th:text="#{team.profile.name}">NAME</strong></td>
-                                    <td><input type="text" class="form-control" th:field="*{name}" readonly="readonly"/></td>
-                                </tr>
-                                <tr>
-                                    <td><strong th:text="#{team.profile.description}">DESCRIPTION</strong></td>
-                                    <td>
-                                        <span class="account-change-fail" th:if="${editDesc eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{team.profile.descriptionFail}">TEXT</span></span>
-                                        <span class="account-change-success" th:if="${editDesc eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{team.profile.descriptionSuccess}">TEXT</span></span>
-                                        <input type="text" class="form-control" th:field="*{description}"/>
-                                    </td>
-                                </tr>
-                                <tr th:if="${team.owner}">
-                                    <td><strong th:text="#{team.profile.owner}">TEAM OWNER</strong></td>
-                                    <td><input type="text" class="form-control" th:value="${team.owner.firstName + ' ' + team.owner.lastName}" readonly="readonly"/></td>
-                                </tr>
-                                <tr>
-                                    <td><strong th:text="#{team.profile.organizationType}">Organization Type</strong></td>
-                                    <td><input type="text" class="form-control" th:field="*{organisationType}" readonly="readonly"/></td>
-                                </tr>
-                                <tr>
-                                    <td><strong th:text="#{team.profile.visibility}">TEXT</strong></td>
-                                    <td th:text="${team.visibility}" th:field="*{visibility}">TEXT</td>
-                                </tr>
-                            </table>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-standard">Save settings</button>
-                            </div>
-                        </form>
+        <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
+            <li class="active"><a data-toggle="pill" href="#profile"><span th:text="#{teamProfile.nav.profile}">Profile</span></a></li>
+            <li><a data-toggle="pill" href="#members"><span th:text="#{teamProfile.nav.members}">Members</span></a></li>
+            <li><a data-toggle="pill" href="#experiments"><span th:text="#{teamProfile.nav.exp}">Experiments</span></a></li>
+            <li><a data-toggle="pill" href="#quota"><span th:text="#{teamProfile.nav.quota}">Quota</span></a></li>
+        </ul>
+
+        <div th:if="${message}">
+            <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail"
+                                                                         th:text="${message}"></span></p>
+        </div>
+        <div th:if="${messageSuccess}">
+            <p><span class="account-change-success"><i class="fa fa-check"></i> <span
+                    th:text="${messageSuccess}"></span></span></p>
+        </div>
+        <div class="tab-content col-sm-10">
+            <div id="profile" class="tab-pane fade in active">
+                <h3 th:text="#{teamProfile.nav.profile}">Profile</h3>
+                <form method="post" action="#" th:action="@{/team_profile/{teamId}(teamId=${team.id})}" th:object="${team}" role="form">
+                    <table class="table table-responsive">
+                        <tr>
+                            <td><strong th:text="#{team.profile.id}">ID</strong></td>
+                            <td><input type="text" class="form-control" th:field="*{id}" readonly="readonly"/></td>
+                        </tr>
+                        <tr>
+                            <td><strong th:text="#{team.profile.status}">STATUS</strong></td>
+                            <td><input type="text" class="form-control" th:field="*{status}" readonly="readonly"/></td>
+                        </tr>
+                        <tr>
+                            <td><strong th:text="#{team.profile.name}">NAME</strong></td>
+                            <td><input type="text" class="form-control" th:field="*{name}" readonly="readonly"/></td>
+                        </tr>
+                        <tr>
+                            <td><strong th:text="#{team.profile.description}">DESCRIPTION</strong></td>
+                            <td>
+                                <span class="account-change-fail" th:if="${editDesc eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{team.profile.descriptionFail}">TEXT</span></span>
+                                <span class="account-change-success" th:if="${editDesc eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{team.profile.descriptionSuccess}">TEXT</span></span>
+                                <input type="text" class="form-control" th:field="*{description}"/>
+                            </td>
+                        </tr>
+                        <tr th:if="${team.owner}">
+                            <td><strong th:text="#{team.profile.owner}">TEAM OWNER</strong></td>
+                            <td><input type="text" class="form-control"
+                                       th:value="${team.owner.firstName + ' ' + team.owner.lastName}"
+                                       readonly="readonly"/></td>
+                        </tr>
+                        <tr>
+                            <td><strong th:text="#{team.profile.organizationType}">Organization Type</strong></td>
+                            <td><input type="text" class="form-control" th:field="*{organisationType}"
+                                       readonly="readonly"/></td>
+                        </tr>
+                        <tr>
+                            <td><strong th:text="#{team.profile.visibility}">TEXT</strong></td>
+                            <td th:text="${team.visibility}" th:field="*{visibility}">TEXT</td>
+                        </tr>
+                    </table>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-standard">Save settings</button>
                     </div>
-                    <div id="members" class="tab-pane fade">
-                        <h3 th:text="#{teamProfile.nav.members}">Members</h3>
-                        <table class="table table-responsive">
-                            <thead>
-                            <tr>
-                                <th th:text="#{team.members.name}">Name</th>
-                                <th th:text="#{team.members.institution}">TEXT</th>
-                                <th th:text="#{team.members.permission}">Permission</th>
-                                <th th:text="#{team.members.actions}"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:if="${team.owner}">
-                                <td th:text="${team.owner.firstName + ' ' + team.owner.lastName}">TEXT</td>
-                                <td th:text="${team.owner.institution}">TEXT</td>
-                                <td th:text="#{team.members.memberType.owner}">MEMBER TYPE</td>
-                                <td></td>
-                            </tr>
-                            <tr th:if="${members.id != owner.getId()}" th:each="members : ${membersList}">
-                                <td th:text="${members.firstName + ' ' + members.lastName}">Name</td>
-                                <td th:text="${members.institution}">TEXT</td>
-                                <td th:text="#{team.members.memberType.member}">MEMBER TYPE</td>
-                                <td>
-                                    <th:block th:if="${owner.getId() == session.id}">
-                                        <a th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.id}, userId=${members.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove this user from this team?"><i class="fa fa-trash btn-fa-red"></i></a>
-                                    </th:block>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                    </div>
-                    <div id="experiments" class="tab-pane fade">
-                        <h3 th:text="#{teamProfile.nav.exp}">Experiments</h3>
-                        <table class="table table-responsive">
-                            <thead>
-                            <tr>
-                                <th th:text="#{experiment.table.header.experiment}">Experiment</th>
-                                <th th:text="#{experiment.table.header.description}">Description</th>
-                                <th th:text="#{experiment.table.header.status}">Status</th>
-                                <th th:text="#{experiment.table.header.actions}">Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="expEntry : ${teamExperimentList}">
-                                <td th:text="${expEntry.name}">Name</td>
-                                <td th:text="${expEntry.description}">Description</td>
-                                <th:block th:each="realization : ${teamRealizationMap.get(expEntry.id)}">
+                </form>
+            </div>
+
+            <div id="members" class="tab-pane fade">
+                <h3 th:text="#{teamProfile.nav.members}">Members</h3>
+                <table class="table table-responsive">
+                    <thead>
+                    <tr>
+                        <th th:text="#{team.members.name}">Name</th>
+                        <th th:text="#{team.members.institution}">TEXT</th>
+                        <th th:text="#{team.members.permission}">Permission</th>
+                        <th th:text="#{team.members.actions}"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${team.owner}">
+                        <td th:text="${team.owner.firstName + ' ' + team.owner.lastName}">TEXT</td>
+                        <td th:text="${team.owner.institution}">TEXT</td>
+                        <td th:text="#{team.members.memberType.owner}">MEMBER TYPE</td>
+                        <td></td>
+                    </tr>
+                    <tr th:if="${members.id != owner.getId()}" th:each="members : ${membersList}">
+                        <td th:text="${members.firstName + ' ' + members.lastName}">Name</td>
+                        <td th:text="${members.institution}">TEXT</td>
+                        <td th:text="#{team.members.memberType.member}">MEMBER TYPE</td>
+                        <td>
+                            <th:block th:if="${owner.getId() == session.id}">
+                                <a th:href="@{/remove_member/{teamId}/{userId}(teamId=${team.id}, userId=${members.id})}"
+                                   class="btn btn-standard" data-toggle="tooltip" data-placement="bottom"
+                                   title="Are you sure you want to remove this user from this team?"><i
+                                        class="fa fa-trash btn-fa-red"></i></a>
+                            </th:block>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            </div>
+
+            <div id="experiments" class="tab-pane fade">
+                <h3 th:text="#{teamProfile.nav.exp}">Experiments</h3>
+                <table class="table table-responsive">
+                    <thead>
+                    <tr>
+                        <th th:text="#{experiment.table.header.experiment}">Experiment</th>
+                        <th th:text="#{experiment.table.header.description}">Description</th>
+                        <th th:text="#{experiment.table.header.status}">Status</th>
+                        <th th:text="#{experiment.table.header.actions}">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="expEntry : ${teamExperimentList}">
+                        <td th:text="${expEntry.name}">Name</td>
+                        <td th:text="${expEntry.description}">Description</td>
+                        <th:block th:each="realization : ${teamRealizationMap.get(expEntry.id)}">
                                     <span th:if="${realization.state == 'STARTING'}">
                                         <td th:text="'Starting'"></td>
                                     </span>
-                                    <span th:if="${realization.state == 'NOT_RUNNING'}">
+                            <span th:if="${realization.state == 'NOT_RUNNING'}">
                                         <td th:text="'Not Running'"></td>
                                     </span>
-                                    <span th:if="${realization.state == 'RUNNING'}">
+                            <span th:if="${realization.state == 'RUNNING'}">
                                         <td th:text="'Running'"></td>
                                     </span>
-                                    <span th:if="${realization.state == 'STOPPING'}">
+                            <span th:if="${realization.state == 'STOPPING'}">
                                         <td th:text="'Stopping'"></td>
                                     </span>
-                                    <span th:if="${realization.state == 'WARNING'}">
+                            <span th:if="${realization.state == 'WARNING'}">
                                         <td th:text="'Warning'"></td>
                                     </span>
-                                    <span th:if="${realization.state == 'ERROR'}">
+                            <span th:if="${realization.state == 'ERROR'}">
                                         <td th:text="'Error'"></td>
                                     </span>
-                                    <td></td>
-                                </th:block>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                    </div>
-                </div>
-            </div> <!-- row -->
-            <div class="cc-wraper">
-                <div class="cc-contactpop fixed">
-                    <h1>Do you need Help? <span>Get in touch.</span></h1>
-                    <div class="renseignement">
-                        <i class="fa fa-times"></i>
-                        <p>We will get back to you as soon as possible. </p>
-                    </div>
-                    <form>
-                        <ul>
-                            <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
-                            <li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
-                            <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
-                        </ul>
-                        <p>&nbsp;</p>
-                    </form>
-                </div>
+                            <td></td>
+                        </th:block>
+                    </tr>
+                    </tbody>
+                </table>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
             </div>
-        </div> <!-- container -->
-        <div th:replace="fragments/footer:: footer"></div>
-        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
-        <script type="text/javascript">
-            function loadLeftOverExp() {
-                $('#leftOverExpModal').modal('toggle');
-            }
-        </script>
-    </body>
+
+            <div id="quota" class="tab-pane fade">
+                <h3 th:text="#{teamProfile.nav.quota}">Quota</h3>
+                <form method="post" action="#" th:action="@{/team_quota/{teamId}(teamId=${team.id})}"
+                      th:object="${teamQuota}" role="form">
+                    <table class="table table-responsive">
+                        <tr>
+                            <td><Strong th:text="#{team.quota.budget}">Budget</Strong></td>
+                            <td>
+                                <span class="account-change-fail" th:if="${editBudget eq 'negativeError'}"><i class="fa fa-times"></i> <span th:text="#{team.quota.budgetNegativeError}">TEXT</span></span>
+                                <span class="account-change-fail" th:if="${editBudget eq 'exceedingLimit'}"><i class="fa fa-times"></i> <span th:text="#{team.quota.budgetExceedingLimit}">TEXT</span></span>
+                                <span class="account-change-fail" th:if="${editBudget eq 'editDeny'}"><i class="fa fa-times"></i> <span th:text="#{team.quota.budgetEditDeny}">TEXT</span></span>
+                                <span class="account-change-success" th:if="${editBudget eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{team.quota.budgetSuccess}">TEXT</span></span>
+                                <div class="input-group">
+                                    <div class="input-group-addon">$</div>
+                                    <input type="text" class="form-control" placeholder="Unlimited" th:field="*{budget}" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><Strong th:text="#{team.quota.amountUsed}">Total Amount Used</Strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-addon">$</div>
+                                    <input type="text" class="form-control" th:field="*{amountUsed}" readonly="readonly"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><Strong th:text="#{team.quota.resourcesLeft}">Resources Left</Strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" th:field="*{resourcesLeft}" readonly="readonly"/>
+                                    <div class="input-group-addon">node X hours * </div>
+                                </div>
+                                <div >
+                                  *Currently usage is charged at $<span th:text="${@environment.getProperty('ncl.web.service.accounting.charges')}">CHARGES</span> per node per hour.
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-standard">Save settings</button>
+                    </div>
+                </form>
+            </div>
+        </div> <!-- tab -->
+
+        </div> <!-- row -->
+        <div class="cc-wraper">
+            <div class="cc-contactpop fixed">
+                <h1>Do you need Help? <span>Get in touch.</span></h1>
+                <div class="renseignement">
+                    <i class="fa fa-times"></i>
+                    <p>We will get back to you as soon as possible. </p>
+                </div>
+                <form>
+                    <ul>
+                        <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+                        <li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}"
+                                                                  th:text="#{support.email}"></a></li>
+                        <li><i class=""></i> <span> Address: </span><a
+                                href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en">13
+                            COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                    </ul>
+                    <p>&nbsp;</p>
+                </form>
+            </div>
+        </div>
+    </div> <!-- container -->
+    <div th:replace="fragments/footer:: footer"></div>
+    <object th:include="fragments/javascript :: javascript" th:remove="tag"/>
+    <script type="text/javascript">
+        function loadLeftOverExp() {
+            $('#leftOverExpModal').modal('toggle');
+        }
+        $(document).ready(function() {
+            var href = window.location.href;
+            var res = href.split("#");
+            $('.nav-pills a[href="#' + res[res.length - 1] + '"]').tab('show');
+        });
+    </script>
+</body>
 </html>
