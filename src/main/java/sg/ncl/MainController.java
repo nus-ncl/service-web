@@ -273,7 +273,8 @@ public class MainController {
     // there are three types of status
     // "free" : node is free
     // "in_use" : node is in use
-    // "reload" : node is in process of freeing
+    // "reload" : node is in process of freeing or unknown status
+    // "reserved" : node is pre-reserved for a project
     @RequestMapping("/testbedNodesStatus")
     public String testbedNodesStatus(Model model) throws IOException {
         Map<MachineType, List> nodesStatus = getNodesStatus();
