@@ -2343,9 +2343,10 @@ public class MainController {
             return "redirect:/experiments";
         }
 
-        //checking quota at WS
+        //checking quota
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response;
+
         try {
             response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.GET, request, String.class);
         } catch (RestClientException e) {
@@ -2355,15 +2356,30 @@ public class MainController {
         }
 
         String responseBody = response.getBody().toString();
-        TeamQuota teamQuota = extractTeamQuotaInfo(responseBody);
-        if (!teamQuota.getBudget.equals("") ) {
-            BigDecimal budget = new BigDecimal(teamQuota.getBudget());
-            BigDecimal amountUsed = new BigDecimal(teamQuota.getAmountUsed());
-            if (budget.compareTo(amountUsed) <= 0) {
-                redirectAttributes.addFlashAttribute(MESSAGE, "There is insufficient quota for you to start this experiment. Please contact your team leader for more details.”");
-                return "redirect:/experiments";
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        log.warn("Get team quota: Team {} not found", teamId);
+                        return REDIRECT_INDEX_PAGE;
+                    case INSUFFICIENT_QUOTA_EXCEPTION:
+                        redirectAttributes.addFlashAttribute(MESSAGE, "There is insufficient quota for you to start this experiment. Please contact your team leader for more details.”");
+                        return "redirect:/experiments";
+                    default:
+                        log.warn("Get team quota : sio or deterlab adapter connection error");
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                        return "redirect:/experiments";
+                }
+            } else {
+                log.info("Getting team quota to start experiment success: team name is {}, team quota info is {}", teamName, responseBody);
             }
+        } catch (IOException e) {
+            log.warn("start experiment error: {]", e.getMessage());
+            throw new WebServiceRuntimeException(e.getMessage());
         }
+
 
         //start experiment
         log.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
@@ -2383,6 +2399,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
 
                 switch (exceptionState) {
                     case EXPERIMENT_START_EXCEPTION:

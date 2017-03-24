@@ -27,6 +27,7 @@ public enum ExceptionState {
     EXPERIMENT_DELETE_EXCEPTION("ExperimentDeleteException"),
     EXPERIMENT_START_EXCEPTION("ExperimentStartException"),
     FORBIDDEN_EXCEPTION("ForbiddenException"),
+    INSUFFICIENT_QUOTA_EXCEPTION("InsufficientQuotaException"),
     INVALID_CREDENTIALS_EXCEPTION("InvalidCredentialsException"),
     INVALID_PASSWORD_EXCEPTION("InvalidPasswordException"),
     INVALID_STATUS_TRANSITION_EXCEPTION("InvalidStatusTransitionException"),
