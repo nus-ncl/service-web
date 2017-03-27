@@ -301,7 +301,7 @@ public class MainController {
 
         model.addAttribute("nodesStatus", nodesStatus);
         model.addAttribute("nodesStatusCount", nodesStatusCount);
-    return "testbed_nodes_status";
+        return "testbed_nodes_status";
     }
 
 
