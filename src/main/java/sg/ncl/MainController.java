@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -277,8 +276,30 @@ public class MainController {
     // "reserved" : node is pre-reserved for a project
     @RequestMapping("/testbedNodesStatus")
     public String testbedNodesStatus(Model model) throws IOException {
-        Map<MachineType, List> nodesStatus = getNodesStatus();
+
+        Map<MachineType, List<Map<String, String>>> nodesStatus = getNodesStatus();
+        Map<MachineType, Map<String, Long>> nodesStatusCount = new HashMap<>(); // count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+
+        // loop through each of the machine type
+        // tabulate the different nodes type
+        nodesStatus.entrySet().forEach(machineTypeListEntry -> {
+            Map<String, Long> nodesCountMap = new HashMap<>();
+
+            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> stringStringMap.get("status").equalsIgnoreCase("free")).count();
+            long in_use = machineTypeListEntry.getValue().stream().filter(stringStringMap -> stringStringMap.get("status").equalsIgnoreCase("in_use")).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> stringStringMap.get("status").equalsIgnoreCase("reserved")).count();
+            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> stringStringMap.get("status").equalsIgnoreCase("reload")).count();
+
+            nodesCountMap.put(NodeType.FREE.name(), free);
+            nodesCountMap.put(NodeType.IN_USE.name(), in_use);
+            nodesCountMap.put(NodeType.RESERVED.name(), reserved);
+            nodesCountMap.put(NodeType.RELOADING.name(), reload);
+
+            nodesStatusCount.put(machineTypeListEntry.getKey(), nodesCountMap);
+        });
+
         model.addAttribute("nodesStatus", nodesStatus);
+        model.addAttribute("nodesStatusCount", nodesStatusCount);
     return "testbed_nodes_status";
     }
 
@@ -3951,10 +3972,10 @@ public class MainController {
      * Invokes the get nodes status in the telemetry service
      * @return a map containing a list of nodes status by their type
      */
-    private Map<MachineType, List> getNodesStatus() throws IOException {
+    private Map<MachineType, List<Map<String, String>>> getNodesStatus() throws IOException {
         log.info("Getting all nodes' status from: {}", properties.getNodesStatus());
 
-        EnumMap<MachineType, List> output = new EnumMap<>(MachineType.class);
+        EnumMap<MachineType, List<Map<String, String>>> output = new EnumMap<>(MachineType.class);
 
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
