@@ -2343,47 +2343,11 @@ public class MainController {
             return "redirect:/experiments";
         }
 
-        //checking quota
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response;
-
-        try {
-            response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.GET, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service for display team quota: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/experiments";
-        }
-
-        String responseBody = response.getBody().toString();
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-                switch (exceptionState) {
-                    case TEAM_NOT_FOUND_EXCEPTION:
-                        log.warn("Get team quota: Team {} not found", teamId);
-                        return REDIRECT_INDEX_PAGE;
-                    case INSUFFICIENT_QUOTA_EXCEPTION:
-                        redirectAttributes.addFlashAttribute(MESSAGE, "There is insufficient quota for you to start this experiment. Please contact your team leader for more details.”");
-                        return "redirect:/experiments";
-                    default:
-                        log.warn("Get team quota : sio or deterlab adapter connection error");
-                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                        return "redirect:/experiments";
-                }
-            } else {
-                log.info("Getting team quota to start experiment success: team name is {}, team quota info is {}", teamName, responseBody);
-            }
-        } catch (IOException e) {
-            log.warn("start experiment error: {]", e.getMessage());
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
-
-
         //start experiment
         log.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response;
 
         try {
             response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
@@ -2393,19 +2357,25 @@ public class MainController {
             return "redirect:/experiments";
         }
 
-        responseBody = response.getBody().toString();
+        String responseBody = response.getBody().toString();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-
                 switch (exceptionState) {
                     case EXPERIMENT_START_EXCEPTION:
                     case FORBIDDEN_EXCEPTION:
                         log.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        return "redirect:/experiments";
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        log.warn("Check team quota to start experiment: Team {} not found", teamName);
+                        return REDIRECT_INDEX_PAGE;
+                    case INSUFFICIENT_QUOTA_EXCEPTION:
+                        log.warn("Check team quota to start experiment: Team {} do not have sufficient quota", teamName);
+                        redirectAttributes.addFlashAttribute(MESSAGE, "There is insufficient quota for you to start this experiment. Please contact your team leader for more details.");
                         return "redirect:/experiments";
                     case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
                         // do nothing
