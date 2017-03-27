@@ -278,20 +278,21 @@ public class MainController {
     public String testbedNodesStatus(Model model) throws IOException {
 
         Map<MachineType, List<Map<String, String>>> nodesStatus = getNodesStatus();
-        Map<MachineType, Map<String, Long>> nodesStatusCount = new HashMap<>(); // count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        EnumMap<MachineType, Map<String, Long>> nodesStatusCount = new EnumMap<>(MachineType.class);
 
         // loop through each of the machine type
         // tabulate the different nodes type
+        // count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
         nodesStatus.entrySet().forEach(machineTypeListEntry -> {
             Map<String, Long> nodesCountMap = new HashMap<>();
 
-            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> stringStringMap.get("status").equalsIgnoreCase("free")).count();
-            long in_use = machineTypeListEntry.getValue().stream().filter(stringStringMap -> stringStringMap.get("status").equalsIgnoreCase("in_use")).count();
-            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> stringStringMap.get("status").equalsIgnoreCase("reserved")).count();
-            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> stringStringMap.get("status").equalsIgnoreCase("reload")).count();
+            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get("status"))).count();
 
             nodesCountMap.put(NodeType.FREE.name(), free);
-            nodesCountMap.put(NodeType.IN_USE.name(), in_use);
+            nodesCountMap.put(NodeType.IN_USE.name(), inUse);
             nodesCountMap.put(NodeType.RESERVED.name(), reserved);
             nodesCountMap.put(NodeType.RELOADING.name(), reload);
 
