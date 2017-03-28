@@ -78,6 +78,7 @@ public class MainController {
     private static final String ERROR_PREFIX = "Error: ";
 
     // error messages
+    private static final String ERROR_CONNECTING_TO_SERVICE_TELEMETRY = "Error connecting to service-telemetry: {}";
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
     private static final String CONNECTION_ERROR = "Connection Error";
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
@@ -99,6 +100,8 @@ public class MainController {
     private static final String FORGET_PSWD_PAGE = "password_reset_email";
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
     private static final String NO_PERMISSION_PAGE = "nopermission";
+
+    private static final String EXPERIMENTS = "experiments";
 
     private static final String TEAM_NAME = "teamName";
     private static final String TEAM_ID = "teamId";
@@ -2015,7 +2018,7 @@ public class MainController {
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
-        return "experiments";
+        return EXPERIMENTS;
     }
 
     @RequestMapping(value = "/experiments/create", method = RequestMethod.GET)
@@ -2427,7 +2430,7 @@ public class MainController {
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
 //                model.addAttribute(EXPERIMENT_MESSAGE, "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
-                return "experiments";
+                return EXPERIMENTS;
             } else {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
@@ -3885,7 +3888,7 @@ public class MainController {
             JSONObject object = new JSONObject(response.getBody().toString());
             nodesCount = object.getString(nodeType.name());
         } catch (RestClientException e) {
-            log.warn("Error connecting to service-telemetry: {}", e);
+            log.warn(ERROR_CONNECTING_TO_SERVICE_TELEMETRY, e);
             nodesCount = "0";
         }
         return Integer.parseInt(nodesCount);
@@ -4005,7 +4008,7 @@ public class MainController {
                 }
             }
         } catch (RestClientException e) {
-            log.warn("Error connecting to service-telemetry: {}", e);
+            log.warn(ERROR_CONNECTING_TO_SERVICE_TELEMETRY, e);
             return new EnumMap<>(MachineType.class);
         }
 
@@ -4026,7 +4029,7 @@ public class MainController {
             statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, object.getString("experiments"));
 
         } catch (RestClientException e) {
-            log.warn("Error connecting to service-telemetry: {}", e);
+            log.warn(ERROR_CONNECTING_TO_SERVICE_TELEMETRY, e);
             statsMap.put(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, "0");
             statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, "0");
         }
