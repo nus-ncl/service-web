@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>National Cybersecurity Laboratories - Team Application</title>
+    <title>National Cybersecurity Laboratories - Testbed Information</title>
     <object th:include="fragments/header :: header" th:remove="tag" />
 </head>
 <body class="mybg loginbackground">
@@ -24,27 +24,27 @@
         <p class="heading h15 text-center">Testbed Info</p>
         <p>&nbsp;</p>
         <div class="col-sm-12">
-            <div class="col-sm-4 stats">
-                <i class="fa fa-group active-users pull-left" style="background: #73AD21;"></i>
-                <span class="pull-right">
-                    <p style="color:#999;">Active Users</p>
-                    <span th:text="${loggedInUsersCount}" style="font-weight:bold; font-size:3em;">0</span>
+            <div class="col-sm-4 stats" style="border-color: #fa9b2b;">
+                <i class="fa fa-group active-users pull-left" style="background: #fa9b2b;"></i>
+                <span class="pull-right stats-info">
+                    <span th:text="${loggedInUsersCount}" class="stats-value">0</span>
+                    <p class="stats-category">Active Users</p>
                 </span>
             </div>
 
-            <div class="col-sm-4 stats">
+            <div class="col-sm-4 stats" style="border-color: #00A4E1;">
                 <i class="fa fa-cloud active-users pull-left" style="background: #00A4E1;"></i>
-                <span class="pull-right">
-                    <p style="color:#999;">Running Experiments</p>
-                    <span th:text="${runningExperimentsCount}" style="font-weight:bold; font-size:3em;">0</span>
+                <span class="pull-right stats-info">
+                    <span th:text="${runningExperimentsCount}" class="stats-value">0</span>
+                    <p class="stats-category">Running Experiments</p>
                 </span>
             </div>
 
-            <div class="col-sm-4 stats">
-                <i class="fa fa-tv active-users pull-left"></i>
-                <span class="pull-right">
-                    <p style="color:#999;">Total Nodes <a href="#" data-toggle="tooltip" title="Reserved for : 60% nodes for research, 40% nodes for education" data-placement="top"><img src="images/information.png" width="20" height="20"/></a></p>
-                    <span th:text="${totalNodes}" style="font-weight:bold; font-size:3em;">0</span>
+            <div class="col-sm-4 stats" style="border-color: #1EAFBB;">
+                <i class="fa fa-tv active-users pull-left" style="background: #1EAFBB;"></i>
+                <span class="pull-right stats-info">
+                    <span th:text="${totalNodes}" class="stats-value">0</span>
+                    <p class="stats-category">Total Nodes <a href="#" data-toggle="tooltip" title="Reserved for : 60% nodes for research, 40% nodes for education" data-placement="bottom"><img src="images/information.png" width="20" height="20"/></a></p>
                 </span>
             </div>
         </div>
