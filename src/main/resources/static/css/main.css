@@ -1601,6 +1601,9 @@ table {
  }
 
 
+
+
+
 .dashpanel2{
     border-bottom: 1px solid #CCC;
     padding: 8px;
@@ -2488,7 +2491,6 @@ h33{
 
 h34{
     color :#c9302c;
-    font-weight:24px;
     font-size:15px;
 
 }
@@ -2547,6 +2549,55 @@ h37{
 .promo-video-container {
     display: inline-block;
 
+}
+
+h17{
+    font-size: 60px;
+    margin: 2px;
+    color: #737373;
+    padding-right: 20px;
+
+    border-right:1px solid #8c8c8c;
+
+}
+
+/* testbed info */
+.active-users {
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 2em;
+    color: #FFF;
+    margin-right: 10px;
+}
+
+.stats {
+    border-top: 1px solid #EEE;
+    border-right: 1px solid #EEE;
+    border-left: 1px solid #EEE;
+    border-bottom: 3px solid #CCC;
+    background: #FFF;
+    padding: 20px;
+    margin-right: 40px;
+    width: auto;
+    height: 120px;
+}
+
+.stats-category {
+    color:#999;
+    font-size: 12px;
+    font-weight:bold;
+    text-transform: uppercase;
+}
+
+.stats-info {
+    margin-left: 20px;
+    margin-top: 10px;
+    text-align: right;
+}
+
+.stats-value {
+    font-size:3em;
+    font-weight:bold;
 }
 
 

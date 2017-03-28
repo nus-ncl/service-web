@@ -240,6 +240,11 @@ public class ConnectionPropertiesTest {
     }
 
     @Test
+    public void testGetTestbedStats() throws Exception {
+        assertThat(properties.getTestbedStats()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint() + "/testbed/stats");
+    }
+
+    @Test
     public void testGetTotalNodes() throws Exception {
         assertThat(properties.getNodes(NodeType.TOTAL)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTelemetryEndpoint() + "/nodes/counts?type=" + NodeType.TOTAL);
     }

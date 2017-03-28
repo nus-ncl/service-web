@@ -78,6 +78,7 @@ public class MainController {
     private static final String ERROR_PREFIX = "Error: ";
 
     // error messages
+    private static final String ERROR_CONNECTING_TO_SERVICE_TELEMETRY = "Error connecting to service-telemetry: {}";
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
     private static final String CONNECTION_ERROR = "Connection Error";
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
@@ -88,6 +89,8 @@ public class MainController {
     private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
     private static final String USER_DASHBOARD_TOTAL_NODES = "totalNodes";
     private static final String USER_DASHBOARD_GLOBAL_IMAGES = "globalImagesMap";
+    private static final String USER_DASHBOARD_LOGGED_IN_USERS_COUNT = "loggedInUsersCount";
+    private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT = "runningExperimentsCount";
 
     private static final String DETER_UID = "deterUid";
 
@@ -97,6 +100,8 @@ public class MainController {
     private static final String FORGET_PSWD_PAGE = "password_reset_email";
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
     private static final String NO_PERMISSION_PAGE = "nopermission";
+
+    private static final String EXPERIMENTS = "experiments";
 
     private static final String TEAM_NAME = "teamName";
     private static final String TEAM_ID = "teamId";
@@ -263,9 +268,15 @@ public class MainController {
 
     @RequestMapping("/testbedInformation")
     public String testbedInformation(Model model) throws IOException {
+
         model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
         model.addAttribute(USER_DASHBOARD_TOTAL_NODES, getNodes(NodeType.TOTAL));
-        return "testbedInformation";
+
+        Map<String, String> testbedStatsMap = getTestbedStats();
+
+        model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
+        model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
+        return "testbed_information";
     }
 
     // get all the nodes' status
@@ -2007,7 +2018,7 @@ public class MainController {
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
-        return "experiments";
+        return EXPERIMENTS;
     }
 
     @RequestMapping(value = "/experiments/create", method = RequestMethod.GET)
@@ -2427,7 +2438,7 @@ public class MainController {
                 // possible for it to be error but experiment has started up finish
                 // if user clicks on start but reloads the page
 //                model.addAttribute(EXPERIMENT_MESSAGE, "Team: " + teamName + " has started Exp: " + realization.getExperimentName());
-                return "experiments";
+                return EXPERIMENTS;
             } else {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
@@ -3885,7 +3896,7 @@ public class MainController {
             JSONObject object = new JSONObject(response.getBody().toString());
             nodesCount = object.getString(nodeType.name());
         } catch (RestClientException e) {
-            log.warn("Error connecting to service-telemetry: {}", e);
+            log.warn(ERROR_CONNECTING_TO_SERVICE_TELEMETRY, e);
             nodesCount = "0";
         }
         return Integer.parseInt(nodesCount);
@@ -4005,12 +4016,31 @@ public class MainController {
                 }
             }
         } catch (RestClientException e) {
-            log.warn("Error connecting to service-telemetry: {}", e);
+            log.warn(ERROR_CONNECTING_TO_SERVICE_TELEMETRY, e);
             return new EnumMap<>(MachineType.class);
         }
 
         log.info("Finish getting all nodes: {}", output);
 
         return output;
+    }
+
+    private Map<String,String> getTestbedStats() {
+        Map<String, String> statsMap = new HashMap<>();
+
+        log.info("Retrieving number of logged in users and running experiments from: {}", properties.getTestbedStats());
+        try {
+            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+            ResponseEntity response = restTemplate.exchange(properties.getTestbedStats(), HttpMethod.GET, request, String.class);
+            JSONObject object = new JSONObject(response.getBody().toString());
+            statsMap.put(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, object.getString("users"));
+            statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, object.getString("experiments"));
+
+        } catch (RestClientException e) {
+            log.warn(ERROR_CONNECTING_TO_SERVICE_TELEMETRY, e);
+            statsMap.put(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, "0");
+            statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, "0");
+        }
+        return statsMap;
     }
 }

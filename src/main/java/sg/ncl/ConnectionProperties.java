@@ -243,7 +243,12 @@ public class ConnectionProperties {
     public String getNodesStatus() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/nodes/status";
     }
-    
+
+    // retrieve the number of logged in users and running experiments
+    public String getTestbedStats() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/testbed/stats";
+    }
+
     //-------------------------------------
     // IMAGES
     //-------------------------------------
