@@ -1227,7 +1227,7 @@ public class MainController {
                 switch (exceptionState) {
                     case EMAIL_NOT_VERIFIED_EXCEPTION:
                         log.warn("Approve join request: User {} email not verified", userId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, "User has not been verified");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "User email has not been verified");
                         break;
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Approve join request: User {}, Team {} fail", userId, teamId);
