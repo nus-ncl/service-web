@@ -2360,17 +2360,17 @@ public class MainController {
         // ensure experiment is stopped first before starting
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
-
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
             return "redirect:/experiments";
         }
 
-        String teamStatus = getTeamStatus(realization.getTeamId());
+        String teamId = realization.getTeamId();
+        String teamStatus = getTeamStatus(teamId);
 
         if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
-            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), realization.getTeamId(), teamStatus);
+            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, teamStatus);
             redirectAttributes.addFlashAttribute(MESSAGE, teamName + " is in " + teamStatus + " status and does not have permission to start experiment. Please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
@@ -2381,6 +2381,7 @@ public class MainController {
             return "redirect:/experiments";
         }
 
+        //start experiment
         log.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -2406,6 +2407,13 @@ public class MainController {
                     case FORBIDDEN_EXCEPTION:
                         log.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        return "redirect:/experiments";
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        log.warn("Check team quota to start experiment: Team {} not found", teamName);
+                        return REDIRECT_INDEX_PAGE;
+                    case INSUFFICIENT_QUOTA_EXCEPTION:
+                        log.warn("Check team quota to start experiment: Team {} do not have sufficient quota", teamName);
+                        redirectAttributes.addFlashAttribute(MESSAGE, "There is insufficient quota for you to start this experiment. Please contact your team leader for more details.");
                         return "redirect:/experiments";
                     case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
                         // do nothing
