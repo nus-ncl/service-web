@@ -137,7 +137,7 @@
                                             <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
                                         </span>
                                         <span th:if="${realization.state == 'NOT_RUNNING'}">
-                                            <a href="#startExperiment" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><button type="button" class="btn btn-standard click-once-button"><i class="fa fa-play btn-fa-green"></i></button></a>
+                                            <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><button type="button" class="btn btn-standard click-once-button"><i class="fa fa-play btn-fa-green"></i></button></a>
                                             <a href="#" th:href="@{/remove_experiment/{teamName}/{teamId}/{expId}(teamName=${expEntry.teamName}, teamId=${expEntry.teamId}, expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><button type="button" class="btn btn-standard click-once-button"><i class="fa fa-trash btn-fa-red"></i></button></a>
                                         </span>
                                         <span th:if="${realization.state == 'RUNNING'}">
@@ -155,7 +155,6 @@
                         <a href="#" th:href="@{/experiments/create}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Create Experiment</a>
                     </div>
                 </div> <!-- panel primary -->
-                <a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}"><navsmall>Please click here for node status</navsmall></a>
             </div> <!-- row -->
             <tr>
                 <td height="1000"></td>
@@ -178,30 +177,6 @@
                 </div>
             </div>
         </div> <!-- container -->
-
-        <!-- start modal -->
-        <div class="modal fade" id="startExperiment" rold="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content -->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Confirmation</h4>
-                    </div>
-
-                    <div class="modal-body">
-                        <p>Are you sure you want to start experiment?</p>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="startButton">Delete</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
 
         <!-- topo thumbnail modal -->
         <div class="modal fade exp-modal" id="topoModal" tabindex="-1" role="dialog" aria-labelledby="topoModalLabel">
