@@ -2615,6 +2615,10 @@ public class MainController {
                             teamOwnerId);
                     redirectAttributes.addFlashAttribute(MESSAGE, "UserId cannot be null or empty");
                     break;
+                case EMAIL_NOT_VERIFIED_EXCEPTION:
+                    log.warn("Approve team: User {} email not verified", teamOwnerId);
+                    redirectAttributes.addFlashAttribute(MESSAGE, "User has not been verified");
+                    break;
                 case INVALID_TEAM_STATUS_EXCEPTION:
                     log.warn("Approve team: TeamStatus is invalid");
                     redirectAttributes.addFlashAttribute(MESSAGE, "Team status is invalid");
