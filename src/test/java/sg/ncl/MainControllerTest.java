@@ -1033,7 +1033,7 @@ public class MainControllerTest {
 
         mockMvc.perform(get("/testbedInformation"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("testbedInformation"))
+                .andExpect(view().name("testbed_information"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/plan")))
@@ -1082,7 +1082,7 @@ public class MainControllerTest {
 
         mockMvc.perform(get("/testbedInformation").sessionAttr("id", "id"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("testbedInformation"))
+                .andExpect(view().name("testbed_information"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/teams")))
