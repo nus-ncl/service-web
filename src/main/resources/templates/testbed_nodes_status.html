@@ -29,10 +29,10 @@
             <ul th:each="nodesStatus : ${nodesStatus}" class="nodes-list">
                 <div class="col-sm-10 col-sm-offset-2 nodebackground1">
                     <h2 class="team-heading team-heading-current-team" th:text="${nodesStatus.key}">Machine Type</h2>
-                    <div class="col-sm-8 col-sm-offset-4">
+                    <div class="col-sm-9 col-sm-offset-3">
                         <img src="images/ServerFree.png" width="19" height="19"/> <h19>Free (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('FREE')}">0</span>)</h19>
                         <img src="images/ServerInUse.png" width="19" height="19"/>  <h19>In Use (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('IN_USE')}">0</span>)</h19>
-                        <img src="images/ServerUn.png" width=0"19" height="19"/> <h19>Reloading (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RELOADING')}">0</span>)</h19>
+                        <img src="images/ServerUn.png" width="19" height="19"/> <h19>Reloading (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RELOADING')}">0</span>)</h19>
                         <img src="images/ServerReserved.png" width="19" height="19"/> <h19>Reserved (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RESERVED')}">0</span>)</h19>
                         <hr/>
                     </div>
