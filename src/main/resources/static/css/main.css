@@ -2473,7 +2473,6 @@ h33{
 
 h34{
     color :#c9302c;
-    font-weight:24px;
     font-size:15px;
 
 }
@@ -2544,9 +2543,9 @@ h17{
 
 }
 
+/* testbed info */
 .active-users {
     border-radius: 10px;
-    background: #1eafbb;
     padding: 20px;
     font-size: 2em;
     color: #FFF;
@@ -2565,4 +2564,21 @@ h17{
     height: 120px;
 }
 
+.stats-category {
+    color:#999;
+    font-size: 12px;
+    font-weight:bold;
+    text-transform: uppercase;
+}
+
+.stats-info {
+    margin-left: 20px;
+    margin-top: 10px;
+    text-align: right;
+}
+
+.stats-value {
+    font-size:3em;
+    font-weight:bold;
+}
 
