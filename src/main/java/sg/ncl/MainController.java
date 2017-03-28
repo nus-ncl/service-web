@@ -83,8 +83,8 @@ public class MainController {
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
 
     // for user dashboard hashmap key values
-    private static final String USER_DASHBOARD_TEAMS = "teams";
-    private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "runningExperiments";
+    private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
+    private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "numberOfRunningExperiments";
     //private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
     private static final String USER_DASHBOARD_TOTAL_NODES = "totalNodes";
     private static final String USER_DASHBOARD_GLOBAL_IMAGES = "globalImagesMap";
@@ -3818,6 +3818,8 @@ public class MainController {
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
+        int numberOfApprovedTeam = 0;
+
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
 
@@ -3833,10 +3835,12 @@ public class MainController {
                 JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
 
                 numberOfRunningExperiments = getNumberOfRunningExperiments(numberOfRunningExperiments, experimentsArray);
+
+                numberOfApprovedTeam ++;
             }
         }
 
-        userDashboardStats.put(USER_DASHBOARD_TEAMS, teamIdsJsonArray.length());
+        userDashboardStats.put(USER_DASHBOARD_APPROVED_TEAMS, numberOfApprovedTeam);
         userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
        // userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNodes(NodeType.FREE));
         return userDashboardStats;
