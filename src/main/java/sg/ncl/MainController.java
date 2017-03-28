@@ -85,7 +85,7 @@ public class MainController {
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_TEAMS = "teams";
     private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "runningExperiments";
-    private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
+    //private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
     private static final String USER_DASHBOARD_TOTAL_NODES = "totalNodes";
     private static final String USER_DASHBOARD_GLOBAL_IMAGES = "globalImagesMap";
 
@@ -3857,7 +3857,6 @@ public class MainController {
         SortedMap<String, Map<String, String>> globalImagesMap = new TreeMap<>();
 
         log.info("Retrieving list of global images from: {}", properties.getGlobalImages());
-
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
             ResponseEntity response = restTemplate.exchange(properties.getGlobalImages(), HttpMethod.GET, request, String.class);
