@@ -636,10 +636,12 @@ public class MainController {
         }
 
         // retrieve user dashboard stats
+
         Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute(webProperties.getSessionUserId()).toString());
         List<TeamUsageInfo> usageInfoList = getTeamsUsageStatisticsForUser(session.getAttribute(webProperties.getSessionUserId()).toString());
         model.addAttribute("userDashboardMap", userDashboardMap);
         model.addAttribute("usageInfoList", usageInfoList);
+
         return "dashboard";
     }
 
@@ -1326,8 +1328,9 @@ public class MainController {
         Map<String, Map<String, List<Image>>> imageMap = new HashMap<>();
 
         // get list of teamids
+        String userId = session.getAttribute("id").toString();
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody().toString();
 
         JSONObject object = new JSONObject(responseBody);
@@ -1341,15 +1344,15 @@ public class MainController {
             ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
             String teamResponseBody = teamResponse.getBody().toString();
 
-            Team2 team2 = extractTeamInfo(teamResponseBody);
-            teamManager2.addTeamToTeamMap(team2);
-
-            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(session.getAttribute("id").toString(), teamResponseBody);
+            //Tran: check if team is approved for userId
+            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(userId, teamResponseBody);
             if (joinRequestTeam != null) {
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
+            } else {
+                Team2 team2 = extractTeamInfo(teamResponseBody);
+                teamManager2.addTeamToTeamMap(team2);
+                imageMap.put(team2.getName(), invokeAndGetImageList(teamId));  //Tran : only retrieve images of approved teams
             }
-
-            imageMap.put(team2.getName(), invokeAndGetImageList(teamId));
         }
 
         // check if inner image map is empty, have to do it via this manner
@@ -3835,7 +3838,7 @@ public class MainController {
 
         userDashboardStats.put(USER_DASHBOARD_TEAMS, teamIdsJsonArray.length());
         userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
-        userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNodes(NodeType.FREE));
+       // userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNodes(NodeType.FREE));
         return userDashboardStats;
     }
 
