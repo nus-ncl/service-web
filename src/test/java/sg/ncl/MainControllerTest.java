@@ -1049,7 +1049,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/about")))
                 .andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
-                .andExpect(content().string(containsString("Reserved for : 60% nodes for research, 40% nodes for education")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
@@ -1097,7 +1096,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/approve_new_user")))
                 .andExpect(content().string(containsString("/account_settings")))
                 .andExpect(content().string(containsString("/logout")))
-                .andExpect(content().string(containsString("Reserved for : 60% nodes for research, 40% nodes for education")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 }
