@@ -23,6 +23,7 @@ public enum ExceptionState {
     DATA_RESOURCE_DELETE_EXCEPTION("DataResourceDeleteException"),
     DETERLAB_OPERATION_FAILED_EXCEPTION("DeterLabOperationFailedException"),
     EMAIL_ALREADY_EXISTS_EXCEPTION("EmailAlreadyExistsException"),
+    EMAIL_NOT_VERIFIED_EXCEPTION("EmailNotVerifiedException"),
     EXPERIMENT_NAME_ALREADY_EXISTS_EXCEPTION("ExperimentNameAlreadyExistsException"),
     EXPERIMENT_DELETE_EXCEPTION("ExperimentDeleteException"),
     EXPERIMENT_START_EXCEPTION("ExperimentStartException"),
