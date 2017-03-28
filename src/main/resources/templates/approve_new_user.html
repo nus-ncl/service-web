@@ -36,7 +36,7 @@
 	                            <!-- get each team's join request map -->
 								<tr th:each="joinInfo : ${joinApprovalList}">
 									<td th:text="${joinInfo.userName}">Request Issuer Name</td>
-									<td th:text="${joinInfo.userEmail}">Request Issuer Email</td>
+									<td><span th:text="${joinInfo.userEmail}">Request Issuer Email</span> <span th:if="${joinInfo.getVerified()}"><a href="#" data-toggle="tooltip" title="Email verified"><i class="fa fa-check-circle blue-tick"></i></a></span></td>
 									<td th:text="${joinInfo.applicationDate}">Request Issuer Date</td>
 									<td th:text="${joinInfo.teamName}">Team wanting to join</td>
 									<td>

@@ -1175,7 +1175,7 @@ public class MainController {
                     joinRequestApproval.setApplicationDate(teamJoinedDate);
                     joinRequestApproval.setTeamId(team2.getId());
                     joinRequestApproval.setTeamName(team2.getName());
-
+                    joinRequestApproval.setVerified(myUser.getEmailVerified());
                     temp.add(joinRequestApproval);
                     log.info("Join request: UserId: {}, UserEmail: {}", myUser.getId(), myUser.getEmail());
                 }
@@ -1225,6 +1225,10 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
+                    case EMAIL_NOT_VERIFIED_EXCEPTION:
+                        log.warn("Approve join request: User {} email not verified", userId);
+                        redirectAttributes.addFlashAttribute(MESSAGE, "User has not been verified");
+                        break;
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Approve join request: User {}, Team {} fail", userId, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE, "Approve join request fail");
