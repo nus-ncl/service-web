@@ -351,6 +351,13 @@ h3 {
 }
 
 
+h19{
+    font-size: 14px;
+    font-weight: bold;
+    margin: 2px;
+    padding: 2px;
+}
+
 .parallax {
     background-size: cover;
     background-repeat: no-repeat;
@@ -1276,6 +1283,7 @@ ul.address {
 .map {
     color : #FFf;
 }
+
 
 .github1 {
     color : #000;
@@ -2386,6 +2394,15 @@ h18{
 }
 
 
+.nodebackground1{
+    border: 2px solid #ccc ;
+    padding:30px;
+    margin: 20px 20px 60px 20px;
+    alignment: center;
+}
+
+
+
 .backadmin {
     padding:30px;
     margin: 10px;
@@ -2407,6 +2424,7 @@ h12{
     padding-left: 0px;
 
 }
+
 
 navsmall{
     font-size: 17px!important;
@@ -2531,3 +2549,14 @@ h37{
 
 }
 
+
+.up {
+    height: 10px;
+    width: 10px;
+    background-color: #f5deb3;
+}
+
+.down {
+    flex-grow: 1;
+    background-color: #9acd32;
+}

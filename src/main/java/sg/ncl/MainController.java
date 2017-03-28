@@ -24,6 +24,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import sg.ncl.domain.*;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
+import sg.ncl.testbed_interface.Image;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +40,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
@@ -264,6 +266,42 @@ public class MainController {
         model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
         model.addAttribute(USER_DASHBOARD_TOTAL_NODES, getNodes(NodeType.TOTAL));
         return "testbedInformation";
+    }
+
+    // get all the nodes' status
+    // there are three types of status
+    // "free" : node is free
+    // "in_use" : node is in use
+    // "reload" : node is in process of freeing or unknown status
+    // "reserved" : node is pre-reserved for a project
+    @RequestMapping("/testbedNodesStatus")
+    public String testbedNodesStatus(Model model) throws IOException {
+
+        Map<MachineType, List<Map<String, String>>> nodesStatus = getNodesStatus();
+        EnumMap<MachineType, Map<String, Long>> nodesStatusCount = new EnumMap<>(MachineType.class);
+
+        // loop through each of the machine type
+        // tabulate the different nodes type
+        // count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        nodesStatus.entrySet().forEach(machineTypeListEntry -> {
+            Map<String, Long> nodesCountMap = new HashMap<>();
+
+            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get("status"))).count();
+
+            nodesCountMap.put(NodeType.FREE.name(), free);
+            nodesCountMap.put(NodeType.IN_USE.name(), inUse);
+            nodesCountMap.put(NodeType.RESERVED.name(), reserved);
+            nodesCountMap.put(NodeType.RELOADING.name(), reload);
+
+            nodesStatusCount.put(machineTypeListEntry.getKey(), nodesCountMap);
+        });
+
+        model.addAttribute("nodesStatus", nodesStatus);
+        model.addAttribute("nodesStatusCount", nodesStatusCount);
+        return "testbed_nodes_status";
     }
 
 
@@ -3929,5 +3967,42 @@ public class MainController {
         amountUsed = amountUsed.setScale(2, BigDecimal.ROUND_HALF_UP);
         teamQuota.setAmountUsed(amountUsed.toString());
         return teamQuota;
+    }
+
+    /**
+     * Invokes the get nodes status in the telemetry service
+     * @return a map containing a list of nodes status by their type
+     */
+    private Map<MachineType, List<Map<String, String>>> getNodesStatus() throws IOException {
+        log.info("Getting all nodes' status from: {}", properties.getNodesStatus());
+
+        EnumMap<MachineType, List<Map<String, String>>> output = new EnumMap<>(MachineType.class);
+
+        try {
+            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+            ResponseEntity response = restTemplate.exchange(properties.getNodesStatus(), HttpMethod.GET, request, String.class);
+            JSONObject object = new JSONObject(response.getBody().toString());
+
+            if (object == JSONObject.NULL || object.length() == 0) {
+                return output;
+            } else {
+                // loop through the object as there may be more than one machine type
+                for (int i = 0; i < object.names().length(); i++) {
+                    // for each machine type, get all the current nodes status
+                    String currentMachineType = object.names().getString(i);
+
+                    // converts the JSON Array of the form [ { id : A, status : B, type : C } ] into a proper list of map
+                    List<Map<String, String>> nodesList = objectMapper.readValue(object.getJSONArray(MachineType.valueOf(currentMachineType).name()).toString(), new TypeReference<List<Map>>(){});
+                    output.put(MachineType.valueOf(currentMachineType), nodesList);
+                }
+            }
+        } catch (RestClientException e) {
+            log.warn("Error connecting to service-telemetry: {}", e);
+            return new EnumMap<>(MachineType.class);
+        }
+
+        log.info("Finish getting all nodes: {}", output);
+
+        return output;
     }
 }
