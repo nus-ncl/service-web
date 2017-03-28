@@ -11,6 +11,7 @@ public class JoinRequestApproval {
     private String applicationDate;
     private String teamId;
     private String teamName;
+    private boolean verified;
 
     public String getUserId() {
         return userId;
@@ -58,5 +59,13 @@ public class JoinRequestApproval {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }
