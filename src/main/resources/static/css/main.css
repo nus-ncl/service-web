@@ -2398,10 +2398,12 @@ h18{
 
 
 .nodebackground1{
-    border: 2px solid #ccc ;
+    border-top: 1px solid #CCC;
+    border-right: 1px solid #CCC;
+    border-left: 1px solid #CCC;
+    border-bottom: 3px solid #999;
+    margin-top: 20px;
     padding:30px;
-    margin: 20px 20px 60px 20px;
-    alignment: center;
 }
 
 
@@ -2577,8 +2579,6 @@ h17{
     border-bottom: 3px solid #CCC;
     background: #FFF;
     padding: 20px;
-    margin-right: 40px;
-    width: auto;
     height: 120px;
 }
 

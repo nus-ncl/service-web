@@ -86,7 +86,7 @@ public class MainController {
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
     private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "numberOfRunningExperiments";
-    //private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
+    private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
     private static final String USER_DASHBOARD_TOTAL_NODES = "totalNodes";
     private static final String USER_DASHBOARD_GLOBAL_IMAGES = "globalImagesMap";
     private static final String USER_DASHBOARD_LOGGED_IN_USERS_COUNT = "loggedInUsersCount";
@@ -268,14 +268,7 @@ public class MainController {
 
     @RequestMapping("/testbedInformation")
     public String testbedInformation(Model model) throws IOException {
-
         model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
-        model.addAttribute(USER_DASHBOARD_TOTAL_NODES, getNodes(NodeType.TOTAL));
-
-        Map<String, String> testbedStatsMap = getTestbedStats();
-
-        model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
-        model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
         return "testbed_information";
     }
 
@@ -287,6 +280,10 @@ public class MainController {
     // "reserved" : node is pre-reserved for a project
     @RequestMapping("/testbedNodesStatus")
     public String testbedNodesStatus(Model model) throws IOException {
+        // get number of active users and running experiments
+        Map<String, String> testbedStatsMap = getTestbedStats();
+        testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, "0");
+        testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, "0");
 
         Map<MachineType, List<Map<String, String>>> nodesStatus = getNodesStatus();
         EnumMap<MachineType, Map<String, Long>> nodesStatusCount = new EnumMap<>(MachineType.class);
@@ -301,17 +298,28 @@ public class MainController {
             long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get("status"))).count();
             long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get("status"))).count();
             long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long total = free + inUse + reserved + reload;
+            long currentTotal = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES)) + total;
+            long currentFree = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_FREE_NODES)) + free;
 
             nodesCountMap.put(NodeType.FREE.name(), free);
             nodesCountMap.put(NodeType.IN_USE.name(), inUse);
             nodesCountMap.put(NodeType.RESERVED.name(), reserved);
             nodesCountMap.put(NodeType.RELOADING.name(), reload);
 
+
             nodesStatusCount.put(machineTypeListEntry.getKey(), nodesCountMap);
+            testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, Long.toString(currentFree));
+            testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, Long.toString(currentTotal));
         });
 
         model.addAttribute("nodesStatus", nodesStatus);
         model.addAttribute("nodesStatusCount", nodesStatusCount);
+
+        model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
+        model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
+        model.addAttribute(USER_DASHBOARD_FREE_NODES, testbedStatsMap.get(USER_DASHBOARD_FREE_NODES));
+        model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
         return "testbed_nodes_status";
     }
 

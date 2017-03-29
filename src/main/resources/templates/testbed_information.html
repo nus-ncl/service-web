@@ -20,37 +20,7 @@
 <p>&nbsp;</p>
 
 <div class="container">
-    <div class="row">
-        <p class="heading h15 text-center">Testbed Info</p>
-        <p>&nbsp;</p>
-        <div class="col-sm-12">
-            <div class="col-sm-4 stats" style="border-color: #fa9b2b;">
-                <i class="fa fa-group active-users pull-left" style="background: #fa9b2b;"></i>
-                <span class="pull-right stats-info">
-                    <span th:text="${loggedInUsersCount}" class="stats-value">0</span>
-                    <p class="stats-category">Active Users</p>
-                </span>
-            </div>
-
-            <div class="col-sm-4 stats" style="border-color: #00A4E1;">
-                <i class="fa fa-cloud active-users pull-left" style="background: #00A4E1;"></i>
-                <span class="pull-right stats-info">
-                    <span th:text="${runningExperimentsCount}" class="stats-value">0</span>
-                    <p class="stats-category">Running Experiments</p>
-                </span>
-            </div>
-
-            <div class="col-sm-4 stats" style="border-color: #1EAFBB;">
-                <i class="fa fa-tv active-users pull-left" style="background: #1EAFBB;"></i>
-                <span class="pull-right stats-info">
-                    <span th:text="${totalNodes}" class="stats-value">0</span>
-                    <p class="stats-category">Total Nodes <a href="#" data-toggle="tooltip" title="Reserved for : 60% nodes for research, 40% nodes for education" data-placement="bottom"><img src="images/information.png" width="20" height="20"/></a></p>
-                </span>
-            </div>
-        </div>
-        <p>&nbsp;</p>
-    </div>
-
+    <p class="heading h15 text-center">Testbed Info</p>
     <div class="row">
         <div class="panel panel-primary dashpanel">
             <h2 class="team-heading team-heading-current-team" th:text="#{Nodes.Specification}">text heading from .properties</h2>
@@ -66,11 +36,9 @@
 
     <div class="row">
         <p>&nbsp;</p>
-
         <div class="panel panel-primary dashpanel">
             <h2 class="team-heading team-heading-current-team" th:text="#{image.heading.global}">text heading from .properties</h2>
-            <p></p>
-
+            <p>&nbsp;</p>
             <div class="table-responsive">
                 <table class="table1">
                     <thead BGCOLOR="#E0E0E0">
