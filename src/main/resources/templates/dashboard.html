@@ -31,13 +31,13 @@
                     <div class="panel-body">
                         <a th:href="@{/teams}">
                             <div class="col-sm-5 dashpanel_teams pull-left">
-                                <p class="dashboard_stats" th:text="${userDashboardMap.get('teams')}">ConnectionError</p>
+                                <p class="dashboard_stats" th:text="${userDashboardMap.get('numberOfApprovedTeam')}">ConnectionError</p>
                                 <h2>Teams</h2>
                             </div>
                         </a>
                         <a th:href="@{/experiments}">
                             <div class="col-sm-5 dashpanel_experiments pull-right">
-                                <p class="dashboard_stats" th:text="${userDashboardMap.get('runningExperiments')}">ConnectionError</p>
+                                <p class="dashboard_stats" th:text="${userDashboardMap.get('numberOfRunningExperiments')}">ConnectionError</p>
                                 <h2>Running Experiments</h2>
                             </div>
                         </a>
@@ -65,12 +65,15 @@
                 </div> <!-- panel -->
 
                 <!--  total/free nodes information -->
+                <!--
                 <div class="panel panel-primary dashpanel">
                     <h2 class="team-heading team-heading-current-team">Nodes Availability</h2>
                     <div class="panel-body">
                         <p>Free nodes: <span th:text="${userDashboardMap.get('freeNodes')}">ConnectionError</span></p>
-                    </div> <!-- panel body -->
-                </div> <!-- panel -->
+                    </div>
+                </div> -->
+
+
             </div>
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">

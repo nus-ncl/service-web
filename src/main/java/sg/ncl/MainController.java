@@ -84,9 +84,9 @@ public class MainController {
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
 
     // for user dashboard hashmap key values
-    private static final String USER_DASHBOARD_TEAMS = "teams";
-    private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "runningExperiments";
-    private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
+    private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
+    private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "numberOfRunningExperiments";
+    //private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
     private static final String USER_DASHBOARD_TOTAL_NODES = "totalNodes";
     private static final String USER_DASHBOARD_GLOBAL_IMAGES = "globalImagesMap";
     private static final String USER_DASHBOARD_LOGGED_IN_USERS_COUNT = "loggedInUsersCount";
@@ -647,10 +647,12 @@ public class MainController {
         }
 
         // retrieve user dashboard stats
+
         Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute(webProperties.getSessionUserId()).toString());
         List<TeamUsageInfo> usageInfoList = getTeamsUsageStatisticsForUser(session.getAttribute(webProperties.getSessionUserId()).toString());
         model.addAttribute("userDashboardMap", userDashboardMap);
         model.addAttribute("usageInfoList", usageInfoList);
+
         return "dashboard";
     }
 
@@ -1341,8 +1343,9 @@ public class MainController {
         Map<String, Map<String, List<Image>>> imageMap = new HashMap<>();
 
         // get list of teamids
+        String userId = session.getAttribute("id").toString();
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody().toString();
 
         JSONObject object = new JSONObject(responseBody);
@@ -1356,15 +1359,15 @@ public class MainController {
             ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
             String teamResponseBody = teamResponse.getBody().toString();
 
-            Team2 team2 = extractTeamInfo(teamResponseBody);
-            teamManager2.addTeamToTeamMap(team2);
-
-            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(session.getAttribute("id").toString(), teamResponseBody);
+            //Tran: check if team is approved for userId
+            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(userId, teamResponseBody);
             if (joinRequestTeam != null) {
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
+            } else {
+                Team2 team2 = extractTeamInfo(teamResponseBody);
+                teamManager2.addTeamToTeamMap(team2);
+                imageMap.put(team2.getName(), invokeAndGetImageList(teamId));  //Tran : only retrieve images of approved teams
             }
-
-            imageMap.put(team2.getName(), invokeAndGetImageList(teamId));
         }
 
         // check if inner image map is empty, have to do it via this manner
@@ -3842,6 +3845,8 @@ public class MainController {
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
+        int numberOfApprovedTeam = 0;
+
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
 
@@ -3857,12 +3862,14 @@ public class MainController {
                 JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
 
                 numberOfRunningExperiments = getNumberOfRunningExperiments(numberOfRunningExperiments, experimentsArray);
+
+                numberOfApprovedTeam ++;
             }
         }
 
-        userDashboardStats.put(USER_DASHBOARD_TEAMS, teamIdsJsonArray.length());
+        userDashboardStats.put(USER_DASHBOARD_APPROVED_TEAMS, numberOfApprovedTeam);
         userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
-        userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNodes(NodeType.FREE));
+       // userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNodes(NodeType.FREE));
         return userDashboardStats;
     }
 
@@ -3881,7 +3888,6 @@ public class MainController {
         SortedMap<String, Map<String, String>> globalImagesMap = new TreeMap<>();
 
         log.info("Retrieving list of global images from: {}", properties.getGlobalImages());
-
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
             ResponseEntity response = restTemplate.exchange(properties.getGlobalImages(), HttpMethod.GET, request, String.class);
