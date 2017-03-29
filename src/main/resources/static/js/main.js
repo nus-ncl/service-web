@@ -124,6 +124,36 @@ $(document).ready(function() {
 	$(".admin-click-once-button").click(function() {
 		$(".admin-click-once-button").prop("disabled", true).addClass("disabled");
 	});
+
+	//start experiment
+    $('#startExperiment').on('show.bs.modal', function (event) {
+    	var anchor = $(event.relatedTarget);
+		var startExperiment = anchor.data('start');
+        var experimentName = anchor.data('name');
+		var modal = $(this);
+        modal.find('#experimentName').text(experimentName);
+        modal.find('#startButton').attr('href', startExperiment);
+    })
+
+	//stop experiment
+    $('#stopExperiment').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var stopExperiment = anchor.data('stop');
+        var experimentName = anchor.data('name');
+        var modal = $(this);
+        modal.find('#experimentName').text(experimentName);
+        modal.find('#stopButton').attr('href', stopExperiment);
+    })
+
+    //remove experiment
+    $('#removeExperiment').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var removeExperiment = anchor.data('remove');
+        var experimentName = anchor.data('name');
+        var modal = $(this);
+        modal.find('#experimentName').text(experimentName);
+        modal.find('#removeButton').attr('href', removeExperiment);
+    })
     
     //-----------------team page-----------------
     // withdraw

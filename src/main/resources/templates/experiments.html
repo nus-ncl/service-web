@@ -137,11 +137,11 @@
                                             <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
                                         </span>
                                         <span th:if="${realization.state == 'NOT_RUNNING'}">
-                                            <a href="#" th:href="@{/start_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Start this experiment"><button type="button" class="btn btn-standard click-once-button"><i class="fa fa-play btn-fa-green"></i></button></a>
-                                            <a href="#" th:href="@{/remove_experiment/{teamName}/{teamId}/{expId}(teamName=${expEntry.teamName}, teamId=${expEntry.teamId}, expId=${expEntry.id})}" data-toggle="tooltip" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><button type="button" class="btn btn-standard click-once-button"><i class="fa fa-trash btn-fa-red"></i></button></a>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'RUNNING'}">
-                                            <a href="#" th:href="@{/stop_experiment/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" class="btn btn-standard" data-toggle="tooltip" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></a>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'ERROR'}">
                                             <p th:text="#{nav.error}"></p>
@@ -155,6 +155,7 @@
                         <a href="#" th:href="@{/experiments/create}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Create Experiment</a>
                     </div>
                 </div> <!-- panel primary -->
+                <a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}"><navsmall>Please click here for node status</navsmall></a>
             </div> <!-- row -->
             <tr>
                 <td height="1000"></td>
@@ -177,6 +178,73 @@
                 </div>
             </div>
         </div> <!-- container -->
+
+        <!-- start experiment modal -->
+        <div id="startExperiment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="startModalLabel">
+            <div class="modal-dialog" role="document">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Confirmation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to start experiment "<span id="experimentName"></span>" ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="#" class="btn btn-primary" id="startButton">Start</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- remove experiment modal -->
+        <div id="removeExperiment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel">
+            <div class="modal-dialog">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Confirmation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to remove experiment "<span id="experimentName"></span>" ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="#" class="btn btn-primary" id="removeButton">Remove</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- remove experiment modal -->
+        <div id="stopExperiment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="stopModalLabel">
+            <div class="modal-dialog">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Confirmation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to stop experiment "<span id="experimentName"></span>" ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="#" class="btn btn-primary" id="stopButton">Stop</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
 
         <!-- topo thumbnail modal -->
         <div class="modal fade exp-modal" id="topoModal" tabindex="-1" role="dialog" aria-labelledby="topoModalLabel">
