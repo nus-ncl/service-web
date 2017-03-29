@@ -86,7 +86,7 @@ public class MainController {
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
     private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "numberOfRunningExperiments";
-    //private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
+    private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
     private static final String USER_DASHBOARD_TOTAL_NODES = "totalNodes";
     private static final String USER_DASHBOARD_GLOBAL_IMAGES = "globalImagesMap";
     private static final String USER_DASHBOARD_LOGGED_IN_USERS_COUNT = "loggedInUsersCount";
