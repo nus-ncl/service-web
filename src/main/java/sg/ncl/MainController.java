@@ -251,11 +251,6 @@ public class MainController {
         return "resource2";
     }
 
-//    @RequestMapping("/admin2")
-//    public String admin2() {
-//        return "admin2";
-//    }
-
     @RequestMapping("/tutorials")
     public String tutorials() {
         return "tutorials";
@@ -2551,18 +2546,13 @@ public class MainController {
     //---------------------------------Admin---------------------------------
     @RequestMapping("/admin")
     public String admin(Model model, HttpSession session) {
-
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
 
-        TeamManager2 teamManager2 = new TeamManager2();
-
-        Map<String, List<String>> userToTeamMap = new HashMap<>(); // userId : list of team names
         List<Team2> pendingApprovalTeamsList = new ArrayList<>();
 
         //------------------------------------
-        // get list of teams
         // get list of teams pending for approval
         //------------------------------------
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -2573,44 +2563,14 @@ public class MainController {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             Team2 one = extractTeamInfo(jsonObject.toString());
-            teamManager2.addTeamToTeamMap(one);
             if (one.getStatus().equals(TeamStatus.PENDING.name())) {
                 pendingApprovalTeamsList.add(one);
             }
         }
 
-        //------------------------------------
-        // get list of users
-        //------------------------------------
-        ResponseEntity response2 = restTemplate.exchange(properties.getSioUsersUrl(), HttpMethod.GET, request, String.class);
-        String responseBody2 = response2.getBody().toString();
-
-        JSONArray jsonUserArray = new JSONArray(responseBody2);
-        List<User2> usersList = new ArrayList<>();
-
-        for (int i = 0; i < jsonUserArray.length(); i++) {
-            JSONObject userObject = jsonUserArray.getJSONObject(i);
-            User2 user = extractUserInfo(userObject.toString());
-            usersList.add(user);
-
-            // get list of teams' names for each user
-            List<String> perUserTeamList = new ArrayList<>();
-            if (userObject.get("teams") != null) {
-                JSONArray teamJsonArray = userObject.getJSONArray("teams");
-                for (int k = 0; k < teamJsonArray.length(); k++) {
-                    Team2 team = invokeAndExtractTeamInfo(teamJsonArray.get(k).toString());
-                    perUserTeamList.add(team.getName());
-                }
-                userToTeamMap.put(user.getId(), perUserTeamList);
-            }
-        }
-
-        model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
-        model.addAttribute("usersList", usersList);
-        model.addAttribute("userToTeamMap", userToTeamMap);
 
-        return "admin2";
+        return "admin3";
     }
 
     @RequestMapping("/admin/data")
@@ -2697,6 +2657,72 @@ public class MainController {
         model.addAttribute("runningExpMap", experiment2Map);
 
         return "experiment_dashboard";
+    }
+
+    @RequestMapping("/admin/teams")
+    public String adminTeamsManagement(Model model, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        //------------------------------------
+        // get list of teams
+        //------------------------------------
+        TeamManager2 teamManager2 = new TeamManager2();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+        }
+
+        model.addAttribute("teamsMap", teamManager2.getTeamMap());
+
+        return "team_dashboard";
+    }
+
+    @RequestMapping("/admin/users")
+    public String adminUsersManagement(Model model, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        //------------------------------------
+        // get list of users
+        //------------------------------------
+        Map<String, List<String>> userToTeamMap = new HashMap<>(); // userId : list of team names
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response2 = restTemplate.exchange(properties.getSioUsersUrl(), HttpMethod.GET, request, String.class);
+        String responseBody2 = response2.getBody().toString();
+
+        JSONArray jsonUserArray = new JSONArray(responseBody2);
+        List<User2> usersList = new ArrayList<>();
+
+        for (int i = 0; i < jsonUserArray.length(); i++) {
+            JSONObject userObject = jsonUserArray.getJSONObject(i);
+            User2 user = extractUserInfo(userObject.toString());
+            usersList.add(user);
+
+            // get list of teams' names for each user
+            List<String> perUserTeamList = new ArrayList<>();
+            if (userObject.get("teams") != null) {
+                JSONArray teamJsonArray = userObject.getJSONArray("teams");
+                for (int k = 0; k < teamJsonArray.length(); k++) {
+                    Team2 team = invokeAndExtractTeamInfo(teamJsonArray.get(k).toString());
+                    perUserTeamList.add(team.getName());
+                }
+                userToTeamMap.put(user.getId(), perUserTeamList);
+            }
+        }
+
+        model.addAttribute("usersList", usersList);
+        model.addAttribute("userToTeamMap", userToTeamMap);
+
+        return "user_dashboard";
     }
 
     @RequestMapping("/admin/usage")
@@ -2936,7 +2962,7 @@ public class MainController {
         } else {
             log.warn(logMessage, teamId, "Cannot " + action + " team with status " + team.getStatus());
             redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "Cannot " + action + " team " + team.getName() + " with status " + team.getStatus());
-            return "redirect:/admin";
+            return "redirect:/admin/teams";
         }
     }
 
@@ -3050,7 +3076,7 @@ public class MainController {
         } else {
             log.warn("Error in freeze/unfreeze user {}: failed to {} user with status {}", userId, action, user.getStatus());
             redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "failed to " + action + " user " + user.getEmail() + " with status " + user.getStatus());
-            return "redirect:/admin";
+            return "redirect:/admin/users";
         }
     }
 
