@@ -194,7 +194,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <a href="#" class="btn btn-primary" id="startButton">Start</a>
+                        <a href="#" class="btn btn-primary" id="startButton" onclick="return closeStartModal();">Start</a>
                     </div>
                 </div>
 
@@ -216,14 +216,14 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <a href="#" class="btn btn-primary" id="removeButton">Remove</a>
+                        <a href="#" class="btn btn-primary" id="removeButton" onclick="return closeRemoveModal();">Remove</a>
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <!-- remove experiment modal -->
+        <!-- stop experiment modal -->
         <div id="stopExperiment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="stopModalLabel">
             <div class="modal-dialog">
 
@@ -238,7 +238,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <a href="#" class="btn btn-primary" id="stopButton">Stop</a>
+                        <a href="#" class="btn btn-primary" id="stopButton" onclick="return closeStopModal();">Stop</a>
                     </div>
                 </div>
 
@@ -261,6 +261,23 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            function closeStartModal() {
+                $('#startExperiment').modal('hide');
+                return true;
+            }
+
+            function closeStopModal() {
+                $('#stopExperiment').modal('hide');
+                return true;
+            }
+
+            function closeRemoveModal() {
+                $('#removeExperiment').modal('hide');
+                return true;
+            }
+        </script>
 
         <div th:replace="fragments/footer:: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
