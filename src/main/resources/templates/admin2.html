@@ -20,7 +20,6 @@
 			<li class="active"><a data-toggle="pill" href="#newTeamsApproval"><span th:text="#{admin.dashboard.nav.teamsApproval}">New Teams Approval</span></a></li>
 			<li><a data-toggle="pill" href="#teamsManagement"><span th:text="#{admin.dashboard.nav.teams}">Teams management</span></a></li>
 			<li><a data-toggle="pill" href="#usersManagement"><span th:text="#{admin.dashboard.nav.users}">Users management</span></a></li>
-			<li><a data-toogle="pill" href="#energyManagement"><span th:text="#{admin.dashboard.nav.energy}">Energy usage</span></a></li>
 		</ul>
 		<div th:if="${message}">
 			<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
@@ -225,6 +224,7 @@
 					</tr>
 				</table>
 			</div>
+
 		</div> <!-- tab content -->
 	</div> <!-- row -->
 </div>
