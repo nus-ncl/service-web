@@ -2744,6 +2744,60 @@ public class MainController {
         return "usage_statistics";
     }
 
+    @RequestMapping(value = "/admin/energy", method = RequestMethod.GET)
+    public String adminEnergy(Model model,
+                              @RequestParam(value = "start", required = false) String start,
+                              @RequestParam(value = "end", required = false) String end,
+                              final RedirectAttributes redirectAttributes,
+                              HttpSession session) throws IOException {
+
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        ZonedDateTime now = ZonedDateTime.now();
+        if (start == null) {
+            ZonedDateTime startDate = now.with(firstDayOfMonth());
+            start = startDate.format(formatter);
+        }
+        if (end == null) {
+            ZonedDateTime endDate = now.with(lastDayOfMonth());
+            end = endDate.format(formatter);
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+
+        ResponseEntity responseEntity;
+        try {
+            responseEntity = restTemplate.exchange(properties.getEnergyStatistics("startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for display team quota: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return REDIRECT_TEAM_PROFILE_TEAM_ID;
+        }
+
+        String responseBody = responseEntity.getBody().toString();
+        JSONArray jsonArray = new JSONArray(responseBody);
+
+        // handling exceptions from SIO
+        if (RestUtil.isError(responseEntity.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            switch (exceptionState) {
+                default:
+                    log.warn("Get team quota : sio or deterlab adapter connection error");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+        } else {
+            log.info("Get team quota info : {}", responseBody);
+        }
+
+        return "energy_usage";
+    }
+
+
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
 //    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
 //    	if (bindingResult.hasErrors()) {

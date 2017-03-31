@@ -281,6 +281,13 @@ public class ConnectionProperties {
     }
 
     //-------------------------------------
+    // ENERGY STATISTICS
+    //-------------------------------------
+    public String getEnergyStatistics(String... paramString) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +analyticsEndpoint + "/energy";
+    }
+
+    //-------------------------------------
     // PASSWORD RESET
     //-------------------------------------
     public String getPasswordResetRequestURI() {
