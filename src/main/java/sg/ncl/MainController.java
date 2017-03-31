@@ -2785,6 +2785,9 @@ public class MainController {
             MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             switch (exceptionState) {
+                case START_DATE_AFTER_END_DATE_EXCEPTION:
+                    
+                    break;
                 default:
                     log.warn("Get energy usage : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);

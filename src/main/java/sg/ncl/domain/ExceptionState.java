@@ -40,6 +40,7 @@ public enum ExceptionState {
     OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION("ObjectOptimisticLockingFailureException"),
     PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION("PasswordResetRequestNotFoundException"),
     PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION("PasswordResetRequestTimeoutException"),
+    START_DATE_AFTER_END_DATE_EXCEPTION("StartDateAfterEndDateException"),
     TEAM_ID_NULL_OR_EMPTY_EXCEPTION("TeamIdNullOrEmptyException"),
     TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION("TeamMemberAlreadyExistsException"),
     TEAM_NAME_NULL_OR_EMPTY_EXCEPTION("TeamNameNullOrEmptyException"),
