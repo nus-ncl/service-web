@@ -2772,7 +2772,7 @@ public class MainController {
         try {
             responseEntity = restTemplate.exchange(properties.getEnergyStatistics("startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
         } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service for display team quota: {}", e);
+            log.warn("Error connecting to sio team service for energy usage: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             return REDIRECT_TEAM_PROFILE_TEAM_ID;
         }
@@ -2786,14 +2786,15 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             switch (exceptionState) {
                 default:
-                    log.warn("Get team quota : sio or deterlab adapter connection error");
+                    log.warn("Get energy usage : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
             }
         } else {
-            log.info("Get team quota info : {}", responseBody);
+            log.info("Get Get energy usage info : {}", responseBody);
         }
 
+        //model.addAttribute("teamQuota", teamQuota);
         return "energy_usage";
     }
 
