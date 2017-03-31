@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>National Cybersecurity Laboratories - Admin</title>
+	<object th:include="fragments/header :: header" th:remove="tag" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<div class="container">
+	<div class="row">
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<div th:if="${message}">
+			<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+		</div>
+		<div th:if="${messageSuccess}">
+			<p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+		</div>
+		<div id="newTeamsApproval" class="tab-pane fade in active">
+			<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.teams.header.pending}">Pending Request to Join Your Team</h2>
+            <p>&nbsp;</p>
+			<th:block th:if="not ${#lists.isEmpty(pendingApprovalTeamsList)}">
+			<table id="myTable" class="table table-responsive">
+				<thead>
+                <tr>
+					<th th:text="#{admin.dashboard.registeredDate}">Date</th>
+					<th th:text="#{admin.teams.header.name}">Team</th>
+					<th th:text="#{admin.teams.header.owner}">Owner</th>
+					<th><!-- Actions --></th>
+                </tr>
+				</thead>
+                <tbody>
+				<tr th:each="team : ${pendingApprovalTeamsList}">
+					<td th:text="${team.createdDate}"></td>
+					<td>
+						<a href="#pendingTeamDetailsModal" data-toggle="modal"
+    						   th:attr="data-name=${team.name},
+							   			data-description=${team.description},
+							   			data-organisation=${team.organisationType},
+							   			data-visibility=${team.visibility}"
+							   th:text="${team.name}">Name</a>
+					</td>
+					<td>
+						<a th:href="'#'+${team.owner.id}" data-toggle="modal"><span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></a>
+						<span th:if="${team.owner.status == 'PENDING' or team.owner.status == 'APPROVED'}"><a href="#" data-toggle="tooltip" title="Email verified"><i class="fa fa-check-circle blue-tick"></i></a></span>
+						<!-- Modal -->
+						<div class="modal fade admin-modal" th:id="${team.owner.id}" aria-labelledby="ownerId" tabindex="-1" role="dialog" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header team-owner-info-header">
+										<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+										<h4 class="modal-title" id="ownerId"><span th:text="#{admin.teams.header.modal}">Team Owner Info</span></h4>
+									</div>
+									<div class="modal-body team-owner-info-body">
+										<ul>
+											<li><strong th:text="#{acc.info.fullName}"></strong>: <span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></li>
+											<li><strong th:text="#{acc.info.email}"></strong>: <span th:text="${team.owner.email}"></span></li>
+											<li><strong th:text="#{acc.info.phone}"></strong>: <span th:text="${team.owner.phone}"></span></li>
+											<li><strong th:text="#{acc.info.jobTitle}"></strong>: <span th:text="${team.owner.jobTitle}"></span></li>
+											<li><strong th:text="#{acc.info.institution}"></strong>: <span th:text="${team.owner.institution}"></span></li>
+											<li><strong th:text="#{acc.info.country}"></strong>: <span th:text="${team.owner.country}"></span></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</td>
+					<td>
+						<a href="#" title="Accept" th:href="@{/admin/teams/accept/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard btn-fa-green admin-click-once-button">Accept</button></a>
+						<a href="#" title="Reject" th:href="@{/admin/teams/reject/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard btn-fa-red admin-click-once-button">Reject</button></a>
+					</td>
+				</tr>
+                </tbody>
+			</table>
+			</th:block>
+		</div>
+
+		<!-- Pending Team Approval - Team Details Modal -->
+		<div class="modal fade admin-modal" id="pendingTeamDetailsModal" tabindex="-1" role="dialog" aria-labelledby="pendingTeamDetailsModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header team-owner-info-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="pendingTeamDetailsLabel">Modal title</h4>
+					</div>
+					<div class="modal-body team-owner-info-body">
+						<ul>
+							<li><strong th:text="#{team.profile.description}"></strong>: <span id="pendingTeamDescription"></span></li>
+							<li><strong th:text="#{team.profile.organizationType}"></strong>: <span id="pendingTeamOrganisationType"></span></li>
+							<li><strong th:text="#{team.profile.visibility}"></strong>: <span id="pendingTeamVisibility"></span></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> <!-- row -->
+</div>
+<div class="cc-wraper">
+	<div class="cc-contactpop fixed">
+		<h1>Do you need Help? <span>Get in touch.</span></h1>
+		<div class="renseignement">
+			<i class="fa fa-times"></i>
+			<p>We will get back to you as soon as possible. </p>
+		</div>
+		<form>
+			<ul>
+				<li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+				<li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
+				<li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+			</ul>
+			<p>&nbsp;</p>
+		</form>
+	</div>
+</div>
+<div th:replace="fragments/footer:: footer"></div>
+</body>
+
+<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+<script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+<script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+<script type="text/javascript" src="static/js/smoothscroll.js" th:src="@{~/js/smoothscroll.js}"></script>
+<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+<script>
+$(document).ready(function () {
+	//-----------------admin sort table -------------
+	$('#myTable').dataTable();
+})
+</script>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Admin</title>
+    <object th:include="fragments/header :: header" th:remove="tag"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<div class="container">
+    <div class="row">
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <div th:if="${message}">
+            <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+        </div>
+        <div th:if="${messageSuccess}">
+            <p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+        </div>
+        <div id="usersManagement" class="tab-pane fade in active">
+            <h2 class="team-heading team-heading-current-team padding" th:text="#{admin.users.header}">Users Dashboard</h2>
+            <p>&nbsp;</p>
+            <p th:if="${#lists.isEmpty(usersList)}">There are no users in the system</p>
+            <table id="myTable" class="table table-responsive" th:if="${not #lists.isEmpty(usersList)}">
+                <thead>
+                <tr>
+                    <th th:text="#{admin.users.header.name}">Full Name</th>
+                    <th th:text="#{admin.users.header.email}">Email</th>
+                    <th th:text="#{admin.users.header.team}">Team</th>
+                    <th th:text="#{admin.users.header.status}">Status</th>
+                    <th><!-- Actions --></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${usersList}">
+                    <td>
+                        <a th:href="'#'+${user.id}" data-toggle="modal"><span th:text="${user.firstName + ' ' + user.lastName}"></span></a>
+                        <!-- Modal -->
+                        <div class="modal fade admin-modal" th:id="${user.id}" aria-labelledby="userId" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header team-owner-info-header">
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                        <h4 class="modal-title" id="userId"><span th:text="#{admin.users.header.modal}">User Info</span></h4>
+                                    </div>
+                                    <div class="modal-body team-owner-info-body">
+                                        <ul>
+                                            <li><strong th:text="#{acc.info.phone}"></strong>: <span th:text="${user.phone}"></span></li>
+                                            <li><strong th:text="#{acc.info.jobTitle}"></strong>: <span th:text="${user.jobTitle}"></span></li>
+                                            <li><strong th:text="#{acc.info.institution}"></strong>: <span th:text="${user.institution}"></span></li>
+                                            <li><strong th:text="#{acc.info.country}"></strong>: <span th:text="${user.country}"></span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td th:text="${user.email}"></td>
+                    <td>
+                        <th:block th:if="${not #lists.isEmpty(userToTeamMap.get(user.id))}">
+                            <div th:each="team : ${userToTeamMap.get(user.id)}">
+                                <p th:text="${team}"></p>
+                            </div>
+                        </th:block>
+                        <p th:if="${#lists.isEmpty(userToTeamMap.get(user.id))}">Not in any teams yet.</p>
+                    </td>
+                    <td th:text="${user.status}"></td>
+                    <td>
+                        <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = freeze)}" th:if="${user.status} == 'APPROVED'">Ban</a>
+                        <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = unfreeze)}" th:if="${user.status} == 'FROZEN'">Unban</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/footer:: footer"></div>
+</body>
+
+<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+<script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+<script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+<script type="text/javascript" src="static/js/smoothscroll.js" th:src="@{~/js/smoothscroll.js}"></script>
+<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+<script>
+    $(document).ready(function () {
+        //-----------------admin sort table -------------
+        $('#myTable').dataTable();
+    })
+</script>
+</html>
