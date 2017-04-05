@@ -283,8 +283,17 @@ public class ConnectionProperties {
     //-------------------------------------
     // ENERGY STATISTICS
     //-------------------------------------
+
     public String getEnergyStatistics(String... paramString) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +analyticsEndpoint + "/energy";
+        String params = "";
+        for (int i = 0; i < paramString.length; i++) {
+            if (i == 0) {
+                params += "?" + paramString[i];
+            } else {
+                params += "&" + paramString[i];
+            }
+        }
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +analyticsEndpoint + "/energy" + params;
     }
 
     //-------------------------------------

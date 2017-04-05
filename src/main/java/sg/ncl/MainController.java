@@ -82,6 +82,7 @@ public class MainController {
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
     private static final String CONNECTION_ERROR = "Connection Error";
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
+    private static final String ERR_START_DATE_AFTER_END_DATE = "End date must be after start date";
 
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
@@ -2774,7 +2775,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for energy usage: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_TEAM_PROFILE_TEAM_ID;
+            return "redirect:/energy_usage";
         }
 
         String responseBody = responseEntity.getBody().toString();
@@ -2786,18 +2787,24 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             switch (exceptionState) {
                 case START_DATE_AFTER_END_DATE_EXCEPTION:
-                    
-                    break;
+                    log.warn("Get energy usage : Start date after end date eroor");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
+                    return "redirect:/energy_usage";
                 default:
                     log.warn("Get energy usage : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    break;
+                    return "redirect:/energy_usage";
             }
         } else {
             log.info("Get Get energy usage info : {}", responseBody);
         }
 
-        //model.addAttribute("teamQuota", teamQuota);
+        double sumEnergy = 0.00;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            sumEnergy  += jsonArray.getDouble(i);
+        }
+
+        model.addAttribute("energy", sumEnergy);
         return "energy_usage";
     }
 
