@@ -50,6 +50,7 @@ public enum ExceptionState {
     USERNAME_ALREADY_EXISTS_EXCEPTION("UsernameAlreadyExistsException"),
     USER_ALREADY_IN_TEAM_EXCEPTION("UserAlreadyInTeamException"),
     USER_ID_NULL_OR_EMPTY_EXCEPTION("UserIdNullOrEmptyException"),
+    USER_IS_NOT_DELETABLE_EXCEPTION("UserIsNotDeletableException"),
     USER_NOT_FOUND_EXCEPTION("UserNotFoundException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
