@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -2799,15 +2800,46 @@ public class MainController {
             log.info("Get Get energy usage info : {}", responseBody);
         }
 
+        Map<String, Double> dataToPlotChart = new HashMap<>();
+
         double sumEnergy = 0.00;
+        List<String> listOfDate = new ArrayList<String>();
+        List<Double> listOfEnergy = new ArrayList<Double>();
+        ZonedDateTime currentZonedDateTime = getZonedDateTime2(start);
+        String currentDate = null;
         for (int i = 0; i < jsonArray.length(); i++) {
             sumEnergy  += jsonArray.getDouble(i);
+            currentDate = currentZonedDateTime.format(formatter);
+            listOfDate.add(currentDate);
+            listOfEnergy.add(jsonArray.getDouble(i));
+            currentZonedDateTime = getZonedDateTime2(currentDate).plusDays(1);
         }
 
+
+        model.addAttribute("listOfDate", listOfDate);
+        model.addAttribute("listOfEnergy", listOfEnergy);
+        //model.addAttribute("dataToPlotChart", dataToPlotChart);
         model.addAttribute("energy", sumEnergy);
         return "energy_usage";
     }
 
+    /**
+     * Get simple ZonedDateTime from date string in the format 'YYYY-MM-DD'.
+     * @param date  date string to convert
+     * @return      ZonedDateTime of
+     */
+    private ZonedDateTime getZonedDateTime2(String date) {
+        if (date != null) {
+            String[] result = date.split("-");
+
+            return ZonedDateTime.of(
+                    Integer.parseInt(result[0]),
+                    Integer.parseInt(result[1]),
+                    Integer.parseInt(result[2]),
+                    0, 0, 0, 0, ZoneId.of("Asia/Singapore"));
+        }
+        return null;
+    }
 
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
 //    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
