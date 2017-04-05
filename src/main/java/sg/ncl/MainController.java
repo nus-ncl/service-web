@@ -108,6 +108,7 @@ public class MainController {
     private static final String NODE_ID = "nodeId";
     private static final String PERMISSION_DENIED = "Permission denied";
     private static final String TEAM_NOT_FOUND = "Team not found";
+    private static final String NOT_FOUND = " not found.";
 
     private static final String EDIT_BUDGET = "editBudget";
     private static final String ORIGINAL_BUDGET = "originalBudget";
@@ -3096,7 +3097,7 @@ public class MainController {
             switch (exceptionState) {
                 case USER_NOT_FOUND_EXCEPTION:
                     log.warn("Failed to freeze user {}: user not found", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " not found.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + NOT_FOUND);
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
                     log.warn("Failed to freeze user {}: invalid status transition {}", user.getId(), error.getMessage());
@@ -3140,7 +3141,7 @@ public class MainController {
             switch (exceptionState) {
                 case USER_NOT_FOUND_EXCEPTION:
                     log.warn("Failed to unfreeze user {}: user not found", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " not found.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + NOT_FOUND);
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
                     log.warn("Failed to unfreeze user {}: invalid status transition {}", user.getId(), error.getMessage());
@@ -3189,7 +3190,7 @@ public class MainController {
             switch (exceptionState) {
                 case USER_NOT_FOUND_EXCEPTION:
                     log.warn("Failed to remove user {}: user not found", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " not found.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + NOT_FOUND);
                     break;
                 case USER_IS_NOT_DELETABLE_EXCEPTION:
                     log.warn("Failed to remove user {}: user is not deletable", user.getId());
@@ -3202,7 +3203,7 @@ public class MainController {
             }
         } else {
             log.info("User {} has been removed", userId);
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + user.getEmail() + " has been removed");
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + user.getEmail() + " has been removed.");
         }
 
         return "redirect:/admin/users";
