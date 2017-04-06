@@ -118,6 +118,7 @@ public class MainController {
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
     private static final String REDIRECT_INDEX_PAGE = "redirect:/";
+    private static final String REDIRECT_ENERGY_USAGE = "redirect:/energy_usage";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -2777,7 +2778,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for energy usage: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/energy_usage";
+            return REDIRECT_ENERGY_USAGE;
         }
 
         String responseBody = responseEntity.getBody().toString();
@@ -2791,11 +2792,12 @@ public class MainController {
                 case START_DATE_AFTER_END_DATE_EXCEPTION:
                     log.warn("Get energy usage : Start date after end date error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
-                    return "redirect:/energy_usage";
+                    return REDIRECT_ENERGY_USAGE;
+
                 default:
                     log.warn("Get energy usage : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    return "redirect:/energy_usage";
+                    return REDIRECT_ENERGY_USAGE;
             }
         } else {
             log.info("Get energy usage info : {}", responseBody);
@@ -2804,8 +2806,8 @@ public class MainController {
         DecimalFormat df2 = new DecimalFormat(".##");
 
         double sumEnergy = 0.00;
-        List<String> listOfDate = new ArrayList<String>();
-        List<Double> listOfEnergy = new ArrayList<Double>();
+        List<String> listOfDate = new ArrayList<>();
+        List<Double> listOfEnergy = new ArrayList<>();
         ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
         String currentDate = null;
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -2825,8 +2827,10 @@ public class MainController {
         sumEnergy = Double.valueOf(df2.format(sumEnergy));
         model.addAttribute("listOfDate", listOfDate);
         model.addAttribute("listOfEnergy", listOfEnergy);
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
         model.addAttribute("energy", sumEnergy);
-        return "/energy_usage";
+        return "energy_usage";
     }
 
     /**
@@ -2835,15 +2839,12 @@ public class MainController {
      * @return      ZonedDateTime of
      */
     private ZonedDateTime convertToZonedDateTime(String date) {
-        if (date != null) {
             String[] result = date.split("-");
             return ZonedDateTime.of(
                     Integer.parseInt(result[0]),
                     Integer.parseInt(result[1]),
                     Integer.parseInt(result[2]),
                     0, 0, 0, 0, ZoneId.of("Asia/Singapore"));
-        }
-        return null;
     }
 
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)

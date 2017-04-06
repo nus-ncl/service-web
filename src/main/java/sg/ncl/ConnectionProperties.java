@@ -285,14 +285,17 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String getEnergyStatistics(String... paramString) {
-        String params = "";
+        StringBuilder bld = new StringBuilder();
         for (int i = 0; i < paramString.length; i++) {
             if (i == 0) {
-                params += "?" + paramString[i];
+                bld.append("?");
+                bld.append(paramString[i]);
             } else {
-                params += "&" + paramString[i];
+                bld.append("&");
+                bld.append(paramString[i]);
             }
         }
+        String params = bld.toString();
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" +analyticsEndpoint + "/energy" + params;
     }
 
