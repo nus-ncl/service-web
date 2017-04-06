@@ -72,7 +72,7 @@
                     <td>
                         <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = freeze)}" th:if="${user.status} == 'APPROVED'">Ban</a>
                         <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = unfreeze)}" th:if="${user.status} == 'FROZEN'">Unban</a>
-                        <a th:href="@{/admin/users/remove/{userId}(userId=${user.id})}" th:if="${#lists.isEmpty(userToTeamMap.get(user.id))} and (${user.status} == 'CREATED' or ${user.status} == 'PENDING')">Remove</a>
+                        <a th:href="@{/admin/users/{userId}/remove/(userId=${user.id})}" th:if="${#lists.isEmpty(userToTeamMap.get(user.id))} and (${user.status} == 'CREATED' or ${user.status} == 'PENDING')">Remove</a>
                     </td>
                 </tr>
                 </tbody>

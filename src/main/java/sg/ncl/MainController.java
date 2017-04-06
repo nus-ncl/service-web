@@ -3169,7 +3169,7 @@ public class MainController {
         }
     }
 
-    @RequestMapping("/admin/users/remove/{userId}")
+    @RequestMapping("/admin/users/{userId}/remove")
     public String removeUser(@PathVariable final String userId, final RedirectAttributes redirectAttributes, HttpSession session) throws IOException {
         // check if admin
         if (!validateIfAdmin(session)) {
