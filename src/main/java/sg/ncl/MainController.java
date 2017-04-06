@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -2788,7 +2789,7 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             switch (exceptionState) {
                 case START_DATE_AFTER_END_DATE_EXCEPTION:
-                    log.warn("Get energy usage : Start date after end date eroor");
+                    log.warn("Get energy usage : Start date after end date error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
                     return "redirect:/energy_usage";
                 default:
@@ -2797,30 +2798,35 @@ public class MainController {
                     return "redirect:/energy_usage";
             }
         } else {
-            log.info("Get Get energy usage info : {}", responseBody);
+            log.info("Get energy usage info : {}", responseBody);
         }
 
-        Map<String, Double> dataToPlotChart = new HashMap<>();
+        DecimalFormat df2 = new DecimalFormat(".##");
 
         double sumEnergy = 0.00;
         List<String> listOfDate = new ArrayList<String>();
         List<Double> listOfEnergy = new ArrayList<Double>();
-        ZonedDateTime currentZonedDateTime = getZonedDateTime2(start);
+        ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
         String currentDate = null;
         for (int i = 0; i < jsonArray.length(); i++) {
             sumEnergy  += jsonArray.getDouble(i);
+
+            // add into listOfDate to display graph
             currentDate = currentZonedDateTime.format(formatter);
             listOfDate.add(currentDate);
-            listOfEnergy.add(jsonArray.getDouble(i));
-            currentZonedDateTime = getZonedDateTime2(currentDate).plusDays(1);
+
+            // add into listOfEnergy to display graph
+            double energy = Double.valueOf(df2.format(jsonArray.getDouble(i)));
+            listOfEnergy.add(energy);
+
+            currentZonedDateTime = convertToZonedDateTime(currentDate).plusDays(1);
         }
 
-
+        sumEnergy = Double.valueOf(df2.format(sumEnergy));
         model.addAttribute("listOfDate", listOfDate);
         model.addAttribute("listOfEnergy", listOfEnergy);
-        //model.addAttribute("dataToPlotChart", dataToPlotChart);
         model.addAttribute("energy", sumEnergy);
-        return "energy_usage";
+        return "/energy_usage";
     }
 
     /**
@@ -2828,10 +2834,9 @@ public class MainController {
      * @param date  date string to convert
      * @return      ZonedDateTime of
      */
-    private ZonedDateTime getZonedDateTime2(String date) {
+    private ZonedDateTime convertToZonedDateTime(String date) {
         if (date != null) {
             String[] result = date.split("-");
-
             return ZonedDateTime.of(
                     Integer.parseInt(result[0]),
                     Integer.parseInt(result[1]),

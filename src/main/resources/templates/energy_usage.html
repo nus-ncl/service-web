@@ -29,7 +29,7 @@
                                 <div class="input-group input-daterange" id="datepicker">
                                     <input type="text" class="form-control" th:name="start" th:value="${start}" placeholder="Start Date" />
                                     <span class="input-group-addon">to</span>
-                                    <input type="text" class="form-control" th:name="end" th:value="${end}" placeholder="End Date" />
+                                    <input type="text" class="form-control endDate" th:name="end" th:value="${end}" placeholder="End Date" />
                                 </div>
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                             </div>
                         </div>
                         <div class="form=group">
-                            <canvas  id="myBarChart" width="400" height="400"></canvas>
+                            <canvas  id="myBarChart" width="400" height="150"></canvas>
                         </div>
                     </fieldset>
                 </form>
@@ -84,45 +84,43 @@
                     clearBtn: true,
                     format: "yyyy-mm-dd"
                 });
+
+                var ctx = document.getElementById("myBarChart");
+                var listOfDate = [[${listOfDate}]];
+                var listOfEnergy = [[${listOfEnergy}]];
+
+                var data = {
+                    labels: listOfDate,
+                    datasets: [
+                        {
+                            label: "Energy Usage",
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1,
+                            data: listOfEnergy,
+                        }
+                    ]
+                };
+
+                var myBarChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data
+                });
             });
-
-            var ctx = document.getElementById("myBarChart");
-            var listOfDate = [[${listOfDate}]];
-            var listOfEnergy = [[${listOfEnergy}]];
-
-            var data = {
-                labels: listOfDate,
-                datasets: [
-                    {
-                        label: "Energy Usage",
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255,99,132,1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1,
-                        data: listOfEnergy,
-                    }
-                ]
-            };
-
-            var myBarChart = new Chart(ctx, {
-                type: 'bar',
-                data: data
-            });
-
-
         </script>
 
     </body>
