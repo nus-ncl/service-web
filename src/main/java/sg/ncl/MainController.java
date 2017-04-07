@@ -3180,6 +3180,7 @@ public class MainController {
         User2 user = invokeAndExtractUserInfo(userId);
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getUser(user.getId()), HttpMethod.DELETE, request, String.class);
         String responseBody = response.getBody().toString();
 
@@ -3195,6 +3196,10 @@ public class MainController {
                 case USER_IS_NOT_DELETABLE_EXCEPTION:
                     log.warn("Failed to remove user {}: user is not deletable", user.getId());
                     redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " is not deletable.");
+                    break;
+                case CREDENTIALS_NOT_FOUND_EXCEPTION:
+                    log.warn("Failed to remove user {}: unable to find credentials", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " is not found.");
                     break;
                 default:
                     log.warn("Failed to remove user {}: {}", user.getId(), exceptionState.getExceptionName());
