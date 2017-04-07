@@ -2776,7 +2776,7 @@ public class MainController {
         try {
             responseEntity = restTemplate.exchange(properties.getEnergyStatistics("startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
         } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service for energy usage: {}", e);
+            log.warn("Error connecting to sio analytics service for energy usage: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             return REDIRECT_ENERGY_USAGE;
         }
