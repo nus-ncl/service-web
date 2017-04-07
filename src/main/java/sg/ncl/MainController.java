@@ -37,6 +37,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -82,6 +84,7 @@ public class MainController {
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
     private static final String CONNECTION_ERROR = "Connection Error";
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
+    private static final String ERR_START_DATE_AFTER_END_DATE = "End date must be after start date";
 
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
@@ -115,6 +118,7 @@ public class MainController {
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
     private static final String REDIRECT_INDEX_PAGE = "redirect:/";
+    private static final String REDIRECT_ENERGY_USAGE = "redirect:/energy_usage";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -2768,6 +2772,105 @@ public class MainController {
         model.addAttribute("end", end);
         model.addAttribute("team", team);
         return "usage_statistics";
+    }
+
+    @RequestMapping(value = "/admin/energy", method = RequestMethod.GET)
+    public String adminEnergy(Model model,
+                              @RequestParam(value = "start", required = false) String start,
+                              @RequestParam(value = "end", required = false) String end,
+                              final RedirectAttributes redirectAttributes,
+                              HttpSession session) throws IOException {
+
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        ZonedDateTime now = ZonedDateTime.now();
+        if (start == null) {
+            ZonedDateTime startDate = now.with(firstDayOfMonth());
+            start = startDate.format(formatter);
+        }
+        if (end == null) {
+            ZonedDateTime endDate = now.with(lastDayOfMonth());
+            end = endDate.format(formatter);
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+
+        ResponseEntity responseEntity;
+        try {
+            responseEntity = restTemplate.exchange(properties.getEnergyStatistics("startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio analytics service for energy usage: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return REDIRECT_ENERGY_USAGE;
+        }
+
+        String responseBody = responseEntity.getBody().toString();
+        JSONArray jsonArray = new JSONArray(responseBody);
+
+        // handling exceptions from SIO
+        if (RestUtil.isError(responseEntity.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            switch (exceptionState) {
+                case START_DATE_AFTER_END_DATE_EXCEPTION:
+                    log.warn("Get energy usage : Start date after end date error");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
+                    return REDIRECT_ENERGY_USAGE;
+
+                default:
+                    log.warn("Get energy usage : sio or deterlab adapter connection error");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    return REDIRECT_ENERGY_USAGE;
+            }
+        } else {
+            log.info("Get energy usage info : {}", responseBody);
+        }
+
+        DecimalFormat df2 = new DecimalFormat(".##");
+
+        double sumEnergy = 0.00;
+        List<String> listOfDate = new ArrayList<>();
+        List<Double> listOfEnergy = new ArrayList<>();
+        ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
+        String currentDate = null;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            sumEnergy  += jsonArray.getDouble(i);
+
+            // add into listOfDate to display graph
+            currentDate = currentZonedDateTime.format(formatter);
+            listOfDate.add(currentDate);
+
+            // add into listOfEnergy to display graph
+            double energy = Double.valueOf(df2.format(jsonArray.getDouble(i)));
+            listOfEnergy.add(energy);
+
+            currentZonedDateTime = convertToZonedDateTime(currentDate).plusDays(1);
+        }
+
+        sumEnergy = Double.valueOf(df2.format(sumEnergy));
+        model.addAttribute("listOfDate", listOfDate);
+        model.addAttribute("listOfEnergy", listOfEnergy);
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
+        model.addAttribute("energy", sumEnergy);
+        return "energy_usage";
+    }
+
+    /**
+     * Get simple ZonedDateTime from date string in the format 'YYYY-MM-DD'.
+     * @param date  date string to convert
+     * @return      ZonedDateTime of
+     */
+    private ZonedDateTime convertToZonedDateTime(String date) {
+            String[] result = date.split("-");
+            return ZonedDateTime.of(
+                    Integer.parseInt(result[0]),
+                    Integer.parseInt(result[1]),
+                    Integer.parseInt(result[2]),
+                    0, 0, 0, 0, ZoneId.of("Asia/Singapore"));
     }
 
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="container">
+
+    <p>&nbsp;</p>
+    <div class="row dashpanel">
+        <div th:if="${message}">
+            <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+        </div>
+        <h2 class="team-heading team-heading-current-team">Usage Statistics</h2>
+
+        <form class="form-horizontal" method="get" action="#" th:action="@{/admin/energy}" role="form">
+            <fieldset>
+                <div class="form-group">
+                    <label for="datepicker" class="col-sm-3 control-label">Period :</label>
+                    <div class="col-sm-7">
+                        <div class="input-group input-daterange" id="datepicker">
+                            <input type="text" class="form-control" th:name="start" th:value="${start}" placeholder="Start Date" />
+                            <span class="input-group-addon">to</span>
+                            <input type="text" class="form-control endDate" th:name="end" th:value="${end}" placeholder="End Date" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="usage" class="col-sm-3 control-label">Usage (kWH) :</label>
+                    <div class="col-sm-7">
+                        <span id="usage" th:text="${energy != null ? energy : ''}"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-10 col-sm-2">
+                        <button type="submit" class="btn btn-default">Query</button>
+                    </div>
+                </div>
+                <div class="form=group">
+                    <canvas  id="myBarChart" width="400" height="150"></canvas>
+                </div>
+            </fieldset>
+        </form>
+        <p>&nbsp;</p>
+    </div> <!-- row dashpanel -->
+
+    <div class="cc-wraper">
+        <div class="cc-contactpop fixed">
+            <h1>Do you need Help? <span>Get in touch.</span></h1>
+            <div class="renseignement">
+                <i class="fa fa-times"></i>
+                <p>We will get back to you as soon as possible. </p>
+            </div>
+            <form>
+                <ul>
+                    <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+                    <li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
+                    <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                </ul>
+                <p>&nbsp;</p>
+            </form>
+        </div>
+    </div>
+
+</div> <!-- container -->
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.js"></script>
+
+<script  th:inline="javascript">
+
+    $(document).ready(function () {
+        $('.input-daterange').datepicker({
+            clearBtn: true,
+            format: "yyyy-mm-dd"
+        });
+        var ctx = document.getElementById("myBarChart");
+        var listOfDate = [[${listOfDate}]];
+        var listOfEnergy = [[${listOfEnergy}]];
+        var dataLength = listOfEnergy.length;
+
+        var background = function randomColorGenerator () {
+            var graphBackground = [];
+            var t;
+            var randomR = 'rgba(255, 0, 0, 0.6)';
+            var randomG = 'rgba(0, 255, 0, 0.6)';
+            var randomB = 'rgba(0, 0, 255, 0.6)';
+            var randomY = 'rgba(255, 255, 0, 0.6)';
+            var randomP = 'rgba(255, 0, 255, 0.6)';
+
+            if (dataLength) {
+                var myArray = Array.apply(null, {length: dataLength}).map(Number.call, Number);
+                for (t in myArray) {
+                    switch (t % 5) {
+                        case 0:
+                            graphBackground.push(randomR);
+                        case 1:
+                            graphBackground.push(randomG);
+                        case 2:
+                            graphBackground.push(randomB);
+                        case 3:
+                            graphBackground.push(randomY);
+                        case 4:
+                            graphBackground.push(randomP);
+                    }
+                }
+            }
+
+            return  graphBackground;
+        };
+
+        var data = {
+            labels: listOfDate,
+            datasets: [
+                {
+                    label: "Energy Usage",
+                    backgroundColor: background(),
+                    borderColor: background(),
+                    borderWidth: 1,
+                    data: listOfEnergy
+                }]
+        };
+
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: data
+        });
+
+    });
+</script>
+
+
+</body>
+<head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Admin</title>
+        <object th:include="fragments/header :: header" th:remove="tag" />
+
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" />
+    </head>
+</html>

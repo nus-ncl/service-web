@@ -281,6 +281,25 @@ public class ConnectionProperties {
     }
 
     //-------------------------------------
+    // ENERGY STATISTICS
+    //-------------------------------------
+
+    public String getEnergyStatistics(String... paramString) {
+        StringBuilder bld = new StringBuilder();
+        for (int i = 0; i < paramString.length; i++) {
+            if (i == 0) {
+                bld.append("?");
+                bld.append(paramString[i]);
+            } else {
+                bld.append("&");
+                bld.append(paramString[i]);
+            }
+        }
+        String params = bld.toString();
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +analyticsEndpoint + "/energy" + params;
+    }
+
+    //-------------------------------------
     // PASSWORD RESET
     //-------------------------------------
     public String getPasswordResetRequestURI() {
