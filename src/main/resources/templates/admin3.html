@@ -71,8 +71,10 @@
 						</div>
 					</td>
 					<td>
-						<a href="#" title="Accept" th:href="@{/admin/teams/accept/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard btn-fa-green admin-click-once-button">Accept</button></a>
-						<a href="#" title="Reject" th:href="@{/admin/teams/reject/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard btn-fa-red admin-click-once-button">Reject</button></a>
+                        <button type="button" class="btn btn-standard btn-fa-green" data-toggle="modal" data-target="#pendingTeamAcceptModal"
+                                th:attr="data-name=${team.name},data-href=@{/admin/teams/accept/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}">Accept</button>
+						<button type="button" class="btn btn-standard btn-fa-red" data-toggle="modal" data-target="#pendingTeamRejectModal"
+                                th:attr="data-name=${team.name},data-href=@{/admin/teams/reject/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}">Reject</button>
 					</td>
 				</tr>
                 </tbody>
@@ -98,6 +100,51 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Pending Team Approval - Accept Team Modal -->
+        <div class="modal fade admin-modal" id="pendingTeamAcceptModal" tabindex="-1" role="dialog" aria-labelledby="pendingTeamAcceptModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header team-owner-info-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="pendingTeamAcceptLabel">Accept Team?</h4>
+                    </div>
+                    <div class="modal-body team-owner-info-body">
+                        <p>Are you sure you want to accept the new team "<span id="pendingTeamAcceptName"></span>"?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="#" class="btn btn-primary" id="acceptButton">Accept</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Team Approval - Reject Team Modal -->
+        <div class="modal fade admin-modal" id="pendingTeamRejectModal" tabindex="-1" role="dialog" aria-labelledby="pendingTeamRejectModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" action="#" role="form" id="rejectForm">
+                    <div class="modal-header team-owner-info-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="pendingTeamRejectLabel">Reject Team?</h4>
+                    </div>
+                    <div class="modal-body team-owner-info-body">
+                        <div class="form-group">
+                            <label for="reason" class="control-label">
+                                Are you sure you want to reject the new team "<span id="pendingTeamRejectName"></span>"? Please give the reason.
+                            </label>
+                            <textarea class="form-control" rows="5" placeholder="Reject Reason" id="reason" name="reason"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="rejectButton">Reject</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 	</div> <!-- row -->
 </div>
 <div class="cc-wraper">
@@ -137,6 +184,22 @@
 $(document).ready(function () {
 	//-----------------admin sort table -------------
 	$('#myTable').dataTable();
+	$('#pendingTeamAcceptModal').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var name = anchor.data('name');
+        var href = anchor.data('href');
+        var modal = $(this);
+        modal.find('#pendingTeamAcceptName').text(name);
+        modal.find('#acceptButton').attr('href', href);
+    });
+    $('#pendingTeamRejectModal').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var name = anchor.data('name');
+        var href = anchor.data('href');
+        var modal = $(this);
+        modal.find('#pendingTeamRejectName').text(name);
+        modal.find('#rejectForm').attr('action', href);
+    });
 })
 </script>
 </html>
