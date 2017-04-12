@@ -111,6 +111,7 @@ public class MainController {
     private static final String NODE_ID = "nodeId";
     private static final String PERMISSION_DENIED = "Permission denied";
     private static final String TEAM_NOT_FOUND = "Team not found";
+    private static final String NOT_FOUND = " not found.";
 
     private static final String EDIT_BUDGET = "editBudget";
     private static final String ORIGINAL_BUDGET = "originalBudget";
@@ -3199,7 +3200,7 @@ public class MainController {
             switch (exceptionState) {
                 case USER_NOT_FOUND_EXCEPTION:
                     log.warn("Failed to freeze user {}: user not found", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " not found.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + NOT_FOUND);
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
                     log.warn("Failed to freeze user {}: invalid status transition {}", user.getId(), error.getMessage());
@@ -3243,7 +3244,7 @@ public class MainController {
             switch (exceptionState) {
                 case USER_NOT_FOUND_EXCEPTION:
                     log.warn("Failed to unfreeze user {}: user not found", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " not found.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + NOT_FOUND);
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
                     log.warn("Failed to unfreeze user {}: invalid status transition {}", user.getId(), error.getMessage());
@@ -3271,6 +3272,50 @@ public class MainController {
         }
     }
 
+    @RequestMapping("/admin/users/{userId}/remove")
+    public String removeUser(@PathVariable final String userId, final RedirectAttributes redirectAttributes, HttpSession session) throws IOException {
+        // check if admin
+        if (!validateIfAdmin(session)) {
+            log.warn("Access denied when trying to remove user {}: must be admin!", userId);
+            return NO_PERMISSION_PAGE;
+        }
+
+        User2 user = invokeAndExtractUserInfo(userId);
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getUser(user.getId()), HttpMethod.DELETE, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            switch (exceptionState) {
+                case USER_NOT_FOUND_EXCEPTION:
+                    log.warn("Failed to remove user {}: user not found", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + NOT_FOUND);
+                    break;
+                case USER_IS_NOT_DELETABLE_EXCEPTION:
+                    log.warn("Failed to remove user {}: user is not deletable", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " is not deletable.");
+                    break;
+                case CREDENTIALS_NOT_FOUND_EXCEPTION:
+                    log.warn("Failed to remove user {}: unable to find credentials", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " is not found.");
+                    break;
+                default:
+                    log.warn("Failed to remove user {}: {}", user.getId(), exceptionState.getExceptionName());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+        } else {
+            log.info("User {} has been removed", userId);
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + user.getEmail() + " has been removed.");
+        }
+
+        return "redirect:/admin/users";
+    }
 
 //    @RequestMapping("/admin/experiments/remove/{expId}")
 //    public String adminRemoveExp(@PathVariable Integer expId) {
