@@ -2982,9 +2982,7 @@ public class MainController {
 
         //FIXME require approver info
         log.info("Rejecting new team {}, team owner {}, reason {}", teamId, teamOwnerId, reason);
-        JSONObject reasonObject = new JSONObject();
-        reasonObject.put("reason", reason);
-        HttpEntity<String> request = createHttpEntityWithBody(reasonObject.toString());
+        HttpEntity<String> request = createHttpEntityWithBody(reason);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(
                 properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
