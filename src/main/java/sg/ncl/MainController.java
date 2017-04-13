@@ -2971,6 +2971,7 @@ public class MainController {
     public String rejectTeam(
             @PathVariable String teamId,
             @PathVariable String teamOwnerId,
+            @RequestParam("reason") String reason,
             final RedirectAttributes redirectAttributes,
             HttpSession session
     ) throws WebServiceRuntimeException {
@@ -2980,8 +2981,8 @@ public class MainController {
         }
 
         //FIXME require approver info
-        log.info("Rejecting new team {}, team owner {}", teamId, teamOwnerId);
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        log.info("Rejecting new team {}, team owner {}, reason {}", teamId, teamOwnerId, reason);
+        HttpEntity<String> request = createHttpEntityWithBody(reason);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(
                 properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
