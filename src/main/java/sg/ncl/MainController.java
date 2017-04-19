@@ -175,6 +175,11 @@ public class MainController {
         return "plan";
     }
 
+    @RequestMapping("/career")
+    public String career() {
+        return "career";
+    }
+
 //    @RequestMapping("/futureplan")
 //    public String futureplan() {
 //        return "futureplan";
