@@ -404,7 +404,7 @@ public class MainController {
         HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
-        final String link = properties.getSioUsersUrl() + id + "/emails/" + emailBase64;
+        final String link = properties.getSioRegUrl() + "/user/" + id + "/emails/" + emailBase64;
         log.info("Activation link: {}, verification key {}", link, key);
         ResponseEntity response = restTemplate.exchange(link, HttpMethod.PUT, request, String.class);
 
