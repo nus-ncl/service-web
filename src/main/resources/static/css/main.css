@@ -2653,7 +2653,15 @@ h24{
     margin: 0;
     padding-top: 20px;
     padding-left: 15px;
+    cursor:pointer;
 
+}
+
+h25{
+    font-weight:800;
+    float:right;
+    font-size: 25px;
+    cursor:pointer;
 }
 
 .hide
