@@ -205,12 +205,6 @@ public class MainController {
         return "calendar";
     }
 
-
-    @RequestMapping("/tools")
-    public String tools() {
-        return "tools";
-    }
-
     @RequestMapping("/tutorials/createaccount")
     public String createAccount() {
         return "createaccount";
