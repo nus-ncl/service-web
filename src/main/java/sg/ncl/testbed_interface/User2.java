@@ -16,7 +16,7 @@ import static sg.ncl.validation.Validator.isValidPassword;
 public class User2 implements Serializable {
 
     private String id;
-    private ZonedDateTime createdDate;
+    private ZonedDateTime applicationDate;
     private boolean emailVerified;
     private String firstName;
     private String lastName;
@@ -46,19 +46,19 @@ public class User2 implements Serializable {
         this.id = id;
     }
 
-    public ZonedDateTime getCreatedDate() {
-        return createdDate;
+    public ZonedDateTime getApplicationDate() {
+        return applicationDate;
     }
 
     // reads the JSON representation of the ZonedDateTime, e.g. 1.4912345E
     // converts to a proper ZonedDateTime object
     // store as ZonedDateTime object because we want to sort by date using DataTables plugin
     // using String will only sort alphabetically
-    public void setCreatedDate(String createdDate) throws IOException {
+    public void setApplicationDate(String applicationDate) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        ZonedDateTime date = mapper.readValue(createdDate, ZonedDateTime.class);
-        this.createdDate = date;
+        ZonedDateTime date = mapper.readValue(applicationDate, ZonedDateTime.class);
+        this.applicationDate = date;
     }
 
     public boolean getEmailVerified() {

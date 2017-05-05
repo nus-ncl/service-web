@@ -3605,11 +3605,11 @@ public class MainController {
         user2.setStatus(object.getString("status"));
         user2.setEmailVerified(object.getBoolean("emailVerified"));
 
-        // createdDate is ZonedDateTime
+        // applicationDate is ZonedDateTime
         try {
-            user2.setCreatedDate(object.get("createdDate").toString());
+            user2.setApplicationDate(object.get("applicationDate").toString());
         } catch (Exception e) {
-            // since createdDate date is a ZonedDateTime and not String
+            // since applicationDate date is a ZonedDateTime and not String
             // set to '?' at the html page
             log.warn("Error getting user application date {}", e);
         }

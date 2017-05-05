@@ -35,7 +35,7 @@ public class UserTest {
     @Test
     public void testGetCreatedDate() {
         final User2 one = new User2();
-        Assertions.assertThat(one.getCreatedDate()).isNull();
+        Assertions.assertThat(one.getApplicationDate()).isNull();
     }
 
     @Test
@@ -45,11 +45,11 @@ public class UserTest {
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        one.setCreatedDate(mapper.writeValueAsString(zonedDateTime));
+        one.setApplicationDate(mapper.writeValueAsString(zonedDateTime));
 
-        Assertions.assertThat(one.getCreatedDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
-        Assertions.assertThat(one.getCreatedDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
-        Assertions.assertThat(one.getCreatedDate().getYear()).isEqualTo(zonedDateTime.getYear());
+        Assertions.assertThat(one.getApplicationDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
+        Assertions.assertThat(one.getApplicationDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
+        Assertions.assertThat(one.getApplicationDate().getYear()).isEqualTo(zonedDateTime.getYear());
     }
 
     @Test

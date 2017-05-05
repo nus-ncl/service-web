@@ -72,8 +72,8 @@
                     <td th:text="${user.status}"></td>
                     <!-- request dataTables plugin to sort using value and not display text -->
                     <!-- use thymeleaf to format zoneddatetime to display in readable format -->
-                    <td th:attr="data-order=${user.createdDate}">
-                        <span th:text="${ user.createdDate != null ? #temporals.format(user.createdDate, 'MMM-dd-yyyy') : '?'}"></span>
+                    <td th:attr="data-order=${user.applicationDate}">
+                        <span th:text="${ user.applicationDate != null ? #temporals.format(user.applicationDate, 'MMM-dd-yyyy') : '?'}"></span>
                     </td>
                     <td>
                         <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = freeze)}" th:if="${user.status} == 'APPROVED'">Ban</a>
