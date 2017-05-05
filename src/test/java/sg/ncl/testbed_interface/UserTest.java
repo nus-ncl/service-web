@@ -1,7 +1,13 @@
 package sg.ncl.testbed_interface;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.time.ZonedDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
@@ -24,6 +30,26 @@ public class UserTest {
         final String id = RandomStringUtils.randomAlphanumeric(20);
         user.setId(id);
         assertThat(user.getId(), is(id));
+    }
+
+    @Test
+    public void testGetCreatedDate() {
+        final User2 one = new User2();
+        Assertions.assertThat(one.getCreatedDate()).isNull();
+    }
+
+    @Test
+    public void testSetCreatedDate() throws IOException {
+        final User2 one = new User2();
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        one.setCreatedDate(mapper.writeValueAsString(zonedDateTime));
+
+        Assertions.assertThat(one.getCreatedDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
+        Assertions.assertThat(one.getCreatedDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
+        Assertions.assertThat(one.getCreatedDate().getYear()).isEqualTo(zonedDateTime.getYear());
     }
 
     @Test

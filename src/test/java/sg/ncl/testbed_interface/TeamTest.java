@@ -120,6 +120,12 @@ public class TeamTest {
     }
 
     @Test
+    public void testGetProcessedDate() {
+        final Team2 one = new Team2();
+        assertThat(one.getProcessedDate()).isNull();
+    }
+
+    @Test
     public void testSetProcessedDate() throws IOException {
         final Team2 one = new Team2();
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
