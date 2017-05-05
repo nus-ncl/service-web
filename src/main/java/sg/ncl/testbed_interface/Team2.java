@@ -39,9 +39,6 @@ public class Team2 implements Serializable {
     private List<User2> pendingMembersList;
     private EnumMap<MemberStatus, List<User2>> membersStatusMap; // membership status, list of members with the specific status, e.g. APPROVED -> [UserA, UserB ...]
 
-    // don't serialize
-    private transient ObjectMapper mapper;
-
     public Team2() {
         pendingMembersList = new ArrayList<>();
         membersList = new ArrayList<>();
@@ -49,9 +46,6 @@ public class Team2 implements Serializable {
         membersStatusMap.put(MemberStatus.APPROVED, new ArrayList<>());
         membersStatusMap.put(MemberStatus.PENDING, new ArrayList<>());
         membersStatusMap.put(MemberStatus.REJECTED, new ArrayList<>());
-
-        mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
     }
 
     public void setId(String id) {
@@ -91,9 +85,11 @@ public class Team2 implements Serializable {
     // store as ZonedDateTime object because we want to sort by date using DataTables plugin
     // using String will only sort alphabetically
     public void setProcessedDate(String processedDate) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         ZonedDateTime date = mapper.readValue(processedDate, ZonedDateTime.class);
         this.processedDate = date;
-    };
+    }
 
     public void setVisibility(String visibility) {
         this.visibility = visibility;
