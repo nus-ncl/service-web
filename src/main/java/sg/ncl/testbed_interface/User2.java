@@ -57,7 +57,8 @@ public class User2 implements Serializable {
     public void setCreatedDate(String createdDate) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        this.createdDate = mapper.readValue(createdDate, ZonedDateTime.class);
+        ZonedDateTime date = mapper.readValue(createdDate, ZonedDateTime.class);
+        this.createdDate = date;
     }
 
     public boolean getEmailVerified() {

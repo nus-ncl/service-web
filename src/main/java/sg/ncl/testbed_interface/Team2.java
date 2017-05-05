@@ -87,7 +87,8 @@ public class Team2 implements Serializable {
     public void setProcessedDate(String processedDate) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        this.processedDate = mapper.readValue(processedDate, ZonedDateTime.class);
+        ZonedDateTime date = mapper.readValue(processedDate, ZonedDateTime.class);
+        this.processedDate = date;
     };
 
     public void setVisibility(String visibility) {
