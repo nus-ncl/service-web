@@ -3609,11 +3609,9 @@ public class MainController {
         try {
             user2.setCreatedDate(object.get("createdDate").toString());
         } catch (Exception e) {
-            try {
-                user2.setCreatedDate(UNKNOWN);
-            } catch (IOException e1) {
-                log.warn("Error getting user application date {}", e);
-            }
+            // since createdDate date is a ZonedDateTime and not String
+            // set to '?' at the html page
+            log.warn("Error getting user application date {}", e);
         }
 
         return user2;
@@ -3633,11 +3631,8 @@ public class MainController {
             log.warn("Error getting team application date and/or processedDate {}", e);
             team2.setCreatedDate(UNKNOWN);
 
-            try {
-                team2.setProcessedDate(UNKNOWN);
-            } catch (IOException e1) {
-                log.warn("Error setting team processedDate {}", e1);
-            }
+            // since proccessed date is a ZonedDateTime and not String
+            // processed date is set to '?' at the html page if exception
         }
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));
