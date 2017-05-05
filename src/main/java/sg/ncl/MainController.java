@@ -106,6 +106,7 @@ public class MainController {
 
     private static final String EXPERIMENTS = "experiments";
 
+    private static final String APPLICATION_DATE = "applicationDate";
     private static final String TEAM_NAME = "teamName";
     private static final String TEAM_ID = "teamId";
     private static final String NODE_ID = "nodeId";
@@ -732,7 +733,7 @@ public class MainController {
         addressDetails.put("zipCode", signUpMergedForm.getPostalCode().trim());
 
         userFields.put("userDetails", userDetails);
-        userFields.put("applicationDate", ZonedDateTime.now());
+        userFields.put(APPLICATION_DATE, ZonedDateTime.now());
 
         JSONObject teamFields = new JSONObject();
 
@@ -3607,7 +3608,7 @@ public class MainController {
 
         // applicationDate is ZonedDateTime
         try {
-            user2.setApplicationDate(object.get("applicationDate").toString());
+            user2.setApplicationDate(object.get(APPLICATION_DATE).toString());
         } catch (Exception e) {
             // since applicationDate date is a ZonedDateTime and not String
             // set to '?' at the html page
@@ -3625,7 +3626,7 @@ public class MainController {
         // createdDate is String
         // processedDate is ZonedDateTime
         try {
-            team2.setCreatedDate(formatZonedDateTime(object.get("applicationDate").toString()));
+            team2.setCreatedDate(formatZonedDateTime(object.get(APPLICATION_DATE).toString()));
             team2.setProcessedDate(object.get("processedDate").toString());
         } catch (Exception e) {
             log.warn("Error getting team application date and/or processedDate {}", e);
