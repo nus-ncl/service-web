@@ -32,6 +32,7 @@
                     <th th:text="#{admin.users.header.email}">Email</th>
                     <th th:text="#{admin.users.header.team}">Team</th>
                     <th th:text="#{admin.users.header.status}">Status</th>
+                    <th th:text="#{admin.users.header.applicationDate}">Application Date</th>
                     <th><!-- Actions --></th>
                 </tr>
                 </thead>
@@ -69,6 +70,11 @@
                         <p th:if="${#lists.isEmpty(userToTeamMap.get(user.id))}">Not in any teams yet.</p>
                     </td>
                     <td th:text="${user.status}"></td>
+                    <!-- request dataTables plugin to sort using value and not display text -->
+                    <!-- use thymeleaf to format zoneddatetime to display in readable format -->
+                    <td th:attr="data-order=${user.createdDate}">
+                        <span th:text="${ user.createdDate != null ? #temporals.format(user.createdDate, 'MMM-dd-yyyy') : '?'}"></span>
+                    </td>
                     <td>
                         <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = freeze)}" th:if="${user.status} == 'APPROVED'">Ban</a>
                         <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = unfreeze)}" th:if="${user.status} == 'FROZEN'">Unban</a>
