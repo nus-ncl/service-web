@@ -33,6 +33,7 @@
                     <th th:text="#{admin.teams.header.name}">Team</th>
                     <th th:text="#{admin.teams.header.owner}">Owner</th>
                     <th th:text="#{admin.teams.header.status}">Status</th>
+                    <th th:text="#{admin.teams.header.approvalDate}">Approval Date</th>
                     <th><!--Actions--></th>
                 </tr>
                 </thead>
@@ -86,6 +87,11 @@
                         </div>
                     </td>
                     <td th:text="${team.value.status}">Status</td>
+                    <!-- request dataTables plugin to sort using value and not display text -->
+                    <!-- use thymeleaf to format zoneddatetime to display in readable format -->
+                    <td th:attr="data-order=${team.value.processedDate}">
+                        <span th:text="${ team.value.processedDate != null ? #temporals.format(team.value.processedDate, 'MMM-dd-yyyy') : '?'}"></span>
+                    </td>
                     <td>
                         <a th:href="@{/admin/teams/{teamId}/(teamId=${team.value.id}, action = restrict)}" th:if="${team.value.status} == 'APPROVED'">Restrict</a>
                         <a th:href="@{/admin/teams/{teamId}/(teamId=${team.value.id}, action = free)}" th:if="${team.value.status} == 'RESTRICTED'">Free</a>

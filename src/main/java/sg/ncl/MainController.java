@@ -3613,11 +3613,20 @@ public class MainController {
         JSONObject object = new JSONObject(json);
         JSONArray membersArray = object.getJSONArray("members");
 
+        // createdDate is String
+        // processedDate is ZonedDateTime
         try {
             team2.setCreatedDate(formatZonedDateTime(object.get("applicationDate").toString()));
+            team2.setProcessedDate(object.get("processedDate").toString());
         } catch (Exception e) {
-            log.warn("Error getting team application date {}", e);
+            log.warn("Error getting team application date and/or processedDate {}", e);
             team2.setCreatedDate(UNKNOWN);
+
+            try {
+                team2.setProcessedDate(UNKNOWN);
+            } catch (IOException e1) {
+                log.warn("Error setting team processedDate {}", e1);
+            }
         }
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));
