@@ -106,6 +106,7 @@ public class MainController {
 
     private static final String EXPERIMENTS = "experiments";
 
+    private static final String APPLICATION_DATE = "applicationDate";
     private static final String TEAM_NAME = "teamName";
     private static final String TEAM_ID = "teamId";
     private static final String NODE_ID = "nodeId";
@@ -732,7 +733,7 @@ public class MainController {
         addressDetails.put("zipCode", signUpMergedForm.getPostalCode().trim());
 
         userFields.put("userDetails", userDetails);
-        userFields.put("applicationDate", ZonedDateTime.now());
+        userFields.put(APPLICATION_DATE, ZonedDateTime.now());
 
         JSONObject teamFields = new JSONObject();
 
@@ -3605,6 +3606,15 @@ public class MainController {
         user2.setStatus(object.getString("status"));
         user2.setEmailVerified(object.getBoolean("emailVerified"));
 
+        // applicationDate is ZonedDateTime
+        try {
+            user2.setApplicationDate(object.get(APPLICATION_DATE).toString());
+        } catch (Exception e) {
+            // since applicationDate date is a ZonedDateTime and not String
+            // set to '?' at the html page
+            log.warn("Error getting user application date {}", e);
+        }
+
         return user2;
     }
 
@@ -3613,11 +3623,17 @@ public class MainController {
         JSONObject object = new JSONObject(json);
         JSONArray membersArray = object.getJSONArray("members");
 
+        // createdDate is ZonedDateTime
+        // processedDate is ZonedDateTime
         try {
-            team2.setCreatedDate(formatZonedDateTime(object.get("applicationDate").toString()));
+            team2.setApplicationDate(object.get(APPLICATION_DATE).toString());
+            team2.setProcessedDate(object.get("processedDate").toString());
         } catch (Exception e) {
-            log.warn("Error getting team application date {}", e);
-            team2.setCreatedDate(UNKNOWN);
+            log.warn("Error getting team application date and/or processedDate {}", e);
+
+            // created date is a ZonedDateTime
+            // since created date and proccessed date is a ZonedDateTime and not String
+            // both is set to '?' at the html page if exception
         }
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));

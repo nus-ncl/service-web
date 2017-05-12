@@ -1,10 +1,14 @@
 package sg.ncl.testbed_interface;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
 import sg.ncl.domain.MemberStatus;
 
 import javax.validation.constraints.Size;
+import java.io.IOException;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -26,7 +30,8 @@ public class Team2 implements Serializable {
 
     private String organisationType;
     private String status;
-    private String createdDate;
+    private ZonedDateTime applicationDate;
+    private ZonedDateTime processedDate;
     private String visibility;
     private int membersCount;
     private User2 owner;
@@ -71,8 +76,26 @@ public class Team2 implements Serializable {
         this.status = status;
     }
 
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
+    // reads the JSON representation of the ZonedDateTime, e.g. 1.4912345E
+    // converts to a proper ZonedDateTime object
+    // store as ZonedDateTime object because we want to sort by date using DataTables plugin
+    // using String will only sort alphabetically
+    public void setApplicationDate(String applicationDate) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ZonedDateTime date = mapper.readValue(applicationDate, ZonedDateTime.class);
+        this.applicationDate = date;
+    }
+
+    // reads the JSON representation of the ZonedDateTime, e.g. 1.4912345E
+    // converts to a proper ZonedDateTime object
+    // store as ZonedDateTime object because we want to sort by date using DataTables plugin
+    // using String will only sort alphabetically
+    public void setProcessedDate(String processedDate) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ZonedDateTime date = mapper.readValue(processedDate, ZonedDateTime.class);
+        this.processedDate = date;
     }
 
     public void setVisibility(String visibility) {

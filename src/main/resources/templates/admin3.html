@@ -36,7 +36,11 @@
 				</thead>
                 <tbody>
 				<tr th:each="team : ${pendingApprovalTeamsList}">
-					<td th:text="${team.createdDate}"></td>
+					<!-- request dataTables plugin to sort using value and not display text -->
+					<!-- use thymeleaf to format zoneddatetime to display in readable format -->
+					<td th:attr="data-order=${team.applicationDate}">
+						<span th:text="${ team.applicationDate != null ? #temporals.format(team.applicationDate, 'MMM-dd-yyyy') : '?'}"></span>
+					</td>
 					<td>
 						<a href="#pendingTeamDetailsModal" data-toggle="modal"
     						   th:attr="data-name=${team.name},
@@ -183,7 +187,10 @@
 <script>
 $(document).ready(function () {
 	//-----------------admin sort table -------------
-	$('#myTable').dataTable();
+	// sort the first column - date from largest zoneddatetime (most recent) to smallest
+	$('#myTable').DataTable({
+	   "order": [[ 0, "desc" ]]
+	});
 	$('#pendingTeamAcceptModal').on('show.bs.modal', function (event) {
         var anchor = $(event.relatedTarget);
         var name = anchor.data('name');

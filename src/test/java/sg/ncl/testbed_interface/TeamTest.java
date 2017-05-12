@@ -1,10 +1,15 @@
 package sg.ncl.testbed_interface;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import sg.ncl.Util;
 import sg.ncl.domain.MemberStatus;
 
+import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -104,15 +109,41 @@ public class TeamTest {
     @Test
     public void testGetCreatedDate() {
         final Team2 one = new Team2();
-        assertThat(one.getCreatedDate()).isNull();
+        assertThat(one.getApplicationDate()).isNull();
     }
 
     @Test
-    public void testSetCreatedDate() {
+    public void testSetCreatedDate() throws IOException {
         final Team2 one = new Team2();
-        final String str = RandomStringUtils.randomAlphanumeric(20);
-        one.setCreatedDate(str);
-        assertThat(one.getCreatedDate()).isEqualTo(str);
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        one.setApplicationDate(mapper.writeValueAsString(zonedDateTime));
+
+        assertThat(one.getApplicationDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
+        assertThat(one.getApplicationDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
+        assertThat(one.getApplicationDate().getYear()).isEqualTo(zonedDateTime.getYear());
+    }
+
+    @Test
+    public void testGetProcessedDate() {
+        final Team2 one = new Team2();
+        assertThat(one.getProcessedDate()).isNull();
+    }
+
+    @Test
+    public void testSetProcessedDate() throws IOException {
+        final Team2 one = new Team2();
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        one.setProcessedDate(mapper.writeValueAsString(zonedDateTime));
+
+        assertThat(one.getProcessedDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
+        assertThat(one.getProcessedDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
+        assertThat(one.getProcessedDate().getYear()).isEqualTo(zonedDateTime.getYear());
     }
 
     @Test
