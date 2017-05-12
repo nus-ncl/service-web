@@ -68,9 +68,11 @@ public class DataController extends MainController {
 
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
     public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
+        HttpEntity<String> request;
+        ResponseEntity response;
         if (id.isPresent()) {
-            HttpEntity<String> request = createHttpEntityHeaderOnly();
-            ResponseEntity response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
+            request = createHttpEntityHeaderOnly();
+            response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
             String dataResponseBody = response.getBody().toString();
             JSONObject dataInfoObject = new JSONObject(dataResponseBody);
             Dataset dataset = extractDataInfo(dataInfoObject.toString());
@@ -83,6 +85,18 @@ public class DataController extends MainController {
         } else {
             model.addAttribute(DATASET, new Dataset());
         }
+
+        request = createHttpEntityHeaderOnly();
+        response = restTemplate.exchange(properties.getCategories(), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+        JSONArray jsonArray = new JSONArray(responseBody);
+        List<DataCategory> dataCategories = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            DataCategory dataCategory = extractCategoryInfo(jsonObject.toString());
+            dataCategories.add(dataCategory);
+        }
+        model.addAttribute("categories", dataCategories);
         return CONTRIBUTE_DATA_PAGE;
     }
 
@@ -629,6 +643,19 @@ public class DataController extends MainController {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getDataset(dataId.toString()), HttpMethod.GET, request, String.class);
         return extractDataInfo(response.getBody().toString());
+    }
+
+    private DataCategory extractCategoryInfo(String json) {
+        log.debug(json);
+
+        DataCategory dataCategory = new DataCategory();
+        JSONObject object = new JSONObject(json);
+
+        dataCategory.setId(object.getLong("id"));
+        dataCategory.setName(object.getString("name"));
+        dataCategory.setDescription(object.getString("description"));
+
+        return dataCategory;
     }
 
 }

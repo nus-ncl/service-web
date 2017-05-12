@@ -28,6 +28,11 @@
                             <textarea class="form-control" rows="5" placeholder="Please give a detailed description about the dataset. You may also put up data samples here." th:field="*{description}"></textarea>
                         </div>
                         <div class="form-group">
+                            <select class="form-control" th:field="*{categoryId}">
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="#{${category.name}}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <div class="radio">
                                 <label><input type="radio" th:field="*{visibility}" th:value="PUBLIC"/><strong><span th:text="#{admin.contributeData.public}">Public</span></strong> <em><span th:text="#{admin.contributeData.publicDesc}">Dataset info will be shown on "Public Datasets" page.</span></em></label>
                             </div>

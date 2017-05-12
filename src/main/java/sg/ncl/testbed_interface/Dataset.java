@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import sg.ncl.domain.DataAccessibility;
 import sg.ncl.domain.DataVisibility;
 
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +25,8 @@ public class Dataset implements Serializable {
     @NotEmpty
 	private String description;
 	private String contributorId;
+	@Min(value = 1)
+	private Integer categoryId;
 	private DataVisibility visibility;
 	private DataAccessibility accessibility;
     private ZonedDateTime releasedDate;
@@ -31,6 +34,7 @@ public class Dataset implements Serializable {
 	private List<String> approvedUsers;
 
 	private User2 contributor;
+	private DataCategory category;
 	
 	public Dataset() {
         visibility = DataVisibility.PUBLIC;

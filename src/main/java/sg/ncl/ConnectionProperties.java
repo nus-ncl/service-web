@@ -208,6 +208,10 @@ public class ConnectionProperties {
         return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download";
     }
 
+    public String getCategories() {
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/categories";
+    }
+
     //-------------------------------------
     // TELEMETRY
     //-------------------------------------
