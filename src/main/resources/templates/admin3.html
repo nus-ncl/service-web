@@ -187,7 +187,10 @@
 <script>
 $(document).ready(function () {
 	//-----------------admin sort table -------------
-	$('#myTable').dataTable();
+	// sort the first column - date from largest zoneddatetime (most recent) to smallest
+	$('#myTable').DataTable({
+	   "order": [[ 0, "desc" ]]
+	});
 	$('#pendingTeamAcceptModal').on('show.bs.modal', function (event) {
         var anchor = $(event.relatedTarget);
         var name = anchor.data('name');

@@ -121,7 +121,10 @@
 <script>
     $(document).ready(function () {
         //-----------------admin sort table -------------
-        $('#myTable').dataTable();
+        // sort the third column - date from largest zoneddatetime (most recent) to smallest
+        $('#myTable').DataTable({
+            "order": [[ 3, 'desc' ]]
+        });
     })
 </script>
 </html>
