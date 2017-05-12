@@ -30,7 +30,7 @@ public class Team2 implements Serializable {
 
     private String organisationType;
     private String status;
-    private String createdDate;
+    private ZonedDateTime applicationDate;
     private ZonedDateTime processedDate;
     private String visibility;
     private int membersCount;
@@ -76,8 +76,15 @@ public class Team2 implements Serializable {
         this.status = status;
     }
 
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
+    // reads the JSON representation of the ZonedDateTime, e.g. 1.4912345E
+    // converts to a proper ZonedDateTime object
+    // store as ZonedDateTime object because we want to sort by date using DataTables plugin
+    // using String will only sort alphabetically
+    public void setApplicationDate(String applicationDate) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        ZonedDateTime date = mapper.readValue(applicationDate, ZonedDateTime.class);
+        this.applicationDate = date;
     }
 
     // reads the JSON representation of the ZonedDateTime, e.g. 1.4912345E

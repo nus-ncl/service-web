@@ -3623,17 +3623,17 @@ public class MainController {
         JSONObject object = new JSONObject(json);
         JSONArray membersArray = object.getJSONArray("members");
 
-        // createdDate is String
+        // createdDate is ZonedDateTime
         // processedDate is ZonedDateTime
         try {
-            team2.setCreatedDate(formatZonedDateTime(object.get(APPLICATION_DATE).toString()));
+            team2.setApplicationDate(object.get(APPLICATION_DATE).toString());
             team2.setProcessedDate(object.get("processedDate").toString());
         } catch (Exception e) {
             log.warn("Error getting team application date and/or processedDate {}", e);
-            team2.setCreatedDate(UNKNOWN);
 
-            // since proccessed date is a ZonedDateTime and not String
-            // processed date is set to '?' at the html page if exception
+            // created date is a ZonedDateTime
+            // since created date and proccessed date is a ZonedDateTime and not String
+            // both is set to '?' at the html page if exception
         }
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));
