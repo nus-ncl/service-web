@@ -1,5 +1,6 @@
 package sg.ncl.testbed_interface;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -108,15 +109,21 @@ public class TeamTest {
     @Test
     public void testGetCreatedDate() {
         final Team2 one = new Team2();
-        assertThat(one.getCreatedDate()).isNull();
+        assertThat(one.getApplicationDate()).isNull();
     }
 
     @Test
-    public void testSetCreatedDate() {
+    public void testSetCreatedDate() throws IOException {
         final Team2 one = new Team2();
-        final String str = RandomStringUtils.randomAlphanumeric(20);
-        one.setCreatedDate(str);
-        assertThat(one.getCreatedDate()).isEqualTo(str);
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        one.setApplicationDate(mapper.writeValueAsString(zonedDateTime));
+
+        assertThat(one.getApplicationDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
+        assertThat(one.getApplicationDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
+        assertThat(one.getApplicationDate().getYear()).isEqualTo(zonedDateTime.getYear());
     }
 
     @Test
