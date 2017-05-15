@@ -68,11 +68,9 @@ public class DataController extends MainController {
 
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
     public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
-        HttpEntity<String> request;
-        ResponseEntity response;
         if (id.isPresent()) {
-            request = createHttpEntityHeaderOnly();
-            response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
             String dataResponseBody = response.getBody().toString();
             JSONObject dataInfoObject = new JSONObject(dataResponseBody);
             Dataset dataset = extractDataInfo(dataInfoObject.toString());
@@ -86,8 +84,13 @@ public class DataController extends MainController {
             model.addAttribute(DATASET, new Dataset());
         }
 
-        request = createHttpEntityHeaderOnly();
-        response = restTemplate.exchange(properties.getCategories(), HttpMethod.GET, request, String.class);
+        model.addAttribute("categories", getDataCategories());
+        return CONTRIBUTE_DATA_PAGE;
+    }
+
+    private List<DataCategory> getDataCategories() {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getCategories(), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody().toString();
         JSONArray jsonArray = new JSONArray(responseBody);
         List<DataCategory> dataCategories = new ArrayList<>();
@@ -96,8 +99,7 @@ public class DataController extends MainController {
             DataCategory dataCategory = extractCategoryInfo(jsonObject.toString());
             dataCategories.add(dataCategory);
         }
-        model.addAttribute("categories", dataCategories);
-        return CONTRIBUTE_DATA_PAGE;
+        return dataCategories;
     }
 
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.POST)
@@ -121,6 +123,7 @@ public class DataController extends MainController {
             }
             message.append("</ul>");
             model.addAttribute(MESSAGE_ATTRIBUTE, message.toString());
+            model.addAttribute("categories", getDataCategories());
             return CONTRIBUTE_DATA_PAGE;
         }
 
@@ -133,6 +136,7 @@ public class DataController extends MainController {
         dataObject.put("resources", new ArrayList());
         dataObject.put("approvedUsers", new ArrayList());
         dataObject.put("releasedDate", dataset.getReleasedDate());
+        dataObject.put("categoryId", dataset.getCategoryId());
         log.debug("DataObject: {}", dataObject.toString());
 
         HttpEntity<String> request = createHttpEntityWithBody(dataObject.toString());
@@ -643,19 +647,6 @@ public class DataController extends MainController {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getDataset(dataId.toString()), HttpMethod.GET, request, String.class);
         return extractDataInfo(response.getBody().toString());
-    }
-
-    private DataCategory extractCategoryInfo(String json) {
-        log.debug(json);
-
-        DataCategory dataCategory = new DataCategory();
-        JSONObject object = new JSONObject(json);
-
-        dataCategory.setId(object.getLong("id"));
-        dataCategory.setName(object.getString("name"));
-        dataCategory.setDescription(object.getString("description"));
-
-        return dataCategory;
     }
 
 }

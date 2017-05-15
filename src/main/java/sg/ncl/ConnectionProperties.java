@@ -212,6 +212,10 @@ public class ConnectionProperties {
         return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/categories";
     }
 
+    public String getCategory(Integer categoryId) {
+        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/categories/" + categoryId;
+    }
+
     //-------------------------------------
     // TELEMETRY
     //-------------------------------------
