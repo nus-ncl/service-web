@@ -181,6 +181,7 @@ $(document).ready(function() {
         var anchor = $(event.relatedTarget);
         var datasetLabel = anchor.data('name');
         var datasetDesc = anchor.data('desc');
+        var datasetCategory = anchor.data('category');
         var datasetOwner = anchor.data('owner');
         var datasetRelease = anchor.data('release');
         var datasetVisible = anchor.data('visible');
@@ -190,6 +191,7 @@ $(document).ready(function() {
 		modal.find('#datasetButton').hide();
         modal.find('#datasetLabel').text(datasetLabel);
         modal.find('#datasetDesc').text(datasetDesc);
+        modal.find('#datasetCategory').text(datasetCategory);
         modal.find('#datasetOwner').text(datasetOwner);
         modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);

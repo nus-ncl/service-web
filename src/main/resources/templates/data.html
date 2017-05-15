@@ -62,6 +62,7 @@
 	                   	<td><a href="#datasetModal" data-toggle="modal"
 							   th:attr="data-name=${datasetEntry.value.name},
 							            data-desc=${datasetEntry.value.description},
+							            data-category=${datasetEntry.value.category.name},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                 	    data-release=${datasetEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
@@ -123,6 +124,10 @@
 						<div class="row">
 							<div class="col-md-4">Description:</div>
 							<div class="col-md-8" id="datasetDesc"></div>
+						</div>
+						<div class="row">
+							<div class="col-md-4">Category:</div>
+							<div class="col-md-8" id="datasetCategory"></div>
 						</div>
                         <div class="row">
                             <div class="col-md-4">Owner:</div>
