@@ -3751,8 +3751,15 @@ public class MainController {
 
         JSONArray approvedUsers = object.getJSONArray("approvedUsers");
         for (int i = 0; i < approvedUsers.length(); i++) {
-            dataset.addApprovedUser(approvedUsers.getString(0));
+            dataset.addApprovedUser(approvedUsers.getString(i));
         }
+
+        JSONArray keywords = object.getJSONArray("keywords");
+        List<String> keywordList = new ArrayList<>();
+        for (int i = 0; i < keywords.length(); i++) {
+            keywordList.add(keywords.getString(i));
+        }
+        dataset.setKeywordList(keywordList);
 
         return dataset;
     }

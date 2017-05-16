@@ -137,6 +137,7 @@ public class DataController extends MainController {
         dataObject.put("approvedUsers", new ArrayList());
         dataObject.put("releasedDate", dataset.getReleasedDate());
         dataObject.put("categoryId", dataset.getCategoryId());
+        dataObject.put("keywords", dataset.getKeywordList());
         log.debug("DataObject: {}", dataObject.toString());
 
         HttpEntity<String> request = createHttpEntityWithBody(dataObject.toString());

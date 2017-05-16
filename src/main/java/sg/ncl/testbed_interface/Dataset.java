@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -32,6 +33,7 @@ public class Dataset implements Serializable {
     private ZonedDateTime releasedDate;
 	private List<DataResource> dataResources;
 	private List<String> approvedUsers;
+	private String keywords; // to be converted to list upon access
 
 	private User2 contributor;
 	private DataCategory category;
@@ -116,6 +118,16 @@ public class Dataset implements Serializable {
     public String getReleasedDateString() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
         return releasedDate.format(format);
+    }
+
+    public List<String> getKeywordList() {
+	    // http://stackoverflow.com/questions/33691430/bind-comma-separated-string-to-list
+        return Arrays.asList(keywords.split("\\s*,\\s*"));
+    }
+
+    public void setKeywordList(List<String> keywordList) {
+	    // http://stackoverflow.com/questions/63150/whats-the-best-way-to-build-a-string-of-delimited-items-in-java
+        keywords = String.join(", ", keywordList);
     }
 
 }

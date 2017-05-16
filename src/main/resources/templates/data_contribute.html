@@ -24,8 +24,10 @@
                             <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{name}"  th:readonly="${dataset.id != null}"/>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? has-error">
-                            <!-- input type="text" class="form-control" placeholder="Enter Dataset Description" th:field="*{description}"/ -->
                             <textarea class="form-control" rows="5" placeholder="Please give a detailed description about the dataset. You may also put up data samples here." th:field="*{description}"></textarea>
+                        </div>
+                        <div class="form-group" th:classappend="${#fields.hasErrors('keywords')} ? has-error">
+                            <input type="text" class="form-control" placeholder="Enter keywords, separated by comma" th:field="*{keywords}"/>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('categoryId')} ? has-error">
                             <select class="form-control" th:field="*{categoryId}">
@@ -59,6 +61,8 @@
                                     data-toggle="modal" data-target="#deleteModal"
                                     th:attr="data-name=*{name},
 							            data-desc=*{description},
+							            data-keywords=*{keywords},
+							            data-category=*{category.name},
                                         data-owner=*{contributor.firstName + ' ' + contributor.lastName},
                                 	    data-release=${dataset.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(dataset.visibility))},
@@ -100,6 +104,14 @@
                         <div class="row">
                             <div class="col-md-4">Description:</div>
                             <div class="col-md-8" id="datasetDesc"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Keywords:</div>
+                            <div class="col-md-8" id="datasetKeywords"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Category:</div>
+                            <div class="col-md-8" id="datasetCategory"></div>
                         </div>
                         <div class="row">
                             <div class="col-md-4">Owner:</div>
