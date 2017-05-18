@@ -61,6 +61,7 @@ public class DataController extends MainController {
             datasetManager.addDataset(dataset);
         }
 
+        model.addAttribute("categories", getDataCategories());
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
         model.addAttribute("requestForm", new DataRequestForm());
         return "data";
