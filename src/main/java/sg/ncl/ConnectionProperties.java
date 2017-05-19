@@ -157,7 +157,7 @@ public class ConnectionProperties {
     }
 
     public String getDeleteExperiment(String teamId, String expId) {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId;
     }
 
     public String getStartExperiment(String teamName, String expId) {
@@ -165,11 +165,11 @@ public class ConnectionProperties {
     }
 
     public String getStopExperiment(String teamName, String expId) {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
     }
 
     public String getTopology(String teamName, String expId) {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiments/" + expId + "/topology";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiments/" + expId + "/topology";
     }
 
     public String getAllRealizations() {
@@ -181,39 +181,52 @@ public class ConnectionProperties {
     //-------------------------------------
 
     public String requestDataset(String dataId) {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests";
     }
 
     public String getRequest(String dataId, String requestId) {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests/" + requestId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests/" + requestId;
     }
 
     public String getPublicData() {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";
     }
 
     public String getData() {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint;
     }
 
     public String getDataset(String dataId) {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId;
+    }
+
+    public String searchDatasets(String keywords) {
+        StringBuilder params = new StringBuilder();
+        String[] keywordArray = keywords.split("\\W+");
+        for (int i = 0; i < keywordArray.length; i++) {
+            if (i == 0) {
+                params.append("?keyword=").append(keywordArray[i]);
+            } else {
+                params.append("&keyword=").append(keywordArray[i]);
+            }
+        }
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/search" + params.toString();
     }
 
     public String getResource(String dataId, String resourceId) {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId;
     }
 
     public String downloadResource(String dataId, String resourceId) {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download";
     }
 
     public String getCategories() {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/categories";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/categories";
     }
 
     public String getCategory(Integer categoryId) {
-        return HTTP_MODE +  sioAddress + ":" + sioPort + "/" + dataEndpoint + "/categories/" + categoryId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/categories/" + categoryId;
     }
 
     //-------------------------------------
@@ -333,26 +346,26 @@ public class ConnectionProperties {
     // ANALYTICS (DATA DOWNLOADS)
     //-------------------------------------
     public String getDownloadStat(String... paramString) {
-        String params = "";
+        StringBuilder params = new StringBuilder();
         for (int i = 0; i < paramString.length; i++) {
             if (i == 0) {
-                params += "?" + paramString[i];
+                params.append("?").append(paramString[i]);
             } else {
-                params += "&" + paramString[i];
+                params.append("&").append(paramString[i]);
             }
         }
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads" + params;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads" + params.toString();
     }
 
     public String getUsageStat(String teamId, String... paramString) {
-        String params = "";
+        StringBuilder params = new StringBuilder();
         for (int i = 0; i < paramString.length; i++) {
             if (i == 0) {
-                params += "?" + paramString[i];
+                params.append("?").append(paramString[i]);
             } else {
-                params += "&" + paramString[i];
+                params.append("&").append(paramString[i]);
             }
         }
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + params;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + params.toString();
     }
 }
