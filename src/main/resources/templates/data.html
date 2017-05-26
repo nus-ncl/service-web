@@ -26,7 +26,7 @@
                         <div class="checkbox"><label><input type="checkbox" name="year" value="2018"/>2018</label></div>
                         <div class="checkbox"><label><input type="checkbox" name="year" value="2017"/>2017</label></div>
                         <div class="checkbox"><label><input type="checkbox" name="year" value="2016"/>2016</label></div>
-                        <u>Category</u>
+                        <u>Category</u> <a href="#categoryDescModal" data-toggle="modal"><i class="fa fa-info-circle"></i></a>
                         <div class="checkbox" th:each="category : ${categories}"><label><input type="checkbox" th:name="category" th:value="${category.id}" th:text="${category.name}"/></label></div>
                         <u>Accessibility</u>
                         <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Open"/>Open</label></div>
@@ -238,6 +238,24 @@
             </div>
         </div>
 
+        <!-- Category Descriptions Modal -->
+        <div class="modal fade" id="categoryDescModal" tabindex="-1" role="dialog" aria-labelledby="categoryDescModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="categoryDescLabel">Category Descriptions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" th:each="category, iterStat : ${categories}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
+                            <div class="col-md-3" th:text="${category.name}"></div>
+                            <div class="col-md-9" th:text="${category.description}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 		<div th:replace="fragments/footer :: footer"></div>
     </body>
 	<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
@@ -354,7 +372,7 @@
                 }
                 table.draw();
             });
-		})
+		});
         // ]]>
 	</script>
 </html>

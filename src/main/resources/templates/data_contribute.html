@@ -30,10 +30,17 @@
                             <input type="text" class="form-control" placeholder="Enter keywords, separated by comma" th:field="*{keywords}"/>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('categoryId')} ? has-error">
-                            <select class="form-control" th:field="*{categoryId}">
-                                <option th:value="0" th:text="#{admin.contributeData.selectCategory}"></option>
-                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-                            </select>
+                            <div class="input-group">
+                                <select class="form-control" th:field="*{categoryId}">
+                                    <option th:value="0" th:text="#{admin.contributeData.selectCategory}"></option>
+                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                                </select>
+                                <div class="input-group-addon">
+                                    <a href="#categoryDescModal" data-toggle="modal">
+                                        <i class="fa fa-info-circle"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <div class="radio">
@@ -133,6 +140,24 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <a href="#" class="btn btn-primary" id="deleteButton">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Descriptions Modal -->
+        <div class="modal fade" id="categoryDescModal" tabindex="-1" role="dialog" aria-labelledby="categoryDescModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="categoryDescLabel">Category Descriptions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" th:each="category, iterStat : ${categories}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
+                            <div class="col-md-3" th:text="${category.name}"></div>
+                            <div class="col-md-9" th:text="${category.description}"></div>
+                        </div>
                     </div>
                 </div>
             </div>
