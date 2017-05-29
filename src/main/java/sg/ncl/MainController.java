@@ -3751,8 +3751,10 @@ public class MainController {
             log.warn("Error getting released date {}", e);
             dataset.setReleasedDate(null);
         }
+        dataset.setCategoryId(object.getInt("categoryId"));
 
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
+        dataset.setCategory(invokeAndExtractCategoryInfo(dataset.getCategoryId()));
 
         JSONArray resources = object.getJSONArray("resources");
         for (int i = 0; i < resources.length(); i++) {
@@ -3765,10 +3767,44 @@ public class MainController {
 
         JSONArray approvedUsers = object.getJSONArray("approvedUsers");
         for (int i = 0; i < approvedUsers.length(); i++) {
-            dataset.addApprovedUser(approvedUsers.getString(0));
+            dataset.addApprovedUser(approvedUsers.getString(i));
         }
 
+        JSONArray keywords = object.getJSONArray("keywords");
+        List<String> keywordList = new ArrayList<>();
+        for (int i = 0; i < keywords.length(); i++) {
+            keywordList.add(keywords.getString(i));
+        }
+        dataset.setKeywordList(keywordList);
+
         return dataset;
+    }
+
+    protected DataCategory extractCategoryInfo(String json) {
+        log.debug(json);
+
+        DataCategory dataCategory = new DataCategory();
+        JSONObject object = new JSONObject(json);
+
+        dataCategory.setId(object.getLong("id"));
+        dataCategory.setName(object.getString("name"));
+        dataCategory.setDescription(object.getString("description"));
+
+        return dataCategory;
+    }
+
+    protected DataCategory invokeAndExtractCategoryInfo(Integer categoryId) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getCategory(categoryId), HttpMethod.GET, request, String.class);
+        } catch (Exception e) {
+            log.warn("Data service not available to retrieve Category: {}", categoryId);
+            return new DataCategory();
+        }
+
+        return extractCategoryInfo(response.getBody().toString());
     }
 
     protected User2 invokeAndExtractUserInfo(String userId) {

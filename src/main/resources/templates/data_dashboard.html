@@ -42,6 +42,8 @@
                                 data-toggle="modal" data-target="#deleteModal"
                                 th:attr="data-name=${dataEntry.name},
 							            data-desc=${dataEntry.description},
+							            data-keywords=${dataEntry.keywords},
+							            data-category=${dataEntry.category.name},
                                         data-owner=${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName},
                                 	    data-release=${dataEntry.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(dataEntry.visibility))},
@@ -68,6 +70,14 @@
                     <div class="row">
                         <div class="col-md-4">Description:</div>
                         <div class="col-md-8" id="datasetDesc"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Keywords:</div>
+                        <div class="col-md-8" id="datasetKeywords"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Category:</div>
+                        <div class="col-md-8" id="datasetCategory"></div>
                     </div>
                     <div class="row">
                         <div class="col-md-4">Owner:</div>

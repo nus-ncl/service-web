@@ -12,66 +12,98 @@
 		<p>&nbsp;</p>
 		<p>&nbsp;</p>
         <div class="container ">
-
 			<p>&nbsp;</p>
             <div class="row dashpanel">
 				<div th:if="${message}">
                     <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 				</div>
-            	<h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.header}"></h2>
-                <table id="myTable" class="table table-responsive">
-                    <thead>
-                    <tr>
-                        <th>
-                        	<span th:text="#{data.header.name}">Name</span>
-							<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
-                        		<span class="tooltiptext">
-                        			<p th:text="#{dataset.user.tooltip.name}">Dataset Name</p>
-                        		</span>
-							</a>
-						</th>
-                        <th>
-                            <span th:text="#{data.header.owner}">Owner</span>
-                            <a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
-                                <span class="tooltiptext">
-                        			<p th:text="#{dataset.user.tooltip.owner}">The owner of the dataset</p>
-                        		</span>
-                            </a>
-                        </th>
-						<th>
-							<span th:text="#{data.header.releaseDate}">Release Date</span>
-							<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
-                        		<span class="tooltiptext">
-                        			<p th:text="#{dataset.user.tooltip.date}">The date when the dataset is made</p>
-                        		</span>
-                        	</a>
-                        </th>
-                        <th>
-                            <span th:text="#{data.header.access}">Access</span>
-                            <a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
-                                <span class="tooltiptext">
-                        			<p th:text="#{dataset.user.tooltip.access}">User granted access can download</p>
-                        		</span>
-                            </a>
-                        </th>
-                        <th><!-- Actions --></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="datasetEntry : ${allDataMap}">
-	                   	<td><a href="#datasetModal" data-toggle="modal"
+                <h2 class="team-heading team-heading-current-team" th:text="#{dataset.user.header}"></h2>
+                <div class="row">
+                    <div class="col-md-3">
+                        <b>Filter</b>
+                        <hr/>
+                        <u>Year</u>
+                        <div class="checkbox"><label><input type="checkbox" name="year" value="2018"/>2018</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="year" value="2017"/>2017</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="year" value="2016"/>2016</label></div>
+                        <u>Category</u> <a href="#categoryDescModal" data-toggle="modal"><i class="fa fa-info-circle"></i></a>
+                        <div class="checkbox" th:each="category : ${categories}"><label><input type="checkbox" th:name="category" th:value="${category.id}" th:text="${category.name}"/></label></div>
+                        <u>Accessibility</u>
+                        <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Open"/>Open</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Restricted"/>Restricted</label></div>
+                        <u>Visibility</u>
+                        <div class="checkbox"><label><input type="checkbox" name="visibility" value="Public"/>Public</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="visibility" value="Protected"/>Protected</label></div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="well">
+                            <form class="form-inline" method="get" action="#" th:action="@{/data/search}" role="form">
+                                <div class="form-group col-md-10">
+                                    <label for="keywords" class="col-md-2" style="padding-top: 5px">Keywords:</label>
+                                    <input type="text" class="form-control col-md-10" style="width: inherit"
+                                           id="keywords" placeholder="search terms"
+                                           th:name="keywords" th:value="${keywords != null ? keywords : ''}"/>
+                                </div>
+                                <button type="submit" class="btn btn-default">Search</button>
+                            </form>
+                        </div>
+                        <table id="myTable" class="table table-responsive">
+                        <thead>
+                        <tr>
+                            <th>
+                            	<span th:text="#{data.header.name}">Name</span>
+				    			<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                            		<span class="tooltiptext">
+                            			<p th:text="#{dataset.user.tooltip.name}">Dataset Name</p>
+                        	    	</span>
+    							</a>
+	    					</th>
+                            <th>
+                                <span th:text="#{data.header.owner}">Owner</span>
+                                <a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                                    <span class="tooltiptext">
+                            			<p th:text="#{dataset.user.tooltip.owner}">The owner of the dataset</p>
+                        	    	</span>
+                                </a>
+                            </th>
+		    				<th>
+			    				<span th:text="#{data.header.releaseDate}">Release Date</span>
+				    			<a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                            		<span class="tooltiptext">
+                            			<p th:text="#{dataset.user.tooltip.date}">The date when the dataset is made</p>
+                        	    	</span>
+                            	</a>
+                            </th>
+                            <th>
+                                <span th:text="#{data.header.access}">Access</span>
+                                <a href="#" class="data-name-tooltip"><i class="fa fa-question-circle"></i>
+                                    <span class="tooltiptext">
+                            			<p th:text="#{dataset.user.tooltip.access}">User granted access can download</p>
+                        	    	</span>
+                                </a>
+                            </th>
+                            <th><!-- Actions --></th>
+                            <th>Visible</th>
+                            <th>Category ID</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="datasetEntry : ${allDataMap}">
+	                       	<td><a href="#datasetModal" data-toggle="modal"
 							   th:attr="data-name=${datasetEntry.value.name},
 							            data-desc=${datasetEntry.value.description},
+							            data-keywords=${datasetEntry.value.keywords},
+							            data-category=${datasetEntry.value.category.name},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                 	    data-release=${datasetEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
                                         data-access=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))},
                                         data-edit=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/contribute/' + datasetEntry.value.id : ''}"
 							   th:text="${datasetEntry.value.name}">Name</a></td>
-	                   	<td th:text="${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName}">Owner</td>
-                        <td th:text="${datasetEntry.value.getReleasedDateString()}"></td>
-					    <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))}">Access</td>
-	                   	<td>
+	                       	<td th:text="${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName}">Owner</td>
+                            <td th:text="${datasetEntry.value.getReleasedDateString()}"></td>
+				    	    <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.accessibility))}">Access</td>
+	                       	<td>
 	                   		<a th:if="${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#downloadModal" class="btn btn-primary" data-toggle="modal"
                                th:attr="data-id=${datasetEntry.value.id},
                                	        data-name=${datasetEntry.value.name},
@@ -84,13 +116,16 @@
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                         data-request=${'/data/' + datasetEntry.value.id + '/request'}"><i class="fa fa-commenting"></i> Request</a>
 	                   	</td>
-                    </tr>
-                    </tbody>
-                </table>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-
-				<p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
+                            <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))}">Visibility</td>
+                            <td th:text="${datasetEntry.value.categoryId}">Category ID</td>
+                        </tr>
+                        </tbody>
+                        </table>
+		        		<p>&nbsp;</p>
+			        	<p>&nbsp;</p>
+				        <p><a href="#" th:href="@{/data/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Dataset</button></a></p>
+                    </div>
+                </div>
             </div> <!-- row -->
 			<div class="cc-wraper">
 				<div class="cc-contactpop fixed">
@@ -123,6 +158,14 @@
 						<div class="row">
 							<div class="col-md-4">Description:</div>
 							<div class="col-md-8" id="datasetDesc"></div>
+						</div>
+                        <div class="row">
+                            <div class="col-md-4">Keywords:</div>
+                            <div class="col-md-8" id="datasetKeywords"></div>
+                        </div>
+						<div class="row">
+							<div class="col-md-4">Category:</div>
+							<div class="col-md-8" id="datasetCategory"></div>
 						</div>
                         <div class="row">
                             <div class="col-md-4">Owner:</div>
@@ -195,6 +238,24 @@
             </div>
         </div>
 
+        <!-- Category Descriptions Modal -->
+        <div class="modal fade" id="categoryDescModal" tabindex="-1" role="dialog" aria-labelledby="categoryDescModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="categoryDescLabel">Category Descriptions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" th:each="category, iterStat : ${categories}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
+                            <div class="col-md-3" th:text="${category.name}"></div>
+                            <div class="col-md-9" th:text="${category.description}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 		<div th:replace="fragments/footer :: footer"></div>
     </body>
 	<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
@@ -211,9 +272,107 @@
 	<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
 	<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
 	<script>
-		$(document).ready(function () {
+        // <![CDATA[
+        var yearCheckboxes = 0;
+        var categoryCheckboxes = 0;
+        var accessibilityCheckboxes = 0;
+        var visibilityCheckboxes = 0;
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var checkedBoxes = $('input:checked');
+            if (checkedBoxes.size() === 0) {
+                return true;
+            }
+
+            var yearFlag = false;
+            if (yearCheckboxes === 0) {
+                yearFlag = true;
+            }
+            var categoryFlag = false;
+            if (categoryCheckboxes === 0) {
+                categoryFlag = true;
+            }
+            var accessibilityFlag = false;
+            if (accessibilityCheckboxes === 0) {
+                accessibilityFlag = true;
+            }
+            var visibilityFlag = false;
+            if (visibilityCheckboxes === 0) {
+                visibilityFlag = true;
+            }
+            $.each(checkedBoxes, function (index, checkbox) {
+                if (checkbox.name === "year") {
+                    var releaseDate = data[2];
+                    if (releaseDate.indexOf(checkbox.value) >= 0) {
+                        yearFlag = true;
+                    }
+                }
+                if (checkbox.name === "category") {
+                    var category = data[6];
+                    if (category === checkbox.value) {
+                        categoryFlag = true;
+                    }
+                }
+                if (checkbox.name === "accessibility") {
+                    var access = data[3];
+                    if (access.indexOf(checkbox.value) >= 0) {
+                        accessibilityFlag = true;
+                    }
+                }
+                if (checkbox.name === "visibility") {
+                    var visible = data[5];
+                    if (visible.indexOf(checkbox.value) >= 0) {
+                        visibilityFlag = true;
+                    }
+                }
+            });
+            return yearFlag && categoryFlag && accessibilityFlag && visibilityFlag;
+        });
+
+        $(document).ready(function () {
 			//-----------------admin sort table -------------
-			$('#myTable').dataTable();
-		})
+            var table = $('#myTable').DataTable({
+                "dom": 'lrtip'
+            });
+            table.column(5).visible(false, false);
+            table.column(6).visible(false, false);
+            table.columns.adjust().draw(false);
+
+            $('input:checkbox').change(function () {
+                if (this.checked) {
+                    switch (this.name) {
+                        case "year":
+                            yearCheckboxes++;
+                            break;
+                        case "category":
+                            categoryCheckboxes++;
+                            break;
+                        case "accessibility":
+                            accessibilityCheckboxes++;
+                            break;
+                        case "visibility":
+                            visibilityCheckboxes++;
+                            break;
+                    }
+                } else {
+                    switch (this.name) {
+                        case "year":
+                            yearCheckboxes--;
+                            break;
+                        case "category":
+                            categoryCheckboxes--;
+                            break;
+                        case "accessibility":
+                            accessibilityCheckboxes--;
+                            break;
+                        case "visibility":
+                            visibilityCheckboxes--;
+                            break;
+                    }
+                }
+                table.draw();
+            });
+		});
+        // ]]>
 	</script>
 </html>

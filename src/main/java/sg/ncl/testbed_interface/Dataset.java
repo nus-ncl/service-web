@@ -7,10 +7,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 import sg.ncl.domain.DataAccessibility;
 import sg.ncl.domain.DataVisibility;
 
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -24,13 +26,17 @@ public class Dataset implements Serializable {
     @NotEmpty
 	private String description;
 	private String contributorId;
+	@Min(value = 1)
+	private Integer categoryId;
 	private DataVisibility visibility;
 	private DataAccessibility accessibility;
     private ZonedDateTime releasedDate;
 	private List<DataResource> dataResources;
 	private List<String> approvedUsers;
+	private String keywords; // to be converted to list upon access
 
 	private User2 contributor;
+	private DataCategory category;
 	
 	public Dataset() {
         visibility = DataVisibility.PUBLIC;
@@ -112,6 +118,16 @@ public class Dataset implements Serializable {
     public String getReleasedDateString() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
         return releasedDate.format(format);
+    }
+
+    public List<String> getKeywordList() {
+	    // http://stackoverflow.com/questions/33691430/bind-comma-separated-string-to-list
+        return Arrays.asList(keywords.split("\\s*,\\s*"));
+    }
+
+    public void setKeywordList(List<String> keywordList) {
+	    // http://stackoverflow.com/questions/63150/whats-the-best-way-to-build-a-string-of-delimited-items-in-java
+        keywords = String.join(", ", keywordList);
     }
 
 }

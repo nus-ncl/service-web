@@ -40,6 +40,7 @@ import static sg.ncl.domain.ExceptionState.*;
 public class DataController extends MainController {
 
     private static final String REDIRECT_DATA = "redirect:/data";
+    private static final String CATEGORIES = "categories";
     private static final String DATASET = "dataset";
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
     private static final String MESSAGE_ATTRIBUTE = "message";
@@ -61,8 +62,35 @@ public class DataController extends MainController {
             datasetManager.addDataset(dataset);
         }
 
+        model.addAttribute(CATEGORIES, getDataCategories());
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
         model.addAttribute("requestForm", new DataRequestForm());
+        return "data";
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String searchData(Model model, @RequestParam("keywords") String keywords) {
+        if (keywords.trim().length() == 0) {
+            return REDIRECT_DATA;
+        }
+
+        DatasetManager datasetManager = new DatasetManager();
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.searchDatasets(keywords), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+
+        JSONArray dataJsonArray = new JSONArray(dataResponseBody);
+        for (int i = 0; i < dataJsonArray.length(); i++) {
+            JSONObject dataInfoObject = dataJsonArray.getJSONObject(i);
+            Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            datasetManager.addDataset(dataset);
+        }
+
+        model.addAttribute(CATEGORIES, getDataCategories());
+        model.addAttribute("allDataMap", datasetManager.getDatasetMap());
+        model.addAttribute("requestForm", new DataRequestForm());
+        model.addAttribute("keywords", keywords);
         return "data";
     }
 
@@ -83,7 +111,23 @@ public class DataController extends MainController {
         } else {
             model.addAttribute(DATASET, new Dataset());
         }
+
+        model.addAttribute(CATEGORIES, getDataCategories());
         return CONTRIBUTE_DATA_PAGE;
+    }
+
+    private List<DataCategory> getDataCategories() {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getCategories(), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+        JSONArray jsonArray = new JSONArray(responseBody);
+        List<DataCategory> dataCategories = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            DataCategory dataCategory = extractCategoryInfo(jsonObject.toString());
+            dataCategories.add(dataCategory);
+        }
+        return dataCategories;
     }
 
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.POST)
@@ -107,6 +151,7 @@ public class DataController extends MainController {
             }
             message.append("</ul>");
             model.addAttribute(MESSAGE_ATTRIBUTE, message.toString());
+            model.addAttribute(CATEGORIES, getDataCategories());
             return CONTRIBUTE_DATA_PAGE;
         }
 
@@ -119,6 +164,8 @@ public class DataController extends MainController {
         dataObject.put("resources", new ArrayList());
         dataObject.put("approvedUsers", new ArrayList());
         dataObject.put("releasedDate", dataset.getReleasedDate());
+        dataObject.put("categoryId", dataset.getCategoryId());
+        dataObject.put("keywords", dataset.getKeywordList());
         log.debug("DataObject: {}", dataObject.toString());
 
         HttpEntity<String> request = createHttpEntityWithBody(dataObject.toString());
