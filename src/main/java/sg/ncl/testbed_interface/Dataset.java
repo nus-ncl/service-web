@@ -118,6 +118,14 @@ public class Dataset implements Serializable {
         return uris;
     }
 
+    public String getResourceMaliciousInArrayString() {
+	    List<Boolean> maliciousList = new ArrayList<>();
+	    dataResources.forEach(temp -> maliciousList.add(temp.isMalicious()));
+	    String maliciousStr = maliciousList.toString();
+	    log.debug(maliciousStr);
+	    return maliciousStr;
+    }
+
     public String getReleasedDateString() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
         return releasedDate.format(format);

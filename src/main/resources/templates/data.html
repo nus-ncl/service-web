@@ -113,6 +113,7 @@
                                	        data-link=${datasetEntry.value.license.link},
                                	        data-resourceuris=${datasetEntry.value.getResourceUrisInArrayString()},
                                	        data-resourceids=${datasetEntry.value.getResourceIdsInArrayString()},
+                               	        data-resourcemalicious=${datasetEntry.value.getResourceMaliciousInArrayString()},
                                         data-upload=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/' + datasetEntry.value.id + '/resources' : ''}">
                                 <i class="fa fa-download"></i> Download</a>
                             <a th:if="not ${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#requestModal" class="btn btn-primary" data-toggle="modal"
