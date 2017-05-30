@@ -93,7 +93,7 @@
 							   th:attr="data-name=${datasetEntry.value.name},
 							            data-desc=${datasetEntry.value.description},
 							            data-keywords=${datasetEntry.value.keywords},
-							            data-category=${datasetEntry.value.category.name},
+							            data-category='aaaa',
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                 	    data-release=${datasetEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
@@ -117,7 +117,7 @@
                                         data-request=${'/data/' + datasetEntry.value.id + '/request'}"><i class="fa fa-commenting"></i> Request</a>
 	                   	</td>
                             <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))}">Visibility</td>
-                            <td th:text="${datasetEntry.value.categoryId}">Category ID</td>
+                            <td th:text="aaaa">Category ID</td>
                         </tr>
                         </tbody>
                         </table>

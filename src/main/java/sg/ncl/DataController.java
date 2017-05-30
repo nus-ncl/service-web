@@ -55,6 +55,8 @@ public class DataController extends MainController {
         ResponseEntity response = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
         String dataResponseBody = response.getBody().toString();
 
+        log.info("data: {}", dataResponseBody);
+
         JSONArray dataJsonArray = new JSONArray(dataResponseBody);
         for (int i = 0; i < dataJsonArray.length(); i++) {
             JSONObject dataInfoObject = dataJsonArray.getJSONObject(i);
@@ -62,7 +64,7 @@ public class DataController extends MainController {
             datasetManager.addDataset(dataset);
         }
 
-        model.addAttribute(CATEGORIES, getDataCategories());
+        model.addAttribute(CATEGORIES, new ArrayList<DataCategory>());
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
         model.addAttribute("requestForm", new DataRequestForm());
         return "data";
