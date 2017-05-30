@@ -225,7 +225,7 @@ $(document).ready(function() {
         modal.find('#downloadLabel').text("Resources of " + downloadLabel);
         modal.find('ul').empty();
         for (i = 0; i < resourceids.length; i++) {
-            modal.find('ul').append("<li><a href='/data/" + dataId + "/resources/" + resourceids[i] + "' onclick='displayDatasetMaliciousAlert(" + resourcemalicious[i] + ")'>" + resourceuris[i] + "</a></li>");
+            modal.find('ul').append("<li><a href='#' onclick='displayDatasetMaliciousAlert(" + resourcemalicious[i] + ")'>" + resourceuris[i] + "</a></li>");
         }
         if (typeof upload === "undefined" || !upload.trim()) {
             //empty string
@@ -316,11 +316,13 @@ $(document).ready(function() {
 
 function displayDatasetMaliciousAlert(isMalicious) {
     console.log("running malicious dataset download");
-    if (isMalicious) {
-        alert("This dataset you are downloading is malicious.");
-    } else {
-        alert("This dataset you are downloading is not malicious.");
-    }
+
+    $('#downloadModal').modal('hide');
+    $('#downloadModal').on('hidden', function() {
+    	console.log("hiding download modal");
+    	// show malicious warning modal
+		$('#downloadMaliciousModal').modal('toggle');
+	})
 }
 
 // display the ns file content when users select the predefined scenarios
