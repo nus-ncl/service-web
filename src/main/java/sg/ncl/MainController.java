@@ -3740,6 +3740,7 @@ public class MainController {
             DataResource dataResource = new DataResource();
             dataResource.setId(resource.getLong("id"));
             dataResource.setUri(resource.getString("uri"));
+            dataResource.setMalicious(resource.getBoolean("malicious"));
             dataset.addResource(dataResource);
         }
 
