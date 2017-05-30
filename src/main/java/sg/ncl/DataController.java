@@ -56,6 +56,8 @@ public class DataController extends MainController {
         ResponseEntity response = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
         String dataResponseBody = response.getBody().toString();
 
+        log.info("data: {}", dataResponseBody);
+
         JSONArray dataJsonArray = new JSONArray(dataResponseBody);
         for (int i = 0; i < dataJsonArray.length(); i++) {
             JSONObject dataInfoObject = dataJsonArray.getJSONObject(i);
