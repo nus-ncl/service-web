@@ -111,6 +111,8 @@
 	                   		<a th:if="${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#downloadModal" class="btn btn-primary" data-toggle="modal"
                                th:attr="data-id=${datasetEntry.value.id},
                                	        data-name=${datasetEntry.value.name},
+                               	        data-license=${datasetEntry.value.license.name},
+                               	        data-link=${datasetEntry.value.license.link},
                                	        data-resourceuris=${datasetEntry.value.getResourceUrisInArrayString()},
                                	        data-resourceids=${datasetEntry.value.getResourceIdsInArrayString()},
                                         data-upload=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/' + datasetEntry.value.id + '/resources' : ''}">
@@ -210,6 +212,9 @@
                         <h4 class="modal-title" id="downloadLabel">Resources</h4>
                     </div>
                     <div class="modal-body">
+                        This Dataset <span id="dataset"></span> is made available under the <span id="license"></span>
+                        whose full text can be found at: <a href="#" id="link" target="_blank"></a>
+                        <br/><br/>
                         <ul></ul>
                     </div>
                     <div class="modal-footer">
