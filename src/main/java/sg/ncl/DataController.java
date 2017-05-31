@@ -41,6 +41,7 @@ public class DataController extends MainController {
 
     private static final String REDIRECT_DATA = "redirect:/data";
     private static final String CATEGORIES = "categories";
+    private static final String LICENSES = "licenses";
     private static final String DATASET = "dataset";
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
     private static final String MESSAGE_ATTRIBUTE = "message";
@@ -63,6 +64,7 @@ public class DataController extends MainController {
         }
 
         model.addAttribute(CATEGORIES, getDataCategories());
+        model.addAttribute(LICENSES, getDataLicenses());
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
         model.addAttribute("requestForm", new DataRequestForm());
         return "data";
@@ -88,6 +90,7 @@ public class DataController extends MainController {
         }
 
         model.addAttribute(CATEGORIES, getDataCategories());
+        model.addAttribute(LICENSES, getDataLicenses());
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
         model.addAttribute("requestForm", new DataRequestForm());
         model.addAttribute("keywords", keywords);
@@ -113,6 +116,7 @@ public class DataController extends MainController {
         }
 
         model.addAttribute(CATEGORIES, getDataCategories());
+        model.addAttribute(LICENSES, getDataLicenses());
         return CONTRIBUTE_DATA_PAGE;
     }
 
@@ -128,6 +132,20 @@ public class DataController extends MainController {
             dataCategories.add(dataCategory);
         }
         return dataCategories;
+    }
+
+    private List<DataLicense> getDataLicenses() {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getLicenses(), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+        JSONArray jsonArray = new JSONArray(responseBody);
+        List<DataLicense> dataLicenses = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            DataLicense dataLicense = extractLicenseInfo(jsonObject.toString());
+            dataLicenses.add(dataLicense);
+        }
+        return dataLicenses;
     }
 
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.POST)
@@ -165,6 +183,7 @@ public class DataController extends MainController {
         dataObject.put("approvedUsers", new ArrayList());
         dataObject.put("releasedDate", dataset.getReleasedDate());
         dataObject.put("categoryId", dataset.getCategoryId());
+        dataObject.put("licenseId", dataset.getLicenseId());
         dataObject.put("keywords", dataset.getKeywordList());
         log.debug("DataObject: {}", dataObject.toString());
 

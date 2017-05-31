@@ -3752,9 +3752,11 @@ public class MainController {
             dataset.setReleasedDate(null);
         }
         dataset.setCategoryId(object.getInt("categoryId"));
+        dataset.setLicenseId(object.getInt("licenseId"));
 
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
         dataset.setCategory(invokeAndExtractCategoryInfo(dataset.getCategoryId()));
+        dataset.setLicense(invokeAndExtractLicenseInfo(dataset.getLicenseId()));
 
         JSONArray resources = object.getJSONArray("resources");
         for (int i = 0; i < resources.length(); i++) {
@@ -3793,6 +3795,21 @@ public class MainController {
         return dataCategory;
     }
 
+    protected DataLicense extractLicenseInfo(String json) {
+        log.debug(json);
+
+        DataLicense dataLicense = new DataLicense();
+        JSONObject object = new JSONObject(json);
+
+        dataLicense.setId(object.getLong("id"));
+        dataLicense.setName(object.getString("name"));
+        dataLicense.setAcronym(object.getString("acronym"));
+        dataLicense.setDescription(object.getString("description"));
+        dataLicense.setLink(object.getString("link"));
+
+        return dataLicense;
+    }
+
     protected DataCategory invokeAndExtractCategoryInfo(Integer categoryId) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response;
@@ -3805,6 +3822,19 @@ public class MainController {
         }
 
         return extractCategoryInfo(response.getBody().toString());
+    }
+
+    protected DataLicense invokeAndExtractLicenseInfo(Integer licenseId) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getLicense(licenseId), HttpMethod.GET, request, String.class);
+        } catch (Exception e) {
+            log.warn("Data service not available to retrieve License: {}", licenseId);
+            return new DataLicense();
+        }
+        return extractLicenseInfo(response.getBody().toString());
     }
 
     protected User2 invokeAndExtractUserInfo(String userId) {

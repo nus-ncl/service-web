@@ -94,6 +94,7 @@
 							            data-desc=${datasetEntry.value.description},
 							            data-keywords=${datasetEntry.value.keywords},
 							            data-category=${datasetEntry.value.category.name},
+                                        data-license=${datasetEntry.value.license.name},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                 	    data-release=${datasetEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
@@ -167,6 +168,10 @@
 							<div class="col-md-4">Category:</div>
 							<div class="col-md-8" id="datasetCategory"></div>
 						</div>
+                        <div class="row">
+                            <div class="col-md-4">License:</div>
+                            <div class="col-md-8" id="datasetLicense"></div>
+                        </div>
                         <div class="row">
                             <div class="col-md-4">Owner:</div>
                             <div class="col-md-8" id="datasetOwner"></div>
@@ -250,6 +255,25 @@
                         <div class="row" th:each="category, iterStat : ${categories}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
                             <div class="col-md-3" th:text="${category.name}"></div>
                             <div class="col-md-9" th:text="${category.description}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- License Descriptions Modal -->
+        <div class="modal fade" id="licenseDescModal" tabindex="-1" role="dialog" aria-labelledby="licenseDescModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="licenseDescLabel">License Descriptions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" th:each="license, iterStat : ${licenses}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
+                            <div class="col-md-3" th:text="${license.name}"></div>
+                            <div class="col-md-3" th:text="${license.acronym}"></div>
+                            <div class="col-md-6" th:text="${license.description}"></div>
                         </div>
                     </div>
                 </div>

@@ -229,6 +229,14 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/categories/" + categoryId;
     }
 
+    public String getLicenses() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/licenses";
+    }
+
+    public String getLicense(Integer licenseId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/licenses/" + licenseId;
+    }
+
     //-------------------------------------
     // TELEMETRY
     //-------------------------------------

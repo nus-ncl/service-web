@@ -183,6 +183,7 @@ $(document).ready(function() {
         var datasetDesc = anchor.data('desc');
         var datasetKeywords = anchor.data('keywords');
         var datasetCategory = anchor.data('category');
+        var datasetLicense = anchor.data('license');
         var datasetOwner = anchor.data('owner');
         var datasetRelease = anchor.data('release');
         var datasetVisible = anchor.data('visible');
@@ -198,6 +199,7 @@ $(document).ready(function() {
             modal.find('#datasetKeywords').text(datasetKeywords);
         }
         modal.find('#datasetCategory').text(datasetCategory);
+        modal.find('#datasetLicense').text(datasetLicense);
         modal.find('#datasetOwner').text(datasetOwner);
         modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);
@@ -253,6 +255,7 @@ $(document).ready(function() {
         var datasetDesc = anchor.data('desc');
         var datasetKeywords = anchor.data('keywords');
         var datasetCategory = anchor.data('category');
+        var datasetLicense = anchor.data('license');
         var datasetOwner = anchor.data('owner');
         var datasetRelease = anchor.data('release');
         var datasetVisible = anchor.data('visible');
@@ -263,6 +266,7 @@ $(document).ready(function() {
         modal.find('#datasetDesc').text(datasetDesc);
         modal.find('#datasetKeywords').text(datasetKeywords);
         modal.find('#datasetCategory').text(datasetCategory);
+        modal.find('#datasetLicense').text(datasetLicense);
         modal.find('#datasetOwner').text(datasetOwner);
         modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);

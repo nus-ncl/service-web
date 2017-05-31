@@ -44,6 +44,7 @@
 							            data-desc=${dataEntry.description},
 							            data-keywords=${dataEntry.keywords},
 							            data-category=${dataEntry.category.name},
+							            data-license=${dataEntry.license.name},
                                         data-owner=${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName},
                                 	    data-release=${dataEntry.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(dataEntry.visibility))},
@@ -78,6 +79,10 @@
                     <div class="row">
                         <div class="col-md-4">Category:</div>
                         <div class="col-md-8" id="datasetCategory"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">License:</div>
+                        <div class="col-md-8" id="datasetLicense"></div>
                     </div>
                     <div class="row">
                         <div class="col-md-4">Owner:</div>
