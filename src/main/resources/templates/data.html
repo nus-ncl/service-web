@@ -28,6 +28,8 @@
                         <div class="checkbox"><label><input type="checkbox" name="year" value="2016"/>2016</label></div>
                         <u>Category</u> <a href="#categoryDescModal" data-toggle="modal"><i class="fa fa-info-circle"></i></a>
                         <div class="checkbox" th:each="category : ${categories}"><label><input type="checkbox" th:name="category" th:value="${category.id}" th:text="${category.name}"/></label></div>
+                        <u>License</u> <a href="#licenseDescModal" data-toggle="modal"><i class="fa fa-info-circle"></i></a>
+                        <div class="checkbox" th:each="license : ${licenses}"><label><input type="checkbox" th:name="license" th:value="${license.id}" th:text="${license.name}"/></label></div>
                         <u>Accessibility</u>
                         <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Open"/>Open</label></div>
                         <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Restricted"/>Restricted</label></div>
@@ -85,6 +87,7 @@
                             <th><!-- Actions --></th>
                             <th>Visible</th>
                             <th>Category ID</th>
+                            <th>License ID</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -116,9 +119,10 @@
                                th:attr="data-name=${datasetEntry.value.name},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                         data-request=${'/data/' + datasetEntry.value.id + '/request'}"><i class="fa fa-commenting"></i> Request</a>
-	                   	</td>
+    	                   	</td>
                             <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))}">Visibility</td>
                             <td th:text="${datasetEntry.value.categoryId}">Category ID</td>
+                            <td th:text="${datasetEntry.value.licenseId}">License ID</td>
                         </tr>
                         </tbody>
                         </table>
@@ -299,6 +303,7 @@
         // <![CDATA[
         var yearCheckboxes = 0;
         var categoryCheckboxes = 0;
+        var licenseCheckboxes = 0;
         var accessibilityCheckboxes = 0;
         var visibilityCheckboxes = 0;
 
@@ -315,6 +320,10 @@
             var categoryFlag = false;
             if (categoryCheckboxes === 0) {
                 categoryFlag = true;
+            }
+            var licenseFlag = false;
+            if (licenseCheckboxes === 0) {
+                licenseFlag = true;
             }
             var accessibilityFlag = false;
             if (accessibilityCheckboxes === 0) {
@@ -337,6 +346,12 @@
                         categoryFlag = true;
                     }
                 }
+                if (checkbox.name === "license") {
+                    var license = data[7];
+                    if (license === checkbox.value) {
+                        licenseFlag = true;
+                    }
+                }
                 if (checkbox.name === "accessibility") {
                     var access = data[3];
                     if (access.indexOf(checkbox.value) >= 0) {
@@ -350,7 +365,7 @@
                     }
                 }
             });
-            return yearFlag && categoryFlag && accessibilityFlag && visibilityFlag;
+            return yearFlag && categoryFlag && licenseFlag && accessibilityFlag && visibilityFlag;
         });
 
         $(document).ready(function () {
@@ -360,6 +375,7 @@
             });
             table.column(5).visible(false, false);
             table.column(6).visible(false, false);
+            table.column(7).visible(false, false);
             table.columns.adjust().draw(false);
 
             $('input:checkbox').change(function () {
@@ -370,6 +386,9 @@
                             break;
                         case "category":
                             categoryCheckboxes++;
+                            break;
+                        case "license":
+                            licenseCheckboxes++;
                             break;
                         case "accessibility":
                             accessibilityCheckboxes++;
@@ -385,6 +404,9 @@
                             break;
                         case "category":
                             categoryCheckboxes--;
+                            break;
+                        case "license":
+                            licenseCheckboxes--;
                             break;
                         case "accessibility":
                             accessibilityCheckboxes--;
