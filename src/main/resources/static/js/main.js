@@ -233,7 +233,8 @@ $(document).ready(function() {
         modal.find('#link').attr('href', link);
         modal.find('ul').empty();
         for (i = 0; i < resourceids.length; i++) {
-            modal.find('ul').append("<li><a href='#' onclick='displayDatasetMaliciousAlert(" + resourcemalicious[i] + ")'>" + resourceuris[i] + "</a></li>");
+            // modal.find('ul').append("<li><a href='#' onclick='displayDatasetMaliciousAlert(" + resourcemalicious[i] + ")'>" + resourceuris[i] + "</a></li>");
+            modal.find('ul').append('<li><a href=# onclick="displayDatasetMaliciousAlert(\'' + resourcemalicious[i] + '\',\'' + downloadLabel + '\')">' + resourceuris[i] + '</a></li>');
         }
         if (typeof upload === "undefined" || !upload.trim()) {
             //empty string
@@ -324,15 +325,18 @@ $(document).ready(function() {
 	});
 });
 
-function displayDatasetMaliciousAlert(isMalicious) {
-    console.log("running malicious dataset download");
-
+function displayDatasetMaliciousAlert(isMalicious, name) {
+    console.log("running malicious dataset download: " + name);
     $('#downloadModal').modal('hide');
-    $('#downloadModal').on('hidden', function() {
-    	console.log("hiding download modal");
-    	// show malicious warning modal
-		$('#downloadMaliciousModal').modal('toggle');
-	})
+
+	console.log("hiding download modal");
+	// show malicious warning modal
+	var $downloadMaliciousModal = $('#downloadMaliciousModal');
+    $downloadMaliciousModal.modal('toggle');
+
+    $downloadMaliciousModal.on('hidden.bs.modal', function () {
+		$('#downloadModal').modal('toggle');
+    });
 }
 
 // display the ns file content when users select the predefined scenarios
