@@ -181,11 +181,6 @@ public class MainController {
         return "career";
     }
 
-//    @RequestMapping("/futureplan")
-//    public String futureplan() {
-//        return "futureplan";
-//    }
-
     @RequestMapping("/pricing")
     public String pricing() {
         return "pricing";
@@ -211,12 +206,10 @@ public class MainController {
         return "createaccount";
     }
 
-
     @RequestMapping("/tutorials/createexperiment")
     public String createExperimentTutorial() {
         return "createexperiment";
     }
-
 
     @RequestMapping("/tutorials/loadimage")
     public String loadimage() {
@@ -233,18 +226,15 @@ public class MainController {
         return "applyteam";
     }
 
-
     @RequestMapping("/tutorials/jointeam")
     public String jointeam() {
         return "jointeam";
     }
 
-
     @RequestMapping("/error_openstack")
     public String error_openstack() {
         return "error_openstack";
     }
-
 
     @RequestMapping("/accessexperiment")
     public String accessexperiment() {
@@ -322,27 +312,6 @@ public class MainController {
         model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
         return "testbed_nodes_status";
     }
-
-
-//    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
-//    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
-//        InputStream stream = null;
-//        response.setContentType("application/pdf");
-//        try {
-//            stream = getClass().getClassLoader().getResourceAsStream("downloads/future_plan.pdf");
-//            response.setContentType("application/force-download");
-//            response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
-//            IOUtils.copy(stream, response.getOutputStream());
-//            response.flushBuffer();
-//        } catch (Exception ex) {
-//            logger.info("Error writing file to output stream.");
-//            throw new FuturePlanDownloadException("IOError writing file to output stream");
-//        } finally {
-//            if (stream != null) {
-//                stream.close();
-//            }
-//        }
-//    }
 
     @RequestMapping(value = "/orderform/download", method = RequestMethod.GET)
     public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {

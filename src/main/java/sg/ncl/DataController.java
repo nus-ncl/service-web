@@ -120,6 +120,12 @@ public class DataController extends MainController {
         return CONTRIBUTE_DATA_PAGE;
     }
 
+    @RequestMapping(value = "/licensesInfo")
+    public String getLicensesInfo(Model model) {
+        model.addAttribute(LICENSES, getDataLicenses());
+        return "data_licenses_info";
+    }
+
     private List<DataCategory> getDataCategories() {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getCategories(), HttpMethod.GET, request, String.class);
