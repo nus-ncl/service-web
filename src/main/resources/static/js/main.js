@@ -233,8 +233,7 @@ $(document).ready(function() {
         modal.find('#link').attr('href', link);
         modal.find('ul').empty();
         for (i = 0; i < resourceids.length; i++) {
-            // modal.find('ul').append("<li><a href='#' onclick='displayDatasetMaliciousAlert(" + resourcemalicious[i] + ")'>" + resourceuris[i] + "</a></li>");
-            modal.find('ul').append('<li><a href=# onclick="displayDatasetMaliciousAlert(\'' + resourcemalicious[i] + '\',\'' + event + '\')">' + resourceuris[i] + '</a></li>');
+            modal.find('ul').append("<li><a href='/data/" + dataId + "/resources/" + resourceids[i] + "'>" + resourceuris[i] + "</a></li>");
         }
         if (typeof upload === "undefined" || !upload.trim()) {
             //empty string

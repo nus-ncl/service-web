@@ -131,6 +131,10 @@ public class Dataset implements Serializable {
         return releasedDate.format(format);
     }
 
+    public boolean isContainMaliciousResources() {
+	    return dataResources.stream().anyMatch(DataResource::isMalicious);
+    }
+
     public List<String> getKeywordList() {
 	    // http://stackoverflow.com/questions/33691430/bind-comma-separated-string-to-list
         return Arrays.asList(keywords.split("\\s*,\\s*"));
