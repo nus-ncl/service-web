@@ -28,8 +28,8 @@
                         <div class="checkbox"><label><input type="checkbox" name="year" value="2016"/>2016</label></div>
                         <u>Category</u> <a href="#categoryDescModal" data-toggle="modal"><i class="fa fa-info-circle"></i></a>
                         <div class="checkbox" th:each="category : ${categories}"><label><input type="checkbox" th:name="category" th:value="${category.id}" th:text="${category.name}"/></label></div>
-                        <u>License</u> <a href="#licenseDescModal" data-toggle="modal"><i class="fa fa-info-circle"></i></a>
-                        <div class="checkbox" th:each="license : ${licenses}"><label><input type="checkbox" th:name="license" th:value="${license.id}" th:text="${license.name}"/></label></div>
+                        <u>License</u> <a href="data_licenses_info.html" th:href="@{~/data/licensesInfo}" target="_blank"><i class="fa fa-info-circle"></i></a>
+                        <div class="checkbox" th:each="license : ${licenses}"><label><input type="checkbox" th:name="license" th:value="${license.id}" th:text="${license.acronym}"/></label></div>
                         <u>Accessibility</u>
                         <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Open"/>Open</label></div>
                         <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Restricted"/>Restricted</label></div>
@@ -97,7 +97,7 @@
 							            data-desc=${datasetEntry.value.description},
 							            data-keywords=${datasetEntry.value.keywords},
 							            data-category=${datasetEntry.value.category.name},
-                                        data-license=${datasetEntry.value.license.name},
+                                        data-license=${datasetEntry.value.license.acronym},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                 	    data-release=${datasetEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},

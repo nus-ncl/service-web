@@ -3780,7 +3780,7 @@ public class MainController {
     }
 
     protected DataCategory invokeAndExtractCategoryInfo(Integer categoryId) {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity response;
 
         try {
@@ -3794,7 +3794,7 @@ public class MainController {
     }
 
     protected DataLicense invokeAndExtractLicenseInfo(Integer licenseId) {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity response;
 
         try {
