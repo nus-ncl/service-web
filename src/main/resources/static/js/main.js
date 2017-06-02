@@ -223,10 +223,16 @@ $(document).ready(function() {
         var modal = $(this);
         modal.find('#uploadButton').hide();
         modal.find('#downloadLabel').text("Resources of " + downloadLabel);
+
+        if (resourcemalicious) {
+        	modal.find('#downloadMaliciousLabel').text("warning this dataset contains malicious files");
+		} else {
+            modal.find('#downloadMaliciousLabel').text("warning this dataset is alright.");
+		}
+
         modal.find('ul').empty();
         for (i = 0; i < resourceids.length; i++) {
-            // modal.find('ul').append("<li><a href='#' onclick='displayDatasetMaliciousAlert(" + resourcemalicious[i] + ")'>" + resourceuris[i] + "</a></li>");
-            modal.find('ul').append('<li><a href=# onclick="displayDatasetMaliciousAlert(\'' + resourcemalicious[i] + '\',\'' + event + '\')">' + resourceuris[i] + '</a></li>');
+            modal.find('ul').append("<li><a href='/data/" + dataId + "/resources/" + resourceids[i] + "'>" + resourceuris[i] + "</a></li>");
         }
         if (typeof upload === "undefined" || !upload.trim()) {
             //empty string
@@ -315,9 +321,8 @@ $(document).ready(function() {
 	});
 });
 
-function displayDatasetMaliciousAlert(isMalicious, event) {
+function displayDatasetMaliciousAlert(isMalicious, resourceids) {
     // console.log("running malicious dataset download: " + event);
-	console.log(event.toString());
     $('#downloadModal').modal('hide');
 
 	console.log("hiding download modal");
@@ -325,9 +330,10 @@ function displayDatasetMaliciousAlert(isMalicious, event) {
 	var $downloadMaliciousModal = $('#downloadMaliciousModal');
     $downloadMaliciousModal.modal('toggle');
 
-    // $downloadMaliciousModal.on('hidden.bs.modal', function () {
-		// $('#downloadModal').modal('toggle');
-    // });
+    $downloadMaliciousModal.on('hidden.bs.modal', function (event) {
+    	$('#downloadModal[data-resourceids]="')
+		$('#downloadModal').modal('toggle');
+    });
 }
 
 // display the ns file content when users select the predefined scenarios
