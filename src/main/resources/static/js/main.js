@@ -224,10 +224,14 @@ $(document).ready(function() {
         modal.find('#uploadButton').hide();
         modal.find('#downloadLabel').text("Resources of " + downloadLabel);
 
+        // display if a collection of resources is malicious
+        // change the information to display accordingly
         if (resourcemalicious) {
-        	modal.find('#downloadMaliciousLabel').text("warning this dataset contains malicious files");
-		} else {
-            modal.find('#downloadMaliciousLabel').text("warning this dataset is alright.");
+            modal.find('#downloadMaliciousLabel').addClass("malicious_resources");
+        	modal.find('#downloadMaliciousLabel').html("This dataset contains <strong>malicious</strong> resources as detected by our deployed scanner, ClamAV.<br/> Please handle with care.");
+        } else {
+        	modal.find('#downloadMaliciousLabel').addClass("clean_resources");
+            modal.find('#downloadMaliciousLabel').html("All resources listed below are <strong>clean</strong>. NCL has made the best effort and cannot guarantee that any resources within this dataset is free of viruses. Remember to use your personal anti-virus software after downloading the resources.");
 		}
 
         modal.find('ul').empty();
@@ -320,21 +324,6 @@ $(document).ready(function() {
 		modal.find('#pendingTeamVisibility').text(pendingTeamVisibility);
 	});
 });
-
-function displayDatasetMaliciousAlert(isMalicious, resourceids) {
-    // console.log("running malicious dataset download: " + event);
-    $('#downloadModal').modal('hide');
-
-	console.log("hiding download modal");
-	// show malicious warning modal
-	var $downloadMaliciousModal = $('#downloadMaliciousModal');
-    $downloadMaliciousModal.modal('toggle');
-
-    $downloadMaliciousModal.on('hidden.bs.modal', function (event) {
-    	$('#downloadModal[data-resourceids]="')
-		$('#downloadModal').modal('toggle');
-    });
-}
 
 // display the ns file content when users select the predefined scenarios
 function displayNsContent() {
