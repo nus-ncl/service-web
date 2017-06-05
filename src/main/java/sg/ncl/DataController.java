@@ -176,6 +176,7 @@ public class DataController extends MainController {
             message.append("</ul>");
             model.addAttribute(MESSAGE_ATTRIBUTE, message.toString());
             model.addAttribute(CATEGORIES, getDataCategories());
+            model.addAttribute(LICENSES, getDataLicenses());
             return CONTRIBUTE_DATA_PAGE;
         }
 

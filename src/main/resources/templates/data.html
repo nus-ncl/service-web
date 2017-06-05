@@ -23,9 +23,7 @@
                         <b>Filter</b>
                         <hr/>
                         <u>Year</u>
-                        <div class="checkbox"><label><input type="checkbox" name="year" value="2018"/>2018</label></div>
-                        <div class="checkbox"><label><input type="checkbox" name="year" value="2017"/>2017</label></div>
-                        <div class="checkbox"><label><input type="checkbox" name="year" value="2016"/>2016</label></div>
+                        <div class="checkbox" th:each="year : ${#numbers.sequence(#dates.year(#dates.createNow()), 2016, -1)}"><label th:text="${year}"><input type="checkbox" th:name="year" th:value="${year}"/>year</label></div>
                         <u>Category</u> <a href="#categoryDescModal" data-toggle="modal"><i class="fa fa-info-circle"></i></a>
                         <div class="checkbox" th:each="category : ${categories}"><label><input type="checkbox" th:name="category" th:value="${category.id}" th:text="${category.name}"/></label></div>
                         <u>License</u> <a href="data_licenses_info.html" th:href="@{~/data/licensesInfo}" target="_blank"><i class="fa fa-info-circle"></i></a>
