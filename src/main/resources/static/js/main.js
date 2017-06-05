@@ -226,6 +226,9 @@ $(document).ready(function() {
 
         // display if a collection of resources is malicious
         // change the information to display accordingly
+        // remove all classes initially
+		modal.find('#downloadMaliciousLabel').removeClass();
+
         if (resourcemalicious) {
             modal.find('#downloadMaliciousLabel').addClass("malicious_resources");
         	modal.find('#downloadMaliciousLabel').html("This dataset contains <strong>malicious</strong> resources as detected by our deployed scanner, ClamAV.<br/> Please handle with care.");
