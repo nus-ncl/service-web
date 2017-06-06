@@ -100,17 +100,14 @@ public class DataController extends MainController {
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
     public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
         if (id.isPresent()) {
-            HttpEntity<String> request = createHttpEntityHeaderOnly();
-            ResponseEntity response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
-            String dataResponseBody = response.getBody().toString();
-            JSONObject dataInfoObject = new JSONObject(dataResponseBody);
-            Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            Dataset dataset = getDataset(id.get());
             if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
                 log.warn(EDIT_DISALLOWED);
                 redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, EDIT_DISALLOWED);
                 return REDIRECT_DATA;
             }
             model.addAttribute(DATASET, dataset);
+            model.addAttribute("data", dataset);
         } else {
             model.addAttribute(DATASET, new Dataset());
         }
@@ -118,6 +115,14 @@ public class DataController extends MainController {
         model.addAttribute(CATEGORIES, getDataCategories());
         model.addAttribute(LICENSES, getDataLicenses());
         return CONTRIBUTE_DATA_PAGE;
+    }
+
+    private Dataset getDataset(String id) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(id), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        return extractDataInfo(dataInfoObject.toString());
     }
 
     @RequestMapping(value = "/licensesInfo")
@@ -168,15 +173,28 @@ public class DataController extends MainController {
             for (ObjectError objectError : bindingResult.getAllErrors()) {
                 FieldError fieldError = (FieldError) objectError;
                 message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
-                message.append(fieldError.getField());
-                message.append(" ");
-                message.append(fieldError.getDefaultMessage());
+                switch (fieldError.getField()) {
+                    case "categoryId":
+                        message.append("category must be selected");
+                        break;
+                    case "licenseId":
+                        message.append("license must be selected");
+                        break;
+                    default:
+                        message.append(fieldError.getField());
+                        message.append(" ");
+                        message.append(fieldError.getDefaultMessage());
+                }
                 message.append("</li>");
             }
             message.append("</ul>");
             model.addAttribute(MESSAGE_ATTRIBUTE, message.toString());
             model.addAttribute(CATEGORIES, getDataCategories());
             model.addAttribute(LICENSES, getDataLicenses());
+            if (id.isPresent()) {
+                Dataset data = getDataset(id.get());
+                model.addAttribute("data", data);
+            }
             return CONTRIBUTE_DATA_PAGE;
         }
 

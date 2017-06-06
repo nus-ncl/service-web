@@ -72,16 +72,16 @@
                             <button type="submit" class="btn btn-standard">Save</button>
                             <button type="button" class="btn btn-danger" th:if="*{id != null}"
                                     data-toggle="modal" data-target="#deleteModal"
-                                    th:attr="data-name=*{name},
-							            data-desc=*{description},
-							            data-keywords=*{keywords},
-							            data-category=*{category.name},
-                                        data-license=*{license.name},
-                                        data-owner=*{contributor.firstName + ' ' + contributor.lastName},
+                                    th:attr="data-name=${data.name},
+							            data-desc=${data.description},
+							            data-keywords=${data.keywords},
+							            data-category=${data.category.name},
+                                        data-license=${data.license.name},
+                                        data-owner=${data.contributor.firstName + ' ' + data.contributor.lastName},
                                 	    data-release=${dataset.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(dataset.visibility))},
                                         data-access=${#strings.capitalize(#strings.toLowerCase(dataset.accessibility))},
-                                        data-delete=@{/data/remove/{id}(id=*{id})}">Delete</button>
+                                        data-delete=@{/data/remove/{id}(id=${data.id})}">Delete</button>
                             <input type="hidden" th:field="*{contributorId}" th:if="*{id != null}"/>
                         </div>
                     </fieldset>
