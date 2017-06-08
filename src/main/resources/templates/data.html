@@ -94,8 +94,12 @@
 							   th:attr="data-name=${datasetEntry.value.name},
 							            data-desc=${datasetEntry.value.description},
 							            data-keywords=${datasetEntry.value.keywords},
+<<<<<<< HEAD
 							            data-category=${datasetEntry.value.category.name},
                                         data-license=${datasetEntry.value.license.acronym},
+=======
+							            data-category='aaaa',
+>>>>>>> dd18ab08e0ae40373c48bc34eb5efa9b61a6624d
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                 	    data-release=${datasetEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
@@ -122,8 +126,12 @@
                                         data-request=${'/data/' + datasetEntry.value.id + '/request'}"><i class="fa fa-commenting"></i> Request</a>
     	                   	</td>
                             <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))}">Visibility</td>
+<<<<<<< HEAD
                             <td th:text="${datasetEntry.value.categoryId}">Category ID</td>
                             <td th:text="${datasetEntry.value.licenseId}">License ID</td>
+=======
+                            <td th:text="aaaa">Category ID</td>
+>>>>>>> dd18ab08e0ae40373c48bc34eb5efa9b61a6624d
                         </tr>
                         </tbody>
                         </table>

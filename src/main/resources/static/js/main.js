@@ -227,12 +227,10 @@ $(document).ready(function() {
         var modal = $(this);
         modal.find('#uploadButton').hide();
         modal.find('#downloadLabel').text("Resources of " + downloadLabel);
-<<<<<<< HEAD
         modal.find('#dataset').text(downloadLabel);
         modal.find('#license').text(license);
         modal.find('#link').text(link);
         modal.find('#link').attr('href', link);
-=======
 
         // display if a collection of resources is malicious
         // change the information to display accordingly
@@ -247,7 +245,6 @@ $(document).ready(function() {
             modal.find('#downloadMaliciousLabel').html("All resources listed below are <strong>clean</strong>. NCL has made the best effort and cannot guarantee that any resources within this dataset is free of viruses. Remember to use your personal anti-virus software after downloading the resources.");
 		}
 
->>>>>>> set is data entity contains malicious resources or not
         modal.find('ul').empty();
         for (i = 0; i < resourceids.length; i++) {
             modal.find('ul').append("<li><a href='/data/" + dataId + "/resources/" + resourceids[i] + "'>" + resourceuris[i] + "</a></li>");

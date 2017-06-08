@@ -3720,12 +3720,19 @@ public class MainController {
             log.warn("Error getting released date {}", e);
             dataset.setReleasedDate(null);
         }
+<<<<<<< HEAD
         dataset.setCategoryId(object.getInt("categoryId"));
         dataset.setLicenseId(object.getInt("licenseId"));
 
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
         dataset.setCategory(invokeAndExtractCategoryInfo(dataset.getCategoryId()));
         dataset.setLicense(invokeAndExtractLicenseInfo(dataset.getLicenseId()));
+=======
+//        dataset.setCategoryId(object.getInt("categoryId"));
+//
+        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
+//        dataset.setCategory(invokeAndExtractCategoryInfo(dataset.getCategoryId()));
+>>>>>>> dd18ab08e0ae40373c48bc34eb5efa9b61a6624d
 
         JSONArray resources = object.getJSONArray("resources");
         for (int i = 0; i < resources.length(); i++) {
@@ -3742,12 +3749,12 @@ public class MainController {
             dataset.addApprovedUser(approvedUsers.getString(i));
         }
 
-        JSONArray keywords = object.getJSONArray("keywords");
-        List<String> keywordList = new ArrayList<>();
-        for (int i = 0; i < keywords.length(); i++) {
-            keywordList.add(keywords.getString(i));
-        }
-        dataset.setKeywordList(keywordList);
+//        JSONArray keywords = object.getJSONArray("keywords");
+//        List<String> keywordList = new ArrayList<>();
+//        for (int i = 0; i < keywords.length(); i++) {
+//            keywordList.add(keywords.getString(i));
+//        }
+//        dataset.setKeywordList(keywordList);
 
         return dataset;
     }
