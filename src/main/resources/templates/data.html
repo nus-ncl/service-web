@@ -23,11 +23,11 @@
                         <b>Filter</b>
                         <hr/>
                         <u>Year</u>
-                        <div class="checkbox"><label><input type="checkbox" name="year" value="2018"/>2018</label></div>
-                        <div class="checkbox"><label><input type="checkbox" name="year" value="2017"/>2017</label></div>
-                        <div class="checkbox"><label><input type="checkbox" name="year" value="2016"/>2016</label></div>
+                        <div class="checkbox" th:each="year : ${#numbers.sequence(#dates.year(#dates.createNow()), 2016, -1)}"><label><input type="checkbox" th:name="year" th:value="${year}" th:text="${year}"/></label></div>
                         <u>Category</u> <a href="#categoryDescModal" data-toggle="modal"><i class="fa fa-info-circle"></i></a>
                         <div class="checkbox" th:each="category : ${categories}"><label><input type="checkbox" th:name="category" th:value="${category.id}" th:text="${category.name}"/></label></div>
+                        <u>License</u> <a href="data_licenses_info.html" th:href="@{~/data/licensesInfo}" target="_blank"><i class="fa fa-info-circle"></i></a>
+                        <div class="checkbox" th:each="license : ${licenses}"><label><input type="checkbox" th:name="license" th:value="${license.id}" th:text="${license.acronym}"/></label></div>
                         <u>Accessibility</u>
                         <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Open"/>Open</label></div>
                         <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Restricted"/>Restricted</label></div>
@@ -85,6 +85,7 @@
                             <th><!-- Actions --></th>
                             <th>Visible</th>
                             <th>Category ID</th>
+                            <th>License ID</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -94,6 +95,7 @@
 							            data-desc=${datasetEntry.value.description},
 							            data-keywords=${datasetEntry.value.keywords},
 							            data-category=${datasetEntry.value.category.name},
+                                        data-license=${datasetEntry.value.license.acronym},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                 	    data-release=${datasetEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))},
@@ -107,6 +109,8 @@
 	                   		<a th:if="${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#downloadModal" class="btn btn-primary" data-toggle="modal"
                                th:attr="data-id=${datasetEntry.value.id},
                                	        data-name=${datasetEntry.value.name},
+                               	        data-license=${datasetEntry.value.license.name},
+                               	        data-link=${datasetEntry.value.license.link},
                                	        data-resourceuris=${datasetEntry.value.getResourceUrisInArrayString()},
                                	        data-resourceids=${datasetEntry.value.getResourceIdsInArrayString()},
                                         data-upload=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/' + datasetEntry.value.id + '/resources' : ''}">
@@ -115,9 +119,10 @@
                                th:attr="data-name=${datasetEntry.value.name},
                                         data-owner=${datasetEntry.value.contributor.firstName + ' ' + datasetEntry.value.contributor.lastName},
                                         data-request=${'/data/' + datasetEntry.value.id + '/request'}"><i class="fa fa-commenting"></i> Request</a>
-	                   	</td>
+    	                   	</td>
                             <td th:text="${#strings.capitalize(#strings.toLowerCase(datasetEntry.value.visibility))}">Visibility</td>
                             <td th:text="${datasetEntry.value.categoryId}">Category ID</td>
+                            <td th:text="${datasetEntry.value.licenseId}">License ID</td>
                         </tr>
                         </tbody>
                         </table>
@@ -168,6 +173,10 @@
 							<div class="col-md-8" id="datasetCategory"></div>
 						</div>
                         <div class="row">
+                            <div class="col-md-4">License:</div>
+                            <div class="col-md-8" id="datasetLicense"></div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-4">Owner:</div>
                             <div class="col-md-8" id="datasetOwner"></div>
                         </div>
@@ -201,6 +210,9 @@
                         <h4 class="modal-title" id="downloadLabel">Resources</h4>
                     </div>
                     <div class="modal-body">
+                        This Dataset <span id="dataset"></span> is made available under the <span id="license"></span>
+                        whose full text can be found at: <a href="#" id="link" target="_blank"></a>
+                        <br/><br/>
                         <ul></ul>
                     </div>
                     <div class="modal-footer">
@@ -256,6 +268,25 @@
             </div>
         </div>
 
+        <!-- License Descriptions Modal -->
+        <div class="modal fade" id="licenseDescModal" tabindex="-1" role="dialog" aria-labelledby="licenseDescModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="licenseDescLabel">License Descriptions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" th:each="license, iterStat : ${licenses}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
+                            <div class="col-md-3" th:text="${license.name}"></div>
+                            <div class="col-md-3" th:text="${license.acronym}"></div>
+                            <div class="col-md-6" th:text="${license.description}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 		<div th:replace="fragments/footer :: footer"></div>
     </body>
 	<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
@@ -275,6 +306,7 @@
         // <![CDATA[
         var yearCheckboxes = 0;
         var categoryCheckboxes = 0;
+        var licenseCheckboxes = 0;
         var accessibilityCheckboxes = 0;
         var visibilityCheckboxes = 0;
 
@@ -291,6 +323,10 @@
             var categoryFlag = false;
             if (categoryCheckboxes === 0) {
                 categoryFlag = true;
+            }
+            var licenseFlag = false;
+            if (licenseCheckboxes === 0) {
+                licenseFlag = true;
             }
             var accessibilityFlag = false;
             if (accessibilityCheckboxes === 0) {
@@ -313,6 +349,12 @@
                         categoryFlag = true;
                     }
                 }
+                if (checkbox.name === "license") {
+                    var license = data[7];
+                    if (license === checkbox.value) {
+                        licenseFlag = true;
+                    }
+                }
                 if (checkbox.name === "accessibility") {
                     var access = data[3];
                     if (access.indexOf(checkbox.value) >= 0) {
@@ -326,7 +368,7 @@
                     }
                 }
             });
-            return yearFlag && categoryFlag && accessibilityFlag && visibilityFlag;
+            return yearFlag && categoryFlag && licenseFlag && accessibilityFlag && visibilityFlag;
         });
 
         $(document).ready(function () {
@@ -336,6 +378,7 @@
             });
             table.column(5).visible(false, false);
             table.column(6).visible(false, false);
+            table.column(7).visible(false, false);
             table.columns.adjust().draw(false);
 
             $('input:checkbox').change(function () {
@@ -346,6 +389,9 @@
                             break;
                         case "category":
                             categoryCheckboxes++;
+                            break;
+                        case "license":
+                            licenseCheckboxes++;
                             break;
                         case "accessibility":
                             accessibilityCheckboxes++;
@@ -361,6 +407,9 @@
                             break;
                         case "category":
                             categoryCheckboxes--;
+                            break;
+                        case "license":
+                            licenseCheckboxes--;
                             break;
                         case "accessibility":
                             accessibilityCheckboxes--;

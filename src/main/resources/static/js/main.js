@@ -183,6 +183,7 @@ $(document).ready(function() {
         var datasetDesc = anchor.data('desc');
         var datasetKeywords = anchor.data('keywords');
         var datasetCategory = anchor.data('category');
+        var datasetLicense = anchor.data('license');
         var datasetOwner = anchor.data('owner');
         var datasetRelease = anchor.data('release');
         var datasetVisible = anchor.data('visible');
@@ -198,6 +199,7 @@ $(document).ready(function() {
             modal.find('#datasetKeywords').text(datasetKeywords);
         }
         modal.find('#datasetCategory').text(datasetCategory);
+        modal.find('#datasetLicense').text(datasetLicense);
         modal.find('#datasetOwner').text(datasetOwner);
         modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);
@@ -215,12 +217,18 @@ $(document).ready(function() {
         var anchor = $(event.relatedTarget);
         var dataId = anchor.data('id');
         var downloadLabel = anchor.data('name');
+        var license = anchor.data('license');
+        var link = anchor.data('link');
         var resourceuris = anchor.data('resourceuris');
         var resourceids = anchor.data('resourceids');
         var upload = anchor.data('upload');
         var modal = $(this);
         modal.find('#uploadButton').hide();
         modal.find('#downloadLabel').text("Resources of " + downloadLabel);
+        modal.find('#dataset').text(downloadLabel);
+        modal.find('#license').text(license);
+        modal.find('#link').text(link);
+        modal.find('#link').attr('href', link);
         modal.find('ul').empty();
         for (i = 0; i < resourceids.length; i++) {
             modal.find('ul').append("<li><a href='/data/" + dataId + "/resources/" + resourceids[i] + "'>" + resourceuris[i] + "</a></li>");
@@ -253,6 +261,7 @@ $(document).ready(function() {
         var datasetDesc = anchor.data('desc');
         var datasetKeywords = anchor.data('keywords');
         var datasetCategory = anchor.data('category');
+        var datasetLicense = anchor.data('license');
         var datasetOwner = anchor.data('owner');
         var datasetRelease = anchor.data('release');
         var datasetVisible = anchor.data('visible');
@@ -263,6 +272,7 @@ $(document).ready(function() {
         modal.find('#datasetDesc').text(datasetDesc);
         modal.find('#datasetKeywords').text(datasetKeywords);
         modal.find('#datasetCategory').text(datasetCategory);
+        modal.find('#datasetLicense').text(datasetLicense);
         modal.find('#datasetOwner').text(datasetOwner);
         modal.find('#datasetRelease').text(datasetRelease);
         modal.find('#datasetVisible').text(datasetVisible);

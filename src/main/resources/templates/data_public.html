@@ -58,6 +58,10 @@
                     <tr th:each="publicDataEntry : ${publicDataMap}" th:if="${publicDataEntry.value.isPublic()}">
                         <td><a href="#datasetModal" data-toggle="modal"
                                th:attr="data-name=${publicDataEntry.value.name},
+							            data-desc=${publicDataEntry.value.description},
+							            data-keywords=${publicDataEntry.value.keywords},
+							            data-category=${publicDataEntry.value.category.name},
+                                        data-license=${publicDataEntry.value.license.acronym},
                                         data-owner=${publicDataEntry.value.contributor.firstName + ' ' + publicDataEntry.value.contributor.lastName},
                                         data-release=${publicDataEntry.value.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(publicDataEntry.value.visibility))},
@@ -88,6 +92,22 @@
                         <h4 class="modal-title" id="datasetLabel">Modal title</h4>
                     </div>
                     <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">Description:</div>
+                            <div class="col-md-8" id="datasetDesc"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Keywords:</div>
+                            <div class="col-md-8" id="datasetKeywords"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">Category:</div>
+                            <div class="col-md-8" id="datasetCategory"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">License:</div>
+                            <div class="col-md-8" id="datasetLicense"></div>
+                        </div>
                         <div class="row">
                             <div class="col-md-4">Owner:</div>
                             <div class="col-md-8" id="datasetOwner"></div>

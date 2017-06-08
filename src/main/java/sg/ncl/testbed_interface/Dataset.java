@@ -28,6 +28,8 @@ public class Dataset implements Serializable {
 	private String contributorId;
 	@Min(value = 1)
 	private Integer categoryId;
+    @Min(value = 1)
+    private Integer licenseId;
 	private DataVisibility visibility;
 	private DataAccessibility accessibility;
     private ZonedDateTime releasedDate;
@@ -37,6 +39,7 @@ public class Dataset implements Serializable {
 
 	private User2 contributor;
 	private DataCategory category;
+	private DataLicense license;
 	
 	public Dataset() {
         visibility = DataVisibility.PUBLIC;

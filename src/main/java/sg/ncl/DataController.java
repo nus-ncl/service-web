@@ -41,6 +41,7 @@ public class DataController extends MainController {
 
     private static final String REDIRECT_DATA = "redirect:/data";
     private static final String CATEGORIES = "categories";
+    private static final String LICENSES = "licenses";
     private static final String DATASET = "dataset";
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
     private static final String MESSAGE_ATTRIBUTE = "message";
@@ -63,6 +64,7 @@ public class DataController extends MainController {
         }
 
         model.addAttribute(CATEGORIES, getDataCategories());
+        model.addAttribute(LICENSES, getDataLicenses());
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
         model.addAttribute("requestForm", new DataRequestForm());
         return "data";
@@ -88,6 +90,7 @@ public class DataController extends MainController {
         }
 
         model.addAttribute(CATEGORIES, getDataCategories());
+        model.addAttribute(LICENSES, getDataLicenses());
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
         model.addAttribute("requestForm", new DataRequestForm());
         model.addAttribute("keywords", keywords);
@@ -97,23 +100,35 @@ public class DataController extends MainController {
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
     public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
         if (id.isPresent()) {
-            HttpEntity<String> request = createHttpEntityHeaderOnly();
-            ResponseEntity response = restTemplate.exchange(properties.getDataset(id.get()), HttpMethod.GET, request, String.class);
-            String dataResponseBody = response.getBody().toString();
-            JSONObject dataInfoObject = new JSONObject(dataResponseBody);
-            Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            Dataset dataset = getDataset(id.get());
             if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
                 log.warn(EDIT_DISALLOWED);
                 redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, EDIT_DISALLOWED);
                 return REDIRECT_DATA;
             }
             model.addAttribute(DATASET, dataset);
+            model.addAttribute("data", dataset);
         } else {
             model.addAttribute(DATASET, new Dataset());
         }
 
         model.addAttribute(CATEGORIES, getDataCategories());
+        model.addAttribute(LICENSES, getDataLicenses());
         return CONTRIBUTE_DATA_PAGE;
+    }
+
+    private Dataset getDataset(String id) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(id), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        return extractDataInfo(dataInfoObject.toString());
+    }
+
+    @RequestMapping(value = "/licensesInfo")
+    public String getLicensesInfo(Model model) {
+        model.addAttribute(LICENSES, getDataLicenses());
+        return "data_licenses_info";
     }
 
     private List<DataCategory> getDataCategories() {
@@ -130,6 +145,20 @@ public class DataController extends MainController {
         return dataCategories;
     }
 
+    private List<DataLicense> getDataLicenses() {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getLicenses(), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+        JSONArray jsonArray = new JSONArray(responseBody);
+        List<DataLicense> dataLicenses = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            DataLicense dataLicense = extractLicenseInfo(jsonObject.toString());
+            dataLicenses.add(dataLicense);
+        }
+        return dataLicenses;
+    }
+
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.POST)
     public String validateContributeData(@Valid @ModelAttribute("dataset") Dataset dataset,
                                          BindingResult bindingResult,
@@ -144,14 +173,28 @@ public class DataController extends MainController {
             for (ObjectError objectError : bindingResult.getAllErrors()) {
                 FieldError fieldError = (FieldError) objectError;
                 message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
-                message.append(fieldError.getField());
-                message.append(" ");
-                message.append(fieldError.getDefaultMessage());
+                switch (fieldError.getField()) {
+                    case "categoryId":
+                        message.append("category must be selected");
+                        break;
+                    case "licenseId":
+                        message.append("license must be selected");
+                        break;
+                    default:
+                        message.append(fieldError.getField());
+                        message.append(" ");
+                        message.append(fieldError.getDefaultMessage());
+                }
                 message.append("</li>");
             }
             message.append("</ul>");
             model.addAttribute(MESSAGE_ATTRIBUTE, message.toString());
             model.addAttribute(CATEGORIES, getDataCategories());
+            model.addAttribute(LICENSES, getDataLicenses());
+            if (id.isPresent()) {
+                Dataset data = getDataset(id.get());
+                model.addAttribute("data", data);
+            }
             return CONTRIBUTE_DATA_PAGE;
         }
 
@@ -165,6 +208,7 @@ public class DataController extends MainController {
         dataObject.put("approvedUsers", new ArrayList());
         dataObject.put("releasedDate", dataset.getReleasedDate());
         dataObject.put("categoryId", dataset.getCategoryId());
+        dataObject.put("licenseId", dataset.getLicenseId());
         dataObject.put("keywords", dataset.getKeywordList());
         log.debug("DataObject: {}", dataObject.toString());
 

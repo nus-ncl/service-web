@@ -53,6 +53,12 @@
                                 <label><input type="radio" th:field="*{visibility}" th:value="PRIVATE"/><strong><span th:text="#{admin.contributeData.private}">Private</span></strong> <em><span th:text="#{admin.contributeData.privateDesc}">The dataset is private.</span></em></label>
                             </div -->
                         </div>
+                        <div class="form-group" th:classappend="${#fields.hasErrors('licenseId')} ? has-error">
+                            <select class="form-control" th:field="*{licenseId}">
+                                <option th:value="0" th:text="#{admin.contributeData.selectLicense}"></option>
+                                <option th:each="license : ${licenses}" th:value="${license.id}" th:text="${license.name + ' (' + license.acronym + ')'}"></option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <div class="checkbox">
                                 <label><input type="checkbox" th:field="*{accessibility}" th:value="RESTRICTED"/><strong><span th:text="#{admin.contributeData.auth}">Require Authorization?</span></strong></label>
@@ -66,19 +72,22 @@
                             <button type="submit" class="btn btn-standard">Save</button>
                             <button type="button" class="btn btn-danger" th:if="*{id != null}"
                                     data-toggle="modal" data-target="#deleteModal"
-                                    th:attr="data-name=*{name},
-							            data-desc=*{description},
-							            data-keywords=*{keywords},
-							            data-category=*{category.name},
-                                        data-owner=*{contributor.firstName + ' ' + contributor.lastName},
+                                    th:attr="data-name=${data.name},
+							            data-desc=${data.description},
+							            data-keywords=${data.keywords},
+							            data-category=${data.category.name},
+                                        data-license=${data.license.name},
+                                        data-owner=${data.contributor.firstName + ' ' + data.contributor.lastName},
                                 	    data-release=${dataset.getReleasedDateString()},
                                         data-visible=${#strings.capitalize(#strings.toLowerCase(dataset.visibility))},
                                         data-access=${#strings.capitalize(#strings.toLowerCase(dataset.accessibility))},
-                                        data-delete=@{/data/remove/{id}(id=*{id})}">Delete</button>
+                                        data-delete=@{/data/remove/{id}(id=${data.id})}">Delete</button>
                             <input type="hidden" th:field="*{contributorId}" th:if="*{id != null}"/>
                         </div>
                     </fieldset>
                 </form>
+                <br/><br/>
+                <a href="data_licenses_info.html" th:href="@{~/data/licensesInfo}" target="_blank"><navsmall>Click here for more detailed license info</navsmall></a>
             </div> <!-- row -->
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">
@@ -121,6 +130,10 @@
                             <div class="col-md-8" id="datasetCategory"></div>
                         </div>
                         <div class="row">
+                            <div class="col-md-4">License:</div>
+                            <div class="col-md-8" id="datasetLicense"></div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-4">Owner:</div>
                             <div class="col-md-8" id="datasetOwner"></div>
                         </div>
@@ -157,6 +170,25 @@
                         <div class="row" th:each="category, iterStat : ${categories}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
                             <div class="col-md-3" th:text="${category.name}"></div>
                             <div class="col-md-9" th:text="${category.description}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- License Descriptions Modal -->
+        <div class="modal fade" id="licenseDescModal" tabindex="-1" role="dialog" aria-labelledby="licenseDescModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="licenseDescLabel">License Descriptions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" th:each="license, iterStat : ${licenses}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
+                            <div class="col-md-3" th:text="${license.name}"></div>
+                            <div class="col-md-3" th:text="${license.acronym}"></div>
+                            <div class="col-md-6" th:text="${license.description}"></div>
                         </div>
                     </div>
                 </div>

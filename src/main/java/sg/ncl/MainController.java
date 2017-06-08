@@ -181,11 +181,6 @@ public class MainController {
         return "career";
     }
 
-//    @RequestMapping("/futureplan")
-//    public String futureplan() {
-//        return "futureplan";
-//    }
-
     @RequestMapping("/pricing")
     public String pricing() {
         return "pricing";
@@ -211,12 +206,10 @@ public class MainController {
         return "createaccount";
     }
 
-
     @RequestMapping("/tutorials/createexperiment")
     public String createExperimentTutorial() {
         return "createexperiment";
     }
-
 
     @RequestMapping("/tutorials/loadimage")
     public String loadimage() {
@@ -233,18 +226,15 @@ public class MainController {
         return "applyteam";
     }
 
-
     @RequestMapping("/tutorials/jointeam")
     public String jointeam() {
         return "jointeam";
     }
 
-
     @RequestMapping("/error_openstack")
     public String error_openstack() {
         return "error_openstack";
     }
-
 
     @RequestMapping("/accessexperiment")
     public String accessexperiment() {
@@ -322,27 +312,6 @@ public class MainController {
         model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
         return "testbed_nodes_status";
     }
-
-
-//    @RequestMapping(value="/futureplan/download", method=RequestMethod.GET)
-//    public void futureplanDownload(HttpServletResponse response) throws FuturePlanDownloadException, IOException {
-//        InputStream stream = null;
-//        response.setContentType("application/pdf");
-//        try {
-//            stream = getClass().getClassLoader().getResourceAsStream("downloads/future_plan.pdf");
-//            response.setContentType("application/force-download");
-//            response.setHeader("Content-Disposition", "attachment; filename=future_plan.pdf");
-//            IOUtils.copy(stream, response.getOutputStream());
-//            response.flushBuffer();
-//        } catch (Exception ex) {
-//            logger.info("Error writing file to output stream.");
-//            throw new FuturePlanDownloadException("IOError writing file to output stream");
-//        } finally {
-//            if (stream != null) {
-//                stream.close();
-//            }
-//        }
-//    }
 
     @RequestMapping(value = "/orderform/download", method = RequestMethod.GET)
     public void OrderForm_v1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
@@ -3752,9 +3721,11 @@ public class MainController {
             dataset.setReleasedDate(null);
         }
         dataset.setCategoryId(object.getInt("categoryId"));
+        dataset.setLicenseId(object.getInt("licenseId"));
 
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
         dataset.setCategory(invokeAndExtractCategoryInfo(dataset.getCategoryId()));
+        dataset.setLicense(invokeAndExtractLicenseInfo(dataset.getLicenseId()));
 
         JSONArray resources = object.getJSONArray("resources");
         for (int i = 0; i < resources.length(); i++) {
@@ -3793,8 +3764,23 @@ public class MainController {
         return dataCategory;
     }
 
+    protected DataLicense extractLicenseInfo(String json) {
+        log.debug(json);
+
+        DataLicense dataLicense = new DataLicense();
+        JSONObject object = new JSONObject(json);
+
+        dataLicense.setId(object.getLong("id"));
+        dataLicense.setName(object.getString("name"));
+        dataLicense.setAcronym(object.getString("acronym"));
+        dataLicense.setDescription(object.getString("description"));
+        dataLicense.setLink(object.getString("link"));
+
+        return dataLicense;
+    }
+
     protected DataCategory invokeAndExtractCategoryInfo(Integer categoryId) {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity response;
 
         try {
@@ -3805,6 +3791,19 @@ public class MainController {
         }
 
         return extractCategoryInfo(response.getBody().toString());
+    }
+
+    protected DataLicense invokeAndExtractLicenseInfo(Integer licenseId) {
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.getLicense(licenseId), HttpMethod.GET, request, String.class);
+        } catch (Exception e) {
+            log.warn("Data service not available to retrieve License: {}", licenseId);
+            return new DataLicense();
+        }
+        return extractLicenseInfo(response.getBody().toString());
     }
 
     protected User2 invokeAndExtractUserInfo(String userId) {
