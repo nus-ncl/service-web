@@ -275,8 +275,8 @@ public class MainController {
         testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, "0");
         testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, "0");
 
-        Map<MachineType, List<Map<String, String>>> nodesStatus = getNodesStatus();
-        EnumMap<MachineType, Map<String, Long>> nodesStatusCount = new EnumMap<>(MachineType.class);
+        Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
+        Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
 
         // loop through each of the machine type
         // tabulate the different nodes type
@@ -4239,10 +4239,10 @@ public class MainController {
      * Invokes the get nodes status in the telemetry service
      * @return a map containing a list of nodes status by their type
      */
-    private Map<MachineType, List<Map<String, String>>> getNodesStatus() throws IOException {
+    private Map<String, List<Map<String, String>>> getNodesStatus() throws IOException {
         log.info("Getting all nodes' status from: {}", properties.getNodesStatus());
 
-        EnumMap<MachineType, List<Map<String, String>>> output = new EnumMap<>(MachineType.class);
+        Map<String, List<Map<String, String>>> output = new HashMap<>();
 
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
@@ -4258,13 +4258,13 @@ public class MainController {
                     String currentMachineType = object.names().getString(i);
 
                     // converts the JSON Array of the form [ { id : A, status : B, type : C } ] into a proper list of map
-                    List<Map<String, String>> nodesList = objectMapper.readValue(object.getJSONArray(MachineType.valueOf(currentMachineType).name()).toString(), new TypeReference<List<Map>>(){});
-                    output.put(MachineType.valueOf(currentMachineType), nodesList);
+                    List<Map<String, String>> nodesList = objectMapper.readValue(object.getJSONArray(currentMachineType).toString(), new TypeReference<List<Map>>(){});
+                    output.put(currentMachineType, nodesList);
                 }
             }
         } catch (RestClientException e) {
             log.warn(ERROR_CONNECTING_TO_SERVICE_TELEMETRY, e);
-            return new EnumMap<>(MachineType.class);
+            return new HashMap<>();
         }
 
         log.info("Finish getting all nodes: {}", output);
