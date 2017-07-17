@@ -2699,3 +2699,9 @@ h25{
     background-color: #F44336;
     color: #FFF;
 }
+
+/* wrap around for data resources names display after users click on the Download button at Data page */
+.data-resource-name-wrap {
+    width: 11em;
+    word-wrap: break-word;
+}

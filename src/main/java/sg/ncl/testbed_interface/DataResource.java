@@ -15,5 +15,6 @@ public class DataResource implements Serializable {
     private Long id;
     private String uri;
     private boolean malicious;
+    private boolean scanned;
 
 }
