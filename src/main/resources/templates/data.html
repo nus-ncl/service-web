@@ -113,7 +113,8 @@
                                	        data-link=${datasetEntry.value.license.link},
                                	        data-resourceuris=${datasetEntry.value.getResourceUrisInArrayString()},
                                	        data-resourceids=${datasetEntry.value.getResourceIdsInArrayString()},
-                               	        data-resourcemalicious=${datasetEntry.value.isContainMaliciousResources()},
+                               	        data-resourcemalicious=${datasetEntry.value.getResourceMaliciousInArrayString()},
+                               	        data-resourcescanned=${datasetEntry.value.getResourceScannedInArrayString()},
                                         data-upload=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/' + datasetEntry.value.id + '/resources' : ''}">
                                 <i class="fa fa-download"></i> Download</a>
                             <a th:if="not ${datasetEntry.value.isAccessible(#httpSession.getAttribute('id').toString())}" href="#requestModal" class="btn btn-primary" data-toggle="modal"
@@ -215,7 +216,16 @@
                         This Dataset <span id="dataset"></span> is made available under the <span id="license"></span>
                         whose full text can be found at: <a href="#" id="link" target="_blank"></a>
                         <br/><br/>
-                        <ul></ul>
+                        <!--<ul></ul>-->
+                        <table class="table table-responsive">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Is_Malicious</th>
+                                <th>Is_Scanned</th>
+                            </tr>
+                            </thead>
+                        </table>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

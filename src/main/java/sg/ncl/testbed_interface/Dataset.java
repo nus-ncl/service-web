@@ -126,6 +126,14 @@ public class Dataset implements Serializable {
 	    return maliciousStr;
     }
 
+    public String getResourceScannedInArrayString() {
+	    List<String> scannedList = new ArrayList<>();
+	    dataResources.forEach(temp -> scannedList.add("\"" + temp.isScanned() + "\""));
+	    String scannedStr = scannedList.toString();
+        log.debug(scannedStr);
+        return scannedStr;
+    }
+
     public String getReleasedDateString() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
         return releasedDate.format(format);
