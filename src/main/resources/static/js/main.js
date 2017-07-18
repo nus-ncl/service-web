@@ -222,8 +222,8 @@ $(document).ready(function() {
         var link = anchor.data('link');
         var resourceuris = anchor.data('resourceuris');
         var resourceids = anchor.data('resourceids');
-        var resourcemalicious = anchor.data('resourcemalicious');
-        var resourcescanned = anchor.data('resourcescanned');
+        var resourcedisplaycode = anchor.data('resourcedisplaycode');
+        var displayCodeMap = new Map();
         var upload = anchor.data('upload');
         var modal = $(this);
         modal.find('#uploadButton').hide();
@@ -233,21 +233,24 @@ $(document).ready(function() {
         modal.find('#link').text(link);
         modal.find('#link').attr('href', link);
 
-        // display if a collection of resources is malicious
-        // change the information to display accordingly
-        // remove all classes initially
-		modal.find('#downloadMaliciousLabel').removeClass();
-
 		modal.find('table').empty();
+
+		// to display the tooltip information when mouseover
+		displayCodeMap.set('data-resource-gray', "This resource has not been scanned by our anti-virus engine yet.");
+        displayCodeMap.set('data-resource-green', "This resource is clean according to our best effort.");
+        displayCodeMap.set('data-resource-red', "This resource is malicious. Please use with caution.");
+
 		if (resourceids.length > 0) {
 			// set up table headers for list of data resources
-			modal.find('table').append("<thead><tr><th>Name</th><th>Is_Malicious</th><th>Is_Scanned</th></tr></thead>");
+			modal.find('table').append("<thead><tr><th>Name</th><th>Malicious</th></tr></thead>");
 		}
+
+		// show the data resource names and whether it is malicious
+		// tooltip information when mouseover
         for (i = 0; i < resourceids.length; i++) {
-            modal.find('table').append("<tr>" +
+			modal.find('table').append("<tr>" +
 				"<td><p class='data-resource-name-wrap'><a href='/data/" + dataId + "/resources/" + resourceids[i] + "'>" + resourceuris[i] + "</p></a></td>" +
-				"<td>" + resourcemalicious[i] + "</td>" +
-                "<td>" + resourcescanned[i] + "</td>" +
+				"<td><a href='#' class='data-name-tooltip'><i class='fa fa-warning " + resourcedisplaycode[i] + "'></i><span id='resourcedisplay-tooltip' class='tooltiptext'>" + displayCodeMap.get(resourcedisplaycode[i]) + "</span></a></td>" +
 				"</tr>");
         }
         if (typeof upload === "undefined" || !upload.trim()) {
