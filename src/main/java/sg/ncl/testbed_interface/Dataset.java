@@ -127,11 +127,34 @@ public class Dataset implements Serializable {
     }
 
     public String getResourceScannedInArrayString() {
-	    List<String> scannedList = new ArrayList<>();
-	    dataResources.forEach(temp -> scannedList.add("\"" + temp.isScanned() + "\""));
+	    List<Boolean> scannedList = new ArrayList<>();
+	    dataResources.forEach(temp -> scannedList.add(temp.isScanned()));
 	    String scannedStr = scannedList.toString();
         log.debug(scannedStr);
         return scannedStr;
+    }
+
+    /**
+     * Sets the color coding for the data resources
+     * Is_malicious + Is_scanned = Red
+     * !Is_malicious + !Is_scanned = Gray
+     * !Is_malicious + Is_scanned = Green
+     * @return a string that indicates the css class names
+     */
+    public String getResourceMaliciousColorCodeInArrayString() {
+        List<String> displayCode = new ArrayList<>();
+        for (DataResource current : dataResources) {
+            if (current.isMalicious() && current.isScanned()) {
+                displayCode.add("\"" + "data-resource-red" + "\"");
+            } else if (!current.isMalicious() && current.isScanned()) {
+                displayCode.add("\"" + "data-resource-green" + "\"");
+            } else {
+                displayCode.add("\"" + "data-resource-gray" + "\"");
+            }
+        }
+        String displayCodeStr = displayCode.toString();
+        log.debug(displayCodeStr);
+        return displayCodeStr;
     }
 
     public String getReleasedDateString() {
