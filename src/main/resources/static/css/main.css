@@ -1918,12 +1918,6 @@ html {
 
 }
 
-h23 {
-    font-size: 1em;
-    color: #000;
-
-}
-
 .sticky-container{
     /*background-color: #333;*/
     padding: 0px;
@@ -2635,14 +2629,17 @@ h17{
     margin: 20px;
 }
 
-h22{
-    font-weight:400;
+h22 {
+    font-weight: 400;
     color: #333333;
     padding-bottom: 20px;
     height: 40px;
-    font-size:25px;
+    font-size: 25px;
+}
 
-
+h23 {
+    font-size: 1em;
+    color: #000;
 }
 
 h24{
@@ -2664,11 +2661,18 @@ h25{
     cursor:pointer;
 }
 
+h26 {
+    font-weight: 400;
+    color: #333333;
+    padding-bottom: 20px;
+    height: 40px;
+    font-size: 15px;
+}
+
 .hide
 {
     display: none;
     padding-left: 15px;;
-
 }
 
 .show
