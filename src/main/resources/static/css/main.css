@@ -1832,7 +1832,7 @@ html {
 
 .loginback
 {
-    background-image: url(../images/login1.png);
+    background-image: url(../images/login1-web.png);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -1915,12 +1915,6 @@ html {
 {
     background-color: transparent;
     border-bottom: transparent;
-
-}
-
-h23 {
-    font-size: 1em;
-    color: #000;
 
 }
 
@@ -2635,14 +2629,17 @@ h17{
     margin: 20px;
 }
 
-h22{
-    font-weight:400;
+h22 {
+    font-weight: 400;
     color: #333333;
     padding-bottom: 20px;
     height: 40px;
-    font-size:25px;
+    font-size: 25px;
+}
 
-
+h23 {
+    font-size: 1em;
+    color: #000;
 }
 
 h24{
@@ -2664,11 +2661,18 @@ h25{
     cursor:pointer;
 }
 
+h26 {
+    font-weight: 400;
+    color: #333333;
+    padding-bottom: 20px;
+    height: 40px;
+    font-size: 15px;
+}
+
 .hide
 {
     display: none;
     padding-left: 15px;;
-
 }
 
 .show
