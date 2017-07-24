@@ -21,18 +21,23 @@
 				<table class="table table-responsive">
 					<tr>
 						<th width="20%">ID</th>
-						<th width="50%">URI</th>
+						<th width="30%">URI</th>
+						<th width="10%">Is_Malicious</th>
+						<th width="10%">Is_Scanned</th>
 						<th width="30%">Action</th>
 					</tr>
 					<tr th:each="dataresource : ${dataset.dataResources}">
 						<td th:text="${dataresource.id}">ID</td>
-						<td th:text="${dataresource.uri}">URI</td>
+						<td><span th:text="${dataresource.uri}" class="data-resource-name-wrap">URI</span></td>
+						<td th:text="${dataresource.malicious}">Malicious</td>
+						<td th:text="${dataresource.scanned}">Scanned</td>
 						<td>
                             <button type="button" class="btn btn-primary"
                                     data-toggle="modal" data-target="#deleteResourceModal"
                                     th:attr="data-id=${dataresource.id},
                                         data-uri=${dataresource.uri},
                                         data-delete=@{/data/{did}/resources/{rid}/delete(did=${dataset.id},rid=${dataresource.id})}"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+							<a th:href="@{/data/{did}/resources/{rid}/edit(did=${dataset.id},rid=${dataresource.id})}">Edit</a>
 						</td>
 					</tr>
 				</table>

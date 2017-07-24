@@ -659,6 +659,42 @@ public class DataController extends MainController {
         return "redirect:/data/" + datasetId + "/resources";
     }
 
+    @RequestMapping(value = "{datasetId}/resources/{resourceId}/edit", method = RequestMethod.GET)
+    public String editResource(@PathVariable String datasetId, @PathVariable String resourceId, Model model) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+        DataResource currentDataResource = new DataResource();
+
+        for (DataResource dataResource : dataset.getDataResources()) {
+            if (dataResource.getId() == Long.parseLong(resourceId)) {
+                currentDataResource = dataResource;
+                break;
+            }
+        }
+
+        model.addAttribute("did", dataset.getId());
+        model.addAttribute("dataresource", currentDataResource);
+        log.info("Data resource editing... {}", currentDataResource);
+        return "data_resources_edit";
+    }
+
+    @RequestMapping(value = "{datasetId}/resources/{resourceId}/edit", method = RequestMethod.POST)
+    public String editResourceFormSubmit(@PathVariable String datasetId, @PathVariable String resourceId, @ModelAttribute DataResource dataResource, Model model) {
+        log.info("Edited data resource...{}", dataResource.isMalicious());
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+//
+        model.addAttribute("dataset", dataset);
+//        log.info("Data resource editing... {}", currentDataResource);
+        return "redirect:/data/" + datasetId + "/resources/" + resourceId + "/edit";
+    }
+
     private void setContributor(Dataset dataset, HttpSession session) {
         if (dataset.getContributorId() == null) {
             dataset.setContributorId(session.getAttribute("id").toString());
