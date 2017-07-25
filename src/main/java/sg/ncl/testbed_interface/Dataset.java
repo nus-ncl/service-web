@@ -135,24 +135,37 @@ public class Dataset implements Serializable {
     }
 
     /**
-     * Sets the color coding for the data resources
+     * Sets the color coding for the data resources in Thymeleaf
      * Is_malicious + Is_scanned = Red
      * !Is_malicious + !Is_scanned = Gray
      * !Is_malicious + Is_scanned = Green
-     * @return a string that indicates the css class names
+     * @return a list of css color classes
      */
-    public String getResourceMaliciousColorCodeInArrayString() {
+    public List<String> getResourceMaliciousColorCodeInList() {
         List<String> displayCode = new ArrayList<>();
         for (DataResource current : dataResources) {
             if (current.isMalicious() && current.isScanned()) {
-                displayCode.add("\"" + "data-resource-red" + "\"");
+                displayCode.add("data-resource-red");
             } else if (!current.isMalicious() && current.isScanned()) {
-                displayCode.add("\"" + "data-resource-green" + "\"");
+                displayCode.add("data-resource-green");
             } else {
-                displayCode.add("\"" + "data-resource-gray" + "\"");
+                displayCode.add("data-resource-gray");
             }
         }
-        String displayCodeStr = displayCode.toString();
+        return displayCode;
+    }
+
+    /**
+     * Sets the color coding for the data resources in Javascript
+     * need double quotes to be display in Javascript
+     * @return a string that indicates the css class names
+     */
+    public String getResourceMaliciousColorCodeInArrayString() {
+        List<String> displayCodeWithQuotes = new ArrayList<>();
+        for (String displayCode : getResourceMaliciousColorCodeInList()) {
+            displayCodeWithQuotes.add("\"" + displayCode + "\"");
+        }
+        String displayCodeStr = displayCodeWithQuotes.toString();
         log.debug(displayCodeStr);
         return displayCodeStr;
     }
