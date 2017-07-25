@@ -2584,6 +2584,67 @@ public class MainController {
         return "data_dashboard";
     }
 
+    @RequestMapping("/admin/data/{datasetId}/resources")
+    public String adminViewDataResources(@PathVariable String datasetId, Model model, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        //----------------------------------------
+        // get list of data resources in a dataset
+        //----------------------------------------
+        Dataset dataset = invokeAndExtractDataInfo(Long.parseLong(datasetId));
+        model.addAttribute("dataset", dataset);
+
+        return "admin_data_resources";
+    }
+
+    @RequestMapping(value = "/admin/data/{datasetId}/resources/{resourceId}/update", method = RequestMethod.GET)
+    public String adminUpdateResource(@PathVariable String datasetId, @PathVariable String resourceId, Model model, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        Dataset dataset = invokeAndExtractDataInfo(Long.parseLong(datasetId));
+        DataResource currentDataResource = new DataResource();
+
+        for (DataResource dataResource : dataset.getDataResources()) {
+            if (dataResource.getId() == Long.parseLong(resourceId)) {
+                currentDataResource = dataResource;
+                break;
+            }
+        }
+
+        model.addAttribute("did", dataset.getId());
+        model.addAttribute("dataresource", currentDataResource);
+        return "admin_data_resources_update";
+    }
+
+    @RequestMapping(value = "/admin/data/{datasetId}/resources/{resourceId}/update", method = RequestMethod.POST)
+    public String adminUpdateResourceFormSubmit(@PathVariable String datasetId, @PathVariable String resourceId, @ModelAttribute DataResource dataResource, Model model, HttpSession session) throws IOException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        Dataset dataset = invokeAndExtractDataInfo(Long.parseLong(datasetId));
+        Dataset updatedDataset = updateDataset(dataset, dataResource);
+
+        log.info("Data updated... {}", updatedDataset.getName());
+        model.addAttribute("did", dataset.getId());
+        model.addAttribute("dataresource", dataResource);
+        return "redirect:/admin/data/" + datasetId + "/resources/" + resourceId + "/update";
+    }
+
+    private Dataset updateDataset(Dataset dataset, DataResource dataResource) throws IOException {
+        log.info("Data resource updating... {}", dataResource);
+        HttpEntity<String> request = createHttpEntityWithBody(objectMapper.writeValueAsString(dataResource));
+        ResponseEntity response = restTemplate.exchange(properties.getResource(dataset.getId().toString(), dataResource.getId().toString()), HttpMethod.PUT, request, String.class);
+
+        Dataset updatedDataset = extractDataInfo(response.getBody().toString());
+        log.info("Data resource updated... {}", dataResource.getUri());
+        return updatedDataset;
+    }
+
     @RequestMapping("/admin/experiments")
     public String adminExperimentsManagement(Model model, HttpSession session) {
 
@@ -3700,6 +3761,12 @@ public class MainController {
 
         // no such member in the team found
         return null;
+    }
+
+    protected Dataset invokeAndExtractDataInfo(Long dataId) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(dataId.toString()), HttpMethod.GET, request, String.class);
+        return extractDataInfo(response.getBody().toString());
     }
 
     protected Dataset extractDataInfo(String json) {
