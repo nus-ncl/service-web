@@ -17,30 +17,22 @@
 				<div th:if="${message}">
 					<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 				</div>
-				<table class="table table-responsive">
-					<tr>
-						<th width="20%">ID</th>
-						<th width="40%">URI</th>
-						<th width="20%">Is_Malicious</th>
-						<th width="20%">Is_Scanned</th>
-					</tr>
-					<tr>
-						<td th:text="${dataresource.id}">ID</td>
-						<td><span th:text="${dataresource.uri}" class="data-resource-name-wrap">URI</span></td>
-						<td th:text="${dataresource.malicious}">Malicious</td>
-						<td th:text="${dataresource.scanned}">Scanned</td>
-					</tr>
-				</table>
-				<form method="post" action="#" th:action="@{/data/{did}/resources/{rid}/edit(did=${did},rid=${dataresource.id})}" th:object="${dataresource}" role="form">
+				<form method="post" action="#" th:action="@{/admin/data/{did}/resources/{rid}/update(did=${did},rid=${dataresource.id})}" th:object="${dataresource}" role="form">
 					<p><strong>ID</strong></p>
 					<input type="text" class="form-control" th:field="*{id}" readonly="readonly"/>
 					<p><strong>URI</strong></p>
-					<input type="text" class="form-control" th:field="*{uri}"/>
+					<input type="text" class="form-control" th:field="*{uri}" readonly="readonly"/>
 					<p><strong>Malicious</strong></p>
-					<input type="text" class="form-control" th:field="*{malicious}"/>
+					<select class="form-control" th:field="*{malicious}">
+						<option value="true">TRUE</option>
+						<option value="false">FALSE</option>
+					</select>
 					<p><strong>Scanned</strong></p>
-					<input type="text" class="form-control" th:field="*{scanned}"/>
-					<button type="submit" class="btn btn-standard">Edit</button>
+					<select class="form-control" th:field="*{scanned}">
+						<option value="true">TRUE</option>
+						<option value="false">FALSE</option>
+					</select>
+					<button type="submit" class="btn btn-standard">Update</button>
 				</form>
 			</div> <!-- row -->
 			<div class="cc-wraper">
