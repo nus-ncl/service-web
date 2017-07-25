@@ -11,9 +11,7 @@ import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
@@ -40,12 +38,18 @@ public class Dataset implements Serializable {
 	private User2 contributor;
 	private DataCategory category;
 	private DataLicense license;
+	private HashMap<String, String> displayCodeMap;
 	
 	public Dataset() {
         visibility = DataVisibility.PUBLIC;
         releasedDate = ZonedDateTime.now();
 	    dataResources = new ArrayList<>();
 	    approvedUsers = new ArrayList<>();
+	    displayCodeMap = new HashMap<>();
+
+        displayCodeMap.put("data-resource-gray", "This resource has not been scanned by our anti-virus engine yet.");
+        displayCodeMap.put("data-resource-green", "This resource is clean according to our best effort.");
+        displayCodeMap.put("data-resource-red", "This resource is malicious. Please use with caution.");
     }
 
     public void setAccessibility(DataAccessibility accessibility) {
@@ -153,6 +157,10 @@ public class Dataset implements Serializable {
             }
         }
         return displayCode;
+    }
+
+    public String getDisplayColor(String color) {
+        return displayCodeMap.get(color);
     }
 
     /**
