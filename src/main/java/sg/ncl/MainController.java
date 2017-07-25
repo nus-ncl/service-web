@@ -2622,6 +2622,7 @@ public class MainController {
         return "admin_data_resources_update";
     }
 
+    // updates the malicious status of a data resource
     @RequestMapping(value = "/admin/data/{datasetId}/resources/{resourceId}/update", method = RequestMethod.POST)
     public String adminUpdateResourceFormSubmit(@PathVariable String datasetId, @PathVariable String resourceId, @ModelAttribute DataResource dataResource, Model model, HttpSession session, RedirectAttributes redirectAttributes) throws IOException {
         if (!validateIfAdmin(session)) {
