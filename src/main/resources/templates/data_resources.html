@@ -28,7 +28,7 @@
 					<tr th:each="dataresource, iterStat : ${dataset.dataResources}">
 						<td th:text="${dataresource.id}">ID</td>
 						<td><span th:text="${dataresource.uri}" class="data-resource-name-wrap">URI</span></td>
-						<td><i th:class="${'fa fa-warning ' + dataset.getResourceMaliciousColorCodeInList()[iterStat.index]}"></i></td>
+						<td><a href='#' class='data-name-tooltip'><i th:class="${'fa fa-warning ' + dataset.getResourceMaliciousColorCodeInList()[iterStat.index]}"></i><span id='resourcedisplay-tooltip' class='tooltiptext' th:text="${dataset.getDisplayColor(dataset.getResourceMaliciousColorCodeInList()[iterStat.index])}">TEXT</span></a></td>
 						<td>
                             <button type="button" class="btn btn-primary"
                                     data-toggle="modal" data-target="#deleteResourceModal"
