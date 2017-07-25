@@ -23,9 +23,9 @@ public class DataResource implements Serializable {
     // to display the list of dropdown selection for admin to update malicious status of a data resource
     // Note: values must be equivalent to those option values defined in the dropdown list under admin_data_resources_update.html
     public String getMaliciousFlag() {
-        if (malicious & scanned) {
+        if (malicious && scanned) {
             maliciousFlag = "true";
-        } else if (!malicious & scanned) {
+        } else if (!malicious && scanned) {
             maliciousFlag = "false";
         } else {
             maliciousFlag = "not_scanned";
