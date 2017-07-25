@@ -37,7 +37,6 @@
                                     th:attr="data-id=${dataresource.id},
                                         data-uri=${dataresource.uri},
                                         data-delete=@{/data/{did}/resources/{rid}/delete(did=${dataset.id},rid=${dataresource.id})}"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
-							<a th:href="@{/data/{did}/resources/{rid}/edit(did=${dataset.id},rid=${dataresource.id})}">Edit</a>
 						</td>
 					</tr>
 				</table>
