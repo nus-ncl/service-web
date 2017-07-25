@@ -18,21 +18,25 @@
 					<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
 				</div>
 				<form method="post" action="#" th:action="@{/admin/data/{did}/resources/{rid}/update(did=${did},rid=${dataresource.id})}" th:object="${dataresource}" role="form">
-					<p><strong>ID</strong></p>
-					<input type="text" class="form-control" th:field="*{id}" readonly="readonly"/>
-					<p><strong>URI</strong></p>
-					<input type="text" class="form-control" th:field="*{uri}" readonly="readonly"/>
-					<p><strong>Malicious</strong></p>
-					<select class="form-control" th:field="*{malicious}">
-						<option value="true">TRUE</option>
-						<option value="false">FALSE</option>
-					</select>
-					<p><strong>Scanned</strong></p>
-					<select class="form-control" th:field="*{scanned}">
-						<option value="true">TRUE</option>
-						<option value="false">FALSE</option>
-					</select>
-					<button type="submit" class="btn btn-standard">Update</button>
+					<div class="form-group">
+						<label for="data-resc-id">ID</label>
+						<input id="data-resc-id" type="text" class="form-control" th:field="*{id}" readonly="readonly"/>
+					</div>
+					<div class="form-group">
+						<label for="data-resc-uri">URI</label>
+						<input id="data-resc-uri" type="text" class="form-control" th:field="*{uri}" readonly="readonly"/>
+					</div>
+					<div class="form-group">
+						<label for="data-resc-malicious">Malicious</label>
+						<select id="data-resc-malicious" class="form-control" th:field="*{maliciousFlag}">
+							<option value="false">CLEAN</option>
+							<option value="true">MALICIOUS</option>
+							<option value="not_scanned">NOT SCANNED</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-standard">Update</button>
+					</div>
 				</form>
 			</div> <!-- row -->
 			<div class="cc-wraper">
