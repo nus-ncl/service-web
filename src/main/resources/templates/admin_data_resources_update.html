@@ -14,10 +14,8 @@
 
 			<p>&nbsp;</p>
 			<div class="row dashpanel">
-				<div th:if="${message}">
-					<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
-				</div>
 				<form method="post" action="#" th:action="@{/admin/data/{did}/resources/{rid}/update(did=${did},rid=${dataresource.id})}" th:object="${dataresource}" role="form">
+					<span class="account-change-success" th:if="${editMaliciousFlag eq 'success'}"><i class="fa fa-check"></i> <span th:text="${'Data resource has been updated to ' + dataresource.maliciousFlag}">TEXT</span></span>
 					<div class="form-group">
 						<label for="data-resc-id">ID</label>
 						<input id="data-resc-id" type="text" class="form-control" th:field="*{id}" readonly="readonly"/>

@@ -2618,21 +2618,29 @@ public class MainController {
 
         model.addAttribute("did", dataset.getId());
         model.addAttribute("dataresource", currentDataResource);
+        session.setAttribute("original_dataresource", currentDataResource);
         return "admin_data_resources_update";
     }
 
     @RequestMapping(value = "/admin/data/{datasetId}/resources/{resourceId}/update", method = RequestMethod.POST)
-    public String adminUpdateResourceFormSubmit(@PathVariable String datasetId, @PathVariable String resourceId, @ModelAttribute DataResource dataResource, Model model, HttpSession session) throws IOException {
+    public String adminUpdateResourceFormSubmit(@PathVariable String datasetId, @PathVariable String resourceId, @ModelAttribute DataResource dataResource, Model model, HttpSession session, RedirectAttributes redirectAttributes) throws IOException {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
 
+        DataResource original = (DataResource) session.getAttribute("original_dataresource");
         Dataset dataset = invokeAndExtractDataInfo(Long.parseLong(datasetId));
         Dataset updatedDataset = updateDataset(dataset, dataResource);
 
-        log.info("Data updated... {}", updatedDataset.getName());
+        // add redirect attributes variable to notify what has been modified
+        if (!original.getMaliciousFlag().equalsIgnoreCase(dataResource.getMaliciousFlag())) {
+            redirectAttributes.addFlashAttribute("editMaliciousFlag", "success");
+        }
+
+        log.info("Data updated... {}", dataset.getName());
         model.addAttribute("did", dataset.getId());
         model.addAttribute("dataresource", dataResource);
+        session.removeAttribute("original_dataresource");
         return "redirect:/admin/data/" + datasetId + "/resources/" + resourceId + "/update";
     }
 
