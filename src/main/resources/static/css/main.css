@@ -510,6 +510,17 @@ section {
     margin-top: 40px;
 }
 
+.caption .btn-start1 {
+    color: #21b3b7;
+    font-size: 14px;
+    font-weight: 600;
+    padding:14px 40px;
+    border: 1px solid #6e6d6c;
+    border-radius: 4px;
+    margin-top: 40px;
+}
+
+
 .caption .btn-start:hover {
     color: #FFF;
 }
@@ -2543,6 +2554,17 @@ h37{
     width: 700px;
 }
 
+
+h38{
+    padding: 15px;
+    border: 1px #ccc solid;
+    font-size: 16px;
+    margin: 10px;
+    width: 300px;
+    color:#00C7BA ;
+}
+
+
 .footnote {
     font-size: 13px;
     font-style: italic;
@@ -2664,6 +2686,14 @@ h25{
     cursor:pointer;
 }
 
+h26{
+    font-size:35px;
+    float:center;
+    font-weight: 200;
+    padding-left: 300px;
+    margin-left: 300px;
+}
+
 .hide
 {
     display: none;
@@ -2679,3 +2709,4 @@ h25{
     padding-left:25px;
     padding-right:25px;
 }
+

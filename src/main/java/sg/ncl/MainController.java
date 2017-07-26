@@ -165,6 +165,12 @@ public class MainController {
         return "about";
     }
 
+    @RequestMapping("/BNVirtusage")
+    public String BNVirtusage() {
+        return "BNVirtusage";
+    }
+
+
     @RequestMapping("/event")
     public String event() {
         return "event";
@@ -1897,6 +1903,7 @@ public class MainController {
         return "terms_and_conditions";
     }
 
+
     //--------------------------Join Team Page--------------------------
 
     @RequestMapping(value = "/teams/join_team", method = RequestMethod.GET)
@@ -3517,6 +3524,8 @@ public class MainController {
         scenarioFileNameList.add("Scenario 2 - Experiment with 2 nodes and 10Gb link");
         scenarioFileNameList.add("Scenario 3 - Experiment with 3 nodes in a LAN");
         scenarioFileNameList.add("Scenario 4 - Experiment with 2 nodes and customized link property");
+        scenarioFileNameList.add("Scenario 5 - Single SDN switch connected to two nodes");
+        scenarioFileNameList.add("Scenario 6 - Tree Topology with configurable SDN switches");
 //        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
 //        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
         log.info("Scenario file list: {}", scenarioFileNameList);
@@ -3534,6 +3543,10 @@ public class MainController {
             actualScenarioFileName = "basic3.ns";
         } else if (scenarioFileName.contains("Scenario 4")) {
             actualScenarioFileName = "basic4.ns";
+        } else if (scenarioFileName.contains("Scenario 5")) {
+            actualScenarioFileName = "basic5.ns";
+        } else if (scenarioFileName.contains("Scenario 6")) {
+            actualScenarioFileName = "basic6.ns";
         } else {
             // defaults to basic single node
             actualScenarioFileName = "basic1.ns";

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Team Application</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+</head>
+<body class="mybg loginbackground">
+<th:block th:if="${session.id == null}">
+    <div th:replace="fragments/login_navigation :: loginnav"></div>
+</th:block>
+<th:block th:if="${session.id != null}">
+    <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</th:block>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="container">
+    <div class="row ">
+
+        <div class="heading col-sm-12 col-sm-offset-1" >
+            <div class="col-sm-10 ">
+                <p>&nbsp;</p>
+                <h2>Provisioning experiments in NCL testbed </h2>
+                <p> NCL&apos;s testbed provisioning system is built based on DETERLab (https://www.deterlab.net/)
+                    and there are numerous tutorials and recipes online that provide a comprehensive guide on
+                    how one can create experiments in DETERLab platform.</p>
+                <p> For a very quick tutorial on creation of an experiment in NCL please refer to NCL tutorial
+                    page at https://ncl.sg/tutorials. For further guide with comprehensive details a good place to
+                    start is DETERLab&apos;s documentation (http://docs.deterlab.net/)</p>
+                <p>Note that in order to create an experiment with SDN switches involved, you will need to
+                    substitute your NS file with one that is written with regards to the following explanations</p>
+            </div>
+
+            <div class="col-sm-10">
+                <p>&nbsp;</p>
+                <h2>Including SDN switches to NCL testbed experiments </h2>
+                <p> In order to define an OpenFlow enabled switch using BNVirt you will need to set the
+                    hardware of your switch node as &quot;ofswitch&quot;like: </p>
+                <h38><i> set switch1 [&amp;ns node]</i></h38>
+                <br /> <i>  tb-set-hardware &amp;switch1 ofswitch </i>
+                <p>This way the provisioning system (DETER in this case) will understand that you have an
+                    OF-enabled switch in your topology and will kickstart the BNVirt module to carry out the SDN
+                    provisioning processes. </p>
+                <p>In the same way you will need to declare a controller node and use tb-set-hardware to
+                declare that particular node as an SDN controller as shown below:</p>
+                <h38><i> set controller [&amp;ns node]</i></h38>
+                <br /><i>tb-set-hardware &amp;controller ofcontrol</i>
+                <p>Please note that you do not need to connect the controller to the SDN switches. The BNVirt
+                will carry out the out-of-band control connections between the controller and the switches
+                automatically. Currently, an experiment can have only a single SDN Controller node
+                (Multi-Controller topologies are currently not supported)</p>
+                <p>DETER uses TCL (the language used for writing NS files that describe the simulation
+                scenario) so you basically have all the power that TCL has to offer. A simple topology
+                example can further elaborate steps needed for creating an experiment with SDN switches.</p>
+                <p> Please note that you will need to assign IP addresses to the nodes connected to SDN
+                switches manually by logging into those nodes via SSH. Otherwise the nodes that are
+                connected to an SDN switch will be assigned IP addresses in different subnets by default.</p>
+                <p>You can login to the controller node, and run any standard OpenFlow controller of your
+                choice to control your SDN Network.</p>
+
+                <h2>Including SDN switches to NCL testbed experiments </h2>
+                <p>1)Currently, we do not support having multiple controllers in a single experiment.
+                    However, we will consider adding this based on demand.
+                </p>
+                <p>2)We do not support nsfile having &quot;for&quot; or &quot;while&quot; or similar loop constructs in SDN</p>
+                <p>3)OpenFlow 1.3 is not supported as of now, but is coming soon</p>
+
+                <h2>Example 1:​ Single SDN switch connected to two nodes</h2>
+                <p><b>Topology schema:</b></p>
+                <img class="img-responsive" preload="true" src="../images/SDN.jpg" width="500" height="325"/></div>
+            <p> Figure 1 : Single SDN switch connected to two nodes</p>
+            <p><b>Input NS script:</b></p>
+                <tutorialbackground>
+                    ### Start of the script <br />
+                    # Create a new experiment<br />
+                    set ns [new Simulator]<br />
+                    # Enable tb commands (an extension to TCL)<br />
+                    source tb_compat.tcl<br />
+                    # Define a node (a server node)<br />
+                    set node1 [&amp;ns node]<br />
+                    # Same as the above<br />
+                    set node2 [&amp;ns node]<br />
+                    # Define a switch<br />
+                    set switch0 [$ns node]<br />
+                    # Declare that the switch0 is an OpenFlow Enabled switch<br />
+                    tb-set-hardware &amp;switch0 ofswitch<br />
+                    # Connect node1 to switch0<br />
+                    set link1 [$ns duplex-link &amp;switch0 &amp;node1 1Gb 0ms DropTail]<br />
+            # Connect node2 to switch0<br />
+            set link2 [$ns duplex-link $switch0 $node2 1Gb 0ms DropTail]<br />
+            # [Optional] Define a node named “controller”<br />
+            # If you define a controller you can set a custom image<br />
+            # otherwise the default image for the controller will be loaded<br />
+            set controller [$ns node]<br />
+            # If you have defined a controller you have to declare it as below<br />
+            # Declare that “controller” is an SDN Controller<br />
+            tb-set-hardware $controller ofcontrol<br />
+            # Boiler plates<br />
+            &amp;ns rtproto Static<br />
+            &amp;ns run<br />
+            ### End of the script<br />
+           </tutorialbackground>
+</div>
+</div>
+    </div>
+</div> <!-- container -->
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+</body>
+</html>
