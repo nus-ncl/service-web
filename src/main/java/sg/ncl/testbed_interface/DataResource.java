@@ -24,11 +24,11 @@ public class DataResource implements Serializable {
     // Note: values must be equivalent to those option values defined in the dropdown list under admin_data_resources_update.html
     public String getMaliciousFlag() {
         if (malicious && scanned) {
-            maliciousFlag = "true";
+            maliciousFlag = "malicious";
         } else if (!malicious && scanned) {
-            maliciousFlag = "false";
+            maliciousFlag = "clean";
         } else {
-            maliciousFlag = "not_scanned";
+            maliciousFlag = "not scanned";
         }
         return maliciousFlag;
     }
@@ -38,15 +38,15 @@ public class DataResource implements Serializable {
     // Note: values must be equivalent to those define in the dropdown list under admin_data_resources_update.html
     public void setMaliciousFlag(String flag) {
         switch (flag) {
-            case "true":
+            case "malicious":
                 malicious = true;
                 scanned = true;
                 break;
-            case "false":
+            case "clean":
                 malicious = false;
                 scanned = true;
                 break;
-            case "not_scanned":
+            case "not scanned":
             default:
                 malicious = false;
                 scanned = false;
