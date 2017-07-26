@@ -113,8 +113,6 @@
                                	        data-link=${datasetEntry.value.license.link},
                                	        data-resourceuris=${datasetEntry.value.getResourceUrisInArrayString()},
                                	        data-resourceids=${datasetEntry.value.getResourceIdsInArrayString()},
-                               	        data-resourcemalicious=${datasetEntry.value.getResourceMaliciousInArrayString()},
-                               	        data-resourcescanned=${datasetEntry.value.getResourceScannedInArrayString()},
                                	        data-resourcedisplaycode=${datasetEntry.value.getResourceMaliciousColorCodeInArrayString()},
                                         data-upload=${datasetEntry.value.contributorId.equals(#httpSession.getAttribute('id').toString()) ? '/data/' + datasetEntry.value.id + '/resources' : ''}">
                                 <i class="fa fa-download"></i> Download</a>
