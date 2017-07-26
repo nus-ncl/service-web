@@ -122,22 +122,6 @@ public class Dataset implements Serializable {
         return uris;
     }
 
-    public String getResourceMaliciousInArrayString() {
-	    List<Boolean> maliciousList = new ArrayList<>();
-	    dataResources.forEach(temp -> maliciousList.add(temp.isMalicious()));
-	    String maliciousStr = maliciousList.toString();
-	    log.debug(maliciousStr);
-	    return maliciousStr;
-    }
-
-    public String getResourceScannedInArrayString() {
-	    List<Boolean> scannedList = new ArrayList<>();
-	    dataResources.forEach(temp -> scannedList.add(temp.isScanned()));
-	    String scannedStr = scannedList.toString();
-        log.debug(scannedStr);
-        return scannedStr;
-    }
-
     /**
      * Sets the color coding for the data resources in Thymeleaf
      * Is_malicious + Is_scanned = Red
