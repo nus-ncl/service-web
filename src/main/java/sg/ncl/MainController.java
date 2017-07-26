@@ -128,6 +128,9 @@ public class MainController {
 
     private static final String MEMBER_TYPE = "memberType";
 
+    // admin update data resource to track what fields have been updated
+    private static final String ORIGINAL_DATARESOURCE = "original_dataresource";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -2617,7 +2620,7 @@ public class MainController {
 
         model.addAttribute("did", dataset.getId());
         model.addAttribute("dataresource", currentDataResource);
-        session.setAttribute("original_dataresource", currentDataResource);
+        session.setAttribute(ORIGINAL_DATARESOURCE, currentDataResource);
         return "admin_data_resources_update";
     }
 
@@ -2628,9 +2631,9 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-        DataResource original = (DataResource) session.getAttribute("original_dataresource");
+        DataResource original = (DataResource) session.getAttribute(ORIGINAL_DATARESOURCE);
         Dataset dataset = invokeAndExtractDataInfo(Long.parseLong(datasetId));
-        Dataset updatedDataset = updateDataset(dataset, dataResource);
+        updateDataset(dataset, dataResource);
 
         // add redirect attributes variable to notify what has been modified
         if (!original.getMaliciousFlag().equalsIgnoreCase(dataResource.getMaliciousFlag())) {
@@ -2640,7 +2643,7 @@ public class MainController {
         log.info("Data updated... {}", dataset.getName());
         model.addAttribute("did", dataset.getId());
         model.addAttribute("dataresource", dataResource);
-        session.removeAttribute("original_dataresource");
+        session.removeAttribute(ORIGINAL_DATARESOURCE);
         return "redirect:/admin/data/" + datasetId + "/resources/" + resourceId + "/update";
     }
 

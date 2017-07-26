@@ -46,8 +46,8 @@ public class DataResource implements Serializable {
                 malicious = false;
                 scanned = true;
                 break;
-            default:
             case "not_scanned":
+            default:
                 malicious = false;
                 scanned = false;
                 break;
