@@ -3912,11 +3912,6 @@ public class MainController {
                 Map<String, String> nodeDetails = new HashMap<>();
                 String nodeName = (String) key;
                 JSONObject nodeDetailsJson = new JSONObject(nodesInfoObject.get(nodeName).toString());
-                log.info("Key is: {}", nodeName);
-//                nodeDetails.put("os", nodeDetailsJson.getString("os"));
-//                nodeDetails.put("qualifiedName", nodeDetailsJson.getString("qualifiedName"));
-
-                log.info("Extracting the rest...");
 
                 nodeDetails.put("os", getValueFromJSONKey(nodeDetailsJson, "os"));
                 nodeDetails.put("qualifiedName", getValueFromJSONKey(nodeDetailsJson, "qualifiedName"));
