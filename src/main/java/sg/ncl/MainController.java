@@ -166,12 +166,6 @@ public class MainController {
         return "about";
     }
 
-    @RequestMapping("/BNVirtusage")
-    public String BNVirtusage() {
-        return "BNVirtusage";
-    }
-
-
     @RequestMapping("/event")
     public String event() {
         return "event";
