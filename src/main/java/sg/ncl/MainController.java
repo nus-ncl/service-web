@@ -855,12 +855,12 @@ public class MainController {
 
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                final String errorPrefix = "Error: ";
+                final String ERROR_PREFIX = "Error: ";
 
                 switch (exceptionState) {
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Register new user failed on DeterLab: {}", error.getMessage());
-                        throw new DeterLabOperationFailedException(errorPrefix + (error.getMessage().contains("unknown error") ? ERR_SERVER_OVERLOAD : error.getMessage()));
+                        throw new DeterLabOperationFailedException(ERROR_PREFIX + (error.getMessage().contains("unknown error") ? ERR_SERVER_OVERLOAD : error.getMessage()));
                     case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Register new users new team request : team name already exists");
                         throw new TeamNameAlreadyExistsException("Team name already exists");
@@ -875,14 +875,14 @@ public class MainController {
                     {
                         String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
                         log.warn("Register new users : email already exists: {}", email);
-                        throw new UsernameAlreadyExistsException(errorPrefix + email + " already in use.");
+                        throw new UsernameAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
                     case EMAIL_ALREADY_EXISTS_EXCEPTION:
                         // throw from adapter deterlab
                     {
                         String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
                         log.warn("Register new users : email already exists: {}", email);
-                        throw new EmailAlreadyExistsException(errorPrefix + email + " already in use.");
+                        throw new EmailAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
                     default:
                         log.warn("Registration or adapter connection fail");
