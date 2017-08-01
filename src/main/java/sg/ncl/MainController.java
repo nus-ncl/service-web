@@ -855,8 +855,6 @@ public class MainController {
 
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                final String ERROR_PREFIX = "Error: ";
-
                 switch (exceptionState) {
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Register new user failed on DeterLab: {}", error.getMessage());
