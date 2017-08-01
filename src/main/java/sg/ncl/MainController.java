@@ -1793,15 +1793,15 @@ public class MainController {
             HttpSession session,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
-        final String logPrefix = "Existing user apply for new team: {}";
+        final String LOG_PREFIX = "Existing user apply for new team: {}";
 
         if (bindingResult.hasErrors()) {
-            log.warn(logPrefix, "Application form error " + teamPageApplyTeamForm.toString());
+            log.warn(LOG_PREFIX, "Application form error " + teamPageApplyTeamForm.toString());
             return "team_page_apply_team";
         }
         // log data to ensure data has been parsed
-        log.debug(logPrefix, properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
-        log.info(logPrefix, teamPageApplyTeamForm.toString());
+        log.debug(LOG_PREFIX, properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
+        log.info(LOG_PREFIX, teamPageApplyTeamForm.toString());
 
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
@@ -1839,18 +1839,18 @@ public class MainController {
 
                 final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
 
-                log.warn(logPrefix, responseBody);
+                log.warn(LOG_PREFIX, responseBody);
                 redirectAttributes.addFlashAttribute("message", errorMessage);
                 return "redirect:/teams/apply_team";
 
             } else {
                 // no errors, everything ok
-                log.info(logPrefix, "Application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
+                log.info(LOG_PREFIX, "Application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
                 return "redirect:/teams/team_application_submitted";
             }
 
         } catch (ResourceAccessException | IOException e) {
-            log.error(logPrefix, e);
+            log.error(LOG_PREFIX, e);
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
