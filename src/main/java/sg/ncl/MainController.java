@@ -1882,10 +1882,10 @@ public class MainController {
             HttpSession session,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
-        final String logPrefix = "Existing user join team: {}";
+        final String LOG_PREFIX = "Existing user join team: {}";
 
         if (bindingResult.hasErrors()) {
-            log.warn(logPrefix, "Application form error " + teamPageJoinForm.toString());
+            log.warn(LOG_PREFIX, "Application form error " + teamPageJoinForm.toString());
             return "team_page_join_team";
         }
 
@@ -1900,7 +1900,7 @@ public class MainController {
 
         teamFields.put("name", teamPageJoinForm.getTeamName());
 
-        log.info(logPrefix, "User " + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
+        log.info(LOG_PREFIX, "User " + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity response;
@@ -1928,12 +1928,12 @@ public class MainController {
 
                 final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
 
-                log.warn(logPrefix, responseBody);
+                log.warn(LOG_PREFIX, responseBody);
                 redirectAttributes.addFlashAttribute("message", errorMessage);
                 return "redirect:/teams/join_team";
 
             } else {
-                log.info(logPrefix, "Application for join team " + teamPageJoinForm.getTeamName() + " submitted");
+                log.info(LOG_PREFIX, "Application for join team " + teamPageJoinForm.getTeamName() + " submitted");
                 return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
             }
 
@@ -3015,11 +3015,11 @@ public class MainController {
             @RequestParam(value = "action", required = true) final String action,
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException {
-        final String logMessage = "Updating restriction settings for team {}: {}";
+        final String LOG_MESSAGE = "Updating restriction settings for team {}: {}";
 
         // check if admin
         if (!validateIfAdmin(session)) {
-            log.warn(logMessage, teamId, PERMISSION_DENIED);
+            log.warn(LOG_MESSAGE, teamId, PERMISSION_DENIED);
             return NO_PERMISSION_PAGE;
         }
 
@@ -3033,7 +3033,7 @@ public class MainController {
         else if ("free".equals(action) && team.getStatus().equals(TeamStatus.RESTRICTED.name())) {
             return freeTeam(team, redirectAttributes);
         } else {
-            log.warn(logMessage, teamId, "Cannot " + action + " team with status " + team.getStatus());
+            log.warn(LOG_MESSAGE, teamId, "Cannot " + action + " team with status " + team.getStatus());
             redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "Cannot " + action + " team " + team.getName() + " with status " + team.getStatus());
             return "redirect:/admin/teams";
         }
