@@ -855,12 +855,10 @@ public class MainController {
 
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
-                final String errorPrefix = "Error: ";
-
                 switch (exceptionState) {
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Register new user failed on DeterLab: {}", error.getMessage());
-                        throw new DeterLabOperationFailedException(errorPrefix + (error.getMessage().contains("unknown error") ? ERR_SERVER_OVERLOAD : error.getMessage()));
+                        throw new DeterLabOperationFailedException(ERROR_PREFIX + (error.getMessage().contains("unknown error") ? ERR_SERVER_OVERLOAD : error.getMessage()));
                     case TEAM_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Register new users new team request : team name already exists");
                         throw new TeamNameAlreadyExistsException("Team name already exists");
@@ -875,14 +873,14 @@ public class MainController {
                     {
                         String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
                         log.warn("Register new users : email already exists: {}", email);
-                        throw new UsernameAlreadyExistsException(errorPrefix + email + " already in use.");
+                        throw new UsernameAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
                     case EMAIL_ALREADY_EXISTS_EXCEPTION:
                         // throw from adapter deterlab
                     {
                         String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
                         log.warn("Register new users : email already exists: {}", email);
-                        throw new EmailAlreadyExistsException(errorPrefix + email + " already in use.");
+                        throw new EmailAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
                     default:
                         log.warn("Registration or adapter connection fail");
@@ -1795,15 +1793,15 @@ public class MainController {
             HttpSession session,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
-        final String logPrefix = "Existing user apply for new team: {}";
+        final String LOG_PREFIX = "Existing user apply for new team: {}";
 
         if (bindingResult.hasErrors()) {
-            log.warn(logPrefix, "Application form error " + teamPageApplyTeamForm.toString());
+            log.warn(LOG_PREFIX, "Application form error " + teamPageApplyTeamForm.toString());
             return "team_page_apply_team";
         }
         // log data to ensure data has been parsed
-        log.debug(logPrefix, properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
-        log.info(logPrefix, teamPageApplyTeamForm.toString());
+        log.debug(LOG_PREFIX, properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
+        log.info(LOG_PREFIX, teamPageApplyTeamForm.toString());
 
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
@@ -1841,18 +1839,18 @@ public class MainController {
 
                 final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
 
-                log.warn(logPrefix, responseBody);
+                log.warn(LOG_PREFIX, responseBody);
                 redirectAttributes.addFlashAttribute("message", errorMessage);
                 return "redirect:/teams/apply_team";
 
             } else {
                 // no errors, everything ok
-                log.info(logPrefix, "Application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
+                log.info(LOG_PREFIX, "Application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
                 return "redirect:/teams/team_application_submitted";
             }
 
         } catch (ResourceAccessException | IOException e) {
-            log.error(logPrefix, e);
+            log.error(LOG_PREFIX, e);
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
@@ -1866,6 +1864,7 @@ public class MainController {
     public String termsAndConditions() {
         return "terms_and_conditions";
     }
+
 
     //--------------------------Join Team Page--------------------------
 
@@ -1883,10 +1882,10 @@ public class MainController {
             HttpSession session,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
-        final String logPrefix = "Existing user join team: {}";
+        final String LOG_PREFIX = "Existing user join team: {}";
 
         if (bindingResult.hasErrors()) {
-            log.warn(logPrefix, "Application form error " + teamPageJoinForm.toString());
+            log.warn(LOG_PREFIX, "Application form error " + teamPageJoinForm.toString());
             return "team_page_join_team";
         }
 
@@ -1901,7 +1900,7 @@ public class MainController {
 
         teamFields.put("name", teamPageJoinForm.getTeamName());
 
-        log.info(logPrefix, "User " + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
+        log.info(LOG_PREFIX, "User " + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity response;
@@ -1929,12 +1928,12 @@ public class MainController {
 
                 final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
 
-                log.warn(logPrefix, responseBody);
+                log.warn(LOG_PREFIX, responseBody);
                 redirectAttributes.addFlashAttribute("message", errorMessage);
                 return "redirect:/teams/join_team";
 
             } else {
-                log.info(logPrefix, "Application for join team " + teamPageJoinForm.getTeamName() + " submitted");
+                log.info(LOG_PREFIX, "Application for join team " + teamPageJoinForm.getTeamName() + " submitted");
                 return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
             }
 
@@ -3016,11 +3015,11 @@ public class MainController {
             @RequestParam(value = "action", required = true) final String action,
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException {
-        final String logMessage = "Updating restriction settings for team {}: {}";
+        final String LOG_MESSAGE = "Updating restriction settings for team {}: {}";
 
         // check if admin
         if (!validateIfAdmin(session)) {
-            log.warn(logMessage, teamId, PERMISSION_DENIED);
+            log.warn(LOG_MESSAGE, teamId, PERMISSION_DENIED);
             return NO_PERMISSION_PAGE;
         }
 
@@ -3034,7 +3033,7 @@ public class MainController {
         else if ("free".equals(action) && team.getStatus().equals(TeamStatus.RESTRICTED.name())) {
             return freeTeam(team, redirectAttributes);
         } else {
-            log.warn(logMessage, teamId, "Cannot " + action + " team with status " + team.getStatus());
+            log.warn(LOG_MESSAGE, teamId, "Cannot " + action + " team with status " + team.getStatus());
             redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "Cannot " + action + " team " + team.getName() + " with status " + team.getStatus());
             return "redirect:/admin/teams";
         }
@@ -3487,6 +3486,8 @@ public class MainController {
         scenarioFileNameList.add("Scenario 2 - Experiment with 2 nodes and 10Gb link");
         scenarioFileNameList.add("Scenario 3 - Experiment with 3 nodes in a LAN");
         scenarioFileNameList.add("Scenario 4 - Experiment with 2 nodes and customized link property");
+        scenarioFileNameList.add("Scenario 5 - Single SDN switch connected to two nodes");
+        scenarioFileNameList.add("Scenario 6 - Tree Topology with configurable SDN switches");
 //        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
 //        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
         log.info("Scenario file list: {}", scenarioFileNameList);
@@ -3504,6 +3505,10 @@ public class MainController {
             actualScenarioFileName = "basic3.ns";
         } else if (scenarioFileName.contains("Scenario 4")) {
             actualScenarioFileName = "basic4.ns";
+        } else if (scenarioFileName.contains("Scenario 5")) {
+            actualScenarioFileName = "basic5.ns";
+        } else if (scenarioFileName.contains("Scenario 6")) {
+            actualScenarioFileName = "basic6.ns";
         } else {
             // defaults to basic single node
             actualScenarioFileName = "basic1.ns";

@@ -955,6 +955,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("How to Apply a Team")))
                 .andExpect(content().string(containsString("How to Save an Image for an Experiment Node")))
                 .andExpect(content().string(containsString("How to Load a Saved Image into an Experiment")))
+                .andExpect(content().string(containsString("Provisioning Software Defined Network (SDN) experiments in NCL testbed")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
@@ -983,6 +984,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("How to Apply a Team")))
                 .andExpect(content().string(containsString("How to Save an Image for an Experiment Node")))
                 .andExpect(content().string(containsString("How to Load a Saved Image into an Experiment")))
+                .andExpect(content().string(containsString("Provisioning Software Defined Network (SDN) experiments in NCL testbed")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
