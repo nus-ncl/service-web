@@ -128,6 +128,8 @@ public class MainController {
 
     private static final String MEMBER_TYPE = "memberType";
 
+    private static final String NOT_APPLICABLE = "N.A.";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -3915,9 +3917,11 @@ public class MainController {
                 Map<String, String> nodeDetails = new HashMap<>();
                 String nodeName = (String) key;
                 JSONObject nodeDetailsJson = new JSONObject(nodesInfoObject.get(nodeName).toString());
-                nodeDetails.put("os", nodeDetailsJson.getString("os"));
-                nodeDetails.put("qualifiedName", nodeDetailsJson.getString("qualifiedName"));
-                nodeDetails.put(NODE_ID, nodeDetailsJson.getString(NODE_ID));
+
+                nodeDetails.put("os", getValueFromJSONKey(nodeDetailsJson, "os"));
+                nodeDetails.put("qualifiedName", getValueFromJSONKey(nodeDetailsJson, "qualifiedName"));
+
+                nodeDetails.put(NODE_ID, getValueFromJSONKey(nodeDetailsJson, NODE_ID));
                 realization.addNodeDetails(nodeName, nodeDetails);
             }
             log.info("nodes info object: {}", nodesInfoObject);
@@ -3925,6 +3929,16 @@ public class MainController {
         }
 
         return realization;
+    }
+
+    // gets the value that corresponds to a particular key
+    // checks if a particular key in the JSONObject exists
+    // returns the value if the key exists, otherwise, returns N.A.
+    private String getValueFromJSONKey(JSONObject json, String key) {
+        if (json.has(key)) {
+            return json.get(key).toString();
+        }
+        return NOT_APPLICABLE;
     }
 
     /**
