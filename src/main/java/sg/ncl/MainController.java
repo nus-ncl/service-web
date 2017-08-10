@@ -3805,10 +3805,6 @@ public class MainController {
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
         dataset.setCategory(invokeAndExtractCategoryInfo(dataset.getCategoryId()));
         dataset.setLicense(invokeAndExtractLicenseInfo(dataset.getLicenseId()));
-        dataset.setCategoryId(object.getInt("categoryId"));
-
-        dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
-        dataset.setCategory(invokeAndExtractCategoryInfo(dataset.getCategoryId()));
 
         JSONArray resources = object.getJSONArray("resources");
         for (int i = 0; i < resources.length(); i++) {
