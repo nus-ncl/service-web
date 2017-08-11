@@ -140,7 +140,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("navbar-header")))
                 .andExpect(content().string(containsString("id=\"about-us\"")))
-                .andExpect(content().string(containsString("id=\"joinUs\"")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
