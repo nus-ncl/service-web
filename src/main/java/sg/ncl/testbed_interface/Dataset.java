@@ -11,9 +11,7 @@ import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
@@ -40,12 +38,18 @@ public class Dataset implements Serializable {
 	private User2 contributor;
 	private DataCategory category;
 	private DataLicense license;
+	private HashMap<String, String> displayCodeMap;
 	
 	public Dataset() {
         visibility = DataVisibility.PUBLIC;
         releasedDate = ZonedDateTime.now();
 	    dataResources = new ArrayList<>();
 	    approvedUsers = new ArrayList<>();
+	    displayCodeMap = new HashMap<>();
+
+        displayCodeMap.put("data-resource-gray", "This resource has not been scanned by our anti-virus engine yet.");
+        displayCodeMap.put("data-resource-green", "This resource is clean according to our best effort.");
+        displayCodeMap.put("data-resource-red", "This resource is malicious. Please use with caution.");
     }
 
     public void setAccessibility(DataAccessibility accessibility) {
@@ -118,9 +122,53 @@ public class Dataset implements Serializable {
         return uris;
     }
 
+    /**
+     * Sets the color coding for the data resources in Thymeleaf
+     * Is_malicious + Is_scanned = Red
+     * !Is_malicious + !Is_scanned = Gray
+     * !Is_malicious + Is_scanned = Green
+     * @return a list of css color classes
+     */
+    public List<String> getResourceMaliciousColorCodeInList() {
+        List<String> displayCode = new ArrayList<>();
+        for (DataResource current : dataResources) {
+            if (current.isMalicious() && current.isScanned()) {
+                displayCode.add("data-resource-red");
+            } else if (!current.isMalicious() && current.isScanned()) {
+                displayCode.add("data-resource-green");
+            } else {
+                displayCode.add("data-resource-gray");
+            }
+        }
+        return displayCode;
+    }
+
+    public String getDisplayColor(String color) {
+        return displayCodeMap.get(color);
+    }
+
+    /**
+     * Sets the color coding for the data resources in Javascript
+     * need double quotes to be display in Javascript
+     * @return a string that indicates the css class names
+     */
+    public String getResourceMaliciousColorCodeInArrayString() {
+        List<String> displayCodeWithQuotes = new ArrayList<>();
+        for (String displayCode : getResourceMaliciousColorCodeInList()) {
+            displayCodeWithQuotes.add("\"" + displayCode + "\"");
+        }
+        String displayCodeStr = displayCodeWithQuotes.toString();
+        log.debug(displayCodeStr);
+        return displayCodeStr;
+    }
+
     public String getReleasedDateString() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM-d-yyyy");
         return releasedDate.format(format);
+    }
+
+    public boolean isContainMaliciousResources() {
+	    return dataResources.stream().anyMatch(DataResource::isMalicious);
     }
 
     public List<String> getKeywordList() {

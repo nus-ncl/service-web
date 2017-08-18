@@ -128,6 +128,9 @@ public class MainController {
 
     private static final String MEMBER_TYPE = "memberType";
 
+    // admin update data resource to track what fields have been updated
+    private static final String ORIGINAL_DATARESOURCE = "original_dataresource";
+
     private static final String NOT_APPLICABLE = "N.A.";
 
     @Autowired
@@ -2585,6 +2588,76 @@ public class MainController {
         return "data_dashboard";
     }
 
+    @RequestMapping("/admin/data/{datasetId}/resources")
+    public String adminViewDataResources(@PathVariable String datasetId, Model model, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        //----------------------------------------
+        // get list of data resources in a dataset
+        //----------------------------------------
+        Dataset dataset = invokeAndExtractDataInfo(Long.parseLong(datasetId));
+        model.addAttribute("dataset", dataset);
+
+        return "admin_data_resources";
+    }
+
+    @RequestMapping(value = "/admin/data/{datasetId}/resources/{resourceId}/update", method = RequestMethod.GET)
+    public String adminUpdateResource(@PathVariable String datasetId, @PathVariable String resourceId, Model model, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        Dataset dataset = invokeAndExtractDataInfo(Long.parseLong(datasetId));
+        DataResource currentDataResource = new DataResource();
+
+        for (DataResource dataResource : dataset.getDataResources()) {
+            if (dataResource.getId() == Long.parseLong(resourceId)) {
+                currentDataResource = dataResource;
+                break;
+            }
+        }
+
+        model.addAttribute("did", dataset.getId());
+        model.addAttribute("dataresource", currentDataResource);
+        session.setAttribute(ORIGINAL_DATARESOURCE, currentDataResource);
+        return "admin_data_resources_update";
+    }
+
+    // updates the malicious status of a data resource
+    @RequestMapping(value = "/admin/data/{datasetId}/resources/{resourceId}/update", method = RequestMethod.POST)
+    public String adminUpdateResourceFormSubmit(@PathVariable String datasetId, @PathVariable String resourceId, @ModelAttribute DataResource dataResource, Model model, HttpSession session, RedirectAttributes redirectAttributes) throws IOException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        DataResource original = (DataResource) session.getAttribute(ORIGINAL_DATARESOURCE);
+        Dataset dataset = invokeAndExtractDataInfo(Long.parseLong(datasetId));
+        updateDataset(dataset, dataResource);
+
+        // add redirect attributes variable to notify what has been modified
+        if (!original.getMaliciousFlag().equalsIgnoreCase(dataResource.getMaliciousFlag())) {
+            redirectAttributes.addFlashAttribute("editMaliciousFlag", "success");
+        }
+
+        log.info("Data updated... {}", dataset.getName());
+        model.addAttribute("did", dataset.getId());
+        model.addAttribute("dataresource", dataResource);
+        session.removeAttribute(ORIGINAL_DATARESOURCE);
+        return "redirect:/admin/data/" + datasetId + "/resources/" + resourceId + "/update";
+    }
+
+    private Dataset updateDataset(Dataset dataset, DataResource dataResource) throws IOException {
+        log.info("Data resource updating... {}", dataResource);
+        HttpEntity<String> request = createHttpEntityWithBody(objectMapper.writeValueAsString(dataResource));
+        ResponseEntity response = restTemplate.exchange(properties.getResource(dataset.getId().toString(), dataResource.getId().toString()), HttpMethod.PUT, request, String.class);
+
+        Dataset updatedDataset = extractDataInfo(response.getBody().toString());
+        log.info("Data resource updated... {}", dataResource.getUri());
+        return updatedDataset;
+    }
+
     @RequestMapping("/admin/experiments")
     public String adminExperimentsManagement(Model model, HttpSession session) {
 
@@ -3709,6 +3782,12 @@ public class MainController {
         return null;
     }
 
+    protected Dataset invokeAndExtractDataInfo(Long dataId) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDataset(dataId.toString()), HttpMethod.GET, request, String.class);
+        return extractDataInfo(response.getBody().toString());
+    }
+
     protected Dataset extractDataInfo(String json) {
         log.debug(json);
 
@@ -3740,6 +3819,8 @@ public class MainController {
             DataResource dataResource = new DataResource();
             dataResource.setId(resource.getLong("id"));
             dataResource.setUri(resource.getString("uri"));
+            dataResource.setMalicious(resource.getBoolean("malicious"));
+            dataResource.setScanned(resource.getBoolean("scanned"));
             dataset.addResource(dataResource);
         }
 

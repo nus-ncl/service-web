@@ -56,6 +56,8 @@ public class DataController extends MainController {
         ResponseEntity response = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
         String dataResponseBody = response.getBody().toString();
 
+        log.info("data: {}", dataResponseBody);
+
         JSONArray dataJsonArray = new JSONArray(dataResponseBody);
         for (int i = 0; i < dataJsonArray.length(); i++) {
             JSONObject dataInfoObject = dataJsonArray.getJSONObject(i);
@@ -714,12 +716,6 @@ public class DataController extends MainController {
         dataAccessRequest.setDataset(invokeAndExtractDataInfo(dataAccessRequest.getDataId()));
 
         return dataAccessRequest;
-    }
-
-    private Dataset invokeAndExtractDataInfo(Long dataId) {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getDataset(dataId.toString()), HttpMethod.GET, request, String.class);
-        return extractDataInfo(response.getBody().toString());
     }
 
 }

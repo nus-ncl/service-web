@@ -2705,3 +2705,49 @@ h26 {
     padding-left:25px;
     padding-right:25px;
 }
+
+/* for downloading of resources */
+/* display resource malicious label message */
+#downloadMaliciousLabel {
+    font-size: 12px;
+    height: auto;
+    margin-left: 10px;
+    padding: 10px;
+    width: auto;
+}
+
+.clean_resources {
+    background-color: #4CAF50;
+    color: #FFF;
+}
+
+.malicious_resources {
+    background-color: #F44336;
+    color: #FFF;
+}
+
+
+/* wrap around for data resources names display after users click on the Download button at Data page */
+.data-resource-name-wrap {
+    width: 11em;
+    word-wrap: break-word;
+}
+
+/* color display codes to indicate if a data resource is malicious or not */
+.data-resource-red {
+    color: #F44336;
+}
+
+.data-resource-green {
+    color: #4CAF50;
+}
+
+.data-resource-gray {
+    color: #999999;
+}
+
+#resourcedisplay-tooltip {
+    font-size: 11px;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
