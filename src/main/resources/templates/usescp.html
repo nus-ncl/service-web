@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Use SCP Tutorial</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+</head>
+<body>
+    <th:block th:if="${session.id == null}">
+        <div th:replace="fragments/login_navigation :: loginnav"></div>
+    </th:block>
+    <th:block th:if="${session.id != null}">
+        <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+    </th:block>
+    <div class="container">
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <div class="row ">
+            <div class="heading col-sm-12 tutorialbackground ">
+                <div class="col-sm-6">
+                    <h2>Step 1</h2>
+                    <p>Open the SSH terminal on your system go to the directory where the file to be uploaded is located.</p>
+                </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/scplocal.png" src="../images/scplocal.png" width="500" alt="screenshot"/>
+                </div>
+            </div>
+            <div class="heading col-sm-12 tutorialbackground ">
+                <div class="col-sm-6">
+                    <h2>Step 2</h2>
+                    <p>Upload the file using the scp command "scp&nbsp;[filename]&nbsp;[username]@users.ncl.sg:[directory]"</p>
+                    <p>eg. "scp fileToUpload.txt ncl@users.ncl.sg:archive"</p>
+                    <p>The password is the same as the one you use to log into here.</p>
+                </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/scpfile.png" src="../images/scpfile.png" width="500" alt="screenshot"/>
+                </div>
+            </div>
+            <div class="heading col-sm-12 tutorialbackground ">
+                <div class="col-sm-6">
+                    <h2>Step 3</h2>
+                    <p>Log into users.ncl.sg with your username using the command "ssh&nbsp;[username]@users.ncl.sg"</p>
+                    <p>eg. "ssh ncl@users.ncl.sg"</p>
+                    <p>You should find the uploaded file in the specified directory.</p>
+                </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/scpremote.png" src="../images/scpremote.png" width="500" alt="screenshot"/>
+                </div>
+            </div>
+            <div class="heading col-sm-12 tutorialbackground ">
+                <div class="col-sm-6">
+                    <h2>Step 4</h2>
+                    <p>Log into your experiment node from users.ncl.sg using the command "ssh&nbsp;[quantified_name]"</p>
+                    <p>eg. "ssh n0.demo.testbed-ncl.dev.ncl.sg"</p>
+                    <p>You can find the uploaded file in the same directory as in users.ncl.sg.</p>
+                </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/scpnode.png" src="../images/scpnode.png" width="500" alt="screenshot"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div th:replace="fragments/footer :: footer"></div>
+    <object th:include="fragments/javascript :: javascript" th:remove="tag"/>
+</body>
+</html>

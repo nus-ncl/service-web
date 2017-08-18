@@ -246,6 +246,11 @@ public class MainController {
         return "usessh";
     }
 
+    @RequestMapping("/tutorials/usescp")
+    public String usescp() {
+        return "usescp";
+    }
+
     @RequestMapping("/tutorials/createcustom")
     public String createcustom() {
         return "createcustom";
