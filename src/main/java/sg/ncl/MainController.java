@@ -257,8 +257,13 @@ public class MainController {
     }
 
     @RequestMapping("/tutorials/manageresource")
-    public String manageResource() {
+    public String manageresource() {
         return "manageresource";
+    }
+
+    @RequestMapping("/tutorials/testbedinfo")
+    public String testbedinfo() {
+        return "testbedinfo";
     }
 
     @RequestMapping("/tutorials/createcustom")
