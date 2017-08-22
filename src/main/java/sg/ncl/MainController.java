@@ -251,6 +251,16 @@ public class MainController {
         return "usescp";
     }
 
+    @RequestMapping("/tutorials/usegui")
+    public String usegui() {
+        return "usegui";
+    }
+
+    @RequestMapping("/tutorials/manageresource")
+    public String manageResource() {
+        return "manageresource";
+    }
+
     @RequestMapping("/tutorials/createcustom")
     public String createcustom() {
         return "createcustom";

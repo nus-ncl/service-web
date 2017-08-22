@@ -83,22 +83,28 @@
             </div>
             <div class="heading col-sm-12 tutorialbackground">
                 <div class="col-sm-6">
-                    <h2>Provisioning Software Defined Network (SDN) experiments in NCL testbed</h2>
+                    <h2>How to Provision Software Defined Network (SDN) Experiments in NCL testbed</h2>
                     <a href="bnvirtusage.pdf"><h18>Learn More >>></h18></a>
                 </div>
                 <div class="col-sm-6">
                     <img class="img-responsive" preload="true" minimal-lightbox="images/SDNTUT.png" src="images/SDNTUT.png" width="500" height="315" alt="screenshot"/>
                 </div>
             </div>
-
+            <div class="heading col-sm-12 tutorialbackground">
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/teamquota.png" src="../images/teamquota.png" width="500" height="390" alt="screenshot"/>
+                </div>
+                <div class="col-sm-6">
+                    <h2>How to Manage Team Resources</h2>
+                    <p>You can specify the amount of resources your team may use by setting the budget quota.</p>
+                    <a href="/tutorials/manageresource.html" th:href="@{/tutorials/manageresource}"> <h18>Learn More >>> </h18></a>
+                </div>
+            </div>
         </div>
-
     </div> <!-- container -->
-
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-
-<div th:replace="fragments/footer :: footer"></div>
-<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+    <div th:replace="fragments/footer :: footer"></div>
+    <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
 </html>
