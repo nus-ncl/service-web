@@ -31,9 +31,16 @@
             <div class="heading col-sm-12 tutorialbackground ">
                 <div class="col-sm-6">
                     <h2>Step 2</h2>
-                    <p>Upload the file using the scp command "scp&nbsp;[filename]&nbsp;[username]@users.ncl.sg:[directory]"</p>
-                    <p>eg. "scp fileToUpload.txt ncl@users.ncl.sg:archive"</p>
-                    <p>The password is the same as the one you use to log into here.</p>
+                    <p>
+                        Upload the file using the scp command "scp&nbsp;[filename]&nbsp;[username]@users.ncl.sg:[directory]" <br/>
+                        where [directory] can be in your home folder /user/your_username, or your project folder /proj/your_project_name.
+                    </p>
+                    <p>eg. "scp fileToUpload.txt ncl@users.ncl.sg:/users/ncl/archive"</p>
+                    <p>
+                        File system on /users or /proj is a networking file system which will be automatically mounted
+                        on the users.ncl.sg machine, as well as all the nodes in your experiment. Hence, if you transfer
+                        files to /users or /proj, you can access those files on any of your experimental nodes.
+                    </p>
                 </div>
                 <div class="col-sm-6">
                     <img class="img-responsive" preload="true" minimal-lightbox="../images/scpfile.png" src="../images/scpfile.png" width="500" alt="screenshot"/>
@@ -42,23 +49,23 @@
             <div class="heading col-sm-12 tutorialbackground ">
                 <div class="col-sm-6">
                     <h2>Step 3</h2>
-                    <p>Log into users.ncl.sg with your username using the command "ssh&nbsp;[username]@users.ncl.sg"</p>
-                    <p>eg. "ssh ncl@users.ncl.sg"</p>
-                    <p>You should find the uploaded file in the specified directory.</p>
+                    <p>Copy data from your experimental node to your local computer:</p>
+                    <ol>
+                        <li>On your experimental node, copy/move the data to your home folder /users/your_username or your project folder /proj/your_project.</li>
+                        <li>
+                            <p>
+                                On your local computer, copy the data using the scp command:
+                                "scp&nbsp;[username]@users.ncl.sg:/path/to/your/data&nbsp;path/on/your/local"
+                            </p>
+                            <p>
+                                e.g. "scp ncl@users.ncl.sg:/users/ncl/demo/test.txt tmp" <br/>
+                                where "tmp" is a directory in your local system/computer.
+                            </p>
+                        </li>
+                    </ol>
                 </div>
                 <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="../images/scpremote.png" src="../images/scpremote.png" width="500" alt="screenshot"/>
-                </div>
-            </div>
-            <div class="heading col-sm-12 tutorialbackground ">
-                <div class="col-sm-6">
-                    <h2>Step 4</h2>
-                    <p>Log into your experiment node from users.ncl.sg using the command "ssh&nbsp;[quantified_name]"</p>
-                    <p>eg. "ssh n0.demo.testbed-ncl.dev.ncl.sg"</p>
-                    <p>You can find the uploaded file in the same directory as in users.ncl.sg.</p>
-                </div>
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="../images/scpnode.png" src="../images/scpnode.png" width="500" alt="screenshot"/>
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/scpdownload.png" src="../images/scpdownload.png" width="500" alt="screenshot"/>
                 </div>
             </div>
         </div>
