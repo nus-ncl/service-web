@@ -949,12 +949,14 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("How to Create an Account")))
-                .andExpect(content().string(containsString("How to Create an Experiment")))
-                .andExpect(content().string(containsString("How to Join a Team")))
                 .andExpect(content().string(containsString("How to Apply a Team")))
-                .andExpect(content().string(containsString("How to Save an Image for an Experiment Node")))
-                .andExpect(content().string(containsString("How to Load a Saved Image into an Experiment")))
-                .andExpect(content().string(containsString("Provisioning Software Defined Network (SDN) experiments in NCL testbed")))
+                .andExpect(content().string(containsString("How to Join a Team")))
+                .andExpect(content().string(containsString("How to Create an Experiment")))
+                .andExpect(content().string(containsString("How to Use your Experiment Node")))
+                .andExpect(content().string(containsString("How to Create Custom Image")))
+                .andExpect(content().string(containsString("How to Provision Software Defined Network (SDN) Experiments in NCL Testbed")))
+                .andExpect(content().string(containsString("How to Manage Team Resources")))
+                .andExpect(content().string(containsString("How to Get Information about NCL Testbed")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
@@ -978,12 +980,14 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/account_settings")))
                 .andExpect(content().string(containsString("/logout")))
                 .andExpect(content().string(containsString("How to Create an Account")))
-                .andExpect(content().string(containsString("How to Create an Experiment")))
-                .andExpect(content().string(containsString("How to Join a Team")))
                 .andExpect(content().string(containsString("How to Apply a Team")))
-                .andExpect(content().string(containsString("How to Save an Image for an Experiment Node")))
-                .andExpect(content().string(containsString("How to Load a Saved Image into an Experiment")))
-                .andExpect(content().string(containsString("Provisioning Software Defined Network (SDN) experiments in NCL testbed")))
+                .andExpect(content().string(containsString("How to Join a Team")))
+                .andExpect(content().string(containsString("How to Create an Experiment")))
+                .andExpect(content().string(containsString("How to Use your Experiment Node")))
+                .andExpect(content().string(containsString("How to Create Custom Image")))
+                .andExpect(content().string(containsString("How to Provision Software Defined Network (SDN) Experiments in NCL Testbed")))
+                .andExpect(content().string(containsString("How to Manage Team Resources")))
+                .andExpect(content().string(containsString("How to Get Information about NCL Testbed")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 

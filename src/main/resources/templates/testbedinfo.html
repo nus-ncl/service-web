@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - View Testbed Tutorial</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+</head>
+<body>
+    <th:block th:if="${session.id == null}">
+        <div th:replace="fragments/login_navigation :: loginnav"></div>
+    </th:block>
+    <th:block th:if="${session.id != null}">
+        <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+    </th:block>
+    <div class="container">
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <div class="row ">
+            <div class="heading col-sm-12 tutorialbackground">
+                <div class="col-sm-6">
+                    <h2>View Testbed Info</h2>
+                    <p>Click on "General Info" on the navigation bar at the top.</p>
+                    <p>You will see the following information:</p>
+                    <ul>
+                        <li>Nodes Specification</li>
+                        <li>List of OS Images</li>
+                        <li>List of Pre-compiled Host Vulnerability Environments</li>
+                    </ul>
+                </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/testbedinfo.png" src="../images/testbedinfo.png" width="500" alt="screenshot"/>
+                </div>
+            </div>
+            <div class="heading col-sm-12 tutorialbackground">
+                <div class="col-sm-6">
+                    <h2>View Node Status</h2>
+                    <p>Click on "Node Status" on the navigation bar at the top.</p>
+                    <p>You will see the following information:</p>
+                    <ul>
+                        <li>Number of Active Users</li>
+                        <li>Number of Running Experiments</li>
+                        <li>Number of Free Nodes</li>
+                        <li>The Status of Individual Nodes</li>
+                    </ul>
+                </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/nodestatus.png" src="../images/nodestatus.png" width="500" alt="screenshot"/>
+                </div>
+            </div>
+            <div class="heading col-sm-12 tutorialbackground">
+                <div class="col-sm-6">
+                    <h2>View Usage Calendar</h2>
+                    <p>Click on "Usage Calendar" on the navigation bar at the top.</p>
+                    <p>You will see the reservations of nodes made by various users.</p>
+                </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/usagecalendar.png" src="../images/usagecalendar.png" width="500" alt="screenshot"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div th:replace="fragments/footer :: footer"></div>
+    <object th:include="fragments/javascript :: javascript" th:remove="tag"/>
+</body>
+</html>

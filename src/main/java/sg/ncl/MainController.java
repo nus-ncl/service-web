@@ -236,6 +236,41 @@ public class MainController {
         return "jointeam";
     }
 
+    @RequestMapping("/tutorials/usenode")
+    public String usenode() {
+        return "usenode";
+    }
+
+    @RequestMapping("/tutorials/usessh")
+    public String usessh() {
+        return "usessh";
+    }
+
+    @RequestMapping("/tutorials/usescp")
+    public String usescp() {
+        return "usescp";
+    }
+
+    @RequestMapping("/tutorials/usegui")
+    public String usegui() {
+        return "usegui";
+    }
+
+    @RequestMapping("/tutorials/manageresource")
+    public String manageresource() {
+        return "manageresource";
+    }
+
+    @RequestMapping("/tutorials/testbedinfo")
+    public String testbedinfo() {
+        return "testbedinfo";
+    }
+
+    @RequestMapping("/tutorials/createcustom")
+    public String createcustom() {
+        return "createcustom";
+    }
+
     @RequestMapping("/error_openstack")
     public String error_openstack() {
         return "error_openstack";
