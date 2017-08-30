@@ -55,39 +55,47 @@
                 </fieldset>
             </form>
             <hr/>
-            <h3>Enter your details to access this dataset's resources</h3>
-            <form method="post" action="#" th:action="@{/data/public/{id}/resources(id=${dataset.id})}" th:object="${puser}" role="form">
-                <fieldset>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('fullName')} ? has-error">
-                        <input type="text" class="form-control" placeholder="Full Name" th:field="*{fullName}"
-                               onblur="validateField(name)" data-toggle="tooltip" data-placement="right" title="Full Name"/>
-                        <span id="fullNameError" style="display: none;"><h34>You can only use alphabetic characters, hyphens and apostrophes</h34></span>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('email')} ? has-error">
-                        <input type="text" class="form-control" th:field="*{email}" placeholder="Organization Email"
-                               onblur="validateEmail(name)" data-toggle="tooltip" data-placement="right" title="Organization Email"/>
-                        <span id="emailError" style="display: none;"><h34>You must enter a valid organization-affiliated email address</h34></span>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('jobTitle')} ? has-error">
-                        <input type="text" class="form-control" th:field="*{jobTitle}" placeholder="Job Title"
-                               onblur="validateField(name)" data-toggle="tooltip" data-placement="right" title="Job Title"/>
-                        <span id="jobTitleError" style="display: none;"><h34>You have to fill in your job title</h34></span>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('institution')} ? has-error">
-                        <input type="text" class="form-control" th:field="*{institution}" placeholder="Institution/Employers"
-                               onblur="validateField(name)" data-toggle="tooltip" data-placement="right" title="Institution/Employers"/>
-                        <span id="institutionError" style="display: none;"><h34>You have to fill in your institution</h34></span>
-                    </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('country')} ? has-error">
-                        <input type="text" class="form-control" th:field="*{country}" placeholder="Country"
-                               onblur="validateField(name)" data-toggle="tooltip" data-placement="right" title="Country"/>
-                        <span id="countryError" style="display: none;"><h34>You have to fill in your country</h34></span>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-special">Access Resources</button>
-                    </div>
-                </fieldset>
-            </form>
+            <div th:if="${dataset.accessibility.toString() == 'OPEN'}">
+                <h3>Enter your details for access to data resources</h3>
+                <form method="post" action="#" th:action="@{/data/public/{id}/resources(id=${dataset.id})}" th:object="${puser}" role="form">
+                    <fieldset>
+                        <div class="form-group" th:classappend="${#fields.hasErrors('fullName')} ? has-error">
+                            <input type="text" class="form-control" placeholder="Full Name" th:field="*{fullName}"
+                                   onblur="validateField(name)" data-toggle="tooltip" data-placement="right" title="Full Name"/>
+                            <span id="fullNameError" style="display: none;"><h34>You can only use alphabetic characters, hyphens and apostrophes</h34></span>
+                        </div>
+                        <div class="form-group" th:classappend="${#fields.hasErrors('email')} ? has-error">
+                            <input type="text" class="form-control" th:field="*{email}" placeholder="Organization Email"
+                                   onblur="validateEmail(name)" data-toggle="tooltip" data-placement="right" title="Organization Email"/>
+                            <span id="emailError" style="display: none;"><h34>You must enter a valid organization-affiliated email address</h34></span>
+                        </div>
+                        <div class="form-group" th:classappend="${#fields.hasErrors('jobTitle')} ? has-error">
+                            <input type="text" class="form-control" th:field="*{jobTitle}" placeholder="Job Title"
+                                   onblur="validateField(name)" data-toggle="tooltip" data-placement="right" title="Job Title"/>
+                            <span id="jobTitleError" style="display: none;"><h34>You have to fill in your job title</h34></span>
+                        </div>
+                        <div class="form-group" th:classappend="${#fields.hasErrors('institution')} ? has-error">
+                            <input type="text" class="form-control" th:field="*{institution}" placeholder="Institution/Employers"
+                                   onblur="validateField(name)" data-toggle="tooltip" data-placement="right" title="Institution/Employers"/>
+                            <span id="institutionError" style="display: none;"><h34>You have to fill in your institution</h34></span>
+                        </div>
+                        <div class="form-group" th:classappend="${#fields.hasErrors('country')} ? has-error">
+                            <input type="text" class="form-control" th:field="*{country}" placeholder="Country"
+                                   onblur="validateField(name)" data-toggle="tooltip" data-placement="right" title="Country"/>
+                            <span id="countryError" style="display: none;"><h34>You have to fill in your country</h34></span>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-special">Access Resources</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div th:if="${dataset.accessibility.toString() == 'RESTRICTED'}">
+                <a href="/login" th:text="#{dataset.public.loginRequest}">Log in to request for access to data resources</a>
+            </div>
+            <div th:if="${dataset.accessibility.toString() == 'QUARANTINED'}">
+                <h3>Data resources are not available for access</h3>
+            </div>
         </div>
     </div>
     <div th:replace="fragments/footer :: footer"></div>
