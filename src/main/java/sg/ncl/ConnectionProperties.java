@@ -192,6 +192,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";
     }
 
+    public String getPublicDataset(String dataId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "?visibility=PUBLIC";
+    }
+
     public String getData() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint;
     }

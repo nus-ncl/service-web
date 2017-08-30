@@ -410,7 +410,7 @@ public class DataController extends MainController {
         return "redirect:/data/" + did + "/requests/" + rid;
     }
 
-    @RequestMapping("/public")
+    @RequestMapping(value = "/public", method = RequestMethod.GET)
     public String getPublicDatasets(Model model) {
         DatasetManager datasetManager = new DatasetManager();
 
@@ -427,6 +427,21 @@ public class DataController extends MainController {
 
         model.addAttribute("publicDataMap", datasetManager.getDatasetMap());
         return "data_public";
+    }
+
+    @RequestMapping(value = "/public/{id}", method = RequestMethod.GET)
+    public String getPublicDataset(HttpSession session, Model model, @PathVariable String id) {
+        if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
+            return REDIRECT_DATA + "/contribute/" + id;
+        }
+        HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
+        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+        String dataResponseBody = dataResponse.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+        model.addAttribute(DATASET, dataset);
+        model.addAttribute("puser", new PublicUser());
+        return "data_public_id";
     }
 
     @RequestMapping("{datasetId}/resources")
