@@ -57,7 +57,7 @@
             <hr/>
             <div th:if="${dataset.accessibility.toString() == 'OPEN'}">
                 <h3>Enter your details for access to data resources</h3>
-                <form method="post" action="#" th:action="@{/data/public/{id}/resources(id=${dataset.id})}" th:object="${puser}" role="form">
+                <form method="post" action="#" th:action="@{/data/public/{id}(id=${dataset.id})}" th:object="${puser}" role="form">
                     <fieldset>
                         <div class="form-group" th:classappend="${#fields.hasErrors('fullName')} ? has-error">
                             <input type="text" class="form-control" placeholder="Full Name" th:field="*{fullName}"

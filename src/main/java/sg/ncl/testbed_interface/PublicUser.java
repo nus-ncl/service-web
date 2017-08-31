@@ -14,19 +14,15 @@ import java.io.Serializable;
 @Slf4j
 public class PublicUser implements Serializable {
 
-    @NotEmpty
     @Pattern(regexp = "[A-Za-z -']")
     private String fullName;
     @NotEmpty
     @Email
     private String email;
-    @NotEmpty
     @Pattern(regexp = "[A-Za-z -']")
     private String jobTitle;
-    @NotEmpty
     @Pattern(regexp = "[A-Za-z -']")
     private String institution;
-    @NotEmpty
     @Pattern(regexp = "[A-Za-z -']")
     private String country;
 

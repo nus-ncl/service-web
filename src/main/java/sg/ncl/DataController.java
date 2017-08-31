@@ -444,6 +444,52 @@ public class DataController extends MainController {
         return "data_public_id";
     }
 
+    @RequestMapping(value = "/public/{id}", method = RequestMethod.POST)
+    public String checkPublicDataset(HttpSession session, Model model, @PathVariable String id,
+                                     @Valid @ModelAttribute("puser") PublicUser puser, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Error(s):");
+            message.append("<ul class=\"fa-ul\">");
+            for (ObjectError objectError : bindingResult.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+                switch (fieldError.getField()) {
+                    case "fullName":
+                        message.append("You have to fill in your full name");
+                        break;
+                    case "email":
+                        message.append("You have to fill in your email address");
+                        break;
+                    case "jobTitle":
+                        message.append("You have to fill in your job title");
+                        break;
+                    case "institution":
+                        message.append("You have to fill in your institution");
+                        break;
+                    case "country":
+                        message.append("You have to fill in your country");
+                        break;
+                    default:
+                        message.append(fieldError.getField());
+                        message.append(" ");
+                        message.append(fieldError.getDefaultMessage());
+                }
+                message.append("</li>");
+            }
+            message.append("</ul>");
+            model.addAttribute(MESSAGE_ATTRIBUTE, message);
+            HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
+            ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+            String dataResponseBody = dataResponse.getBody().toString();
+            JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+            Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            model.addAttribute(DATASET, dataset);
+            return "data_public_id";
+        }
+        return REDIRECT_DATA + "/public/" + id + "/resources";
+    }
+
     @RequestMapping("{datasetId}/resources")
     public String getResources(Model model, @PathVariable String datasetId, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
