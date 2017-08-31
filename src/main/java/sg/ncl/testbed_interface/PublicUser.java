@@ -14,16 +14,16 @@ import java.io.Serializable;
 @Slf4j
 public class PublicUser implements Serializable {
 
-    @Pattern(regexp = "[A-Za-z -']")
+    @Pattern(regexp = "^[A-Za-z -']+$")
     private String fullName;
     @NotEmpty
     @Email
     private String email;
-    @Pattern(regexp = "[A-Za-z -']")
+    @Pattern(regexp = "^[A-Za-z -']+$")
     private String jobTitle;
-    @Pattern(regexp = "[A-Za-z -']")
+    @Pattern(regexp = "^[A-Za-z -']+$")
     private String institution;
-    @Pattern(regexp = "[A-Za-z -']")
+    @Pattern(regexp = "^[A-Za-z -']+$")
     private String country;
 
 }
