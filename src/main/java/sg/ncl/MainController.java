@@ -2938,6 +2938,49 @@ public class MainController {
         return "energy_usage";
     }
 
+    @RequestMapping("/admin/adminNodesStatus")
+    public String adminNodesStatus(Model model) throws IOException {
+        //get number of active users and running experiments
+        Map<String, String> testbedStatsMap = getTestbedStats();
+        testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, "0");
+        testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, "0");
+
+        Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
+        Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
+
+        nodesStatus.entrySet().forEach(machineTypeListEntry -> {
+            Map<String, Long> nodesCountMap = new HashMap<>();
+
+            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long total = free + inUse + reserved + reload;
+            long currentTotal = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES)) + total;
+            long currentFree = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_FREE_NODES)) + free;
+
+            nodesCountMap.put(NodeType.FREE.name(), free);
+            nodesCountMap.put(NodeType.IN_USE.name(), inUse);
+            nodesCountMap.put(NodeType.RESERVED.name(), reserved);
+            nodesCountMap.put(NodeType.RELOADING.name(), reload);
+
+            nodesStatusCount.put(machineTypeListEntry.getKey(), nodesCountMap);
+            testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, Long.toString(currentFree));
+            testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, Long.toString(currentTotal));
+        });
+
+        model.addAttribute("nodesStatus", nodesStatus);
+        model.addAttribute("nodesStatusCount", nodesStatusCount);
+
+        model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
+        model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
+        model.addAttribute(USER_DASHBOARD_FREE_NODES, testbedStatsMap.get(USER_DASHBOARD_FREE_NODES));
+        model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
+
+        return "node_status";
+
+    }
+
     /**
      * Get simple ZonedDateTime from date string in the format 'YYYY-MM-DD'.
      * @param date  date string to convert
