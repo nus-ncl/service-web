@@ -528,12 +528,16 @@ public class DataController extends MainController {
 
     @RequestMapping(value = "/public/{did}/resources/{rid}", method = RequestMethod.GET)
     public void getPublicOpenResource(HttpSession session, @PathVariable String did, @PathVariable String rid,
-                                      final HttpServletResponse httpResponse) throws UnsupportedEncodingException {
+                                      final HttpServletResponse httpResponse) throws UnsupportedEncodingException, WebServiceRuntimeException {
+        if (session.getAttribute(PUBLIC_USER_ID) == null || session.getAttribute(PUBLIC_USER_ID).toString().isEmpty()) {
+            throw new WebServiceRuntimeException("No public user id for downloading.");
+        }
         try {
+            String publicUserId = (String) session.getAttribute(PUBLIC_USER_ID);
             // Optional Accept header
             RequestCallback requestCallback = request -> {
                 request.getHeaders().setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
-                request.getHeaders().set("PublicUserId", "unknown");// publicUserId);
+                request.getHeaders().set("PublicUserId", publicUserId);
             };
 
             // Streams the response instead of loading it all in memory
