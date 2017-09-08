@@ -2940,7 +2940,7 @@ public class MainController {
 
     @RequestMapping("/admin/adminNodesStatus")
     public String adminNodesStatus(Model model) throws IOException {
-        //get number of active users and running experiments
+        // get number of active users and running experiments
         Map<String, String> testbedStatsMap = getTestbedStats();
         testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, "0");
         testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, "0");
@@ -2948,6 +2948,9 @@ public class MainController {
         Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
         Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
 
+        // loop through each of the machine type
+        // tabulate the different nodes type
+        // count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
         nodesStatus.entrySet().forEach(machineTypeListEntry -> {
             Map<String, Long> nodesCountMap = new HashMap<>();
 
@@ -2964,6 +2967,7 @@ public class MainController {
             nodesCountMap.put(NodeType.RESERVED.name(), reserved);
             nodesCountMap.put(NodeType.RELOADING.name(), reload);
 
+
             nodesStatusCount.put(machineTypeListEntry.getKey(), nodesCountMap);
             testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, Long.toString(currentFree));
             testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, Long.toString(currentTotal));
@@ -2976,7 +2980,6 @@ public class MainController {
         model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
         model.addAttribute(USER_DASHBOARD_FREE_NODES, testbedStatsMap.get(USER_DASHBOARD_FREE_NODES));
         model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
-
         return "node_status";
 
     }
