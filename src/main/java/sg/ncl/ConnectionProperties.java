@@ -188,12 +188,24 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/requests/" + requestId;
     }
 
+    public String getPublicDataUsers() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/public/users";
+    }
+
+    public String getPublicDataUser(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/public/users/" + id;
+    }
+
     public String getPublicData() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "?visibility=PUBLIC";
     }
 
     public String getPublicDataset(String dataId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "?visibility=PUBLIC";
+    }
+
+    public String downloadPublicOpenResource(String dataId, String resourceId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download?visibility=PUBLIC";
     }
 
     public String getData() {

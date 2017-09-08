@@ -47,6 +47,7 @@ public class DataController extends MainController {
     private static final String MESSAGE_ATTRIBUTE = "message";
     private static final String EDIT_DISALLOWED = "Edit/delete of dataset disallowed as user is not contributor";
     private static final String UPLOAD_DISALLOWED = "Upload of data resource disallowed as user is not contributor";
+    private static final String PUBLIC_USER_ID = "publicUserId";
 
     @RequestMapping
     public String data(Model model) {
@@ -487,7 +488,73 @@ public class DataController extends MainController {
             model.addAttribute(DATASET, dataset);
             return "data_public_id";
         }
+
+        JSONObject puserObject = new JSONObject();
+        puserObject.put("fullName", puser.getFullName());
+        puserObject.put("email", puser.getEmail());
+        puserObject.put("jobTitle", puser.getJobTitle());
+        puserObject.put("institution", puser.getInstitution());
+        puserObject.put("country", puser.getCountry());
+
+        HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(puserObject.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getPublicDataUsers(), HttpMethod.POST, request, String.class);
+        String responseBody = response.getBody().toString();
+        log.info("Public user saved: {}", responseBody);
+        JSONObject object = new JSONObject(responseBody);
+        session.setAttribute(PUBLIC_USER_ID, object.getLong("id"));
+
         return REDIRECT_DATA + "/public/" + id + "/resources";
+    }
+
+    @RequestMapping(value = "/public/{id}/resources", method = RequestMethod.GET)
+    public String getPublicResources(HttpSession session, Model model, @PathVariable String id, RedirectAttributes redirectAttributes) {
+        if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
+            return REDIRECT_DATA + "/" + id + "/resources";
+        } else if (session.getAttribute(PUBLIC_USER_ID) == null || session.getAttribute(PUBLIC_USER_ID).toString().isEmpty()) {
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "Please fill in your details before trying to access resources.");
+            return REDIRECT_DATA + "/public/" + id;
+        }
+
+        HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
+        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+        String dataResponseBody = dataResponse.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+        model.addAttribute(DATASET, dataset);
+
+        return "data_public_resources";
+    }
+
+    @RequestMapping(value = "/public/{did}/resources/{rid}", method = RequestMethod.GET)
+    public void getPublicOpenResource(HttpSession session, @PathVariable String did, @PathVariable String rid,
+                                      final HttpServletResponse httpResponse) throws UnsupportedEncodingException {
+        try {
+            // Optional Accept header
+            RequestCallback requestCallback = request -> {
+                request.getHeaders().setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
+                request.getHeaders().set("PublicUserId", "unknown");// publicUserId);
+            };
+
+            // Streams the response instead of loading it all in memory
+            ResponseExtractor<Void> responseExtractor = getResponseExtractor(httpResponse);
+
+            restTemplate.execute(properties.downloadPublicOpenResource(did, rid), HttpMethod.GET, requestCallback, responseExtractor);
+        } catch (Exception e) {
+            log.error("Error transferring download: {}", e.getMessage());
+        }
+    }
+
+    private ResponseExtractor<Void> getResponseExtractor(final HttpServletResponse httpResponse) {
+        return response -> {
+            String content = response.getHeaders().get("Content-Disposition").get(0);
+            httpResponse.setContentType("application/octet-stream");
+            httpResponse.setContentLengthLong(Long.parseLong(response.getHeaders().get("Content-Length").get(0)));
+            httpResponse.setHeader("Content-Disposition", content);
+            IOUtils.copy(response.getBody(), httpResponse.getOutputStream());
+            httpResponse.flushBuffer();
+            return null;
+        };
     }
 
     @RequestMapping("{datasetId}/resources")
@@ -665,15 +732,7 @@ public class DataController extends MainController {
             };
 
             // Streams the response instead of loading it all in memory
-            ResponseExtractor<Void> responseExtractor = response -> {
-                String content = response.getHeaders().get("Content-Disposition").get(0);
-                httpResponse.setContentType("application/octet-stream");
-                httpResponse.setContentLengthLong(Long.parseLong(response.getHeaders().get("Content-Length").get(0)));
-                httpResponse.setHeader("Content-Disposition", content);
-                IOUtils.copy(response.getBody(), httpResponse.getOutputStream());
-                httpResponse.flushBuffer();
-                return null;
-            };
+            ResponseExtractor<Void> responseExtractor = getResponseExtractor(httpResponse);
 
             restTemplate.execute(properties.downloadResource(datasetId, resourceId), HttpMethod.GET, requestCallback, responseExtractor);
         } catch (Exception e) {
