@@ -617,8 +617,26 @@ public class DataController extends MainController {
             downloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
         }
 
+        if (start.isEmpty() && end.isEmpty()) {
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId), HttpMethod.GET, request, String.class);
+        } else if (end.isEmpty()) {
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, "startDate=" + start), HttpMethod.GET, request, String.class);
+        } else if (start.isEmpty()) {
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, "endDate=" + end), HttpMethod.GET, request, String.class);
+        } else {
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+        }
+        responseBody = response.getBody().toString();
+        Map<Integer, Long> publicDownloadStats = new HashMap<>();
+        statJsonArray = new JSONArray(responseBody);
+        for (int i = 0; i < statJsonArray.length(); i++) {
+            JSONObject statInfoObject = statJsonArray.getJSONObject(i);
+            publicDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+        }
+
         model.addAttribute(DATASET, dataset);
         model.addAttribute("downloadStats", downloadStats);
+        model.addAttribute("publicDownloadStats", publicDownloadStats);
         model.addAttribute("start", start);
         model.addAttribute("end", end);
         return "data_statistics";

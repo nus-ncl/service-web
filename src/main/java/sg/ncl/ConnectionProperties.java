@@ -381,6 +381,18 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads" + params.toString();
     }
 
+    public String getPublicDownloadStat(String... paramString) {
+        StringBuilder params = new StringBuilder();
+        for (int i = 0; i < paramString.length; i++) {
+            if (i == 0) {
+                params.append("?").append(paramString[i]);
+            } else {
+                params.append("&").append(paramString[i]);
+            }
+        }
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads/public" + params.toString();
+    }
+
     public String getUsageStat(String teamId, String... paramString) {
         StringBuilder params = new StringBuilder();
         for (int i = 0; i < paramString.length; i++) {
