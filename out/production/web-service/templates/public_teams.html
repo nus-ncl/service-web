@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>National Cybersecurity Laboratories - Public Teams</title>
+        <object th:include="fragments/header :: header" th:remove="tag" />
+    </head>
+    <body class="mybg loginbackground">
+        <th:block th:if="${session.id == null}">
+            <div th:replace="fragments/login_navigation :: loginnav"></div>
+        </th:block>
+        <th:block th:if="${session.id != null}">
+            <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+        </th:block>
+        <div class="container">
+            <div class="row">
+                <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
+                    <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.public}">Public Teams</h2>
+                    <div class="panel-body">
+                        <table class="table table-responsive" th:if="not ${publicTeamMap2.isEmpty()}">
+                            <thead>
+                                <th th:text="#{admin.teams.header.name}">Team</th>
+                                <th th:text="#{admin.teams.header.description}">Description</th>
+                                <th th:text="#{admin.teams.header.owner}">Owner</th>
+                                <th th:text="#{admin.teams.header.type}">Type</th>
+                            </thead>
+                            <tr th:each="team : ${publicTeamMap2}">
+                                <td th:text="${team.value.name}"></td>
+                                <td th:text="${team.value.description}"></td>
+                                <td>
+                                    <span th:text="${team.value.owner.firstName + ' ' + team.value.owner.lastName}"></span>
+                                    <!-- Modal -->
+                                    <div class="modal fade admin-modal" th:id="${team.value.owner.id}" aria-labelledby="ownerId" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header team-owner-info-header">
+                                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                    <h4 class="modal-title" id="ownerId"><span th:text="#{admin.teams.header.modal}">Team Owner Info</span></h4>
+                                                </div>
+                                                <div class="modal-body team-owner-info-body">
+                                                    <ul>
+                                                        <li><strong th:text="#{acc.info.fullName}"></strong>: <span th:text="${team.value.owner.firstName + ' ' + team.value.owner.lastName}"></span></li>
+                                                        <li><strong th:text="#{acc.info.email}"></strong>: <span th:text="${team.value.owner.email}"></span></li>
+                                                        <li><strong th:text="#{acc.info.jobTitle}"></strong>: <span th:text="${team.value.owner.jobTitle}"></span></li>
+                                                        <li><strong th:text="#{acc.info.institution}"></strong>: <span th:text="${team.value.owner.institution}"></span></li>
+                                                        <li><strong th:text="#{acc.info.website}"></strong>: <span th:text="${team.value.owner.institutionWeb}"></span></li>
+                                                        <li><strong th:text="#{acc.info.country}"></strong>: <span th:text="${team.value.owner.country}"></span></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td th:text="${team.value.organisationType}"></td>
+                            </tr>
+                        </table>
+                        <p th:if="${publicTeamMap2.isEmpty()}">There are no teams in the system.</p>
+                    </div> <!-- panel body -->
+                </div> <!-- panel primary -->
+            </div> <!-- row -->
+        </div> <!-- container -->
+        <div th:replace="fragments/footer :: footer"></div>
+        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+    </body>
+</html>

@@ -2938,7 +2938,7 @@ public class MainController {
         return "energy_usage";
     }
 
-    @RequestMapping("/admin/adminNodesStatus")
+    @RequestMapping("/admin/nodesStatus")
     public String adminNodesStatus(Model model) throws IOException {
         // get number of active users and running experiments
         Map<String, String> testbedStatsMap = getTestbedStats();
@@ -2981,7 +2981,6 @@ public class MainController {
         model.addAttribute(USER_DASHBOARD_FREE_NODES, testbedStatsMap.get(USER_DASHBOARD_FREE_NODES));
         model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
         return "node_status";
-
     }
 
     /**

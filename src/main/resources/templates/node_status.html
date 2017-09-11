@@ -4,11 +4,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>National Cybersecurity Laboratories - Testbed Nodes Status</title>
     <object th:include="fragments/header :: header" th:remove="tag" />
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" />
 
 </head>
 <body class="mybg loginbackground">
     <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -37,7 +40,7 @@
             </div>
             <div class="col-md-4">
                 <div class="stats" style="border-color: #1EAFBB;">
-                    <i class="fa fa-tv active-users pull-left" style="background: #1EAFBB;"></i><a href="#" data-toggle="tooltip" title="Reserved for : 60% nodes for research, 40% nodes for education" data-placement="bottom"><img src="images/information.png" width="20" height="20"/></a>
+                    <i class="fa fa-tv active-users pull-left" style="background: #1EAFBB;"></i><a href="#" data-toggle="tooltip" title="Reserved for : 60% nodes for research, 40% nodes for education" data-placement="bottom"><img src="/images/information.png" width="20" height="20"/></a>
                     <span class="pull-right stats-info">
                     <span class="stats-value">
                         <span th:text="${freeNodes}">0</span>/<span th:text="${totalNodes}">0</span>
@@ -54,21 +57,25 @@
                     <div class="nodebackground1">
                         <h2 class="team-heading team-heading-current-team" th:text="${nodesStatus.key}">Machine Type</h2>
                         <div class="col-sm-6 col-sm-offset-6">
-                            <img src="images/ServerFree.png" width="19" height="19"/> <h19>Free (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('FREE')}">0</span>)</h19>
-                            <img src="images/ServerInUse.png" width="19" height="19"/>  <h19>In Use (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('IN_USE')}">0</span>)</h19>
-                            <img src="images/ServerUn.png" width="19" height="19"/> <h19>Reloading (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RELOADING')}">0</span>)</h19>
-                            <img src="images/ServerReserved.png" width="19" height="19"/> <h19>Reserved (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RESERVED')}">0</span>)</h19>
+                            <img src="/images/ServerFree.png" width="19" height="19"/> <h19>Free (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('FREE')}">0</span>)</h19>
+                            <img src="/images/ServerInUse.png" width="19" height="19"/>  <h19>In Use (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('IN_USE')}">0</span>)</h19>
+                            <img src="/images/ServerUn.png" width="19" height="19"/> <h19>Reloading (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RELOADING')}">0</span>)</h19>
+                            <img src="/images/ServerReserved.png" width="19" height="19"/> <h19>Reserved (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RESERVED')}">0</span>)</h19>
                             <hr/>
                         </div>
                         <ul>
                             <th:block th:each="nodes : ${nodesStatus.value}">
-                                <li style="display:inline-block; margin: 10px; padding: 15px; width: 6%;">
-                                    <img th:if="${nodes.status == 'in_use'}" src="images/ServerInUse.png" width="35" height="35" class="nowrap"/>
-                                    <img th:if="${nodes.status == 'free'}" src="images/ServerFree.png" width="35" height="35" class="nowrap"/>
-                                    <img th:if="${nodes.status == 'reserved'}" src="images/ServerReserved.png" width="35" height="35" class="nowrap"/>
-                                    <img th:if="${nodes.status == 'reload'}" src="images/ServerUn.png" width="35" height="35" class="nowrap"/>
+                                <li style="display:inline-block; margin: 10px; padding: 15px; width: 12%;">
+                                    <img th:if="${nodes.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
+                                    <img th:if="${nodes.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
+                                    <img th:if="${nodes.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
+                                    <img th:if="${nodes.status == 'reload'}" src="/images/ServerUn.png" width="35" height="35" class="nowrap"/>
                                     <br/>
                                     <span th:text="${nodes.id}">pc00</span>
+                                    <br/>
+                                    <span th:text="${nodes.pid}">pid</span>
+                                    <br/>
+                                    <span th:text="${nodes.eid}">eid</span>
                                 </li>
                             </th:block>
                         </ul>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Future plan</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/animate.min.css" />
+    <link rel="stylesheet"  type="text/css" href="../static/css/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/lightbox.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/responsive.css"/>
+    <link rel="stylesheet" type="text/css" id="static/css-preset" href="../static/css/presets/preset1.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/flexslider.css"/>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
+</head>
+<body>
+<div layout:fragment="content">
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
+
+    <div class="container">
+        <div class="h15">
+            <div align="center">Future Plan Table
+            </div>
+        </div>
+        <p>&nbsp;</p>
+
+        <p align="right"><img src="images/download.png" width="26" height="26" class=""/><a href="#" th:href="@{/futureplan/download}"> DOWNLOAD </a></p>
+
+
+        <div class="table-responsive">
+            <table class="table1">
+                <thead BGCOLOR="#E0E0E0">
+                <th width="42%"><h4 align="left"><b>Major Features</b></h4>
+                </th>
+                <th width="21%"><p><h4><b>Phase One</b></h4></p></th>
+                <th width="20%"><p><h4><b>Phase Two</b></h4></p></th>
+                <th width="17%"><p><h4><b>Phase Three</b></h4></p></th>
+                </thead>
+                <tr BGCOLOR="#F3F3F3">
+                    <td><div align="left"><strong>Hardware</strong></div></td>
+                    <td>&nbsp;</td>
+                    <td BGCOLOR="#E0E0E0">&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><div align="left">Number of servers</div></td>
+                    <td>100</td>
+                    <td BGCOLOR="#E0E0E0">100</td>
+                    <td>300</td>
+                </tr>
+                <tr>
+                    <td><div align="left">Networking</div></td>
+                    <td>3x10 Gbps (OpenFlow enabled, 3 SDN switches)</td>
+                    <td BGCOLOR="#E0E0E0">3x10 Gbps (OpenFlow enabled, 3 SDN switches)</td>
+                    <td>3x10 Gbps (OpenFlow enabled, 9 SDN switches)</td>
+                </tr>
+                <tr BGCOLOR="#F3F3F3">
+                    <td>
+                        <div align="left"><strong>Core Software</strong></div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td BGCOLOR="#E0E0E0">&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><div align="left">VM &amp; Bare Metal Machines Provisioning </div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Fully Controllable Networks <a href="#" data-toggle="tooltip" title="Control of bandwidth, latency, drop rate etc" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td><i class="fa fa-check"></i>*</td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i>*</td>
+                    <td><i class="fa fa-check"></i>*</td>
+                </tr>
+                <tr>
+                    <td> <div align="left">OS Support <a href="#" data-toggle="tooltip" title="(Linux, FreeBSD, Windows)" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">Support of Configuration Management System </div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">Ansible</td>
+                    <td>Ansible, Puppet, etc.</td>
+                </tr>
+                <tr>
+                    <td><div align="left">Support of Container Technology </div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">Docker</td>
+                    <td>Docker</td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Creation of SDN-related Experiments <a href="#" data-toggle="tooltip" title="Evaluation of new switch design, new algorithms for multi-controllers management, resilience protocols and security mechanisms, etc" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i>*</td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">Web built-in Console
+                    </div></td>
+                    <td><i class="fa fa-check"></i>#</td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i>#</td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr BGCOLOR="#F3F3F3">
+                    <td><div align="left"><strong>Data &amp; Data Repository</strong></div></td>
+                    <td>&nbsp;</td>
+                    <td BGCOLOR="#E0E0E0">&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><div align="left">Database</div></td>
+                    <td>Up to 3 (e.g. Rainbow table for GSM A5/1, Click-flaw data, mobile anti-virus apps)</td>
+                    <td BGCOLOR="#E0E0E0">Up to 5 (additional: Alexa top 1,000,000 websites, Internet traffic) </td>
+                    <td>Up to 10 (including data for network, malware, web, mobile and human behavior etc)</td>
+                </tr>
+                <tr>
+                    <td><div align="left">Access to External Databases</div></td>
+                    <td>US IMPACT </td>
+                    <td BGCOLOR="#E0E0E0">US IMPACT </td>
+                    <td>US IMPACT </td>
+                </tr>
+                <tr>
+                    <td><div align="left">Seamless Integration with NCL Testbed</div></td>
+                    <td>(uploading and downloading only</td>
+                    <td BGCOLOR="#E0E0E0">(uploading and downloading only</td>
+                    <td><p> <i class="fa fa-check"></i>(direct access within experiment nodes)</p></td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Analytic Tools within NCL Data Repo <a href="#" data-toggle="tooltip" title="searching,sorting,extraction, anonymization etc." data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">-</td>
+                    <td>-</td>
+                </tr>
+                <tr BGCOLOR="#F3F3F3">
+                    <td><div align="left"><strong>Services and Tools</strong></div></td>
+                    <td>&nbsp;</td>
+                    <td BGCOLOR="#E0E0E0">&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Management Console <a href="#" data-toggle="tooltip" title="Accounts, projects and experiments management through a simple user interface" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">GUI to Visualize Network Topology </div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">GUI to Configure Network Topology </div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><div align="left">Billing &amp; Cost Management Tool </div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">Monitoring &amp; Logging Tool </div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">Usage &amp; Resource Auditing Tool </div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">Network Traffic Generator
+                    </div></td>
+                    <td>Open-source software</td>
+                    <td BGCOLOR="#E0E0E0">Software and high-end dedicated hardware </td>
+                    <td>Software and high-end dedicated hardware </td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Internet Simulator <a href="#" data-toggle="tooltip" title="Detailed Internet model for simulation of Internet-wide events such as worm spread, DDoS, spam etc" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">VM-based Router, Firewall</div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">Support of hot plugging of external devices</div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">-</td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr BGCOLOR="#F3F3F3">
+                    <td><div align="left"><strong>1-Click Ready-to-use experiment setups</strong></div></td>
+                    <td>&nbsp;</td>
+                    <td BGCOLOR="#E0E0E0">&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><div align="left">System vulnerability environments</div></td>
+                    <td>Up to 20 (well-known ones like Heartbleed, shellshock etc)</td>
+                    <td BGCOLOR="#E0E0E0">Up to 20 (include main vulnerability types like memory corruption, data corruption, crypto implementation flaws)</td>
+                    <td>Up to 100 (include most of the vulnerability types) </td>
+                </tr>
+                <tr>
+                    <td><div align="left">Big-Data Platforms </div></td>
+                    <td>Hadoop, Spark</td>
+                    <td BGCOLOR="#E0E0E0">Additional: Storm, HBase, HIVE</td>
+                    <td>Additional: H2O, Flink, etc</td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Distributed Ledger System <a href="#" data-toggle="tooltip" title="For validation and testing of new protocols, data structure and security mechanisms, etc" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td>Bitcoin </td>
+                    <td BGCOLOR="#E0E0E0">Bitcoin and possible others</td>
+                    <td>Bitcoin and possible others</td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Cyber Range Infrastructure <a href="#" data-toggle="tooltip" title="Simulated infrastructure for training to defend against cyber attacks scenarios" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">1 simple example (e.g. a test lab) </td>
+                    <td>More complex example (e.g. an organization)</td>
+                </tr>
+                <tr>
+                    <td><div align="left">Cyber-physical system simulators</div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">-</td>
+                    <td>Smart grid simulator </td>
+                </tr>
+                <tr>
+                    <td><div align="left">Emulated android environment </div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">Emulated ARM environment </div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">-</td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">Teaching-ready environments</div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">Up to 5</td>
+                    <td>Up to 10</td>
+                </tr>
+                <tr BGCOLOR="#F3F3F3">
+                    <td><div align="left"><strong>Security</strong></div></td>
+                    <td>&nbsp;</td>
+                    <td BGCOLOR="#E0E0E0">&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Access Control <a href="#" data-toggle="tooltip" title="Manage user access and encryption keys" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Contained experiments <a href="#" data-toggle="tooltip" title="Traffic in one experiment will not affect another" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td> <div align="left">Internet Access <a href="#" data-toggle="tooltip" title="Accessibility to Internet from experiment nodes" data-placement="right"><img src="images/information.png" width="20" height="20" class=""/></a></div></td>
+                    <td>Isolated (no outgiong Internet access )</td>
+                    <td BGCOLOR="#E0E0E0">Controlled</td>
+                    <td>Controlled</td>
+                </tr>
+                <tr BGCOLOR="#F3F3F3">
+                    <td><div align="left"><strong>Federation</strong></div></td>
+                    <td>&nbsp;</td>
+                    <td BGCOLOR="#E0E0E0">&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><div align="left">NUS Sensor Network Testbed (Indriya) </div></td>
+                    <td><i class="fa fa-check"></i></td>
+                    <td BGCOLOR="#E0E0E0"><i class="fa fa-check"></i></td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+                <tr>
+                    <td><div align="left">SUTD Water Testbed</div></td>
+                    <td>-</td>
+                    <td BGCOLOR="#E0E0E0">-</td>
+                    <td><i class="fa fa-check"></i></td>
+                </tr>
+            </table>
+
+            <p>&nbsp;</p>
+            <p><i class="fa fa-check"></i>*Feature(s) only available in bare metal provisioning</p>
+            <p><i class="fa fa-check"></i>#Feature(s) only available in VM provisioning</p>
+        </div>
+    </div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</div>
+<!--[if lt IE 9]>
+<script type="text/javascript" src="../static/js/html5shiv.js"></script>
+<script type="text/javascript" src="../static/js/respond.min.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../static/js/jquery.min.js"></script>
+<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+<!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>-->
+<script type="text/javascript" src="../static/js/jquery.inview.min.js"></script>
+<script type="text/javascript" src="../static/js/wow.min.js"></script>
+<script type="text/javascript" src="../static/js/mousescroll.js"></script>
+<script type="text/javascript" src="../static/js/jquery.countTo.js"></script>
+<script type="text/javascript" src="../static/js/lightbox.min.js"></script>
+<script type="text/javascript" src="../static/js/main.js"></script>
+<script type="text/javascript" src="../static/js/waypoints.min.js"></script>
+<script type="text/javascript" src="../static/js/minimal.lightbox.js"></script>
+<script type="text/javascript" src="../static/js/jquery.flexslider.js"></script>
+</body>
+</html>

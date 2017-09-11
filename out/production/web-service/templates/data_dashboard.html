@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Admin</title>
+    <object th:include="fragments/header :: header" th:remove="tag"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+</head>
+
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<div class="container">
+    <div class="row">
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <div id="expManagement" class="tab-pane fade in active">
+            <h2 class="team-heading team-heading-current-team padding" th:text="#{admin.data.header}">Data
+                Dashboard</h2>
+            <p>&nbsp;</p>
+            <table id="myTable" class="table table-responsive" th:if="${not #lists.isEmpty(dataList)}">
+                <thead>
+                <tr>
+                    <th th:text="#{data.header.name}">Name</th>
+                    <th th:text="#{data.header.owner}">Owner</th>
+                    <th th:text="#{data.header.releaseDate}">Release Date</th>
+                    <th th:text="#{data.header.downloads}">Number of Downloads</th>
+                    <th><!-- Actions --></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="dataEntry : ${dataList}">
+                    <td><a href="#" th:href="@{/data/{id}/stats(id=${dataEntry.id})}"
+                           th:text="${dataEntry.name}">Name</a></td>
+                    <td th:text="${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName}"></td>
+                    <td th:text="${dataEntry.getReleasedDateString()}"></td>
+                    <td th:text="${downloadStats.containsKey(dataEntry.id) ? downloadStats.get(dataEntry.id) : 0}"></td>
+                    <td>
+                        <button type="button" class="btn btn-primary"
+                                data-toggle="modal" data-target="#deleteModal"
+                                th:attr="data-name=${dataEntry.name},
+							            data-desc=${dataEntry.description},
+							            data-keywords=${dataEntry.keywords},
+							            data-category=${dataEntry.category.name},
+							            data-license=${dataEntry.license.name},
+                                        data-owner=${dataEntry.contributor.firstName + ' ' + dataEntry.contributor.lastName},
+                                	    data-release=${dataEntry.getReleasedDateString()},
+                                        data-visible=${#strings.capitalize(#strings.toLowerCase(dataEntry.visibility))},
+                                        data-access=${#strings.capitalize(#strings.toLowerCase(dataEntry.accessibility))},
+                                        data-delete=@{/data/remove/{id}/admin(id=${dataEntry.id})}"><i
+                                class="fa fa-trash" aria-hidden="true"></i> Delete
+                        </button>
+                        <a th:href="@{/admin/data/{did}/resources(did=${dataEntry.id})}"><button class="btn btn-primary">View</button></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="deleteLabel">Delete?</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">Description:</div>
+                        <div class="col-md-8" id="datasetDesc"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Keywords:</div>
+                        <div class="col-md-8" id="datasetKeywords"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Category:</div>
+                        <div class="col-md-8" id="datasetCategory"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">License:</div>
+                        <div class="col-md-8" id="datasetLicense"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Owner:</div>
+                        <div class="col-md-8" id="datasetOwner"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Release:</div>
+                        <div class="col-md-8" id="datasetRelease"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Visibility:</div>
+                        <div class="col-md-8" id="datasetVisible"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Accessibility:</div>
+                        <div class="col-md-8" id="datasetAccess"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <a href="#" class="btn btn-primary" id="deleteButton">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/footer:: footer"></div>
+</body>
+
+<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+<script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+<script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+<script>
+    $(document).ready(function () {
+        //-----------------admin sort table -------------
+        $('#myTable').dataTable();
+    })
+</script>
+</html>
