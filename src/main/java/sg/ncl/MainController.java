@@ -2939,7 +2939,13 @@ public class MainController {
     }
 
     @RequestMapping("/admin/nodesStatus")
-    public String adminNodesStatus(Model model) throws IOException {
+    public String adminNodesStatus(Model model, HttpSession session) throws IOException {
+
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+
         // get number of active users and running experiments
         Map<String, String> testbedStatsMap = getTestbedStats();
         testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, "0");
