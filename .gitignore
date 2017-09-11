@@ -18,4 +18,4 @@ bin
 # Spring artifacts
 *.pid
 
-out
+out/
