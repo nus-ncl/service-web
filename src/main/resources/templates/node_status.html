@@ -65,7 +65,7 @@
                         </div>
                         <ul>
                             <th:block th:each="nodes : ${nodesStatus.value}">
-                                <li style="display:inline-block; margin: 10px; padding: 15px; width: 12%;">
+                                <li style="display:inline-block; margin: 10px; padding: 15px; width: 15%;">
                                     <img th:if="${nodes.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
                                     <img th:if="${nodes.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
                                     <img th:if="${nodes.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
