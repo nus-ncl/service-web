@@ -139,9 +139,10 @@
                                         <span th:if="${realization.state == 'NOT_RUNNING'}">
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#internetRequest" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud btn-fa-yellow"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'RUNNING'}">
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-red"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'ERROR'}">
                                             <p th:text="#{nav.error}"></p>
@@ -245,6 +246,29 @@
             </div>
         </div>
 
+        <!-- internet access request modal -->
+        <div id="internetRequest" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="stopModalLabel">
+            <div class="modal-dialog">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Confirmation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please specify reason for internet access</p>
+                        <textarea data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the reason" class="form-control" th:placeholder="#{form.internetReason}">
+                        </textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="#" class="btn btn-primary" id="internetButton" onclick="return closeInternetModal();">Submit</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
         <!-- topo thumbnail modal -->
         <div class="modal fade exp-modal" id="topoModal" tabindex="-1" role="dialog" aria-labelledby="topoModalLabel">
@@ -275,6 +299,11 @@
 
             function closeRemoveModal() {
                 $('#removeExperiment').modal('hide');
+                return true;
+            }
+
+            function closeInternetModal() {
+                $('#internetRequest').modal('hide');
                 return true;
             }
         </script>
