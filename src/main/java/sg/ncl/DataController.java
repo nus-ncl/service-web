@@ -48,6 +48,7 @@ public class DataController extends MainController {
     private static final String EDIT_DISALLOWED = "Edit/delete of dataset disallowed as user is not contributor";
     private static final String UPLOAD_DISALLOWED = "Upload of data resource disallowed as user is not contributor";
     private static final String PUBLIC_USER_ID = "publicUserId";
+    private static final String EDITABLE_FLAG = "editable";
 
     @RequestMapping
     public String data(Model model) {
@@ -104,12 +105,12 @@ public class DataController extends MainController {
         if (id.isPresent()) {
             Dataset dataset = getDataset(id.get());
             if (dataset.getContributorId().equals(session.getAttribute("id").toString())) {
-                model.addAttribute("editable", true);
+                model.addAttribute(EDITABLE_FLAG, true);
             }
             model.addAttribute(DATASET, dataset);
             model.addAttribute("data", dataset);
         } else {
-            model.addAttribute("editable", true);
+            model.addAttribute(EDITABLE_FLAG, true);
             model.addAttribute(DATASET, new Dataset());
         }
 
@@ -567,11 +568,9 @@ public class DataController extends MainController {
         String dataResponseBody = response.getBody().toString();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
-//        if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
-//            log.warn(UPLOAD_DISALLOWED);
-//            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, UPLOAD_DISALLOWED);
-//            return REDIRECT_DATA;
-//        }
+        if (dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+            model.addAttribute(EDITABLE_FLAG, true);
+        }
         model.addAttribute(DATASET, dataset);
         return "data_resources";
     }
