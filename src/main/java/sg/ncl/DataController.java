@@ -69,7 +69,6 @@ public class DataController extends MainController {
         model.addAttribute(CATEGORIES, getDataCategories());
         model.addAttribute(LICENSES, getDataLicenses());
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
-        model.addAttribute("requestForm", new DataRequestForm());
         return "data";
     }
 
@@ -104,19 +103,19 @@ public class DataController extends MainController {
     public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
         if (id.isPresent()) {
             Dataset dataset = getDataset(id.get());
-            if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
-                log.warn(EDIT_DISALLOWED);
-                redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, EDIT_DISALLOWED);
-                return REDIRECT_DATA;
+            if (dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+                model.addAttribute("editable", true);
             }
             model.addAttribute(DATASET, dataset);
             model.addAttribute("data", dataset);
         } else {
+            model.addAttribute("editable", true);
             model.addAttribute(DATASET, new Dataset());
         }
 
         model.addAttribute(CATEGORIES, getDataCategories());
         model.addAttribute(LICENSES, getDataLicenses());
+        model.addAttribute("requestForm", new DataRequestForm());
         return CONTRIBUTE_DATA_PAGE;
     }
 
@@ -327,7 +326,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return REDIRECT_DATA;
+        return REDIRECT_DATA + "/contribute/" + id;
     }
 
     @RequestMapping(value = "{did}/requests/{rid}", method = RequestMethod.GET)
@@ -568,11 +567,11 @@ public class DataController extends MainController {
         String dataResponseBody = response.getBody().toString();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
-        if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
-            log.warn(UPLOAD_DISALLOWED);
-            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, UPLOAD_DISALLOWED);
-            return REDIRECT_DATA;
-        }
+//        if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+//            log.warn(UPLOAD_DISALLOWED);
+//            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, UPLOAD_DISALLOWED);
+//            return REDIRECT_DATA;
+//        }
         model.addAttribute(DATASET, dataset);
         return "data_resources";
     }
