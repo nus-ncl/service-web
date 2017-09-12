@@ -155,7 +155,7 @@ $(document).ready(function() {
         modal.find('#experimentName').text(experimentName);
         modal.find('#removeButton').attr('href', removeExperiment);
     })
-    
+
     //-----------------team page-----------------
     // withdraw
     $('#confirm-withdraw').on('click', '.withdraw-ok', function(e) {
