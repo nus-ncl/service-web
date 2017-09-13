@@ -139,7 +139,7 @@
                                         <span th:if="${realization.state == 'NOT_RUNNING'}">
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#internetRequest" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud btn-fa-yellow"></i></button>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#internetRequest" th:attr="data-name=${expEntry.name}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud btn-fa-yellow"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'RUNNING'}">
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-red"></i></button>
@@ -257,7 +257,7 @@
                         <h4 class="modal-title">Confirmation</h4>
                     </div>
                     <div class="modal-body">
-                        <p>Please specify reason for internet access</p>
+                        <p>Please specify reason for internet access request</p>
                         <textarea data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the reason" class="form-control" th:placeholder="#{form.internetReason}">
                         </textarea>
                     </div>
