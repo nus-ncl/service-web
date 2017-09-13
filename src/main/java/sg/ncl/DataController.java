@@ -42,6 +42,7 @@ public class DataController extends MainController {
     private static final String REDIRECT_DATA = "redirect:/data";
     private static final String CATEGORIES = "categories";
     private static final String LICENSES = "licenses";
+    private static final String RESOURCES = "resources";
     private static final String DATASET = "dataset";
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
     private static final String MESSAGE_ATTRIBUTE = "message";
@@ -49,6 +50,7 @@ public class DataController extends MainController {
     private static final String EDITABLE_FLAG = "editable";
     private static final String START_DATE = "startDate=";
     private static final String END_DATE = "endDate=";
+    private static final String DATA_ID = "dataId";
 
     @RequestMapping
     public String data(Model model) {
@@ -504,13 +506,13 @@ public class DataController extends MainController {
         JSONObject object = new JSONObject(responseBody);
         session.setAttribute(PUBLIC_USER_ID, object.getLong("id"));
 
-        return REDIRECT_DATA + "/public/" + id + "/resources";
+        return REDIRECT_DATA + "/public/" + id + "/" + RESOURCES;
     }
 
     @RequestMapping(value = "/public/{id}/resources", method = RequestMethod.GET)
     public String getPublicResources(HttpSession session, Model model, @PathVariable String id, RedirectAttributes redirectAttributes) {
         if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
-            return REDIRECT_DATA + "/" + id + "/resources";
+            return REDIRECT_DATA + "/" + id + "/" + RESOURCES;
         } else if (session.getAttribute(PUBLIC_USER_ID) == null || session.getAttribute(PUBLIC_USER_ID).toString().isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "Please fill in your details before trying to access resources.");
             return REDIRECT_DATA + "/public/" + id;
@@ -612,7 +614,7 @@ public class DataController extends MainController {
         JSONArray statJsonArray = new JSONArray(responseBody);
         for (int i = 0; i < statJsonArray.length(); i++) {
             JSONObject statInfoObject = statJsonArray.getJSONObject(i);
-            downloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+            downloadStats.put(statInfoObject.getInt(DATA_ID), statInfoObject.getLong("count"));
         }
 
         if (start.isEmpty() && end.isEmpty()) {
@@ -629,7 +631,7 @@ public class DataController extends MainController {
         statJsonArray = new JSONArray(responseBody);
         for (int i = 0; i < statJsonArray.length(); i++) {
             JSONObject statInfoObject = statJsonArray.getJSONObject(i);
-            publicDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+            publicDownloadStats.put(statInfoObject.getInt(DATA_ID), statInfoObject.getLong("count"));
         }
 
         model.addAttribute(DATASET, dataset);
@@ -795,7 +797,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return "redirect:/data/" + datasetId + "/resources";
+        return "redirect:/data/" + datasetId + "/" + RESOURCES;
     }
 
     private void setContributor(Dataset dataset, HttpSession session) {
@@ -836,7 +838,7 @@ public class DataController extends MainController {
         JSONObject object = new JSONObject(json);
 
         dataAccessRequest.setId(object.getLong("id"));
-        dataAccessRequest.setDataId(object.getLong("dataId"));
+        dataAccessRequest.setDataId(object.getLong(DATA_ID));
         dataAccessRequest.setRequesterId(object.getString("requesterId"));
         dataAccessRequest.setReason(object.getString("reason"));
         try {
