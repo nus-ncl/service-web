@@ -200,6 +200,7 @@ public class DataController extends MainController {
                 Dataset data = getDataset(id.get());
                 model.addAttribute("data", data);
             }
+            model.addAttribute(EDITABLE_FLAG, true);
             return CONTRIBUTE_DATA_PAGE;
         }
 
