@@ -2500,6 +2500,47 @@ public class MainController {
         return abc(teamName, expId, redirectAttributes, realization, request);
     }
 
+    @RequestMapping("/internet_experiment/{teamName}/{expId}")
+    public String internetRequest(@PathVariable String teamName,
+                                  @PathVariable String expId,
+                                  Model model,
+                                  final RedirectAttributes redirectAttributes,
+                                  HttpSession session) throws WebServiceRuntimeException {
+
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if (isNotAdminAndNotInTeam (session, realization)) {
+            log.warn("Permission denied to request internet access: {} for team: {}", realization.getExperimentName(), teamName);
+            redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
+            return "redirect:/experiments";
+        }
+
+
+
+        String teamId = realization.getTeamId();
+        String teamStatus = getTeamStatus(teamId);
+
+        if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
+            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, teamStatus);
+            redirectAttributes.addFlashAttribute(MESSAGE, teamName + " is in " + teamStatus +
+                    " status and does not have permission to start experiment. Please contact " + CONTACT_EMAIL);
+            return "redirect:/experiments";
+        }
+
+
+        log.info("Sending internet access reqest: at" + properties.getInternetExperiment(teamName,expId));
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity responseEntity;
+     //   try {
+           // response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+       // }
+
+
+        return EXPERIMENTS;
+    }
+
+
     @RequestMapping("/get_topology/{teamName}/{expId}")
     @ResponseBody
     public String getTopology(@PathVariable String teamName, @PathVariable String expId) {
