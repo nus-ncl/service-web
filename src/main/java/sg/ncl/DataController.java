@@ -45,10 +45,10 @@ public class DataController extends MainController {
     private static final String DATASET = "dataset";
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
     private static final String MESSAGE_ATTRIBUTE = "message";
-    private static final String EDIT_DISALLOWED = "Edit/delete of dataset disallowed as user is not contributor";
-    private static final String UPLOAD_DISALLOWED = "Upload of data resource disallowed as user is not contributor";
     private static final String PUBLIC_USER_ID = "publicUserId";
     private static final String EDITABLE_FLAG = "editable";
+    private static final String START_DATE = "startDate=";
+    private static final String END_DATE = "endDate=";
 
     @RequestMapping
     public String data(Model model) {
@@ -101,7 +101,7 @@ public class DataController extends MainController {
     }
 
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
-    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
+    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) {
         if (id.isPresent()) {
             Dataset dataset = getDataset(id.get());
             if (dataset.getContributorId().equals(session.getAttribute("id").toString())) {
@@ -600,11 +600,11 @@ public class DataController extends MainController {
         if (start.isEmpty() && end.isEmpty()) {
             response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId), HttpMethod.GET, request, String.class);
         } else if (end.isEmpty()) {
-            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "startDate=" + start), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, START_DATE + start), HttpMethod.GET, request, String.class);
         } else if (start.isEmpty()) {
-            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "endDate=" + end), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, END_DATE + end), HttpMethod.GET, request, String.class);
         } else {
-            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, START_DATE + start, END_DATE + end), HttpMethod.GET, request, String.class);
         }
         String responseBody = response.getBody().toString();
 
@@ -618,11 +618,11 @@ public class DataController extends MainController {
         if (start.isEmpty() && end.isEmpty()) {
             response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId), HttpMethod.GET, request, String.class);
         } else if (end.isEmpty()) {
-            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, "startDate=" + start), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, START_DATE + start), HttpMethod.GET, request, String.class);
         } else if (start.isEmpty()) {
-            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, "endDate=" + end), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, END_DATE + end), HttpMethod.GET, request, String.class);
         } else {
-            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, START_DATE + start, END_DATE + end), HttpMethod.GET, request, String.class);
         }
         responseBody = response.getBody().toString();
         Map<Integer, Long> publicDownloadStats = new HashMap<>();

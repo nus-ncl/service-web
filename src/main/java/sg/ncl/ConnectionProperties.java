@@ -16,6 +16,7 @@ public class ConnectionProperties {
 
     private static final String HTTP_MODE = "http://";
     public static final String PREFIX = "ncl.web.service";
+    private static final String RESOURCES = "resources";
 
     private String sioAddress;
     private String sioPort;
@@ -205,7 +206,7 @@ public class ConnectionProperties {
     }
 
     public String downloadPublicOpenResource(String dataId, String resourceId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download?visibility=PUBLIC";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/" + RESOURCES + "/" + resourceId + "/download?visibility=PUBLIC";
     }
 
     public String getData() {
@@ -230,11 +231,11 @@ public class ConnectionProperties {
     }
 
     public String getResource(String dataId, String resourceId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/" + RESOURCES + "/" + resourceId;
     }
 
     public String downloadResource(String dataId, String resourceId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/resources/" + resourceId + "/download";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/" + RESOURCES + "/" + resourceId + "/download";
     }
 
     public String getCategories() {
