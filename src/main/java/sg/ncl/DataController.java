@@ -536,7 +536,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException("No public user id for downloading.");
         }
         try {
-            String publicUserId = (String) session.getAttribute(PUBLIC_USER_ID);
+            String publicUserId = session.getAttribute(PUBLIC_USER_ID).toString();
             // Optional Accept header
             RequestCallback requestCallback = request -> {
                 request.getHeaders().setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
