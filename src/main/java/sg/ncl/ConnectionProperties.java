@@ -168,8 +168,8 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
     }
 
-    public String getInternetExperiment (String teamName, String expId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/internet/team/" + teamName + "/experiment/" + expId;
+    public String requestInternetExperiment (String teamName, String expId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiment/" + expId + "/internet";
     }
 
     public String getTopology(String teamName, String expId) {

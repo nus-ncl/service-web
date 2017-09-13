@@ -2500,46 +2500,6 @@ public class MainController {
         return abc(teamName, expId, redirectAttributes, realization, request);
     }
 
-    @RequestMapping("/internet_experiment/{teamName}/{expId}")
-    public String internetRequest(@PathVariable String teamName,
-                                  @PathVariable String expId,
-                                  Model model,
-                                  final RedirectAttributes redirectAttributes,
-                                  HttpSession session) throws WebServiceRuntimeException {
-
-        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
-
-        if (isNotAdminAndNotInTeam (session, realization)) {
-            log.warn("Permission denied to request internet access: {} for team: {}", realization.getExperimentName(), teamName);
-            redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
-            return "redirect:/experiments";
-        }
-
-
-
-        String teamId = realization.getTeamId();
-        String teamStatus = getTeamStatus(teamId);
-
-        if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
-            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, teamStatus);
-            redirectAttributes.addFlashAttribute(MESSAGE, teamName + " is in " + teamStatus +
-                    " status and does not have permission to start experiment. Please contact " + CONTACT_EMAIL);
-            return "redirect:/experiments";
-        }
-
-
-        log.info("Sending internet access reqest: at" + properties.getInternetExperiment(teamName,expId));
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity responseEntity;
-     //   try {
-           // response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
-       // }
-
-
-        return EXPERIMENTS;
-    }
-
 
     @RequestMapping("/get_topology/{teamName}/{expId}")
     @ResponseBody
@@ -2553,6 +2513,42 @@ public class MainController {
             log.error("Error getting topology thumbnail", e.getMessage());
             return "";
         }
+    }
+
+    @RequestMapping(value = "/get_internet/{teamName}/{expId}", method = RequestMethod.POST)
+    public String internetRequest(@PathVariable String teamName,
+                                  @PathVariable String expId,
+                                  @ModelAttribute InternetRequestForm requestForm,
+                                  final RedirectAttributes redirectAttributes,
+                                  HttpSession session) throws WebServiceRuntimeException {
+
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if (isNotAdminAndNotInTeam (session, realization)) {
+            log.warn("Permission denied to request internet access: {} for team: {}", realization.getExperimentName(), teamName);
+            redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
+            return "redirect:/experiments";
+        }
+
+        String teamId = realization.getTeamId();
+        String teamStatus = getTeamStatus(teamId);
+
+        if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
+            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, teamStatus);
+            redirectAttributes.addFlashAttribute(MESSAGE, teamName + " is in " + teamStatus +
+                    " status and does not have permission to start experiment. Please contact " + CONTACT_EMAIL);
+            return "redirect:/experiments";
+        }
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("reason", requestForm.getReason());
+
+        HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity responseEntity = restTemplate.exchange(properties.requestInternetExperiment(teamName, expId),
+                                                    HttpMethod.POST, request, String.class);
+        
+        return EXPERIMENTS;
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
