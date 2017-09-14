@@ -2044,6 +2044,7 @@ public class MainController {
 
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
+        model.addAttribute("internetRequestForm", new InternetRequestForm());
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
         return EXPERIMENTS;
     }
@@ -2519,40 +2520,31 @@ public class MainController {
         }
     }
 
-    @RequestMapping(value = "/get_internet/{teamName}/{expId}", method = RequestMethod.POST)
-    public String internetRequest(@PathVariable String teamName,
+    @RequestMapping(value = "/request_internet/{teamId}/{expId}", method = RequestMethod.POST)
+    public String internetRequest(@PathVariable String teamId,
                                   @PathVariable String expId,
-                                  @ModelAttribute InternetRequestForm requestForm,
-                                  final RedirectAttributes redirectAttributes,
-                                  HttpSession session) throws WebServiceRuntimeException {
+                                  @ModelAttribute InternetRequestForm internetRequestForm,
+                                  final RedirectAttributes redirectAttributes
+                                 ) throws WebServiceRuntimeException {
 
-        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+        log.info("it has gone into post method");
 
-        if (isNotAdminAndNotInTeam (session, realization)) {
-            log.warn("Permission denied to request internet access: {} for team: {}", realization.getExperimentName(), teamName);
-            redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
-            return "redirect:/experiments";
-        }
-
-        String teamId = realization.getTeamId();
-        String teamStatus = getTeamStatus(teamId);
-
-        if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
-            log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, teamStatus);
-            redirectAttributes.addFlashAttribute(MESSAGE, teamName + " is in " + teamStatus +
-                    " status and does not have permission to start experiment. Please contact " + CONTACT_EMAIL);
-            return "redirect:/experiments";
-        }
 
         JSONObject requestObject = new JSONObject();
-        requestObject.put("reason", requestForm.getReason());
+        requestObject.put("reason", internetRequestForm.getReason());
+
 
         HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity responseEntity = restTemplate.exchange(properties.requestInternetExperiment(teamName, expId),
-                                                    HttpMethod.POST, request, String.class);
-        
-        return EXPERIMENTS;
+
+        try {
+            ResponseEntity response = restTemplate.exchange(properties.requestInternetExperiment(teamId, expId),
+                    HttpMethod.POST, request, String.class);
+        }  catch (Exception e) {
+            log.warn("error: {}", e.getMessage());
+        }
+
+        return "redirect:/experiments";
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
