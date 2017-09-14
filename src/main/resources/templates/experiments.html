@@ -139,10 +139,10 @@
                                         <span th:if="${realization.state == 'NOT_RUNNING'}">
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud btn-fa-yellow"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'RUNNING'}">
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-red"></i></button>
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#internetRequest" th:attr="data-name=${expEntry.name}, data-request=@{/get_internet/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud btn-fa-yellow"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'ERROR'}">
                                             <p th:text="#{nav.error}"></p>
@@ -248,10 +248,10 @@
 
         <!-- internet access request modal -->
         <div id="internetRequest" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog">
 
                 <div class="modal-content">
-                    <form method="post" action="#" role="form" id="requestform" th:object="${requestForm}">
+                    <form method="post" action="#" role="form" id="internetRequestForm" th:object="${internetRequestForm}">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">Request</h4>
@@ -262,13 +262,13 @@
                                 Please specify node names and reason for internet access
                             </label>
                         </div>
-                        <textarea class ="form-control" th:placeholder="#{form.internetReason} th:field=*{reason}"></textarea>
+                        <textarea class ="form-control" th:placeholder="#{form.internetReason}" th:field="*{reason}"></textarea>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary" id="internetButton">Submit</button>
                     </div>
-                    </form>>
+                    </form>
                 </div>
             </div>
         </div>
