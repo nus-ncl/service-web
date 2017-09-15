@@ -2607,14 +2607,28 @@ public class MainController {
             datasetsList.add(dataset);
         }
 
-        ResponseEntity response4 = restTemplate.exchange(properties.getDownloadStat(), HttpMethod.GET, request, String.class);
-        String responseBody4 = response4.getBody().toString();
+        response = restTemplate.exchange(properties.getDownloadStat(), HttpMethod.GET, request, String.class);
+        responseBody = response.getBody().toString();
 
         Map<Integer, Long> dataDownloadStats = new HashMap<>();
-        JSONArray statJsonArray = new JSONArray(responseBody4);
-        for (int i = 0; i < statJsonArray.length(); i++) {
-            JSONObject statInfoObject = statJsonArray.getJSONObject(i);
+        JSONArray statJsonArray1 = new JSONArray(responseBody);
+        for (int i = 0; i < statJsonArray1.length(); i++) {
+            JSONObject statInfoObject = statJsonArray1.getJSONObject(i);
             dataDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+        }
+
+        response = restTemplate.exchange(properties.getPublicDownloadStat(), HttpMethod.GET, request, String.class);
+        responseBody = response.getBody().toString();
+        JSONArray statJsonArray2 = new JSONArray(responseBody);
+        for (int i = 0; i < statJsonArray2.length(); i++) {
+            JSONObject statInfoObject = statJsonArray2.getJSONObject(i);
+            int key = statInfoObject.getInt("dataId");
+            if (dataDownloadStats.containsKey(key)) {
+                Long count = dataDownloadStats.get(key) + statInfoObject.getLong("count");
+                dataDownloadStats.replace(key, count);
+            } else {
+                dataDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+            }
         }
 
         model.addAttribute("dataList", datasetsList);

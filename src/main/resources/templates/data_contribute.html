@@ -17,7 +17,7 @@
                 <h4 th:utext="${message}"></h4>
             </div>
             <form method="post" action="#" th:action="${dataset.id == null ? '/data/contribute' : '/data/contribute/' + dataset.id}" th:object="${dataset}" role="form">
-                <fieldset>
+                <fieldset th:if="${editable != null}">
                     <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
                     <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? has-error">
                         <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{name}" th:readonly="${dataset.id != null}"/>
@@ -67,7 +67,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="form-group" th:if="${editable != null}">
+                    <div class="form-group">
                         <button type="submit" class="btn btn-standard">Save</button>
                         <button type="button" class="btn btn-danger" th:if="*{id != null}"
                                 data-toggle="modal" data-target="#deleteModal"
@@ -82,6 +82,37 @@
                                             data-access=${#strings.capitalize(#strings.toLowerCase(dataset.accessibility))},
                                             data-delete=@{/data/remove/{id}(id=${data.id})}">Delete</button>
                         <input type="hidden" th:field="*{contributorId}" th:if="*{id != null}"/>
+                    </div>
+                </fieldset>
+                <fieldset th:if="${editable == null}">
+                    <h2 class="team-heading team-heading-current-team" th:text="#{dataset.public.page.header}">Dataset Information</h2>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Dataset Name" th:field="*{name}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Dataset Name"/>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="5" placeholder="Detailed Description" th:field="*{description}"
+                                  th:readonly="true" data-toggle="tooltip" data-placement="right" title="Detailed Description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Keywords" th:field="*{keywords}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Keywords"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Category" th:value="${dataset.category.name + ' - ' + dataset.category.description}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Category"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="License" th:value="${dataset.license.name + ' (' + dataset.license.acronym + ')'}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="License"/>
+                    </div>
+                    <div class="form-group" th:switch="${dataset.accessibility.toString()}">
+                        <input th:case="'OPEN'" type="text" class="form-control" placeholder="Accessibility" th:value="#{admin.contributeData.open} +  ' - ' + #{admin.contributeData.openDesc}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Accessibility"/>
+                        <input th:case="'RESTRICTED'" type="text" class="form-control" placeholder="Accessibility" th:value="#{admin.contributeData.restricted} +  ' - ' + #{admin.contributeData.restrictedDesc}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Accessibility"/>
+                        <input th:case="'QUARANTINED'" type="text" class="form-control" placeholder="Accessibility" th:value="#{admin.contributeData.quarantined} +  ' - ' + #{admin.contributeData.quarantinedDesc}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Accessibility"/>
                     </div>
                 </fieldset>
             </form>
