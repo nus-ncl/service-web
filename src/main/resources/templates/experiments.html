@@ -254,12 +254,13 @@
                     <form method="post" action="#" role="form" id="internetRequestForm" th:object="${internetRequestForm}">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Request</h4>
+                        <h4 class="modal-title">Request From</h4>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="reason" class="control-label">
                                 Please specify node names and reason for internet access
+                                Please note that internet access is only available in current running experiment
                             </label>
                         </div>
                         <textarea class ="form-control" th:placeholder="#{form.internetReason}" th:field="*{reason}"></textarea>
