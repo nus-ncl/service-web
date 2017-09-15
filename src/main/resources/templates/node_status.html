@@ -4,14 +4,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>National Cybersecurity Laboratories - Testbed Nodes Status</title>
     <object th:include="fragments/header :: header" th:remove="tag" />
-
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
 </head>
 <body class="mybg loginbackground">
     <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -50,6 +49,7 @@
                 </div>
             </div>
         </div>
+
         <p th:if="${nodesStatus.isEmpty()}" th:text="#{nav.error}"></p>
 
         <th:block th:each="nodesStatus : ${nodesStatus}">
@@ -65,38 +65,67 @@
                             <hr/>
                         </div>
 
-                        <div class="panel-body">
 
-                            <table id="nodeStatusTable" class="table table-responsive">
-                                <thread>
-                                    <tr>
-                                        <th th:text="#{admin.nodeStatus.header.id}">Node ID</th>
-                                        <th th:text="#{admin.nodeStatus.header.status}">Status</th>
-                                        <th th:text="#{admin.nodeStatus.header.project}">Project</th>
-                                        <th th:text="#{admin.nodeStatus.header.experiment}">Experiment</th>
-                                        <th></th>
-                                    </tr>
-                                </thread>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table id="nodeStatusTable1" class="table table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th th:text="#{admin.nodeStatus.header.id}">Node ID</th>
+                                            <th th:text="#{admin.nodeStatus.header.status}">Status</th>
+                                            <th th:text="#{admin.nodeStatus.header.project}">Project</th>
+                                            <th th:text="#{admin.nodeStatus.header.experiment}">Experiment</th>
+                                        </tr>
+                                    </thead>
 
-                                <tbody>
-                                    <tr th:each="node : ${nodesStatus.value}">
+                                    <tbody>
+                                        <tr th:each="node, iter : ${nodesStatus.value}" th:if="${iter.odd}">
+                                            <td><span th:text="${node.id}"></span></td>
+                                            <td>
+                                                <span>
+                                                    <img th:if="${node.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
+                                                    <img th:if="${node.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
+                                                    <img th:if="${node.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
+                                                    <img th:if="${node.status == 'reload'}" src="/images/ServerUn.png" width="35" height="35" class="nowrap"/>
+                                                </span>
+                                            </td>
+                                            <td><span th:text="${node.pid}"></span></td>
+                                            <td><span th:text="${node.eid}"></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="col-md-6">
+                                <table id="nodeStatusTable2" class="table table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th th:text="#{admin.nodeStatus.header.id}">Node ID</th>
+                                            <th th:text="#{admin.nodeStatus.header.status}">Status</th>
+                                            <th th:text="#{admin.nodeStatus.header.project}">Project</th>
+                                            <th th:text="#{admin.nodeStatus.header.experiment}">Experiment</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr th:each="node,iter : ${nodesStatus.value}" th:if="${iter.even}">
                                         <td class="content"><span th:text="${node.id}">pc00</span></td>
-                                        <td>
-                                            <span>
-                                                <img th:if="${node.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
-                                                <img th:if="${node.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
-                                                <img th:if="${node.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
-                                                <img th:if="${node.status == 'reload'}" src="/images/ServerUn.png" width="35" height="35" class="nowrap"/>
-                                            </span>
+                                        <td class="content">
+                                                <span>
+                                                    <img th:if="${node.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
+                                                    <img th:if="${node.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
+                                                    <img th:if="${node.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
+                                                    <img th:if="${node.status == 'reload'}" src="/images/ServerUn.png" width="35" height="35" class="nowrap"/>
+                                                </span>
                                         </td>
-                                        <td><span th:text="${node.pid}"></span></td>
-                                        <td><span th:text="${node.eid}"></span></td>
+                                        <td class="content"><span th:text="${node.pid}"></span></td>
+                                        <td class="content"><span th:text="${node.eid}"></span></td>
                                     </tr>
-                                </tbody>
-                            </table>
-
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-
 
                         <p>&nbsp;</p>
                     </div><!-- div with border -->
@@ -123,12 +152,25 @@
     </div><!-- container -->
 
     <div th:replace="fragments/footer :: footer"></div>
-    <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
+
+<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+<script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+<script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
 <script>
     $(document).ready(function () {
         //-----------------admin sort table -------------
-        $('#nodeStatusTable').dataTable();
+        $('#nodeStatusTable1').dataTable();
+        $('#nodeStatusTable2').dataTable();
     })
 </script>
 </html>
