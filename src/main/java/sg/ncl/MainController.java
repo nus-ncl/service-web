@@ -133,6 +133,9 @@ public class MainController {
 
     private static final String NOT_APPLICABLE = "N.A.";
 
+    private static final String DATA_ID = "dataId";
+    private static final String COUNT = "count";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -2614,7 +2617,7 @@ public class MainController {
         JSONArray statJsonArray1 = new JSONArray(responseBody);
         for (int i = 0; i < statJsonArray1.length(); i++) {
             JSONObject statInfoObject = statJsonArray1.getJSONObject(i);
-            dataDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+            dataDownloadStats.put(statInfoObject.getInt(DATA_ID), statInfoObject.getLong(COUNT));
         }
 
         response = restTemplate.exchange(properties.getPublicDownloadStat(), HttpMethod.GET, request, String.class);
@@ -2622,12 +2625,12 @@ public class MainController {
         JSONArray statJsonArray2 = new JSONArray(responseBody);
         for (int i = 0; i < statJsonArray2.length(); i++) {
             JSONObject statInfoObject = statJsonArray2.getJSONObject(i);
-            int key = statInfoObject.getInt("dataId");
+            int key = statInfoObject.getInt(DATA_ID);
             if (dataDownloadStats.containsKey(key)) {
-                Long count = dataDownloadStats.get(key) + statInfoObject.getLong("count");
+                Long count = dataDownloadStats.get(key) + statInfoObject.getLong(COUNT);
                 dataDownloadStats.replace(key, count);
             } else {
-                dataDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+                dataDownloadStats.put(statInfoObject.getInt(DATA_ID), statInfoObject.getLong(COUNT));
             }
         }
 
