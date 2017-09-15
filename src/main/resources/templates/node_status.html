@@ -51,6 +51,7 @@
             </div>
         </div>
         <p th:if="${nodesStatus.isEmpty()}" th:text="#{nav.error}"></p>
+
         <th:block th:each="nodesStatus : ${nodesStatus}">
             <div class="row">
                 <div class="col-md-12">
@@ -63,22 +64,40 @@
                             <img src="/images/ServerReserved.png" width="19" height="19"/> <h19>Reserved (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RESERVED')}">0</span>)</h19>
                             <hr/>
                         </div>
-                        <ul>
-                            <th:block th:each="nodes : ${nodesStatus.value}">
-                                <li style="display:inline-block; margin: 10px; padding: 15px; width: 15%;">
-                                    <img th:if="${nodes.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
-                                    <img th:if="${nodes.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
-                                    <img th:if="${nodes.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
-                                    <img th:if="${nodes.status == 'reload'}" src="/images/ServerUn.png" width="35" height="35" class="nowrap"/>
-                                    <br/>
-                                    <span th:text="${nodes.id}">pc00</span>
-                                    <br/>
-                                    <span th:text=" ${nodes.pid}">pid</span>
-                                    <br/>
-                                    <span th:text="${nodes.eid}">eid</span>
-                                </li>
-                            </th:block>
-                        </ul>
+
+                        <div class="panel-body">
+
+                            <table id="nodeStatusTable" class="table table-responsive">
+                                <thread>
+                                    <tr>
+                                        <th th:text="#{admin.nodeStatus.header.id}">Node ID</th>
+                                        <th th:text="#{admin.nodeStatus.header.status}">Status</th>
+                                        <th th:text="#{admin.nodeStatus.header.project}">Project</th>
+                                        <th th:text="#{admin.nodeStatus.header.experiment}">Experiment</th>
+                                        <th></th>
+                                    </tr>
+                                </thread>
+
+                                <tbody>
+                                    <tr th:each="node : ${nodesStatus.value}">
+                                        <td class="content"><span th:text="${node.id}">pc00</span></td>
+                                        <td>
+                                            <span>
+                                                <img th:if="${node.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
+                                                <img th:if="${node.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
+                                                <img th:if="${node.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
+                                                <img th:if="${node.status == 'reload'}" src="/images/ServerUn.png" width="35" height="35" class="nowrap"/>
+                                            </span>
+                                        </td>
+                                        <td><span th:text="${node.pid}"></span></td>
+                                        <td><span th:text="${node.eid}"></span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+
                         <p>&nbsp;</p>
                     </div><!-- div with border -->
                 </div>
@@ -106,4 +125,10 @@
     <div th:replace="fragments/footer :: footer"></div>
     <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
+<script>
+    $(document).ready(function () {
+        //-----------------admin sort table -------------
+        $('#nodeStatusTable').dataTable();
+    })
+</script>
 </html>

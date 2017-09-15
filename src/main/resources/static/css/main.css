@@ -1749,6 +1749,11 @@ table {
      list-style: none;
 }
 
+/* fro admin node status page*/
+table .content {
+    width: 100%
+}
+
 .blue-tick {
     color: #5890ff;
 }
