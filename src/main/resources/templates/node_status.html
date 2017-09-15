@@ -65,7 +65,6 @@
                             <hr/>
                         </div>
 
-
                         <div class="row">
                             <div class="col-md-6">
                                 <table id="nodeStatusTable1" class="table table-responsive">
@@ -79,7 +78,7 @@
                                     </thead>
 
                                     <tbody>
-                                        <tr th:each="node, iter : ${nodesStatus.value}" th:if="${iter.odd}">
+                                        <tr th:each="node,iter : ${nodesStatus.value}" th:if="${iter.odd}">
                                             <td><span th:text="${node.id}"></span></td>
                                             <td>
                                                 <span>
@@ -96,9 +95,9 @@
                                 </table>
                             </div>
 
-                            <div class="col-md-6">
-                                <table id="nodeStatusTable2" class="table table-responsive">
-                                    <thead>
+                             <div class="col-md-6">
+                                 <table id="nodeStatusTable2" class="table table-responsive">
+                                     <thead>
                                         <tr>
                                             <th th:text="#{admin.nodeStatus.header.id}">Node ID</th>
                                             <th th:text="#{admin.nodeStatus.header.status}">Status</th>
@@ -109,25 +108,25 @@
                                     </thead>
 
                                     <tbody>
-                                    <tr th:each="node,iter : ${nodesStatus.value}" th:if="${iter.even}">
-                                        <td class="content"><span th:text="${node.id}">pc00</span></td>
-                                        <td class="content">
+                                        <tr th:each="node,iter : ${nodesStatus.value}" th:if="${iter.even}">
+                                            <td><span th:text="${node.id}"></span></td>
+                                            <td>
                                                 <span>
                                                     <img th:if="${node.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
                                                     <img th:if="${node.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
                                                     <img th:if="${node.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
                                                     <img th:if="${node.status == 'reload'}" src="/images/ServerUn.png" width="35" height="35" class="nowrap"/>
                                                 </span>
-                                        </td>
-                                        <td class="content"><span th:text="${node.pid}"></span></td>
-                                        <td class="content"><span th:text="${node.eid}"></span></td>
-                                    </tr>
+                                            </td>
+                                            <td><span th:text="${node.pid}"></span></td>
+                                            <td><span th:text="${node.eid}"></span></td>
+                                        </tr>
                                     </tbody>
-                                </table>
+                                 </table>
                             </div>
                         </div>
 
-                        <p>&nbsp;</p>
+                    <p>&nbsp;</p>
                     </div><!-- div with border -->
                 </div>
             </div> <!-- row -->
@@ -166,11 +165,11 @@
 <script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
 <script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
 <script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+
 <script>
     $(document).ready(function () {
         //-----------------admin sort table -------------
         $('#nodeStatusTable1').dataTable();
-        $('#nodeStatusTable2').dataTable();
     })
 </script>
 </html>
