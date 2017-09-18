@@ -49,7 +49,7 @@
                                 <tr th:each="expEntry : ${experimentList}">
                                     <td><a th:href="@{/experiment_profile/{expId}(expId=${expEntry.id})}"><span th:text="${expEntry.name}">Name</span></a></td>
                                     <td th:text="${expEntry.teamName}">Team</td>
-                                    <td th:text="${realizationMap.get(expEntry.id).numberOfNodes}">Nodes</td>
+                                    <td th:text="${realizationMap.get(expEntry.id).numberOfNodes}" style="text-align: center">Nodes</td>
                                     <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
                                         <span th:if="${realization.state == 'STARTING'}">
                                             <td th:text="'Starting'"></td>
@@ -69,12 +69,12 @@
                                         <span th:if="${realization.state == 'ERROR'}">
                                             <td th:text="'Error'"></td>
                                         </span>
-                                        <td>
+                                        <td style="text-align: center">
                                             <a href="#topoModal" data-toggle="modal"
                                                th:attr="data-title=${expEntry.name},
                                                         data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">View</a>
                                         </td>
-                                        <td>
+                                        <td style="text-align: center">
                                             <a th:href="'#'+${realization.experimentId}" data-toggle="modal">View</a>
                                             <!-- Modal -->
                                             <div class="modal fade exp-modal" th:id="${realization.experimentId}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
