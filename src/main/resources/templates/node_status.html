@@ -66,7 +66,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <table id="nodeStatusTable1" class="table table-responsive">
                                     <thead>
                                         <tr>
@@ -78,7 +78,7 @@
                                     </thead>
 
                                     <tbody>
-                                        <tr th:each="node,iter : ${nodesStatus.value}" th:if="${iter.odd}">
+                                        <tr th:each="node : ${nodesStatus.value}">
                                             <td><span th:text="${node.id}"></span></td>
                                             <td>
                                                 <span>
@@ -93,36 +93,6 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
-
-                             <div class="col-md-6">
-                                 <table id="nodeStatusTable2" class="table table-responsive">
-                                     <thead>
-                                        <tr>
-                                            <th th:text="#{admin.nodeStatus.header.id}">Node ID</th>
-                                            <th th:text="#{admin.nodeStatus.header.status}">Status</th>
-                                            <th th:text="#{admin.nodeStatus.header.project}">Project</th>
-                                            <th th:text="#{admin.nodeStatus.header.experiment}">Experiment</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        <tr th:each="node,iter : ${nodesStatus.value}" th:if="${iter.even}">
-                                            <td><span th:text="${node.id}"></span></td>
-                                            <td>
-                                                <span>
-                                                    <img th:if="${node.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
-                                                    <img th:if="${node.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
-                                                    <img th:if="${node.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
-                                                    <img th:if="${node.status == 'reload'}" src="/images/ServerUn.png" width="35" height="35" class="nowrap"/>
-                                                </span>
-                                            </td>
-                                            <td><span th:text="${node.pid}"></span></td>
-                                            <td><span th:text="${node.eid}"></span></td>
-                                        </tr>
-                                    </tbody>
-                                 </table>
                             </div>
                         </div>
 
@@ -169,7 +139,7 @@
 <script>
     $(document).ready(function () {
         //-----------------admin sort table -------------
-        $('#nodeStatusTable1').dataTable();
+        $('.table').dataTable();
     })
 </script>
 </html>
