@@ -318,9 +318,10 @@ public class MainController {
         Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
         Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
 
-        // loop through each of the machine type
-        // tabulate the different nodes type
-        // count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        /* loop through each of the machine type
+           tabulate the different nodes type
+           count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        */
         nodesStatus.entrySet().forEach(machineTypeListEntry -> {
             Map<String, Long> nodesCountMap = new HashMap<>();
 
