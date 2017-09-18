@@ -36,7 +36,7 @@
                             <thead>
                                 <th th:text="#{experiment.table.header.experiment}">Experiment</th>
                                 <th th:text="#{experiment.table.header.team}">Team</th>
-                                <th th:text="#{experiment.table.header.description}">Description</th>
+                                <th th:text="#{experiment.table.header.nodes.number}">Nodes</th>
                                 <!--<th th:text="#{experiment.table.header.configuration}">Configuration</th>-->
                                 <th th:text="#{experiment.table.header.status}">Status</th>
                                 <th th:text="#{experiment.table.header.details}">Details</th>
@@ -45,7 +45,7 @@
                             <tr th:each="expEntry : ${experimentList}">
                                 <td th:text="${expEntry.name}">Name</td>
                                 <td th:text="${expEntry.teamName}">Team</td>
-                                <td th:text="${expEntry.description}">Description</td>
+                                <td th:text="${realizationMap.get(expEntry.id).numberOfNodes}">Nodes</td>
                                 <!--<td><a href="#" th:href="@{/experiments/configuration/{expId}(expId=${expEntry.experimentId})}">View</a></td>-->
                                 <!--<td>-->
                                 	<!--<span th:if="${expEntry.status == 'STOPPED'}" th:classappend="expStatusStop" th:text="${expEntry.status}"></span>-->
