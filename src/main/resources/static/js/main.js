@@ -113,6 +113,7 @@ $(document).ready(function() {
     //-----------------experiment page---------------------
     // tooltip hover
     $('[data-toggle="tooltip"]').tooltip();
+    $('[data-tooltip="tooltip"]').tooltip();
 
 	// prevent start and delete button from multi clicks
 	$(".click-once-button").click(function() {
