@@ -147,6 +147,9 @@ public class ConnectionProperties {
     //-------------------------------------
     // EXPERIMENTS
     //-------------------------------------
+    public String getExperiment(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id;
+    }
 
     public String getExpListByTeamId(String teamId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId;

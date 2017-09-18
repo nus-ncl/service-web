@@ -2045,7 +2045,16 @@ public class MainController {
     }
 
     @GetMapping(value = "/experiment_profile/{expId}")
-    public String experimentProfile(@PathVariable String expId) {
+    public String experimentProfile(@PathVariable String expId, Model model) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+        log.info("experiment profile: extract experiment");
+        Experiment2 experiment2 = extractExperiment(response.getBody().toString());
+        log.info("experiment profile: extract realization");
+        Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+
+        model.addAttribute("experiment", experiment2);
+        model.addAttribute("realization", realization);
         return "experiment_profile";
     }
 
@@ -3956,6 +3965,7 @@ public class MainController {
     }
 
     private Experiment2 extractExperiment(String experimentJson) {
+        log.info("{}", experimentJson);
         Experiment2 experiment2 = new Experiment2();
         JSONObject object = new JSONObject(experimentJson);
 
