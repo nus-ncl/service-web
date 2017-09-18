@@ -2053,8 +2053,11 @@ public class MainController {
         log.info("experiment profile: extract realization");
         Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
 
+        User2 experimentOwner = invokeAndExtractUserInfo(experiment2.getUserId());
+
         model.addAttribute("experiment", experiment2);
         model.addAttribute("realization", realization);
+        model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
         return "experiment_profile";
     }
 
