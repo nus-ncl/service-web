@@ -29,15 +29,19 @@
                 <h3 th:text="#{experimentProfile.profile}">Profile</h3>
                 <table class="table table-responsive">
                     <tr>
+                        <td><strong th:text="#{experimentProfile.experimentOwner}">Experiment Owner</strong></td>
                         <td th:text="${experiment.userId}"></td>
                     </tr>
                     <tr>
+                        <td><strong th:text="#{experimentProfile.description}">Description</strong></td>
                         <td th:text="${experiment.description}"></td>
                     </tr>
                     <tr>
+                        <td><strong th:text="#{experimentProfile.team}">Team</strong></td>
                         <td th:text="${experiment.teamName}"></td>
                     </tr>
                     <tr>
+                        <td><strong th:text="#{experimentProfile.status}">Status</strong></td>
                         <span th:if="${realization.state == 'STARTING'}"><td th:text="'Starting'"></td></span>
                         <span th:if="${realization.state == 'NOT_RUNNING'}"><td th:text="'Not Running'"></td></span>
                         <span th:if="${realization.state == 'RUNNING'}"><td th:text="'Running'"></td></span>
@@ -46,9 +50,11 @@
                         <span th:if="${realization.state == 'ERROR'}"><td th:text="'Error'"></td></span>
                     </tr>
                     <tr>
+                        <td><strong th:text="#{experimentProfile.createdDate}">Created Date</strong></td>
                         <td><span th:text="${ experiment.createdDate != '' ? #temporals.format(experiment.createdDate, 'MMM-dd-yyyy HH:mm') : '?'}"></span> GMT+08:00</td>
                     </tr>
                     <tr>
+                        <td><strong th:text="#{experimentProfile.lastModifiedDate}">Last Modified Date</strong></td>
                         <td><span th:text="${ experiment.lastModifiedDate != '' ? #temporals.format(experiment.lastModifiedDate, 'MMM-dd-yyyy HH:mm') : '?'}"></span> GMT+08:00</td>
                     </tr>
                 </table>

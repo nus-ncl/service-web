@@ -3980,6 +3980,18 @@ public class MainController {
         experiment2.setIdleSwap(object.getInt("idleSwap"));
         experiment2.setMaxDuration(object.getInt("maxDuration"));
 
+        try {
+            experiment2.setCreatedDate(object.get("createdDate").toString());
+        } catch (Exception e) {
+            experiment2.setCreatedDate("");
+        }
+
+        try {
+            experiment2.setLastModifiedDate(object.get("lastModifiedDate").toString());
+        } catch (Exception e) {
+            experiment2.setLastModifiedDate("");
+        }
+
         return experiment2;
     }
 
