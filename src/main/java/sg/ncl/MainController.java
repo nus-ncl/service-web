@@ -2044,6 +2044,11 @@ public class MainController {
         return EXPERIMENTS;
     }
 
+    @GetMapping(value = "/experiment_profile/{expId}")
+    public String experimentProfile(@PathVariable String expId) {
+        return "experiment_profile";
+    }
+
     @RequestMapping(value = "/experiments/create", method = RequestMethod.GET)
     public String createExperiment(Model model, HttpSession session) throws WebServiceRuntimeException {
         log.info("Loading create experiment page");

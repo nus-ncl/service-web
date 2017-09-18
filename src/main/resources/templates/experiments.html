@@ -43,7 +43,7 @@
                                 <th th:text="#{experiment.table.header.actions}">Actions</th>
                             </thead>
                             <tr th:each="expEntry : ${experimentList}">
-                                <td th:text="${expEntry.name}">Name</td>
+                                <td><a th:href="@{/experiment_profile/{expId}(expId=${expEntry.id})}"><span th:text="${expEntry.name}">Name</span></a></td>
                                 <td th:text="${expEntry.teamName}">Team</td>
                                 <td th:text="${realizationMap.get(expEntry.id).numberOfNodes}">Nodes</td>
                                 <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
