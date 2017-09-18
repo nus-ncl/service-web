@@ -69,12 +69,12 @@
                                         <span th:if="${realization.state == 'ERROR'}">
                                             <td th:text="'Error'"></td>
                                         </span>
-                                        <td style="text-align: center">
+                                        <td>
                                             <a href="#topoModal" data-toggle="modal"
                                                th:attr="data-title=${expEntry.name},
                                                         data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">View</a>
                                         </td>
-                                        <td style="text-align: center">
+                                        <td>
                                             <a th:href="'#'+${realization.experimentId}" data-toggle="modal">View</a>
                                             <!-- Modal -->
                                             <div class="modal fade exp-modal" th:id="${realization.experimentId}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
@@ -86,10 +86,12 @@
                                                         </div>
                                                         <div class="modal-body team-owner-info-body">
                                                             <h4>Instructions to Access Nodes</h4>
-                                                            <ul>
-                                                                <ol>SSH into <strong><span th:text="${deterUid}"></span></strong>@users.ncl.sg</ol>
-                                                                <ol>SSH into the node by using its Qualified Name, e.g. <em>n0.demoexp.project.ncl.sg</em></ol>
-                                                            </ul>
+                                                            <div class="exp-details">
+                                                                <p><strong>Step 1</strong>: <code>ssh</code> to NCL gateway:</p>
+                                                                <pre>ssh <span th:text="${deterUid}"></span>@users.ncl.sg</pre>
+                                                                <p>&nbsp;</p>
+                                                                <p><strong>Step 2</strong>: <code>ssh</code> into your experiment node using its Fully Qualified Name, for example</p>
+                                                            </div>
                                                             <h4>Info</h4>
                                                             <th:block th:if="${!realization.nodesInfoMap.isEmpty()}">
                                                                 <table class="table table-responsive table-striped">
