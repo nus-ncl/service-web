@@ -27,6 +27,37 @@
         <div class="tab-content col-sm-10">
             <div id="profile" class="tab-pane fade in active">
                 <h3 th:text="#{experimentProfile.profile}">Profile</h3>
+                <table class="table table-responsive">
+                    <tr>
+                        <td th:text="${experiment.userId}"></td>
+                    </tr>
+                    <tr>
+                        <td th:text="${experiment.description}"></td>
+                    </tr>
+                    <tr>
+                        <td th:text="${experiment.teamName}"></td>
+                    </tr>
+                    <tr>
+                        <span th:if="${realization.state == 'STARTING'}"><td th:text="'Starting'"></td></span>
+                        <span th:if="${realization.state == 'NOT_RUNNING'}"><td th:text="'Not Running'"></td></span>
+                        <span th:if="${realization.state == 'RUNNING'}"><td th:text="'Running'"></td></span>
+                        <span th:if="${realization.state == 'STOPPING'}"><td th:text="'Stopping'"></td></span>
+                        <span th:if="${realization.state == 'WARNING'}"><td th:text="'Warning'"></td></span>
+                        <span th:if="${realization.state == 'ERROR'}"><td th:text="'Error'"></td></span>
+                    </tr>
+                    <tr>
+                        <td><span th:text="${ experiment.createdDate != '' ? #temporals.format(experiment.createdDate, 'MMM-dd-yyyy HH:mm') : '?'}"></span> GMT+08:00</td>
+                    </tr>
+                    <tr>
+                        <td><span th:text="${ experiment.lastModifiedDate != '' ? #temporals.format(experiment.lastModifiedDate, 'MMM-dd-yyyy HH:mm') : '?'}"></span> GMT+08:00</td>
+                    </tr>
+                </table>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
             </div>
 
             <div id="nsFile" class="tab-pane fade">
@@ -51,7 +82,12 @@
 
             <div id="activityLog" class="tab-pane fade">
                 <h3 th:text="#{experimentProfile.activityLog}">Activity Log</h3>
-
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
             </div>
         </div> <!-- tab -->
 
