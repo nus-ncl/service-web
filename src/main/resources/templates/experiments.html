@@ -100,7 +100,6 @@
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
-                                                                        <!--<td th:text="${nodesDetailsMap.value.nodeId}"></td>-->
                                                                         <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${realization.experimentId}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
                                                                     </tr>
                                                                 </th:block>
