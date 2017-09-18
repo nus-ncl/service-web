@@ -38,7 +38,8 @@
                                 <th th:text="#{experiment.table.header.team}">Team</th>
                                 <th th:text="#{experiment.table.header.nodes.number}">Nodes</th>
                                 <th th:text="#{experiment.table.header.status}">Status</th>
-                                <th th:text="#{experiment.table.header.details}">Details</th>
+                                <th th:text="#{experiment.table.header.visualization}">Visualization</th>
+                                <th th:text="#{experiment.table.header.realization}">Realization</th>
                                 <th th:text="#{experiment.table.header.actions}">Actions</th>
                             </thead>
                             <tr th:each="expEntry : ${experimentList}">
@@ -65,6 +66,11 @@
                                         <td th:text="'Error'"></td>
                                     </span>
                                     <td>
+                                        <a href="#topoModal" data-toggle="modal"
+                                           th:attr="data-title=${expEntry.name},
+                                                    data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">View</a>
+                                    </td>
+                                    <td>
                                         <a th:href="'#'+${realization.experimentId}" data-toggle="modal">View</a>
                                         <!-- Modal -->
                                         <div class="modal fade exp-modal" th:id="${realization.experimentId}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
@@ -72,7 +78,7 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header team-owner-info-header">
                                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="btn-fa-red">&times;</span><span class="sr-only">Close</span></button>
-                                                        <h4 class="modal-title" id="expId"><span th:text="#{experiment.table.header.details}">Details</span></h4>
+                                                        <h4 class="modal-title" id="expId"><span th:text="#{experiment.table.header.realization}">Realization</span></h4>
                                                     </div>
                                                     <div class="modal-body team-owner-info-body">
                                                         <h4>Instructions to Access Nodes</h4>
@@ -107,10 +113,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        &nbsp;|&nbsp;
-                                        <a href="#topoModal" data-toggle="modal"
-                                           th:attr="data-title=${expEntry.name},
-                                                    data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">Topo</a>
                                     </td>
                                     <td>
                                         <span th:if="${realization.state == 'STARTING'}">
