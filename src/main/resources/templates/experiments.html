@@ -37,7 +37,6 @@
                                 <th th:text="#{experiment.table.header.experiment}">Experiment</th>
                                 <th th:text="#{experiment.table.header.team}">Team</th>
                                 <th th:text="#{experiment.table.header.nodes.number}">Nodes</th>
-                                <!--<th th:text="#{experiment.table.header.configuration}">Configuration</th>-->
                                 <th th:text="#{experiment.table.header.status}">Status</th>
                                 <th th:text="#{experiment.table.header.details}">Details</th>
                                 <th th:text="#{experiment.table.header.actions}">Actions</th>
@@ -46,12 +45,6 @@
                                 <td th:text="${expEntry.name}">Name</td>
                                 <td th:text="${expEntry.teamName}">Team</td>
                                 <td th:text="${realizationMap.get(expEntry.id).numberOfNodes}">Nodes</td>
-                                <!--<td><a href="#" th:href="@{/experiments/configuration/{expId}(expId=${expEntry.experimentId})}">View</a></td>-->
-                                <!--<td>-->
-                                	<!--<span th:if="${expEntry.status == 'STOPPED'}" th:classappend="expStatusStop" th:text="${expEntry.status}"></span>-->
-                                	<!--<span th:if="${expEntry.status == 'READY'}" th:classappend="expStatusReady" th:text="${expEntry.status}"></span>-->
-                                	<!--&lt;!&ndash; TODO need to cater for ALLOCATING and ERROR &ndash;&gt;-->
-                                <!--</td>-->
                                 <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
                                     <span th:if="${realization.state == 'STARTING'}">
                                         <td th:text="'Starting'"></td>
@@ -110,16 +103,6 @@
                                                         <th:block th:if="${realization.nodesInfoMap.isEmpty()}">
                                                             <p th:text="#{form.expNotStarted}"></p>
                                                         </th:block>
-                                                        <!--<th:block th:if="${realization.details != 'null'}">-->
-                                                            <!--<form action="#">-->
-                                                                <!--<textarea th:text="${realization.details}" class="realization" rows="30" cols="100"></textarea>-->
-                                                            <!--</form>-->
-                                                        <!--</th:block>-->
-                                                        <!--<th:block th:if="${realization.details == 'null'}">-->
-                                                            <!--<form action="#">-->
-                                                                <!--<textarea th:text="#{form.expNotStarted}" class="realization" rows="30" cols="100"></textarea>-->
-                                                            <!--</form>-->
-                                                        <!--</th:block>-->
                                                     </div>
                                                 </div>
                                             </div>
