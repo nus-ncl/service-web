@@ -2520,30 +2520,37 @@ public class MainController {
         }
     }
 
-    @RequestMapping(value = "/request_internet/{teamId}/{expId}", method = RequestMethod.POST)
-    public String internetRequest(@PathVariable String teamId,
+    @RequestMapping(value = "/request_internet/{teamName}/{teamId}/{expId}", method = RequestMethod.POST)
+    public String internetRequest(@PathVariable String teamName,
+                                  @PathVariable String teamId,
                                   @PathVariable String expId,
                                   @ModelAttribute InternetRequestForm internetRequestForm,
                                   final RedirectAttributes redirectAttributes
                                  ) throws WebServiceRuntimeException {
 
-        log.info("it has gone into post method");
-
-
-        JSONObject requestObject = new JSONObject();
-        requestObject.put("reason", internetRequestForm.getReason());
-
-
-        HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-
-        try {
-            ResponseEntity response = restTemplate.exchange(properties.requestInternetExperiment(teamId, expId),
-                    HttpMethod.POST, request, String.class);
-        }  catch (Exception e) {
-            log.warn("error: {}", e.getMessage());
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+        if(!realization.getState().equals(RealizationState.RUNNING.toString())) {
+            log.warn("Trying to request internet for Team: {}, Experiment: {} with State: {}", teamName, expId, realization.getState());
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for experiment: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
+            return "redirect:/experiments";
         }
 
+        log.info("Requesting internet access: at " + properties.requestInternetExperiment(teamId, expId));
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("reason", internetRequestForm.getReason());
+        try {
+            HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+            ResponseEntity response = restTemplate.exchange(properties.requestInternetExperiment(teamId, expId),
+                                                            HttpMethod.POST, request, String.class);
+        }  catch (Exception e) {
+            log.warn("Error requesting internet access: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for experiment: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
+            return "redirect:/experiments";
+        }
+
+        log.info("Requesting internet acess is successful for Team: {}, Experiment: {}", teamName, expId);
+        redirectAttributes.addFlashAttribute("internet_access_message", "Your request has been successful for Experiment: " + realization.getExperimentName());
         return "redirect:/experiments";
     }
 
