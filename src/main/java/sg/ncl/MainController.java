@@ -2049,16 +2049,24 @@ public class MainController {
     public String experimentProfile(@PathVariable String expId, Model model) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+
         log.info("experiment profile: extract experiment");
         Experiment2 experiment2 = extractExperiment(response.getBody().toString());
+
         log.info("experiment profile: extract realization");
         Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
 
         User2 experimentOwner = invokeAndExtractUserInfo(experiment2.getUserId());
 
+        // get activity log
+        ResponseEntity activityLogResponse = restTemplate.exchange(properties.getActivityLog(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
+        log.info("experiment profile - activity log: {}", activityLogResponse.getBody().toString());
+
+
         model.addAttribute("experiment", experiment2);
         model.addAttribute("realization", realization);
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
+        model.addAttribute("activityLog", new JSONObject(activityLogResponse.getBody().toString()));
         return "experiment_profile";
     }
 

@@ -215,6 +215,13 @@
     color: #73c20e;
 }
 
+/* experiment profile activity log to allow vertical scroll */
+pre {
+    height: auto;
+    max-height: 600px;
+    overflow: auto;
+}
+
 /* experiment instructions to ssh into nodes */
 .exp-details {
     margin-left: 20px;
