@@ -90,7 +90,9 @@
                                                                 <p><strong>Step 1</strong>: <code>ssh</code> to NCL gateway:</p>
                                                                 <pre>ssh <span th:text="${deterUid}"></span>@users.ncl.sg</pre>
                                                                 <p>&nbsp;</p>
-                                                                <p><strong>Step 2</strong>: <code>ssh</code> into your experiment node using its Fully Qualified Name, for example</p>
+                                                                <p><strong>Step 2</strong>: <code>ssh</code> into your experiment node using its Qualified Name, for example:</p>
+                                                                <pre>ssh <span th:text="${!realization.nodesInfoMap.isEmpty()} ? ${realization.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg' "></span></pre>
+                                                                <p>&nbsp;</p>
                                                             </div>
                                                             <h4>Info</h4>
                                                             <th:block th:if="${!realization.nodesInfoMap.isEmpty()}">
