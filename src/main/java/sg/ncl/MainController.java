@@ -2525,11 +2525,11 @@ public class MainController {
                                  ) throws WebServiceRuntimeException {
 
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
-        if(!realization.getState().equals(RealizationState.RUNNING.toString())) {
-            log.warn("Trying to request internet for Experiment: {}, from Team: {} with State: {}", expId, teamName,realization.getState());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for Experiment: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
-            return "redirect:/experiments";
-        }
+       // if(!realization.getState().equals(RealizationState.RUNNING.toString())) {
+       //     log.warn("Trying to request internet for the experiment {} from team {} with state: {}", expId, teamName,realization.getState());
+       //     redirectAttributes.addFlashAttribute(MESSAGE, "Experiment " + realization.getExperimentName() + " need to be started before you can request for internet access" );
+       //     return "redirect:/experiments";
+       // }
 
         log.info("Requesting internet access: at " + properties.requestInternetExperiment(teamId, expId));
         JSONObject requestObject = new JSONObject();
@@ -2539,15 +2539,15 @@ public class MainController {
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             ResponseEntity response = restTemplate.exchange(properties.requestInternetExperiment(teamId, expId),
                                                             HttpMethod.POST, request, String.class);
+            log.info("Requesting internet access is successful for the experiment {}", expId);
+            redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Your request has been successful for the experiment: " + realization.getExperimentName());
+            return "redirect:/experiments";
+
         }  catch (Exception e) {
             log.warn("Error requesting internet access: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for Experiment: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for the experiment: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
-
-        log.info("Requesting internet access is successful for Experiment: {}", expId);
-        redirectAttributes.addFlashAttribute("internet_access_message", "Your request has been successful for Experiment: " + realization.getExperimentName());
-        return "redirect:/experiments";
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {

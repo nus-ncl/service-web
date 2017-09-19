@@ -4,6 +4,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>National Cybersecurity Laboratories - Experiment</title>
         <object th:include="fragments/header :: header" th:remove="tag" />
+        <style>
+            .keep-left {
+                text-align: left;
+            }
+        </style>
     </head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
@@ -252,23 +257,24 @@
 
                 <div class="modal-content">
                     <form method="post" action="#" role="form" id="internetRequestForm" th:object="${internetRequestForm}">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Request From</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="reason" class="control-label">
-                                Please specify node names and reason for internet access request.<br/>
-                                The internet access is only available in current running experiment.
-                            </label>
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Request From</h4>
                         </div>
-                        <textarea class ="form-control" th:placeholder="#{form.internetReason}" th:field="*{reason}"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="internetButton">Submit</button>
-                    </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="reason" class="control-label">
+                                    Please specify node names and reason for internet access request.*
+                                </label>
+                            </div>
+                            <textarea class ="form-control" th:placeholder="#{form.internetReason}" th:field="*{reason}"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="keep-left">* The internet access is only available in current running experiment.</div>
+                            <br/>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="internetButton">Submit</button>
+                        </div>
                     </form>
                 </div>
             </div>
