@@ -2530,8 +2530,8 @@ public class MainController {
 
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
         if(!realization.getState().equals(RealizationState.RUNNING.toString())) {
-            log.warn("Trying to request internet for Team: {}, Experiment: {} with State: {}", teamName, expId, realization.getState());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for experiment: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
+            log.warn("Trying to request internet for Experiment: {}, from Team: {} with State: {}", expId, teamName,realization.getState());
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for Experiment: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
 
@@ -2545,11 +2545,11 @@ public class MainController {
                                                             HttpMethod.POST, request, String.class);
         }  catch (Exception e) {
             log.warn("Error requesting internet access: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for experiment: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for Experiment: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
             return "redirect:/experiments";
         }
 
-        log.info("Requesting internet acess is successful for Team: {}, Experiment: {}", teamName, expId);
+        log.info("Requesting internet access is successful for Experiment: {}", expId);
         redirectAttributes.addFlashAttribute("internet_access_message", "Your request has been successful for Experiment: " + realization.getExperimentName());
         return "redirect:/experiments";
     }
