@@ -16,6 +16,9 @@
             <div class="alert alert-danger" th:if="${message}">
                 <h4 th:utext="${message}"></h4>
             </div>
+            <div class="alert alert-success" th:if="${success}">
+                <h4 th:utext="${'Your request has been sent to ' + dataset.contributor.firstName + ' ' + dataset.contributor.lastName + ' for processing. You will be notified via email if your request is approved.'}"></h4>
+            </div>
             <form method="post" action="#" th:action="${dataset.id == null ? '/data/contribute' : '/data/contribute/' + dataset.id}" th:object="${dataset}" role="form">
                 <fieldset th:if="${editable != null}">
                     <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>

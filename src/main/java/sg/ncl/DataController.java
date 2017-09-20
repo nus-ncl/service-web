@@ -324,6 +324,7 @@ public class DataController extends MainController {
                 }
             } else {
                 log.info("Dataset access requested: {}", dataResponseBody);
+                redirectAttributes.addFlashAttribute("success", true);
             }
         } catch (IOException e) {
             log.error("requestDataset: {}", e.toString());
