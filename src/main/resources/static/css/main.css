@@ -218,7 +218,7 @@
 /* experiment profile activity log to allow vertical scroll */
 pre {
     height: auto;
-    max-height: 600px;
+    max-height: 400px;
     overflow: auto;
 }
 
