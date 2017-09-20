@@ -2062,11 +2062,16 @@ public class MainController {
         ResponseEntity activityLogResponse = restTemplate.exchange(properties.getActivityLog(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
         log.info("experiment profile - activity log: {}", activityLogResponse.getBody().toString());
 
+        // get ns file
+        ResponseEntity nsFileResponse = restTemplate.exchange(properties.getNSFile(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
+        log.info("experiment profile - ns file: {}", nsFileResponse.getBody().toString());
+
 
         model.addAttribute("experiment", experiment2);
         model.addAttribute("realization", realization);
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
         model.addAttribute("activityLog", new JSONObject(activityLogResponse.getBody().toString()));
+        model.addAttribute("nsFile", new JSONObject(nsFileResponse.getBody().toString()));
         return "experiment_profile";
     }
 
