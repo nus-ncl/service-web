@@ -155,6 +155,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id;
     }
 
+    public String getExperimentDetails(String teamId, String expId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId + "/experimentDetails";
+    }
+
     public String getNSFile(String teamId, String expId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId + "/nsFile";
     }
