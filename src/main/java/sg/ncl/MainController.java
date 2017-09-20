@@ -2534,20 +2534,30 @@ public class MainController {
         log.info("Requesting internet access at " + properties.requestInternetExperiment(teamId, expId));
         JSONObject requestObject = new JSONObject();
         requestObject.put("reason", internetRequestForm.getReason());
+
         try {
             HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             ResponseEntity response = restTemplate.exchange(properties.requestInternetExperiment(teamId, expId),
-                                                            HttpMethod.POST, request, String.class);
-            log.info("Requesting internet access is successful for the experiment {}", expId);
-            redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Your request has been successful for the experiment " + realization.getExperimentName());
-            return "redirect:/experiments";
+                                             HttpMethod.POST, request, String.class);
+            String responseBody = response.getBody().toString();
 
-        }  catch (Exception e) {
-            log.warn("Error requesting internet access: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to request internet for the experiment " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
-            return "redirect:/experiments";
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                log.warn("Error connecting to sio experiment service for sending email: {}", exceptionState);
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            } else {
+                log.info("Requesting internet access is successful for the experiment {}", expId);
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Your request has been successful for the experiment " + realization.getExperimentName());
+            }
+
+        } catch (IOException e) {
+            log.warn("Error connecting to sio exp service for sending email: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            throw new WebServiceRuntimeException(e.getMessage());
         }
+        return "redirect:/experiments";
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
