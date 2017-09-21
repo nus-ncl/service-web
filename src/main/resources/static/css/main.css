@@ -1749,6 +1749,9 @@ table {
      list-style: none;
 }
 
+/* for admin node status page*/
+
+
 .blue-tick {
     color: #5890ff;
 }

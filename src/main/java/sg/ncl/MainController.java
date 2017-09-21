@@ -321,9 +321,10 @@ public class MainController {
         Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
         Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
 
-        // loop through each of the machine type
-        // tabulate the different nodes type
-        // count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        /* loop through each of the machine type
+           tabulate the different nodes type
+           count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        */
         nodesStatus.entrySet().forEach(machineTypeListEntry -> {
             Map<String, Long> nodesCountMap = new HashMap<>();
 
@@ -2955,6 +2956,59 @@ public class MainController {
         return "energy_usage";
     }
 
+    @RequestMapping("/admin/nodesStatus")
+    public String adminNodesStatus(Model model, HttpSession session) throws IOException {
+
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+
+        // get number of active users and running experiments
+        Map<String, String> testbedStatsMap = getTestbedStats();
+        testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, "0");
+        testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, "0");
+
+        Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
+        Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
+
+        /*
+         loop through each of the machine type
+         tabulate the different nodes type
+         count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        */
+        nodesStatus.entrySet().forEach(machineTypeListEntry -> {
+            Map<String, Long> nodesCountMap = new HashMap<>();
+
+            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long total = free + inUse + reserved + reload;
+            long currentTotal = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES)) + total;
+            long currentFree = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_FREE_NODES)) + free;
+
+            nodesCountMap.put(NodeType.FREE.name(), free);
+            nodesCountMap.put(NodeType.IN_USE.name(), inUse);
+            nodesCountMap.put(NodeType.RESERVED.name(), reserved);
+            nodesCountMap.put(NodeType.RELOADING.name(), reload);
+
+
+            nodesStatusCount.put(machineTypeListEntry.getKey(), nodesCountMap);
+            testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, Long.toString(currentFree));
+            testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, Long.toString(currentTotal));
+        });
+
+        model.addAttribute("nodesStatus", nodesStatus);
+        model.addAttribute("nodesStatusCount", nodesStatusCount);
+
+        model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
+        model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
+        model.addAttribute(USER_DASHBOARD_FREE_NODES, testbedStatsMap.get(USER_DASHBOARD_FREE_NODES));
+        model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
+        return "node_status";
+    }
+
     /**
      * Get simple ZonedDateTime from date string in the format 'YYYY-MM-DD'.
      * @param date  date string to convert
@@ -4419,7 +4473,7 @@ public class MainController {
             return new HashMap<>();
         }
 
-        log.info("Finish getting all nodes: {}", output);
+        log.debug("Finish getting all nodes: {}", output);
 
         return output;
     }
