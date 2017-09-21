@@ -77,7 +77,7 @@ public class Dataset implements Serializable {
     }
 
     public boolean isDownloadable(String userId) {
-	    return !(accessibility == DataAccessibility.QUARANTINED) && isAccessible(userId);
+	    return accessibility != DataAccessibility.QUARANTINED && isAccessible(userId);
     }
 
     public boolean isContributor(String userId) {
