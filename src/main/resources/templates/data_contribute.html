@@ -62,12 +62,20 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <div class="checkbox">
+                        <!-- div class="checkbox">
                             <label><input type="checkbox" th:field="*{accessibility}" th:value="RESTRICTED"/><strong><span th:text="#{admin.contributeData.auth}">Require Authorization?</span></strong></label>
                             <p>
-                                <em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Select it if you want to review every access request to this dataset.</span>
-                                    <br/><!-- span th:text="#{admin.contributeData.authDesc2}">Otherwise, users can just download your dataset without your authorization</span --></em>
+                                <em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Select it if you want to review every access request to this dataset.</span><br/></em>
                             </p>
+                        </div -->
+                        <div class="radio">
+                            <label><input type="radio" th:field="*{accessibility}" th:value="OPEN"/><strong><span th:text="#{admin.contributeData.open}"></span></strong> <em th:text="#{admin.contributeData.openDesc}"></em></label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" th:field="*{accessibility}" th:value="RESTRICTED"/><strong><span th:text="#{admin.contributeData.restricted}"></span></strong> <em th:text="#{admin.contributeData.restrictedDesc}"></em></label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" th:field="*{accessibility}" th:value="QUARANTINED"/><strong><span th:text="#{admin.contributeData.quarantined}"></span></strong> <em th:text="#{admin.contributeData.quarantinedDesc}"></em></label>
                         </div>
                     </div>
                     <div class="form-group">

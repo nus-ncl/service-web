@@ -11,7 +11,6 @@
 		<p>&nbsp;</p>
 		<p>&nbsp;</p>
 		<div class="container ">
-
 			<p>&nbsp;</p>
 			<div class="row dashpanel">
 				<div th:if="${message}">
@@ -36,7 +35,7 @@
                                         data-uri=${dataresource.uri},
                                         data-delete=@{/data/{did}/resources/{rid}/delete(did=${dataset.id},rid=${dataresource.id})}"
 									th:if="${dataset.isContributor(#httpSession.getAttribute('id').toString())}"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
-                            <a class="btn btn-standard" href ="#" th:href="@{/data/{did}/resources/{rid}(did=${dataset.id},rid=${dataresource.id})}" th:if="${dataset.isAccessible(#httpSession.getAttribute('id').toString())}">Download</a>
+                            <a class="btn btn-standard" href ="#" th:href="@{/data/{did}/resources/{rid}(did=${dataset.id},rid=${dataresource.id})}" th:if="${dataset.isDownloadable(#httpSession.getAttribute('id').toString())}">Download</a>
 						</td>
 					</tr>
 				</table>

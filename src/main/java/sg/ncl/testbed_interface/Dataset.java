@@ -76,6 +76,10 @@ public class Dataset implements Serializable {
         return isOpen() || isContributor(userId) || isApprovedUser(userId);
     }
 
+    public boolean isDownloadable(String userId) {
+	    return !(accessibility == DataAccessibility.QUARANTINED) && isAccessible(userId);
+    }
+
     public boolean isContributor(String userId) {
 	    return contributorId.equals(userId);
     }

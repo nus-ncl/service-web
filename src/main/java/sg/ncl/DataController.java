@@ -745,9 +745,13 @@ public class DataController extends MainController {
      * [3] http://stackoverflow.com/questions/32988370/download-large-file-from-server-using-rest-template-java-spring-mvc
      */
     @RequestMapping(value="{datasetId}/resources/{resourceId}", method=RequestMethod.GET)
-    public void getResource(@PathVariable String datasetId,
-                            @PathVariable String resourceId,
-                            final HttpServletResponse httpResponse) throws UnsupportedEncodingException {
+    public void getResource(@PathVariable String datasetId, @PathVariable String resourceId, HttpSession session,
+                            final HttpServletResponse httpResponse) throws UnsupportedEncodingException, WebServiceRuntimeException {
+        Dataset dataset = invokeAndExtractDataInfo(Long.valueOf(datasetId));
+        if (!dataset.isDownloadable(session.getAttribute("id").toString())) {
+            throw new WebServiceRuntimeException("Resource download denied!");
+        }
+
         try {
             // Optional Accept header
             RequestCallback requestCallback = request -> {
