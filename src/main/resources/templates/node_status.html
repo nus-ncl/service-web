@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <style>
+        #nodeStatusTable tbody td {
+            padding: 1px 10px;
+        }
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>National Cybersecurity Laboratories - Testbed Nodes Status</title>
     <object th:include="fragments/header :: header" th:remove="tag" />
@@ -67,7 +72,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <table id="nodeStatusTable1" class="table table-responsive">
+                                <table id="nodeStatusTable" class="table table-responsive">
                                     <thead>
                                         <tr>
                                             <th th:text="#{admin.nodeStatus.header.id}">Node ID</th>
@@ -82,10 +87,10 @@
                                             <td><span th:text="${node.id}"></span></td>
                                             <td>
                                                 <span>
-                                                    <img th:if="${node.status == 'in_use'}" src="/images/ServerInUse.png" width="35" height="35" class="nowrap"/>
-                                                    <img th:if="${node.status == 'free'}" src="/images/ServerFree.png" width="35" height="35" class="nowrap"/>
-                                                    <img th:if="${node.status == 'reserved'}" src="/images/ServerReserved.png" width="35" height="35" class="nowrap"/>
-                                                    <img th:if="${node.status == 'reload'}" src="/images/ServerUn.png" width="35" height="35" class="nowrap"/>
+                                                    <img th:if="${node.status == 'in_use'}" src="/images/ServerInUse.png" width="19" height="19" class="nowrap"/>
+                                                    <img th:if="${node.status == 'free'}" src="/images/ServerFree.png" width="19" height="19" class="nowrap"/>
+                                                    <img th:if="${node.status == 'reserved'}" src="/images/ServerReserved.png" width="19" height="19" class="nowrap"/>
+                                                    <img th:if="${node.status == 'reload'}" src="/images/ServerUn.png" width="19" height="19" class="nowrap"/>
                                                 </span>
                                             </td>
                                             <td><span th:text="${node.pid}"></span></td>
@@ -139,7 +144,9 @@
 <script>
     $(document).ready(function () {
         //-----------------admin sort table -------------
-        $('.table').dataTable();
+        $('#nodeStatusTable').dataTable({
+            "pageLength": 100
+        });
     })
 </script>
 </html>
