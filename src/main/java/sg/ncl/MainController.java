@@ -4456,7 +4456,7 @@ public class MainController {
             return new HashMap<>();
         }
 
-        log.info("Finish getting all nodes: {}", output);
+        log.debug("Finish getting all nodes: {}", output);
 
         return output;
     }
