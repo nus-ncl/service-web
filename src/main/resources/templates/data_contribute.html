@@ -1,201 +1,257 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Contribute data</title>
-        <object th:include="fragments/header :: header" th:remove="tag" />
-    </head>
-    <body class="mybg loginbackground">
-        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Contribute data</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+</head>
+<body class="mybg loginbackground">
+    <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="container">
         <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <div class="container">
-
-            <p>&nbsp;</p>
-            <div class="row dashpanel">
-                <div class="alert alert-danger" th:if="${message}">
-                    <h4 th:utext="${message}"></h4>
-                </div>
-                <form  method="post" action="#" th:action="${dataset.id == null ? '/data/contribute' : '/data/contribute/' + dataset.id}" th:object="${dataset}" role="form">
-                    <fieldset>
-                        <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
-                        <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? has-error">
-                            <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{name}"  th:readonly="${dataset.id != null}"/>
-                        </div>
-                        <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? has-error">
-                            <textarea class="form-control" rows="5" placeholder="Please give a detailed description about the dataset. You may also put up data samples here." th:field="*{description}"></textarea>
-                        </div>
-                        <div class="form-group" th:classappend="${#fields.hasErrors('keywords')} ? has-error">
-                            <input type="text" class="form-control" placeholder="Enter keywords, separated by comma" th:field="*{keywords}"/>
-                        </div>
-                        <div class="form-group" th:classappend="${#fields.hasErrors('categoryId')} ? has-error">
-                            <div class="input-group">
-                                <select class="form-control" th:field="*{categoryId}">
-                                    <option th:value="0" th:text="#{admin.contributeData.selectCategory}"></option>
-                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-                                </select>
-                                <div class="input-group-addon">
-                                    <a href="#categoryDescModal" data-toggle="modal">
-                                        <i class="fa fa-info-circle"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="radio">
-                                <label><input type="radio" th:field="*{visibility}" th:value="PUBLIC"/><strong><span th:text="#{admin.contributeData.public}">Public</span></strong> <em><span th:text="#{admin.contributeData.publicDesc}">Dataset info will be shown on "Public Datasets" page.</span></em></label>
-                            </div>
-                            <div class="radio">
-                                <label><input type="radio" th:field="*{visibility}" th:value="PROTECTED"/><strong><span th:text="#{admin.contributeData.protected}">Protected</span></strong> <em><span th:text="#{admin.contributeData.protectedDesc}">Only logged in users can view this dataset info.</span></em></label>
-                            </div>
-                            <!-- div class="radio">
-                                <label><input type="radio" th:field="*{visibility}" th:value="PRIVATE"/><strong><span th:text="#{admin.contributeData.private}">Private</span></strong> <em><span th:text="#{admin.contributeData.privateDesc}">The dataset is private.</span></em></label>
-                            </div -->
-                        </div>
-                        <div class="form-group" th:classappend="${#fields.hasErrors('licenseId')} ? has-error">
-                            <select class="form-control" th:field="*{licenseId}">
-                                <option th:value="0" th:text="#{admin.contributeData.selectLicense}"></option>
-                                <option th:each="license : ${licenses}" th:value="${license.id}" th:text="${license.name + ' (' + license.acronym + ')'}"></option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label><input type="checkbox" th:field="*{accessibility}" th:value="RESTRICTED"/><strong><span th:text="#{admin.contributeData.auth}">Require Authorization?</span></strong></label>
-                                <p>
-                                	<em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Select it if you want to review every access request to this dataset.</span>
-                                	<br/><!-- span th:text="#{admin.contributeData.authDesc2}">Otherwise, users can just download your dataset without your authorization</span --></em>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-standard">Save</button>
-                            <button type="button" class="btn btn-danger" th:if="*{id != null}"
-                                    data-toggle="modal" data-target="#deleteModal"
-                                    th:attr="data-name=${data.name},
-							            data-desc=${data.description},
-							            data-keywords=${data.keywords},
-							            data-category=${data.category.name},
-                                        data-license=${data.license.name},
-                                        data-owner=${data.contributor.firstName + ' ' + data.contributor.lastName},
-                                	    data-release=${dataset.getReleasedDateString()},
-                                        data-visible=${#strings.capitalize(#strings.toLowerCase(dataset.visibility))},
-                                        data-access=${#strings.capitalize(#strings.toLowerCase(dataset.accessibility))},
-                                        data-delete=@{/data/remove/{id}(id=${data.id})}">Delete</button>
-                            <input type="hidden" th:field="*{contributorId}" th:if="*{id != null}"/>
-                        </div>
-                    </fieldset>
-                </form>
-                <br/><br/>
-                <a href="data_licenses_info.html" th:href="@{~/data/licensesInfo}" target="_blank"><navsmall>Click here for more detailed license info</navsmall></a>
-            </div> <!-- row -->
-            <div class="cc-wraper">
-                <div class="cc-contactpop fixed">
-                    <h1>Do you need Help? <span>Get in touch.</span></h1>
-                    <div class="renseignement">
-                        <i class="fa fa-times"></i>
-                        <p>We will get back to you as soon as possible. </p>
+        <div class="row dashpanel">
+            <div class="alert alert-danger" th:if="${message}">
+                <h4 th:utext="${message}"></h4>
+            </div>
+            <div class="alert alert-success" th:if="${success}">
+                <h4 th:utext="${'Your request has been sent to ' + dataset.contributor.firstName + ' ' + dataset.contributor.lastName + ' for processing. You will be notified via email if your request is approved.'}"></h4>
+            </div>
+            <form method="post" action="#" th:action="${dataset.id == null ? '/data/contribute' : '/data/contribute/' + dataset.id}" th:object="${dataset}" role="form">
+                <fieldset th:if="${editable != null}">
+                    <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? has-error">
+                        <input type="text" class="form-control" placeholder="Enter Dataset Name" th:field="*{name}" th:readonly="${dataset.id != null}"/>
                     </div>
-                    <form>
-                        <ul>
-                            <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
-                            <li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
-                            <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
-                        </ul>
-                        <p>&nbsp;</p>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? has-error">
+                        <textarea class="form-control" rows="5" placeholder="Please give a detailed description about the dataset. You may also put up data samples here." th:field="*{description}"></textarea>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('keywords')} ? has-error">
+                        <input type="text" class="form-control" placeholder="Enter keywords, separated by comma" th:field="*{keywords}"/>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('categoryId')} ? has-error">
+                        <div class="input-group">
+                            <select class="form-control" th:field="*{categoryId}">
+                                <option th:value="0" th:text="#{admin.contributeData.selectCategory}"></option>
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                            </select>
+                            <div class="input-group-addon">
+                                <a href="#categoryDescModal" data-toggle="modal">
+                                    <i class="fa fa-info-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="radio">
+                            <label><input type="radio" th:field="*{visibility}" th:value="PUBLIC"/><strong><span th:text="#{admin.contributeData.public}">Public</span></strong> <em><span th:text="#{admin.contributeData.publicDesc}">Dataset info will be shown on "Public Datasets" page.</span></em></label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" th:field="*{visibility}" th:value="PROTECTED"/><strong><span th:text="#{admin.contributeData.protected}">Protected</span></strong> <em><span th:text="#{admin.contributeData.protectedDesc}">Only logged in users can view this dataset info.</span></em></label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" th:field="*{visibility}" th:value="PRIVATE"/><strong><span th:text="#{admin.contributeData.private}">Private</span></strong> <em><span th:text="#{admin.contributeData.privateDesc}">The dataset is private.</span></em></label>
+                        </div>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('licenseId')} ? has-error">
+                        <select class="form-control" th:field="*{licenseId}">
+                            <option th:value="0" th:text="#{admin.contributeData.selectLicense}"></option>
+                            <option th:each="license : ${licenses}" th:value="${license.id}" th:text="${license.name + ' (' + license.acronym + ')'}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label><input type="checkbox" th:field="*{accessibility}" th:value="RESTRICTED"/><strong><span th:text="#{admin.contributeData.auth}">Require Authorization?</span></strong></label>
+                            <p>
+                                <em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Select it if you want to review every access request to this dataset.</span>
+                                    <br/><!-- span th:text="#{admin.contributeData.authDesc2}">Otherwise, users can just download your dataset without your authorization</span --></em>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-standard">Save</button>
+                        <button type="button" class="btn btn-danger" th:if="*{id != null}"
+                                data-toggle="modal" data-target="#deleteModal"
+                                th:attr="data-name=${data.name},
+                                            data-desc=${data.description},
+                                            data-keywords=${data.keywords},
+                                            data-category=${data.category.name},
+                                            data-license=${data.license.name},
+                                            data-owner=${data.contributor.firstName + ' ' + data.contributor.lastName},
+                                            data-release=${dataset.getReleasedDateString()},
+                                            data-visible=${#strings.capitalize(#strings.toLowerCase(dataset.visibility))},
+                                            data-access=${#strings.capitalize(#strings.toLowerCase(dataset.accessibility))},
+                                            data-delete=@{/data/remove/{id}(id=${data.id})}">Delete</button>
+                        <input type="hidden" th:field="*{contributorId}" th:if="*{id != null}"/>
+                    </div>
+                </fieldset>
+                <fieldset th:if="${editable == null}">
+                    <h2 class="team-heading team-heading-current-team" th:text="#{dataset.public.page.header}">Dataset Information</h2>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Dataset Name" th:field="*{name}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Dataset Name"/>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="5" placeholder="Detailed Description" th:field="*{description}"
+                                  th:readonly="true" data-toggle="tooltip" data-placement="right" title="Detailed Description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Keywords" th:field="*{keywords}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Keywords"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Category" th:value="${dataset.category.name + ' - ' + dataset.category.description}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Category"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="License" th:value="${dataset.license.name + ' (' + dataset.license.acronym + ')'}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="License"/>
+                    </div>
+                    <div class="form-group" th:switch="${dataset.accessibility.toString()}">
+                        <input th:case="'OPEN'" type="text" class="form-control" placeholder="Accessibility" th:value="#{admin.contributeData.open} +  ' - ' + #{admin.contributeData.openDesc}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Accessibility"/>
+                        <input th:case="'RESTRICTED'" type="text" class="form-control" placeholder="Accessibility" th:value="#{admin.contributeData.restricted} +  ' - ' + #{admin.contributeData.restrictedDesc}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Accessibility"/>
+                        <input th:case="'QUARANTINED'" type="text" class="form-control" placeholder="Accessibility" th:value="#{admin.contributeData.quarantined} +  ' - ' + #{admin.contributeData.quarantinedDesc}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="Accessibility"/>
+                    </div>
+                </fieldset>
+            </form>
+            <div th:if="${data != null}">
+                <hr/>
+                <div th:if="${data.isAccessible(#httpSession.getAttribute('id').toString())}">
+                    <a th:href="${'/data/' + data.id + '/resources'}" class="btn btn-primary" id="uploadButton">Access Resources</a>
+                </div>
+                <div th:if="not ${data.isAccessible(#httpSession.getAttribute('id').toString())}">
+                    <form method="post" action="#" th:action="${'/data/' + data.id + '/request'}" role="form" id="requestForm" th:object="${requestForm}">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="reason" class="control-label">
+                                    Please state the reason for your request to the owner
+                                    <u><span th:text="${data.getContributor().getFirstName() + ' ' + data.getContributor().getLastName()}"></span></u>
+                                    for access to the resources of dataset <u><span th:text="${data.getName()}"></span></u>:
+                                </label>
+                                <textarea class="form-control" rows="5" th:field="*{reason}"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary" id="requestButton">Request</button>
+                            </div>
+                        </fieldset>
                     </form>
                 </div>
             </div>
-        </div> <!-- container -->
+            <br/><br/>
+            <a href="data_licenses_info.html" th:href="@{~/data/licensesInfo}" target="_blank"><navsmall>Click here for more detailed license info</navsmall></a>
+        </div> <!-- row -->
+        <div class="cc-wraper">
+            <div class="cc-contactpop fixed">
+                <h1>Do you need Help? <span>Get in touch.</span></h1>
+                <div class="renseignement">
+                    <i class="fa fa-times"></i>
+                    <p>We will get back to you as soon as possible. </p>
+                </div>
+                <form>
+                    <ul>
+                        <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+                        <li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
+                        <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                    </ul>
+                    <p>&nbsp;</p>
+                </form>
+            </div>
+        </div>
+    </div> <!-- container -->
 
-        <!-- Confirm Delete Modal -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="deleteLabel">Delete?</h4>
+    <!-- Confirm Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="deleteLabel">Delete?</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">Description:</div>
+                        <div class="col-md-8" id="datasetDesc"></div>
                     </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-4">Description:</div>
-                            <div class="col-md-8" id="datasetDesc"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">Keywords:</div>
-                            <div class="col-md-8" id="datasetKeywords"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">Category:</div>
-                            <div class="col-md-8" id="datasetCategory"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">License:</div>
-                            <div class="col-md-8" id="datasetLicense"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">Owner:</div>
-                            <div class="col-md-8" id="datasetOwner"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">Release:</div>
-                            <div class="col-md-8" id="datasetRelease"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">Visibility:</div>
-                            <div class="col-md-8" id="datasetVisible"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">Accessibility:</div>
-                            <div class="col-md-8" id="datasetAccess"></div>
-                        </div>
+                    <div class="row">
+                        <div class="col-md-4">Keywords:</div>
+                        <div class="col-md-8" id="datasetKeywords"></div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <a href="#" class="btn btn-primary" id="deleteButton">Delete</a>
+                    <div class="row">
+                        <div class="col-md-4">Category:</div>
+                        <div class="col-md-8" id="datasetCategory"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">License:</div>
+                        <div class="col-md-8" id="datasetLicense"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Owner:</div>
+                        <div class="col-md-8" id="datasetOwner"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Release:</div>
+                        <div class="col-md-8" id="datasetRelease"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Visibility:</div>
+                        <div class="col-md-8" id="datasetVisible"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Accessibility:</div>
+                        <div class="col-md-8" id="datasetAccess"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <a href="#" class="btn btn-primary" id="deleteButton">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Descriptions Modal -->
+    <div class="modal fade" id="categoryDescModal" tabindex="-1" role="dialog" aria-labelledby="categoryDescModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="categoryDescLabel">Category Descriptions</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" th:each="category, iterStat : ${categories}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
+                        <div class="col-md-3" th:text="${category.name}"></div>
+                        <div class="col-md-9" th:text="${category.description}"></div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Category Descriptions Modal -->
-        <div class="modal fade" id="categoryDescModal" tabindex="-1" role="dialog" aria-labelledby="categoryDescModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="categoryDescLabel">Category Descriptions</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row" th:each="category, iterStat : ${categories}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
-                            <div class="col-md-3" th:text="${category.name}"></div>
-                            <div class="col-md-9" th:text="${category.description}"></div>
-                        </div>
+    <!-- License Descriptions Modal -->
+    <div class="modal fade" id="licenseDescModal" tabindex="-1" role="dialog" aria-labelledby="licenseDescModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="licenseDescLabel">License Descriptions</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row" th:each="license, iterStat : ${licenses}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
+                        <div class="col-md-3" th:text="${license.name}"></div>
+                        <div class="col-md-3" th:text="${license.acronym}"></div>
+                        <div class="col-md-6" th:text="${license.description}"></div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- License Descriptions Modal -->
-        <div class="modal fade" id="licenseDescModal" tabindex="-1" role="dialog" aria-labelledby="licenseDescModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="licenseDescLabel">License Descriptions</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row" th:each="license, iterStat : ${licenses}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
-                            <div class="col-md-3" th:text="${license.name}"></div>
-                            <div class="col-md-3" th:text="${license.acronym}"></div>
-                            <div class="col-md-6" th:text="${license.description}"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div th:replace="fragments/footer :: footer"></div>
-        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
-    </body>
+    <div th:replace="fragments/footer :: footer"></div>
+    <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+</body>
 </html>

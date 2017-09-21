@@ -34,20 +34,24 @@
                 </form>
                 <p>&nbsp;</p>
                 <div class="row">
-                    <div class="col-sm-2 text-right"><strong>Dataset Name :</strong></div>
-                    <div class="col-sm-10"><span th:text="${dataset.name}"></span></div>
+                    <div class="col-sm-3 text-right"><strong>Dataset Name :</strong></div>
+                    <div class="col-sm-9"><span th:text="${dataset.name}"></span></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-2 text-right"><strong>Dataset Resources :</strong></div>
-                    <div class="col-sm-10">
+                    <div class="col-sm-3 text-right"><strong>Dataset Resources :</strong></div>
+                    <div class="col-sm-9">
                         <ul>
                             <li th:each="dataresource : ${dataset.dataResources}"><span th:text="${dataresource.uri}"></span></li>
                         </ul>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-2 text-right"><strong># of Downloads :</strong></div>
-                    <div class="col-sm-10"><span th:text="${downloadStats.containsKey(dataset.id) ? downloadStats.get(dataset.id) : 0}"></span></div>
+                    <div class="col-sm-3 text-right"><strong># of authenticated downloads :</strong></div>
+                    <div class="col-sm-9"><span th:text="${downloadStats.containsKey(dataset.id) ? downloadStats.get(dataset.id) : 0}"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 text-right"><strong># of public downloads :</strong></div>
+                    <div class="col-sm-9"><span th:text="${publicDownloadStats.containsKey(dataset.id) ? publicDownloadStats.get(dataset.id) : 0}"></span></div>
                 </div>
             </div> <!-- row -->
             <div class="cc-wraper">

@@ -34,11 +34,13 @@
                                     data-toggle="modal" data-target="#deleteResourceModal"
                                     th:attr="data-id=${dataresource.id},
                                         data-uri=${dataresource.uri},
-                                        data-delete=@{/data/{did}/resources/{rid}/delete(did=${dataset.id},rid=${dataresource.id})}"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+                                        data-delete=@{/data/{did}/resources/{rid}/delete(did=${dataset.id},rid=${dataresource.id})}"
+									th:if="${dataset.isContributor(#httpSession.getAttribute('id').toString())}"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
+                            <a class="btn btn-standard" href ="#" th:href="@{/data/{did}/resources/{rid}(did=${dataset.id},rid=${dataresource.id})}" th:if="${dataset.isAccessible(#httpSession.getAttribute('id').toString())}">Download</a>
 						</td>
 					</tr>
 				</table>
-                <div class="row">
+                <div class="row" th:if="${dataset.isContributor(#httpSession.getAttribute('id').toString())}">
                     <div class="col-md-4"><button type="button" class="btn btn-standard resumable-browse"><i class="fa fa-plus" aria-hidden="true"></i> Upload Resource</button></div>
                     <div class="col-md-8">
                         <div class="resumable-error">
