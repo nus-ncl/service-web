@@ -42,11 +42,15 @@ public class DataController extends MainController {
     private static final String REDIRECT_DATA = "redirect:/data";
     private static final String CATEGORIES = "categories";
     private static final String LICENSES = "licenses";
+    private static final String RESOURCES = "resources";
     private static final String DATASET = "dataset";
     private static final String CONTRIBUTE_DATA_PAGE = "data_contribute";
     private static final String MESSAGE_ATTRIBUTE = "message";
-    private static final String EDIT_DISALLOWED = "Edit/delete of dataset disallowed as user is not contributor";
-    private static final String UPLOAD_DISALLOWED = "Upload of data resource disallowed as user is not contributor";
+    private static final String PUBLIC_USER_ID = "publicUserId";
+    private static final String EDITABLE_FLAG = "editable";
+    private static final String START_DATE = "startDate=";
+    private static final String END_DATE = "endDate=";
+    private static final String DATA_ID = "dataId";
 
     @RequestMapping
     public String data(Model model) {
@@ -68,7 +72,6 @@ public class DataController extends MainController {
         model.addAttribute(CATEGORIES, getDataCategories());
         model.addAttribute(LICENSES, getDataLicenses());
         model.addAttribute("allDataMap", datasetManager.getDatasetMap());
-        model.addAttribute("requestForm", new DataRequestForm());
         return "data";
     }
 
@@ -100,22 +103,22 @@ public class DataController extends MainController {
     }
 
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
-    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
+    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) {
         if (id.isPresent()) {
             Dataset dataset = getDataset(id.get());
-            if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
-                log.warn(EDIT_DISALLOWED);
-                redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, EDIT_DISALLOWED);
-                return REDIRECT_DATA;
+            if (dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+                model.addAttribute(EDITABLE_FLAG, true);
             }
             model.addAttribute(DATASET, dataset);
             model.addAttribute("data", dataset);
         } else {
+            model.addAttribute(EDITABLE_FLAG, true);
             model.addAttribute(DATASET, new Dataset());
         }
 
         model.addAttribute(CATEGORIES, getDataCategories());
         model.addAttribute(LICENSES, getDataLicenses());
+        model.addAttribute("requestForm", new DataRequestForm());
         return CONTRIBUTE_DATA_PAGE;
     }
 
@@ -197,6 +200,7 @@ public class DataController extends MainController {
                 Dataset data = getDataset(id.get());
                 model.addAttribute("data", data);
             }
+            model.addAttribute(EDITABLE_FLAG, true);
             return CONTRIBUTE_DATA_PAGE;
         }
 
@@ -320,13 +324,14 @@ public class DataController extends MainController {
                 }
             } else {
                 log.info("Dataset access requested: {}", dataResponseBody);
+                redirectAttributes.addFlashAttribute("success", true);
             }
         } catch (IOException e) {
             log.error("requestDataset: {}", e.toString());
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return REDIRECT_DATA;
+        return REDIRECT_DATA + "/contribute/" + id;
     }
 
     @RequestMapping(value = "{did}/requests/{rid}", method = RequestMethod.GET)
@@ -410,7 +415,7 @@ public class DataController extends MainController {
         return "redirect:/data/" + did + "/requests/" + rid;
     }
 
-    @RequestMapping("/public")
+    @RequestMapping(value = "/public", method = RequestMethod.GET)
     public String getPublicDatasets(Model model) {
         DatasetManager datasetManager = new DatasetManager();
 
@@ -429,6 +434,137 @@ public class DataController extends MainController {
         return "data_public";
     }
 
+    @RequestMapping(value = "/public/{id}", method = RequestMethod.GET)
+    public String getPublicDataset(HttpSession session, Model model, @PathVariable String id) {
+        if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
+            return REDIRECT_DATA + "/contribute/" + id;
+        }
+        HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
+        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+        String dataResponseBody = dataResponse.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+        model.addAttribute(DATASET, dataset);
+        model.addAttribute("puser", new PublicUser());
+        return "data_public_id";
+    }
+
+    @RequestMapping(value = "/public/{id}", method = RequestMethod.POST)
+    public String checkPublicDataset(HttpSession session, Model model, @PathVariable String id,
+                                     @Valid @ModelAttribute("puser") PublicUser puser, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Error(s):");
+            message.append("<ul class=\"fa-ul\">");
+            for (ObjectError objectError : bindingResult.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+                switch (fieldError.getField()) {
+                    case "fullName":
+                        message.append("You have to fill in your full name");
+                        break;
+                    case "email":
+                        message.append("You have to fill in your email address");
+                        break;
+                    case "jobTitle":
+                        message.append("You have to fill in your job title");
+                        break;
+                    case "institution":
+                        message.append("You have to fill in your institution");
+                        break;
+                    case "country":
+                        message.append("You have to fill in your country");
+                        break;
+                    default:
+                        message.append(fieldError.getField());
+                        message.append(" ");
+                        message.append(fieldError.getDefaultMessage());
+                }
+                message.append("</li>");
+            }
+            message.append("</ul>");
+            model.addAttribute(MESSAGE_ATTRIBUTE, message);
+            HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
+            ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+            String dataResponseBody = dataResponse.getBody().toString();
+            JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+            Dataset dataset = extractDataInfo(dataInfoObject.toString());
+            model.addAttribute(DATASET, dataset);
+            return "data_public_id";
+        }
+
+        JSONObject puserObject = new JSONObject();
+        puserObject.put("fullName", puser.getFullName());
+        puserObject.put("email", puser.getEmail());
+        puserObject.put("jobTitle", puser.getJobTitle());
+        puserObject.put("institution", puser.getInstitution());
+        puserObject.put("country", puser.getCountry());
+
+        HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(puserObject.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getPublicDataUsers(), HttpMethod.POST, request, String.class);
+        String responseBody = response.getBody().toString();
+        log.info("Public user saved: {}", responseBody);
+        JSONObject object = new JSONObject(responseBody);
+        session.setAttribute(PUBLIC_USER_ID, object.getLong("id"));
+
+        return REDIRECT_DATA + "/public/" + id + "/" + RESOURCES;
+    }
+
+    @RequestMapping(value = "/public/{id}/resources", method = RequestMethod.GET)
+    public String getPublicResources(HttpSession session, Model model, @PathVariable String id, RedirectAttributes redirectAttributes) {
+        if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
+            return REDIRECT_DATA + "/" + id + "/" + RESOURCES;
+        } else if (session.getAttribute(PUBLIC_USER_ID) == null || session.getAttribute(PUBLIC_USER_ID).toString().isEmpty()) {
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "Please fill in your details before trying to access resources.");
+            return REDIRECT_DATA + "/public/" + id;
+        }
+
+        HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
+        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+        String dataResponseBody = dataResponse.getBody().toString();
+        JSONObject dataInfoObject = new JSONObject(dataResponseBody);
+        Dataset dataset = extractDataInfo(dataInfoObject.toString());
+        model.addAttribute(DATASET, dataset);
+
+        return "data_public_resources";
+    }
+
+    @RequestMapping(value = "/public/{did}/resources/{rid}", method = RequestMethod.GET)
+    public void getPublicOpenResource(HttpSession session, @PathVariable String did, @PathVariable String rid,
+                                      final HttpServletResponse httpResponse) throws UnsupportedEncodingException, WebServiceRuntimeException {
+        if (session.getAttribute(PUBLIC_USER_ID) == null || session.getAttribute(PUBLIC_USER_ID).toString().isEmpty()) {
+            throw new WebServiceRuntimeException("No public user id for downloading.");
+        }
+        try {
+            String publicUserId = session.getAttribute(PUBLIC_USER_ID).toString();
+            // Optional Accept header
+            RequestCallback requestCallback = request -> {
+                request.getHeaders().setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
+                request.getHeaders().set("PublicUserId", publicUserId);
+            };
+
+            // Streams the response instead of loading it all in memory
+            ResponseExtractor<Void> responseExtractor = getResponseExtractor(httpResponse);
+
+            restTemplate.execute(properties.downloadPublicOpenResource(did, rid), HttpMethod.GET, requestCallback, responseExtractor);
+        } catch (Exception e) {
+            log.error("Error transferring download: {}", e.getMessage());
+        }
+    }
+
+    private ResponseExtractor<Void> getResponseExtractor(final HttpServletResponse httpResponse) {
+        return response -> {
+            String content = response.getHeaders().get("Content-Disposition").get(0);
+            httpResponse.setContentType("application/octet-stream");
+            httpResponse.setContentLengthLong(Long.parseLong(response.getHeaders().get("Content-Length").get(0)));
+            httpResponse.setHeader("Content-Disposition", content);
+            IOUtils.copy(response.getBody(), httpResponse.getOutputStream());
+            httpResponse.flushBuffer();
+            return null;
+        };
+    }
+
     @RequestMapping("{datasetId}/resources")
     public String getResources(Model model, @PathVariable String datasetId, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -436,10 +572,8 @@ public class DataController extends MainController {
         String dataResponseBody = response.getBody().toString();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
-        if (!dataset.getContributorId().equals(session.getAttribute("id").toString())) {
-            log.warn(UPLOAD_DISALLOWED);
-            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, UPLOAD_DISALLOWED);
-            return REDIRECT_DATA;
+        if (dataset.getContributorId().equals(session.getAttribute("id").toString())) {
+            model.addAttribute(EDITABLE_FLAG, true);
         }
         model.addAttribute(DATASET, dataset);
         return "data_resources";
@@ -470,11 +604,11 @@ public class DataController extends MainController {
         if (start.isEmpty() && end.isEmpty()) {
             response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId), HttpMethod.GET, request, String.class);
         } else if (end.isEmpty()) {
-            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "startDate=" + start), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, START_DATE + start), HttpMethod.GET, request, String.class);
         } else if (start.isEmpty()) {
-            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "endDate=" + end), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, END_DATE + end), HttpMethod.GET, request, String.class);
         } else {
-            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+            response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, START_DATE + start, END_DATE + end), HttpMethod.GET, request, String.class);
         }
         String responseBody = response.getBody().toString();
 
@@ -482,11 +616,29 @@ public class DataController extends MainController {
         JSONArray statJsonArray = new JSONArray(responseBody);
         for (int i = 0; i < statJsonArray.length(); i++) {
             JSONObject statInfoObject = statJsonArray.getJSONObject(i);
-            downloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+            downloadStats.put(statInfoObject.getInt(DATA_ID), statInfoObject.getLong("count"));
+        }
+
+        if (start.isEmpty() && end.isEmpty()) {
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId), HttpMethod.GET, request, String.class);
+        } else if (end.isEmpty()) {
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, START_DATE + start), HttpMethod.GET, request, String.class);
+        } else if (start.isEmpty()) {
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, END_DATE + end), HttpMethod.GET, request, String.class);
+        } else {
+            response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, START_DATE + start, END_DATE + end), HttpMethod.GET, request, String.class);
+        }
+        responseBody = response.getBody().toString();
+        Map<Integer, Long> publicDownloadStats = new HashMap<>();
+        statJsonArray = new JSONArray(responseBody);
+        for (int i = 0; i < statJsonArray.length(); i++) {
+            JSONObject statInfoObject = statJsonArray.getJSONObject(i);
+            publicDownloadStats.put(statInfoObject.getInt(DATA_ID), statInfoObject.getLong("count"));
         }
 
         model.addAttribute(DATASET, dataset);
         model.addAttribute("downloadStats", downloadStats);
+        model.addAttribute("publicDownloadStats", publicDownloadStats);
         model.addAttribute("start", start);
         model.addAttribute("end", end);
         return "data_statistics";
@@ -604,15 +756,7 @@ public class DataController extends MainController {
             };
 
             // Streams the response instead of loading it all in memory
-            ResponseExtractor<Void> responseExtractor = response -> {
-                String content = response.getHeaders().get("Content-Disposition").get(0);
-                httpResponse.setContentType("application/octet-stream");
-                httpResponse.setContentLengthLong(Long.parseLong(response.getHeaders().get("Content-Length").get(0)));
-                httpResponse.setHeader("Content-Disposition", content);
-                IOUtils.copy(response.getBody(), httpResponse.getOutputStream());
-                httpResponse.flushBuffer();
-                return null;
-            };
+            ResponseExtractor<Void> responseExtractor = getResponseExtractor(httpResponse);
 
             restTemplate.execute(properties.downloadResource(datasetId, resourceId), HttpMethod.GET, requestCallback, responseExtractor);
         } catch (Exception e) {
@@ -655,7 +799,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return "redirect:/data/" + datasetId + "/resources";
+        return "redirect:/data/" + datasetId + "/" + RESOURCES;
     }
 
     private void setContributor(Dataset dataset, HttpSession session) {
@@ -696,7 +840,7 @@ public class DataController extends MainController {
         JSONObject object = new JSONObject(json);
 
         dataAccessRequest.setId(object.getLong("id"));
-        dataAccessRequest.setDataId(object.getLong("dataId"));
+        dataAccessRequest.setDataId(object.getLong(DATA_ID));
         dataAccessRequest.setRequesterId(object.getString("requesterId"));
         dataAccessRequest.setReason(object.getString("reason"));
         try {
