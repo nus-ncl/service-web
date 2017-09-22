@@ -2525,6 +2525,7 @@ public class MainController {
                                  ) throws WebServiceRuntimeException {
 
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
         if(!realization.getState().equals(RealizationState.RUNNING.toString())) {
             log.warn("Trying to request internet for the experiment {} from team {} with state {}", expId, teamName,realization.getState());
             redirectAttributes.addFlashAttribute(MESSAGE, "The experiment " + realization.getExperimentName() + " need to be started before you can request for internet access" );
