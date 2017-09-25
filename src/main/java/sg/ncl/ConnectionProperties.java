@@ -152,7 +152,7 @@ public class ConnectionProperties {
     }
 
     public String getExperimentDetails(String teamId, String expId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId + "/experimentDetails";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/" +  expEndpoint + "/" + expId + "/experimentDetails";
     }
 
     public String getExpListByTeamId(String teamId) {
