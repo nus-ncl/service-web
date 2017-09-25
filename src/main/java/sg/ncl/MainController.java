@@ -2058,14 +2058,6 @@ public class MainController {
 
         User2 experimentOwner = invokeAndExtractUserInfo(experiment2.getUserId());
 
-        // get activity log
-        ResponseEntity activityLogResponse = restTemplate.exchange(properties.getActivityLog(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
-        log.info("experiment profile - activity log: {}", activityLogResponse.getBody().toString());
-
-        // get ns file
-        ResponseEntity nsFileResponse = restTemplate.exchange(properties.getNSFile(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
-        log.info("experiment profile - ns file: {}", nsFileResponse.getBody().toString());
-
         // get experiment details
         ResponseEntity expDetailsResponse = restTemplate.exchange(properties.getExperimentDetails(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
         log.info("experiment profile - experiment details: {}", expDetailsResponse.getBody().toString());
@@ -2074,8 +2066,8 @@ public class MainController {
         model.addAttribute("experiment", experiment2);
         model.addAttribute("realization", realization);
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
-        model.addAttribute("activityLog", new JSONObject(activityLogResponse.getBody().toString()));
-        model.addAttribute("nsFile", new JSONObject(nsFileResponse.getBody().toString()));
+        model.addAttribute("activityLog", "");
+        model.addAttribute("nsFile", "");
         model.addAttribute("experimentDetails", new JSONObject(expDetailsResponse.getBody().toString()));
         return "experiment_profile";
     }
