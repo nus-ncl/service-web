@@ -4001,7 +4001,6 @@ public class MainController {
     }
 
     private Experiment2 extractExperiment(String experimentJson) {
-        log.info("{}", experimentJson);
         Experiment2 experiment2 = new Experiment2();
         JSONObject object = new JSONObject(experimentJson);
 
