@@ -2546,7 +2546,7 @@ public class MainController {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-                log.warn("Error connecting to sio experiment service for sending email: {}", exceptionState);
+                log.warn("Success! Your Internet access request for the experiment {} has been successful. You will be notified via email if the request is approved.", exceptionState);
                 redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             } else {
                 log.info("Requesting internet access is successful for the experiment {}", expId);
