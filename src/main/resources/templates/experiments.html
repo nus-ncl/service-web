@@ -8,6 +8,10 @@
             .keep-left {
                 text-align: left;
             }
+
+            .internet-btn {
+                padding: 6px 10.5px;
+            }
         </style>
     </head>
     <body class="mybg loginbackground">
@@ -147,7 +151,7 @@
                                         </span>
                                         <span th:if="${realization.state == 'RUNNING'}">
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-red"></i></button>
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud btn-fa-yellow"></i></button>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard internet-btn" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud  btn-fa-yellow"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'ERROR'}">
                                             <p th:text="#{nav.error}"></p>
