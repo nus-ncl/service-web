@@ -2046,7 +2046,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/experiment_profile/{expId}")
-    public String experimentProfile(@PathVariable String expId, Model model) {
+    public String experimentProfile(@PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
 
@@ -2055,6 +2055,12 @@ public class MainController {
 
         log.info("experiment profile: extract realization");
         Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+
+        if (isNotAdminAndNotInTeam(session, realization)) {
+            log.warn("Permission denied to view experiment profile: {} for team: {}", realization.getExperimentName(), experiment2.getTeamName());
+            redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
+            return "redirect:/experiments";
+        }
 
         User2 experimentOwner = invokeAndExtractUserInfo(experiment2.getUserId());
 
