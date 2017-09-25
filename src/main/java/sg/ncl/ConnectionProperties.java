@@ -147,20 +147,12 @@ public class ConnectionProperties {
     //-------------------------------------
     // EXPERIMENTS
     //-------------------------------------
-    public String getActivityLog(String teamId, String expId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId + "/activityLog";
-    }
-
     public String getExperiment(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id;
     }
 
     public String getExperimentDetails(String teamId, String expId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId + "/experimentDetails";
-    }
-
-    public String getNSFile(String teamId, String expId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId + "/nsFile";
     }
 
     public String getExpListByTeamId(String teamId) {
