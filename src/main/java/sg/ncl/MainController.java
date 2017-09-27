@@ -2064,26 +2064,28 @@ public class MainController {
 
         User2 experimentOwner = invokeAndExtractUserInfo(experiment2.getUserId());
 
-        // get experiment details
-        // returns a json string in the format:
-        //    {
-        //        'ns_file' :
-        //        {
-        //            'msg' : 'success/fail',
-        //            'ns_file' : 'ns_file_contents'
-        //        },
-        //        'realization_details' :
-        //        {
-        //            'msg' : 'success/fail',
-        //            'realization_details' : 'realization_details_contents'
-        //        },
-        //        'activity_log'	:
-        //        {
-        //            'msg' : 'success/fail',
-        //            'activity_log' : 'activity_log_contents'
-        //        }
-        //    }
-        // returns a '{}' otherwise if fail
+        /*
+         * get experiment details
+         * returns a json string in the format:
+         * {
+         *   'ns_file' :
+         *              {
+         *              'msg' : 'success/fail',
+         *              'ns_file' : 'ns_file_contents'
+         *              },
+         *              'realization_details' :
+         *              {
+         *              'msg' : 'success/fail',
+         *              'realization_details' : 'realization_details_contents'
+         *              },
+         *              'activity_log'	:
+         *              {
+         *              'msg' : 'success/fail',
+         *              activity_log' : 'activity_log_contents'
+         *              }
+         *  }
+         *  returns a '{}' otherwise if fail
+         */
         ResponseEntity expDetailsResponse = restTemplate.exchange(properties.getExperimentDetails(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
         log.debug("experiment profile - experiment details: {}", expDetailsResponse.getBody().toString());
 
