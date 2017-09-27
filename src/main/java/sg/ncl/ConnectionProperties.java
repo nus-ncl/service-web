@@ -16,6 +16,7 @@ public class ConnectionProperties {
 
     private static final String HTTP_MODE = "http://";
     public static final String PREFIX = "ncl.web.service";
+    public static final String EXPERIMENTS = "/experiments/";
     private static final String RESOURCES = "resources";
 
     private String sioAddress;
@@ -158,7 +159,7 @@ public class ConnectionProperties {
     }
 
     public String getDeleteExperiment(String teamId, String expId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/experiments/" + expId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + EXPERIMENTS + expId;
     }
 
     public String getStartExperiment(String teamName, String expId) {
@@ -169,8 +170,12 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + "/experiment/" + expId;
     }
 
+    public String requestInternetExperiment (String teamId, String expId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + EXPERIMENTS + expId + "/internet";
+    }
+
     public String getTopology(String teamName, String expId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + "/experiments/" + expId + "/topology";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamName + EXPERIMENTS + expId + "/topology";
     }
 
     public String getAllRealizations() {

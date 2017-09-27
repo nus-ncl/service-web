@@ -2044,6 +2044,7 @@ public class MainController {
 
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
+        model.addAttribute("internetRequestForm", new InternetRequestForm());
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
         return EXPERIMENTS;
     }
@@ -2504,6 +2505,7 @@ public class MainController {
         return abc(teamName, expId, redirectAttributes, realization, request);
     }
 
+
     @RequestMapping("/get_topology/{teamName}/{expId}")
     @ResponseBody
     public String getTopology(@PathVariable String teamName, @PathVariable String expId) {
@@ -2516,6 +2518,51 @@ public class MainController {
             log.error("Error getting topology thumbnail", e.getMessage());
             return "";
         }
+    }
+
+    @RequestMapping(value = "/request_internet/{teamName}/{teamId}/{expId}", method = RequestMethod.POST)
+    public String internetRequest(@PathVariable String teamName,
+                                  @PathVariable String teamId,
+                                  @PathVariable String expId,
+                                  @ModelAttribute InternetRequestForm internetRequestForm,
+                                  final RedirectAttributes redirectAttributes
+                                 ) throws WebServiceRuntimeException {
+
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if(!realization.getState().equals(RealizationState.RUNNING.toString())) {
+            log.warn("Trying to request internet for the experiment {} from team {} with state {}", expId, teamName,realization.getState());
+            redirectAttributes.addFlashAttribute(MESSAGE, "The experiment " + realization.getExperimentName() + " need to be started before you can request for internet access" );
+            return "redirect:/experiments";
+        }
+
+        log.info("Requesting internet access at " + properties.requestInternetExperiment(teamId, expId));
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("reason", internetRequestForm.getReason());
+
+        try {
+            HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+            ResponseEntity response = restTemplate.exchange(properties.requestInternetExperiment(teamId, expId),
+                                             HttpMethod.POST, request, String.class);
+            String responseBody = response.getBody().toString();
+
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                log.warn("Error connecting to sio experiment service for sending email: {}", exceptionState);
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            } else {
+                log.info("Requesting internet access is successful for the experiment {}", expId);
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Your Internet access request for the experiment \"" + realization.getExperimentName()+ "\" has been successful. You will be notified via email if the request is approved.");
+            }
+
+        } catch (IOException e) {
+            log.warn("Error connecting to sio exp service for sending email: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+        return "redirect:/experiments";
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {

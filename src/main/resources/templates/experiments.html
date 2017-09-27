@@ -4,6 +4,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>National Cybersecurity Laboratories - Experiment</title>
         <object th:include="fragments/header :: header" th:remove="tag" />
+        <style>
+            .keep-left {
+                text-align: left;
+            }
+
+            .internet-btn {
+                padding: 6px 10.5px;
+            }
+        </style>
     </head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
@@ -141,7 +150,8 @@
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'RUNNING'}">
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-red"></i></button>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard internet-btn" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud  btn-fa-yellow"></i></button>
                                         </span>
                                         <span th:if="${realization.state == 'ERROR'}">
                                             <p th:text="#{nav.error}"></p>
@@ -245,6 +255,35 @@
             </div>
         </div>
 
+        <!-- internet access request modal -->
+        <div id="internetRequest" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="requestModalLabel">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <form method="post" action="#" role="form" id="internetRequestForm" th:object="${internetRequestForm}">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">Request From</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="reason" class="control-label">
+                                    Please specify your reason for requesting Internet access. Optionally, you can specify the node names that you want to have Internet access. You will be notified via email if the request is approved.*
+                                </label>
+                            </div>
+                            <textarea class ="form-control" th:placeholder="#{form.internetReason}" th:field="*{reason}"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="keep-left">* The granted internet access will be terminated when the experiment stops.</div>
+                            <br/>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="internetButton">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
 
         <!-- topo thumbnail modal -->
         <div class="modal fade exp-modal" id="topoModal" tabindex="-1" role="dialog" aria-labelledby="topoModalLabel">
@@ -275,6 +314,11 @@
 
             function closeRemoveModal() {
                 $('#removeExperiment').modal('hide');
+                return true;
+            }
+
+            function closeInternetModal() {
+                $('#internetRequest').modal('hide');
                 return true;
             }
         </script>
