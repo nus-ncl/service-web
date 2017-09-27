@@ -69,9 +69,9 @@
             <div id="networkConfig" class="tab-pane fade">
                 <h3 th:text="#{experimentProfile.networkConfig}">Network Configuration</h3>
                 <th:block th:switch="${experimentDetails.has('ns_file')} ? ${experimentDetails.get('ns_file').has('ns_file')} : ${false}">
-                    <pre th:case="${false}">No ns file to be found.</pre>
+                    <pre th:case="${false}">No ns file found.</pre>
                     <pre th:case="${true}" th:text="${experimentDetails.get('ns_file').get('ns_file')}"></pre>
-                    <pre th:case="*">No ns file to be found.</pre>
+                    <pre th:case="*">No ns file found.</pre>
                 </th:block>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
@@ -84,9 +84,9 @@
             <div id="realization" class="tab-pane fade">
                 <h3 th:text="#{experimentProfile.realization}">Realization</h3>
                 <th:block th:switch="${experimentDetails.has('realization_details')} ? ${experimentDetails.get('realization_details').has('realization_details')} : ${false}">
-                    <pre th:case="${false}">No experiment details to be found.</pre>
+                    <pre th:case="${false}">No experiment details found.</pre>
                     <pre th:case="${true}" th:text="${experimentDetails.get('realization_details').get('realization_details')}"></pre>
-                    <pre th:case="*">No experiment details to be found.</pre>
+                    <pre th:case="*">No experiment details found.</pre>
                 </th:block>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
@@ -99,9 +99,9 @@
             <div id="activityLog" class="tab-pane fade">
                 <h3 th:text="#{experimentProfile.activityLog}">Activity Log</h3>
                 <th:block th:switch="${experimentDetails.has('activity_log')} ? ${experimentDetails.get('activity_log').has('activity_log')} : ${false}">
-                    <pre th:case="${false}">No activity log to be found.</pre>
+                    <pre th:case="${false}">No activity log found.</pre>
                     <pre th:case="${true}" th:text="${experimentDetails.get('activity_log').get('activity_log')}"></pre>
-                    <pre th:case="*">No activity log to be found.</pre>
+                    <pre th:case="*">No activity log found.</pre>
                 </th:block>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
