@@ -884,6 +884,9 @@ Waypoints
 .team-member:hover .social-icons ul li a.linkedin {
     background-color: #036dc0;
 }
+.team-member:hover .social-icons ul li a.github {
+    background-color: #0e2f44;
+}
 .team-member:hover .social-icons ul li a.rss {
     background-color: #ff6b00;
 }
@@ -1231,6 +1234,9 @@ ul.address {
 }
 #footer .social-icons ul li a.linkedin:hover {
     background-color: #036dc0;
+}
+#footer .social-icons ul li a.github:hover {
+    background-color: #0e2f44;
 }
 #footer .social-icons ul li a.tumblr:hover {
     background-color: #ff6b00;
@@ -1732,6 +1738,10 @@ table {
     color: #dd4b39;
 }
 
+.btn-fa-yellow{
+    color: #FFD700;
+}
+
 .btn-fa-loading {
     color: #1a8edc;
 }
@@ -1760,6 +1770,9 @@ table {
 .team-owner-info-body ul {
      list-style: none;
 }
+
+/* for admin node status page*/
+
 
 .blue-tick {
     color: #5890ff;

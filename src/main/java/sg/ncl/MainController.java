@@ -133,6 +133,9 @@ public class MainController {
 
     private static final String NOT_APPLICABLE = "N.A.";
 
+    private static final String DATA_ID = "dataId";
+    private static final String COUNT = "count";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -318,9 +321,10 @@ public class MainController {
         Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
         Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
 
-        // loop through each of the machine type
-        // tabulate the different nodes type
-        // count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        /* loop through each of the machine type
+           tabulate the different nodes type
+           count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        */
         nodesStatus.entrySet().forEach(machineTypeListEntry -> {
             Map<String, Long> nodesCountMap = new HashMap<>();
 
@@ -2041,6 +2045,7 @@ public class MainController {
 
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
+        model.addAttribute("internetRequestForm", new InternetRequestForm());
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
         return EXPERIMENTS;
     }
@@ -2552,6 +2557,7 @@ public class MainController {
         return abc(teamName, expId, redirectAttributes, realization, request);
     }
 
+
     @RequestMapping("/get_topology/{teamName}/{expId}")
     @ResponseBody
     public String getTopology(@PathVariable String teamName, @PathVariable String expId) {
@@ -2564,6 +2570,51 @@ public class MainController {
             log.error("Error getting topology thumbnail", e.getMessage());
             return "";
         }
+    }
+
+    @RequestMapping(value = "/request_internet/{teamName}/{teamId}/{expId}", method = RequestMethod.POST)
+    public String internetRequest(@PathVariable String teamName,
+                                  @PathVariable String teamId,
+                                  @PathVariable String expId,
+                                  @ModelAttribute InternetRequestForm internetRequestForm,
+                                  final RedirectAttributes redirectAttributes
+                                 ) throws WebServiceRuntimeException {
+
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+
+        if(!realization.getState().equals(RealizationState.RUNNING.toString())) {
+            log.warn("Trying to request internet for the experiment {} from team {} with state {}", expId, teamName,realization.getState());
+            redirectAttributes.addFlashAttribute(MESSAGE, "The experiment " + realization.getExperimentName() + " need to be started before you can request for internet access" );
+            return "redirect:/experiments";
+        }
+
+        log.info("Requesting internet access at " + properties.requestInternetExperiment(teamId, expId));
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("reason", internetRequestForm.getReason());
+
+        try {
+            HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+            ResponseEntity response = restTemplate.exchange(properties.requestInternetExperiment(teamId, expId),
+                                             HttpMethod.POST, request, String.class);
+            String responseBody = response.getBody().toString();
+
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                log.warn("Error connecting to sio experiment service for sending email: {}", exceptionState);
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            } else {
+                log.info("Requesting internet access is successful for the experiment {}", expId);
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Your Internet access request for the experiment \"" + realization.getExperimentName()+ "\" has been successful. You will be notified via email if the request is approved.");
+            }
+
+        } catch (IOException e) {
+            log.warn("Error connecting to sio exp service for sending email: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+        return "redirect:/experiments";
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
@@ -2659,14 +2710,28 @@ public class MainController {
             datasetsList.add(dataset);
         }
 
-        ResponseEntity response4 = restTemplate.exchange(properties.getDownloadStat(), HttpMethod.GET, request, String.class);
-        String responseBody4 = response4.getBody().toString();
+        response = restTemplate.exchange(properties.getDownloadStat(), HttpMethod.GET, request, String.class);
+        responseBody = response.getBody().toString();
 
         Map<Integer, Long> dataDownloadStats = new HashMap<>();
-        JSONArray statJsonArray = new JSONArray(responseBody4);
-        for (int i = 0; i < statJsonArray.length(); i++) {
-            JSONObject statInfoObject = statJsonArray.getJSONObject(i);
-            dataDownloadStats.put(statInfoObject.getInt("dataId"), statInfoObject.getLong("count"));
+        JSONArray statJsonArray1 = new JSONArray(responseBody);
+        for (int i = 0; i < statJsonArray1.length(); i++) {
+            JSONObject statInfoObject = statJsonArray1.getJSONObject(i);
+            dataDownloadStats.put(statInfoObject.getInt(DATA_ID), statInfoObject.getLong(COUNT));
+        }
+
+        response = restTemplate.exchange(properties.getPublicDownloadStat(), HttpMethod.GET, request, String.class);
+        responseBody = response.getBody().toString();
+        JSONArray statJsonArray2 = new JSONArray(responseBody);
+        for (int i = 0; i < statJsonArray2.length(); i++) {
+            JSONObject statInfoObject = statJsonArray2.getJSONObject(i);
+            int key = statInfoObject.getInt(DATA_ID);
+            if (dataDownloadStats.containsKey(key)) {
+                Long count = dataDownloadStats.get(key) + statInfoObject.getLong(COUNT);
+                dataDownloadStats.replace(key, count);
+            } else {
+                dataDownloadStats.put(statInfoObject.getInt(DATA_ID), statInfoObject.getLong(COUNT));
+            }
         }
 
         model.addAttribute("dataList", datasetsList);
@@ -2988,6 +3053,59 @@ public class MainController {
         model.addAttribute("end", end);
         model.addAttribute("energy", sumEnergy);
         return "energy_usage";
+    }
+
+    @RequestMapping("/admin/nodesStatus")
+    public String adminNodesStatus(Model model, HttpSession session) throws IOException {
+
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+
+        // get number of active users and running experiments
+        Map<String, String> testbedStatsMap = getTestbedStats();
+        testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, "0");
+        testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, "0");
+
+        Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
+        Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
+
+        /*
+         loop through each of the machine type
+         tabulate the different nodes type
+         count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+        */
+        nodesStatus.entrySet().forEach(machineTypeListEntry -> {
+            Map<String, Long> nodesCountMap = new HashMap<>();
+
+            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long total = free + inUse + reserved + reload;
+            long currentTotal = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES)) + total;
+            long currentFree = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_FREE_NODES)) + free;
+
+            nodesCountMap.put(NodeType.FREE.name(), free);
+            nodesCountMap.put(NodeType.IN_USE.name(), inUse);
+            nodesCountMap.put(NodeType.RESERVED.name(), reserved);
+            nodesCountMap.put(NodeType.RELOADING.name(), reload);
+
+
+            nodesStatusCount.put(machineTypeListEntry.getKey(), nodesCountMap);
+            testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, Long.toString(currentFree));
+            testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, Long.toString(currentTotal));
+        });
+
+        model.addAttribute("nodesStatus", nodesStatus);
+        model.addAttribute("nodesStatusCount", nodesStatusCount);
+
+        model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
+        model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
+        model.addAttribute(USER_DASHBOARD_FREE_NODES, testbedStatsMap.get(USER_DASHBOARD_FREE_NODES));
+        model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
+        return "node_status";
     }
 
     /**
@@ -4466,7 +4584,7 @@ public class MainController {
             return new HashMap<>();
         }
 
-        log.info("Finish getting all nodes: {}", output);
+        log.debug("Finish getting all nodes: {}", output);
 
         return output;
     }

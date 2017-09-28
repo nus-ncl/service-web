@@ -135,7 +135,7 @@ $(document).ready(function() {
 		var modal = $(this);
         modal.find('#experimentName').text(experimentName);
         modal.find('#startButton').attr('href', startExperiment);
-    })
+    });
 
 	//stop experiment
     $('#stopExperiment').on('show.bs.modal', function (event) {
@@ -145,7 +145,7 @@ $(document).ready(function() {
         var modal = $(this);
         modal.find('#experimentName').text(experimentName);
         modal.find('#stopButton').attr('href', stopExperiment);
-    })
+    });
 
     //remove experiment
     $('#removeExperiment').on('show.bs.modal', function (event) {
@@ -155,8 +155,16 @@ $(document).ready(function() {
         var modal = $(this);
         modal.find('#experimentName').text(experimentName);
         modal.find('#removeButton').attr('href', removeExperiment);
-    })
-    
+    });
+
+    //request internet
+    $('#internetRequest').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var internetRequest = anchor.data('request');
+        var modal = $(this);
+        modal.find('#internetRequestForm').attr('action', internetRequest);
+    });
+
     //-----------------team page-----------------
     // withdraw
     $('#confirm-withdraw').on('click', '.withdraw-ok', function(e) {
