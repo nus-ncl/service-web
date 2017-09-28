@@ -372,4 +372,17 @@ public class ConnectionPropertiesTest {
         String id = RandomStringUtils.randomAlphanumeric(20);
         assertThat(properties.removeUserFromTeam(id)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + id + "/members");
     }
+
+    @Test
+    public void testGetExperiment() throws Exception {
+        String id = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getExperiment(id)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/" + id);
+    }
+
+    @Test
+    public void testGetExperimentDetails() throws Exception {
+        String expId = RandomStringUtils.randomAlphanumeric(20);
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getExperimentDetails(teamId, expId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/teams/" + teamId + "/experiments/" + expId + "/experimentDetails");
+    }
 }

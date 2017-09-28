@@ -1,5 +1,12 @@
 package sg.ncl.testbed_interface;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 /**
  * Created by Desmond.
  */
@@ -15,6 +22,8 @@ public class Experiment2 {
     private String nsFileContent;
     private Integer idleSwap;
     private Integer maxDuration;
+    private ZonedDateTime createdDate;
+    private ZonedDateTime lastModifiedDate;
 
     public Experiment2() {}
 
@@ -119,5 +128,33 @@ public class Experiment2 {
 
     public void setMaxDuration(Integer maxDuration) {
         this.maxDuration = maxDuration;
+    }
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate.withZoneSameInstant(ZoneId.of("GMT+08:00"));
+    }
+
+    public void setCreatedDate(String createdDate) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            this.createdDate = mapper.readValue(createdDate, ZonedDateTime.class);
+        } catch (IOException e) {
+            this.createdDate = null;
+        }
+    }
+
+    public ZonedDateTime getLastModifiedDate() {
+        return lastModifiedDate.withZoneSameInstant(ZoneId.of("GMT+08:00"));
+    }
+
+    public void setLastModifiedDate(String lastModifiedDate) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            this.lastModifiedDate = mapper.readValue(lastModifiedDate, ZonedDateTime.class);
+        } catch (IOException e) {
+            this.lastModifiedDate = null;
+        }
     }
 }

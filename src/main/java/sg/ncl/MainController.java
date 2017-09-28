@@ -2042,11 +2042,63 @@ public class MainController {
             }
         }
 
+
         model.addAttribute("experimentList", experimentList);
         model.addAttribute("realizationMap", realizationMap);
         model.addAttribute("internetRequestForm", new InternetRequestForm());
 //        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
         return EXPERIMENTS;
+    }
+
+    @GetMapping(value = "/experiment_profile/{expId}")
+    public String experimentProfile(@PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+
+        log.info("experiment profile: extract experiment");
+        Experiment2 experiment2 = extractExperiment(response.getBody().toString());
+
+        log.info("experiment profile: extract realization");
+        Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
+
+        if (isNotAdminAndNotInTeam(session, realization)) {
+            log.warn("Permission denied to view experiment profile: {} for team: {}", realization.getExperimentName(), experiment2.getTeamName());
+            redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
+            return "redirect:/experiments";
+        }
+
+        User2 experimentOwner = invokeAndExtractUserInfo(experiment2.getUserId());
+
+        /*
+         * get experiment details
+         * returns a json string in the format:
+         * {
+         *   'ns_file' :
+         *              {
+         *              'msg' : 'success/fail',
+         *              'ns_file' : 'ns_file_contents'
+         *              },
+         *              'realization_details' :
+         *              {
+         *              'msg' : 'success/fail',
+         *              'realization_details' : 'realization_details_contents'
+         *              },
+         *              'activity_log'	:
+         *              {
+         *              'msg' : 'success/fail',
+         *              activity_log' : 'activity_log_contents'
+         *              }
+         *  }
+         *  returns a '{}' otherwise if fail
+         */
+        ResponseEntity expDetailsResponse = restTemplate.exchange(properties.getExperimentDetails(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
+        log.debug("experiment profile - experiment details: {}", expDetailsResponse.getBody().toString());
+
+        model.addAttribute("experiment", experiment2);
+        model.addAttribute("realization", realization);
+        model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
+        model.addAttribute("experimentDetails", new JSONObject(expDetailsResponse.getBody().toString()));
+        return "experiment_profile";
     }
 
     @RequestMapping(value = "/experiments/create", method = RequestMethod.GET)
@@ -4082,6 +4134,18 @@ public class MainController {
         experiment2.setNsFileContent(object.getString("nsFileContent"));
         experiment2.setIdleSwap(object.getInt("idleSwap"));
         experiment2.setMaxDuration(object.getInt("maxDuration"));
+
+        try {
+            experiment2.setCreatedDate(object.get("createdDate").toString());
+        } catch (Exception e) {
+            experiment2.setCreatedDate("");
+        }
+
+        try {
+            experiment2.setLastModifiedDate(object.get("lastModifiedDate").toString());
+        } catch (Exception e) {
+            experiment2.setLastModifiedDate("");
+        }
 
         return experiment2;
     }

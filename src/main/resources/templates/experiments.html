@@ -4,15 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>National Cybersecurity Laboratories - Experiment</title>
         <object th:include="fragments/header :: header" th:remove="tag" />
-        <style>
-            .keep-left {
-                text-align: left;
-            }
-
-            .internet-btn {
-                padding: 6px 10.5px;
-            }
-        </style>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
     </head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
@@ -41,65 +33,71 @@
                 <!-- user has some experiments -->
                 <div class="team-panel team-panel-current-team">
                     <div class="panel-body" th:if="not ${#lists.isEmpty(experimentList)}">
-                        <table class="table table-responsive">
+                        <table id="experimentTable" class="table table-responsive">
                             <thead>
-                                <th th:text="#{experiment.table.header.experiment}">Experiment</th>
-                                <th th:text="#{experiment.table.header.team}">Team</th>
-                                <th th:text="#{experiment.table.header.description}">Description</th>
-                                <!--<th th:text="#{experiment.table.header.configuration}">Configuration</th>-->
-                                <th th:text="#{experiment.table.header.status}">Status</th>
-                                <th th:text="#{experiment.table.header.details}">Details</th>
-                                <th th:text="#{experiment.table.header.actions}">Actions</th>
+                                <tr>
+                                    <th th:text="#{experiment.table.header.experiment}">Experiment</th>
+                                    <th th:text="#{experiment.table.header.team}">Team</th>
+                                    <th th:text="#{experiment.table.header.nodes.number}">Nodes</th>
+                                    <th th:text="#{experiment.table.header.status}">Status</th>
+                                    <th th:text="#{experiment.table.header.visualization}">Visualization</th>
+                                    <th th:text="#{experiment.table.header.realization}">Realization</th>
+                                    <th th:text="#{experiment.table.header.actions}">Actions</th>
+                                </tr>
                             </thead>
-                            <tr th:each="expEntry : ${experimentList}">
-                                <td th:text="${expEntry.name}">Name</td>
-                                <td th:text="${expEntry.teamName}">Team</td>
-                                <td th:text="${expEntry.description}">Description</td>
-                                <!--<td><a href="#" th:href="@{/experiments/configuration/{expId}(expId=${expEntry.experimentId})}">View</a></td>-->
-                                <!--<td>-->
-                                	<!--<span th:if="${expEntry.status == 'STOPPED'}" th:classappend="expStatusStop" th:text="${expEntry.status}"></span>-->
-                                	<!--<span th:if="${expEntry.status == 'READY'}" th:classappend="expStatusReady" th:text="${expEntry.status}"></span>-->
-                                	<!--&lt;!&ndash; TODO need to cater for ALLOCATING and ERROR &ndash;&gt;-->
-                                <!--</td>-->
-                                <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
-                                    <span th:if="${realization.state == 'STARTING'}">
-                                        <td th:text="'Starting'"></td>
-                                    </span>
-                                    <span th:if="${realization.state == 'NOT_RUNNING'}">
-                                        <td th:text="'Not Running'"></td>
-                                    </span>
-                                    <span th:if="${realization.state == 'RUNNING'}">
-                                        <td th:text="'Running'"></td>
-                                    </span>
-                                    <span th:if="${realization.state == 'STOPPING'}">
-                                        <td th:text="'Stopping'"></td>
-                                    </span>
-                                    <span th:if="${realization.state == 'WARNING'}">
-                                        <td th:text="'Warning'"></td>
-                                    </span>
-                                    <span th:if="${realization.state == 'ERROR'}">
-                                        <td th:text="'Error'"></td>
-                                    </span>
-                                    <td>
-                                        <a th:href="'#'+${realization.experimentId}" data-toggle="modal">View</a>
-                                        <!-- Modal -->
-                                        <div class="modal fade exp-modal" th:id="${realization.experimentId}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header team-owner-info-header">
-                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="btn-fa-red">&times;</span><span class="sr-only">Close</span></button>
-                                                        <h4 class="modal-title" id="expId"><span th:text="#{experiment.table.header.details}">Details</span></h4>
-                                                    </div>
-                                                    <div class="modal-body team-owner-info-body">
-                                                        <h4>Instructions to Access Nodes</h4>
-                                                        <ul>
-                                                            <ol>SSH into <strong><span th:text="${deterUid}"></span></strong>@users.ncl.sg</ol>
-                                                            <ol>SSH into the node by using its Qualified Name, e.g. <em>n0.demoexp.project.ncl.sg</em></ol>
-                                                        </ul>
-                                                        <h4>Info</h4>
-                                                        <th:block th:if="${!realization.nodesInfoMap.isEmpty()}">
-                                                            <table class="table table-responsive table-striped">
-                                                                <thead>
+                            <tbody>
+                                <tr th:each="expEntry : ${experimentList}">
+                                    <td><a th:href="@{/experiment_profile/{expId}(expId=${expEntry.id})}"><span th:text="${expEntry.name}">Name</span></a></td>
+                                    <td th:text="${expEntry.teamName}">Team</td>
+                                    <td th:text="${realizationMap.get(expEntry.id).numberOfNodes}" style="text-align: center">Nodes</td>
+                                    <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
+                                        <span th:if="${realization.state == 'STARTING'}">
+                                            <td th:text="'Starting'"></td>
+                                        </span>
+                                        <span th:if="${realization.state == 'NOT_RUNNING'}">
+                                            <td th:text="'Not Running'"></td>
+                                        </span>
+                                        <span th:if="${realization.state == 'RUNNING'}">
+                                            <td th:text="'Running'"></td>
+                                        </span>
+                                        <span th:if="${realization.state == 'STOPPING'}">
+                                            <td th:text="'Stopping'"></td>
+                                        </span>
+                                        <span th:if="${realization.state == 'WARNING'}">
+                                            <td th:text="'Warning'"></td>
+                                        </span>
+                                        <span th:if="${realization.state == 'ERROR'}">
+                                            <td th:text="'Error'"></td>
+                                        </span>
+                                        <td>
+                                            <a href="#topoModal" data-toggle="modal"
+                                               th:attr="data-title=${expEntry.name},
+                                                        data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">View</a>
+                                        </td>
+                                        <td>
+                                            <a th:href="'#'+${realization.experimentId}" data-toggle="modal">View</a>
+                                            <!-- Modal -->
+                                            <div class="modal fade exp-modal" th:id="${realization.experimentId}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header team-owner-info-header">
+                                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="btn-fa-red">&times;</span><span class="sr-only">Close</span></button>
+                                                            <h4 class="modal-title" id="expId"><span th:text="${expEntry.name}">Realization</span></h4>
+                                                        </div>
+                                                        <div class="modal-body team-owner-info-body">
+                                                            <h4>Instructions to Access Nodes</h4>
+                                                            <div class="exp-details">
+                                                                <p><strong>Step 1</strong>: <code>ssh</code> to NCL gateway:</p>
+                                                                <pre>ssh <span th:text="${deterUid}"></span>@users.ncl.sg</pre>
+                                                                <p>&nbsp;</p>
+                                                                <p><strong>Step 2</strong>: <code>ssh</code> into your experiment node using its Qualified Name, for example:</p>
+                                                                <pre>ssh <span th:text="${!realization.nodesInfoMap.isEmpty()} ? ${realization.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg' "></span></pre>
+                                                                <p>&nbsp;</p>
+                                                            </div>
+                                                            <h4>Info</h4>
+                                                            <th:block th:if="${!realization.nodesInfoMap.isEmpty()}">
+                                                                <table class="table table-responsive table-striped">
+                                                                    <thead>
                                                                     <th th:text="#{experiment.table.header.nodes}">Node</th>
                                                                     <th th:text="#{experiment.table.header.os}">OS</th>
                                                                     <th th:text="#{experiment.table.header.qualifiedName}">Qualified Name</th>
@@ -110,7 +108,6 @@
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
-                                                                        <!--<td th:text="${nodesDetailsMap.value.nodeId}"></td>-->
                                                                         <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${realization.experimentId}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
                                                                     </tr>
                                                                 </th:block>
@@ -119,46 +116,33 @@
                                                         <th:block th:if="${realization.nodesInfoMap.isEmpty()}">
                                                             <p th:text="#{form.expNotStarted}"></p>
                                                         </th:block>
-                                                        <!--<th:block th:if="${realization.details != 'null'}">-->
-                                                            <!--<form action="#">-->
-                                                                <!--<textarea th:text="${realization.details}" class="realization" rows="30" cols="100"></textarea>-->
-                                                            <!--</form>-->
-                                                        <!--</th:block>-->
-                                                        <!--<th:block th:if="${realization.details == 'null'}">-->
-                                                            <!--<form action="#">-->
-                                                                <!--<textarea th:text="#{form.expNotStarted}" class="realization" rows="30" cols="100"></textarea>-->
-                                                            <!--</form>-->
-                                                        <!--</th:block>-->
-                                                    </div>
+                                                       </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        &nbsp;|&nbsp;
-                                        <a href="#topoModal" data-toggle="modal"
-                                           th:attr="data-title=${expEntry.name},
-                                                    data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">Topo</a>
-                                    </td>
-                                    <td>
-                                        <span th:if="${realization.state == 'STARTING'}">
-                                            <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
-                                        </span>
-                                        <span th:if="${realization.state == 'STOPPING'}">
-                                            <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
-                                        </span>
-                                        <span th:if="${realization.state == 'NOT_RUNNING'}">
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
-                                        </span>
-                                        <span th:if="${realization.state == 'RUNNING'}">
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-red"></i></button>
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard internet-btn" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud  btn-fa-yellow"></i></button>
-                                        </span>
-                                        <span th:if="${realization.state == 'ERROR'}">
-                                            <p th:text="#{nav.error}"></p>
-                                        </span>
-                                    </td>
-                                </th:block>
-                            </tr>
+                                       </td>
+                                        <td>
+                                            <span th:if="${realization.state == 'STARTING'}">
+                                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
+                                            </span>
+                                            <span th:if="${realization.state == 'STOPPING'}">
+                                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
+                                            </span>
+                                            <span th:if="${realization.state == 'NOT_RUNNING'}">
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                            </span>
+                                            <span th:if="${realization.state == 'RUNNING'}">
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard internet-btn" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud  btn-fa-yellow"></i></button>
+                                            </span>
+                                            <span th:if="${realization.state == 'ERROR'}">
+                                                <p th:text="#{nav.error}"></p>
+                                            </span>
+                                        </td>
+                                    </th:block>
+                                </tr>
+                            </tbody>
                         </table>
                     </div> <!-- panel body -->
                     <div class="panel-footer team-panel-footer">
@@ -301,29 +285,49 @@
             </div>
         </div>
 
-        <script>
-            function closeStartModal() {
-                $('#startExperiment').modal('hide');
-                return true;
-            }
-
-            function closeStopModal() {
-                $('#stopExperiment').modal('hide');
-                return true;
-            }
-
-            function closeRemoveModal() {
-                $('#removeExperiment').modal('hide');
-                return true;
-            }
-
-            function closeInternetModal() {
-                $('#internetRequest').modal('hide');
-                return true;
-            }
-        </script>
-
         <div th:replace="fragments/footer:: footer"></div>
-        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
+    <script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+    <script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+    <script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+    <script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+    <script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+    <script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+    <script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+    <script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+    <script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+    <script>
+        $(document).ready(function () {
+            //----------------- sort table -------------
+            // disable sorting for last three columns; visualization, realization, actions
+            $('#experimentTable').dataTable({
+                "columnDefs": [
+                    { "orderable": false, "targets": [4, 5, 6]},
+                ]
+            });
+        });
+
+        function closeStartModal() {
+            $('#startExperiment').modal('hide');
+            return true;
+        }
+
+        function closeStopModal() {
+            $('#stopExperiment').modal('hide');
+            return true;
+        }
+
+        function closeRemoveModal() {
+            $('#removeExperiment').modal('hide');
+            return true;
+        }
+
+        function closeInternetModal() {
+            $('#internetRequest').modal('hide');
+            return true;
+        }
+    </script>
 </html>

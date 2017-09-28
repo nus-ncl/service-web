@@ -215,6 +215,18 @@
     color: #73c20e;
 }
 
+/* experiment profile activity log to allow vertical scroll */
+pre {
+    height: auto;
+    max-height: 480px;
+    overflow: auto;
+}
+
+/* experiment instructions to ssh into nodes */
+.exp-details {
+    margin-left: 20px;
+}
+
 /* account details page */
 .account-change-success {
     font-weight: bold;
