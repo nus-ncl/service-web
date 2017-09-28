@@ -2557,6 +2557,16 @@ public class MainController {
         return abc(teamName, expId, redirectAttributes, realization, request);
     }
 
+    @RequestMapping("/update_experiment/{teamId}/{expId}")
+    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, Model model) {
+        // same endpoint as delete experiment but different request
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId), HttpMethod.PUT, request, String.class);
+
+        log.info("Update experiment success...{}", response.getBody().toString());
+
+        return "redirect:/experiments";
+    }
 
     @RequestMapping("/get_topology/{teamName}/{expId}")
     @ResponseBody
