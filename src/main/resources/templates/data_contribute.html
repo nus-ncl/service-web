@@ -62,12 +62,6 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <!-- div class="checkbox">
-                            <label><input type="checkbox" th:field="*{accessibility}" th:value="RESTRICTED"/><strong><span th:text="#{admin.contributeData.auth}">Require Authorization?</span></strong></label>
-                            <p>
-                                <em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Select it if you want to review every access request to this dataset.</span><br/></em>
-                            </p>
-                        </div -->
                         <div class="radio">
                             <label><input type="radio" th:field="*{accessibility}" th:value="OPEN"/><strong><span th:text="#{admin.contributeData.open}"></span></strong> <em th:text="#{admin.contributeData.openDesc}"></em></label>
                         </div>
@@ -134,7 +128,7 @@
                         <fieldset>
                             <div class="form-group" th:classappend="${hasErrors != null} ? has-error">
                                 <div class="checkbox">
-                                    <label><input type="checkbox" th:field="*{licenseAgreed}"/> I agree to this dataset's licensing terms.</label>
+                                    <label><input type="checkbox" th:field="*{licenseAgreed}"/> I agree to this dataset's <a href="#licenseModal" data-toggle="modal">licensing terms</a>.</label>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -254,20 +248,16 @@
         </div>
     </div>
 
-    <!-- License Descriptions Modal -->
-    <div class="modal fade" id="licenseDescModal" tabindex="-1" role="dialog" aria-labelledby="licenseDescModalLabel">
+    <!-- License Modal -->
+    <div class="modal fade" id="licenseModal" tabindex="-1" role="dialog" aria-labelledby="licenseModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="licenseDescLabel">License Descriptions</h4>
+                    <h4 class="modal-title" id="licenseLabel" th:text="${dataset.license.name}"></h4>
                 </div>
                 <div class="modal-body">
-                    <div class="row" th:each="license, iterStat : ${licenses}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
-                        <div class="col-md-3" th:text="${license.name}"></div>
-                        <div class="col-md-3" th:text="${license.acronym}"></div>
-                        <div class="col-md-6" th:text="${license.description}"></div>
-                    </div>
+                    <p th:text="${dataset.license.description}"></p>
                 </div>
             </div>
         </div>
