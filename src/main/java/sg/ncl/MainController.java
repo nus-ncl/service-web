@@ -2634,7 +2634,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("update experiment success for Team:{}, Exp: {}", teamId, expId);
-                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + experiment.getName() + " 's network configuration in team " + experiment.getTeamName() + " has been modified. You may proceed to startup the experiment.");
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + experiment.getName() + " 's network configuration in team " + experiment.getTeamName() + " has been modified. You may proceed to start the experiment.");
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
