@@ -143,6 +143,9 @@
                                 </label>
                                 <textarea class="form-control" rows="5" th:field="*{reason}"></textarea>
                             </div>
+                            <div class="alert alert-warning" role="alert" th:if="${data.isQuarantined()}">
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> This is a quarantined dataset. You won't be able to download or copy its resources. Its resources can only be used in NCL testbed.
+                            </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary" id="requestButton">Request</button>
                             </div>

@@ -64,6 +64,10 @@ public class Dataset implements Serializable {
 	    return accessibility == DataAccessibility.OPEN;
     }
 
+    public boolean isQuarantined() {
+	    return accessibility == DataAccessibility.QUARANTINED;
+    }
+
 	public boolean isPublic() {
 	    return visibility == DataVisibility.PUBLIC;
     }
