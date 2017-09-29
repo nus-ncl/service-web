@@ -103,7 +103,7 @@ public class DataController extends MainController {
     }
 
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
-    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session) {
         if (id.isPresent()) {
             Dataset dataset = getDataset(id.get());
             if (dataset.getContributorId().equals(session.getAttribute("id").toString())) {
@@ -119,6 +119,7 @@ public class DataController extends MainController {
         model.addAttribute(CATEGORIES, getDataCategories());
         model.addAttribute(LICENSES, getDataLicenses());
         model.addAttribute("requestForm", new DataRequestForm());
+        model.addAttribute("agreementForm", new LicenseAgreementForm());
         return CONTRIBUTE_DATA_PAGE;
     }
 
@@ -570,7 +571,20 @@ public class DataController extends MainController {
     }
 
     @RequestMapping("{datasetId}/resources")
-    public String getResources(Model model, @PathVariable String datasetId, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String getResources(@PathVariable String datasetId, @ModelAttribute LicenseAgreementForm agreementForm,
+                               HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        if (!agreementForm.isLicenseAgreed()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Error(s):");
+            message.append("<ul class=\"fa-ul\">");
+            message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+            message.append("You have to agree to the licensing terms");
+            message.append("</li>");
+            message.append("</ul>");
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, message);
+            redirectAttributes.addFlashAttribute("hasErrors", true);
+            return REDIRECT_DATA + "/contribute/" + datasetId;
+        }
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
         String dataResponseBody = response.getBody().toString();

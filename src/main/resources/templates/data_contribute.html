@@ -130,7 +130,18 @@
             <div th:if="${data != null}">
                 <hr/>
                 <div th:if="${data.isAccessible(#httpSession.getAttribute('id').toString())}">
-                    <a th:href="${'/data/' + data.id + '/resources'}" class="btn btn-primary" id="uploadButton">Access Resources</a>
+                    <form method="post" action="#" th:action="@{/data/{id}/resources(id=${data.id})}" th:object="${agreementForm}" role="form">
+                        <fieldset>
+                            <div class="form-group" th:classappend="${hasErrors != null} ? has-error">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" th:field="*{licenseAgreed}"/> I agree to this dataset's licensing terms.</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Access Resources</button>
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
                 <div th:if="not ${data.isAccessible(#httpSession.getAttribute('id').toString())}">
                     <form method="post" action="#" th:action="${'/data/' + data.id + '/request'}" role="form" id="requestForm" th:object="${requestForm}">
