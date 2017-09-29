@@ -215,6 +215,14 @@
     color: #73c20e;
 }
 
+/* experiment modify to style network config editor */
+.network-config-editor {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+}
+
 /* experiment profile activity log to allow vertical scroll */
 pre {
     height: auto;

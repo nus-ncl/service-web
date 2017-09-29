@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -2559,13 +2560,76 @@ public class MainController {
 
     @RequestMapping("/update_experiment/{teamId}/{expId}")
     public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, Model model) {
-        // same endpoint as delete experiment but different request
+        log.info("Loading experiment modify page");
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId), HttpMethod.PUT, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+        Experiment2 editExperiment = extractExperiment(response.getBody().toString());
 
-        log.info("Update experiment success...{}", response.getBody().toString());
+        model.addAttribute("edit_experiment", editExperiment);
+        return "experiment_modify";
+    }
 
-        return "redirect:/experiments";
+    @PostMapping("/update_experiment/{teamId}/{expId}")
+    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, @PathVariable String teamId, @PathVariable String expId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        // get original experiment
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+        Experiment2 experiment = extractExperiment(response.getBody().toString());
+
+        experiment.setNsFileContent(editExperiment.getNsFileContent());
+
+        objectMapper.registerModule(new JavaTimeModule());
+        String jsonExperiment;
+        try {
+            jsonExperiment = objectMapper.writeValueAsString(experiment);
+        } catch (JsonProcessingException e) {
+            log.debug("update experiment convert to json error: {}", experiment);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/update_experiment/" + teamId + "/" + expId;
+        }
+
+        // identical endpoint as delete experiment but different HTTP method
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        request = createHttpEntityWithBody(jsonExperiment);
+        ResponseEntity updateExperimentResponse;
+        try {
+            updateExperimentResponse = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId), HttpMethod.PUT, request, String.class);
+        } catch (Exception e) {
+            log.warn("Error connecting to experiment service to update experiment", e.getMessage());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String responseBody = updateExperimentResponse.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch(exceptionState) {
+                    case NS_FILE_PARSE_EXCEPTION:
+                    case EXPERIMENT_MODIFY_EXCEPTION:
+                        log.warn("update experiment failed for Team: {}, Exp: {}", teamId, expId);
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                    case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
+                        // do nothing
+                        log.info("update experiment database locking failure");
+                        break;
+                    default:
+                        // do nothing
+                        break;
+                }
+                return "redirect:/update_experiment/" + teamId + "/" + expId;
+            } else {
+                // everything ok
+                log.info("Update experiment success...{}", response.getBody().toString());
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + experiment.getName() + " 's network configuration in team " + experiment.getTeamName() + " has been modified. You may proceed to startup the experiment.");
+                return "redirect:/experiments";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
     }
 
     @RequestMapping("/get_topology/{teamName}/{expId}")
