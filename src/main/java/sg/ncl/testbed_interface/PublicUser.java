@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
@@ -25,5 +26,7 @@ public class PublicUser implements Serializable {
     private String institution;
     @Pattern(regexp = "^[A-Za-z -']+$")
     private String country;
+    @AssertTrue
+    private boolean licenseAgreed;
 
 }

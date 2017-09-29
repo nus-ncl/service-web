@@ -475,6 +475,9 @@ public class DataController extends MainController {
                     case "country":
                         message.append("You have to fill in your country");
                         break;
+                    case "licenseAgreed":
+                        message.append("You have to agree to the licensing terms");
+                        break;
                     default:
                         message.append(fieldError.getField());
                         message.append(" ");
@@ -499,6 +502,7 @@ public class DataController extends MainController {
         puserObject.put("jobTitle", puser.getJobTitle());
         puserObject.put("institution", puser.getInstitution());
         puserObject.put("country", puser.getCountry());
+        puserObject.put("licenseAgreed", puser.isLicenseAgreed());
 
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(puserObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());

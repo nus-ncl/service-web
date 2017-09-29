@@ -84,7 +84,10 @@
                                    onblur="validateField(name)" data-toggle="tooltip" data-placement="right" title="Country"/>
                             <span id="countryError" style="display: none;"><h34>You have to fill in your country</h34></span>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" th:classappend="${#fields.hasErrors('licenseAgreed')} ? has-error">
+                            <div class="checkbox">
+                                <label><input type="checkbox" th:field="*{licenseAgreed}"/> I agree to this dataset's licensing terms.</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-special">Access Resources</button>
