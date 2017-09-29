@@ -2559,10 +2559,20 @@ public class MainController {
     }
 
     @RequestMapping("/update_experiment/{teamId}/{expId}")
-    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, Model model) {
+    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
         Experiment2 editExperiment = extractExperiment(response.getBody().toString());
+
+        Team2 team = invokeAndExtractTeamInfo(teamId);
+
+        // check valid authentication to remove experiments
+        // either admin, experiment creator or experiment owner
+        if (!validateIfAdmin(session) && !editExperiment.getUserId().equals(session.getAttribute("id").toString()) && !team.getOwner().getId().equals(session.getAttribute(webProperties.getSessionUserId()))) {
+            log.warn("Permission denied when updating Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to update experiment;" + permissionDeniedMessage);
+            return "redirect:/experiments";
+        }
 
         model.addAttribute("edit_experiment", editExperiment);
         return "experiment_modify";
