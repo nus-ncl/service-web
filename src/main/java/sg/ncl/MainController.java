@@ -2558,11 +2558,28 @@ public class MainController {
         return abc(teamName, expId, redirectAttributes, realization, request);
     }
 
+    /**
+     * Invokes the sio to update the experiment. Experiment must be stopped first before modifying. Only experiment creator, team owner and admin can modify experiment.
+     * @param teamId team that contains the experiment
+     * @param expId exp to be modified
+     * @param model insert the form to the html page
+     * @param session for pre-modification checks
+     * @param redirectAttributes redirect error messages
+     * @return experiment modify page
+     */
     @RequestMapping("/update_experiment/{teamId}/{expId}")
     public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
         Experiment2 editExperiment = extractExperiment(response.getBody().toString());
+
+        Realization realization = invokeAndExtractRealization(editExperiment.getTeamName(), Long.parseLong(expId));
+
+        if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
+            log.warn("Trying to modify Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while attempting to modify Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
+            return "redirect:/experiments";
+        }
 
         Team2 team = invokeAndExtractTeamInfo(teamId);
 
