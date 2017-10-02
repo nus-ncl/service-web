@@ -64,6 +64,10 @@ public class Dataset implements Serializable {
 	    return accessibility == DataAccessibility.OPEN;
     }
 
+    public boolean isQuarantined() {
+	    return accessibility == DataAccessibility.QUARANTINED;
+    }
+
 	public boolean isPublic() {
 	    return visibility == DataVisibility.PUBLIC;
     }
@@ -74,6 +78,10 @@ public class Dataset implements Serializable {
 
     public boolean isAccessible(String userId) {
         return isOpen() || isContributor(userId) || isApprovedUser(userId);
+    }
+
+    public boolean isDownloadable(String userId) {
+	    return accessibility != DataAccessibility.QUARANTINED && isAccessible(userId);
     }
 
     public boolean isContributor(String userId) {

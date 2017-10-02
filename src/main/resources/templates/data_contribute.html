@@ -62,12 +62,14 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <div class="checkbox">
-                            <label><input type="checkbox" th:field="*{accessibility}" th:value="RESTRICTED"/><strong><span th:text="#{admin.contributeData.auth}">Require Authorization?</span></strong></label>
-                            <p>
-                                <em><span th:text="#{admin.contributeData.authDesc1}">(Optional) Select it if you want to review every access request to this dataset.</span>
-                                    <br/><!-- span th:text="#{admin.contributeData.authDesc2}">Otherwise, users can just download your dataset without your authorization</span --></em>
-                            </p>
+                        <div class="radio">
+                            <label><input type="radio" th:field="*{accessibility}" th:value="OPEN"/><strong><span th:text="#{admin.contributeData.open}"></span></strong> <em th:text="#{admin.contributeData.openDesc}"></em></label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" th:field="*{accessibility}" th:value="RESTRICTED"/><strong><span th:text="#{admin.contributeData.restricted}"></span></strong> <em th:text="#{admin.contributeData.restrictedDesc}"></em></label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" th:field="*{accessibility}" th:value="QUARANTINED"/><strong><span th:text="#{admin.contributeData.quarantined}"></span></strong> <em th:text="#{admin.contributeData.quarantinedDesc}"></em></label>
                         </div>
                     </div>
                     <div class="form-group">
@@ -122,7 +124,18 @@
             <div th:if="${data != null}">
                 <hr/>
                 <div th:if="${data.isAccessible(#httpSession.getAttribute('id').toString())}">
-                    <a th:href="${'/data/' + data.id + '/resources'}" class="btn btn-primary" id="uploadButton">Access Resources</a>
+                    <form method="post" action="#" th:action="@{/data/{id}/resources(id=${data.id})}" th:object="${agreementForm}" role="form">
+                        <fieldset>
+                            <div class="form-group" th:classappend="${hasErrors != null} ? has-error">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" th:field="*{licenseAgreed}"/> I agree to this dataset's <a href="#licenseModal" data-toggle="modal">licensing terms</a>.</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Access Resources</button>
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
                 <div th:if="not ${data.isAccessible(#httpSession.getAttribute('id').toString())}">
                     <form method="post" action="#" th:action="${'/data/' + data.id + '/request'}" role="form" id="requestForm" th:object="${requestForm}">
@@ -134,6 +147,9 @@
                                     for access to the resources of dataset <u><span th:text="${data.getName()}"></span></u>:
                                 </label>
                                 <textarea class="form-control" rows="5" th:field="*{reason}"></textarea>
+                            </div>
+                            <div class="alert alert-warning" role="alert" th:if="${data.isQuarantined()}">
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> This is a quarantined dataset. You won't be able to download or copy its resources. Its resources can only be used in NCL testbed.
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary" id="requestButton">Request</button>
@@ -232,20 +248,16 @@
         </div>
     </div>
 
-    <!-- License Descriptions Modal -->
-    <div class="modal fade" id="licenseDescModal" tabindex="-1" role="dialog" aria-labelledby="licenseDescModalLabel">
+    <!-- License Modal -->
+    <div class="modal fade" id="licenseModal" tabindex="-1" role="dialog" aria-labelledby="licenseModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="licenseDescLabel">License Descriptions</h4>
+                    <h4 class="modal-title" id="licenseLabel" th:text="${dataset.license.name}"></h4>
                 </div>
                 <div class="modal-body">
-                    <div class="row" th:each="license, iterStat : ${licenses}" th:attr="style=!${iterStat.last} ? 'border-bottom: 1px solid #ccc' : ''">
-                        <div class="col-md-3" th:text="${license.name}"></div>
-                        <div class="col-md-3" th:text="${license.acronym}"></div>
-                        <div class="col-md-6" th:text="${license.description}"></div>
-                    </div>
+                    <p th:text="${dataset.license.description}"></p>
                 </div>
             </div>
         </div>

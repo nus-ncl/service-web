@@ -40,6 +40,7 @@ import static sg.ncl.domain.ExceptionState.*;
 public class DataController extends MainController {
 
     private static final String REDIRECT_DATA = "redirect:/data";
+    private static final String REDIRECT_CONTRIBUTE = "redirect:/data/contribute/";
     private static final String CATEGORIES = "categories";
     private static final String LICENSES = "licenses";
     private static final String RESOURCES = "resources";
@@ -51,6 +52,11 @@ public class DataController extends MainController {
     private static final String START_DATE = "startDate=";
     private static final String END_DATE = "endDate=";
     private static final String DATA_ID = "dataId";
+    private static final String ERRORS_STR = "Error(s):";
+    private static final String UL_TAG_START = "<ul class=\"fa-ul\">";
+    private static final String LI_START_TAG = "<li><i class=\"fa fa-exclamation-circle\"></i> ";
+    private static final String LI_END_TAG = "</li>";
+    private static final String UL_END_TAG = "</ul>";
 
     @RequestMapping
     public String data(Model model) {
@@ -103,7 +109,7 @@ public class DataController extends MainController {
     }
 
     @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
-    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session) {
         if (id.isPresent()) {
             Dataset dataset = getDataset(id.get());
             if (dataset.getContributorId().equals(session.getAttribute("id").toString())) {
@@ -119,6 +125,7 @@ public class DataController extends MainController {
         model.addAttribute(CATEGORIES, getDataCategories());
         model.addAttribute(LICENSES, getDataLicenses());
         model.addAttribute("requestForm", new DataRequestForm());
+        model.addAttribute("agreementForm", new LicenseAgreementForm());
         return CONTRIBUTE_DATA_PAGE;
     }
 
@@ -173,11 +180,11 @@ public class DataController extends MainController {
 
         if (bindingResult.hasErrors()) {
             StringBuilder message = new StringBuilder();
-            message.append("Error(s):");
-            message.append("<ul class=\"fa-ul\">");
+            message.append(ERRORS_STR);
+            message.append(UL_TAG_START);
             for (ObjectError objectError : bindingResult.getAllErrors()) {
                 FieldError fieldError = (FieldError) objectError;
-                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+                message.append(LI_START_TAG);
                 switch (fieldError.getField()) {
                     case "categoryId":
                         message.append("category must be selected");
@@ -190,9 +197,9 @@ public class DataController extends MainController {
                         message.append(" ");
                         message.append(fieldError.getDefaultMessage());
                 }
-                message.append("</li>");
+                message.append(LI_END_TAG);
             }
-            message.append("</ul>");
+            message.append(UL_END_TAG);
             model.addAttribute(MESSAGE_ATTRIBUTE, message.toString());
             model.addAttribute(CATEGORIES, getDataCategories());
             model.addAttribute(LICENSES, getDataLicenses());
@@ -331,7 +338,7 @@ public class DataController extends MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return REDIRECT_DATA + "/contribute/" + id;
+        return REDIRECT_CONTRIBUTE + id;
     }
 
     @RequestMapping(value = "{did}/requests/{rid}", method = RequestMethod.GET)
@@ -437,7 +444,7 @@ public class DataController extends MainController {
     @RequestMapping(value = "/public/{id}", method = RequestMethod.GET)
     public String getPublicDataset(HttpSession session, Model model, @PathVariable String id) {
         if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
-            return REDIRECT_DATA + "/contribute/" + id;
+            return REDIRECT_CONTRIBUTE + id;
         }
         HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
@@ -454,11 +461,11 @@ public class DataController extends MainController {
                                      @Valid @ModelAttribute("puser") PublicUser puser, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder message = new StringBuilder();
-            message.append("Error(s):");
-            message.append("<ul class=\"fa-ul\">");
+            message.append(ERRORS_STR);
+            message.append(UL_TAG_START);
             for (ObjectError objectError : bindingResult.getAllErrors()) {
                 FieldError fieldError = (FieldError) objectError;
-                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+                message.append(LI_START_TAG);
                 switch (fieldError.getField()) {
                     case "fullName":
                         message.append("You have to fill in your full name");
@@ -475,14 +482,17 @@ public class DataController extends MainController {
                     case "country":
                         message.append("You have to fill in your country");
                         break;
+                    case "licenseAgreed":
+                        message.append("You have to agree to the licensing terms");
+                        break;
                     default:
                         message.append(fieldError.getField());
                         message.append(" ");
                         message.append(fieldError.getDefaultMessage());
                 }
-                message.append("</li>");
+                message.append(LI_END_TAG);
             }
-            message.append("</ul>");
+            message.append(UL_END_TAG);
             model.addAttribute(MESSAGE_ATTRIBUTE, message);
             HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
             ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
@@ -499,6 +509,7 @@ public class DataController extends MainController {
         puserObject.put("jobTitle", puser.getJobTitle());
         puserObject.put("institution", puser.getInstitution());
         puserObject.put("country", puser.getCountry());
+        puserObject.put("licenseAgreed", puser.isLicenseAgreed());
 
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(puserObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -566,7 +577,20 @@ public class DataController extends MainController {
     }
 
     @RequestMapping("{datasetId}/resources")
-    public String getResources(Model model, @PathVariable String datasetId, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String getResources(@PathVariable String datasetId, @ModelAttribute LicenseAgreementForm agreementForm,
+                               HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        if (!agreementForm.isLicenseAgreed()) {
+            StringBuilder message = new StringBuilder();
+            message.append(ERRORS_STR);
+            message.append(UL_TAG_START);
+            message.append(LI_START_TAG);
+            message.append("You have to agree to the licensing terms");
+            message.append(LI_END_TAG);
+            message.append(UL_END_TAG);
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, message);
+            redirectAttributes.addFlashAttribute("hasErrors", true);
+            return REDIRECT_CONTRIBUTE + datasetId;
+        }
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
         String dataResponseBody = response.getBody().toString();
@@ -745,9 +769,13 @@ public class DataController extends MainController {
      * [3] http://stackoverflow.com/questions/32988370/download-large-file-from-server-using-rest-template-java-spring-mvc
      */
     @RequestMapping(value="{datasetId}/resources/{resourceId}", method=RequestMethod.GET)
-    public void getResource(@PathVariable String datasetId,
-                            @PathVariable String resourceId,
-                            final HttpServletResponse httpResponse) throws UnsupportedEncodingException {
+    public void getResource(@PathVariable String datasetId, @PathVariable String resourceId, HttpSession session,
+                            final HttpServletResponse httpResponse) throws UnsupportedEncodingException, WebServiceRuntimeException {
+        Dataset dataset = invokeAndExtractDataInfo(Long.valueOf(datasetId));
+        if (!dataset.isDownloadable(session.getAttribute("id").toString())) {
+            throw new WebServiceRuntimeException("Resource download denied!");
+        }
+
         try {
             // Optional Accept header
             RequestCallback requestCallback = request -> {
