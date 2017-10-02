@@ -1532,6 +1532,38 @@ public class MainController {
         return "redirect:/teams/members_approval/{teamId}";
     }
 
+    @RequestMapping(value = "/teams/delete_image/{teamName}/{imageName}", method = RequestMethod.DELETE)
+    public String deleteImage(
+            @PathVariable String teamName,
+            @PathVariable String imageName,
+            final RedirectAttributes redirectAttributes)
+            throws WebServiceRuntimeException {
+
+        log.info("Deleting image: team {}, image {}", teamName, imageName);
+        JSONObject requestObject = new JSONObject();
+
+        try {
+            HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+            ResponseEntity response = restTemplate.exchange(properties.deleteImage(teamName, imageName),
+                                            HttpMethod.DELETE, request, String.class);
+            String responseBody = response.getBody().toString();
+
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                log.warn("Error connecting to sio image service for deleting image: {}", exceptionState);
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            }
+        } catch (IOException e) {
+            log.warn("Eroor connecting to sio image service for deleting image: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "redirect:/teams";
+    }
+
     //--------------------------Team Profile Page--------------------------
 
     @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
