@@ -2523,7 +2523,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + realization.getExperimentName() + " in team " + teamName + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please refresh this page later.");
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, getExperimentMessage(realization.getExperimentName(), teamName) + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please refresh this page later.");
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
@@ -2651,7 +2651,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("update experiment success for Team:{}, Exp: {}", teamId, expId);
-                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + experiment.getName() + " 's network configuration in team " + experiment.getTeamName() + " has been modified. You may proceed to start the experiment.");
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, getExperimentMessage(experiment.getName(), experiment.getTeamName()) + " has been modified. You may proceed to start the experiment.");
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
@@ -2745,7 +2745,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + realization.getExperimentName() + " in team " + teamName + " is stopping. Please refresh this page in a few minutes.");
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, getExperimentMessage(realization.getExperimentName(), teamName) + " is stopping. Please refresh this page in a few minutes.");
             }
             return "redirect:/experiments";
         } catch (IOException e) {
@@ -4707,5 +4707,16 @@ public class MainController {
             statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, "0");
         }
         return statsMap;
+    }
+
+    /**
+     * Refactor experiment messages used for display purposes when starting, stopping and modifying experiment
+     * For fixing the SonarQube duplicate errors
+     * @param expName experiment name
+     * @param teamName team name
+     * @return a string in the form "Experiment expName in Team teamName"
+     */
+    private String getExperimentMessage(String expName, String teamName) {
+        return "Experiment " + expName + " in team " + teamName;
     }
 }
