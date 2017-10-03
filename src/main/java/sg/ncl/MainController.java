@@ -1556,7 +1556,7 @@ public class MainController {
                 redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             }
         } catch (IOException e) {
-            log.warn("Eroor connecting to sio image service for deleting image: {}", e.getMessage());
+            log.warn("Error connecting to sio image service for deleting image: {}", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             throw new WebServiceRuntimeException(e.getMessage());
         }
