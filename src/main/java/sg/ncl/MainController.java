@@ -1532,20 +1532,20 @@ public class MainController {
         return "redirect:/teams/members_approval/{teamId}";
     }
 
-    @RequestMapping(value = "/teams/delete_image/{teamName}/{imageName}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/teams/delete_image/{teamId}/{imageName}", method = RequestMethod.DELETE)
     public String deleteImage(
-            @PathVariable String teamName,
+            @PathVariable String teamId,
             @PathVariable String imageName,
             final RedirectAttributes redirectAttributes)
             throws WebServiceRuntimeException {
 
-        log.info("Deleting image: team {}, image {}", teamName, imageName);
+        log.info("Deleting image: team {}, image {}", teamId, imageName);
         JSONObject requestObject = new JSONObject();
 
         try {
             HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
-            ResponseEntity response = restTemplate.exchange(properties.deleteImage(teamName, imageName),
+            ResponseEntity response = restTemplate.exchange(properties.deleteImage(teamId, imageName),
                                             HttpMethod.DELETE, request, String.class);
             String responseBody = response.getBody().toString();
 
@@ -1554,6 +1554,9 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
                 log.warn("Error connecting to sio image service for deleting image: {}", exceptionState);
                 redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            } else {
+                log.info("Deleting image {} of team {} is successful ", imageName, teamId);
+                redirectAttributes.addFlashAttribute(MESSAGE, "Image " + "\'" + imageName + "\'" + " is successfully deleted");
             }
         } catch (IOException e) {
             log.warn("Error connecting to sio image service for deleting image: {}", e.getMessage());

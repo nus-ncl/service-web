@@ -120,7 +120,7 @@
                                         <td th:text="#{team.table.header.imageCreated}"></td>
                                         <td>
                                             <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#deleteImage"
-                                                    th:href="@{/teams/delete_image/{teamName}/{imageName}(teamName = ${perTeamImageMap.key}, imageName = ${image.imageName})}"
+                                                    th:href="data-imageName = ${image.imageName} ,data-request='/teams/delete_image/' + ${perTeamImageMap.key} + '/' + ${image.imageName}"
                                                     data-placement="bottom" title="Are you sure you want to delete this image?"><i class="fa fa-trash btn-fa-red"></i></button>
                                         </td>
                                     </th:block>
@@ -167,11 +167,11 @@
                         <h4 class="modal-title">Confirmation</h4>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure you want to delete the image ?</p>
+                        <p>Are you sure you want to delete the image '<span id="imageName"></span>' ?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <a href="#" class="btn btn-primary" id="removeButton" onclick="return closeDeleteModal();">Delete</a>
+                        <a href="#" class="btn btn-primary" id="confirmButton" onclick="return closeDeleteModal();">Confirm</a>
                     </div>
                 </div>
 
@@ -187,5 +187,15 @@
                 $('#deleteImage').modal('hide');
                 return true;
             }
+
+            $('#deleteImage').on('show.bs.modal', function (event) {
+                var anchor = $(event.relatedTarget);
+                var deleteImage = anchor.data('request');
+                var imageName = anchor.data('imageName');
+                var modal = $(this);
+                modal.find('#imageName').text(imageName);
+                modal.find('#confirmButton').attr('href', deleteImage);
+            });
+
         </script>
 </html>
