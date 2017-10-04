@@ -79,6 +79,9 @@ public class MainController {
     private static final String EXPERIMENT_MESSAGE = "exp_message";
     private static final String ERROR_PREFIX = "Error: ";
 
+    private static final String MESSAGE_DELETE_IMAGE_SUCCESS = "message_success";
+    private static final String MESSAGE_DELETE_IMAGE_FAILURE = "massage_failure";
+
     // error messages
     private static final String ERROR_CONNECTING_TO_SERVICE_TELEMETRY = "Error connecting to service-telemetry: {}";
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
@@ -1532,14 +1535,14 @@ public class MainController {
         return "redirect:/teams/members_approval/{teamId}";
     }
 
-    @RequestMapping(value = "/teams/delete_image/{teamId}/{imageName}", method = RequestMethod.DELETE)
+    @RequestMapping("/teams/delete_image/{teamId}/{imageName}")
     public String deleteImage(
             @PathVariable String teamId,
             @PathVariable String imageName,
             final RedirectAttributes redirectAttributes)
             throws WebServiceRuntimeException {
 
-        log.info("Deleting image: team {}, image {}", teamId, imageName);
+        log.info("Deleting image image {} from team {}", imageName, teamId);
         JSONObject requestObject = new JSONObject();
 
         try {
@@ -1548,23 +1551,59 @@ public class MainController {
             ResponseEntity response = restTemplate.exchange(properties.deleteImage(teamId, imageName),
                                             HttpMethod.DELETE, request, String.class);
             String responseBody = response.getBody().toString();
+            String sioMessage = new JSONObject(responseBody).getString("msg");
 
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-                log.warn("Error connecting to sio image service for deleting image: {}", exceptionState);
-                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+
+                switch (exceptionState) {
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                        log.warn("Deleting image image {} from team {} error: operation failed on DeterLab", imageName, teamId);
+                        break;
+                    case ADAPTER_CONNECTION_EXCEPTION:
+                        log.warn("Deleting image image {} from team {} error: adapter internal server error", imageName, teamId);
+                        break;
+                    case ADAPTER_INTERNAL_ERROR_EXCEPTION:
+                        log.warn("Deleting image image {} from team {} error: adapter internal server error", imageName, teamId);
+                        break;
+                    default:
+                        log.warn("Deleting image image {} from team {} error: unknown exception error", imageName, teamId);
+                        break;
+                }
+                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
+                return "redirect:/teams";
+
+            } else if (sioMessage.equals("no permission to delete the imageid")) {
+                log.warn("Deleting image image {} from team {} error: no permission", imageName, teamId);
+                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "You have no permission to delete this image");
+                return "redirect:/teams";
+
+            } else if (sioMessage.equals("image still in use")) {
+                log.warn("Deleting image image {} from team {} error: image still in use", imageName, teamId);
+                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is still in use or busy!");
+                return "redirect:/teams";
+
+                // curl command is ok but there is problem with rm command
+            } else if (sioMessage.equals("delete image OK from web but error in using rm command to delete physical image")) {
+                log.warn("Deleting image image {} from team {} error: delete image OK from web but error in using rm command to delete physical image", imageName, teamId);
+                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
+                                                                                "However, " + ERR_SERVER_OVERLOAD);
+                return "redirect:/teams";
+
             } else {
                 log.info("Deleting image {} of team {} is successful ", imageName, teamId);
-                redirectAttributes.addFlashAttribute(MESSAGE, "Image " + "\'" + imageName + "\'" + " is successfully deleted");
+                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_SUCCESS, "Image " + "\'" + imageName + "\'" + " is successfully deleted");
+                return "redirect:/teams";
             }
+
         } catch (IOException e) {
             log.warn("Error connecting to sio image service for deleting image: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        return "redirect:/teams";
+
     }
 
     //--------------------------Team Profile Page--------------------------
