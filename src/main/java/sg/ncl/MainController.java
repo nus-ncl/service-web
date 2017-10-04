@@ -1542,16 +1542,14 @@ public class MainController {
             final RedirectAttributes redirectAttributes)
             throws WebServiceRuntimeException {
 
-        log.info("Deleting image image {} from team {}", imageName, teamId);
-        JSONObject requestObject = new JSONObject();
+        log.info("Deleting image {} from team {}", imageName, teamId);
 
         try {
-            HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             ResponseEntity response = restTemplate.exchange(properties.deleteImage(teamId, imageName),
                                             HttpMethod.DELETE, request, String.class);
             String responseBody = response.getBody().toString();
-            String sioMessage = new JSONObject(responseBody).getString("msg");
 
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
@@ -1559,42 +1557,55 @@ public class MainController {
 
                 switch (exceptionState) {
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
-                        log.warn("Deleting image image {} from team {} error: operation failed on DeterLab", imageName, teamId);
-                        break;
+                        log.warn("Error in deleting image '{}' from team '{}' : operation failed on DeterLab", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
+                        return "redirect:/teams";
                     case ADAPTER_CONNECTION_EXCEPTION:
-                        log.warn("Deleting image image {} from team {} error: adapter internal server error", imageName, teamId);
-                        break;
+                        log.warn("Error in deleting  image '{}' from team '{}' : adapter internal server error", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
+                        return "redirect:/teams";
                     case ADAPTER_INTERNAL_ERROR_EXCEPTION:
-                        log.warn("Deleting image image {} from team {} error: adapter internal server error", imageName, teamId);
-                        break;
+                        log.warn("Error in deleting image '{}' from team '{}' : adapter internal server error", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
+                        return "redirect:/teams";
                     default:
-                        log.warn("Deleting image image {} from team {} error: unknown exception error", imageName, teamId);
-                        break;
+                        log.warn("Error in deleting image '{}' from team '{}' : {}", imageName, teamId,  exceptionState);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
+                        return "redirect:/teams";
                 }
-                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
-                return "redirect:/teams";
-
-            } else if (sioMessage.equals("no permission to delete the imageid")) {
-                log.warn("Deleting image image {} from team {} error: no permission", imageName, teamId);
-                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "You have no permission to delete this image");
-                return "redirect:/teams";
-
-            } else if (sioMessage.equals("image still in use")) {
-                log.warn("Deleting image image {} from team {} error: image still in use", imageName, teamId);
-                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is still in use or busy!");
-                return "redirect:/teams";
-
-                // curl command is ok but there is problem with rm command
-            } else if (sioMessage.equals("delete image OK from web but error in using rm command to delete physical image")) {
-                log.warn("Deleting image image {} from team {} error: delete image OK from web but error in using rm command to delete physical image", imageName, teamId);
-                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
-                                                                                "However, " + ERR_SERVER_OVERLOAD);
-                return "redirect:/teams";
-
             } else {
-                log.info("Deleting image {} of team {} is successful ", imageName, teamId);
-                redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_SUCCESS, "Image " + "\'" + imageName + "\'" + " is successfully deleted");
-                return "redirect:/teams";
+                String sioMessage = new JSONObject(responseBody).getString("msg");
+
+                switch (sioMessage) {
+                    case "not creator":
+                        log.warn("Error in deleting image {} from team '{}' : no permission", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " was not created by you. Therefore, " +
+                                                                                            "You do not have permission to delete this image.");
+                        return "redirect:/teams";
+                    case "no permission to delete the imageid":
+                        log.warn("Error in deleting image {} from team '{}' : no permission", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "You do not have permission to delete this image. Please log in first!");
+                        return "redirect:/teams";
+                    case "image still in use":
+                        log.warn("Error in deleting image '{}' from team '{}' : {}", imageName, teamId, sioMessage);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is still in use or busy!");
+                        return "redirect:/teams";
+                    // curl command is ok but there is problem with rm command
+                    case "delete image OK from web but error in using rm command to delete physical image":
+                        log.warn("Error in deleting image '{}' from team '{}' : {}", imageName, teamId, sioMessage);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
+                                                                                        "However, " + ERR_SERVER_OVERLOAD);
+                        return "redirect:/teams";
+                    case "delete image OK from web but there is unknown error when deleting physical image":
+                        log.warn("Error in deleting image '{}' from team '{}' : {}", imageName, teamId, sioMessage);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
+                                                                                    "However, " + ERR_SERVER_OVERLOAD);
+                        return "redirect:/teams";
+                    default:
+                        log.info("Deleting image '{}' of team '{}' is successful ", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_SUCCESS, "Image " + "\'" + imageName + "\'" + " is successfully deleted");
+                        return "redirect:/teams";
+                }
             }
 
         } catch (IOException e) {
