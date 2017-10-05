@@ -110,6 +110,10 @@
                         </i> <span class="account-change-fail" th:text="${massage_failure}"></span>
                         </p>
                     </div>
+                    <div th:if="${message_warning}" class="alert alert-warning">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>Warning!</strong> <p th:text="${message_warning}"></p>
+                    </div>
                     <div class="panel-body">
                         <div th:if="${isInnerImageMapPresent} == false">
                             <p th:text="#{team.noSavedOSImages}">text heading from .properties</p>

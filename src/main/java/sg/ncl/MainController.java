@@ -81,7 +81,7 @@ public class MainController {
 
     private static final String MESSAGE_DELETE_IMAGE_SUCCESS = "message_success";
     private static final String MESSAGE_DELETE_IMAGE_FAILURE = "massage_failure";
-
+    private static final String MESSAGE_DELETE_IMAGE_WARNING = "massage_warning";
     // error messages
     private static final String ERROR_CONNECTING_TO_SERVICE_TELEMETRY = "Error connecting to service-telemetry: {}";
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
@@ -1575,11 +1575,11 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
                         return "redirect:/teams";
                     case ADAPTER_CONNECTION_EXCEPTION:
-                        log.warn("Error in deleting  image '{}' from team '{}' : adapter internal server error", imageName, teamId);
+                        log.warn("Error in deleting  image '{}' from team '{}' : adapter connection error", imageName, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
                         return "redirect:/teams";
                     case ADAPTER_INTERNAL_ERROR_EXCEPTION:
-                        log.warn("Error in deleting image '{}' from team '{}' : adapter internal server error", imageName, teamId);
+                        log.warn("Error in deleting image '{}' from team '{}' : adapter internal error", imageName, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
                         return "redirect:/teams";
                     default:
@@ -1596,14 +1596,14 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is still in use or busy!");
                         return "redirect:/teams";
                     // curl command is ok but there is problem with rm command
-                    case "delete image OK from web but error in using rm command to delete physical image":
+                    case "delete image OK from web but error when executing rm command to delete physical image":
                         log.warn("Error in deleting image '{}' from team '{}' : {}", imageName, teamId, sioMessage);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_WARNING, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
                                                                                         "However, " + ERR_SERVER_OVERLOAD);
                         return "redirect:/teams";
                     case "delete image OK from web but there is unknown error when deleting physical image":
                         log.warn("Error in deleting image '{}' from team '{}' : {}", imageName, teamId, sioMessage);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_WARNING, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
                                                                                     "However, " + ERR_SERVER_OVERLOAD);
                         return "redirect:/teams";
                     default:
@@ -1618,8 +1618,6 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
             throw new WebServiceRuntimeException(e.getMessage());
         }
-
-
     }
 
     //--------------------------Team Profile Page--------------------------
