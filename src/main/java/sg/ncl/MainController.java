@@ -1561,9 +1561,13 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "You do not have permission to delete this image. Only " +
                                                                                 " team leader or creator of this image can delete this image.");
                         return "redirect:/teams";
-                    case IMAGE_NOT_FOUND_IN_TEAM_EXCEPTION:
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        log.warn("Error in deleting image {} from team '{}' : team not found", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Team '" + teamId + "' is not found");
+                        return "redirect:/teams";
+                    case IMAGE_NOT_FOUND_EXCEPTION:
                         log.warn("Error in deleting image {} from team '{}' : image is not found in team", imageName, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "This image does not belong to your team");
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "The image '" + imageName + "' is not found in your teams' list of images");
                         return "redirect:/teams";
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Error in deleting image '{}' from team '{}' : operation failed on DeterLab", imageName, teamId);
