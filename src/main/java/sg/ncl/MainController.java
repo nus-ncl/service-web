@@ -1542,6 +1542,7 @@ public class MainController {
             final RedirectAttributes redirectAttributes)
             throws WebServiceRuntimeException {
 
+
         log.info("Deleting image {} from team {}", imageName, teamId);
 
         try {
@@ -1566,8 +1567,8 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Team '" + teamId + "' is not found");
                         return "redirect:/teams";
                     case IMAGE_NOT_FOUND_EXCEPTION:
-                        log.warn("Error in deleting image {} from team '{}' : image is not found in team", imageName, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "The image '" + imageName + "' is not found in your teams' list of images");
+                        log.warn("Error in deleting image {} from team '{}' : image does not exist or not found in teams' list of images", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "The image '" + imageName + "' either does not exist or not found in your teams' list of images");
                         return "redirect:/teams";
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Error in deleting image '{}' from team '{}' : operation failed on DeterLab", imageName, teamId);
