@@ -1560,7 +1560,7 @@ public class MainController {
                     case INSUFFICIENT_PERMISSION_EXCEPTION:
                         log.warn("Error in deleting image {} from team '{}' : insufficient permission", imageName, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "You do not have permission to delete this image. Only " +
-                                                                                " team leader or creator of this image can delete this image.");
+                                                                                " team leader or creator of this image can delete the image.");
                         return "redirect:/teams";
                     case TEAM_NOT_FOUND_EXCEPTION:
                         log.warn("Error in deleting image {} from team '{}' : team not found", imageName, teamId);
