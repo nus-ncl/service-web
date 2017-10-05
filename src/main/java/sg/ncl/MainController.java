@@ -1544,6 +1544,8 @@ public class MainController {
             throws WebServiceRuntimeException {
 
         String errorMessage = "Error in deleting image {} from team '{}' ";
+        String imageMessage = "The image " + "\'" + imageName + "\'";
+
         log.info("Deleting image {} from team {}", imageName, teamId);
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -1568,7 +1570,7 @@ public class MainController {
                         break;
                     case IMAGE_NOT_FOUND_EXCEPTION:
                         log.warn(errorMessage + ": image does not exist or not found in teams' list of images", imageName, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "The image '" + imageName + "' either does not exist or not found in your teams' list of images");
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, imageMessage + " either does not exist or not found in your teams' list of images");
                         break;
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn(errorMessage + ": operation failed on DeterLab", imageName, teamId);
@@ -1594,22 +1596,22 @@ public class MainController {
                 switch (sioMessage) {
                     case "image still in use":
                         log.warn(errorMessage + ": {}", imageName, teamId, sioMessage);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is still in use or busy!");
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, imageMessage + " is still in use or busy!");
                         break;
                     // curl command is ok but there is problem with rm command
                     case "delete image OK from web but error when executing rm command to delete physical image":
                         log.warn(errorMessage + ": {}", imageName, teamId, sioMessage);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_WARNING, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_WARNING, imageMessage + " is successfully deleted. " +
                                                                                         "However, " + ERR_SERVER_OVERLOAD);
                         break;
                     case "delete image OK from web but there is unknown error when deleting physical image":
                         log.warn(errorMessage + ": {}", imageName, teamId, sioMessage);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_WARNING, "Image " + "\'" + imageName + "\'" + " is successfully deleted. " +
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_WARNING, imageMessage + " is successfully deleted. " +
                                                                                     "However, " + ERR_SERVER_OVERLOAD);
                         break;
                     default:
                         log.info("Deleting image '{}' of team '{}' is successful ", imageName, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_SUCCESS, "Image " + "\'" + imageName + "\'" + " is successfully deleted");
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_SUCCESS, imageMessage + " is successfully deleted");
                         break;
                 }
                 return REDIRECT_TEAMS;
