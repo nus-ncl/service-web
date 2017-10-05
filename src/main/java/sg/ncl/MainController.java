@@ -1556,6 +1556,15 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 switch (exceptionState) {
+                    case INSUFFICIENT_PERMISSION_EXCEPTION:
+                        log.warn("Error in deleting image {} from team '{}' : insufficient permission", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "You do not have permission to delete this image. Only " +
+                                                                                " team leader or creator of this image can delete this image.");
+                        return "redirect:/teams";
+                    case IMAGE_NOT_FOUND_IN_TEAM_EXCEPTION:
+                        log.warn("Error in deleting image {} from team '{}' : image is not found in team", imageName, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "This image does not belong to your team");
+                        return "redirect:/teams";
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Error in deleting image '{}' from team '{}' : operation failed on DeterLab", imageName, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, ERR_SERVER_OVERLOAD);
@@ -1577,15 +1586,6 @@ public class MainController {
                 String sioMessage = new JSONObject(responseBody).getString("msg");
 
                 switch (sioMessage) {
-                    case "not creator":
-                        log.warn("Error in deleting image {} from team '{}' : no permission", imageName, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " was not created by you. Therefore, " +
-                                                                                            "You do not have permission to delete this image.");
-                        return "redirect:/teams";
-                    case "no permission to delete the imageid":
-                        log.warn("Error in deleting image {} from team '{}' : no permission", imageName, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "You do not have permission to delete this image. Please log in first!");
-                        return "redirect:/teams";
                     case "image still in use":
                         log.warn("Error in deleting image '{}' from team '{}' : {}", imageName, teamId, sioMessage);
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "Image " + "\'" + imageName + "\'" + " is still in use or busy!");
