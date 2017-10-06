@@ -2637,7 +2637,8 @@ public class MainController {
                     case NS_FILE_PARSE_EXCEPTION:
                     case EXPERIMENT_MODIFY_EXCEPTION:
                         log.warn("update experiment failed for Team: {}, Exp: {}", teamId, expId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error in parsing NS File");
+                        redirectAttributes.addFlashAttribute("exp_output", error.getMessage());
                         break;
                     case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
                         // do nothing

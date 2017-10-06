@@ -18,6 +18,7 @@
         <div th:if="${message}">
             <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
         </div>
+        <blockquote th:if="${exp_output}"><pre th:text="${exp_output}"></pre></blockquote>
         <h2><span th:text="#{experimentProfile.header}">Experiment</span>: <span th:text="${edit_experiment.name}" style="color:#00C7BA;"></span></h2>
         <p>For more information about the NS language, refer to <a href="http://docs.deterlab.net/core/core-guide/">Deterlab Core Guide</a> for more information.</p>
         <form  method="post" action="#" th:action="@{/update_experiment/{teamId}/{expId}(teamId = ${edit_experiment.teamId}, expId = ${edit_experiment.id})}" th:object="${edit_experiment}" role="form">
