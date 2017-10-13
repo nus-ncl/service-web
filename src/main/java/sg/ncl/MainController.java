@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -2522,7 +2523,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + realization.getExperimentName() + " in team " + teamName + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please refresh this page later.");
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, getExperimentMessage(realization.getExperimentName(), teamName) + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please refresh this page later.");
                 return "redirect:/experiments";
             }
         } catch (IOException e) {
@@ -2557,6 +2558,107 @@ public class MainController {
         return abc(teamName, expId, redirectAttributes, realization, request);
     }
 
+    /**
+     * Invokes the sio to update the experiment. Experiment must be stopped first before modifying. Only experiment creator, team owner and admin can modify experiment.
+     * @param teamId team that contains the experiment
+     * @param expId exp to be modified
+     * @param model insert the form to the html page
+     * @param session for pre-modification checks
+     * @param redirectAttributes redirect error messages
+     * @return experiment modify page
+     */
+    @RequestMapping("/update_experiment/{teamId}/{expId}")
+    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+        Experiment2 editExperiment = extractExperiment(response.getBody().toString());
+
+        Realization realization = invokeAndExtractRealization(editExperiment.getTeamName(), Long.parseLong(expId));
+
+        if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
+            log.warn("Trying to modify Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while attempting to modify Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
+            return "redirect:/experiments";
+        }
+
+        Team2 team = invokeAndExtractTeamInfo(teamId);
+
+        // check valid authentication to remove experiments
+        // either admin, experiment creator or experiment owner
+        if (!validateIfAdmin(session) && !editExperiment.getUserId().equals(session.getAttribute("id").toString()) && !team.getOwner().getId().equals(session.getAttribute(webProperties.getSessionUserId()))) {
+            log.warn("Permission denied when updating Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to update experiment;" + permissionDeniedMessage);
+            return "redirect:/experiments";
+        }
+
+        model.addAttribute("edit_experiment", editExperiment);
+        return "experiment_modify";
+    }
+
+    @PostMapping("/update_experiment/{teamId}/{expId}")
+    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, @PathVariable String teamId, @PathVariable String expId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        // get original experiment
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+        Experiment2 experiment = extractExperiment(response.getBody().toString());
+
+        experiment.setNsFileContent(editExperiment.getNsFileContent());
+
+        objectMapper.registerModule(new JavaTimeModule());
+        String jsonExperiment;
+        try {
+            jsonExperiment = objectMapper.writeValueAsString(experiment);
+        } catch (JsonProcessingException e) {
+            log.debug("update experiment convert to json error: {}", experiment);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/update_experiment/" + teamId + "/" + expId;
+        }
+
+        // identical endpoint as delete experiment but different HTTP method
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        request = createHttpEntityWithBody(jsonExperiment);
+        ResponseEntity updateExperimentResponse;
+        try {
+            updateExperimentResponse = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId), HttpMethod.PUT, request, String.class);
+        } catch (Exception e) {
+            log.warn("Error connecting to experiment service to update experiment", e.getMessage());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/experiments";
+        }
+
+        String updateExperimentResponseBody = updateExperimentResponse.getBody().toString();
+
+        try {
+            if (RestUtil.isError(updateExperimentResponse.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(updateExperimentResponseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch(exceptionState) {
+                    case NS_FILE_PARSE_EXCEPTION:
+                    case EXPERIMENT_MODIFY_EXCEPTION:
+                        log.warn("update experiment failed for Team: {}, Exp: {}", teamId, expId);
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error in parsing NS File");
+                        redirectAttributes.addFlashAttribute("exp_output", error.getMessage());
+                        break;
+                    case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
+                        // do nothing
+                        log.info("update experiment database locking failure");
+                        break;
+                    default:
+                        // do nothing
+                        break;
+                }
+                return "redirect:/update_experiment/" + teamId + "/" + expId;
+            } else {
+                // everything ok
+                log.info("update experiment success for Team:{}, Exp: {}", teamId, expId);
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, getExperimentMessage(experiment.getName(), experiment.getTeamName()) + " has been modified. You may proceed to start the experiment.");
+                return "redirect:/experiments";
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+    }
 
     @RequestMapping("/get_topology/{teamName}/{expId}")
     @ResponseBody
@@ -2644,7 +2746,7 @@ public class MainController {
             } else {
                 // everything ok
                 log.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
-                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, "Experiment " + realization.getExperimentName() + " in team " + teamName + " is stopping. Please refresh this page in a few minutes.");
+                redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, getExperimentMessage(realization.getExperimentName(), teamName) + " is stopping. Please refresh this page in a few minutes.");
             }
             return "redirect:/experiments";
         } catch (IOException e) {
@@ -4606,5 +4708,16 @@ public class MainController {
             statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, "0");
         }
         return statsMap;
+    }
+
+    /**
+     * Refactor experiment messages used for display purposes when starting, stopping and modifying experiment
+     * For fixing the SonarQube duplicate errors
+     * @param expName experiment name
+     * @param teamName team name
+     * @return a string in the form "Experiment expName in Team teamName"
+     */
+    private String getExperimentMessage(String expName, String teamName) {
+        return "Experiment " + expName + " in team " + teamName;
     }
 }

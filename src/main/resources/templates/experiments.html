@@ -130,6 +130,7 @@
                                             </span>
                                             <span th:if="${realization.state == 'NOT_RUNNING'}">
                                                 <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
+                                                <a th:href="@{/update_experiment/{teamId}/{expId}(teamId = ${expEntry.teamId}, expId = ${expEntry.id})}"><button type="button" data-tooltip="tooltip" class="btn btn-standard" data-placement="bottom" title="Modify this experiment"><i class="fa fa-pencil"></i></button></a>
                                                 <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
                                             </span>
                                             <span th:if="${realization.state == 'RUNNING'}">

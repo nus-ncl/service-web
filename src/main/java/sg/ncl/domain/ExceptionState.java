@@ -24,6 +24,7 @@ public enum ExceptionState {
     DETERLAB_OPERATION_FAILED_EXCEPTION("DeterLabOperationFailedException"),
     EMAIL_ALREADY_EXISTS_EXCEPTION("EmailAlreadyExistsException"),
     EMAIL_NOT_VERIFIED_EXCEPTION("EmailNotVerifiedException"),
+    EXPERIMENT_MODIFY_EXCEPTION("ExperimentModifyException"),
     EXPERIMENT_NAME_ALREADY_EXISTS_EXCEPTION("ExperimentNameAlreadyExistsException"),
     EXPERIMENT_DELETE_EXCEPTION("ExperimentDeleteException"),
     EXPERIMENT_START_EXCEPTION("ExperimentStartException"),
