@@ -1599,11 +1599,6 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, imageMessage + " is still in use or busy!");
                         break;
                     // curl command is ok but there is problem with rm command
-                    case "delete image OK from web but error when executing rm command to delete physical image":
-                        log.warn(errorMessage + ": {}", imageName, teamId, sioMessage);
-                        redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_WARNING, imageMessage + " is successfully deleted. " +
-                                                                                        "However, " + ERR_SERVER_OVERLOAD);
-                        break;
                     case "delete image OK from web but there is unknown error when deleting physical image":
                         log.warn(errorMessage + ": {}", imageName, teamId, sioMessage);
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_WARNING, imageMessage + " is successfully deleted. " +
