@@ -80,8 +80,9 @@ public class MainController {
     private static final String ERROR_PREFIX = "Error: ";
 
     private static final String MESSAGE_DELETE_IMAGE_SUCCESS = "message_success";
-    private static final String MESSAGE_DELETE_IMAGE_FAILURE = "massage_failure";
-    private static final String MESSAGE_DELETE_IMAGE_WARNING = "massage_warning";
+    private static final String MESSAGE_DELETE_IMAGE_FAILURE = "message_failure";
+    private static final String MESSAGE_DELETE_IMAGE_FAILURE_EXPERIMENTS = "message_failure_experiments";
+    private static final String MESSAGE_DELETE_IMAGE_WARNING = "message_warning";
     // error messages
     private static final String ERROR_CONNECTING_TO_SERVICE_TELEMETRY = "Error connecting to service-telemetry: {}";
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
@@ -1597,6 +1598,15 @@ public class MainController {
                     case "image still in use":
                         log.warn(errorMessage + ": {}", imageName, teamId, sioMessage);
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, imageMessage + " is still in use or busy!");
+
+                        // show experiments list
+                        // string experiments is passed from adapter
+                        // truncate the square brackets in front and behind
+                        if (responseBody.contains("experiments")) {
+                            String experiments = new JSONObject(responseBody).getJSONArray("experiments").toString();
+                            redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE_EXPERIMENTS, experiments.substring(1, experiments.length()-1));
+                        }
+
                         break;
                     // curl command is ok but there is problem with rm command
                     case "delete image OK from web but there is unknown error when deleting physical image":

@@ -105,10 +105,13 @@
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                         <strong>Success!</strong> <p th:text="${message_success}"></p>
                     </div>
-                    <div th:if="${massage_failure}">
+                    <div th:if="${message_failure}">
                         <p><i class="fa fa-exclamation-circle btn-fa-red">
-                        </i> <span class="account-change-fail" th:text="${massage_failure}"></span>
+                        </i> <span class="account-change-fail" th:text="${message_failure}"></span>
                         </p>
+                    </div>
+                    <div th:if="${message_failure_experiments}">
+                        <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail">Experiments still using the image: <span th:text="${message_failure_experiments}"></span> </span></p>
                     </div>
                     <div th:if="${message_warning}" class="alert alert-warning">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
