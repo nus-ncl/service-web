@@ -1603,7 +1603,7 @@ public class MainController {
                         // string experiments is passed from adapter
                         // truncate the square brackets in front and behind
                         if (responseBody.contains(EXPERIMENTS)) {
-                            String experiments = new JSONObject(responseBody).getJSONArray("experiments").toString();
+                            String experiments = new JSONObject(responseBody).getJSONArray(EXPERIMENTS).toString();
                             redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE_LIST, experiments.substring(1, experiments.length()-1));
                         }
 
