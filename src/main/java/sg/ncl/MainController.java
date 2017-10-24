@@ -81,7 +81,7 @@ public class MainController {
 
     private static final String MESSAGE_DELETE_IMAGE_SUCCESS = "message_success";
     private static final String MESSAGE_DELETE_IMAGE_FAILURE = "message_failure";
-    private static final String MESSAGE_DELETE_IMAGE_FAILURE_EXPERIMENTS = "message_failure_experiments";
+    private static final String MESSAGE_DELETE_IMAGE_FAILURE_LIST = "message_failure_list";
     private static final String MESSAGE_DELETE_IMAGE_WARNING = "message_warning";
     // error messages
     private static final String ERROR_CONNECTING_TO_SERVICE_TELEMETRY = "Error connecting to service-telemetry: {}";
@@ -1604,7 +1604,7 @@ public class MainController {
                         // truncate the square brackets in front and behind
                         if (responseBody.contains("experiments")) {
                             String experiments = new JSONObject(responseBody).getJSONArray("experiments").toString();
-                            redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE_EXPERIMENTS, experiments.substring(1, experiments.length()-1));
+                            redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE_LIST, experiments.substring(1, experiments.length()-1));
                         }
 
                         break;
