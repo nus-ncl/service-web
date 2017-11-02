@@ -7,7 +7,7 @@ import sg.ncl.domain.NodeType;
 import sg.ncl.testbed_interface.TeamStatus;
 
 /**
- * Created by Te Ye
+ * @authors: Te Ye, Tran Ly Vu
  */
 @ConfigurationProperties(prefix = ConnectionProperties.PREFIX)
 @Getter
@@ -329,6 +329,10 @@ public class ConnectionProperties {
 
     public String saveImage() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint;
+    }
+
+    public String deleteImage(String teamId, String imageName) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint + "/" + imageName + "?teamId=" + teamId ;
     }
 
     //-------------------------------------
