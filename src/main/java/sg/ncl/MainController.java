@@ -2396,12 +2396,11 @@ public class MainController {
         }
 
         log.info("Saving image: team {}, experiment {}, node {}", teamId, expId, nodeId);
-
         ObjectMapper mapper = new ObjectMapper();
         HttpEntity<String> request = createHttpEntityWithBody(mapper.writeValueAsString(saveImageForm));
 
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.saveImage(), HttpMethod.POST, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.saveImage(expId), HttpMethod.POST, request, String.class);
         String responseBody = response.getBody().toString();
 
         if (RestUtil.isError(response.getStatusCode())) {
