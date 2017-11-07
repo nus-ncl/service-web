@@ -279,7 +279,8 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testSaveImage() throws Exception {
-        assertThat(properties.saveImage()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint());
+        String expName = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.saveImage(expName)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getImageEndpoint());
     }
 
     @Test
