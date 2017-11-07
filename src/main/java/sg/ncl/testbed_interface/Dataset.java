@@ -42,6 +42,7 @@ public class Dataset implements Serializable {
 	
 	public Dataset() {
         visibility = DataVisibility.PUBLIC;
+        accessibility = DataAccessibility.OPEN;
         releasedDate = ZonedDateTime.now();
 	    dataResources = new ArrayList<>();
 	    approvedUsers = new ArrayList<>();
