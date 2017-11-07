@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import sg.ncl.domain.NodeType;
+import sg.ncl.testbed_interface.TeamMemberPrivilege;
 import sg.ncl.testbed_interface.TeamStatus;
 
 /**
@@ -110,8 +111,8 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
     }
 
-    public String getApproveJoinRequest(String teamId, String userId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+    public String getApproveJoinRequest(String teamId, String userId, TeamMemberPrivilege teamMemberPrivilege) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId + "?privilege=" + teamMemberPrivilege;
     }
 
     //-------------------------------------

@@ -1225,10 +1225,11 @@ public class MainController {
     public String userSideAcceptJoinRequest(
             @PathVariable String teamId,
             @PathVariable String userId,
+            @RequestParam(value = "privilege", required = true) final String privilege,
             HttpSession session,
             RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
-        log.info("Approve join request: User {}, Team {}, Approver {}",
-                userId, teamId, session.getAttribute("id").toString());
+        log.info("Approve join request: User {}, Team {}, Approver {}, Privilege {}",
+                userId, teamId, session.getAttribute("id").toString(), privilege);
 
         JSONObject mainObject = new JSONObject();
         JSONObject userFields = new JSONObject();
@@ -1238,9 +1239,14 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity response;
         try {
-            response = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+            response = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId, TeamMemberPrivilege.valueOf(privilege)), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/approve_new_user";
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Wrong privilege provided: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             return "redirect:/approve_new_user";
         }
