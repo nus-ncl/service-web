@@ -2389,18 +2389,29 @@ public class MainController {
             @PathVariable String expId,
             @PathVariable String nodeId) throws IOException {
 
-        if (saveImageForm.getImageName().length() < 2) {
+        //checking image name
+        String imageName = saveImageForm.getImageName();
+        if (imageName.length() < 2) {
             log.warn("Save image form has errors {}", saveImageForm);
             redirectAttributes.addFlashAttribute("message", "Image name too short, minimum 2 characters");
             return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
+        } else if () {
+
         }
+
+        //get exp name by id
+        log.info("Saving image: retrieving experiment name from expId {} ", teamId);
+        HttpEntity<String> request2 = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request2, String.class);
+        Experiment2 experiment2 = extractExperiment(response.getBody().toString());
+
 
         log.info("Saving image: team {}, experiment {}, node {}", teamId, expId, nodeId);
         ObjectMapper mapper = new ObjectMapper();
         HttpEntity<String> request = createHttpEntityWithBody(mapper.writeValueAsString(saveImageForm));
 
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.saveImage(expId), HttpMethod.POST, request, String.class);
+        response = restTemplate.exchange(properties.saveImage(experiment2.getName()), HttpMethod.POST, request, String.class);
         String responseBody = response.getBody().toString();
 
         if (RestUtil.isError(response.getStatusCode())) {
@@ -2410,21 +2421,26 @@ public class MainController {
             log.warn("Save image: error with exception {}", exceptionState);
 
             switch (exceptionState) {
+                case INSUFFICIENT_PERMISSION_EXCEPTION:
+                    log.warn("Imaging saving error: {}", error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, "You do not have permission to save this image. Only " +
+                                                            "swapper of this experiment can save the image.");
+                    break;
                 case DETERLAB_OPERATION_FAILED_EXCEPTION:
-                    log.warn("Save image: error, operation failed on DeterLab");
-                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                    log.warn("Imaging saving error: {}", error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
                 case ADAPTER_CONNECTION_EXCEPTION:
                     log.warn("Save image: error, cannot connect to adapter");
-                    redirectAttributes.addFlashAttribute("message", "connection to adapter failed");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
                 case ADAPTER_INTERNAL_ERROR_EXCEPTION:
                     log.warn("Save image: error, adapter internal server error");
-                    redirectAttributes.addFlashAttribute("message", "internal error was found on the adapter");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
                 default:
-                    log.warn("Save image: other error");
-                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                    log.warn("Imaging saving error: {}", error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             }
 
             return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
