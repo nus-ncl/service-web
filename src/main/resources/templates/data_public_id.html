@@ -40,7 +40,7 @@
                         <input type="text" class="form-control" placeholder="Category" th:value="${dataset.category.name + ' - ' + dataset.category.description}"
                                th:readonly="true" data-toggle="tooltip" data-placement="right" title="Category"/>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" th:if="${!dataset.isQuarantined()}">
                         <input type="text" class="form-control" placeholder="License" th:value="${dataset.license.name + ' (' + dataset.license.acronym + ')'}"
                                th:readonly="true" data-toggle="tooltip" data-placement="right" title="License"/>
                     </div>
