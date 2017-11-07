@@ -26,11 +26,10 @@
                     <div class="checkbox" th:each="year : ${#numbers.sequence(#dates.year(#dates.createNow()), 2016, -1)}"><label><input type="checkbox" th:name="year" th:value="${year}" th:text="${year}"/></label></div>
                     <u>Category</u> <a href="#categoryDescModal" data-toggle="modal"><i class="fa fa-info-circle"></i></a>
                     <div class="checkbox" th:each="category : ${categories}"><label><input type="checkbox" th:name="category" th:value="${category.id}" th:text="${category.name}"/></label></div>
-                    <u>License</u> <a href="data_licenses_info.html" th:href="@{~/data/licensesInfo}" target="_blank"><i class="fa fa-info-circle"></i></a>
-                    <div class="checkbox" th:each="license : ${licenses}"><label><input type="checkbox" th:name="license" th:value="${license.id}" th:text="${license.acronym}"/></label></div>
                     <u>Accessibility</u>
                     <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Open"/>Open</label></div>
                     <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Restricted"/>Restricted</label></div>
+                    <div class="checkbox"><label><input type="checkbox" name="accessibility" value="Quarantined"/>Quarantined</label></div>
                     <u>Visibility</u>
                     <div class="checkbox"><label><input type="checkbox" name="visibility" value="Public"/>Public</label></div>
                     <div class="checkbox"><label><input type="checkbox" name="visibility" value="Protected"/>Protected</label></div>
