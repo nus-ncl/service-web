@@ -28,6 +28,13 @@ $(document).ready(function() {
 
 	});
 
+    //-----------------pending requests page -----------------
+    // redirect to appropriate url based on privilege
+    $('#approve_join_request_btn').click(function() {
+        var privilege_options = document.getElementById("privilege_box");
+        var selected_option = privilege_options.options[privilege_options.selectedIndex].value;
+        this.href += '?privilege=' + selected_option;
+    });
 
 	//-----------------registration page -----------------
 	/* Hide all except first fieldset */
@@ -534,7 +541,6 @@ jQuery(function($) {
 			form_status.html('<p class="text-success">Thank you for contact us. As early as possible  we will contact you</p>').delay(3000).fadeOut();
 		});
 	});
-	
 });
 
 /***************** Flexsliders ******************/

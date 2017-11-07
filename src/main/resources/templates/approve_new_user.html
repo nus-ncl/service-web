@@ -31,6 +31,7 @@
 	                                <th th:text="#{team.table.awaiting.approval.header.email}"></th>
 	                                <th th:text="#{team.table.awaiting.approval.header.dateOfApplication}"></th>
 	                                <th th:text="#{team.table.awaiting.approval.header.team}"></th>
+									<th th:text="#{team.table.awaiting.approval.header.privilege}"></th>
 	                                <th><!-- Actions --></th>
 	                            </thead>
 	                            <!-- get each team's join request map -->
@@ -40,7 +41,16 @@
 									<td th:text="${joinInfo.applicationDate}">Request Issuer Date</td>
 									<td th:text="${joinInfo.teamName}">Team wanting to join</td>
 									<td>
-										<a href="#" th:href="@{/approve_new_user/accept/{teamId}/{userId}(teamId=${joinInfo.teamId},userId=${joinInfo.userId})}" title="Accept" class="btn btn-standard"><i class="fa fa-check-circle-o fa-lg btn-fa-green"></i> Accept</a>
+										<form>
+											<select id="privilege_box">
+												<option value="LOCAL_ROOT">Local Root</option>
+												<option value="USER">User</option>
+												<option value="9487">9487</option>
+											</select>
+										</form>
+									</td>
+									<td>
+										<a id="approve_join_request_btn" th:href="@{/approve_new_user/accept/{teamId}/{userId}(teamId=${joinInfo.teamId},userId=${joinInfo.userId})}" href="#" title="Accept" class="btn btn-standard"><i class="fa fa-check-circle-o fa-lg btn-fa-green"></i> Accept</a>
 										<a href="#" th:href="@{/approve_new_user/reject/{teamId}/{userId}(teamId=${joinInfo.teamId},userId=${joinInfo.userId})}" title="Reject" class="btn btn-standard"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</a>
 									</td>
 								</tr>
