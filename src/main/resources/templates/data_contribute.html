@@ -19,7 +19,7 @@
             <div class="alert alert-success" th:if="${success}">
                 <h4 th:utext="${'Your request has been sent to ' + dataset.contributor.firstName + ' ' + dataset.contributor.lastName + ' for processing. You will be notified via email if your request is approved.'}"></h4>
             </div>
-            <form method="post" action="#" th:action="${dataset.id == null ? '/data/contribute' : '/data/contribute/' + dataset.id}" th:object="${dataset}" role="form">
+            <form method="post" action="#" th:action="${dataset.id == null ? '/data/contribute' : '/data/contribute/' + dataset.id}" th:object="${dataset}" role="form" id="dataForm">
                 <fieldset th:if="${editable != null}">
                     <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
                     <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? has-error">
@@ -253,5 +253,37 @@
 
     <div th:replace="fragments/footer :: footer"></div>
     <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        (function() {
+            var accessibility = document.forms['dataForm'].elements['accessibility'];
+            var licenses = document.forms['dataForm'].elements['licenseId'];
+            var selected = licenses.selectedIndex;
+
+            licenses.onchange = function() {
+                selected = licenses.selectedIndex;
+            };
+
+            if (accessibility[2].checked === true) {
+                licenses.selectedIndex = 1;
+                licenses.disabled = true;
+            }
+
+            for (var i = 0, len = accessibility.length; i < len; i++) {
+                accessibility[i].onclick = function() {
+                    if (this.value === "QUARANTINED") {
+                        selected = licenses.selectedIndex;
+                        licenses.selectedIndex = 1;
+                        licenses.disabled = true;
+                    } else {
+                        licenses.disabled = false;
+                        licenses.selectedIndex = selected;
+                    }
+                };
+            }
+        }());
+        /*]]>*/
+    </script>
 </body>
 </html>
