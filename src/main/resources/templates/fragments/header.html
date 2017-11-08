@@ -6,6 +6,25 @@
  <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head th:fragment="header">
+        <object th:if="${#httpServletRequest.requestURI} eq '/' or
+                        ${#httpServletRequest.requestURI} eq '/about' or
+                        ${#httpServletRequest.requestURI} eq '/calendar' or
+                        ${#httpServletRequest.requestURI} eq '/career' or
+                        ${#httpServletRequest.requestURI} eq '/contactus' or
+                        ${#httpServletRequest.requestURI} eq '/data/public' or
+                        ${#httpServletRequest.requestURI} eq '/event' or
+                        ${#httpServletRequest.requestURI} eq '/overview' or
+                        ${#httpServletRequest.requestURI} eq '/plan' or
+                        ${#httpServletRequest.requestURI} eq '/pricing' or
+                        ${#httpServletRequest.requestURI} eq '/public_teams' or
+                        ${#httpServletRequest.requestURI} eq '/research' or
+                        ${#httpServletRequest.requestURI} eq '/resources' or
+                        ${#httpServletRequest.requestURI} eq '/signup2' or
+                        ${#httpServletRequest.requestURI} eq '/testbedInformation' or
+                        ${#httpServletRequest.requestURI} eq '/testbedNodesStatus' or
+                        ${#strings.startsWith(#httpServletRequest.requestURI,'/tutorials')} == true"
+                th:include="fragments/google_analytics :: google_analytics" th:remove="tag"></object>
+
         <title>National Cybersecurity R&amp;D Laboratories</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.min.css" th:href="@{~/css/bootstrap.min.css}" media="screen"/>
