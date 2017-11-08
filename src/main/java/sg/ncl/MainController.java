@@ -2007,6 +2007,10 @@ public class MainController {
         return "terms_and_conditions";
     }
 
+    @RequestMapping(value = "/data_license_agreement", method = RequestMethod.GET)
+    public String dataLicenseAgreement() {
+        return "data_license_agreement";
+    }
 
     //--------------------------Join Team Page--------------------------
 

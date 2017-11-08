@@ -128,7 +128,7 @@
                         <fieldset>
                             <div class="form-group" th:classappend="${hasErrors != null} ? has-error">
                                 <div class="checkbox" th:if="${!data.isContributor(#httpSession.getAttribute('id').toString())}">
-                                    <label><input type="checkbox" th:field="*{licenseAgreed}"/> I agree to the <a th:href="${data.license.link}" target="_blank">Licensing Terms &amp; Conditions</a> attached to this dataset.</label>
+                                    <label><input type="checkbox" th:field="*{licenseAgreed}"/> I agree to the <a th:href="${data.isQuarantined() ? '/data_license_agreement' : data.license.link}" target="_blank">Licensing Terms &amp; Conditions</a> attached to this dataset.</label>
                                 </div>
                                 <div th:if="${data.isContributor(#httpSession.getAttribute('id').toString())}">
                                     <input th:type="hidden" th:name="licenseAgreed" th:value="true"/>
