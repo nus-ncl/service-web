@@ -327,8 +327,8 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint + "/teams/" + teamId;
     }
 
-    public String saveImage(String expName) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint + "?expName=" + expName;
+    public String saveImage() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint;
     }
 
     public String deleteImage(String teamId, String imageName) {
