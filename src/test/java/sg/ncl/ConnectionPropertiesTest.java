@@ -6,8 +6,10 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import sg.ncl.domain.MemberStatus;
 import sg.ncl.domain.NodeType;
 import sg.ncl.domain.UserStatus;
+import sg.ncl.testbed_interface.TeamMemberPrivilege;
 import sg.ncl.testbed_interface.TeamStatus;
 import sg.ncl.testbed_interface.TeamVisibility;
 
@@ -142,7 +144,7 @@ public class ConnectionPropertiesTest {
     public void testGetApproveJoinRequest() throws Exception {
         String teamId = RandomStringUtils.randomAlphanumeric(20);
         String userId = RandomStringUtils.randomAlphanumeric(20);
-        assertThat(properties.getApproveJoinRequest(teamId, userId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/teams/" + teamId + "/members/" + userId);
+        assertThat(properties.getApproveJoinRequest(teamId, userId, TeamMemberPrivilege.LOCAL_ROOT)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/teams/" + teamId + "/members/" + userId + "?privilege=" + TeamMemberPrivilege.LOCAL_ROOT);
     }
 
     @Test
