@@ -55,20 +55,7 @@
 										<a href="#" th:href="@{/approve_new_user/reject/{teamId}/{userId}(teamId=${joinInfo.teamId},userId=${joinInfo.userId})}" title="Reject" class="btn btn-standard"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</a>
 									</td>
 								</tr>
-	                            <!--<tr th:each="team : ${teamMapOwnedByUser}">-->
-	                            	<!--<th:block th:each="joinRequestEntry : ${team.value.joinRequestMap}">-->
-	                            		<!--<td th:text="${joinRequestEntry.value.name}">Request Issuer Name</td>-->
-	                            		<!--<td th:text="${joinRequestEntry.value.email}">Request Issuer Email</td>-->
-	                            		<!--<td th:text="${team.value.getUserJoinRequestDate(joinRequestEntry.key)}">Request Issuer Date</td>-->
-	                            		<!--<td th:text="${team.value.name}">Team wanting to join</td>-->
-		                                <!--<td>-->
-		                                    <!--<a href="#" title="Accept" class="btn btn-success" th:href="@{/approve_new_user/accept/{teamId}/{userId}(teamId=${team.key}, userId=${joinRequestEntry.key})}"><i class="fa fa-check-circle-o fa-lg"></i> Accept</a>-->
-		                                    <!--<a href="#" title="Reject" class="btn btn-danger" th:href="@{/approve_new_user/reject/{teamId}/{userId}(teamId=${team.key}, userId=${joinRequestEntry.key})}"><i class="fa fa-times-circle-o fa-lg"></i> Reject</a>-->
-		                               <!--</td>-->
-	                            	<!--</th:block>-->
-	                            <!--</tr>-->
 	                        </table>
-	                        <!--<p th:if="${teamMapOwnedByUser.isEmpty()}" th:text="#{user.approve.notTeamOwner}">You are not a team owner of any teams yet.</p>-->
                     	</th:block>
                     	<!-- user's controlled teams have NO join request awaiting approval -->
                     	<p th:if="${#lists.isEmpty(joinApprovalList)}" th:text="#{user.approve.noMembersAwaiting}">You have no members awaiting for your approval yet.</p>
