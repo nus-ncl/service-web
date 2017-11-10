@@ -1423,6 +1423,8 @@ public class MainController {
         Map<String, List<Image>> resultMap = new HashMap<>();
         List<Image> createdImageList = new ArrayList<>();
         List<Image> inProgressImageList = new ArrayList<>();
+        List<Image> failedImageList = new ArrayList<>();
+        List<Image> notFoundImageList = new ArrayList<>();
 
         HttpEntity<String> imageRequest = createHttpEntityHeaderOnly();
         ResponseEntity imageResponse;
@@ -1430,7 +1432,7 @@ public class MainController {
             imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
         } catch (ResourceAccessException e) {
             log.warn("Error connecting to image service: {}", e);
-            return new HashMap<>();
+            return resultMap;
         }
 
         String imageResponseBody = imageResponse.getBody().toString();
@@ -1459,13 +1461,19 @@ public class MainController {
 
             if ("created".equals(imageStatus)) {
                 createdImageList.add(image);
-            } else if ("notfound".equals(imageStatus)) {
+            } else if ("saving".equals(imageStatus)) {
                 inProgressImageList.add(image);
+            }else if ("failed".equals(imageStatus)) {
+                failedImageList.add(image);
+            }else if ("notfound".equals(imageStatus)) {
+                notFoundImageList.add(image);
             }
         }
 
         resultMap.put("created", createdImageList);
         resultMap.put("inProgress", inProgressImageList);
+        resultMap.put("failed", failedImageList);
+        resultMap.put("notfound", notFoundImageList);
 
         return resultMap;
     }

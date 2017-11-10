@@ -135,7 +135,7 @@
                                         <td th:text="${perTeamImageMap.key}"></td>
                                         <td th:text="#{team.table.header.imageCreated}"></td>
                                         <td>
-                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#deleteImage"
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-sm" data-toggle="modal" data-target="#deleteImage"
                                                     th:attr="data-name=${image.imageName} ,data-request='/teams/delete_image/' + ${image.teamId} + '/' + ${image.imageName}"
                                                     data-placement="bottom" title="Are you sure you want to delete this image?"><i class="fa fa-trash btn-fa-red"></i>
                                             </button>
@@ -147,6 +147,33 @@
                                         <td th:text="${image.imageName}"></td>
                                         <td th:text="${perTeamImageMap.key}"></td>
                                         <td th:text="#{team.table.header.imageInProgress}"></td>
+                                        <td></td>
+                                    </th:block>
+                                </tr>
+                                <tr th:each="imageList : ${perTeamImageMap.value.get('failed')}">
+                                    <th:block th:each="image : ${imageList}">
+                                        <td th:text="${image.imageName}"></td>
+                                        <td th:text="${perTeamImageMap.key}"></td>
+                                        <td th:text="#{team.table.header.imageFailed}"></td>
+                                        <td>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-sm" data-toggle="modal" data-target="#deleteImage"
+                                                    th:attr="data-name=${image.imageName} ,data-request='/teams/delete_image/' + ${image.teamId} + '/' + ${image.imageName}"
+                                                    data-placement="bottom" title="Are you sure you want to delete this image?"><i class="fa fa-trash btn-fa-red"></i>
+                                            </button>
+                                        </td>
+                                    </th:block>
+                                </tr>
+                                <tr th:each="imageList : ${perTeamImageMap.value.get('notfound')}">
+                                    <th:block th:each="image : ${imageList}">
+                                        <td th:text="${image.imageName}"></td>
+                                        <td th:text="${perTeamImageMap.key}"></td>
+                                        <td th:text="#{team.table.header.imageNotFound}"></td>
+                                        <td>
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-sm" data-toggle="modal" data-target="#deleteImage"
+                                                    th:attr="data-name=${image.imageName} ,data-request='/teams/delete_image/' + ${image.teamId} + '/' + ${image.imageName}"
+                                                    data-placement="bottom" title="Are you sure you want to delete this image?"><i class="fa fa-trash btn-fa-red"></i>
+                                            </button>
+                                        </td>
                                     </th:block>
                                 </tr>
                             </th:block>
