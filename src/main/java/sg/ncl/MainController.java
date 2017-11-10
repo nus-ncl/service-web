@@ -1432,7 +1432,7 @@ public class MainController {
             imageResponse = restTemplate.exchange(properties.getTeamSavedImages(teamId), HttpMethod.GET, imageRequest, String.class);
         } catch (ResourceAccessException e) {
             log.warn("Error connecting to image service: {}", e);
-            return new HashMap<>();
+            return resultMap;
         }
 
         String imageResponseBody = imageResponse.getBody().toString();
