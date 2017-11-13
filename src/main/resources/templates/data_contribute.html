@@ -263,11 +263,16 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
         (function() {
-            var accessibility = document.forms['dataForm'].elements['accessibility'];
-            var licenses = document.forms['dataForm'].elements['licenseId'];
+            var dataForm = document.forms['dataForm'];
+            var accessibility = dataForm.elements['accessibility'];
+            var licenses = dataForm.elements['licenseId'];
             var selected = licenses.selectedIndex;
 
-            licenses.onchange = function() {
+            dataForm.onsubmit = function () {
+                licenses.disabled = false;
+            };
+
+            licenses.onchange = function () {
                 selected = licenses.selectedIndex;
             };
 
@@ -277,7 +282,7 @@
             }
 
             for (var i = 0, len = accessibility.length; i < len; i++) {
-                accessibility[i].onclick = function() {
+                accessibility[i].onclick = function () {
                     if (this.value === "QUARANTINED") {
                         selected = licenses.selectedIndex;
                         licenses.selectedIndex = 1;
