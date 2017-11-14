@@ -15,7 +15,7 @@ plugins {
     id 'jacoco'
     id 'io.spring.dependency-management' version '0.6.0.RELEASE'
     id 'com.github.kt3k.coveralls' version '2.6.3'
-    id 'org.sonarqube' version '2.1-rc3'
+    id 'org.sonarqube' version '2.5'
     id 'com.jfrog.bintray' version '1.7.1'
     id 'org.tenne.rest' version '0.4.2'
 }
@@ -77,7 +77,7 @@ tasks.jacocoTestReport {
 
 sonarqube {
     properties {
-        property 'sonar.host.url', 'https://sonarqube.com'
+        property 'sonar.host.url', 'https://sonarcloud.io'
         property 'sonar.projectKey', 'nus-ncl:service-web'
         property 'sonar.projectName', 'NCLUI'
         property 'sonar.projectVersion', "${project.version}"
