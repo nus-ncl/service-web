@@ -2409,10 +2409,10 @@ public class MainController {
         String imageName = saveImageForm.getImageName();
         if (imageName.length() < 2) {
             log.warn("Save image form has errors {}", saveImageForm);
-            redirectAttributes.addFlashAttribute("message", "Image name is required minimum of 2 characters");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Image name is required minimum of 2 characters");
             return REDIRECT_SAVING_IMAGE + teamId + "/" + expId + "/" + nodeId;
         } else if (!VALID_IMAGE_NAME.matcher(imageName).matches()) {
-            redirectAttributes.addFlashAttribute("message", "Image name can only contain alphanumeric characters and \"-\"");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Image name can only contain alphanumeric characters and \"-\"");
             return REDIRECT_SAVING_IMAGE + teamId + "/" + expId + "/" + nodeId;
         }
 
