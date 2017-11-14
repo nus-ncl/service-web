@@ -2409,11 +2409,16 @@ public class MainController {
         String imageName = saveImageForm.getImageName();
         if (imageName.length() < 2) {
             log.warn("Save image form has errors {}", saveImageForm);
+<<<<<<< HEAD
             redirectAttributes.addFlashAttribute("message", "Image name is required minimum of 2 characters");
             return REDIRECT_SAVING_IMAGE + teamId + "/" + expId + "/" + nodeId;
         } else if (!VALID_IMAGE_NAME.matcher(imageName).matches()) {
             redirectAttributes.addFlashAttribute("message", "Image name can only contain alphanumeric characters and \"-\"");
             return REDIRECT_SAVING_IMAGE + teamId + "/" + expId + "/" + nodeId;
+=======
+            redirectAttributes.addFlashAttribute(MESSAGE, "Image name too short, minimum 2 characters");
+            return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
+>>>>>>> 7ed2877f5106bc111a3d278e9e92b3184fc3d954
         }
 
         log.info("Saving image: team {}, experiment {}, node {}", teamId, expId, nodeId);
@@ -2432,6 +2437,7 @@ public class MainController {
             String IMAGE_SAVING_ERROR = "Saving image error: {}";
             switch (exceptionState) {
                 case DETERLAB_OPERATION_FAILED_EXCEPTION:
+<<<<<<< HEAD
                     log.warn(IMAGE_SAVING_ERROR, error.getMessage());
                     redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage() + " Please contact " + CONTACT_EMAIL + " for support.");
                     break;
@@ -2445,6 +2451,21 @@ public class MainController {
                     break;
                 default:
                     log.warn(IMAGE_SAVING_ERROR, error.getMessage());
+=======
+                    log.warn("Save image: error, operation failed on DeterLab");
+                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                    break;
+                case ADAPTER_CONNECTION_EXCEPTION:
+                    log.warn("Save image: error, cannot connect to adapter");
+                    redirectAttributes.addFlashAttribute(MESSAGE, "connection to adapter failed");
+                    break;
+                case ADAPTER_INTERNAL_ERROR_EXCEPTION:
+                    log.warn("Save image: error, adapter internal server error");
+                    redirectAttributes.addFlashAttribute(MESSAGE, "internal error was found on the adapter");
+                    break;
+                default:
+                    log.warn("Save image: other error");
+>>>>>>> 7ed2877f5106bc111a3d278e9e92b3184fc3d954
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             }
 
