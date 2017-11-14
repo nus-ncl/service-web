@@ -1992,7 +1992,7 @@ public class MainController {
                 final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
 
                 log.warn(LOG_PREFIX, responseBody);
-                redirectAttributes.addFlashAttribute("message", errorMessage);
+                redirectAttributes.addFlashAttribute(MESSAGE, errorMessage);
                 return "redirect:/teams/apply_team";
 
             } else {
@@ -2085,7 +2085,7 @@ public class MainController {
                 final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
 
                 log.warn(LOG_PREFIX, responseBody);
-                redirectAttributes.addFlashAttribute("message", errorMessage);
+                redirectAttributes.addFlashAttribute(MESSAGE, errorMessage);
                 return "redirect:/teams/join_team";
 
             } else {
@@ -2383,7 +2383,7 @@ public class MainController {
         saveImageForm.setTeamId(teamId);
         saveImageForm.setNodeId(nodeId);
 
-        model.addAttribute("teamName", teamName);
+        model.addAttribute(TEAM_NAME, teamName);
         model.addAttribute("singleNodeInfoMap", singleNodeInfoMap);
         model.addAttribute("pathTeamId", teamId);
         model.addAttribute("pathExperimentId", expId);
@@ -2467,12 +2467,12 @@ public class MainController {
             switch (exceptionState) {
                 case DETERLAB_OPERATION_FAILED_EXCEPTION:
                     log.warn("adapter deterlab operation failed exception");
-                    redirectAttributes.addFlashAttribute("message", error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                     break;
                 default:
                     log.warn("Image service or adapter fail");
                     // possible sio or adapter connection fail
-                    redirectAttributes.addFlashAttribute("message", ERR_SERVER_OVERLOAD);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
             }
             return "redirect:/experiments/save_image/" + teamId + "/" + expId + "/" + nodeId;
@@ -4817,7 +4817,7 @@ public class MainController {
             ResponseEntity response = restTemplate.exchange(properties.getTestbedStats(), HttpMethod.GET, request, String.class);
             JSONObject object = new JSONObject(response.getBody().toString());
             statsMap.put(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, object.getString("users"));
-            statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, object.getString("experiments"));
+            statsMap.put(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, object.getString(EXPERIMENTS));
 
         } catch (RestClientException e) {
             log.warn(ERROR_CONNECTING_TO_SERVICE_TELEMETRY, e);
