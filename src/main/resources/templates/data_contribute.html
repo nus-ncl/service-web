@@ -19,7 +19,7 @@
             <div class="alert alert-success" th:if="${success}">
                 <h4 th:utext="${'Your request has been sent to ' + dataset.contributor.firstName + ' ' + dataset.contributor.lastName + ' for processing. You will be notified via email if your request is approved.'}"></h4>
             </div>
-            <form method="post" action="#" th:action="${dataset.id == null ? '/data/contribute' : '/data/contribute/' + dataset.id}" th:object="${dataset}" role="form">
+            <form method="post" action="#" th:action="${dataset.id == null ? '/data/contribute' : '/data/contribute/' + dataset.id}" th:object="${dataset}" role="form" id="dataForm">
                 <fieldset th:if="${editable != null}">
                     <h2 class="team-heading team-heading-current-team" th:text="#{admin.contributeData.header}">Contribute Dataset</h2>
                     <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? has-error">
@@ -44,6 +44,9 @@
                             </div>
                         </div>
                     </div>
+                    <div>
+                        <h3><u>Visibility</u></h3>
+                    </div>
                     <div class="form-group">
                         <div class="radio">
                             <label><input type="radio" th:field="*{visibility}" th:value="PUBLIC"/><strong><span th:text="#{admin.contributeData.public}">Public</span></strong> <em><span th:text="#{admin.contributeData.publicDesc}">Dataset info will be shown on "Public Datasets" page.</span></em></label>
@@ -55,11 +58,8 @@
                             <label><input type="radio" th:field="*{visibility}" th:value="PRIVATE"/><strong><span th:text="#{admin.contributeData.private}">Private</span></strong> <em><span th:text="#{admin.contributeData.privateDesc}">The dataset is private.</span></em></label>
                         </div>
                     </div>
-                    <div class="form-group" th:classappend="${#fields.hasErrors('licenseId')} ? has-error">
-                        <select class="form-control" th:field="*{licenseId}">
-                            <option th:value="0" th:text="#{admin.contributeData.selectLicense}"></option>
-                            <option th:each="license : ${licenses}" th:value="${license.id}" th:text="${license.name + ' (' + license.acronym + ')'}"></option>
-                        </select>
+                    <div>
+                        <h3><u>Accessibility</u></h3>
                     </div>
                     <div class="form-group">
                         <div class="radio">
@@ -71,6 +71,12 @@
                         <div class="radio">
                             <label><input type="radio" th:field="*{accessibility}" th:value="QUARANTINED"/><strong><span th:text="#{admin.contributeData.quarantined}"></span></strong> <em th:text="#{admin.contributeData.quarantinedDesc}"></em></label>
                         </div>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('licenseId')} ? has-error">
+                        <select class="form-control" th:field="*{licenseId}">
+                            <option th:value="0" th:text="#{admin.contributeData.selectLicense}"></option>
+                            <option th:each="license : ${licenses}" th:value="${license.id}" th:text="${license.name + ' (' + license.acronym + ')'}"></option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-standard">Save</button>
@@ -107,10 +113,6 @@
                         <input type="text" class="form-control" placeholder="Category" th:value="${dataset.category.name + ' - ' + dataset.category.description}"
                                th:readonly="true" data-toggle="tooltip" data-placement="right" title="Category"/>
                     </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="License" th:value="${dataset.license.name + ' (' + dataset.license.acronym + ')'}"
-                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="License"/>
-                    </div>
                     <div class="form-group" th:switch="${dataset.accessibility.toString()}">
                         <input th:case="'OPEN'" type="text" class="form-control" placeholder="Accessibility" th:value="#{admin.contributeData.open} +  ' - ' + #{admin.contributeData.openDesc}"
                                th:readonly="true" data-toggle="tooltip" data-placement="right" title="Accessibility"/>
@@ -118,6 +120,10 @@
                                th:readonly="true" data-toggle="tooltip" data-placement="right" title="Accessibility"/>
                         <input th:case="'QUARANTINED'" type="text" class="form-control" placeholder="Accessibility" th:value="#{admin.contributeData.quarantined} +  ' - ' + #{admin.contributeData.quarantinedDesc}"
                                th:readonly="true" data-toggle="tooltip" data-placement="right" title="Accessibility"/>
+                    </div>
+                    <div class="form-group" th:if="${!dataset.isQuarantined()}">
+                        <input type="text" class="form-control" placeholder="License" th:value="${dataset.license.name + ' (' + dataset.license.acronym + ')'}"
+                               th:readonly="true" data-toggle="tooltip" data-placement="right" title="License"/>
                     </div>
                 </fieldset>
             </form>
@@ -127,8 +133,11 @@
                     <form method="post" action="#" th:action="@{/data/{id}/resources(id=${data.id})}" th:object="${agreementForm}" role="form">
                         <fieldset>
                             <div class="form-group" th:classappend="${hasErrors != null} ? has-error">
-                                <div class="checkbox">
-                                    <label><input type="checkbox" th:field="*{licenseAgreed}"/> I agree to this dataset's <a href="#licenseModal" data-toggle="modal">licensing terms</a>.</label>
+                                <div class="checkbox" th:if="${!data.isContributor(#httpSession.getAttribute('id').toString())}">
+                                    <label><input type="checkbox" th:field="*{licenseAgreed}"/> I agree to the <a th:href="${data.isQuarantined() ? '/data_license_agreement' : data.license.link}" target="_blank">Licensing Terms &amp; Conditions</a> attached to this dataset.</label>
+                                </div>
+                                <div th:if="${data.isContributor(#httpSession.getAttribute('id').toString())}">
+                                    <input th:type="hidden" th:name="licenseAgreed" th:value="true"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -248,22 +257,44 @@
         </div>
     </div>
 
-    <!-- License Modal -->
-    <div class="modal fade" id="licenseModal" tabindex="-1" role="dialog" aria-labelledby="licenseModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="licenseLabel" th:text="${dataset.license.name}"></h4>
-                </div>
-                <div class="modal-body">
-                    <p th:text="${dataset.license.description}"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div th:replace="fragments/footer :: footer"></div>
     <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        (function() {
+            var dataForm = document.forms['dataForm'];
+            var accessibility = dataForm.elements['accessibility'];
+            var licenses = dataForm.elements['licenseId'];
+            var selected = licenses.selectedIndex;
+
+            dataForm.onsubmit = function () {
+                licenses.disabled = false;
+            };
+
+            licenses.onchange = function () {
+                selected = licenses.selectedIndex;
+            };
+
+            if (accessibility[2].checked === true) {
+                licenses.selectedIndex = 1;
+                licenses.disabled = true;
+            }
+
+            for (var i = 0, len = accessibility.length; i < len; i++) {
+                accessibility[i].onclick = function () {
+                    if (this.value === "QUARANTINED") {
+                        selected = licenses.selectedIndex;
+                        licenses.selectedIndex = 1;
+                        licenses.disabled = true;
+                    } else {
+                        licenses.disabled = false;
+                        licenses.selectedIndex = selected;
+                    }
+                };
+            }
+        }());
+        /*]]>*/
+    </script>
 </body>
 </html>
