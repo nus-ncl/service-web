@@ -112,6 +112,8 @@ public class MainController {
     private static final String NO_PERMISSION_PAGE = "nopermission";
 
     private static final String EXPERIMENTS = "experiments";
+    private static final String EXPERIMENT_ID = "expId";
+    private static final String EXPERIMENT_NAME = "expName";
 
     private static final String APPLICATION_DATE = "applicationDate";
     private static final String TEAM_NAME = "teamName";
@@ -143,6 +145,14 @@ public class MainController {
 
     private static final String DATA_ID = "dataId";
     private static final String COUNT = "count";
+
+    private static final String ID = "id";
+    private static final String USER_ID = "userId";
+    private static final String OS = "os";
+    private static final String QUALIFIED_NAME = "qualifiedName";
+    private static final String DESCRIPTION = "description";
+    private static final String CREATED_DATE = "createdDate";
+    private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -2098,30 +2108,28 @@ public class MainController {
 
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
     public String experiments(Model model, HttpSession session) throws WebServiceRuntimeException {
-//        long start = System.currentTimeMillis();
-        List<Experiment2> experimentList = new ArrayList<>();
-        Map<Long, Realization> realizationMap = new HashMap<>();
+
+        List<RealizedExperiment> realizedExperimentList = new ArrayList<>();
+
+        // get uid on Deter
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
-
         String responseBody = response.getBody().toString();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                log.error("No user to get experiment: {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                log.info("experiment error: {} - {} - {} - user token:{}", error.getError(), error.getMessage(), error.getLocalizedMessage(), httpScopedSession.getAttribute(webProperties.getSessionJwtToken()));
-                model.addAttribute(DETER_UID, CONNECTION_ERROR);
+                log.error("Failed to get Deter uid for user {}: {}", session.getAttribute("id").toString(), error.getError());
+                model.addAttribute(DETER_UID, UNKNOWN);
             } else {
-                log.info("Show the deter user id: {}", responseBody);
                 model.addAttribute(DETER_UID, responseBody);
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        // get list of teamids
+        // get list of teamIds
         ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
 
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
@@ -2135,26 +2143,16 @@ public class MainController {
             String teamResponseBody = teamResponse.getBody().toString();
 
             if (!isMemberJoinRequestPending(session.getAttribute("id").toString(), teamResponseBody)) {
-                // get experiments lists of the teams
-                HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
-                ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
-
-                JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
-
-                for (int k = 0; k < experimentsArray.length(); k++) {
-                    Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-                    Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-                    realizationMap.put(experiment2.getId(), realization);
-                    experimentList.add(experiment2);
+                List<RealizedExperiment> myExpList = getRealizedExperiments(teamId);
+                if (!myExpList.isEmpty()) {
+                    realizedExperimentList.addAll(myExpList);
                 }
             }
         }
 
-
-        model.addAttribute("experimentList", experimentList);
-        model.addAttribute("realizationMap", realizationMap);
+        model.addAttribute("experimentList", realizedExperimentList);
         model.addAttribute("internetRequestForm", new InternetRequestForm());
-//        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
+
         return EXPERIMENTS;
     }
 
@@ -4339,8 +4337,8 @@ public class MainController {
         Experiment2 experiment2 = new Experiment2();
         JSONObject object = new JSONObject(experimentJson);
 
-        experiment2.setId(object.getLong("id"));
-        experiment2.setUserId(object.getString("userId"));
+        experiment2.setId(object.getLong(ID));
+        experiment2.setUserId(object.getString(USER_ID));
         experiment2.setTeamId(object.getString(TEAM_ID));
         experiment2.setTeamName(object.getString(TEAM_NAME));
         experiment2.setName(object.getString("name"));
@@ -4600,6 +4598,8 @@ public class MainController {
      * @return a map in the form teams: numberOfTeams, experiments: numberOfExperiments
      */
     private Map<String, Integer> getUserDashboardStats(String userId) {
+
+        int numberOfApprovedTeam = 0;
         int numberOfRunningExperiments = 0;
         Map<String, Integer> userDashboardStats = new HashMap<>();
 
@@ -4610,8 +4610,6 @@ public class MainController {
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
-        int numberOfApprovedTeam = 0;
-
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
 
@@ -4620,13 +4618,13 @@ public class MainController {
             String teamResponseBody = teamResponse.getBody().toString();
 
             if (!isMemberJoinRequestPending(userId, teamResponseBody)) {
-                // get experiments lists of the teams
-                HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
-                ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
 
-                JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
-
-                numberOfRunningExperiments = getNumberOfRunningExperiments(numberOfRunningExperiments, experimentsArray);
+                List<RealizedExperiment> realizedExperimentList = getRealizedExperiments(teamId);
+                for (int j = 0; j < realizedExperimentList.size(); j++) {
+                    if ("RUNNING".equals(realizedExperimentList.get(j).getState())) {
+                        numberOfRunningExperiments++;
+                    }
+                }
 
                 numberOfApprovedTeam ++;
             }
@@ -4634,19 +4632,107 @@ public class MainController {
 
         userDashboardStats.put(USER_DASHBOARD_APPROVED_TEAMS, numberOfApprovedTeam);
         userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
-       // userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNodes(NodeType.FREE));
+
         return userDashboardStats;
     }
 
-    private int getNumberOfRunningExperiments(int numberOfRunningExperiments, JSONArray experimentsArray) {
-        for (int k = 0; k < experimentsArray.length(); k++) {
-            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-            if (realization.getState().equals(RealizationState.RUNNING.toString())) {
-                numberOfRunningExperiments++;
-            }
+    private List<RealizedExperiment> getRealizedExperiments(String teamId) {
+        log.info("Getting realized experiments for team {}", teamId);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity respEntity;
+        try {
+            respEntity = restTemplate.exchange(properties.getTeamRealizedExperiments(teamId), HttpMethod.GET, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Connection to sio failed: {}", e);
+            return new ArrayList<>();
         }
-        return numberOfRunningExperiments;
+
+        String result = respEntity.getBody().toString();
+        log.info(result);
+        if (result.isEmpty() || "[]".equals(result)) {
+            return new ArrayList<>();
+        }
+
+        List<RealizedExperiment> realExpList = new ArrayList<>();
+        JSONArray realExpsArray = new JSONArray(result);
+        for (int i = 0; i < realExpsArray.length(); i++) {
+            realExpList.add(extractRealizedExperiment(realExpsArray.getJSONObject(i).toString()));
+        }
+
+        return realExpList;
+    }
+
+    /**
+     *
+     * @param jsonString of the format
+     *                  {
+     *                   "teamId":"56bde048-c12c-47c7-a66e-170d2f4708d8",
+     *                   "teamName":"ncltest01",
+     *                   "expId":498,
+     *                   "expName":"modexp",
+     *                   "userId":"97a71fc5-91e9-4b64-9c50-73992b2684b5",
+     *                   "description":"test modify experiment",
+     *                   "createdDate":1507101706.000000000,
+     *                   "lastModifiedDate":1507101706.000000000,
+     *                   "state":"swapped",
+     *                   "nodes":0,
+     *                   "minNodes":1,
+     *                   "idleHours":0,
+     *                   "details":"
+     *                      {"n0":
+     *                         {"qualifiedName": "n0.modexp.ncltest01.staging.ncl.sg",
+     *                         "os": "Ubuntu16.04.3-64-pr",
+     *                         "nodeId": "pc6"
+     *                         },
+     *                       "n1":
+     *                        {"qualifiedName": "n0.modexp.ncltest01.staging.ncl.sg",
+     *                         "os": "Ubuntu16.04.3-64-pr",
+     *                         "nodeId": "pc6"
+     *                        }
+     *                      }"
+     *                   }
+     * @return
+     */
+    private RealizedExperiment extractRealizedExperiment(String jsonString) {
+
+        JSONObject expJsonObj = new JSONObject(jsonString);
+        RealizedExperiment realExp = new RealizedExperiment();
+
+        realExp.setTeamId(expJsonObj.getString(TEAM_ID));
+        realExp.setTeamName(expJsonObj.getString(TEAM_NAME));
+        realExp.setExpId(expJsonObj.getLong(EXPERIMENT_ID));
+        realExp.setExpName(expJsonObj.getString(EXPERIMENT_NAME));
+        realExp.setUserId(expJsonObj.getString(USER_ID));
+        realExp.setDescription(expJsonObj.getString(DESCRIPTION));
+        realExp.setCreatedDate(expJsonObj.getLong(CREATED_DATE));
+        realExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
+        realExp.setState(expJsonObj.getString("state"));
+        realExp.setNodes(expJsonObj.getInt("nodes"));
+        realExp.setMinNodes(expJsonObj.getInt("minNodes"));
+        realExp.setIdleHours(expJsonObj.getLong("idleHours"));
+
+        String expDetailsString = expJsonObj.getString("details");
+        if (null == expDetailsString || expDetailsString.isEmpty()) {
+            return realExp;
+        }
+
+        JSONObject details = new JSONObject(expDetailsString);
+        if( details == JSONObject.NULL || details.toString().isEmpty()) {
+            return realExp;
+        }
+
+        for (Object key : details.keySet()) {
+            String nodeName = (String) key;
+            JSONObject nodeDetails = details.getJSONObject(nodeName);
+            HashMap<String, String> nodeInfoMap = new HashMap<>();
+            nodeInfoMap.put(QUALIFIED_NAME, nodeDetails.getString(QUALIFIED_NAME));
+            nodeInfoMap.put(OS, nodeDetails.getString(OS));
+            nodeInfoMap.put(NODE_ID, nodeDetails.getString(NODE_ID));
+
+            realExp.addNodeInfo(nodeName, nodeInfoMap);
+        }
+
+        return realExp;
     }
 
     private SortedMap<String, Map<String, String>> getGlobalImages() throws IOException {

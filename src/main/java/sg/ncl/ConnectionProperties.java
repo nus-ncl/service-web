@@ -161,6 +161,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId;
     }
 
+    public String getTeamRealizedExperiments(String teamId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/teams/" + teamId + "/" + expEndpoint;
+    }
+
     public String getRealizationByTeam(String teamName, String expId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + "/experiment/" + expId;
     }
