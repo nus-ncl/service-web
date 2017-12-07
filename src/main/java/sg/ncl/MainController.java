@@ -1667,25 +1667,8 @@ public class MainController {
         session.setAttribute("originalTeam", team);
 
         List<StatefulExperiment> experimentList = getStatefulExperiments(teamId);
-/*
-
-        request = createHttpEntityHeaderOnly();
-        response = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, request, String.class);
-        JSONArray experimentsArray = new JSONArray(response.getBody().toString());
-
-        List<Experiment2> experimentList = new ArrayList<>();
-        Map<Long, Realization> realizationMap = new HashMap<>();
-
-        for (int k = 0; k < experimentsArray.length(); k++) {
-            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-            realizationMap.put(experiment2.getId(), realization);
-            experimentList.add(experiment2);
-        }
-*/
 
         model.addAttribute("teamExperimentList", experimentList);
-        //model.addAttribute("teamRealizationMap", realizationMap);
 
         //Starting to get quota
         try {
@@ -2164,25 +2147,10 @@ public class MainController {
     @GetMapping(value = "/experiment_profile/{expId}")
     public String experimentProfile(@PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-       // ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
-
-        //Experiment2 experiment2 = extractExperiment(response.getBody().toString());
-
         ResponseEntity response = restTemplate.exchange(properties.getStatefulExperiment(expId), HttpMethod.GET, request, String.class);
 
         StatefulExperiment stateExp = extractStatefulExperiment(response.getBody().toString());
-/*
 
-        log.info("experiment profile: extract realization");
-        Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-
-        if (isNotAdminAndNotInTeam(session, realization)) {
-            log.warn("Permission denied to view experiment profile: {} for team: {}", realization.getExperimentName(), experiment2.getTeamName());
-            redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
-            return "redirect:/experiments";
-        }
-
-*/
         User2 experimentOwner = invokeAndExtractUserInfo(stateExp.getUserId());
 
         /*
@@ -2211,7 +2179,6 @@ public class MainController {
         log.debug("experiment profile - experiment details: {}", expDetailsResponse.getBody().toString());
 
         model.addAttribute("experiment", stateExp);
-        //model.addAttribute("realization", realization);
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
         model.addAttribute("experimentDetails", new JSONObject(expDetailsResponse.getBody().toString()));
         return "experiment_profile";
