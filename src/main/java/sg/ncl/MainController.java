@@ -147,6 +147,7 @@ public class MainController {
     private static final String COUNT = "count";
 
     private static final String ID = "id";
+    private static final String NAME = "name";
     private static final String USER_ID = "userId";
     private static final String OS = "os";
     private static final String QUALIFIED_NAME = "qualifiedName";
@@ -1665,6 +1666,9 @@ public class MainController {
         model.addAttribute("membersList", team.getMembersStatusMap().get(MemberStatus.APPROVED));
         session.setAttribute("originalTeam", team);
 
+        List<StatefulExperiment> experimentList = getStatefulExperiments(teamId);
+/*
+
         request = createHttpEntityHeaderOnly();
         response = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, request, String.class);
         JSONArray experimentsArray = new JSONArray(response.getBody().toString());
@@ -1678,9 +1682,10 @@ public class MainController {
             realizationMap.put(experiment2.getId(), realization);
             experimentList.add(experiment2);
         }
+*/
 
         model.addAttribute("teamExperimentList", experimentList);
-        model.addAttribute("teamRealizationMap", realizationMap);
+        //model.addAttribute("teamRealizationMap", realizationMap);
 
         //Starting to get quota
         try {
@@ -2109,7 +2114,7 @@ public class MainController {
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
     public String experiments(Model model, HttpSession session) throws WebServiceRuntimeException {
 
-        List<RealizedExperiment> realizedExperimentList = new ArrayList<>();
+        List<StatefulExperiment> statefulExperimentList = new ArrayList<>();
 
         // get uid on Deter
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -2143,14 +2148,14 @@ public class MainController {
             String teamResponseBody = teamResponse.getBody().toString();
 
             if (!isMemberJoinRequestPending(session.getAttribute("id").toString(), teamResponseBody)) {
-                List<RealizedExperiment> myExpList = getRealizedExperiments(teamId);
+                List<StatefulExperiment> myExpList = getStatefulExperiments(teamId);
                 if (!myExpList.isEmpty()) {
-                    realizedExperimentList.addAll(myExpList);
+                    statefulExperimentList.addAll(myExpList);
                 }
             }
         }
 
-        model.addAttribute("experimentList", realizedExperimentList);
+        model.addAttribute("experimentList", statefulExperimentList);
         model.addAttribute("internetRequestForm", new InternetRequestForm());
 
         return EXPERIMENTS;
@@ -2159,10 +2164,14 @@ public class MainController {
     @GetMapping(value = "/experiment_profile/{expId}")
     public String experimentProfile(@PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+       // ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
 
-        log.info("experiment profile: extract experiment");
-        Experiment2 experiment2 = extractExperiment(response.getBody().toString());
+        //Experiment2 experiment2 = extractExperiment(response.getBody().toString());
+
+        ResponseEntity response = restTemplate.exchange(properties.getStatefulExperiment(expId), HttpMethod.GET, request, String.class);
+
+        StatefulExperiment stateExp = extractStatefulExperiment(response.getBody().toString());
+/*
 
         log.info("experiment profile: extract realization");
         Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
@@ -2173,7 +2182,8 @@ public class MainController {
             return "redirect:/experiments";
         }
 
-        User2 experimentOwner = invokeAndExtractUserInfo(experiment2.getUserId());
+*/
+        User2 experimentOwner = invokeAndExtractUserInfo(stateExp.getUserId());
 
         /*
          * get experiment details
@@ -2197,11 +2207,11 @@ public class MainController {
          *  }
          *  returns a '{}' otherwise if fail
          */
-        ResponseEntity expDetailsResponse = restTemplate.exchange(properties.getExperimentDetails(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
+        ResponseEntity expDetailsResponse = restTemplate.exchange(properties.getExperimentDetails(stateExp.getTeamId(), expId), HttpMethod.GET, request, String.class);
         log.debug("experiment profile - experiment details: {}", expDetailsResponse.getBody().toString());
 
-        model.addAttribute("experiment", experiment2);
-        model.addAttribute("realization", realization);
+        model.addAttribute("experiment", stateExp);
+        //model.addAttribute("realization", realization);
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
         model.addAttribute("experimentDetails", new JSONObject(expDetailsResponse.getBody().toString()));
         return "experiment_profile";
@@ -4619,9 +4629,9 @@ public class MainController {
 
             if (!isMemberJoinRequestPending(userId, teamResponseBody)) {
 
-                List<RealizedExperiment> realizedExperimentList = getRealizedExperiments(teamId);
-                for (int j = 0; j < realizedExperimentList.size(); j++) {
-                    if ("RUNNING".equals(realizedExperimentList.get(j).getState())) {
+                List<StatefulExperiment> statefulExperimentList = getStatefulExperiments(teamId);
+                for (int j = 0; j < statefulExperimentList.size(); j++) {
+                    if ("RUNNING".equals(statefulExperimentList.get(j).getState())) {
                         numberOfRunningExperiments++;
                     }
                 }
@@ -4636,12 +4646,12 @@ public class MainController {
         return userDashboardStats;
     }
 
-    private List<RealizedExperiment> getRealizedExperiments(String teamId) {
-        log.info("Getting realized experiments for team {}", teamId);
+    private List<StatefulExperiment> getStatefulExperiments(String teamId) {
+        log.info("Getting stateful experiments for team {}", teamId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity respEntity;
         try {
-            respEntity = restTemplate.exchange(properties.getTeamRealizedExperiments(teamId), HttpMethod.GET, request, String.class);
+            respEntity = restTemplate.exchange(properties.getStatefulExperimentsByTeam(teamId), HttpMethod.GET, request, String.class);
         } catch (RestClientException e) {
             log.warn("Connection to sio failed: {}", e);
             return new ArrayList<>();
@@ -4653,13 +4663,13 @@ public class MainController {
             return new ArrayList<>();
         }
 
-        List<RealizedExperiment> realExpList = new ArrayList<>();
-        JSONArray realExpsArray = new JSONArray(result);
-        for (int i = 0; i < realExpsArray.length(); i++) {
-            realExpList.add(extractRealizedExperiment(realExpsArray.getJSONObject(i).toString()));
+        List<StatefulExperiment> stateExpList = new ArrayList<>();
+        JSONArray stateExpsArray = new JSONArray(result);
+        for (int i = 0; i < stateExpsArray.length(); i++) {
+            stateExpList.add(extractStatefulExperiment(stateExpsArray.getJSONObject(i).toString()));
         }
 
-        return realExpList;
+        return stateExpList;
     }
 
     /**
@@ -4668,8 +4678,8 @@ public class MainController {
      *                  {
      *                   "teamId":"56bde048-c12c-47c7-a66e-170d2f4708d8",
      *                   "teamName":"ncltest01",
-     *                   "expId":498,
-     *                   "expName":"modexp",
+     *                   "id":498,
+     *                   "name":"modexp",
      *                   "userId":"97a71fc5-91e9-4b64-9c50-73992b2684b5",
      *                   "description":"test modify experiment",
      *                   "createdDate":1507101706.000000000,
@@ -4681,44 +4691,46 @@ public class MainController {
      *                   "details":"
      *                      {"n0":
      *                         {"qualifiedName": "n0.modexp.ncltest01.staging.ncl.sg",
-     *                         "os": "Ubuntu16.04.3-64-pr",
-     *                         "nodeId": "pc6"
+     *                          "os": "Ubuntu16.04.3-64-pr",
+     *                          "nodeId": "pc6",
+     *                          "type": "SystemX"
      *                         },
      *                       "n1":
-     *                        {"qualifiedName": "n0.modexp.ncltest01.staging.ncl.sg",
-     *                         "os": "Ubuntu16.04.3-64-pr",
-     *                         "nodeId": "pc6"
+     *                        { "qualifiedName": "n1.modexp.ncltest01.staging.ncl.sg",
+     *                          "os": "Ubuntu16.04.3-64-pr",
+     *                          "nodeId": "pc5",
+     *                          "type": "SystemX"
      *                        }
      *                      }"
      *                   }
      * @return
      */
-    private RealizedExperiment extractRealizedExperiment(String jsonString) {
+    private StatefulExperiment extractStatefulExperiment(String jsonString) {
 
         JSONObject expJsonObj = new JSONObject(jsonString);
-        RealizedExperiment realExp = new RealizedExperiment();
+        StatefulExperiment stateExp = new StatefulExperiment();
 
-        realExp.setTeamId(expJsonObj.getString(TEAM_ID));
-        realExp.setTeamName(expJsonObj.getString(TEAM_NAME));
-        realExp.setExpId(expJsonObj.getLong(EXPERIMENT_ID));
-        realExp.setExpName(expJsonObj.getString(EXPERIMENT_NAME));
-        realExp.setUserId(expJsonObj.getString(USER_ID));
-        realExp.setDescription(expJsonObj.getString(DESCRIPTION));
-        realExp.setCreatedDate(expJsonObj.getLong(CREATED_DATE));
-        realExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
-        realExp.setState(expJsonObj.getString("state"));
-        realExp.setNodes(expJsonObj.getInt("nodes"));
-        realExp.setMinNodes(expJsonObj.getInt("minNodes"));
-        realExp.setIdleHours(expJsonObj.getLong("idleHours"));
+        stateExp.setTeamId(expJsonObj.getString(TEAM_ID));
+        stateExp.setTeamName(expJsonObj.getString(TEAM_NAME));
+        stateExp.setId(expJsonObj.getLong(ID));
+        stateExp.setName(expJsonObj.getString(NAME));
+        stateExp.setUserId(expJsonObj.getString(USER_ID));
+        stateExp.setDescription(expJsonObj.getString(DESCRIPTION));
+        stateExp.setCreatedDate(expJsonObj.getLong(CREATED_DATE));
+        stateExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
+        stateExp.setState(expJsonObj.getString("state"));
+        stateExp.setNodes(expJsonObj.getInt("nodes"));
+        stateExp.setMinNodes(expJsonObj.getInt("minNodes"));
+        stateExp.setIdleHours(expJsonObj.getLong("idleHours"));
 
         String expDetailsString = expJsonObj.getString("details");
         if (null == expDetailsString || expDetailsString.isEmpty()) {
-            return realExp;
+            return stateExp;
         }
 
         JSONObject details = new JSONObject(expDetailsString);
         if( details == JSONObject.NULL || details.toString().isEmpty()) {
-            return realExp;
+            return stateExp;
         }
 
         for (Object key : details.keySet()) {
@@ -4729,10 +4741,10 @@ public class MainController {
             nodeInfoMap.put(OS, nodeDetails.getString(OS));
             nodeInfoMap.put(NODE_ID, nodeDetails.getString(NODE_ID));
 
-            realExp.addNodeInfo(nodeName, nodeInfoMap);
+            stateExp.addNodeInfo(nodeName, nodeInfoMap);
         }
 
-        return realExp;
+        return stateExp;
     }
 
     private SortedMap<String, Map<String, String>> getGlobalImages() throws IOException {

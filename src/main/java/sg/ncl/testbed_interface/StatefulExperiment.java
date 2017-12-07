@@ -14,11 +14,11 @@ import java.util.Map;
  */
 @Getter
 @Setter
-public class RealizedExperiment {
+public class StatefulExperiment {
     private String teamId;
     private String teamName;
-    private Long expId;
-    private String expName;
+    private Long id;
+    private String name;
     private String userId;
     private String description;
     private ZonedDateTime createdDate;
@@ -29,7 +29,7 @@ public class RealizedExperiment {
     private Long idleHours;
     private Map<String, Map<String, String>> nodesInfoMap;
 
-    public RealizedExperiment() {
+    public StatefulExperiment() {
         nodes = 0;
         minNodes = 0;
         idleHours = 0L;

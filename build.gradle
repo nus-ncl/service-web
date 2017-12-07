@@ -77,10 +77,8 @@ tasks.jacocoTestReport {
 
 sonarqube {
     properties {
-        property 'sonar.host.url', 'https://sonarqube.com'
-        property 'sonar.projectKey', 'nus-ncl:service-web'
-        property 'sonar.projectName', 'NCLUI'
-        property 'sonar.projectVersion', "${project.version}"
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.organization', 'zhangchunwang-github'
         property 'sonar.login', System.getenv('SONAR_TOKEN')
         if (System.getenv('TRAVIS_BRANCH') == 'master') {
             if (System.getenv('TRAVIS_PULL_REQUEST') == 'false') {

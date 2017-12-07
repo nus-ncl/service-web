@@ -47,7 +47,7 @@
                             </thead>
                             <tbody>
                                 <tr th:each="expEntry : ${experimentList}">
-                                    <td><a th:href="@{/experiment_profile/{expId}(expId=${expEntry.expId})}"><span th:text="${expEntry.expName}">Name</span></a></td>
+                                    <td><a th:href="@{/experiment_profile/{expId}(expId=${expEntry.id})}"><span th:text="${expEntry.name}">Name</span></a></td>
                                     <td th:text="${expEntry.teamName}">Team</td>
                                     <td th:text="${expEntry.nodes}" style="text-align: center">Nodes</td>
                                     <th:block>
@@ -71,18 +71,18 @@
                                         </span>
                                         <td>
                                             <a href="#topoModal" data-toggle="modal"
-                                               th:attr="data-title=${expEntry.expName},
-                                                        data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.expId})}">View</a>
+                                               th:attr="data-title=${expEntry.name},
+                                                        data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">View</a>
                                         </td>
                                         <td>
-                                            <a th:href="'#'+${expEntry.expId}" data-toggle="modal">View</a>
+                                            <a th:href="'#'+${expEntry.id}" data-toggle="modal">View</a>
                                             <!-- Modal -->
-                                            <div class="modal fade exp-modal" th:id="${expEntry.expId}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal fade exp-modal" th:id="${expEntry.id}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header team-owner-info-header">
                                                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="btn-fa-red">&times;</span><span class="sr-only">Close</span></button>
-                                                            <h4 class="modal-title" id="expId"><span th:text="${expEntry.expName}">Realization</span></h4>
+                                                            <h4 class="modal-title" id="expId"><span th:text="${expEntry.name}">Realization</span></h4>
                                                         </div>
                                                         <div class="modal-body team-owner-info-body">
                                                             <h4>Instructions to Access Nodes</h4>
@@ -108,7 +108,7 @@
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
-                                                                        <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${expEntry.expId}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
+                                                                        <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${expEntry.id}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
                                                                     </tr>
                                                                 </th:block>
                                                             </table>
@@ -129,13 +129,13 @@
                                                 <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
                                             </span>
                                             <span th:if="${expEntry.state == 'STOPPED'}">
-                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.expName},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.expId}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
-                                                <a th:href="@{/update_experiment/{teamId}/{expId}(teamId = ${expEntry.teamId}, expId = ${expEntry.expId})}"><button type="button" data-tooltip="tooltip" class="btn btn-standard" data-placement="bottom" title="Modify this experiment"><i class="fa fa-pencil"></i></button></a>
-                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.expName},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.expId}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
+                                                <a th:href="@{/update_experiment/{teamId}/{expId}(teamId = ${expEntry.teamId}, expId = ${expEntry.id})}"><button type="button" data-tooltip="tooltip" class="btn btn-standard" data-placement="bottom" title="Modify this experiment"><i class="fa fa-pencil"></i></button></a>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
                                             </span>
                                             <span th:if="${expEntry.state == 'RUNNING'}">
-                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.expName},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.expId}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
-                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard internet-btn" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.expId}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud  btn-fa-yellow"></i></button>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard internet-btn" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud  btn-fa-yellow"></i></button>
                                             </span>
                                             <span th:if="${expEntry.state == 'ERROR'}">
                                                 <p th:text="#{nav.error}"></p>
