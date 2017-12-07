@@ -112,8 +112,6 @@ public class MainController {
     private static final String NO_PERMISSION_PAGE = "nopermission";
 
     private static final String EXPERIMENTS = "experiments";
-    private static final String EXPERIMENT_ID = "expId";
-    private static final String EXPERIMENT_NAME = "expName";
 
     private static final String APPLICATION_DATE = "applicationDate";
     private static final String TEAM_NAME = "teamName";
@@ -4326,13 +4324,13 @@ public class MainController {
         experiment2.setMaxDuration(object.getInt("maxDuration"));
 
         try {
-            experiment2.setCreatedDate(object.get("createdDate").toString());
+            experiment2.setCreatedDate(object.get(CREATED_DATE).toString());
         } catch (Exception e) {
             experiment2.setCreatedDate("");
         }
 
         try {
-            experiment2.setLastModifiedDate(object.get("lastModifiedDate").toString());
+            experiment2.setLastModifiedDate(object.get(LAST_MODIFIED_DATE).toString());
         } catch (Exception e) {
             experiment2.setLastModifiedDate("");
         }
@@ -4407,7 +4405,7 @@ public class MainController {
                 JSONObject nodeDetailsJson = new JSONObject(nodesInfoObject.get(nodeName).toString());
 
                 nodeDetails.put("os", getValueFromJSONKey(nodeDetailsJson, "os"));
-                nodeDetails.put("qualifiedName", getValueFromJSONKey(nodeDetailsJson, "qualifiedName"));
+                nodeDetails.put(QUALIFIED_NAME, getValueFromJSONKey(nodeDetailsJson, QUALIFIED_NAME));
 
                 nodeDetails.put(NODE_ID, getValueFromJSONKey(nodeDetailsJson, NODE_ID));
                 realization.addNodeDetails(nodeName, nodeDetails);
