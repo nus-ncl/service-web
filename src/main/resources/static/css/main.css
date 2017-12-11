@@ -2613,8 +2613,6 @@ h17{
 
 .events-caption, .events-tooltiptext {
     font-size: 0.7em;
-    font-style: italic;
-    font-weight: bold;
     line-height: 1.1;
     margin-top: 10px;
     text-align: justify;
@@ -2628,7 +2626,7 @@ h17{
 
 .events-tooltip .events-tooltiptext {
     visibility: hidden;
-    width: 300px;
+    width: 320px;
     background: rgba(0, 0, 0, 0.7);
     color: #fff;
     border-radius: 6px;
