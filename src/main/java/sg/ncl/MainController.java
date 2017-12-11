@@ -144,6 +144,15 @@ public class MainController {
     private static final String DATA_ID = "dataId";
     private static final String COUNT = "count";
 
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String USER_ID = "userId";
+    private static final String OS = "os";
+    private static final String QUALIFIED_NAME = "qualifiedName";
+    private static final String DESCRIPTION = "description";
+    private static final String CREATED_DATE = "createdDate";
+    private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -1655,22 +1664,9 @@ public class MainController {
         model.addAttribute("membersList", team.getMembersStatusMap().get(MemberStatus.APPROVED));
         session.setAttribute("originalTeam", team);
 
-        request = createHttpEntityHeaderOnly();
-        response = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, request, String.class);
-        JSONArray experimentsArray = new JSONArray(response.getBody().toString());
-
-        List<Experiment2> experimentList = new ArrayList<>();
-        Map<Long, Realization> realizationMap = new HashMap<>();
-
-        for (int k = 0; k < experimentsArray.length(); k++) {
-            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-            realizationMap.put(experiment2.getId(), realization);
-            experimentList.add(experiment2);
-        }
+        List<StatefulExperiment> experimentList = getStatefulExperiments(teamId);
 
         model.addAttribute("teamExperimentList", experimentList);
-        model.addAttribute("teamRealizationMap", realizationMap);
 
         //Starting to get quota
         try {
@@ -2102,30 +2098,28 @@ public class MainController {
 
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
     public String experiments(Model model, HttpSession session) throws WebServiceRuntimeException {
-//        long start = System.currentTimeMillis();
-        List<Experiment2> experimentList = new ArrayList<>();
-        Map<Long, Realization> realizationMap = new HashMap<>();
+
+        List<StatefulExperiment> statefulExperimentList = new ArrayList<>();
+
+        // get uid on Deter
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
-
         String responseBody = response.getBody().toString();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                log.error("No user to get experiment: {}", session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                log.info("experiment error: {} - {} - {} - user token:{}", error.getError(), error.getMessage(), error.getLocalizedMessage(), httpScopedSession.getAttribute(webProperties.getSessionJwtToken()));
-                model.addAttribute(DETER_UID, CONNECTION_ERROR);
+                log.error("Failed to get Deter uid for user {}: {}", session.getAttribute("id").toString(), error.getError());
+                model.addAttribute(DETER_UID, UNKNOWN);
             } else {
-                log.info("Show the deter user id: {}", responseBody);
                 model.addAttribute(DETER_UID, responseBody);
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        // get list of teamids
+        // get list of teamIds
         ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
 
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
@@ -2139,47 +2133,27 @@ public class MainController {
             String teamResponseBody = teamResponse.getBody().toString();
 
             if (!isMemberJoinRequestPending(session.getAttribute("id").toString(), teamResponseBody)) {
-                // get experiments lists of the teams
-                HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
-                ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
-
-                JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
-
-                for (int k = 0; k < experimentsArray.length(); k++) {
-                    Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-                    Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-                    realizationMap.put(experiment2.getId(), realization);
-                    experimentList.add(experiment2);
+                List<StatefulExperiment> myExpList = getStatefulExperiments(teamId);
+                if (!myExpList.isEmpty()) {
+                    statefulExperimentList.addAll(myExpList);
                 }
             }
         }
 
-
-        model.addAttribute("experimentList", experimentList);
-        model.addAttribute("realizationMap", realizationMap);
+        model.addAttribute("experimentList", statefulExperimentList);
         model.addAttribute("internetRequestForm", new InternetRequestForm());
-//        System.out.println("Elapsed time to get experiment page:" + (System.currentTimeMillis() - start));
+
         return EXPERIMENTS;
     }
 
     @GetMapping(value = "/experiment_profile/{expId}")
     public String experimentProfile(@PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getStatefulExperiment(expId), HttpMethod.GET, request, String.class);
 
-        log.info("experiment profile: extract experiment");
-        Experiment2 experiment2 = extractExperiment(response.getBody().toString());
+        StatefulExperiment stateExp = extractStatefulExperiment(response.getBody().toString());
 
-        log.info("experiment profile: extract realization");
-        Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-
-        if (isNotAdminAndNotInTeam(session, realization)) {
-            log.warn("Permission denied to view experiment profile: {} for team: {}", realization.getExperimentName(), experiment2.getTeamName());
-            redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
-            return "redirect:/experiments";
-        }
-
-        User2 experimentOwner = invokeAndExtractUserInfo(experiment2.getUserId());
+        User2 experimentOwner = invokeAndExtractUserInfo(stateExp.getUserId());
 
         /*
          * get experiment details
@@ -2203,11 +2177,10 @@ public class MainController {
          *  }
          *  returns a '{}' otherwise if fail
          */
-        ResponseEntity expDetailsResponse = restTemplate.exchange(properties.getExperimentDetails(experiment2.getTeamId(), expId), HttpMethod.GET, request, String.class);
+        ResponseEntity expDetailsResponse = restTemplate.exchange(properties.getExperimentDetails(stateExp.getTeamId(), expId), HttpMethod.GET, request, String.class);
         log.debug("experiment profile - experiment details: {}", expDetailsResponse.getBody().toString());
 
-        model.addAttribute("experiment", experiment2);
-        model.addAttribute("realization", realization);
+        model.addAttribute("experiment", stateExp);
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
         model.addAttribute("experimentDetails", new JSONObject(expDetailsResponse.getBody().toString()));
         return "experiment_profile";
@@ -4343,8 +4316,8 @@ public class MainController {
         Experiment2 experiment2 = new Experiment2();
         JSONObject object = new JSONObject(experimentJson);
 
-        experiment2.setId(object.getLong("id"));
-        experiment2.setUserId(object.getString("userId"));
+        experiment2.setId(object.getLong(ID));
+        experiment2.setUserId(object.getString(USER_ID));
         experiment2.setTeamId(object.getString(TEAM_ID));
         experiment2.setTeamName(object.getString(TEAM_NAME));
         experiment2.setName(object.getString("name"));
@@ -4355,13 +4328,13 @@ public class MainController {
         experiment2.setMaxDuration(object.getInt("maxDuration"));
 
         try {
-            experiment2.setCreatedDate(object.get("createdDate").toString());
+            experiment2.setCreatedDate(object.get(CREATED_DATE).toString());
         } catch (Exception e) {
             experiment2.setCreatedDate("");
         }
 
         try {
-            experiment2.setLastModifiedDate(object.get("lastModifiedDate").toString());
+            experiment2.setLastModifiedDate(object.get(LAST_MODIFIED_DATE).toString());
         } catch (Exception e) {
             experiment2.setLastModifiedDate("");
         }
@@ -4436,7 +4409,7 @@ public class MainController {
                 JSONObject nodeDetailsJson = new JSONObject(nodesInfoObject.get(nodeName).toString());
 
                 nodeDetails.put("os", getValueFromJSONKey(nodeDetailsJson, "os"));
-                nodeDetails.put("qualifiedName", getValueFromJSONKey(nodeDetailsJson, "qualifiedName"));
+                nodeDetails.put(QUALIFIED_NAME, getValueFromJSONKey(nodeDetailsJson, QUALIFIED_NAME));
 
                 nodeDetails.put(NODE_ID, getValueFromJSONKey(nodeDetailsJson, NODE_ID));
                 realization.addNodeDetails(nodeName, nodeDetails);
@@ -4604,6 +4577,8 @@ public class MainController {
      * @return a map in the form teams: numberOfTeams, experiments: numberOfExperiments
      */
     private Map<String, Integer> getUserDashboardStats(String userId) {
+
+        int numberOfApprovedTeam = 0;
         int numberOfRunningExperiments = 0;
         Map<String, Integer> userDashboardStats = new HashMap<>();
 
@@ -4614,8 +4589,6 @@ public class MainController {
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
-        int numberOfApprovedTeam = 0;
-
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
 
@@ -4624,13 +4597,13 @@ public class MainController {
             String teamResponseBody = teamResponse.getBody().toString();
 
             if (!isMemberJoinRequestPending(userId, teamResponseBody)) {
-                // get experiments lists of the teams
-                HttpEntity<String> expRequest = createHttpEntityHeaderOnly();
-                ResponseEntity expRespEntity = restTemplate.exchange(properties.getExpListByTeamId(teamId), HttpMethod.GET, expRequest, String.class);
 
-                JSONArray experimentsArray = new JSONArray(expRespEntity.getBody().toString());
-
-                numberOfRunningExperiments = getNumberOfRunningExperiments(numberOfRunningExperiments, experimentsArray);
+                List<StatefulExperiment> statefulExperimentList = getStatefulExperiments(teamId);
+                for (int j = 0; j < statefulExperimentList.size(); j++) {
+                    if ("RUNNING".equals(statefulExperimentList.get(j).getState())) {
+                        numberOfRunningExperiments++;
+                    }
+                }
 
                 numberOfApprovedTeam ++;
             }
@@ -4638,19 +4611,109 @@ public class MainController {
 
         userDashboardStats.put(USER_DASHBOARD_APPROVED_TEAMS, numberOfApprovedTeam);
         userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
-       // userDashboardStats.put(USER_DASHBOARD_FREE_NODES, getNodes(NodeType.FREE));
+
         return userDashboardStats;
     }
 
-    private int getNumberOfRunningExperiments(int numberOfRunningExperiments, JSONArray experimentsArray) {
-        for (int k = 0; k < experimentsArray.length(); k++) {
-            Experiment2 experiment2 = extractExperiment(experimentsArray.getJSONObject(k).toString());
-            Realization realization = invokeAndExtractRealization(experiment2.getTeamName(), experiment2.getId());
-            if (realization.getState().equals(RealizationState.RUNNING.toString())) {
-                numberOfRunningExperiments++;
-            }
+    private List<StatefulExperiment> getStatefulExperiments(String teamId) {
+        log.info("Getting stateful experiments for team {}", teamId);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity respEntity;
+        try {
+            respEntity = restTemplate.exchange(properties.getStatefulExperimentsByTeam(teamId), HttpMethod.GET, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Connection to sio failed: {}", e);
+            return new ArrayList<>();
         }
-        return numberOfRunningExperiments;
+
+        String result = respEntity.getBody().toString();
+        log.info(result);
+        if (result.isEmpty() || "[]".equals(result)) {
+            return new ArrayList<>();
+        }
+
+        List<StatefulExperiment> stateExpList = new ArrayList<>();
+        JSONArray stateExpsArray = new JSONArray(result);
+        for (int i = 0; i < stateExpsArray.length(); i++) {
+            stateExpList.add(extractStatefulExperiment(stateExpsArray.getJSONObject(i).toString()));
+        }
+
+        return stateExpList;
+    }
+
+    /**
+     *
+     * @param jsonString of the format
+     *                  {
+     *                   "teamId":"56bde048-c12c-47c7-a66e-170d2f4708d8",
+     *                   "teamName":"ncltest01",
+     *                   "id":498,
+     *                   "name":"modexp",
+     *                   "userId":"97a71fc5-91e9-4b64-9c50-73992b2684b5",
+     *                   "description":"test modify experiment",
+     *                   "createdDate":1507101706.000000000,
+     *                   "lastModifiedDate":1507101706.000000000,
+     *                   "state":"swapped",
+     *                   "nodes":0,
+     *                   "minNodes":1,
+     *                   "idleHours":0,
+     *                   "details":"
+     *                      {"n0":
+     *                         {"qualifiedName": "n0.modexp.ncltest01.staging.ncl.sg",
+     *                          "os": "Ubuntu16.04.3-64-pr",
+     *                          "nodeId": "pc6",
+     *                          "type": "SystemX"
+     *                         },
+     *                       "n1":
+     *                        { "qualifiedName": "n1.modexp.ncltest01.staging.ncl.sg",
+     *                          "os": "Ubuntu16.04.3-64-pr",
+     *                          "nodeId": "pc5",
+     *                          "type": "SystemX"
+     *                        }
+     *                      }"
+     *                   }
+     * @return
+     */
+    private StatefulExperiment extractStatefulExperiment(String jsonString) {
+
+        JSONObject expJsonObj = new JSONObject(jsonString);
+        StatefulExperiment stateExp = new StatefulExperiment();
+
+        stateExp.setTeamId(expJsonObj.getString(TEAM_ID));
+        stateExp.setTeamName(expJsonObj.getString(TEAM_NAME));
+        stateExp.setId(expJsonObj.getLong(ID));
+        stateExp.setName(expJsonObj.getString(NAME));
+        stateExp.setUserId(expJsonObj.getString(USER_ID));
+        stateExp.setDescription(expJsonObj.getString(DESCRIPTION));
+        stateExp.setCreatedDate(expJsonObj.getLong(CREATED_DATE));
+        stateExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
+        stateExp.setState(expJsonObj.getString("state"));
+        stateExp.setNodes(expJsonObj.getInt("nodes"));
+        stateExp.setMinNodes(expJsonObj.getInt("minNodes"));
+        stateExp.setIdleHours(expJsonObj.getLong("idleHours"));
+
+        String expDetailsString = expJsonObj.getString("details");
+        if (null == expDetailsString || expDetailsString.isEmpty()) {
+            return stateExp;
+        }
+
+        JSONObject details = new JSONObject(expDetailsString);
+        if( details == JSONObject.NULL || details.toString().isEmpty()) {
+            return stateExp;
+        }
+
+        for (Object key : details.keySet()) {
+            String nodeName = (String) key;
+            JSONObject nodeDetails = details.getJSONObject(nodeName);
+            HashMap<String, String> nodeInfoMap = new HashMap<>();
+            nodeInfoMap.put(QUALIFIED_NAME, nodeDetails.getString(QUALIFIED_NAME));
+            nodeInfoMap.put(OS, nodeDetails.getString(OS));
+            nodeInfoMap.put(NODE_ID, nodeDetails.getString(NODE_ID));
+
+            stateExp.addNodeInfo(nodeName, nodeInfoMap);
+        }
+
+        return stateExp;
     }
 
     private SortedMap<String, Map<String, String>> getGlobalImages() throws IOException {

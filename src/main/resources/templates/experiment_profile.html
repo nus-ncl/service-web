@@ -42,12 +42,12 @@
                     </tr>
                     <tr>
                         <td><strong th:text="#{experimentProfile.status}">Status</strong></td>
-                        <span th:if="${realization.state == 'STARTING'}"><td th:text="'Starting'"></td></span>
-                        <span th:if="${realization.state == 'NOT_RUNNING'}"><td th:text="'Not Running'"></td></span>
-                        <span th:if="${realization.state == 'RUNNING'}"><td th:text="'Running'"></td></span>
-                        <span th:if="${realization.state == 'STOPPING'}"><td th:text="'Stopping'"></td></span>
-                        <span th:if="${realization.state == 'WARNING'}"><td th:text="'Warning'"></td></span>
-                        <span th:if="${realization.state == 'ERROR'}"><td th:text="'Error'"></td></span>
+                        <span th:if="${experiment.state == 'STARTING'}"><td th:text="'Starting'"></td></span>
+                        <span th:if="${experiment.state == 'STOPPED'}"><td th:text="'Stopped'"></td></span>
+                        <span th:if="${experiment.state == 'RUNNING'}"><td th:text="'Running'"></td></span>
+                        <span th:if="${experiment.state == 'STOPPING'}"><td th:text="'Stopping'"></td></span>
+                        <span th:if="${experiment.state == 'WARNING'}"><td th:text="'Warning'"></td></span>
+                        <span th:if="${experiment.state == 'ERROR'}"><td th:text="'Error'"></td></span>
                     </tr>
                     <tr>
                         <td><strong th:text="#{experimentProfile.createdDate}">Created Date</strong></td>

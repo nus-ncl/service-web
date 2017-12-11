@@ -49,24 +49,24 @@
                                 <tr th:each="expEntry : ${experimentList}">
                                     <td><a th:href="@{/experiment_profile/{expId}(expId=${expEntry.id})}"><span th:text="${expEntry.name}">Name</span></a></td>
                                     <td th:text="${expEntry.teamName}">Team</td>
-                                    <td th:text="${realizationMap.get(expEntry.id).numberOfNodes}" style="text-align: center">Nodes</td>
-                                    <th:block th:each="realization : ${realizationMap.get(expEntry.id)}">
-                                        <span th:if="${realization.state == 'STARTING'}">
+                                    <td th:text="${expEntry.nodes}" style="text-align: center">Nodes</td>
+                                    <th:block>
+                                        <span th:if="${expEntry.state == 'STARTING'}">
                                             <td th:text="'Starting'"></td>
                                         </span>
-                                        <span th:if="${realization.state == 'NOT_RUNNING'}">
-                                            <td th:text="'Not Running'"></td>
+                                        <span th:if="${expEntry.state == 'STOPPED'}">
+                                            <td th:text="'Stopped'"></td>
                                         </span>
-                                        <span th:if="${realization.state == 'RUNNING'}">
+                                        <span th:if="${expEntry.state == 'RUNNING'}">
                                             <td th:text="'Running'"></td>
                                         </span>
-                                        <span th:if="${realization.state == 'STOPPING'}">
+                                        <span th:if="${expEntry.state == 'STOPPING'}">
                                             <td th:text="'Stopping'"></td>
                                         </span>
-                                        <span th:if="${realization.state == 'WARNING'}">
-                                            <td th:text="'Warning'"></td>
+                                        <span th:if="${expEntry.state == 'UNKNOWN'}">
+                                            <td th:text="'Unknown'"></td>
                                         </span>
-                                        <span th:if="${realization.state == 'ERROR'}">
+                                        <span th:if="${expEntry.state == 'ERROR'}">
                                             <td th:text="'Error'"></td>
                                         </span>
                                         <td>
@@ -75,9 +75,9 @@
                                                         data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">View</a>
                                         </td>
                                         <td>
-                                            <a th:href="'#'+${realization.experimentId}" data-toggle="modal">View</a>
+                                            <a th:href="'#'+${expEntry.id}" data-toggle="modal">View</a>
                                             <!-- Modal -->
-                                            <div class="modal fade exp-modal" th:id="${realization.experimentId}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal fade exp-modal" th:id="${expEntry.id}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header team-owner-info-header">
@@ -91,11 +91,11 @@
                                                                 <pre>ssh <span th:text="${deterUid}"></span>@users.ncl.sg</pre>
                                                                 <p>&nbsp;</p>
                                                                 <p><strong>Step 2</strong>: <code>ssh</code> into your experiment node using its Qualified Name, for example:</p>
-                                                                <pre>ssh <span th:text="${!realization.nodesInfoMap.isEmpty()} ? ${realization.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg' "></span></pre>
+                                                                <pre>ssh <span th:text="${!expEntry.nodesInfoMap.isEmpty()} ? ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg' "></span></pre>
                                                                 <p>&nbsp;</p>
                                                             </div>
                                                             <h4>Info</h4>
-                                                            <th:block th:if="${!realization.nodesInfoMap.isEmpty()}">
+                                                            <th:block th:if="${!expEntry.nodesInfoMap.isEmpty()}">
                                                                 <table class="table table-responsive table-striped">
                                                                     <thead>
                                                                     <th th:text="#{experiment.table.header.nodes}">Node</th>
@@ -103,17 +103,17 @@
                                                                     <th th:text="#{experiment.table.header.qualifiedName}">Qualified Name</th>
                                                                     <th>Actions</th>
                                                                 </thead>
-                                                                <th:block th:each="nodesDetailsMap: ${realization.nodesInfoMap}">
+                                                                <th:block th:each="nodesDetailsMap: ${expEntry.nodesInfoMap}">
                                                                     <tr>
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
-                                                                        <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${realization.experimentId}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
+                                                                        <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${expEntry.id}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
                                                                     </tr>
                                                                 </th:block>
                                                             </table>
                                                         </th:block>
-                                                        <th:block th:if="${realization.nodesInfoMap.isEmpty()}">
+                                                        <th:block th:if="${expEntry.nodesInfoMap.isEmpty()}">
                                                             <p th:text="#{form.expNotStarted}"></p>
                                                         </th:block>
                                                        </div>
@@ -122,22 +122,22 @@
                                         </div>
                                        </td>
                                         <td>
-                                            <span th:if="${realization.state == 'STARTING'}">
+                                            <span th:if="${expEntry.state == 'STARTING'}">
                                                 <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
                                             </span>
-                                            <span th:if="${realization.state == 'STOPPING'}">
+                                            <span th:if="${expEntry.state == 'STOPPING'}">
                                                 <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
                                             </span>
-                                            <span th:if="${realization.state == 'NOT_RUNNING'}">
+                                            <span th:if="${expEntry.state == 'STOPPED'}">
                                                 <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
                                                 <a th:href="@{/update_experiment/{teamId}/{expId}(teamId = ${expEntry.teamId}, expId = ${expEntry.id})}"><button type="button" data-tooltip="tooltip" class="btn btn-standard" data-placement="bottom" title="Modify this experiment"><i class="fa fa-pencil"></i></button></a>
                                                 <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
                                             </span>
-                                            <span th:if="${realization.state == 'RUNNING'}">
+                                            <span th:if="${expEntry.state == 'RUNNING'}">
                                                 <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
                                                 <button type="button" data-tooltip="tooltip" class="btn btn-standard internet-btn" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud  btn-fa-yellow"></i></button>
                                             </span>
-                                            <span th:if="${realization.state == 'ERROR'}">
+                                            <span th:if="${expEntry.state == 'ERROR'}">
                                                 <p th:text="#{nav.error}"></p>
                                             </span>
                                         </td>

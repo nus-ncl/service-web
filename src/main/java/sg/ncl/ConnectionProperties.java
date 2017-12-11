@@ -153,12 +153,20 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id;
     }
 
+    public String getStatefulExperiment(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/status";
+    }
+
     public String getExperimentDetails(String teamId, String expId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId + "/" +  expEndpoint + "/" + expId + "/experimentDetails";
     }
 
     public String getExpListByTeamId(String teamId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/teams/" + teamId;
+    }
+
+    public String getStatefulExperimentsByTeam(String teamId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/" + expEndpoint;
     }
 
     public String getRealizationByTeam(String teamName, String expId) {
