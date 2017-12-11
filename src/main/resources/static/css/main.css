@@ -2611,7 +2611,7 @@ h17{
 
 }
 
-.events-caption, .events-tooltiptext {
+.events-tooltiptext {
     font-size: 0.7em;
     line-height: 1.1;
     margin-top: 10px;
