@@ -8,6 +8,7 @@
 <body class="mybg loginbackground">
     <th:block th:if="${session.id == null}">
         <div th:replace="fragments/login_navigation :: loginnav"></div>
+        <p>&nbsp;</p>
     </th:block>
     <th:block th:if="${session.id != null}">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
