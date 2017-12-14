@@ -8,14 +8,14 @@
     <body class="mybg loginbackground">
         <th:block th:if="${session.id == null}">
             <div th:replace="fragments/login_navigation :: loginnav"></div>
+            <p>&nbsp;</p>
         </th:block>
         <th:block th:if="${session.id != null}">
             <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
             <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
         </th:block>
         <div class="container">
+            <p>&nbsp;</p>
             <div class="row">
                 <div class="panel panel-primary team-panel team-panel-current-team dashpanel">
                     <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.public}">Public Teams</h2>
