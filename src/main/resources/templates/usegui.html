@@ -76,7 +76,29 @@
             </div>
             <div class="heading col-sm-12 tutorialbackground">
                 <div class="col-sm-6">
-                    <h2>Step 6</h2>
+                    <h2>Step 6 <i>(optional)</i></h2>
+                    <p>Reconfigure the VNC server.</p>
+                    <p>Stop the VNC server by killing the VNC process, using the command "vncserver -kill :1".</p>
+                    <p>
+                        Update the ".vnc/xstartup" file with the following lines:
+                    </p>
+                    <pre>
+[ -x /etc/vnc/xstartup ] &amp;&amp; exec /etc/vnc/xstartup
+[ -r $HOME/.Xresources ] &amp;&amp; xrdb $HOME/.Xresources
+startxfce4 &amp;</pre>
+                    <p>Start the VNC server using the command "vncserver :1".</p>
+                </div>
+                <div class="col-sm-6">
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/01_vncserver_kill.jpg" src="../images/01_vncserver_kill.jpg" width="500" alt="screenshot"/>
+                    <br/>
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/02_xstartup.jpg" src="../images/02_xstartup.jpg" width="500" alt="screenshot"/>
+                    <br/>
+                    <img class="img-responsive" preload="true" minimal-lightbox="../images/03_vncserver_start.jpg" src="../images/03_vncserver_start.jpg" width="500" alt="screenshot"/>
+                </div>
+            </div>
+            <div class="heading col-sm-12 tutorialbackground">
+                <div class="col-sm-6">
+                    <h2>Step 7</h2>
                     <p>Open another SSH terminal window on your local system.</p>
                     <p>
                         Set up port forwarding from your local system to your node via users.ncl.sg, using the command
@@ -90,7 +112,7 @@
             </div>
             <div class="heading col-sm-12 tutorialbackground">
                 <div class="col-sm-6">
-                    <h2>Step 7</h2>
+                    <h2>Step 8</h2>
                     <p>
                         Open your VNC client (eg. <a href="https://www.realvnc.com/en/connect/download/viewer/">VNC Viewer</a>)
                         and connect to "localhost:[local_port]", which is 5901 in our example above.
