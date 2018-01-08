@@ -2250,7 +2250,7 @@ public class MainController {
         experimentObject.put("nsFile", "file");
         experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
-        experimentObject.put("maxDuration", "960");
+        experimentObject.put("maxDuration", experimentForm.getMaxDuration());
 
         log.info("Calling service to create experiment");
         HttpEntity<String> request = createHttpEntityWithBody(experimentObject.toString());

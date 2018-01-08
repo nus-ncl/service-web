@@ -24,7 +24,7 @@ public class ExperimentForm {
 
     private String nsFileContent;
     private Integer idleSwap;
-    private Integer maxDuration;
+    private Integer maxDuration = 0; // max number of hours before experiment auto swap out
 
     private String scenarioFileName;
     private String scenarioContents;
