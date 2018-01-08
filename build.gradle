@@ -52,12 +52,14 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-configuration-processor'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'org.springframework.boot:spring-boot-starter-websocket'
     compile 'org.thymeleaf.extras:thymeleaf-extras-java8time' // for thymeleaf to format zoneddatetime into readable format
     compile 'javax.inject:javax.inject'
     compile 'org.json:json'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'commons-io:commons-io'
     compile 'org.projectlombok:lombok'
+    compile 'com.jcraft:jsch:0.1.54'
 
     testCompile 'org.apache.commons:commons-lang3'
     testCompile 'org.springframework.boot:spring-boot-starter-test'

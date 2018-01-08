@@ -171,6 +171,11 @@ public class MainController {
     @Inject
     protected HttpSession httpScopedSession;
 
+    @RequestMapping("/testwebssh")
+    public String testWebSSH() {
+        return "webssh";
+    }
+
     @RequestMapping("/")
     public String index() {
         return "index";

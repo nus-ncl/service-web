@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Web SSH</title>
+    <object th:include="fragments/header :: header" th:remove="tag"/>
+</head>
+<body>
+<th:block th:if="${session.id == null}">
+    <div th:replace="fragments/login_navigation :: loginnav"></div>
+</th:block>
+<th:block th:if="${session.id != null}">
+    <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+</th:block>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div id="main-content" class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="connect">WebSocket connection:</label>
+                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
+                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="command">Enter command:</label>
+                    <input type="text" id="command" class="form-control" placeholder="enter shell command"/>
+                </div>
+                <button id="send" class="btn btn-default" type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <br/>
+            <textarea rows="10" cols="100" id="console"></textarea>
+        </div>
+    </div>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    var stompClient = null;
+
+    function setConnected(connected) {
+        $('#connect').prop("disabled", connected);
+        $('#disconnect').prop("disabled", !connected);
+        $('#command').html("");
+    }
+
+    function connect() {
+        var socket = new SockJS('/websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({user: "student", host: "127.0.0.1", port: "2222", pass: "cs4239"}, function (frame) {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/shell/output', function (output) {
+                showResult(output.body);
+            });
+        });
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+        $('#console').val("");
+        console.log("Disconnected");
+    }
+
+    function sendText() {
+        stompClient.send("/webssh/input", {}, $('#command').val());
+    }
+
+    function showResult(message) {
+        $('#console').val(function (i, text) {
+            return text + message;
+        });
+    }
+
+    $(function () {
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+        });
+        $('#connect').click(function () {
+            connect();
+        });
+        $('#disconnect').click(function () {
+            disconnect();
+        });
+        $('#send').click(function () {
+            sendText();
+        });
+    });
+</script>
+</body>
+</html>
