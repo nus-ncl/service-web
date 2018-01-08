@@ -49,7 +49,14 @@
 	                        </div>
                         </div>
                         <div class="form-group">
-                            <label for="max-duration">Shutdown experiment after:</label>
+                            <label for="max-duration">Auto-shutdown experiment after:&nbsp;
+                                <a href="#" class="data-name-tooltip">
+                                    <i class="fa fa-question-circle"></i>
+                                    <span class="tooltiptext" style="z-index: 9999; font-weight: normal; font-size: 0.8em;">
+                                        <p>Experiment data will be <strong>erased</strong> upon shutdown.<br/> Set this to <strong>ZERO</strong> if you wish to manually stop the experiment.</p>
+                                    </span>
+                                </a>
+                            </label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="max-duration" value="0" th:field="*{maxDuration}" th:maxlength="3" aria-describedby="max-duration-addon" />
                                 <span class="input-group-addon" id="max-duration-addon">hour(s)</span>
