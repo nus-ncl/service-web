@@ -2,6 +2,8 @@ package sg.ncl.testbed_interface;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 public class ExperimentForm {
@@ -24,6 +26,8 @@ public class ExperimentForm {
 
     private String nsFileContent;
     private Integer idleSwap;
+    @Min(0)
+    @Max(168)
     private Integer maxDuration = 0; // max number of hours before experiment auto swap out
 
     private String scenarioFileName;
