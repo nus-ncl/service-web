@@ -19,10 +19,14 @@ import java.util.Properties;
 import static sg.ncl.webssh.SentOutputTask.BUFFER_LEN;
 
 /**
+ * Singleton class to hold a ssh session.
+ *
  * References:
- * [1] https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#websocket
- * [2] http://codenav.org/code.html?project=/com/nitorcreations/willow-servers/0.1&path=/Source%20Packages/com.nitorcreations.willow.ssh/SecureShellWS.java
- * [3] https://www.mkyong.com/spring/spring-and-java-thread-example/
+ * [1] http://www.jcraft.com/jsch/
+ * [2] https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#websocket
+ * [3] http://codenav.org/code.html?project=/com/nitorcreations/willow-servers/0.1&path=/Source%20Packages/com.nitorcreations.willow.ssh/SecureShellWS.java
+ * [4] https://www.mkyong.com/spring/spring-and-java-thread-example/
+ * [5] https://stackoverflow.com/questions/25789245/how-to-get-jsch-shell-command-output-in-string
  */
 
 @Component

@@ -11,6 +11,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 /**
  * References:
  * [1] http://www.sergialmar.com/2014/03/detect-websocket-connects-and-disconnects-in-spring-4/
+ * [2] http://www.devglan.com/spring-boot/spring-session-stomp-websocket
  */
 
 @Configuration
@@ -35,6 +36,6 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket").withSockJS();
+        registry.addEndpoint("/websocket").addInterceptors(new HttpHandshakeInterceptor()).withSockJS();
     }
 }
