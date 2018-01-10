@@ -27,6 +27,28 @@
                     <label for="networkConfig" th:text="#{exp.networkConfig}">Network Configuration</label>
                     <textarea id="networkConfig" rows="20" cols="50" style="resize: none" th:field="*{nsFileContent}" class="form-control network-config-editor"></textarea>
                 </div>
+                <p>&nbsp;</p>
+                <div class="form-group">
+                    <label for="max-duration">Auto-shutdown experiment after:&nbsp;
+                        <a href="#" class="data-name-tooltip">
+                            <i class="fa fa-question-circle"></i>
+                            <span class="tooltiptext" style="z-index: 9999; font-weight: normal; font-size: 0.8em;">
+                                        <p>Experiment data will be <strong>erased</strong> upon shutdown.<br/> Set this to <strong>'NEVER'</strong> if you wish to <strong>manually stop</strong> the experiment.</p>
+                                    </span>
+                        </a>
+                    </label>
+                    <div class="input-group">
+                        <select class="form-control" id="max-duration" th:field="*{maxDuration}" aria-describedby="max-duration-addon">
+                            <th:block th:each="i : ${#numbers.sequence(0, 168)}">
+                                <option th:if="${i == 0}" th:text="NEVER" th:value="${i}"></option>
+                                <option th:if="${(i % 24 == 0) and (i != 0)}" th:text="${i} + ' - ' + ${i/24} + ' day(s)'" th:value="${i}"></option>
+                                <option th:if="${(i % 24 != 0) and (i != 0)}" th:text="${i}" th:value="${i}"></option>
+                            </th:block>
+                        </select>
+                        <span class="input-group-addon" id="max-duration-addon">hour(s)</span>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <button id="submit-loader-button" type="submit" class="btn btn-standard">Modify</button>
                 </div>

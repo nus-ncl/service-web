@@ -2693,6 +2693,7 @@ public class MainController {
         Experiment2 experiment = extractExperiment(response.getBody().toString());
 
         experiment.setNsFileContent(editExperiment.getNsFileContent());
+        experiment.setMaxDuration(editExperiment.getMaxDuration());
 
         objectMapper.registerModule(new JavaTimeModule());
         String jsonExperiment;
