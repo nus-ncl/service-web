@@ -48,6 +48,22 @@
                         <span th:if="${experiment.state == 'ERROR'}"><td th:text="'Error'"></td></span>
                     </tr>
                     <tr>
+                        <td>
+                            <strong>Auto-shutdown</strong>&nbsp;
+                            <a href="#" class="data-name-tooltip">
+                                <i class="fa fa-question-circle"></i>
+                                <span class="tooltiptext" style="z-index: 9999; font-weight: normal; font-size: 0.8em;">
+                                    <p>Experiment data will be <strong>erased</strong> upon shutdown.<br/> Set this to <strong>'NEVER'</strong> by clicking on the <strong>pencil icon</strong> at the <strong>experiment page</strong> if you wish to <strong>manually stop</strong> the experiment.</p>
+                                </span>
+                            </a>
+                        </td>
+                        <td>
+                            <span th:if="${experiment.maxDuration &gt; 0} and ${experiment.maxDuration &lt;= 168} and ${experiment.maxDuration % 24 != 0}" th:text="${experiment.maxDuration} + ' hour(s)'"></span>
+                            <span th:if="${experiment.maxDuration &gt; 0} and ${experiment.maxDuration &lt;= 168} and ${experiment.maxDuration % 24 == 0}" th:text="${experiment.maxDuration / 24} + ' day(s)'"></span>
+                            <span th:if="${experiment.maxDuration &lt;= 0} or ${experiment.maxDuration &gt; 168}" th:text="Never"></span>
+                        </td>
+                    </tr>
+                    <tr>
                         <td><strong th:text="#{experimentProfile.createdDate}">Created Date</strong></td>
                         <td><span th:text="${ experiment.createdDate != '' ? #temporals.format(experiment.createdDate, 'MMM-dd-yyyy HH:mm') : '?'}"></span> GMT+08:00</td>
                     </tr>
