@@ -28,12 +28,14 @@ public class ExperimentForm {
     private Integer idleSwap;
     @Min(0)
     @Max(168)
-    private Integer maxDuration = 0; // max number of hours before experiment auto swap out
+    private Integer maxDuration; // max number of hours before experiment auto swap out
 
     private String scenarioFileName;
     private String scenarioContents;
 
-    public ExperimentForm() {}
+    public ExperimentForm() {
+        maxDuration = 0;
+    }
 
     public String getTeamId() {
         return teamId;
