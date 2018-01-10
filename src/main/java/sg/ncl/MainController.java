@@ -152,6 +152,7 @@ public class MainController {
     private static final String DESCRIPTION = "description";
     private static final String CREATED_DATE = "createdDate";
     private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+    private static final String MAX_DURATION = "maxDuration";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -2250,7 +2251,7 @@ public class MainController {
         experimentObject.put("nsFile", "file");
         experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
-        experimentObject.put("maxDuration", experimentForm.getMaxDuration());
+        experimentObject.put(MAX_DURATION, experimentForm.getMaxDuration());
 
         log.info("Calling service to create experiment");
         HttpEntity<String> request = createHttpEntityWithBody(experimentObject.toString());
@@ -4326,7 +4327,7 @@ public class MainController {
         experiment2.setNsFile(object.getString("nsFile"));
         experiment2.setNsFileContent(object.getString("nsFileContent"));
         experiment2.setIdleSwap(object.getInt("idleSwap"));
-        experiment2.setMaxDuration(object.getInt("maxDuration"));
+        experiment2.setMaxDuration(object.getInt(MAX_DURATION));
 
         try {
             experiment2.setCreatedDate(object.get(CREATED_DATE).toString());
@@ -4690,7 +4691,7 @@ public class MainController {
         stateExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
         stateExp.setState(expJsonObj.getString("state"));
         stateExp.setNodes(expJsonObj.getInt("nodes"));
-        stateExp.setMaxDuration(expJsonObj.getInt("maxDuration"));
+        stateExp.setMaxDuration(expJsonObj.getInt(MAX_DURATION));
         stateExp.setMinNodes(expJsonObj.getInt("minNodes"));
         stateExp.setIdleHours(expJsonObj.getLong("idleHours"));
 
