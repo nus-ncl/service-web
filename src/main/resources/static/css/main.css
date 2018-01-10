@@ -340,7 +340,7 @@ body {
     color: #666;
     background-color: #fff;
     height : 100%;
-    padding-top: 100px; /* to fixed the spacing between navbar and body content when using navbar-fixed-top */
+    padding-top: 90px; /* to fixed the spacing between navbar and body content when using navbar-fixed-top */
     margin: 0 0 100px; /* bottom = footer height */
 }
 
