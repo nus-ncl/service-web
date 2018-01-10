@@ -4690,6 +4690,7 @@ public class MainController {
         stateExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
         stateExp.setState(expJsonObj.getString("state"));
         stateExp.setNodes(expJsonObj.getInt("nodes"));
+        stateExp.setMaxDuration(expJsonObj.getInt("maxDuration"));
         stateExp.setMinNodes(expJsonObj.getInt("minNodes"));
         stateExp.setIdleHours(expJsonObj.getLong("idleHours"));
 
