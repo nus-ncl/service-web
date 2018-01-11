@@ -36,7 +36,7 @@ public class SocketChannelInterceptor extends ChannelInterceptorAdapter {
                 String host = stompHeaderAccessor.getNativeHeader("host").get(0);
                 String port = stompHeaderAccessor.getNativeHeader("port").get(0);
                 String pass = stompHeaderAccessor.getNativeHeader("pass").get(0);
-                log.info("STOMP Connect [socket: {}, user: {}, host: {}, port: {}, pass: {}]", sessionId, user, host, port, pass);
+                log.info("STOMP Connect [socket: {}, user: {}, host: {}, port: {}]", sessionId, user, host, port);
                 webSocketBean.connect(sessionId, user, host, port, pass);
                 break;
             case CONNECTED:

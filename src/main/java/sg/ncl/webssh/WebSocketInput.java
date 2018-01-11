@@ -7,14 +7,19 @@ import lombok.Setter;
 @Setter
 public class WebSocketInput {
 
-    private String command;
-    private Double keyCode;
+    private Boolean ctrlKey;
+    private String key;
+    private Integer keyCode;
 
     public WebSocketInput() {}
 
-    public WebSocketInput(String command, Double keyCode) {
-        this.command = command;
+    public WebSocketInput(Boolean ctrlKey, String key, Integer keyCode) {
+        this.ctrlKey = ctrlKey;
+        this.key = key;
         this.keyCode = keyCode;
     }
 
+    public String toString() {
+        return "{ctrlKey: " + ctrlKey + ", key: " + key + ", keyCode: " + keyCode + "}";
+    }
 }

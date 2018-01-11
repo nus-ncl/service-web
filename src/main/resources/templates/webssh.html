@@ -6,7 +6,7 @@
     <object th:include="fragments/header :: header" th:remove="tag"/>
     <link rel="stylesheet" type="text/css" href="static/css/xterm.css" th:href="@{~/css/xterm.css}"/>
 </head>
-<body>
+<body onunload="disconnect()">
 <th:block th:if="${session.id == null}">
     <div th:replace="fragments/login_navigation :: loginnav"></div>
 </th:block>
@@ -18,22 +18,13 @@
 <p>&nbsp;</p>
 <div id="main-content" class="container">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <form class="form-inline">
                 <div class="form-group">
-                    <label for="connect">WebSocket connection:</label>
+                    <label for="connect">WebSocket SSH Connection:</label>
                     <button id="connect" class="btn btn-default" type="submit">Connect</button>
                     <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
                 </div>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="command">Enter command:</label>
-                    <input type="text" id="command" class="form-control" placeholder="enter shell command"/>
-                </div>
-                <button id="send" class="btn btn-default" type="submit">Send</button>
             </form>
         </div>
     </div>
@@ -58,7 +49,6 @@
     function setConnected(connected) {
         $('#connect').prop("disabled", connected);
         $('#disconnect').prop("disabled", !connected);
-        $('#command').html("");
     }
 
     function connect() {
@@ -71,6 +61,7 @@
                 showResult(output.body);
             });
         });
+        term.focus();
     }
 
     function disconnect() {
@@ -82,8 +73,8 @@
         console.log("Disconnected");
     }
 
-    function sendText() {
-        stompClient.send("/webssh/input", {}, $('#command').val());
+    function sendKey(ctrlKey, key, keyCode) {
+        stompClient.send("/webssh/input", {}, JSON.stringify({'ctrlKey':ctrlKey,'key':key,'keyCode':keyCode}));
     }
 
     function showResult(message) {
@@ -100,10 +91,16 @@
         $('#disconnect').click(function () {
             disconnect();
         });
-        $('#send').click(function () {
-            sendText();
-        });
+
         term.open(document.getElementById('terminal'));
+        // Log the keyCode of every keyDown event
+        term.textarea.onkeydown = function (e) {
+            console.log("onkeydown: ", e);
+            if ($('#connect').prop("disabled")) {
+                sendKey(e.ctrlKey, e.key, e.keyCode);
+                // term.write(e.key);
+            }
+        };
     });
 </script>
 </body>
