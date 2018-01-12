@@ -52,7 +52,7 @@ public class WebSocketBean {
         log.info("Init Bean #{}", ++count);
     }
 
-    public void connect(String socketId, String user, String host, String port, String pass) {
+    public void connect(String user, String host, String port, String pass) {
         try {
             session = jSch.getSession(user, host, Integer.parseInt(port));
             session.setPassword(pass);
@@ -74,7 +74,6 @@ public class WebSocketBean {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        log.info("Connected Bean #{} [Session '{}', User '{}', Host '{}', Port '{}']", count, socketId, user, host, port);
     }
 
     public PrintStream getInputToShell() {

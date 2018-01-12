@@ -24,7 +24,7 @@ public class SocketChannelInterceptor extends ChannelInterceptorAdapter {
         StompHeaderAccessor stompHeaderAccessor = StompHeaderAccessor.wrap(message);
 
         // ignore non-STOMP messages like heartbeat messages
-        if(stompHeaderAccessor.getCommand() == null) {
+        if (stompHeaderAccessor.getCommand() == null) {
             return;
         }
 
@@ -37,7 +37,7 @@ public class SocketChannelInterceptor extends ChannelInterceptorAdapter {
                 String port = stompHeaderAccessor.getNativeHeader("port").get(0);
                 String pass = stompHeaderAccessor.getNativeHeader("pass").get(0);
                 log.info("STOMP Connect [socket: {}, user: {}, host: {}, port: {}]", sessionId, user, host, port);
-                webSocketBean.connect(sessionId, user, host, port, pass);
+                webSocketBean.connect(user, host, port, pass);
                 break;
             case CONNECTED:
                 log.info("STOMP Connected [sessionId: {}]", sessionId);

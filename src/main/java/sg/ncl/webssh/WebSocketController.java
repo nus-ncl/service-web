@@ -37,7 +37,6 @@ public class WebSocketController {
 
     @MessageMapping("/input")
     public void handleInput(WebSocketInput input, SimpMessageHeaderAccessor headerAccessor) {
-        log.info("Session {}: {}", headerAccessor.getSessionId(), input.toString());
         Boolean ctrlKey = input.getCtrlKey();
         String key = input.getKey();
         Integer keyCode = input.getKeyCode();
