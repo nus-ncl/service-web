@@ -49,6 +49,7 @@ public class SentOutputTask implements Runnable {
             log.info("Failed to read data from ssh: {}", e);
         } catch (InterruptedException e) {
             log.info("Interrupted while waiting for data: {}", e);
+            Thread.currentThread().interrupt();
         }
     }
 }

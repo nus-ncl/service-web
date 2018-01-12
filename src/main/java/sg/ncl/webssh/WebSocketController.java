@@ -45,7 +45,7 @@ public class WebSocketController {
             try {
                 webSocketBean.getInputToShell().write(keyMap.get(keyCode));
             } catch (IOException ioe) {
-                ioe.printStackTrace();
+                log.info("write key: {}", ioe);
             }
         } else {
             webSocketBean.getInputToShell().print(key);
