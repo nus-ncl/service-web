@@ -33,10 +33,7 @@ import static sg.ncl.webssh.SentOutputTask.BUFFER_LEN;
 @Scope(scopeName = "websocket", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Slf4j
 public class WebSocketBean {
-    private static int count = 0;
 
-    private Properties config;
-    private JSch jSch;
     private Session session;
     private Channel channel;
     private PrintStream inputToShell;
@@ -44,27 +41,22 @@ public class WebSocketBean {
     @Autowired
     ApplicationContext context;
 
-    @PostConstruct
-    public void init() {
-        jSch = new JSch();
-        config = new Properties();
-        config.put("StrictHostKeyChecking", "no");
-        log.info("Init Bean #{}", ++count);
-    }
-
     public void connect(String user, String host, String port, String pass) {
+        JSch jSch = new JSch();
+        Properties config = new Properties();
+        config.put("StrictHostKeyChecking", "no");
+
         try {
             session = jSch.getSession(user, host, Integer.parseInt(port));
             session.setPassword(pass);
             session.setConfig(config);
             session.connect();
             channel = session.openChannel("shell");
-//            ((ChannelShell) channel).setAgentForwarding(true);
-//            ((ChannelShell) channel).setPtyType("vt102");
             channel.connect();
         } catch (JSchException jsche) {
-            jsche.printStackTrace();
+            log.error("jsch connect: {}", jsche);
         }
+
         try {
             ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) context.getBean("taskExecutor");
             SentOutputTask sentOutputTask = (SentOutputTask) context.getBean("sentOutputTask");
@@ -72,7 +64,7 @@ public class WebSocketBean {
             taskExecutor.execute(sentOutputTask);
             inputToShell = new PrintStream(channel.getOutputStream(), true);
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            log.error("get channel stream: {}", ioe);
         }
     }
 
@@ -89,6 +81,5 @@ public class WebSocketBean {
             session.disconnect();
         }
         session = null;
-        log.info("Destroy Bean #{}", count);
     }
 }

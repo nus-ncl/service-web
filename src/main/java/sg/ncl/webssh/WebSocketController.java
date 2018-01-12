@@ -3,8 +3,6 @@ package sg.ncl.webssh;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -36,7 +34,7 @@ public class WebSocketController {
     }
 
     @MessageMapping("/input")
-    public void handleInput(WebSocketInput input, SimpMessageHeaderAccessor headerAccessor) {
+    public void handleInput(WebSocketInput input) {
         Boolean ctrlKey = input.getCtrlKey();
         String key = input.getKey();
         Integer keyCode = input.getKeyCode();
@@ -57,7 +55,7 @@ public class WebSocketController {
     /**
      * Maps key press events to the ascii values
      */
-    static Map<Integer, byte[]> keyMap = new HashMap<Integer, byte[]>();
+    private static Map<Integer, byte[]> keyMap = new HashMap<>();
 
     static {
         //ESC

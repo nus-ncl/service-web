@@ -36,6 +36,6 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket").addInterceptors(new HttpHandshakeInterceptor()).withSockJS();
+        registry.addEndpoint("/websocket").withSockJS();
     }
 }

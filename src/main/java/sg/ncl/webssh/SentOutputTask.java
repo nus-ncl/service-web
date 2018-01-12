@@ -43,14 +43,12 @@ public class SentOutputTask implements Runnable {
                 if (read > 0) {
                     template.convertAndSend("/shell/output", new String(buf, 0, read, Charset.forName("UTF-8")));
                 }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    log.info("Interrupted while waiting for data: {}", e);
-                }
+                Thread.sleep(100);
             }
         } catch (IOException e) {
             log.info("Failed to read data from ssh: {}", e);
+        } catch (InterruptedException e) {
+            log.info("Interrupted while waiting for data: {}", e);
         }
     }
 }

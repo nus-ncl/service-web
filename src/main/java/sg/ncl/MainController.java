@@ -2816,7 +2816,7 @@ public class MainController {
 
     @RequestMapping("/web_ssh/access_gateway")
     public String webAccessGateway(Model model, HttpSession session) throws WebServiceRuntimeException {
-        HttpEntity<String> request = getDeterUid(model, session);
+        getDeterUid(model, session);
         return "webssh";
     }
 
