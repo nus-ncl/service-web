@@ -900,6 +900,7 @@ public class MainController {
             InvalidTeamNameException,
             InvalidPasswordException,
             DeterLabOperationFailedException {
+
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(mainObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioRegUrl(), HttpMethod.POST, request, String.class);
@@ -955,6 +956,9 @@ public class MainController {
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
+
+        // Starting creating OpenStack account after successfully creating Deterlab
+        //response = restTemplate.exchange(properties)
     }
 
     /**

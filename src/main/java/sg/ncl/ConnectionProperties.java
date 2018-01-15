@@ -72,6 +72,11 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint;
     }
 
+    //Openstack
+    public String getSioOpenStackRegUrl() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/openstack" ;
+    }
+
     public String getSioExpUrl() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
