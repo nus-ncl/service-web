@@ -58,6 +58,7 @@
         var password = $('#password').val();
         var socket = new SockJS('/websocket');
         stompClient = Stomp.over(socket);
+        stompClient.debug = null;
         stompClient.connect(
             {user: userhost[0], host: userhost[1], port: "22", pass: password},
             function (frame) {
