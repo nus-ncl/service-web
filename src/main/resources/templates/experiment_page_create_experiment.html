@@ -49,23 +49,19 @@
 	                        </div>
                         </div>
                         <div class="form-group">
-                            <label for="max-duration">Auto-shutdown experiment after:&nbsp;
-                                <a href="#" class="data-name-tooltip">
-                                    <i class="fa fa-question-circle"></i>
-                                    <span class="tooltiptext" style="z-index: 9999; font-weight: normal; font-size: 0.8em;">
-                                        <p>Experiment data will be <strong>erased</strong> upon shutdown.<br/> Choose <strong>'NEVER'</strong> if you wish to <strong>manually stop</strong> the experiment.</p>
-                                    </span>
-                                </a>
-                            </label>
-                            <div class="input-group">
-                                <select class="form-control" id="max-duration" th:field="*{maxDuration}" aria-describedby="max-duration-addon">
-                                    <th:block th:each="i : ${#numbers.sequence(0, 168)}">
-                                        <option th:if="${i == 0}" th:text="NEVER" th:value="${i}"></option>
-                                        <option th:if="${(i % 24 == 0) and (i != 0)}" th:text="${i} + ' - ' + ${i/24} + ' day(s)'" th:value="${i}"></option>
-                                        <option th:if="${(i % 24 != 0) and (i != 0)}" th:text="${i}" th:value="${i}"></option>
-                                    </th:block>
-                                </select>
-                                <span class="input-group-addon" id="max-duration-addon">hour(s)</span>
+                            <div class="checkbox col-sm-4">
+                                <label><input type="checkbox" value="" id="max-duration-checkbox" /><strong>Auto-shutdown experiment after:</strong></label>
+                            </div>
+                            <div class="input-group col-sm-8">
+                                <input type="text" class="form-control" id="max-duration" th:field="*{maxDuration}" aria-describedby="max-duration-addon" th:disabled="true" />
+                                <span class="input-group-addon" id="max-duration-addon">hour(s)&nbsp;
+                                    <a href="#" class="data-name-tooltip">
+                                        <i class="fa fa-question-circle"></i>
+                                        <span class="tooltiptext" style="z-index: 9999; font-weight: normal; font-size: 0.8em; white-space: initial; text-align: justify; line-height: 2;">
+                                            <p>The experiment will be automatically/forcefully shutdown after the specified hours, regardless of whether it's being used or not.<br/><strong>DO NOT</strong> select this option if you wish to manually stop the experiment.</p>
+                                        </span>
+                                    </a>
+                                </span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -94,5 +90,15 @@
         </div> <!-- container -->
         <div th:replace="fragments/footer :: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+
+        <script th:inline="javascript">
+            document.getElementById('max-duration-checkbox').onchange = function() {
+                document.getElementById('max-duration').disabled = !this.checked;
+                if (document.getElementById('max-duration').disabled) {
+                    // reset value when disabled
+                    document.getElementById('max-duration').value = 0;
+                }
+            }
+        </script>
     </body>
 </html>
