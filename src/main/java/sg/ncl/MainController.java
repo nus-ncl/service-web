@@ -16,6 +16,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
@@ -2221,12 +2223,22 @@ public class MainController {
     @RequestMapping(value = "/experiments/create", method = RequestMethod.POST)
     public String validateExperiment(
             @ModelAttribute("experimentForm") ExperimentForm experimentForm,
-            HttpSession session,
             BindingResult bindingResult,
+            HttpSession session,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
             log.info("Create experiment - form has errors");
+            for (ObjectError objectError : bindingResult.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                switch (fieldError.getField()) {
+                    case "maxDuration":
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Auto-shutdown hours must be an integer without any decimals");
+                        break;
+                    default:
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Form not filled up");
+                }
+            }
             return "redirect:/experiments/create";
         }
 
