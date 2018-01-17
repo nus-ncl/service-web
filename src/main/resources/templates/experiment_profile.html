@@ -58,9 +58,8 @@
                             </a>
                         </td>
                         <td>
-                            <span th:if="${experiment.maxDuration &gt; 0} and ${experiment.maxDuration &lt;= 168} and ${experiment.maxDuration % 24 != 0}" th:text="${experiment.maxDuration} + ' hour(s)'"></span>
-                            <span th:if="${experiment.maxDuration &gt; 0} and ${experiment.maxDuration &lt;= 168} and ${experiment.maxDuration % 24 == 0}" th:text="${experiment.maxDuration / 24} + ' day(s)'"></span>
-                            <span th:if="${experiment.maxDuration &lt;= 0} or ${experiment.maxDuration &gt; 168}" th:text="Never"></span>
+                            <span th:if="${experiment.maxDuration &gt; 0}" th:text="${experiment.maxDuration} + ' hour(s)'"></span>
+                            <span th:if="${experiment.maxDuration &lt;= 0}" th:text="Never"></span>
                         </td>
                     </tr>
                     <tr>
