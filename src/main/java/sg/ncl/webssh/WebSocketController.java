@@ -74,6 +74,8 @@ public class WebSocketController {
         keyMap.put(8, new byte[]{(byte) 0x7f});
         //TAB
         keyMap.put(9, new byte[]{(byte) 0x09});
+        //Shift
+        keyMap.put(16, new byte[]{});
         //CTR
         keyMap.put(17, new byte[]{});
         //DEL

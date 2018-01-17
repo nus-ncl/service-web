@@ -51,6 +51,7 @@ public class WebSocketBean {
             session.setConfig(config);
             session.connect();
             channel = session.openChannel("shell");
+            ((ChannelShell) channel).setPtyType("vt220");
             channel.connect();
         } catch (JSchException jsche) {
             log.error("jsch connect: {}", jsche);
