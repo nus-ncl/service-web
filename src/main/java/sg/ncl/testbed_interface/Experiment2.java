@@ -25,7 +25,9 @@ public class Experiment2 {
     private ZonedDateTime createdDate;
     private ZonedDateTime lastModifiedDate;
 
-    public Experiment2() {}
+    public Experiment2() {
+        maxDuration = 0;
+    }
 
     public Experiment2(final Long id,
                        final String userId,
