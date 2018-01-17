@@ -87,6 +87,7 @@ public class MainController {
     private static final String MESSAGE_DELETE_IMAGE_FAILURE_LIST = "message_failure_list";
     private static final String MESSAGE_DELETE_IMAGE_WARNING = "message_warning";
     // error messages
+    private static final String MAX_DURATION_ERROR = "Auto-shutdown hours must be an integer without any decimals";
     private static final String ERROR_CONNECTING_TO_SERVICE_TELEMETRY = "Error connecting to service-telemetry: {}";
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
     private static final String CONNECTION_ERROR = "Connection Error";
@@ -2233,7 +2234,7 @@ public class MainController {
                 FieldError fieldError = (FieldError) objectError;
                 switch (fieldError.getField()) {
                     case "maxDuration":
-                        redirectAttributes.addFlashAttribute(MESSAGE, "Auto-shutdown hours must be an integer without any decimals");
+                        redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
                         break;
                     default:
                         redirectAttributes.addFlashAttribute(MESSAGE, "Form not filled up");
@@ -2243,7 +2244,7 @@ public class MainController {
         }
 
         if (!experimentForm.getMaxDuration().toString().matches("\\d+")) {
-            redirectAttributes.addFlashAttribute(MESSAGE, "Auto-shutdown hours must be an integer without any decimals");
+            redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
             return "redirect:/experiments/create";
         }
 
@@ -2704,7 +2705,14 @@ public class MainController {
     }
 
     @PostMapping("/update_experiment/{teamId}/{expId}")
-    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, @PathVariable String teamId, @PathVariable String expId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, BindingResult bindingResult, @PathVariable String teamId, @PathVariable String expId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+
+        // check max duration for errors
+        if (bindingResult.hasErrors() || !editExperiment.getMaxDuration().toString().matches("\\d+")) {
+            redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
+            return "redirect:/update_experiment/" + teamId + "/" + expId;
+        }
+
         // get original experiment
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
