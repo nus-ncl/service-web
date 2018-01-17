@@ -18,7 +18,7 @@ public class ExperimentForm {
 
     @NotEmpty(message = "Experiment Name cannot be empty")
     @Size(min = 1, message = "Experiment Name cannot be empty")
-    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Experiment name cannot have special characters")
+    @Pattern(regexp="^[a-zA-Z0-9]*$", message="Experiment name cannot have special characters")
     private String name;
 
     @NotEmpty(message = "Description cannot be empty")
