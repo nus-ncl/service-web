@@ -2242,6 +2242,11 @@ public class MainController {
             return "redirect:/experiments/create";
         }
 
+        if (!experimentForm.getMaxDuration().toString().matches("\\d+")) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Auto-shutdown hours must be an integer without any decimals");
+            return "redirect:/experiments/create";
+        }
+
         if (experimentForm.getName() == null || experimentForm.getName().isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Experiment Name cannot be empty");
             return "redirect:/experiments/create";
