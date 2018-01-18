@@ -1072,7 +1072,6 @@ function toggleAutoShutdown(event) {
 // set the auto-shutdown checkbox to checked or unchecked depending on the number of hours
 function setAutoShutdownCheckbox() {
     if (document.getElementById('max-duration').value > 0) {
-    	console.log('Max duration: ' + document.getElementById('max-duration'));
         document.getElementById('max-duration').disabled = false;
         document.getElementById('max-duration-checkbox').checked = true;
     }
