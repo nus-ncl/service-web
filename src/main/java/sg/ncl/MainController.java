@@ -127,6 +127,7 @@ public class MainController {
     private static final String EDIT_BUDGET = "editBudget";
     private static final String ORIGINAL_BUDGET = "originalBudget";
 
+    private static final String REDIRECT_UPDATE_EXPERIMENT = "redirect:/update_experiment/";
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
     private static final String REDIRECT_INDEX_PAGE = "redirect:/";
@@ -2233,7 +2234,7 @@ public class MainController {
             for (ObjectError objectError : bindingResult.getAllErrors()) {
                 FieldError fieldError = (FieldError) objectError;
                 switch (fieldError.getField()) {
-                    case "maxDuration":
+                    case MAX_DURATION:
                         redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
                         break;
                     default:
@@ -2710,7 +2711,7 @@ public class MainController {
         // check max duration for errors
         if (bindingResult.hasErrors() || !editExperiment.getMaxDuration().toString().matches("\\d+")) {
             redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
-            return "redirect:/update_experiment/" + teamId + "/" + expId;
+            return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
         }
 
         // get original experiment
@@ -2728,7 +2729,7 @@ public class MainController {
         } catch (JsonProcessingException e) {
             log.debug("update experiment convert to json error: {}", experiment);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/update_experiment/" + teamId + "/" + expId;
+            return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
         }
 
         // identical endpoint as delete experiment but different HTTP method
@@ -2765,7 +2766,7 @@ public class MainController {
                         // do nothing
                         break;
                 }
-                return "redirect:/update_experiment/" + teamId + "/" + expId;
+                return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
             } else {
                 // everything ok
                 log.info("update experiment success for Team:{}, Exp: {}", teamId, expId);
