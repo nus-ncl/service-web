@@ -141,7 +141,7 @@ public class ExperimentTest {
     @Test
     public void testGetMaxDuration() {
         final Experiment2 exp = new Experiment2();
-        assertThat(exp.getMaxDuration(), is(nullValue()));
+        assertThat(exp.getMaxDuration(), is(0));
     }
 
     @Test
