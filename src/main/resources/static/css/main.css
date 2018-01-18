@@ -291,6 +291,15 @@ pre {
     margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
 }
 
+/* experiment max duration settings */
+.exp-max-duration-tooltip {
+    font-size: 0.8em;
+    font-weight: normal;
+    line-height: 2;
+    white-space: initial;
+    z-index: 9999;
+}
+
 /* license tooltip mouseover */
 .license-tooltip {
     position: relative;
