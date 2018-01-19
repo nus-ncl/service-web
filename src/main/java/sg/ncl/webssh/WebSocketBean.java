@@ -40,7 +40,10 @@ public class WebSocketBean {
     @Autowired
     ApplicationContext context;
 
-    public void connect(String user, String host, String port, String pass) {
+    @Autowired
+    SshProperties sshProperties;
+
+    public void connect(String user, String pass) {
         JSch jSch = new JSch();
         MyUserInfo userInfo = new MyUserInfo();
         userInfo.setPassword(pass);
@@ -48,7 +51,7 @@ public class WebSocketBean {
         config.put("StrictHostKeyChecking", "no");
 
         try {
-            session = jSch.getSession(user, host, Integer.parseInt(port));
+            session = jSch.getSession(user, sshProperties.getHost(), Integer.parseInt(sshProperties.getPort()));
             session.setUserInfo(userInfo);
             session.setConfig(config);
             session.connect();

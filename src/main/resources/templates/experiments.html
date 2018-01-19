@@ -87,7 +87,6 @@
                                                             <div class="exp-details">
                                                                 <p><strong>Step 1</strong>: <code>ssh</code> to NCL gateway:</p>
                                                                 <pre>ssh <span th:text="${deterUid}"></span>@users.ncl.sg</pre>
-                                                                <p>* <a th:href="@{/web_ssh/access_gateway}">Login via web</a> (experimental)</p>
                                                                 <p>&nbsp;</p>
                                                                 <p><strong>Step 2</strong>: <code>ssh</code> into your experiment node using its Qualified Name, for example:</p>
                                                                 <pre>ssh <span th:text="${!expEntry.nodesInfoMap.isEmpty()} ? ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg' "></span></pre>
@@ -106,7 +105,7 @@
                                                                     <tr>
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
-                                                                        <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
+                                                                        <td><a th:href="@{/web_ssh/access_node/{qualifiedName}(qualifiedName = ${nodeDetailsMap.value.qualifiedName})}" th:text="${nodesDetailsMap.value.qualifiedName}"></a></td>
                                                                         <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${expEntry.id}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
                                                                     </tr>
                                                                 </th:block>

@@ -22,8 +22,7 @@
         <div>
             <form class="form-inline">
                 <div class="form-group">
-                    <label for="connect">Connection:</label>
-                    <input type="text" class="form_control" placeholder="username@domain.com" id="userhost" th:value="${deterUid + '@users.ncl.sg'}" readonly="readonly"/>
+                    <label for="connect">Connect to <span th:text="${qualified}"></span>:</label>
                     <input type="text" class="form-control" placeholder="password" id="password"/>
                     <button id="connect" class="btn btn-default" type="submit">Connect</button>
                     <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
@@ -43,7 +42,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script type="text/javascript" src="static/js/xterm.js" th:src="@{~/js/xterm.js}"></script>
-<script>
+<script th:inline="javascript">
     var stompClient = null;
     var term = new Terminal();
     var command = "";
@@ -54,13 +53,16 @@
     }
 
     function connect() {
-        var userhost = $('#userhost').val().split('@');
+        /*<![CDATA[*/
+        var username = [[${deterUid}]];
+        var qualified = [[${qualified}]];
+        /*]]>*/
         var password = $('#password').val();
         var socket = new SockJS('/websocket');
         stompClient = Stomp.over(socket);
         stompClient.debug = null;
         stompClient.connect(
-            {user: userhost[0], host: userhost[1], port: "22", pass: password},
+            {user: username, qualified: qualified, pass: password},
             function (frame) {
                 console.log("Connected: " + frame);
                 term.reset();

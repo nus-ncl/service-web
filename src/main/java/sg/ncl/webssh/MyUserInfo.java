@@ -51,7 +51,7 @@ public class MyUserInfo implements UserInfo, UIKeyboardInteractive {
                                               String instruction,
                                               String[] prompt,
                                               boolean[] echo) {
-        log.info("Prompt: {}", prompt);
+        log.info("Prompt: {}", prompt[0]);
         String[] response = new String[prompt.length];
         response[0] = password;
         return response;

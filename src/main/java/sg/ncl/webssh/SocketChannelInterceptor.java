@@ -33,11 +33,11 @@ public class SocketChannelInterceptor extends ChannelInterceptorAdapter {
         switch (stompHeaderAccessor.getCommand()) {
             case CONNECT:
                 String user = stompHeaderAccessor.getNativeHeader("user").get(0);
-                String host = stompHeaderAccessor.getNativeHeader("host").get(0);
-                String port = stompHeaderAccessor.getNativeHeader("port").get(0);
                 String pass = stompHeaderAccessor.getNativeHeader("pass").get(0);
-                log.info("STOMP Connect [socket: {}, user: {}, host: {}, port: {}]", sessionId, user, host, port);
-                webSocketBean.connect(user, host, port, pass);
+                String qualified = stompHeaderAccessor.getNativeHeader("qualified").get(0);
+                log.info("STOMP Connect [socket: {}, user: {}, domain: {}]", sessionId, user, qualified);
+                webSocketBean.connect(user, pass);
+                webSocketBean.getInputToShell().println("ssh " + qualified);
                 break;
             case CONNECTED:
                 log.info("STOMP Connected [sessionId: {}]", sessionId);
