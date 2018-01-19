@@ -962,10 +962,7 @@ public class MainController {
         response = restTemplate.exchange(properties.getSioOpenStackRegUrl(), HttpMethod.POST, request, String.class);
 
         responseBody = response.getBody().toString();
-
-
-
-        log.info("openstack response body is {}", response.getBody().toString());
+        log.info("OpenStack response body is {}", response.getBody().toString());
 
     }
 
