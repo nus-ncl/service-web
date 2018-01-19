@@ -42,12 +42,14 @@ public class WebSocketBean {
 
     public void connect(String user, String host, String port, String pass) {
         JSch jSch = new JSch();
+        MyUserInfo userInfo = new MyUserInfo();
+        userInfo.setPassword(pass);
         Properties config = new Properties();
         config.put("StrictHostKeyChecking", "no");
 
         try {
             session = jSch.getSession(user, host, Integer.parseInt(port));
-            session.setPassword(pass);
+            session.setUserInfo(userInfo);
             session.setConfig(config);
             session.connect();
             channel = session.openChannel("shell");
