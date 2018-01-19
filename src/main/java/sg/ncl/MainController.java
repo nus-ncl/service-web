@@ -960,6 +960,11 @@ public class MainController {
         // Starting creating OpenStack account after successfully creating Deterlab
         log.info("Starting to create OpenStack account");
         response = restTemplate.exchange(properties.getSioOpenStackRegUrl(), HttpMethod.POST, request, String.class);
+
+        responseBody = response.getBody().toString();
+
+
+
         log.info("openstack response body is {}", response.getBody().toString());
 
     }
