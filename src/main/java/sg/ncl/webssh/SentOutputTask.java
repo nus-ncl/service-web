@@ -28,10 +28,12 @@ public class SentOutputTask implements Runnable {
     private SimpMessagingTemplate template;
 
     private InputStream output;
+    private String user;
     private String qualified;
 
-    public void setOutput(InputStream output, String qualified) {
+    public void setOutput(InputStream output, String user, String qualified) {
         this.output = output;
+        this.user = user;
         this.qualified = qualified;
     }
 
@@ -43,7 +45,7 @@ public class SentOutputTask implements Runnable {
         try {
             while ((read = output.read(buf)) != -1) {
                 if (read > 0) {
-                    template.convertAndSend("/shell/output/" + qualified, new String(buf, 0, read, Charset.forName("UTF-8")));
+                    template.convertAndSend("/shell/output/" + user + "@" + qualified, new String(buf, 0, read, Charset.forName("UTF-8")));
                 }
                 Thread.sleep(100);
             }
