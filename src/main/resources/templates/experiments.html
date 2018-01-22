@@ -105,7 +105,7 @@
                                                                     <tr>
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
-                                                                        <td><a th:href="@{/web_ssh/access_node/{qualifiedName}(qualifiedName = ${nodeDetailsMap.value.qualifiedName})}" th:text="${nodesDetailsMap.value.qualifiedName}"></a></td>
+                                                                        <td><a th:href="@{/web_ssh/access_node/{qualifiedName}(qualifiedName = ${nodesDetailsMap.value.qualifiedName})}" th:text="${nodesDetailsMap.value.qualifiedName}"></a></td>
                                                                         <td><a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${expEntry.id}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
                                                                     </tr>
                                                                 </th:block>

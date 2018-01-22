@@ -2814,7 +2814,7 @@ public class MainController {
         return "redirect:/experiments";
     }
 
-    @RequestMapping("/web_ssh/access_node/{qualifiedName}")
+    @RequestMapping("/web_ssh/access_node/{qualifiedName:.+}")
     public String webAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
         getDeterUid(model, session);
         model.addAttribute("qualified", qualifiedName);
