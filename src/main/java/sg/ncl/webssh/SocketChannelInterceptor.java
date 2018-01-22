@@ -36,7 +36,7 @@ public class SocketChannelInterceptor extends ChannelInterceptorAdapter {
                 String pass = stompHeaderAccessor.getNativeHeader("pass").get(0);
                 String qualified = stompHeaderAccessor.getNativeHeader("qualified").get(0);
                 log.info("STOMP Connect [socket: {}, user: {}, domain: {}]", sessionId, user, qualified);
-                webSocketBean.connect(user, pass);
+                webSocketBean.connect(user, pass, qualified);
                 webSocketBean.getInputToShell().println("ssh " + qualified);
                 break;
             case CONNECTED:

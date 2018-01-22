@@ -67,7 +67,7 @@
                 console.log("Connected: " + frame);
                 term.reset();
                 setConnected(true);
-                stompClient.subscribe('/shell/output', function (output) {
+                stompClient.subscribe('/shell/output/' + qualified, function (output) {
                     showResult(output.body);
                 });
                 term.focus();

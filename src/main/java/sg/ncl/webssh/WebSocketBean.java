@@ -43,7 +43,7 @@ public class WebSocketBean {
     @Autowired
     SshProperties sshProperties;
 
-    public void connect(String user, String pass) {
+    public void connect(String user, String pass, String qualified) {
         JSch jSch = new JSch();
         MyUserInfo userInfo = new MyUserInfo();
         userInfo.setPassword(pass);
@@ -65,7 +65,7 @@ public class WebSocketBean {
         try {
             ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) context.getBean("taskExecutor");
             SentOutputTask sentOutputTask = (SentOutputTask) context.getBean("sentOutputTask");
-            sentOutputTask.setOutput(new BufferedInputStream(channel.getInputStream(), BUFFER_LEN));
+            sentOutputTask.setOutput(new BufferedInputStream(channel.getInputStream(), BUFFER_LEN), qualified);
             taskExecutor.execute(sentOutputTask);
             inputToShell = new PrintStream(channel.getOutputStream(), true);
         } catch (IOException ioe) {
