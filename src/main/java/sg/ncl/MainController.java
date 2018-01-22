@@ -3523,7 +3523,7 @@ public class MainController {
 
         // reject Openstack team
         try {
-            response = restTemplate.exchange(properties.getApproveOpenStackTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
+            response = restTemplate.exchange(properties.getApproveOpenStackTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio registration service: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
