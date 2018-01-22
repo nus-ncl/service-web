@@ -957,13 +957,6 @@ public class MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        // Starting creating OpenStack account after successfully creating Deterlab
-        log.info("Starting to create OpenStack account");
-        response = restTemplate.exchange(properties.getSioOpenStackRegUrl(), HttpMethod.POST, request, String.class);
-
-        responseBody = response.getBody().toString();
-        log.info("OpenStack response body is {}", responseBody);
-
     }
 
     /**
@@ -1291,15 +1284,6 @@ public class MainController {
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
-        // Approve new user for OpenStack
-        try {
-            response = restTemplate.exchange(properties.getApproveOpenStackJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio registration service: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/approve_new_user";
-        }
-        responseBody = response.getBody().toString();
 
         // everything looks OK?
         log.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
@@ -1353,17 +1337,6 @@ public class MainController {
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
-
-        // Reject new user for OpenStack
-        try {
-            response = restTemplate.exchange(properties.getRejectOpenStackJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio registration service: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/approve_new_user";
-        }
-        responseBody = response.getBody().toString();
-
 
         // everything looks OK?
         log.info("Join request has been REJECTED, User {}, Team {}", userId, teamId);
