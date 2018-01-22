@@ -962,7 +962,7 @@ public class MainController {
         response = restTemplate.exchange(properties.getSioOpenStackRegUrl(), HttpMethod.POST, request, String.class);
 
         responseBody = response.getBody().toString();
-        log.info("OpenStack response body is {}", response.getBody().toString());
+        log.info("OpenStack response body is {}", responseBody);
 
     }
 
@@ -1260,7 +1260,7 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service: {}", e);
+            log.warn("Error connecting to sio registration service: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             return "redirect:/approve_new_user";
         }
@@ -1291,6 +1291,16 @@ public class MainController {
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
+        // Approve new user for OpenStack
+        try {
+            response = restTemplate.exchange(properties.getApproveOpenStackJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio registration service: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/approve_new_user";
+        }
+        responseBody = response.getBody().toString();
+
         // everything looks OK?
         log.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
         redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Join request has been APPROVED.");
@@ -1316,7 +1326,7 @@ public class MainController {
         try {
             response = restTemplate.exchange(properties.getRejectJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
         } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service: {}", e);
+            log.warn("Error connecting to sio registration service: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             return "redirect:/approve_new_user";
         }
@@ -1343,6 +1353,18 @@ public class MainController {
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
+
+        // Reject new user for OpenStack
+        try {
+            response = restTemplate.exchange(properties.getRejectOpenStackJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio registration service: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/approve_new_user";
+        }
+        responseBody = response.getBody().toString();
+
+
         // everything looks OK?
         log.info("Join request has been REJECTED, User {}, Team {}", userId, teamId);
         redirectAttributes.addFlashAttribute(MESSAGE, "Join request has been REJECTED.");

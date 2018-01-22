@@ -119,6 +119,15 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
     }
 
+    public String getApproveOpenStackJoinRequest(String teamId, String userId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+    }
+
+    public String getRejectOpenStackJoinRequest(String teamId, String userId) {
+        // same but REST API is DELETE
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+    }
+
     //-------------------------------------
     // TEAMS
     //-------------------------------------
