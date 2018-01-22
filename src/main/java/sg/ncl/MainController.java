@@ -3436,16 +3436,6 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
         }
 
-        // Approve OpenStack team
-        try {
-            response = restTemplate.exchange(properties.getApproveOpenStackTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio registration service: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/admin";
-        }
-        responseBody = response.getBody().toString();
-
         return "redirect:/admin";
     }
 
@@ -3519,15 +3509,6 @@ public class MainController {
         } else {
             log.warn("Reject team {} FAIL", teamId);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-        }
-
-        // reject Openstack team
-        try {
-            response = restTemplate.exchange(properties.getApproveOpenStackTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio registration service: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/admin";
         }
 
         return "redirect:/admin";

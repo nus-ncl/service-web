@@ -115,10 +115,6 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
     }
 
-    public String getApproveOpenStackTeam(String teamId, String ownerId, TeamStatus teamStatus) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/owner/" + ownerId + "?status=" + teamStatus + "/openstack";
-    }
-
     public String getApproveJoinRequest(String teamId, String userId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
     }
