@@ -115,17 +115,21 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
     }
 
+    public String getApproveOpenStackTeam(String teamId, String ownerId, TeamStatus teamStatus) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/owner/" + ownerId + "?status=" + teamStatus + "/openstack";
+    }
+
     public String getApproveJoinRequest(String teamId, String userId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
     }
 
     public String getApproveOpenStackJoinRequest(String teamId, String userId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId + "/openstack";
     }
 
     public String getRejectOpenStackJoinRequest(String teamId, String userId) {
         // same but REST API is DELETE
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId + "/openstack";
     }
 
     //-------------------------------------
