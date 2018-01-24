@@ -900,6 +900,7 @@ public class MainController {
             InvalidTeamNameException,
             InvalidPasswordException,
             OpenStackConnectionException,
+            OpenStackInternalErrorException,
             DeterLabOperationFailedException {
 
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(mainObject.toString());
@@ -946,9 +947,11 @@ public class MainController {
                         throw new EmailAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
                     case OPENSTACK_CONNECTION_EXCEPTION:
-                        log.warn("Register new user failed on OpenStack: {}", error.getMessage());
+                        log.warn("Register new user failed on OpenStack connection: {}", error.getMessage());
                         throw new OpenStackConnectionException(ERR_SERVER_OVERLOAD);
-
+                    case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
+                        log.warn("Register new user failed on internal OpenStack server: {}", error.getMessage());
+                        throw new OpenStackConnectionException(ERR_SERVER_OVERLOAD);
                     default:
                         log.warn("Registration or adapter connection fail");
                         // possible sio or adapter connection fail
@@ -1279,7 +1282,11 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE, "Approve join request fail");
                         break;
                     case OPENSTACK_CONNECTION_EXCEPTION:
-                        log.warn("Approve join request: User {}, Team {} fail on OpenStack", userId, teamId);
+                        log.warn("Approve join request: User {}, Team {} fail on OpenStack connection", userId, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Approve join request fail");
+                        break;
+                    case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
+                        log.warn("Approve join request: User {}, Team {} fail on internal OpenStack server", userId, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE, "Approve join request fail");
                         break;
                     default:
@@ -1336,7 +1343,11 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE, "Reject join request fail");
                         break;
                     case OPENSTACK_CONNECTION_EXCEPTION:
-                        log.warn("Reject join request: User {}, Team {} fail on OpenStack", userId, teamId);
+                        log.warn("Reject join request: User {}, Team {} fail on OpenStack connection", userId, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Reject join request fail");
+                        break;
+                    case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
+                        log.warn("Reject join request: User {}, Team {} fail on internal OpenStack server", userId, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE, "Reject join request fail");
                         break;
                     default:
@@ -1998,7 +2009,8 @@ public class MainController {
                 exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Connection to adapter failed");
                 exceptionMessageMap.put(ADAPTER_INTERNAL_ERROR_EXCEPTION, "Internal server error on adapter");
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
-                exceptionMessageMap.put(OPENSTACK_CONNECTION_EXCEPTION, "Connection failed on OpenStack");
+                exceptionMessageMap.put(OPENSTACK_CONNECTION_EXCEPTION, "Connection failed on OpenStack connection");
+                exceptionMessageMap.put(OPENSTACK_INTERNAL_ERROR_EXCEPTION, "Connection failed on internal OpenStack server");
 
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
@@ -2092,7 +2104,8 @@ public class MainController {
                 exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Connection to adapter failed");
                 exceptionMessageMap.put(ADAPTER_INTERNAL_ERROR_EXCEPTION, "Internal server error on adapter");
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
-                exceptionMessageMap.put(OPENSTACK_CONNECTION_EXCEPTION, "Connection failed on OpenStack");
+                exceptionMessageMap.put(OPENSTACK_CONNECTION_EXCEPTION, "Connection failed on OpenStack connection");
+                exceptionMessageMap.put(OPENSTACK_INTERNAL_ERROR_EXCEPTION, "Connection failed on internal OpenStack server");
 
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
@@ -3404,11 +3417,15 @@ public class MainController {
                     break;
                 case DETERLAB_OPERATION_FAILED_EXCEPTION:
                     log.warn("Approve team: Team {} fail", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Approve team request fail on Deterlab");
+                    redirectAttributes.addFlashAttribute(MESSAGE, "Approve team request fail");
                     break;
                 case OPENSTACK_CONNECTION_EXCEPTION:
-                    log.warn("Approve team: Team {} fail on OpenStack", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Approve team request fail on OpenStack");
+                    log.warn("Approve team: Team {} fail on OpenStack connection", teamId);
+                    redirectAttributes.addFlashAttribute(MESSAGE, "Approve team request fail");
+                    break;
+                case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
+                    log.warn("Approve team: Team {} fail on internal OpenStack server", teamId);
+                    redirectAttributes.addFlashAttribute(MESSAGE, "Approve team request fail");
                     break;
                 default:
                     log.warn("Approve team : sio or deterlab adapter connection error");
@@ -3483,11 +3500,15 @@ public class MainController {
                     break;
                 case DETERLAB_OPERATION_FAILED_EXCEPTION:
                     log.warn("Reject team: Team {} fail", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Reject team request fail on Deterlab");
+                    redirectAttributes.addFlashAttribute(MESSAGE, "Reject team request fail");
                     break;
                 case OPENSTACK_CONNECTION_EXCEPTION:
-                    log.warn("Reject team: Team {} fail on OpenStack", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Reject team request fail on OpenStack");
+                    log.warn("Reject team: Team {} fail on OpenStack connection", teamId);
+                    redirectAttributes.addFlashAttribute(MESSAGE, "Reject team request fail");
+                    break;
+                case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
+                    log.warn("Reject team: Team {} fail on internal OpenStack server", teamId);
+                    redirectAttributes.addFlashAttribute(MESSAGE, "Reject team request fail");
                     break;
                 default:
                     log.warn("Reject team : sio or deterlab adapter connection error");

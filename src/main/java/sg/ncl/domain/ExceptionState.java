@@ -42,6 +42,7 @@ public enum ExceptionState {
     NS_FILE_PARSE_EXCEPTION("NSFileParseException"),
     OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION("ObjectOptimisticLockingFailureException"),
     OPENSTACK_CONNECTION_EXCEPTION("OpenStackConnectionException"),
+    OPENSTACK_INTERNAL_ERROR_EXCEPTION("OpenStackInternalErrorConnection"),
     PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION("PasswordResetRequestNotFoundException"),
     PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION("PasswordResetRequestTimeoutException"),
     START_DATE_AFTER_END_DATE_EXCEPTION("StartDateAfterEndDateException"),
