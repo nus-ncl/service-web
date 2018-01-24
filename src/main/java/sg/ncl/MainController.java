@@ -899,6 +899,7 @@ public class MainController {
             EmailAlreadyExistsException,
             InvalidTeamNameException,
             InvalidPasswordException,
+            OpenStackConnectionException,
             DeterLabOperationFailedException {
 
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(mainObject.toString());
@@ -944,6 +945,10 @@ public class MainController {
                         log.warn("Register new users : email already exists: {}", email);
                         throw new EmailAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
+                    case OPENSTACK_CONNECTION_EXCEPTION:
+                        log.warn("Register new user failed on OpenStack: {}", error.getMessage());
+                        throw new OpenStackConnectionException(ERR_SERVER_OVERLOAD);
+
                     default:
                         log.warn("Registration or adapter connection fail");
                         // possible sio or adapter connection fail
