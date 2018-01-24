@@ -26,11 +26,13 @@ public class StatefulExperiment {
     private String state;
     private int nodes;
     private int minNodes;
+    private int maxDuration;
     private Long idleHours;
     private Map<String, Map<String, String>> nodesInfoMap;
 
     public StatefulExperiment() {
         nodes = 0;
+        maxDuration = 0;
         minNodes = 0;
         idleHours = 0L;
         nodesInfoMap = new HashMap<>();

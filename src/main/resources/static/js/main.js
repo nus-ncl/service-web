@@ -1059,6 +1059,24 @@ function displayDefaultNsContent() {
 	document.getElementById("networkConfig").innerHTML = basic;
 }
 
+// when the auto-shutdown checkbox is checked
+// enable the input text to type in the number of max duration hours for experiment
+function toggleAutoShutdown(event) {
+        document.getElementById('max-duration').disabled = !event.checked;
+        if (document.getElementById('max-duration').disabled) {
+            // reset value when disabled
+            document.getElementById('max-duration').value = 0;
+        }
+}
+
+// set the auto-shutdown checkbox to checked or unchecked depending on the number of hours
+function setAutoShutdownCheckbox() {
+    if (document.getElementById('max-duration').value > 0) {
+        document.getElementById('max-duration').disabled = false;
+        document.getElementById('max-duration-checkbox').checked = true;
+    }
+}
+
 
 
 

@@ -16,6 +16,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
@@ -85,6 +87,7 @@ public class MainController {
     private static final String MESSAGE_DELETE_IMAGE_FAILURE_LIST = "message_failure_list";
     private static final String MESSAGE_DELETE_IMAGE_WARNING = "message_warning";
     // error messages
+    private static final String MAX_DURATION_ERROR = "Auto-shutdown hours must be an integer without any decimals";
     private static final String ERROR_CONNECTING_TO_SERVICE_TELEMETRY = "Error connecting to service-telemetry: {}";
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
     private static final String CONNECTION_ERROR = "Connection Error";
@@ -124,6 +127,7 @@ public class MainController {
     private static final String EDIT_BUDGET = "editBudget";
     private static final String ORIGINAL_BUDGET = "originalBudget";
 
+    private static final String REDIRECT_UPDATE_EXPERIMENT = "redirect:/update_experiment/";
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
     private static final String REDIRECT_INDEX_PAGE = "redirect:/";
@@ -152,6 +156,7 @@ public class MainController {
     private static final String DESCRIPTION = "description";
     private static final String CREATED_DATE = "createdDate";
     private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+    private static final String MAX_DURATION = "maxDuration";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -2220,12 +2225,27 @@ public class MainController {
     @RequestMapping(value = "/experiments/create", method = RequestMethod.POST)
     public String validateExperiment(
             @ModelAttribute("experimentForm") ExperimentForm experimentForm,
-            HttpSession session,
             BindingResult bindingResult,
+            HttpSession session,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
             log.info("Create experiment - form has errors");
+            for (ObjectError objectError : bindingResult.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                switch (fieldError.getField()) {
+                    case MAX_DURATION:
+                        redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
+                        break;
+                    default:
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Form not filled up");
+                }
+            }
+            return "redirect:/experiments/create";
+        }
+
+        if (!experimentForm.getMaxDuration().toString().matches("\\d+")) {
+            redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
             return "redirect:/experiments/create";
         }
 
@@ -2250,7 +2270,7 @@ public class MainController {
         experimentObject.put("nsFile", "file");
         experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
-        experimentObject.put("maxDuration", "960");
+        experimentObject.put(MAX_DURATION, experimentForm.getMaxDuration());
 
         log.info("Calling service to create experiment");
         HttpEntity<String> request = createHttpEntityWithBody(experimentObject.toString());
@@ -2686,13 +2706,21 @@ public class MainController {
     }
 
     @PostMapping("/update_experiment/{teamId}/{expId}")
-    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, @PathVariable String teamId, @PathVariable String expId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, BindingResult bindingResult, @PathVariable String teamId, @PathVariable String expId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+
+        // check max duration for errors
+        if (bindingResult.hasErrors() || !editExperiment.getMaxDuration().toString().matches("\\d+")) {
+            redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
+            return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
+        }
+
         // get original experiment
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
         Experiment2 experiment = extractExperiment(response.getBody().toString());
 
         experiment.setNsFileContent(editExperiment.getNsFileContent());
+        experiment.setMaxDuration(editExperiment.getMaxDuration());
 
         objectMapper.registerModule(new JavaTimeModule());
         String jsonExperiment;
@@ -2701,7 +2729,7 @@ public class MainController {
         } catch (JsonProcessingException e) {
             log.debug("update experiment convert to json error: {}", experiment);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/update_experiment/" + teamId + "/" + expId;
+            return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
         }
 
         // identical endpoint as delete experiment but different HTTP method
@@ -2738,7 +2766,7 @@ public class MainController {
                         // do nothing
                         break;
                 }
-                return "redirect:/update_experiment/" + teamId + "/" + expId;
+                return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
             } else {
                 // everything ok
                 log.info("update experiment success for Team:{}, Exp: {}", teamId, expId);
@@ -4325,7 +4353,7 @@ public class MainController {
         experiment2.setNsFile(object.getString("nsFile"));
         experiment2.setNsFileContent(object.getString("nsFileContent"));
         experiment2.setIdleSwap(object.getInt("idleSwap"));
-        experiment2.setMaxDuration(object.getInt("maxDuration"));
+        experiment2.setMaxDuration(object.getInt(MAX_DURATION));
 
         try {
             experiment2.setCreatedDate(object.get(CREATED_DATE).toString());
@@ -4689,6 +4717,7 @@ public class MainController {
         stateExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
         stateExp.setState(expJsonObj.getString("state"));
         stateExp.setNodes(expJsonObj.getInt("nodes"));
+        stateExp.setMaxDuration(expJsonObj.getInt(MAX_DURATION));
         stateExp.setMinNodes(expJsonObj.getInt("minNodes"));
         stateExp.setIdleHours(expJsonObj.getLong("idleHours"));
 

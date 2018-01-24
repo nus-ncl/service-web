@@ -2,6 +2,8 @@ package sg.ncl.testbed_interface;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class ExperimentForm {
@@ -15,6 +17,7 @@ public class ExperimentForm {
 
     @NotEmpty(message = "Experiment Name cannot be empty")
     @Size(min = 1, message = "Experiment Name cannot be empty")
+    @Pattern(regexp="^[a-zA-Z0-9]*$", message="Experiment name cannot have special characters")
     private String name;
 
     @NotEmpty(message = "Description cannot be empty")
@@ -24,12 +27,15 @@ public class ExperimentForm {
 
     private String nsFileContent;
     private Integer idleSwap;
-    private Integer maxDuration;
+    @Min(value = 0, message = "Auto-shutdown hours must be an integer without any decimals")
+    private Integer maxDuration; // max number of hours before experiment auto swap out
 
     private String scenarioFileName;
     private String scenarioContents;
 
-    public ExperimentForm() {}
+    public ExperimentForm() {
+        maxDuration = 0;
+    }
 
     public String getTeamId() {
         return teamId;

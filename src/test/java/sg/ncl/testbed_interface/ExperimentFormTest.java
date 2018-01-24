@@ -128,7 +128,7 @@ public class ExperimentFormTest {
     @Test
     public void testGetMaxDuration() {
         final ExperimentForm one = new ExperimentForm();
-        assertThat(one.getMaxDuration(), is(nullValue()));
+        assertThat(one.getMaxDuration(), is(0));
     }
 
     @Test

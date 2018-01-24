@@ -291,6 +291,15 @@ pre {
     margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
 }
 
+/* experiment max duration settings */
+.exp-max-duration-tooltip {
+    font-size: 0.8em;
+    font-weight: normal;
+    line-height: 2;
+    white-space: initial;
+    z-index: 9999;
+}
+
 /* license tooltip mouseover */
 .license-tooltip {
     position: relative;
@@ -340,7 +349,7 @@ body {
     color: #666;
     background-color: #fff;
     height : 100%;
-    padding-top: 100px; /* to fixed the spacing between navbar and body content when using navbar-fixed-top */
+    padding-top: 90px; /* to fixed the spacing between navbar and body content when using navbar-fixed-top */
     margin: 0 0 100px; /* bottom = footer height */
 }
 
@@ -2145,7 +2154,7 @@ html {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 0;
+    z-index: 9999;
     color: #21b3b7;
     background-color: rgba(51,51,51,.7);
 }
