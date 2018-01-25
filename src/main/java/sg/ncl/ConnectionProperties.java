@@ -72,9 +72,7 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint;
     }
 
-
-    public String getSioExpUrl() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
+    public String getSioExpUrl() {return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
 
     //-------------------------------------
