@@ -84,12 +84,18 @@ public class MainController {
     private static final String MESSAGE_DELETE_IMAGE_FAILURE = "message_failure";
     private static final String MESSAGE_DELETE_IMAGE_FAILURE_LIST = "message_failure_list";
     private static final String MESSAGE_DELETE_IMAGE_WARNING = "message_warning";
+    private static final String REJECT_JOIN_REQUEST_FAIL = "Reject join request fail";
+    private static final String APPROVE_JOIN_REQUEST_FAIL = "Approve join request fail";
+    private static final String APPROVE_TEAM_REQUEST_FAIL = "Approve team request fail";
+    private static final String REJECT_TEAM_REQUEST_FAIL = "Reject team request fail";
+
     // error messages
     private static final String ERROR_CONNECTING_TO_SERVICE_TELEMETRY = "Error connecting to service-telemetry: {}";
     private static final String ERR_SERVER_OVERLOAD = "There is a problem with your request. Please contact " + CONTACT_EMAIL;
     private static final String CONNECTION_ERROR = "Connection Error";
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
     private static final String ERR_START_DATE_AFTER_END_DATE = "End date must be after start date";
+
 
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
@@ -1279,15 +1285,15 @@ public class MainController {
                         break;
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Approve join request: User {}, Team {} fail", userId, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, "Approve join request fail");
+                        redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_JOIN_REQUEST_FAIL);
                         break;
                     case OPENSTACK_CONNECTION_EXCEPTION:
                         log.warn("Approve join request: User {}, Team {} fail on OpenStack connection", userId, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, "Approve join request fail");
+                        redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_JOIN_REQUEST_FAIL);
                         break;
                     case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
                         log.warn("Approve join request: User {}, Team {} fail on internal OpenStack server", userId, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, "Approve join request fail");
+                        redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_JOIN_REQUEST_FAIL);
                         break;
                     default:
                         log.warn("Server side error: {}", error.getError());
@@ -1340,15 +1346,15 @@ public class MainController {
                 switch (exceptionState) {
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
                         log.warn("Reject join request: User {}, Team {} fail", userId, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, "Reject join request fail");
+                        redirectAttributes.addFlashAttribute(MESSAGE, REJECT_JOIN_REQUEST_FAIL);
                         break;
                     case OPENSTACK_CONNECTION_EXCEPTION:
                         log.warn("Reject join request: User {}, Team {} fail on OpenStack connection", userId, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, "Reject join request fail");
+                        redirectAttributes.addFlashAttribute(MESSAGE, REJECT_JOIN_REQUEST_FAIL);
                         break;
                     case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
                         log.warn("Reject join request: User {}, Team {} fail on internal OpenStack server", userId, teamId);
-                        redirectAttributes.addFlashAttribute(MESSAGE, "Reject join request fail");
+                        redirectAttributes.addFlashAttribute(MESSAGE, REJECT_JOIN_REQUEST_FAIL);
                         break;
                     default:
                         log.warn("Server side error: {}", error.getError());
@@ -3417,15 +3423,15 @@ public class MainController {
                     break;
                 case DETERLAB_OPERATION_FAILED_EXCEPTION:
                     log.warn("Approve team: Team {} fail", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Approve team request fail");
+                    redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_TEAM_REQUEST_FAIL);
                     break;
                 case OPENSTACK_CONNECTION_EXCEPTION:
                     log.warn("Approve team: Team {} fail on OpenStack connection", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Approve team request fail");
+                    redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_TEAM_REQUEST_FAIL);
                     break;
                 case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
                     log.warn("Approve team: Team {} fail on internal OpenStack server", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Approve team request fail");
+                    redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_TEAM_REQUEST_FAIL);
                     break;
                 default:
                     log.warn("Approve team : sio or deterlab adapter connection error");
@@ -3500,15 +3506,15 @@ public class MainController {
                     break;
                 case DETERLAB_OPERATION_FAILED_EXCEPTION:
                     log.warn("Reject team: Team {} fail", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Reject team request fail");
+                    redirectAttributes.addFlashAttribute(MESSAGE, REJECT_TEAM_REQUEST_FAIL);
                     break;
                 case OPENSTACK_CONNECTION_EXCEPTION:
                     log.warn("Reject team: Team {} fail on OpenStack connection", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Reject team request fail");
+                    redirectAttributes.addFlashAttribute(MESSAGE, REJECT_TEAM_REQUEST_FAIL);
                     break;
                 case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
                     log.warn("Reject team: Team {} fail on internal OpenStack server", teamId);
-                    redirectAttributes.addFlashAttribute(MESSAGE, "Reject team request fail");
+                    redirectAttributes.addFlashAttribute(MESSAGE, REJECT_TEAM_REQUEST_FAIL);
                     break;
                 default:
                     log.warn("Reject team : sio or deterlab adapter connection error");
