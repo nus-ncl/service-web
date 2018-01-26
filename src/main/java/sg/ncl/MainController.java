@@ -907,6 +907,8 @@ public class MainController {
             InvalidPasswordException,
             OpenStackConnectionException,
             OpenStackInternalErrorException,
+            OpenStackDuplicateUserException,
+            OpenStackDuplicateProjectException,
             DeterLabOperationFailedException {
 
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(mainObject.toString());
@@ -958,6 +960,12 @@ public class MainController {
                     case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
                         log.warn("Register new user failed on internal OpenStack server: {}", error.getMessage());
                         throw new OpenStackConnectionException(ERR_SERVER_OVERLOAD);
+                    case OPENSTACK_DUPLICATE_USER_EXCEPTION:
+                        log.warn("Register new user failed: OpenStack user with same name already exists: {}", error.getMessage());
+                        throw new OpenStackDuplicateUserException(ERR_SERVER_OVERLOAD);
+                    case OPENSTACK_DUPLICATE_PROJECT_EXCEPTION:
+                        log.warn("Register new user failed: OpenStack project with same name already exists: {}", error.getMessage());
+                        throw new OpenStackDuplicateProjectException(ERR_SERVER_OVERLOAD);
                     default:
                         log.warn("Registration or adapter connection fail");
                         // possible sio or adapter connection fail
@@ -1295,6 +1303,10 @@ public class MainController {
                         log.warn("Approve join request: User {}, Team {} fail on internal OpenStack server", userId, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_JOIN_REQUEST_FAIL);
                         break;
+                    case OPENSTACK_USER_NOT_FOUND_EXCEPTION:
+                        log.warn("Approve join request: User {}, Team {} failed as OpenStack user name not found", userId, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_JOIN_REQUEST_FAIL);
+                        break;
                     default:
                         log.warn("Server side error: {}", error.getError());
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -1354,6 +1366,10 @@ public class MainController {
                         break;
                     case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
                         log.warn("Reject join request: User {}, Team {} fail on internal OpenStack server", userId, teamId);
+                        redirectAttributes.addFlashAttribute(MESSAGE, REJECT_JOIN_REQUEST_FAIL);
+                        break;
+                    case OPENSTACK_USER_NOT_FOUND_EXCEPTION:
+                        log.warn("Reject join request: User {}, Team {} failed as OpenStack user not found", userId, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE, REJECT_JOIN_REQUEST_FAIL);
                         break;
                     default:
@@ -2017,6 +2033,8 @@ public class MainController {
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
                 exceptionMessageMap.put(OPENSTACK_CONNECTION_EXCEPTION, "Connection failed on OpenStack connection");
                 exceptionMessageMap.put(OPENSTACK_INTERNAL_ERROR_EXCEPTION, "Connection failed on internal OpenStack server");
+                exceptionMessageMap.put(OPENSTACK_DUPLICATE_PROJECT_EXCEPTION, "OpenStack project with same name found");
+                exceptionMessageMap.put(OPENSTACK_USER_NOT_FOUND_EXCEPTION, "OpenStack user could not be found");
 
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
@@ -2112,6 +2130,8 @@ public class MainController {
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
                 exceptionMessageMap.put(OPENSTACK_CONNECTION_EXCEPTION, "Connection failed on OpenStack connection");
                 exceptionMessageMap.put(OPENSTACK_INTERNAL_ERROR_EXCEPTION, "Connection failed on internal OpenStack server");
+                exceptionMessageMap.put(OPENSTACK_PROJECT_NOT_FOUND_EXCEPTION, "OpenStack project not found");
+                exceptionMessageMap.put(OPENSTACK_USER_NOT_FOUND_EXCEPTION, "OpenStack user not found");
 
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
@@ -3433,6 +3453,10 @@ public class MainController {
                     log.warn("Approve team: Team {} fail on internal OpenStack server", teamId);
                     redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_TEAM_REQUEST_FAIL);
                     break;
+                case OPENSTACK_PROJECT_NOT_FOUND_EXCEPTION:
+                    log.warn("Approve team: Project {} not found on OpenStack", teamId);
+                    redirectAttributes.addFlashAttribute(MESSAGE, APPROVE_TEAM_REQUEST_FAIL);
+                    break;
                 default:
                     log.warn("Approve team : sio or deterlab adapter connection error");
                     // possible sio or adapter connection fail
@@ -3514,6 +3538,10 @@ public class MainController {
                     break;
                 case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
                     log.warn("Reject team: Team {} fail on internal OpenStack server", teamId);
+                    redirectAttributes.addFlashAttribute(MESSAGE, REJECT_TEAM_REQUEST_FAIL);
+                    break;
+                case OPENSTACK_PROJECT_NOT_FOUND_EXCEPTION:
+                    log.warn("Reject team: Team {} not found on OpenStack", teamId);
                     redirectAttributes.addFlashAttribute(MESSAGE, REJECT_TEAM_REQUEST_FAIL);
                     break;
                 default:
