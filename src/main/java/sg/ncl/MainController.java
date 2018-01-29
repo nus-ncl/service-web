@@ -907,8 +907,8 @@ public class MainController {
             InvalidPasswordException,
             OpenStackConnectionException,
             OpenStackInternalErrorException,
-            OpenStackDuplicateUserException,
-            OpenStackDuplicateProjectException,
+            OpenStackUserNameAlreadyExistsException,
+            OpenStackProjectNameAlreadyExistsException,
             DeterLabOperationFailedException {
 
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(mainObject.toString());
@@ -960,12 +960,12 @@ public class MainController {
                     case OPENSTACK_INTERNAL_ERROR_EXCEPTION:
                         log.warn("Register new user failed on internal OpenStack server: {}", error.getMessage());
                         throw new OpenStackConnectionException(ERR_SERVER_OVERLOAD);
-                    case OPENSTACK_DUPLICATE_USER_EXCEPTION:
+                    case OPENSTACK_USER_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Register new user failed: OpenStack user with same name already exists: {}", error.getMessage());
-                        throw new OpenStackDuplicateUserException(ERR_SERVER_OVERLOAD);
-                    case OPENSTACK_DUPLICATE_PROJECT_EXCEPTION:
+                        throw new OpenStackUserNameAlreadyExistsException(ERR_SERVER_OVERLOAD);
+                    case OPENSTACK_PROJECT_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Register new user failed: OpenStack project with same name already exists: {}", error.getMessage());
-                        throw new OpenStackDuplicateProjectException(ERR_SERVER_OVERLOAD);
+                        throw new OpenStackProjectNameAlreadyExistsException(ERR_SERVER_OVERLOAD);
                     default:
                         log.warn("Registration or adapter connection fail");
                         // possible sio or adapter connection fail
@@ -2033,7 +2033,7 @@ public class MainController {
                 exceptionMessageMap.put(DETERLAB_OPERATION_FAILED_EXCEPTION, "Operation failed on DeterLab");
                 exceptionMessageMap.put(OPENSTACK_CONNECTION_EXCEPTION, "Connection failed on OpenStack connection");
                 exceptionMessageMap.put(OPENSTACK_INTERNAL_ERROR_EXCEPTION, "Connection failed on internal OpenStack server");
-                exceptionMessageMap.put(OPENSTACK_DUPLICATE_PROJECT_EXCEPTION, "OpenStack project with same name found");
+                exceptionMessageMap.put(OPENSTACK_PROJECT_NAME_ALREADY_EXISTS_EXCEPTION, "OpenStack project with same name found");
                 exceptionMessageMap.put(OPENSTACK_USER_NOT_FOUND_EXCEPTION, "OpenStack user could not be found");
 
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
