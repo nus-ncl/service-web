@@ -825,6 +825,10 @@ public class MainController {
                                 EmailAlreadyExistsException |
                                 InvalidTeamNameException |
                                 InvalidPasswordException |
+                                OpenStackConnectionException|
+                                OpenStackInternalErrorException|
+                                OpenStackUserNameAlreadyExistsException|
+                                OpenStackProjectNameAlreadyExistsException|
                                 DeterLabOperationFailedException e) {
                     redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                     redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
@@ -867,6 +871,10 @@ public class MainController {
                             EmailAlreadyExistsException |
                             InvalidTeamNameException |
                             InvalidPasswordException |
+                            OpenStackConnectionException|
+                            OpenStackInternalErrorException|
+                            OpenStackUserNameAlreadyExistsException|
+                            OpenStackProjectNameAlreadyExistsException|
                             DeterLabOperationFailedException e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                 redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
@@ -965,6 +973,9 @@ public class MainController {
                         throw new OpenStackUserNameAlreadyExistsException(ERR_SERVER_OVERLOAD);
                     case OPENSTACK_PROJECT_NAME_ALREADY_EXISTS_EXCEPTION:
                         log.warn("Register new user failed: OpenStack project with same name already exists: {}", error.getMessage());
+                        throw new OpenStackProjectNameAlreadyExistsException(ERR_SERVER_OVERLOAD);
+                    case OPENSTACK_PROJECT_NOT_FOUND_EXCEPTION:
+                        log.warn("Register new user failed: OpenStack project that user applied join does not exist: {}", error.getMessage());
                         throw new OpenStackProjectNameAlreadyExistsException(ERR_SERVER_OVERLOAD);
                     default:
                         log.warn("Registration or adapter connection fail");
