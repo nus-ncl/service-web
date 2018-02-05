@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Web SSH</title>
+    <object th:include="fragments/header :: header" th:remove="tag"/>
+    <link rel="stylesheet" type="text/css" href="static/css/xterm.css" th:href="@{~/css/xterm.css}"/>
+</head>
+<body onunload="disconnect()">
+<th:block th:if="${session.id == null}">
+    <div th:replace="fragments/login_navigation :: loginnav"></div>
+</th:block>
+<th:block th:if="${session.id != null}">
+    <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+</th:block>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div id="main-content" class="container">
+    <div class="row dashpanel">
+        <h2 class="team-heading team-heading-current-team">WebSocket SSH Access</h2>
+        <div>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="connect">Connect to <span th:text="${qualified}"></span>:</label>
+                    <input type="password" class="form-control" placeholder="password" id="password"/>
+                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
+                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect</button>
+                </div>
+            </form>
+        </div>
+        <div>
+            <br/>
+            <div id="terminal"></div>
+        </div>
+    </div>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script type="text/javascript" src="static/js/xterm.js" th:src="@{~/js/xterm.js}"></script>
+<script th:inline="javascript">
+    var stompClient = null;
+    var term = new Terminal();
+    var command = "";
+
+    function setConnected(connected) {
+        $('#connect').prop("disabled", connected);
+        $('#disconnect').prop("disabled", !connected);
+    }
+
+    function connect() {
+        /*<![CDATA[*/
+        var username = [[${deterUid}]];
+        var qualified = [[${qualified}]];
+        /*]]>*/
+        var password = $('#password').val();
+        var socket = new SockJS('/websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+        stompClient.connect(
+            {user: username, qualified: qualified, pass: password},
+            function (frame) {
+                console.log("Connected: " + frame);
+                term.reset();
+                setConnected(true);
+                stompClient.subscribe('/shell/output/' + username + "@" + qualified, function (output) {
+                    showResult(output.body);
+                });
+                term.focus();
+            },
+            function (error) {
+                term.write("Unable to established ssh connection. Password may be invalid.");
+                disconnect();
+            }
+        );
+    }
+
+    function disconnect() {
+        term.blur();
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+        console.log("Disconnected");
+    }
+
+    function sendKey(ctrlKey, key, keyCode) {
+        stompClient.send("/webssh/input", {}, JSON.stringify({'ctrlKey':ctrlKey,'key':key,'keyCode':keyCode}));
+    }
+
+    function showResult(message) {
+        term.write(message);
+    }
+
+    $(function () {
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+        });
+        $('#connect').click(function () {
+            connect();
+        });
+        $('#disconnect').click(function () {
+            disconnect();
+        });
+
+        term.open(document.getElementById('terminal'));
+        // Log the keyCode of every keyDown event
+        term.textarea.onkeydown = function (e) {
+            if ($('#connect').prop("disabled")) {
+                sendKey(e.ctrlKey, e.key, e.keyCode);
+                if (e.keyCode === 13) {
+                    if (command === "exit" || command === "logout") {
+                        disconnect();
+                    }
+                    command = "";
+                } else {
+                    command += e.key;
+                }
+            }
+        };
+    });
+</script>
+</body>
+</html>

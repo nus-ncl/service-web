@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.system.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
+import sg.ncl.webssh.SshProperties;
 
 @SpringBootApplication
 public class WebApplication {
@@ -27,6 +28,11 @@ public class WebApplication {
     @Bean
     AccountingProperties accountingProperties() {
         return new AccountingProperties();
+    }
+
+    @Bean
+    SshProperties sshProperties() {
+        return new SshProperties();
     }
 
     public static void main(String[] args) {

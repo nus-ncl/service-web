@@ -2106,23 +2106,7 @@ public class MainController {
 
         List<StatefulExperiment> statefulExperimentList = new ArrayList<>();
 
-        // get uid on Deter
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody().toString();
-
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                log.error("Failed to get Deter uid for user {}: {}", session.getAttribute("id").toString(), error.getError());
-                model.addAttribute(DETER_UID, UNKNOWN);
-            } else {
-                model.addAttribute(DETER_UID, responseBody);
-            }
-        } catch (IOException e) {
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
+        HttpEntity<String> request = getDeterUid(model, session);
 
         // get list of teamIds
         ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
@@ -2149,6 +2133,27 @@ public class MainController {
         model.addAttribute("internetRequestForm", new InternetRequestForm());
 
         return EXPERIMENTS;
+    }
+
+    private HttpEntity<String> getDeterUid(Model model, HttpSession session) throws WebServiceRuntimeException {
+        // get uid on Deter
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                log.error("Failed to get Deter uid for user {}: {}", session.getAttribute("id").toString(), error.getError());
+                model.addAttribute(DETER_UID, UNKNOWN);
+            } else {
+                model.addAttribute(DETER_UID, responseBody);
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+        return request;
     }
 
     @GetMapping(value = "/experiment_profile/{expId}")
@@ -2448,8 +2453,8 @@ public class MainController {
         log.info("Saving image in progress: team {}, experiment {}, node {}, image {}", teamId, expId, nodeId, saveImageForm.getImageName());
         return "redirect:/experiments";
     }
-/*
 
+/*
     private String processSaveImageRequest(@Valid @ModelAttribute("saveImageForm") Image saveImageForm, RedirectAttributes redirectAttributes, @PathVariable String teamId, @PathVariable String expId, @PathVariable String nodeId, ResponseEntity response, String responseBody) throws IOException {
         if (RestUtil.isError(response.getStatusCode())) {
             MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
@@ -2835,6 +2840,13 @@ public class MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
         return "redirect:/experiments";
+    }
+
+    @RequestMapping("/web_ssh/access_node/{qualifiedName:.+}")
+    public String webAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
+        getDeterUid(model, session);
+        model.addAttribute("qualified", qualifiedName);
+        return "webssh";
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
