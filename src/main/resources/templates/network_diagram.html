@@ -27,6 +27,7 @@
             height: 100%;
             overflow: scroll;
         }
+<<<<<<< HEAD
         #paintarea:focus {
             outline: none;
         }
@@ -36,6 +37,13 @@
         }
     </style>
 
+=======
+    </style>
+
+    <script type="text/javascript" th:src="@{~/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{~/js/bootstrap.min.js}"></script>
+
+>>>>>>> New UI
     <!-- common, all times required, imports -->
     <script th:src="@{~/topology-tool/wz_jsgraphics.js}"></script>
     <script th:src="@{~/topology-tool/draw2d.js}"></script>
@@ -48,6 +56,7 @@
     <script th:src="@{~/topology-tool/JSONSerializer.js}"></script>
     <script th:src="@{~/topology-tool/DiagramFigure.js}"></script>
 
+<<<<<<< HEAD
     <script type="text/javascript" th:src="@{~/topology-tool/adapter/prototype/prototype.js}"></script>
     <script type="text/javascript" th:src="@{~/js/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{~/js/bootstrap.min.js}"></script>
@@ -80,12 +89,72 @@
     </script>
 
     <!-- use this imports if you want use the Yahoo utility methods -->
+=======
+    <!-- use this imports if you want use the Yahoo utility methods -->
+    <link rel="stylesheet" type="text/css" th:href="@{~/topology-tool/css/xtheme-aero.css}"/>
+>>>>>>> New UI
     <script type="text/javascript" th:src="@{~/topology-tool/adapter/yui/yui-utilities.js}"></script>
     <script type="text/javascript" th:src="@{~/topology-tool/adapter/yui/ext-yui-adapter.js}"></script>
     <script type="text/javascript" th:src="@{~/topology-tool/ext-all.js}"></script>
 
     <script type="text/javascript">
         /*<![CDATA[*/
+<<<<<<< HEAD
+=======
+        function addOnloadHandler(elementObject, functionObject) {
+            if (typeof(appLog) != 'undefined') {
+                //appLog("addOnloadHandler: " + elementObject.id);
+            }
+            if (document.addEventListener) {
+                elementObject.addEventListener('load', function (e) {
+                    functionObject(elementObject);
+                }, false);
+            } else {
+                if (document.attachEvent) {
+                    elementObject.onreadystatechange = function (e) {
+                        var state = elementObject.readyState;
+                        if (state != "loaded" && state != "complete") {
+                            return;
+                        }
+                        functionObject(elementObject);
+                    };
+                } else {
+                    alert("Could not bind the onLoad handler to an element!");
+                }
+            }
+        }
+
+        function removeElement(e) {
+            var aNodeToRemove = e;
+            if (aNodeToRemove.parentNode) {
+                aNodeToRemove.parentNode.removeChild(aNodeToRemove);
+            }
+        }
+
+        function bootstrapGetLoadScriptNode(aURI) {
+            var element;
+            var aID = "script_" + aURI.replace(/[\/\.:-]/g, "_");
+            removeElement(aID);
+            element = document.createElement("script");
+            element.setAttribute('id', aID);
+
+            aURI = aURI + "?_=" + (new Date()).getTime();
+
+            element.setAttribute('src', aURI);
+            element.setAttribute('type', "text/javascript");
+
+            return element;
+        }
+
+        function loadJavaScript(aURI, aCallback) {
+            var element = bootstrapGetLoadScriptNode(aURI);
+            addOnloadHandler(element, function (el) {
+                aCallback(element);
+            });
+            document.getElementsByTagName('head')[0].appendChild(element);
+        }
+
+>>>>>>> New UI
         function createNewDiv(aID) {
             var txt = document.createElement('P');
             var div = document.createElement('span');
@@ -99,6 +168,33 @@
             new JSONSerializer().fromJSON(Ext.util.JSON.decode(aText));
         }
 
+<<<<<<< HEAD
+=======
+        function loadJSON(aFile) {
+            loadJavaScript(aFile, function (el) {
+                new JSONSerializer().fromJSON(json_diagram);
+            });
+        }
+
+        function addDragIcon(aName, aWhere) {
+            loadJavaScript("/topology-tool/icons/" + aName + ".js", function () {
+                if (document.getElementById("cont_" + aName)) {
+                    return;
+                }
+                var div = document.getElementById(aWhere);
+                var cdiv = createNewDiv("cont_" + aName);
+                var html = '';
+                html = html + aName + "<img src='/topology-tool/icons/" + aName + ".png' id='drag_" + aName + "' style='cursor:move'/><br><br>\n";
+                cdiv.innerHTML = html;
+                div.appendChild(cdiv);
+                var dragsource = new Ext.dd.DragSource('drag_' + aName, {
+                    ddGroup: 'TreeDD',
+                    dragData: {name: aName}
+                });
+            });
+        }
+
+>>>>>>> New UI
         function addDragIconPic(aName, aWhere, aPic) {
             if (document.getElementById("cont_" + aName)) {
                 return;
@@ -129,6 +225,16 @@
             addDragIcon2(aName, "icons_div");
         }
 
+<<<<<<< HEAD
+=======
+        function addLibraryIconText(aName) {
+            var txt = document.createElement('P');
+            txt.innerHTML = '<a href="javascript:addLibraryIcon(\'' + aName + '\');">' + aName + '</a>';
+            document.getElementById("library_div").appendChild(txt);
+
+        }
+
+>>>>>>> New UI
         function createNewIconDiv(aID) {
             var txt = document.createElement('P');
             var div = document.createElement('span');
@@ -139,6 +245,7 @@
             return div;
         }
 
+<<<<<<< HEAD
         function doSendJSON() {
             var str = $j.trim($j('#json_text').val());
             if (!str) {
@@ -154,6 +261,8 @@
             }
         }
 
+=======
+>>>>>>> New UI
         function doSaveJSON() {
             var txt = Ext.util.JSON.encode(new JSONSerializer().toJSON(workflow.getDocument()));
             txt = txt.replace(/,"/g, ', "');
@@ -164,6 +273,21 @@
             loadJSONtext(document.getElementById('json_text').value);
         }
 
+<<<<<<< HEAD
+=======
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) {
+                    return unescape(pair[1]);
+                }
+            }
+            return "";
+        }
+
+>>>>>>> New UI
         function debug(message) {
             console.log(message);
         }
@@ -218,7 +342,11 @@
                     <ul class="dropdown-menu">
                         <li><a href="#" onclick="doLoadJSON();"><i class="fa fa-upload"></i> Load</a></li>
                         <li><a href="#" onclick="doSaveJSON();"><i class="fa fa-download"></i> Save</a></li>
+<<<<<<< HEAD
                         <li><a href="#" onclick="doSendJSON();"><i class="fa fa-cloud-upload"></i> Analyze</a></li>
+=======
+                        <li><a href="#"><i class="fa fa-cloud-upload"></i> Analyze</a></li>
+>>>>>>> New UI
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -289,6 +417,7 @@
             <div class="btn-group" role="group" aria-label="...">
                 <button type="button" class="btn btn-default" onclick="doLoadJSON();">Load</button>
                 <button type="button" class="btn btn-default" onclick="doSaveJSON();">Save</button>
+<<<<<<< HEAD
                 <button type="button" class="btn btn-default" onclick="doSendJSON();">Analyze</button>
             </div>
             <hr size="1" noshade="noshade"/>
@@ -297,6 +426,13 @@
             <hr size="1" noshade="noshade"/>
             <h2>Log</h2>
             <textarea id='log_text' rows="10" cols="80" style="width: 90%" readonly="readonly"></textarea>
+=======
+                <button type="button" class="btn btn-default">Analyze</button>
+            </div>
+            <hr size="1" noshade="noshade"/>
+            <h2>Message</h2>
+            <textarea id='message_text' rows="10" cols="80" style="width: 90%"></textarea>
+>>>>>>> New UI
         </div>
     </div>
 </div>
@@ -309,7 +445,11 @@
      **********************************************************************************/
     var workflow = new Workflow("paintarea");
 
+<<<<<<< HEAD
     jQuery(document).ready(function ($) {
+=======
+    $(function() {
+>>>>>>> New UI
         workflow.scrollArea = document.getElementById("paint_div").parentNode;
 
         addLibraryIcon('a100baset_hub');
