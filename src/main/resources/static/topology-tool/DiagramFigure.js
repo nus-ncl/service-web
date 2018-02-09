@@ -1,4 +1,3 @@
-
 Figure.prototype.toggleBackground=function()
 {
   if(this.highlight) {
