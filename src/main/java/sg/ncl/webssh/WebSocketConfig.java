@@ -12,6 +12,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
  * References:
  * [1] http://www.sergialmar.com/2014/03/detect-websocket-connects-and-disconnects-in-spring-4/
  * [2] http://www.devglan.com/spring-boot/spring-session-stomp-websocket
+ * [3] https://stackoverflow.com/questions/33977803/origin-header-value-not-allowed-even-though-url-is-allowed
  */
 
 @Configuration
