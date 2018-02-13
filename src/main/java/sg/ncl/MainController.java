@@ -272,11 +272,10 @@ public class MainController {
     protected VncProperties vncProperties;
 
     @Inject
-<<<<<<< HEAD
     protected GpuProperties gpuProperties;
-=======
+
+    @Inject
     protected NetworkToolProperties networkToolProperties;
->>>>>>> Properties settings for python script
 
     @RequestMapping("/")
     public String index() {
@@ -428,7 +427,6 @@ public class MainController {
         return "maintainance";
     }
 
-<<<<<<< HEAD
     @RequestMapping(value = "/networkTool", method = RequestMethod.GET)
     public String networkTopologyTool() {
         return "network_diagram";
@@ -499,13 +497,11 @@ public class MainController {
         return nsfilename;
     }
 
-=======
     @RequestMapping("/network-topology-tool")
     public String experimentNetworkTool() {
         return "network_diagram";
     }
 
->>>>>>> New UI
     @RequestMapping("/testbedInformation")
     public String testbedInformation(Model model) throws IOException {
         model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
