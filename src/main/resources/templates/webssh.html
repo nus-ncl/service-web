@@ -44,7 +44,10 @@
 <script type="text/javascript" src="static/js/xterm.js" th:src="@{~/js/xterm.js}"></script>
 <script th:inline="javascript">
     var stompClient = null;
-    var term = new Terminal();
+    var term = new Terminal({
+        rows: 60,
+        scrollback: 5000
+    });
     var command = "";
 
     function setConnected(connected) {
