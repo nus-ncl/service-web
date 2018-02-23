@@ -43,6 +43,9 @@ public class WebSocketBean {
     @Autowired
     SshProperties sshProperties;
 
+    @Autowired
+    PtyProperties ptyProperties;
+
     public void connect(String user, String pass, String qualified) {
         JSch jSch = new JSch();
         MyUserInfo userInfo = new MyUserInfo();
@@ -56,7 +59,12 @@ public class WebSocketBean {
             session.setConfig(config);
             session.connect();
             channel = session.openChannel("shell");
-            ((ChannelShell) channel).setPtyType("vt220");
+            ((ChannelShell) channel).setPtyType(
+                    ptyProperties.getType(),
+                    ptyProperties.getCols(),
+                    ptyProperties.getRows(),
+                    ptyProperties.getWpix(),
+                    ptyProperties.getHpix());
             channel.connect();
         } catch (JSchException jsche) {
             log.error("jsch connect: {}", jsche);

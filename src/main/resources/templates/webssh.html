@@ -45,6 +45,8 @@
 <script th:inline="javascript">
     var stompClient = null;
     var term = new Terminal({
+        cols: [[${cols}]],
+        rows: [[${rows}]],
         scrollback: 5000
     });
     var command = "";
