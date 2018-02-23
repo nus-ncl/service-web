@@ -60,9 +60,15 @@
         /*<![CDATA[*/
         var username = [[${deterUid}]];
         var qualified = [[${qualified}]];
+
+        /* http mode is https:// */
+        var http_mode = [[${@environment.getProperty('ncl.web.cors.httpMode')}]];
+        var cors_domain = [[${@environment.getProperty('ncl.web.cors.domain')}]];
+        var web_port = [[${@environment.getProperty('server.port')}]];
         /*]]>*/
         var password = $('#password').val();
         var socket = new SockJS('/websocket');
+        socket.url = http_mode + cors_domain + ":" + web_port + "/websocket";
         stompClient = Stomp.over(socket);
         stompClient.debug = null;
         stompClient.connect(
