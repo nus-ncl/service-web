@@ -28,6 +28,7 @@ import sg.ncl.domain.*;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 import sg.ncl.testbed_interface.Image;
+import sg.ncl.webssh.PtyProperties;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -175,6 +176,9 @@ public class MainController {
 
     @Inject
     protected HttpSession httpScopedSession;
+
+    @Inject
+    protected PtyProperties ptyProperties;
 
     @RequestMapping("/")
     public String index() {
@@ -2846,6 +2850,8 @@ public class MainController {
     public String webAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
         getDeterUid(model, session);
         model.addAttribute("qualified", qualifiedName);
+        model.addAttribute("cols", ptyProperties.getCols());
+        model.addAttribute("rows", ptyProperties.getRows());
         return "webssh";
     }
 

@@ -8,10 +8,13 @@ import org.springframework.web.socket.config.annotation.AbstractWebSocketMessage
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
+import javax.inject.Inject;
+
 /**
  * References:
  * [1] http://www.sergialmar.com/2014/03/detect-websocket-connects-and-disconnects-in-spring-4/
  * [2] http://www.devglan.com/spring-boot/spring-session-stomp-websocket
+ * [3] https://stackoverflow.com/questions/33977803/origin-header-value-not-allowed-even-though-url-is-allowed
  */
 
 @Configuration
@@ -22,6 +25,9 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     public SocketChannelInterceptor socketChannelInterceptor() {
         return new SocketChannelInterceptor();
     }
+
+    @Inject
+    private WebSocketProperties webSocketProperties;
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
@@ -36,6 +42,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket").withSockJS();
+        String url = webSocketProperties.getHttpMode() + webSocketProperties.getDomain();
+        registry.addEndpoint("/websocket").setAllowedOrigins(url).withSockJS();
     }
 }

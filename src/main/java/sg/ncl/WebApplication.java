@@ -6,6 +6,8 @@ import org.springframework.boot.system.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import sg.ncl.webssh.SshProperties;
+import sg.ncl.webssh.PtyProperties;
+import sg.ncl.webssh.WebSocketProperties;
 
 @SpringBootApplication
 public class WebApplication {
@@ -33,6 +35,16 @@ public class WebApplication {
     @Bean
     SshProperties sshProperties() {
         return new SshProperties();
+    }
+
+    @Bean
+    PtyProperties ptyProperties() {
+        return new PtyProperties();
+    }
+
+    @Bean
+    WebSocketProperties webSocketProperties() {
+        return new WebSocketProperties();
     }
 
     public static void main(String[] args) {
