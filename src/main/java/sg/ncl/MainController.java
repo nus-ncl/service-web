@@ -29,6 +29,7 @@ import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 import sg.ncl.testbed_interface.Image;
 import sg.ncl.webssh.PtyProperties;
+import sg.ncl.webssh.VncProperties;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -179,6 +180,9 @@ public class MainController {
 
     @Inject
     protected PtyProperties ptyProperties;
+
+    @Inject
+    protected VncProperties vncProperties;
 
     @RequestMapping("/")
     public String index() {
@@ -2135,6 +2139,9 @@ public class MainController {
 
         model.addAttribute("experimentList", statefulExperimentList);
         model.addAttribute("internetRequestForm", new InternetRequestForm());
+        model.addAttribute("http", vncProperties.getHttp());
+        model.addAttribute("host", vncProperties.getHost());
+        model.addAttribute("port", vncProperties.getPort());
 
         return EXPERIMENTS;
     }

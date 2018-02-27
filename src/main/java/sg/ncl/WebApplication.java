@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import sg.ncl.webssh.SshProperties;
 import sg.ncl.webssh.PtyProperties;
+import sg.ncl.webssh.VncProperties;
 import sg.ncl.webssh.WebSocketProperties;
 
 @SpringBootApplication
@@ -30,6 +31,11 @@ public class WebApplication {
     @Bean
     AccountingProperties accountingProperties() {
         return new AccountingProperties();
+    }
+
+    @Bean
+    VncProperties vncProperties() {
+        return new VncProperties();
     }
 
     @Bean
