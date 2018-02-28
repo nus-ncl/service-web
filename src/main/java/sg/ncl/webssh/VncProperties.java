@@ -14,4 +14,5 @@ public class VncProperties {
     private String http;
     private String host;
     private String port;
+    private String salt;
 }
