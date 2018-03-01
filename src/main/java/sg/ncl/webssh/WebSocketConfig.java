@@ -15,6 +15,7 @@ import javax.inject.Inject;
  * [1] http://www.sergialmar.com/2014/03/detect-websocket-connects-and-disconnects-in-spring-4/
  * [2] http://www.devglan.com/spring-boot/spring-session-stomp-websocket
  * [3] https://stackoverflow.com/questions/33977803/origin-header-value-not-allowed-even-though-url-is-allowed
+ * [4] https://stackoverflow.com/questions/27526281/websockets-and-apache-proxy-how-to-configure-mod-proxy-wstunnel
  */
 
 @Configuration

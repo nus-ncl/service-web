@@ -68,7 +68,6 @@
         /*]]>*/
         var password = $('#password').val();
         var socket = new SockJS('/websocket');
-        socket.url = http_mode + cors_domain + ":" + web_port + "/websocket";
         stompClient = Stomp.over(socket);
         stompClient.debug = null;
         stompClient.connect(
