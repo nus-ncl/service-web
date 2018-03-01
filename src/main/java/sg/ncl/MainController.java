@@ -2866,8 +2866,7 @@ public class MainController {
 
     @RequestMapping("/web_vnc/access_node/{qualifiedName:.+}/{portnum}")
     public String vncAccessNode(@PathVariable String qualifiedName, @PathVariable String portnum) throws NoSuchAlgorithmException {
-        String uriTemplate = vncProperties.getHttp() + vncProperties.getHost() + ":" + vncProperties.getPort() + "/vnc.html";
-        UriComponents uriComponents = UriComponentsBuilder.fromUriString(uriTemplate)
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(vncProperties.getHttp())
                 .queryParam("host", vncProperties.getHost())
                 .queryParam("port", vncProperties.getPort())
                 .queryParam("path", qencode(qualifiedName + ":" + portnum))
