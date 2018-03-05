@@ -2865,11 +2865,13 @@ public class MainController {
     }
 
     @RequestMapping("/web_vnc/access_node/{qualifiedName:.+}/{portnum}")
-    public String vncAccessNode(@PathVariable String qualifiedName, @PathVariable String portnum) throws NoSuchAlgorithmException {
+    public String vncAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName, @PathVariable String portnum) throws WebServiceRuntimeException, NoSuchAlgorithmException {
+        getDeterUid(model, session);
+        Map attributes = model.asMap();
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(vncProperties.getHttp())
                 .queryParam("host", vncProperties.getHost())
                 .queryParam("port", vncProperties.getPort())
-                .queryParam("path", qencode(qualifiedName + ":" + portnum))
+                .queryParam("path", qencode(qualifiedName + ":" + portnum, (String) attributes.get(DETER_UID)))
                 .build();
         log.info("VNC URI: {}", uriComponents.toString());
         return "redirect:" + uriComponents.toString();
@@ -2886,7 +2888,7 @@ public class MainController {
         return hexString.toString();
     }
 
-    private String qencode(String str) throws NoSuchAlgorithmException {
+    private String qencode(String str, String deterUid) throws NoSuchAlgorithmException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         Date today = Calendar.getInstance().getTime();
         String tstr = sdf.format(today);
@@ -2897,7 +2899,7 @@ public class MainController {
         digest.update(vncProperties.getSalt().getBytes());
         byte[] encodedhash = digest.digest();
         String hash = bytesToHex(encodedhash);
-        return java.util.Base64.getEncoder().encodeToString((hash + tstr + ":" + str).getBytes());
+        return java.util.Base64.getEncoder().encodeToString((hash + tstr + ":" + str + ":" + deterUid).getBytes());
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {

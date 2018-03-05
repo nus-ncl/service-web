@@ -1335,10 +1335,4 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/logout")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
-
-    @Test
-    public void TestVncAccessNode() throws Exception {
-        mockMvc.perform(get("/web_vnc/access_node/n1.soc.cloud.ncl.sg/5901"))
-                .andExpect(status().isFound());
-    }
 }
