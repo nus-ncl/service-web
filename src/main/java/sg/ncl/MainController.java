@@ -2896,6 +2896,8 @@ public class MainController {
         digest.update(tstr.getBytes());
         digest.update(":".getBytes());
         digest.update(str.getBytes());
+        digest.update(":".getBytes());
+        digest.update(deterUid.getBytes());
         digest.update(vncProperties.getSalt().getBytes());
         byte[] encodedhash = digest.digest();
         String hash = bytesToHex(encodedhash);
