@@ -24,11 +24,14 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 import sg.ncl.domain.*;
 import sg.ncl.exceptions.*;
 import sg.ncl.testbed_interface.*;
 import sg.ncl.testbed_interface.Image;
 import sg.ncl.webssh.PtyProperties;
+import sg.ncl.webssh.VncProperties;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +44,10 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -179,6 +185,9 @@ public class MainController {
 
     @Inject
     protected PtyProperties ptyProperties;
+
+    @Inject
+    protected VncProperties vncProperties;
 
     @RequestMapping("/")
     public String index() {
@@ -2847,12 +2856,52 @@ public class MainController {
     }
 
     @RequestMapping("/web_ssh/access_node/{qualifiedName:.+}")
-    public String webAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
+    public String sshAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
         getDeterUid(model, session);
         model.addAttribute("qualified", qualifiedName);
         model.addAttribute("cols", ptyProperties.getCols());
         model.addAttribute("rows", ptyProperties.getRows());
         return "webssh";
+    }
+
+    @RequestMapping("/web_vnc/access_node/{qualifiedName:.+}/{portnum}")
+    public String vncAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName, @PathVariable String portnum) throws WebServiceRuntimeException, NoSuchAlgorithmException {
+        getDeterUid(model, session);
+        Map attributes = model.asMap();
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(vncProperties.getHttp())
+                .queryParam("host", vncProperties.getHost())
+                .queryParam("port", vncProperties.getPort())
+                .queryParam("path", qencode(qualifiedName + ":" + portnum, (String) attributes.get(DETER_UID)))
+                .build();
+        log.info("VNC URI: {}", uriComponents.toString());
+        return "redirect:" + uriComponents.toString();
+    }
+
+    // Reference: http://www.baeldung.com/sha-256-hashing-java
+    private String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte h : hash) {
+            String hex = Integer.toHexString(0xff & h);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+
+    private String qencode(String str, String deterUid) throws NoSuchAlgorithmException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date today = Calendar.getInstance().getTime();
+        String tstr = sdf.format(today);
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update(tstr.getBytes());
+        digest.update(":".getBytes());
+        digest.update(str.getBytes());
+        digest.update(":".getBytes());
+        digest.update(deterUid.getBytes());
+        digest.update(vncProperties.getSalt().getBytes());
+        byte[] encodedhash = digest.digest();
+        String hash = bytesToHex(encodedhash);
+        return java.util.Base64.getEncoder().encodeToString((hash + tstr + ":" + str + ":" + deterUid).getBytes());
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
