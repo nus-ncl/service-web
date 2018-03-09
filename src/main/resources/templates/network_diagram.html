@@ -30,13 +30,10 @@
         #paintarea:focus {
             outline: none;
         }
-<<<<<<< HEAD
         #ns2_text, #log_text {
             white-space: pre;
             overflow: scroll;
         }
-=======
->>>>>>> Resolve bootstrap and prototype conflict
     </style>
 
     <!-- common, all times required, imports -->
@@ -54,36 +51,6 @@
     <script type="text/javascript" th:src="@{~/topology-tool/adapter/prototype/prototype.js}"></script>
     <script type="text/javascript" th:src="@{~/js/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{~/js/bootstrap.min.js}"></script>
-<<<<<<< HEAD
-=======
-
-    <script type="text/javascript">
-        /*<![CDATA[*/
-        jQuery.noConflict();
-        if (Prototype.BrowserFeatures.ElementExtensions) {
-            var disablePrototypeJS = function (method, pluginsToDisable) {
-                    var handler = function (event) {
-                        event.target[method] = undefined;
-                        setTimeout(function () {
-                            delete event.target[method];
-                        }, 0);
-                    };
-                    pluginsToDisable.each(function (plugin) {
-                        jQuery(window).on(method + '.bs.' + plugin, handler);
-                    });
-                },
-                pluginsToDisable = ['collapse', 'dropdown', 'modal', 'tooltip', 'popover', 'tab'];
-            disablePrototypeJS('show', pluginsToDisable);
-            disablePrototypeJS('hide', pluginsToDisable);
-        }
-        /*]]>*/
-    </script>
-
-    <!-- use this imports if you want use the Yahoo utility methods -->
-    <script type="text/javascript" th:src="@{~/topology-tool/adapter/yui/yui-utilities.js}"></script>
-    <script type="text/javascript" th:src="@{~/topology-tool/adapter/yui/ext-yui-adapter.js}"></script>
-    <script type="text/javascript" th:src="@{~/topology-tool/ext-all.js}"></script>
->>>>>>> Resolve bootstrap and prototype conflict
 
     <!--
     References:
