@@ -48,9 +48,14 @@
     <script type="text/javascript" th:src="@{~/js/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{~/js/bootstrap.min.js}"></script>
 
+    <!--
+    References:
+    [1] http://learn.jquery.com/using-jquery-core/avoid-conflicts-other-libraries/
+    [2] https://www.contrid.co.za/2015/06/fix-bootstrap-3-and-prototype-js-conflict/
+    -->
     <script type="text/javascript">
         /*<![CDATA[*/
-        jQuery.noConflict();
+        var $j = jQuery.noConflict();
         if (Prototype.BrowserFeatures.ElementExtensions) {
             var disablePrototypeJS = function (method, pluginsToDisable) {
                     var handler = function (event) {
@@ -77,59 +82,6 @@
 
     <script type="text/javascript">
         /*<![CDATA[*/
-        function addOnloadHandler(elementObject, functionObject) {
-            if (typeof(appLog) != 'undefined') {
-                //appLog("addOnloadHandler: " + elementObject.id);
-            }
-            if (document.addEventListener) {
-                elementObject.addEventListener('load', function (e) {
-                    functionObject(elementObject);
-                }, false);
-            } else {
-                if (document.attachEvent) {
-                    elementObject.onreadystatechange = function (e) {
-                        var state = elementObject.readyState;
-                        if (state != "loaded" && state != "complete") {
-                            return;
-                        }
-                        functionObject(elementObject);
-                    };
-                } else {
-                    alert("Could not bind the onLoad handler to an element!");
-                }
-            }
-        }
-
-        function removeElement(e) {
-            var aNodeToRemove = e;
-            if (aNodeToRemove.parentNode) {
-                aNodeToRemove.parentNode.removeChild(aNodeToRemove);
-            }
-        }
-
-        function bootstrapGetLoadScriptNode(aURI) {
-            var element;
-            var aID = "script_" + aURI.replace(/[\/\.:-]/g, "_");
-            removeElement(aID);
-            element = document.createElement("script");
-            element.setAttribute('id', aID);
-
-            aURI = aURI + "?_=" + (new Date()).getTime();
-
-            element.setAttribute('src', aURI);
-            element.setAttribute('type', "text/javascript");
-
-            return element;
-        }
-
-        function loadJavaScript(aURI, aCallback) {
-            var element = bootstrapGetLoadScriptNode(aURI);
-            addOnloadHandler(element, function (el) {
-                aCallback(element);
-            });
-            document.getElementsByTagName('head')[0].appendChild(element);
-        }
-
         function createNewDiv(aID) {
             var txt = document.createElement('P');
             var div = document.createElement('span');
@@ -141,30 +93,6 @@
 
         function loadJSONtext(aText) {
             new JSONSerializer().fromJSON(Ext.util.JSON.decode(aText));
-        }
-
-        function loadJSON(aFile) {
-            loadJavaScript(aFile, function (el) {
-                new JSONSerializer().fromJSON(json_diagram);
-            });
-        }
-
-        function addDragIcon(aName, aWhere) {
-            loadJavaScript("/topology-tool/icons/" + aName + ".js", function () {
-                if (document.getElementById("cont_" + aName)) {
-                    return;
-                }
-                var div = document.getElementById(aWhere);
-                var cdiv = createNewDiv("cont_" + aName);
-                var html = '';
-                html = html + aName + "<img src='/topology-tool/icons/" + aName + ".png' id='drag_" + aName + "' style='cursor:move'/><br><br>\n";
-                cdiv.innerHTML = html;
-                div.appendChild(cdiv);
-                var dragsource = new Ext.dd.DragSource('drag_' + aName, {
-                    ddGroup: 'TreeDD',
-                    dragData: {name: aName}
-                });
-            });
         }
 
         function addDragIconPic(aName, aWhere, aPic) {
@@ -197,13 +125,6 @@
             addDragIcon2(aName, "icons_div");
         }
 
-        function addLibraryIconText(aName) {
-            var txt = document.createElement('P');
-            txt.innerHTML = '<a href="javascript:addLibraryIcon(\'' + aName + '\');">' + aName + '</a>';
-            document.getElementById("library_div").appendChild(txt);
-
-        }
-
         function createNewIconDiv(aID) {
             var txt = document.createElement('P');
             var div = document.createElement('span');
@@ -214,6 +135,15 @@
             return div;
         }
 
+        function doSendJSON() {
+            if (!$j.trim($j('#json_text').val())) {
+                alert("Please save topology to json before analysing.");
+            } else {
+                $j.post("/networkTool", { jsonText: $j.trim($j('#json_text').val()) })
+                    .done(function(data) { $j('#ns2_text').val(data) });
+            }
+        }
+
         function doSaveJSON() {
             var txt = Ext.util.JSON.encode(new JSONSerializer().toJSON(workflow.getDocument()));
             txt = txt.replace(/,"/g, ', "');
@@ -222,18 +152,6 @@
 
         function doLoadJSON() {
             loadJSONtext(document.getElementById('json_text').value);
-        }
-
-        function getQueryVariable(variable) {
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split("=");
-                if (pair[0] == variable) {
-                    return unescape(pair[1]);
-                }
-            }
-            return "";
         }
 
         function debug(message) {
@@ -290,7 +208,7 @@
                     <ul class="dropdown-menu">
                         <li><a href="#" onclick="doLoadJSON();"><i class="fa fa-upload"></i> Load</a></li>
                         <li><a href="#" onclick="doSaveJSON();"><i class="fa fa-download"></i> Save</a></li>
-                        <li><a href="#"><i class="fa fa-cloud-upload"></i> Analyze</a></li>
+                        <li><a href="#" onclick="doSendJSON();"><i class="fa fa-cloud-upload"></i> Analyze</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -361,11 +279,11 @@
             <div class="btn-group" role="group" aria-label="...">
                 <button type="button" class="btn btn-default" onclick="doLoadJSON();">Load</button>
                 <button type="button" class="btn btn-default" onclick="doSaveJSON();">Save</button>
-                <button type="button" class="btn btn-default">Analyze</button>
+                <button type="button" class="btn btn-default" onclick="doSendJSON();">Analyze</button>
             </div>
             <hr size="1" noshade="noshade"/>
-            <h2>Message</h2>
-            <textarea id='message_text' rows="10" cols="80" style="width: 90%"></textarea>
+            <h2>NS2</h2>
+            <textarea id='ns2_text' rows="10" cols="80" style="width: 90%"></textarea>
         </div>
     </div>
 </div>
