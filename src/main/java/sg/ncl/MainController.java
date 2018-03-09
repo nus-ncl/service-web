@@ -497,11 +497,6 @@ public class MainController {
         return nsfilename;
     }
 
-    @RequestMapping("/network-topology-tool")
-    public String experimentNetworkTool() {
-        return "network_diagram";
-    }
-
     @RequestMapping("/testbedInformation")
     public String testbedInformation(Model model) throws IOException {
         model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
