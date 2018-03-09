@@ -334,9 +334,14 @@ public class MainController {
         return "maintainance";
     }
 
-    @RequestMapping("/network-topology-tool")
-    public String experimentNetworkTool() {
+    @RequestMapping(value = "/networkTool", method = RequestMethod.GET)
+    public String networkTopologyTool() {
         return "network_diagram";
+    }
+
+    @RequestMapping(value = "/networkTool", method = RequestMethod.POST)
+    public @ResponseBody String networkTopologyAnalysis(@RequestParam("jsonText") String jsonText) {
+        return jsonText;
     }
 
     @RequestMapping("/testbedInformation")
