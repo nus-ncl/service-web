@@ -427,6 +427,7 @@ public class MainController {
 
     @RequestMapping(value = "/networkTool", method = RequestMethod.POST)
     public @ResponseBody String networkTopologyAnalysis(@RequestParam("jsonText") String jsonText) {
+<<<<<<< HEAD
         JSONObject jsonObject = new JSONObject();
         StringBuilder logBuilder = new StringBuilder();
         String filename = System.currentTimeMillis() + ".json";
@@ -452,6 +453,9 @@ public class MainController {
         jsonObject.put("nsText", jsonText);
         jsonObject.put("logText", logBuilder.toString());
         return jsonObject.toString();
+=======
+        return jsonText;
+>>>>>>> Add function to send network diagram json text
     }
 
     @RequestMapping("/testbedInformation")
