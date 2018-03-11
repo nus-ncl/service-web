@@ -2870,7 +2870,6 @@ public class MainController {
         Map attributes = model.asMap();
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(vncProperties.getHttp())
                 .queryParam("host", vncProperties.getHost())
-                .queryParam("port", vncProperties.getPort())
                 .queryParam("path", qencode(qualifiedName + ":" + portnum, (String) attributes.get(DETER_UID)))
                 .build();
         log.info("VNC URI: {}", uriComponents.toString());
