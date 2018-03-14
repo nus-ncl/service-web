@@ -49,7 +49,6 @@
         rows: [[${rows}]],
         scrollback: 5000
     });
-    var command = "";
 
     function setConnected(connected) {
         $('#connect').prop("disabled", connected);
@@ -121,14 +120,6 @@
         term.textarea.onkeydown = function (e) {
             if ($('#connect').prop("disabled")) {
                 sendKey(e.ctrlKey, e.key, e.keyCode);
-                if (e.keyCode === 13) {
-                    if (command === "exit" || command === "logout") {
-                        disconnect();
-                    }
-                    command = "";
-                } else {
-                    command += e.key;
-                }
             }
         };
     });
