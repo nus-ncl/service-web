@@ -30,6 +30,10 @@
         #paintarea:focus {
             outline: none;
         }
+        #ns2_text, #log_text {
+            white-space: pre;
+            overflow: scroll;
+        }
     </style>
 
     <!-- common, all times required, imports -->
@@ -136,11 +140,17 @@
         }
 
         function doSendJSON() {
-            if (!$j.trim($j('#json_text').val())) {
+            var str = $j.trim($j('#json_text').val());
+            if (!str) {
                 alert("Please save topology to json before analysing.");
             } else {
-                $j.post("/networkTool", { jsonText: $j.trim($j('#json_text').val()) })
-                    .done(function(data) { $j('#ns2_text').val(data) });
+                $j.post("/networkTool", { jsonText: str.replace("json_diagram = ", "") })
+                    .done(function(data) {
+                        var jsonData = $j.parseJSON(data);
+                        $j('#ns2_text').val(jsonData.nsText);
+                        $j('#log_text').val(jsonData.logText.replace(/&#010;/g, "\n"));
+                    })
+                    .fail(function(error) { debug(error); });
             }
         }
 
@@ -283,7 +293,10 @@
             </div>
             <hr size="1" noshade="noshade"/>
             <h2>NS2</h2>
-            <textarea id='ns2_text' rows="10" cols="80" style="width: 90%"></textarea>
+            <textarea id='ns2_text' rows="10" cols="80" style="width: 90%" readonly="readonly"></textarea>
+            <hr size="1" noshade="noshade"/>
+            <h2>Log</h2>
+            <textarea id='log_text' rows="10" cols="80" style="width: 90%" readonly="readonly"></textarea>
         </div>
     </div>
 </div>
