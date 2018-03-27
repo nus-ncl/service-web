@@ -39,9 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -341,7 +339,31 @@ public class MainController {
 
     @RequestMapping(value = "/networkTool", method = RequestMethod.POST)
     public @ResponseBody String networkTopologyAnalysis(@RequestParam("jsonText") String jsonText) {
-        return jsonText;
+        JSONObject jsonObject = new JSONObject();
+        StringBuilder logBuilder = new StringBuilder();
+        String filename = System.currentTimeMillis() + ".json";
+        try (FileWriter fw = new FileWriter("D:/" + filename)) {
+            fw.write(jsonText);
+            fw.close();
+            log.debug("D:/" + filename + " written");
+            ProcessBuilder pb = new ProcessBuilder("py", "-2.7", "D:/GitHub/virtualnetwork/netdef.py");
+            Process p = pb.start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            for (String line = br.readLine(); line != null; line = br.readLine()) {
+                log.info(line);
+                logBuilder.append(line).append("&#010;");
+            }
+        } catch (IOException ioe) {
+            log.error(ioe.toString());
+        } finally {
+            File file = new File("D:/" + filename);
+            if (file.delete()) {
+                log.debug("D:/" + filename + " deleted");
+            }
+        }
+        jsonObject.put("nsText", jsonText);
+        jsonObject.put("logText", logBuilder.toString());
+        return jsonObject.toString();
     }
 
     @RequestMapping("/testbedInformation")
