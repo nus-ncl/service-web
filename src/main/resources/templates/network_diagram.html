@@ -144,10 +144,12 @@
             if (!str) {
                 alert("Please save topology to json before analysing.");
             } else {
+                $j('#ns2_text').val("");
+                $j('#log_text').val("");
                 $j.post("/networkTool", { jsonText: str.replace("json_diagram = ", "") })
                     .done(function(data) {
                         var jsonData = $j.parseJSON(data);
-                        $j('#ns2_text').val(jsonData.nsText);
+                        $j('#ns2_text').val(jsonData.nsText.replace(/&#010;/g, "\n"));
                         $j('#log_text').val(jsonData.logText.replace(/&#010;/g, "\n"));
                     })
                     .fail(function(error) { debug(error); });
