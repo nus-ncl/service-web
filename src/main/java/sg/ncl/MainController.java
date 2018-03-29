@@ -451,18 +451,8 @@ public class MainController {
                     networkToolProperties.getProgram(),
                     networkToolProperties.getOption(),
                     filename);
-            Process p = pb.start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            for (String line = br.readLine(); line != null; line = br.readLine()) {
-                if (line.contains("Produce NSfile")) {
-                    Pattern pattern = Pattern.compile("\\[([^]]+)\\]");
-                    Matcher matcher = pattern.matcher(line);
-                    if (matcher.find()) {
-                        nsfilename = matcher.group(1) + "/NSfile.txt";
-                    }
-                }
-                logBuilder.append(line).append("&#010;");
-            }
+            final Process p = pb.start();
+            nsfilename = generateNSfile(p.getInputStream(), logBuilder);
         } catch (IOException ioe) {
             log.error(ioe.toString());
         }
@@ -487,6 +477,22 @@ public class MainController {
         jsonObject.put("nsText", nsBuilder.toString());
         jsonObject.put("logText", logBuilder.toString());
         return jsonObject.toString();
+    }
+
+    private String generateNSfile(InputStream inputStream, StringBuilder logBuilder) throws IOException {
+        String nsfilename = null;
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        for (String line = br.readLine(); line != null; line = br.readLine()) {
+            if (line.contains("Produce NSfile")) {
+                Pattern pattern = Pattern.compile("\\[([^]]+)\\]");
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.find()) {
+                    nsfilename = matcher.group(1) + "/NSfile.txt";
+                }
+            }
+            logBuilder.append(line).append("&#010;");
+        }
+        return nsfilename;
     }
 
     @RequestMapping("/testbedInformation")
