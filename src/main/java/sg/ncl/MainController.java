@@ -51,6 +51,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
@@ -339,29 +340,46 @@ public class MainController {
 
     @RequestMapping(value = "/networkTool", method = RequestMethod.POST)
     public @ResponseBody String networkTopologyAnalysis(@RequestParam("jsonText") String jsonText) {
+        String nsfilename = null;
         JSONObject jsonObject = new JSONObject();
         StringBuilder logBuilder = new StringBuilder();
-        String filename = System.currentTimeMillis() + ".json";
-        try (FileWriter fw = new FileWriter("D:/" + filename)) {
+        String filename = "D:/" + System.currentTimeMillis() + ".json";
+        try (FileWriter fw = new FileWriter(filename)) {
             fw.write(jsonText);
             fw.close();
-            log.debug("D:/" + filename + " written");
-            ProcessBuilder pb = new ProcessBuilder("py", "-2.7", "D:/GitHub/virtualnetwork/netdef.py");
+            log.debug(filename + " written");
+            ProcessBuilder pb = new ProcessBuilder("py", "-2.7", "D:/GitHub/virtualnetwork/netdef.py", "ns", filename);
             Process p = pb.start();
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             for (String line = br.readLine(); line != null; line = br.readLine()) {
-                log.info(line);
+                if (line.contains("Produce NSfile")) {
+                    Pattern pattern = Pattern.compile("\\[([^]]+)\\]");
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        nsfilename = matcher.group(1) + "/NSfile.txt";
+                    }
+                }
                 logBuilder.append(line).append("&#010;");
             }
         } catch (IOException ioe) {
             log.error(ioe.toString());
         } finally {
-            File file = new File("D:/" + filename);
+            File file = new File(filename);
             if (file.delete()) {
-                log.debug("D:/" + filename + " deleted");
+                log.debug(filename + " deleted");
             }
         }
-        jsonObject.put("nsText", jsonText);
+        StringBuilder nsBuilder = new StringBuilder();
+        if (nsfilename != null) {
+            try (BufferedReader br = new BufferedReader(new FileReader(nsfilename))) {
+                for (String line = br.readLine(); line != null; line = br.readLine()) {
+                    nsBuilder.append(line).append("&#010;");
+                }
+            } catch (IOException ioe) {
+                log.error(ioe.toString());
+            }
+        }
+        jsonObject.put("nsText", nsBuilder.toString());
         jsonObject.put("logText", logBuilder.toString());
         return jsonObject.toString();
     }
