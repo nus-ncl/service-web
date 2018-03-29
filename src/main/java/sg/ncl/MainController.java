@@ -434,18 +434,21 @@ public class MainController {
         return jsonObject.toString();
     }
 
-    private String generateNSfile(InputStream inputStream, StringBuilder logBuilder) throws IOException {
+    private String generateNSfile(InputStream inputStream, StringBuilder logBuilder) {
         String nsfilename = null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        for (String line = br.readLine(); line != null; line = br.readLine()) {
-            if (line.contains("Produce NSfile")) {
-                Pattern pattern = Pattern.compile("\\[([^]]+)\\]");
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find()) {
-                    nsfilename = matcher.group(1) + "/NSfile.txt";
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            for (String line = br.readLine(); line != null; line = br.readLine()) {
+                if (line.contains("Produce NSfile")) {
+                    Pattern pattern = Pattern.compile("\\[([^]]+)\\]");
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        nsfilename = matcher.group(1) + "/NSfile.txt";
+                    }
                 }
+                logBuilder.append(line).append("&#010;");
             }
-            logBuilder.append(line).append("&#010;");
+        } catch (IOException ioe) {
+            log.error(ioe.toString());
         }
         return nsfilename;
     }
