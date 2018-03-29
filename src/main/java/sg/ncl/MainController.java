@@ -376,14 +376,13 @@ public class MainController {
             }
         } catch (IOException ioe) {
             log.error(ioe.toString());
-        } finally {
-            Path filePath = Paths.get(filename);
-            if (Files.exists(filePath)) {
-                try {
-                    Files.delete(filePath);
-                } catch (IOException ioe) {
-                    log.error(ioe.toString());
-                }
+        }
+        Path filePath = Paths.get(filename);
+        if (filePath.toFile().exists()) {
+            try {
+                Files.delete(filePath);
+            } catch (IOException ioe) {
+                log.error(ioe.toString());
             }
         }
         StringBuilder nsBuilder = new StringBuilder();
