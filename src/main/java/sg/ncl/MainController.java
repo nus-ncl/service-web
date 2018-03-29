@@ -43,6 +43,9 @@ import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -438,8 +441,10 @@ public class MainController {
         String filename = networkToolProperties.getTemp() + System.currentTimeMillis() + ".json";
         try (FileWriter fw = new FileWriter(filename)) {
             fw.write(jsonText);
-            fw.close();
-            log.debug(filename + " written");
+        } catch (IOException ioe) {
+            log.error(ioe.toString());
+        }
+        try {
             ProcessBuilder pb = new ProcessBuilder(
                     networkToolProperties.getCommand(),
                     networkToolProperties.getVersion(),
@@ -461,9 +466,13 @@ public class MainController {
         } catch (IOException ioe) {
             log.error(ioe.toString());
         } finally {
-            File file = new File(filename);
-            if (file.delete()) {
-                log.debug(filename + " deleted");
+            Path filePath = Paths.get(filename);
+            if (Files.exists(filePath)) {
+                try {
+                    Files.delete(filePath);
+                } catch (IOException ioe) {
+                    log.error(ioe.toString());
+                }
             }
         }
         StringBuilder nsBuilder = new StringBuilder();
