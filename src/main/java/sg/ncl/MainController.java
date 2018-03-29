@@ -274,6 +274,7 @@ public class MainController {
     @Inject
     protected GpuProperties gpuProperties;
 
+    @Inject
     protected NetworkToolProperties networkToolProperties;
 
     @RequestMapping("/")
