@@ -269,7 +269,11 @@ public class MainController {
     protected VncProperties vncProperties;
 
     @Inject
+<<<<<<< HEAD
     protected GpuProperties gpuProperties;
+=======
+    protected NetworkToolProperties networkToolProperties;
+>>>>>>> Properties settings for python script
 
     @RequestMapping("/")
     public String index() {
@@ -431,12 +435,17 @@ public class MainController {
         String nsfilename = null;
         JSONObject jsonObject = new JSONObject();
         StringBuilder logBuilder = new StringBuilder();
-        String filename = "D:/" + System.currentTimeMillis() + ".json";
+        String filename = networkToolProperties.getTemp() + System.currentTimeMillis() + ".json";
         try (FileWriter fw = new FileWriter(filename)) {
             fw.write(jsonText);
             fw.close();
             log.debug(filename + " written");
-            ProcessBuilder pb = new ProcessBuilder("py", "-2.7", "D:/GitHub/virtualnetwork/netdef.py", "ns", filename);
+            ProcessBuilder pb = new ProcessBuilder(
+                    networkToolProperties.getCommand(),
+                    networkToolProperties.getVersion(),
+                    networkToolProperties.getProgram(),
+                    networkToolProperties.getOption(),
+                    filename);
             Process p = pb.start();
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             for (String line = br.readLine(); line != null; line = br.readLine()) {

@@ -58,6 +58,11 @@ public class WebApplication {
         return new GpuProperties();
     }
 
+    @Bean
+    NetworkToolProperties networkToolProperties() {
+        return new NetworkToolProperties();
+    }
+
     public static void main(String[] args) {
         final SpringApplication application = new SpringApplication(WebApplication.class);
         application.addListeners(new ApplicationPidFileWriter());
