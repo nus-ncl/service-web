@@ -3344,6 +3344,19 @@ public class MainController {
     @RequestMapping("/admin/nodesReservation")
     public String adminNodesReservation(Model model, HttpSession session) {
 
+        TeamManager2 teamManager2 = new TeamManager2();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+        }
+
+        model.addAttribute("allTeams", teamManager2.getTeamMap());
         return "node_reservation";
     }
 
