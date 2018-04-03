@@ -3341,6 +3341,12 @@ public class MainController {
         return "energy_usage";
     }
 
+    @RequestMapping("/admin/nodesReservation")
+    public String adminNodesReservation(Model model, HttpSession session) {
+
+        return "node_reservation";
+    }
+
     @RequestMapping("/admin/nodesStatus")
     public String adminNodesStatus(Model model, HttpSession session) throws IOException {
 
