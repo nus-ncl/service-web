@@ -429,4 +429,11 @@ public class ConnectionProperties {
         }
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + params.toString();
     }
+
+    //-------------------------------------
+    // RESERVATION
+    //-------------------------------------
+    public String getReservationStatus(String teamId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations";
+    }
 }

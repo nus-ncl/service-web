@@ -3360,6 +3360,21 @@ public class MainController {
         return "node_reservation";
     }
 
+    @PostMapping("/admin/nodesReservation/{teamId}")
+    public String getAdminNodesReservation(@PathVariable String teamId, Model model, HttpSession session) {
+        // call sio
+        try {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity response = restTemplate.exchange((properties.getReservationStatus(teamId)), HttpMethod.GET, request, String.class);
+            JSONObject object = new JSONObject(response.getBody().toString());
+            log.info("Reservation: {}", response.getBody().toString());
+        } catch (RestClientException e) {
+            log.warn("error");
+        }
+
+        return "node_reservation";
+    }
+
     @RequestMapping("/admin/nodesStatus")
     public String adminNodesStatus(Model model, HttpSession session) throws IOException {
 
