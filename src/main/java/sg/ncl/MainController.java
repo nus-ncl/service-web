@@ -3357,22 +3357,44 @@ public class MainController {
         }
 
         model.addAttribute("allTeams", teamManager2.getTeamMap());
+        model.addAttribute("reservationStatusForm", new ReservationStatusForm());
         return "node_reservation";
     }
 
-    @PostMapping("/admin/nodesReservation/{teamId}")
-    public String getAdminNodesReservation(@PathVariable String teamId, Model model, HttpSession session) {
+    @PostMapping("/admin/nodesReservation")
+    public String getAdminNodesReservation(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) throws IOException {
+        log.info("Reservation called on team: {}", reservationStatusForm.getTeamId());
         // call sio
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
-            ResponseEntity response = restTemplate.exchange((properties.getReservationStatus(teamId)), HttpMethod.GET, request, String.class);
-            JSONObject object = new JSONObject(response.getBody().toString());
+            ResponseEntity response = restTemplate.exchange((properties.getReservationStatus(reservationStatusForm.getTeamId())), HttpMethod.GET, request, String.class);
             log.info("Reservation: {}", response.getBody().toString());
+
+            JSONObject reservation = new JSONObject(response.getBody().toString()).getJSONObject("reservation");
+            Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("all")));
+            Set<String> reloadSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("reload")));
+            Set<String> inUseSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("in_use")));
+
+            redirectAttributes.addFlashAttribute("reservedSet", reservedSet);
+            redirectAttributes.addFlashAttribute("reloadSet", reloadSet);
+            redirectAttributes.addFlashAttribute("inUseSet", inUseSet);
+
+            log.info("Reserved set: {}", reservedSet);
+            log.info("Reload set: {}", reloadSet);
+            log.info("In use set: {}", inUseSet);
         } catch (RestClientException e) {
             log.warn("error");
         }
 
-        return "node_reservation";
+        return "redirect:/admin/nodesReservation";
+    }
+
+    private List<String> convertJSONArrayToList(JSONArray jsonArray) {
+        List<String> resultList = new ArrayList<String>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            resultList.add(jsonArray.getString(i));
+        }
+        return resultList;
     }
 
     @RequestMapping("/admin/nodesStatus")

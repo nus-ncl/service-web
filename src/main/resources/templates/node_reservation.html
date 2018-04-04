@@ -14,14 +14,13 @@
     <div class="container">
         <h2 class="team-heading team-heading-current-team">Nodes Reservation</h2>
         <p>&nbsp;</p>
-        <form class="form-horizontal" method="get" action="#" th:action="@{/admin/reservation}" role="form">
+        <form class="form-horizontal" method="post" th:object="${reservationStatusForm}" th:action="@{/admin/nodesReservation}" role="form">
             <fieldset>
                 <div class="form-group">
                     <label for="team" class="col-sm-3 control-label">Team :</label>
                     <div class="col-sm-7">
-                        <select id="team" th:name="team">
-                            <option th:each="teamEntry : ${allTeams}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}"
-                                    th:selected="${team == teamEntry.value.id}"></option>
+                        <select id="team" th:field="*{teamId}">
+                            <option th:each="teamEntry : ${allTeams}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}"></option>
                         </select>
                     </div>
                 </div>
@@ -32,6 +31,26 @@
                 </div>
             </fieldset>
         </form>
+        <div>
+            <th:block th:if="${reservedSet != null and !reservedSet.isEmpty()}">
+                <table class="table table-responsive table-striped">
+                    <thead>
+                    <th>Node ID</th>
+                    <th>Status</th>
+                    </thead>
+                    <th:block th:each="nodeId : ${reservedSet}">
+                        <tr>
+                            <td th:text="${nodeId}"></td>
+                            <td>
+                                <span th:if="${reloadSet.contains(nodeId)}" th:text="'reloading'"></span>
+                                <span th:if="${inUseSet.contains(nodeId)}" th:text="'in-use'"></span>
+                                <span th:if="not ${reloadSet.contains(nodeId) and inUseSet.contains(nodeId)}" th:text="'free'"></span>
+                            </td>
+                        </tr>
+                    </th:block>
+                </table>
+            </th:block>
+        </div>
         <div class="cc-wraper">
             <div class="cc-contactpop fixed">
                 <h1>Do you need  Help? Get in touch. </h1>
