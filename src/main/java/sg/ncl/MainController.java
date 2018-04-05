@@ -3341,8 +3341,12 @@ public class MainController {
         return "energy_usage";
     }
 
-    @RequestMapping("/admin/nodesReservation")
-    public String adminNodesReservation(Model model, HttpSession session) {
+    /**
+     *
+     * @param teamId e.g. F12345-G12345-E12345
+     */
+    @GetMapping("/admin/nodesReservation")
+    public String adminNodesReservation(@RequestParam(value = "teamId", required = false) String teamId, Model model, HttpSession session) {
 
         TeamManager2 teamManager2 = new TeamManager2();
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -3356,8 +3360,32 @@ public class MainController {
             teamManager2.addTeamToTeamMap(one);
         }
 
+        if (teamId != null) {
+            log.info("Reservation called on team: {}");
+            // call sio
+            try {
+                ResponseEntity response = restTemplate.exchange((properties.getReservationStatus(teamId)), HttpMethod.GET, request, String.class);
+                log.info("Reservation: {}", response.getBody().toString());
+
+                JSONObject reservation = new JSONObject(response.getBody().toString()).getJSONObject("reservation");
+                Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("all")));
+                Set<String> reloadSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("reload")));
+                Set<String> inUseSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("in_use")));
+
+                model.addAttribute("reservedSet", reservedSet);
+                model.addAttribute("reloadSet", reloadSet);
+                model.addAttribute("inUseSet", inUseSet);
+
+                log.info("Reserved set: {}", reservedSet);
+                log.info("Reload set: {}", reloadSet);
+                log.info("In use set: {}", inUseSet);
+            } catch (RestClientException e) {
+                log.warn("error");
+            }
+        }
+
         model.addAttribute("allTeams", teamManager2.getTeamMap());
-        model.addAttribute("reservationStatusForm", new ReservationStatusForm());
+        model.addAttribute("teamId", teamId);
         return "node_reservation";
     }
 

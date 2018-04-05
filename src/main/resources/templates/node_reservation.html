@@ -14,13 +14,13 @@
     <div class="container">
         <h2 class="team-heading team-heading-current-team">Nodes Reservation</h2>
         <p>&nbsp;</p>
-        <form class="form-horizontal" method="post" th:object="${reservationStatusForm}" th:action="@{/admin/nodesReservation}" role="form">
+        <form class="form-horizontal" method="get" th:action="@{/admin/nodesReservation}" role="form">
             <fieldset>
                 <div class="form-group">
                     <label for="team" class="col-sm-3 control-label">Team :</label>
                     <div class="col-sm-7">
-                        <select id="team" th:field="*{teamId}">
-                            <option th:each="teamEntry : ${allTeams}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}"></option>
+                        <select id="team" th:name="teamId">
+                            <option th:each="teamEntry : ${allTeams}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}" th:selected="${teamId == teamEntry.value.id}"></option>
                         </select>
                     </div>
                 </div>
@@ -32,6 +32,7 @@
             </fieldset>
         </form>
         <div>
+            <h3><span id="reservedTeamName">Team</span>: Reserved Nodes</h3>
             <th:block th:if="${reservedSet != null and !reservedSet.isEmpty()}">
                 <table class="table table-responsive table-striped">
                     <thead>
