@@ -315,18 +315,17 @@
 
             // for the reloading portion
             // cookie must be more than reload interval to keep the state
-//            setInterval(function() {
-//                console.log("experiment table refresh..." + table);
-//                $('#experimentPanel').load(document.URL +  ' #experimentPanel ' , function() {
-//                    $('#experimentTable').dataTable({
-//                        "columnDefs": [
-//                            { "orderable": false, "targets": [4, 5, 6]}
-//                        ],
-//                        "iCookieDuration": 31,
-//                        "bStateSave": true
-//                    });
-//                });
-//            }, 30000);
+            setInterval(function() {
+                $('#experimentPanel').load(document.URL +  ' #experimentPanel ' , function() {
+                    $('#experimentTable').dataTable({
+                        "columnDefs": [
+                            { "orderable": false, "targets": [4, 5, 6]}
+                        ],
+                        "iCookieDuration": 11,
+                        "bStateSave": true
+                    });
+                });
+            }, 10000);
         });
 
         function closeStartModal() {
