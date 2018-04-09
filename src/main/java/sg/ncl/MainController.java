@@ -826,7 +826,7 @@ public class MainController {
                 teamFields.put("website", signUpMergedForm.getTeamWebsite().trim());
                 teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
                 teamFields.put("visibility", signUpMergedForm.getIsPublic());
-                teamFields.put("class", signUpMergedForm.getIsClass());
+                teamFields.put("isClass", signUpMergedForm.getIsClass());
                 mainObject.put("isJoinTeam", false);
 
                 try {
