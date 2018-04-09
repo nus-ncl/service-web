@@ -1077,6 +1077,23 @@ function setAutoShutdownCheckbox() {
     }
 }
 
+// Small quality-of-life enhancement
+if ($('#activityLog').length > 0) {
+    setInterval(function() {
+        var log = $('#activityLog > pre')[0];
+        var max = log.scrollHeight - log.clientHeight;
+        var current = log.scrollTop;
 
+        $('#activityLog').load(document.URL +  ' #activityLog *', function() {
+            var new_log = $('#activityLog > pre')[0];
+            var new_max = new_log.scrollHeight - new_log.clientHeight;
 
+            if (current == max) {
+                new_log.scrollTop = new_max;
+            } else {
+                new_log.scrollTop = current;
+            }
+        });
+    }, 3000);
+}
 
