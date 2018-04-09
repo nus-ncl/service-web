@@ -10,7 +10,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <p>&nbsp;</p>
         <p>&nbsp;</p>
-        <div class="container ">
+        <div class="container">
             <div class="row dashpanel">
                 <h2 class="team-heading team-heading-current-team" th:text="#{exp.header}">Experiments</h2>
                 <div th:if="${message}">
@@ -29,7 +29,7 @@
                     <p th:text="#{exp.noExpRunning}">You do not have any experiments running yet.</p>
                 </div>
                 <!-- user has some experiments -->
-                <div class="team-panel team-panel-current-team">
+                <div class="team-panel team-panel-current-team" id="experimentPanel">
                     <div class="panel-body" th:if="not ${#lists.isEmpty(experimentList)}">
                         <table id="experimentTable" class="table table-responsive">
                             <thead>
@@ -106,9 +106,12 @@
                                                                         <td th:text="${nodesDetailsMap.key}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.os}"></td>
                                                                         <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
-                                                                        <td><a th:href="@{/web_ssh/access_node/{qualifiedName}(qualifiedName = ${nodesDetailsMap.value.qualifiedName})}" data-toggle="tooltip" data-placement="bottom" title="SSH into this node"><button type="button" class="btn btn-standard"><i class="fa fa-terminal btn-fa-green"></i></button></a>&nbsp;
-                                                                            <a th:href="@{/web_vnc/access_node/{qualifiedName}/5901(qualifiedName = ${nodesDetailsMap.value.qualifiedName})}" data-toggle="tooltip" data-placement="bottom" title="VNC into this node"><button type="button" class="btn btn-standard"><i class="fa fa-desktop btn-fa-green"></i></button></a>&nbsp;
-                                                                            <a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${expEntry.id}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
+                                                                        <td>
+                                                                            <a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId=${expEntry.teamId}, expId=${expEntry.id}, nodeId=${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a>
+                                                                            <a th:href="@{/web_ssh/access_node/{qualifiedName}(qualifiedName=${nodesDetailsMap.value.qualifiedName})}" data-toggle="tooltip" data-placement="bottom" title="SSH into this node" target="_blank"><button type="button" class="btn btn-standard"><i class="fa fa-terminal btn-fa-green"></i></button></a>&nbsp;
+                                                                            <a th:href="@{/web_vnc/access_node/{teamId}/{expId}/{nodeId}(teamId=${expEntry.teamId}, expId=${expEntry.id}, nodeId=${nodesDetailsMap.value.nodeId}, portNum=5901)}" data-toggle="tooltip" data-placement="bottom" title="VNC into this node" target="_blank" th:id="${nodesDetailsMap.value.qualifiedName}"><button type="button" class="btn btn-standard"><i class="fa fa-desktop btn-fa-green"></i></button></a>&nbsp;
+                                                                            <input th:type="number" th:value="5901" th:min="5901" th:max="5999" data-toggle="tooltip" data-placement="bottom" title="You can specify the VNC port to connect to (5901-5999)" th:onblur="'checkRange(this, \'' + ${nodesDetailsMap.value.qualifiedName} + '\');'"/>
+                                                                        </td>
                                                                     </tr>
                                                                 </th:block>
                                                             </table>
@@ -301,14 +304,32 @@
     <script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
     <script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
     <script>
+        //<![CDATA[
         $(document).ready(function () {
             //----------------- sort table -------------
             // disable sorting for last three columns; visualization, realization, actions
             $('#experimentTable').dataTable({
                 "columnDefs": [
-                    { "orderable": false, "targets": [4, 5, 6]},
-                ]
+                    { "orderable": false, "targets": [4, 5, 6]}
+                ],
+                // refresh the cookie on page load
+                "iCookieDuration": 1,
+                "bStateSave": true
             });
+
+            // for the reloading portion
+            // cookie must be more than reload interval to keep the state
+            setInterval(function() {
+                $('#experimentPanel').load(document.URL +  ' #experimentPanel ' , function() {
+                    $('#experimentTable').dataTable({
+                        "columnDefs": [
+                            { "orderable": false, "targets": [4, 5, 6]}
+                        ],
+                        "iCookieDuration": 31,
+                        "bStateSave": true
+                    });
+                });
+            }, 30000);
         });
 
         function closeStartModal() {
@@ -330,5 +351,18 @@
             $('#internetRequest').modal('hide');
             return true;
         }
+
+        function checkRange(portText, qualifiedName) {
+            var v = portText.value;
+            if (isNaN(v) || v < 5901 || v > 5999) {
+                portText.value = 5901;
+            }
+            var h = document.getElementById(qualifiedName).href;
+            var i = h.indexOf("?portNum=") + 9;
+            var s = h.substr(i);
+            var r = h.replace(s, portText.value);
+            document.getElementById(qualifiedName).href = r;
+        }
+        //]]>
     </script>
 </html>

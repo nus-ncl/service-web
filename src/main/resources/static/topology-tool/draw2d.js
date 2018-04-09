@@ -1638,6 +1638,15 @@ this.url=url;
 Node.call(this);
 this.setDimension(40,40);
 };
+ImageFigure=function(url, w, h){
+this.url=url;
+Node.call(this);
+if(w == undefined || h == undefined){
+	w = 40;
+	h = 40;
+}
+this.setDimension(w,h);
+};
 ImageFigure.prototype=new Node;
 ImageFigure.prototype.type="Image";
 ImageFigure.prototype.createHTMLElement=function(){
