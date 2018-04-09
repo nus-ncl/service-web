@@ -39,11 +39,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -53,6 +54,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
@@ -188,6 +190,9 @@ public class MainController {
 
     @Inject
     protected VncProperties vncProperties;
+
+    @Inject
+    protected NetworkToolProperties networkToolProperties;
 
     @RequestMapping("/")
     public String index() {
@@ -332,6 +337,76 @@ public class MainController {
     @RequestMapping("/maintainance")
     public String maintainance() {
         return "maintainance";
+    }
+
+    @RequestMapping(value = "/networkTool", method = RequestMethod.GET)
+    public String networkTopologyTool() {
+        return "network_diagram";
+    }
+
+    @RequestMapping(value = "/networkTool", method = RequestMethod.POST)
+    public @ResponseBody String networkTopologyAnalysis(@RequestParam("jsonText") String jsonText) {
+        String nsfilename = null;
+        JSONObject jsonObject = new JSONObject();
+        StringBuilder logBuilder = new StringBuilder();
+        String filename = networkToolProperties.getTemp() + System.currentTimeMillis() + ".json";
+        try (FileWriter fw = new FileWriter(filename)) {
+            fw.write(jsonText);
+        } catch (IOException ioe) {
+            log.error(ioe.toString());
+        }
+        try {
+            ProcessBuilder pb = new ProcessBuilder(
+                    networkToolProperties.getCommand(),
+                    networkToolProperties.getVersion(),
+                    networkToolProperties.getProgram(),
+                    networkToolProperties.getOption(),
+                    filename);
+            final Process p = pb.start();
+            nsfilename = generateNSfile(p.getInputStream(), logBuilder);
+        } catch (IOException ioe) {
+            log.error(ioe.toString());
+        }
+        Path filePath = Paths.get(filename);
+        if (filePath.toFile().exists()) {
+            try {
+                Files.delete(filePath);
+            } catch (IOException ioe) {
+                log.error(ioe.toString());
+            }
+        }
+        StringBuilder nsBuilder = new StringBuilder();
+        if (nsfilename != null) {
+            try (BufferedReader br = new BufferedReader(new FileReader(nsfilename))) {
+                for (String line = br.readLine(); line != null; line = br.readLine()) {
+                    nsBuilder.append(line).append("&#010;");
+                }
+            } catch (IOException ioe) {
+                log.error(ioe.toString());
+            }
+        }
+        jsonObject.put("nsText", nsBuilder.toString());
+        jsonObject.put("logText", logBuilder.toString());
+        return jsonObject.toString();
+    }
+
+    private String generateNSfile(InputStream inputStream, StringBuilder logBuilder) {
+        String nsfilename = null;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            for (String line = br.readLine(); line != null; line = br.readLine()) {
+                if (line.contains("Produce NSfile")) {
+                    Pattern pattern = Pattern.compile("\\[([^]]+)\\]");
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        nsfilename = matcher.group(1) + "/NSfile.txt";
+                    }
+                }
+                logBuilder.append(line).append("&#010;");
+            }
+        } catch (IOException ioe) {
+            log.error(ioe.toString());
+        }
+        return nsfilename;
     }
 
     @RequestMapping("/testbedInformation")

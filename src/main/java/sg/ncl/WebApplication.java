@@ -53,6 +53,11 @@ public class WebApplication {
         return new WebSocketProperties();
     }
 
+    @Bean
+    NetworkToolProperties networkToolProperties() {
+        return new NetworkToolProperties();
+    }
+
     public static void main(String[] args) {
         final SpringApplication application = new SpringApplication(WebApplication.class);
         application.addListeners(new ApplicationPidFileWriter());
