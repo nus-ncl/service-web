@@ -99,7 +99,7 @@
             new JSONSerializer().fromJSON(Ext.util.JSON.decode(aText));
         }
 
-        function addDragIconPic(aName, aWhere, aPic) {
+        function addDragIconPic(aName, aWhere, aPic, aDisplay) {
             if (document.getElementById("cont_" + aName)) {
                 return;
             }
@@ -107,7 +107,7 @@
             var cdiv = createNewDiv("cont_" + aName);
             var html = '';
             html = html + "<center>";
-            html = html + "<h1>" + aName + "</h1>\n";
+            html = html + "<h1>" + aDisplay + "</h1>\n";
             html = html + "<img src='" + aPic + "' id='drag_" + aName + "' style='cursor:move'/>\n";
             html = html + "<hr size=1 noshade>\n";
             html = html + "</center>";
@@ -120,13 +120,14 @@
             });
         }
 
-        function addDragIcon2(aName, aWhere) {
+        function addDragIcon2(aName, aWhere, aDisplay) {
             var aPic = "/topology-tool/icons/" + aName + ".png";
-            addDragIconPic(aName, aWhere, aPic);
+            addDragIconPic(aName, aWhere, aPic, aDisplay);
         }
 
-        function addLibraryIcon(aName) {
-            addDragIcon2(aName, "icons_div");
+        function addLibraryIcon(aName, aDisplay) {
+            if(aDisplay == undefined) aDisplay = aName;
+            addDragIcon2(aName, "icons_div", aDisplay);
         }
 
         function createNewIconDiv(aID) {
@@ -159,10 +160,12 @@
         function doSaveJSON() {
             var txt = Ext.util.JSON.encode(new JSONSerializer().toJSON(workflow.getDocument()));
             txt = txt.replace(/,"/g, ', "');
-            document.getElementById('json_text').value = "json_diagram = " + txt + "\n\n\n\n";
+            document.getElementById('json_text').value = txt + "\n\n\n\n";
         }
 
         function doLoadJSON() {
+            document.getElementById('paintarea').innerHTML = "";
+            workflow = new Workflow('paintarea');
             loadJSONtext(document.getElementById('json_text').value);
         }
 
@@ -322,14 +325,14 @@
     jQuery(document).ready(function ($) {
         workflow.scrollArea = document.getElementById("paint_div").parentNode;
 
-        addLibraryIcon('a100baset_hub');
-        addLibraryIcon('asa');
-        addLibraryIcon('cloud_filled');
-        addLibraryIcon('laptop');
-        addLibraryIcon('layer_3_switch');
-        addLibraryIcon('router');
-        addLibraryIcon('web_server');
-        addLibraryIcon('workstation');
+        //addLibraryIcon('a100baset_hub');
+        addLibraryIcon('asa', 'Physical Node');
+        addLibraryIcon('cloud_filled', 'Internet');
+        addLibraryIcon('laptop', 'Kali');
+        addLibraryIcon('layer_3_switch', 'Windows 7');
+        addLibraryIcon('router', 'Router');
+        addLibraryIcon('web_server', 'Windows 10');
+        addLibraryIcon('workstation', 'Ubuntu 16');
 
         var droptarget = new Ext.dd.DropTarget("paint_div", {ddGroup: 'TreeDD'});
         droptarget.notifyDrop = function (dd, e, data) {
