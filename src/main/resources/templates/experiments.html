@@ -10,7 +10,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <p>&nbsp;</p>
         <p>&nbsp;</p>
-        <div class="container ">
+        <div class="container">
             <div class="row dashpanel">
                 <h2 class="team-heading team-heading-current-team" th:text="#{exp.header}">Experiments</h2>
                 <div th:if="${message}">
@@ -29,7 +29,7 @@
                     <p th:text="#{exp.noExpRunning}">You do not have any experiments running yet.</p>
                 </div>
                 <!-- user has some experiments -->
-                <div class="team-panel team-panel-current-team">
+                <div class="team-panel team-panel-current-team" id="experimentPanel">
                     <div class="panel-body" th:if="not ${#lists.isEmpty(experimentList)}">
                         <table id="experimentTable" class="table table-responsive">
                             <thead>
@@ -310,9 +310,26 @@
             // disable sorting for last three columns; visualization, realization, actions
             $('#experimentTable').dataTable({
                 "columnDefs": [
-                    { "orderable": false, "targets": [4, 5, 6]},
-                ]
+                    { "orderable": false, "targets": [4, 5, 6]}
+                ],
+                // refresh the cookie on page load
+                "iCookieDuration": 1,
+                "bStateSave": true
             });
+
+            // for the reloading portion
+            // cookie must be more than reload interval to keep the state
+            setInterval(function() {
+                $('#experimentPanel').load(document.URL +  ' #experimentPanel ' , function() {
+                    $('#experimentTable').dataTable({
+                        "columnDefs": [
+                            { "orderable": false, "targets": [4, 5, 6]}
+                        ],
+                        "iCookieDuration": 31,
+                        "bStateSave": true
+                    });
+                });
+            }, 30000);
         });
 
         function closeStartModal() {

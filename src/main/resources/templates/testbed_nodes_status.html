@@ -19,7 +19,7 @@
 <div class="container">
     <p class="heading h15 text-center">Testbed Nodes Status</p>
     <p>&nbsp;</p>
-    <div class="row">
+    <div class="row" id="statistics">
         <div class="col-md-4">
             <div class="stats" style="border-color: #fa9b2b;">
                 <i class="fa fa-group active-users pull-left" style="background: #fa9b2b;"></i>
@@ -51,35 +51,37 @@
         </div>
     </div>
     <p th:if="${nodesStatus.isEmpty()}" th:text="#{nav.error}"></p>
-    <th:block th:each="nodesStatus : ${nodesStatus}">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="nodebackground1">
-                    <h2 class="team-heading team-heading-current-team" th:text="${nodesStatus.key}">Machine Type</h2>
-                    <div class="col-sm-6 col-sm-offset-6">
-                        <img src="images/ServerFree.png" width="19" height="19"/> <h19>Free (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('FREE')}">0</span>)</h19>
-                        <img src="images/ServerInUse.png" width="19" height="19"/>  <h19>In Use (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('IN_USE')}">0</span>)</h19>
-                        <img src="images/ServerUn.png" width="19" height="19"/> <h19>Reloading (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RELOADING')}">0</span>)</h19>
-                        <img src="images/ServerReserved.png" width="19" height="19"/> <h19>Reserved (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RESERVED')}">0</span>)</h19>
-                        <hr/>
-                    </div>
-                    <ul>
-                        <th:block th:each="nodes : ${nodesStatus.value}">
-                            <li style="display:inline-block; margin: 10px; padding: 15px; width: 6%;">
-                                <img th:if="${nodes.status == 'in_use'}" src="images/ServerInUse.png" width="35" height="35" class="nowrap"/>
-                                <img th:if="${nodes.status == 'free'}" src="images/ServerFree.png" width="35" height="35" class="nowrap"/>
-                                <img th:if="${nodes.status == 'reserved'}" src="images/ServerReserved.png" width="35" height="35" class="nowrap"/>
-                                <img th:if="${nodes.status == 'reload'}" src="images/ServerUn.png" width="35" height="35" class="nowrap"/>
-                                <br/>
-                                <span th:text="${nodes.id}">pc00</span>
-                            </li>
-                        </th:block>
-                    </ul>
-                    <p>&nbsp;</p>
-                </div><!-- div with border -->
-            </div>
-        </div> <!-- row -->
-    </th:block>
+    <div id="node_status_map">
+        <th:block th:each="nodesStatus : ${nodesStatus}">
+            <div class="row node_status">
+                <div class="col-md-12">
+                    <div class="nodebackground1">
+                        <h2 class="team-heading team-heading-current-team" th:text="${nodesStatus.key}">Machine Type</h2>
+                        <div class="col-sm-6 col-sm-offset-6">
+                            <img src="images/ServerFree.png" width="19" height="19"/> <h19>Free (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('FREE')}">0</span>)</h19>
+                            <img src="images/ServerInUse.png" width="19" height="19"/>  <h19>In Use (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('IN_USE')}">0</span>)</h19>
+                            <img src="images/ServerUn.png" width="19" height="19"/> <h19>Reloading (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RELOADING')}">0</span>)</h19>
+                            <img src="images/ServerReserved.png" width="19" height="19"/> <h19>Reserved (<span th:text="${nodesStatusCount.get(nodesStatus.key).get('RESERVED')}">0</span>)</h19>
+                            <hr/>
+                        </div>
+                        <ul>
+                            <th:block th:each="nodes : ${nodesStatus.value}">
+                                <li style="display:inline-block; margin: 10px; padding: 15px; width: 6%;">
+                                    <img th:if="${nodes.status == 'in_use'}" src="images/ServerInUse.png" width="35" height="35" class="nowrap"/>
+                                    <img th:if="${nodes.status == 'free'}" src="images/ServerFree.png" width="35" height="35" class="nowrap"/>
+                                    <img th:if="${nodes.status == 'reserved'}" src="images/ServerReserved.png" width="35" height="35" class="nowrap"/>
+                                    <img th:if="${nodes.status == 'reload'}" src="images/ServerUn.png" width="35" height="35" class="nowrap"/>
+                                    <br/>
+                                    <span th:text="${nodes.id}">pc00</span>
+                                </li>
+                            </th:block>
+                        </ul>
+                        <p>&nbsp;</p>
+                    </div><!-- div with border -->
+                </div>
+            </div> <!-- row -->
+        </th:block>
+    </div> <!-- container to hold the row for refresh purpose -->
     <div class="cc-wraper">
         <div class="cc-contactpop fixed">
             <h1>Do you need  Help? Get in touch. </h1>
@@ -102,4 +104,11 @@
 <div th:replace="fragments/footer :: footer"></div>
 <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
+    <script type="text/javascript">
+        // auto-refresh testbed nodes' status
+        setInterval(function() {
+            $('#statistics').load(document.URL +  ' #statistics ');
+            $('#node_status_map').load(document.URL +  ' .node_status ');
+        }, 30000);
+    </script>
 </html>
