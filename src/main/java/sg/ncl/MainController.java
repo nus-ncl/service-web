@@ -826,6 +826,7 @@ public class MainController {
                 teamFields.put("website", signUpMergedForm.getTeamWebsite().trim());
                 teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
                 teamFields.put("visibility", signUpMergedForm.getIsPublic());
+                teamFields.put("class", signUpMergedForm.getIsClass());
                 mainObject.put("isJoinTeam", false);
 
                 try {
@@ -1977,6 +1978,7 @@ public class MainController {
         teamFields.put("website", teamPageApplyTeamForm.getTeamWebsite());
         teamFields.put("organisationType", teamPageApplyTeamForm.getTeamOrganizationType());
         teamFields.put("visibility", teamPageApplyTeamForm.getIsPublic());
+        teamFields.put("class", teamPageApplyTeamForm.getIsClass());
 
         String nclUserId = session.getAttribute("id").toString();
 

@@ -23,6 +23,8 @@ public class TeamPageApplyTeamForm {
     
     @NotNull(message="Please select one of them")
     private String isPublic = TeamVisibility.PUBLIC.toString();
+
+    private String isClass;
     
     public TeamPageApplyTeamForm() {   
     }
@@ -67,6 +69,8 @@ public class TeamPageApplyTeamForm {
         this.isPublic = isPublic;
     }
 
+    public String getIsClass() {return isClass;}
+
     
     @Override
     public String toString() {
@@ -74,6 +78,7 @@ public class TeamPageApplyTeamForm {
                 "Description: " + teamDescription + "\n" +
                 "Website: " + teamWebsite + "\n" +
                 "Organization Type: " + teamOrganizationType + "\n" +
-                "Visibility: " + isPublic;
+                "Visibility: " + isPublic + "\n" +
+                "Class" + isClass;
     }
 }

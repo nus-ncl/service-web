@@ -79,6 +79,8 @@ public class SignUpMergedForm {
     // defaults to public
     private String isPublic = "PUBLIC";
 
+    private String isClass= "CLASS";
+
     private boolean hasAcceptTeamOwnerPolicy;
     
     // Join New Team Fields
@@ -282,6 +284,10 @@ public class SignUpMergedForm {
     public void setIsPublic(String isPublic) {
         this.isPublic = isPublic;
     }
+
+    public String getIsClass() {return isClass;}
+
+    public void setIsClass(String isClass) {this.isClass = isClass;}
     
     public boolean getHasAcceptTeamOwnerPolicy() {
         return hasAcceptTeamOwnerPolicy;
