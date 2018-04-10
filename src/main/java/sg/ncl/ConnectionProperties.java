@@ -436,4 +436,9 @@ public class ConnectionProperties {
     public String getReservationStatus(String teamId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations";
     }
+
+    public String releaseNodes(String teamId, String numNodes) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations?numNodes=" + numNodes;
+
+    }
 }
