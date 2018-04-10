@@ -3341,6 +3341,46 @@ public class MainController {
         return "energy_usage";
     }
 
+    @GetMapping("/admin/nodesRelease")
+    public String adminNodesRelease(Model model) {
+        TeamManager2 teamManager2 = new TeamManager2();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+        }
+
+        model.addAttribute("allTeams", teamManager2.getTeamMap());
+        model.addAttribute("reservationStatusForm", new ReservationStatusForm());
+        return "node_release";
+    }
+
+    @PostMapping("/admin/nodesRelease")
+    public String releaseNodes(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm) {
+        try {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity response = null;
+            if (reservationStatusForm.getNumNodes() == null) {
+                // number of nodes not fill
+                // release all nodes; endpoint is the same with adminNodesReservation but with different HTTP method
+                response = restTemplate.exchange(properties.getReservationStatus(reservationStatusForm.getTeamId()), HttpMethod.DELETE, request, String.class);
+            } else {
+                response = restTemplate.exchange((properties.releaseNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes())), HttpMethod.DELETE, request, String.class);
+            }
+
+            log.info("Reservation: {}", response.getBody().toString());
+
+        } catch (RestClientException e) {
+            log.warn("error");
+        }
+        return "node_release";
+    }
+
     /**
      *
      * @param teamId e.g. F12345-G12345-E12345
