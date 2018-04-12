@@ -3361,23 +3361,60 @@ public class MainController {
     }
 
     @PostMapping("/admin/nodesRelease")
-    public String releaseNodes(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm) {
+    public String releaseNodes(@Valid @ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        TeamManager2 teamManager2 = new TeamManager2();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("allTeams", teamManager2.getTeamMap());
+            model.addAttribute("reservationStatusForm", reservationStatusForm);
+            model.addAttribute("status", "release reservation FAIL");
+            model.addAttribute("msg", "form errors");
+            return "node_release";
+        }
+
         try {
-            HttpEntity<String> request = createHttpEntityHeaderOnly();
             ResponseEntity response = null;
             if (reservationStatusForm.getNumNodes() == null) {
                 // number of nodes not fill
                 // release all nodes; endpoint is the same with adminNodesReservation but with different HTTP method
                 response = restTemplate.exchange(properties.getReservationStatus(reservationStatusForm.getTeamId()), HttpMethod.DELETE, request, String.class);
             } else {
+                // release a specific number of nodes
                 response = restTemplate.exchange((properties.releaseNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes())), HttpMethod.DELETE, request, String.class);
             }
 
             log.info("Reservation: {}", response.getBody().toString());
 
+            JSONObject object = new JSONObject(response.getBody().toString());
+            String status = object.getString("status");
+            String msg = object.optString("msg");
+
+            if ("release reservation OK".equals(status) && (msg.equals("[]"))) {
+                msg = "No nodes to be released";
+            } else if ("release reservation OK".equals(status)) {
+                // node ids
+                // ["A","B"] -> A,B
+                msg = msg.replace("[", "").replace("]", "").replace("\"", "");
+            }
+
+            model.addAttribute("status", status);
+            model.addAttribute("msg", msg);
         } catch (RestClientException e) {
             log.warn("error");
         }
+
+        model.addAttribute("allTeams", teamManager2.getTeamMap());
+        model.addAttribute("reservationStatusForm", reservationStatusForm);
         return "node_release";
     }
 

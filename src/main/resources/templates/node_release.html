@@ -12,6 +12,9 @@
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <div class="container">
+        <div th:if="${status != null and status == 'release reservation FAIL'}">
+            <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${msg}"></span></p>
+        </div>
         <h2 class="team-heading team-heading-current-team">Release Nodes</h2>
         <p>&nbsp;</p>
         <form class="form-horizontal" method="post" th:object="${reservationStatusForm}" th:action="@{/admin/nodesRelease}" role="form">
@@ -37,6 +40,18 @@
                 </div>
             </fieldset>
         </form>
+        <div th:if="${status != null and status == 'release reservation OK'}">
+            <table class="table table-responsive table-striped">
+                <thead>
+                    <tr>
+                        <th>Released Node ID</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td th:text="${msg}"></td>
+                </tr>
+            </table>
+        </div>
         <div class="cc-wraper">
             <div class="cc-contactpop fixed">
                 <h1>Do you need  Help? Get in touch. </h1>

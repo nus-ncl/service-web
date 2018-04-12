@@ -13,6 +13,6 @@ import lombok.Setter;
 public class ReservationStatusForm {
     private String teamId;
 //    private String nodes_id_list;
-    private String numNodes;
+    private Integer numNodes;
 //    private String server_type;
 }
