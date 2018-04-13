@@ -437,8 +437,16 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations";
     }
 
-    public String releaseNodes(String teamId, String numNodes) {
+    public String releaseNodes(String teamId, Integer numNodes) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations?numNodes=" + numNodes;
 
+    }
+
+    public String reserveNodes(String teamId, Integer numNodes, String machineType) {
+        if (machineType == null) {
+            return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations?numNodes=" + numNodes;
+        } else {
+            return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations?numNodes=" + numNodes + "&machineType=" + machineType;
+        }
     }
 }
