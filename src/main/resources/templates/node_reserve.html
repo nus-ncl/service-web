@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>National Cybersecurity Laboratories - Nodes Release</title>
+    <title>National Cybersecurity Laboratories - Nodes Reserve</title>
     <object th:include="fragments/header :: header" th:remove="tag" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
 </head>
@@ -12,12 +12,12 @@
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <div class="container">
-        <div th:if="${status != null and status == 'release reservation FAIL'}">
+        <div th:if="${status != null and status == 'nodes reservation FAIL'}">
             <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${msg}"></span></p>
         </div>
-        <h2 class="team-heading team-heading-current-team">Release Nodes</h2>
+        <h2 class="team-heading team-heading-current-team">Reserve Nodes</h2>
         <p>&nbsp;</p>
-        <form class="form-horizontal" method="post" th:object="${reservationStatusForm}" th:action="@{/admin/nodesRelease}" role="form">
+        <form class="form-horizontal" method="post" th:object="${reservationStatusForm}" th:action="@{/admin/nodesReserve}" role="form">
             <fieldset>
                 <div class="form-group">
                     <label for="team" class="col-sm-3 control-label">Team :</label>
@@ -30,21 +30,27 @@
                 <div class="form-group">
                     <label for="numNodes" class="col-sm-3 control-label">Number of Nodes :</label>
                     <div class="col-sm-3">
-                        <input type="text" class="form-control col-sm-3" id="numNodes" placeholder="Optional" th:field="*{numNodes}"/>
+                        <input type="text" class="form-control col-sm-3" id="numNodes" th:field="*{numNodes}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="machineType" class="col-sm-3 control-label">MachineType :</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control col-sm-3" id="machineType" placeholder="Optional" th:field="*{machineType}"/>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-10 col-sm-2">
-                        <button type="submit" class="btn btn-default">Release</button>
+                        <button type="submit" class="btn btn-default">Reserve</button>
                     </div>
                 </div>
             </fieldset>
         </form>
-        <div th:if="${status != null and status == 'release reservation OK'}">
+        <div th:if="${status != null and status == 'nodes reservation OK'}">
             <table class="table table-responsive table-striped">
                 <thead>
                     <tr>
-                        <th>Released Node ID</th>
+                        <th>Reserved Node ID</th>
                     </tr>
                 </thead>
                 <tr>

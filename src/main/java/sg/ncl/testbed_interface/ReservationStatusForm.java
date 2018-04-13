@@ -14,5 +14,5 @@ public class ReservationStatusForm {
     private String teamId;
 //    private String nodes_id_list;
     private Integer numNodes;
-//    private String server_type;
+    private String machineType;
 }

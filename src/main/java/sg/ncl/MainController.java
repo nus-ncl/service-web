@@ -3418,6 +3418,76 @@ public class MainController {
         return "node_release";
     }
 
+    @GetMapping("/admin/nodesReserve")
+    public String adminNodesReserve(Model model) {
+        TeamManager2 teamManager2 = new TeamManager2();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+        }
+
+        model.addAttribute("allTeams", teamManager2.getTeamMap());
+        model.addAttribute("reservationStatusForm", new ReservationStatusForm());
+        return "node_reserve";
+    }
+
+    @PostMapping("/admin/nodesReserve")
+    public String reserveNodes(@Valid @ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, Model model) {
+        TeamManager2 teamManager2 = new TeamManager2();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+        }
+
+
+        try {
+            ResponseEntity response = null;
+            if (reservationStatusForm.getMachineType() == null) {
+                // machine type not filled
+                // endpoint is the same as releaseNodes, i.e. /{id}
+                response = restTemplate.exchange(properties.reserveNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes(), null), HttpMethod.POST, request, String.class);
+            } else {
+                // reserve a specific number of machine type
+                response = restTemplate.exchange((properties.reserveNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes(), reservationStatusForm.getMachineType())), HttpMethod.POST, request, String.class);
+            }
+
+            log.info("Reservation: {}", response.getBody().toString());
+
+            JSONObject object = new JSONObject(response.getBody().toString());
+            String status = object.getString("status");
+            String msg = object.optString("msg");
+
+            if ("nodes reservation OK".equals(status) && (msg.equals("[]"))) {
+                msg = "No nodes to be reserved";
+            } else if ("nodes reservation OK".equals(status)) {
+                // node ids
+                // ["A","B"] -> A,B
+                msg = msg.replace("[", "").replace("]", "").replace("\"", "");
+            }
+
+            model.addAttribute("status", status);
+            model.addAttribute("msg", msg);
+        } catch (RestClientException e) {
+            log.warn("error");
+        }
+
+        model.addAttribute("allTeams", teamManager2.getTeamMap());
+        model.addAttribute("reservationStatusForm", reservationStatusForm);
+        return "node_reserve";
+    }
+
     /**
      *
      * @param teamId e.g. F12345-G12345-E12345
