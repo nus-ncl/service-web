@@ -45,7 +45,7 @@
                             <td>
                                 <span th:if="${reloadSet.contains(nodeId)}" th:text="'reloading'"></span>
                                 <span th:if="${inUseSet.contains(nodeId)}" th:text="'in-use'"></span>
-                                <span th:if="not ${reloadSet.contains(nodeId) and inUseSet.contains(nodeId)}" th:text="'free'"></span>
+                                <span th:if="not ${reloadSet.contains(nodeId) or inUseSet.contains(nodeId)}" th:text="'free'"></span>
                             </td>
                         </tr>
                     </th:block>
