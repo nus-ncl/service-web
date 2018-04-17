@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 public class ReservationStatusForm {
     private String teamId;
-//    private String nodes_id_list;
     private Integer numNodes;
     private String machineType;
     private String action;
