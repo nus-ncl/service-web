@@ -12,32 +12,18 @@
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <div class="container">
+        <div th:if="${status != null and (status == 'nodes reservation FAIL' or status == 'release reservation FAIL')}">
+            <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+        </div>
         <h2 class="team-heading team-heading-current-team">Nodes Reservation</h2>
         <p>&nbsp;</p>
-        <!--<form class="form-horizontal" method="get" th:action="@{/admin/nodesReservation}" role="form">-->
-            <!--<fieldset>-->
-                <!--<div class="form-group">-->
-                    <!--<label for="team" class="col-sm-3 control-label">Team :</label>-->
-                    <!--<div class="col-sm-7">-->
-                        <!--<select id="team" th:name="teamId">-->
-                            <!--<option th:each="teamEntry : ${allTeams}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}" th:selected="${teamId == teamEntry.value.id}"></option>-->
-                        <!--</select>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="form-group">-->
-                    <!--<div class="col-sm-offset-10 col-sm-2">-->
-                        <!--<button type="submit" class="btn btn-default">Query</button>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</fieldset>-->
-        <!--</form>-->
         <form class="form-horizontal" method="post" th:object="${reservationStatusForm}" th:action="@{/admin/nodesReservation}" role="form">
             <fieldset>
                 <div class="form-group">
                     <label for="team" class="col-sm-3 control-label">Team :</label>
                     <div class="col-sm-7">
-                        <select id="team" th:name="teamId">
-                            <option th:each="teamEntry : ${allTeams}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}" th:selected="${teamId == teamEntry.value.id}"></option>
+                        <select id="team" th:name="teamId" th:field="*{teamId}">
+                            <option th:each="teamEntry : ${allTeams}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}"></option>
                         </select>
                     </div>
                 </div>
@@ -70,8 +56,8 @@
                 </div>
             </fieldset>
         </form>
-        <div>
-            <h3><span id="reservedTeamName">Team</span>: Reserved Nodes</h3>
+        <div id="information">
+            <h3 th:if="${status != null and (status == 'nodes reservation OK' or status == 'release reservation OK')}"><span id="reservedTeamName">Team</span>: <span id="actionTitle">Nodes Reservation</span></h3>
             <th:block th:if="${reservedSet != null and !reservedSet.isEmpty()}">
                 <table class="table table-responsive table-striped">
                     <thead>
@@ -90,6 +76,19 @@
                     </th:block>
                 </table>
             </th:block>
+            <div th:if="${status != null and (status == 'nodes reservation OK' or status == 'release reservation OK')}">
+                <table class="table table-responsive table-striped">
+                    <thead>
+                    <tr>
+                        <th th:if = "${status == 'nodes reservation OK'}">Reserved Node ID</th>
+                        <th th:if = "${status == 'release reservation OK'}">Released Node ID</th>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td th:text="${message}"></td>
+                    </tr>
+                </table>
+            </div>
         </div>
         <div class="cc-wraper">
             <div class="cc-contactpop fixed">
@@ -127,29 +126,51 @@
 <script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
 
 <script th:inline="javascript">
-    // default is reserve
-    var numNodesField = document.getElementById("numNodes");
-    $('#number_of_nodes').css('display', 'block');
-    $('#machine_type').css('display', 'block');
+    // toggle show hide for initial page load and subsequent page reload
+    showHide();
 
     function showHide() {
+        setTeamName();
+        toggleFields();
+    }
+
+    // display the respective selected team name taken from the dropdown
+    function setTeamName() {
+        var dropdown = document.getElementById("team");
+        var selectedValue = dropdown.options[dropdown.selectedIndex].text;
+        var spanText = document.getElementById("reservedTeamName");
+
+        if (spanText != null) {
+            spanText.innerHTML = selectedValue;
+        }
+    }
+
+    // toggle the form fields
+    function toggleFields() {
         $(".optional").css('display', 'none');
         var action = document.getElementById("action").value;
-        console.log("action: " + action);
+        var actionTitle = document.getElementById("actionTitle");
+        var numNodesField = document.getElementById("numNodes");
+        var machineTypeField = document.getElementById("machineType");
+
+        numNodesField.value = "";
+        machineTypeField.value = "";
 
         if (action == "release") {
             $('#number_of_nodes').css('display', 'block');
             numNodesField.placeholder = "Optional";
+            actionTitle.innerHTML = "Released Nodes";
 
         } else if (action == "reserve") {
             $('#number_of_nodes').css('display', 'block');
             $('#machine_type').css('display', 'block');
             numNodesField.placeholder = "";
+            actionTitle.innerHTML = "Reserved Nodes";
 
         } else if (action == "check") {
             $(".optional").css('display', 'none');
+            actionTitle.innerHTML = "Reserved Nodes";
         } else {
-            console.warn("No such actions");
             location.reload();
         }
     }

@@ -165,6 +165,12 @@ public class MainController {
     private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
     private static final String MAX_DURATION = "maxDuration";
 
+    // nodes reservation
+    private static final String ALL_TEAMS = "allTeams";
+    private static final String STATUS = "status";
+    private static final String NODES_RESERVATION_FAIL = "nodes reservation FAIL";
+    private static final String RESERVATION_STATUS_FORM = "reservationStatusForm";
+
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -3341,213 +3347,137 @@ public class MainController {
         return "energy_usage";
     }
 
-    @GetMapping("/admin/nodesRelease")
-    public String adminNodesRelease(Model model) {
-        TeamManager2 teamManager2 = new TeamManager2();
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
-
-        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Team2 one = extractTeamInfo(jsonObject.toString());
-            teamManager2.addTeamToTeamMap(one);
-        }
-
-        model.addAttribute("allTeams", teamManager2.getTeamMap());
-        model.addAttribute("reservationStatusForm", new ReservationStatusForm());
-        return "node_release";
-    }
-
-    @PostMapping("/admin/nodesRelease")
-    public String releaseNodes(@Valid @ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        TeamManager2 teamManager2 = new TeamManager2();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
-
-        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Team2 one = extractTeamInfo(jsonObject.toString());
-            teamManager2.addTeamToTeamMap(one);
-        }
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("allTeams", teamManager2.getTeamMap());
-            model.addAttribute("reservationStatusForm", reservationStatusForm);
-            model.addAttribute("status", "release reservation FAIL");
-            model.addAttribute("msg", "form errors");
-            return "node_release";
-        }
-
-        try {
-            ResponseEntity response = null;
-            if (reservationStatusForm.getNumNodes() == null) {
-                // number of nodes not fill
-                // release all nodes; endpoint is the same with adminNodesReservation but with different HTTP method
-                response = restTemplate.exchange(properties.getReservationStatus(reservationStatusForm.getTeamId()), HttpMethod.DELETE, request, String.class);
-            } else {
-                // release a specific number of nodes
-                response = restTemplate.exchange((properties.releaseNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes())), HttpMethod.DELETE, request, String.class);
-            }
-
-            log.info("Reservation: {}", response.getBody().toString());
-
-            JSONObject object = new JSONObject(response.getBody().toString());
-            String status = object.getString("status");
-            String msg = object.optString("msg");
-
-            if ("release reservation OK".equals(status) && (msg.equals("[]"))) {
-                msg = "No nodes to be released";
-            } else if ("release reservation OK".equals(status)) {
-                // node ids
-                // ["A","B"] -> A,B
-                msg = msg.replace("[", "").replace("]", "").replace("\"", "");
-            }
-
-            model.addAttribute("status", status);
-            model.addAttribute("msg", msg);
-        } catch (RestClientException e) {
-            log.warn("error");
-        }
-
-        model.addAttribute("allTeams", teamManager2.getTeamMap());
-        model.addAttribute("reservationStatusForm", reservationStatusForm);
-        return "node_release";
-    }
-
-    @GetMapping("/admin/nodesReserve")
-    public String adminNodesReserve(Model model) {
-        TeamManager2 teamManager2 = new TeamManager2();
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
-
-        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Team2 one = extractTeamInfo(jsonObject.toString());
-            teamManager2.addTeamToTeamMap(one);
-        }
-
-        model.addAttribute("allTeams", teamManager2.getTeamMap());
-        model.addAttribute("reservationStatusForm", new ReservationStatusForm());
-        return "node_reserve";
-    }
-
-    @PostMapping("/admin/nodesReserve")
-    public String reserveNodes(@Valid @ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, BindingResult bindingResult, Model model) {
-        TeamManager2 teamManager2 = new TeamManager2();
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
-
-        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Team2 one = extractTeamInfo(jsonObject.toString());
-            teamManager2.addTeamToTeamMap(one);
-        }
-
-        if (bindingResult.hasErrors() || reservationStatusForm.getNumNodes() == null) {
-            model.addAttribute("allTeams", teamManager2.getTeamMap());
-            model.addAttribute("reservationStatusForm", reservationStatusForm);
-            model.addAttribute("status", "nodes reservation FAIL");
-            model.addAttribute("msg", "form errors");
-            return "node_reserve";
-        }
-
-        try {
-            ResponseEntity response = null;
-            if (reservationStatusForm.getMachineType() == null) {
-                // machine type not filled
-                // endpoint is the same as releaseNodes, i.e. /{id}
-                response = restTemplate.exchange(properties.reserveNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes(), null), HttpMethod.POST, request, String.class);
-            } else {
-                // reserve a specific number of machine type
-                response = restTemplate.exchange((properties.reserveNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes(), reservationStatusForm.getMachineType())), HttpMethod.POST, request, String.class);
-            }
-
-            log.info("Reservation: {}", response.getBody().toString());
-
-            JSONObject object = new JSONObject(response.getBody().toString());
-            String status = object.getString("status");
-            String msg = object.optString("msg");
-
-            if ("nodes reservation OK".equals(status) && (msg.equals("[]"))) {
-                msg = "No nodes to be reserved";
-            } else if ("nodes reservation OK".equals(status)) {
-                // node ids
-                // ["A","B"] -> A,B
-                msg = msg.replace("[", "").replace("]", "").replace("\"", "");
-            }
-
-            model.addAttribute("status", status);
-            model.addAttribute("msg", msg);
-        } catch (RestClientException e) {
-            log.warn("error");
-        }
-
-        model.addAttribute("allTeams", teamManager2.getTeamMap());
-        model.addAttribute("reservationStatusForm", reservationStatusForm);
-        return "node_reserve";
-    }
-
     /**
-     *
-     * @param teamId e.g. F12345-G12345-E12345
+     * Allows admins to:
+     * view reservations
+     * reserve nodes
+     * release nodes
      */
     @GetMapping("/admin/nodesReservation")
-    public String adminNodesReservation(@RequestParam(value = "teamId", required = false) String teamId, Model model) {
-
-        TeamManager2 teamManager2 = new TeamManager2();
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
-
-        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Team2 one = extractTeamInfo(jsonObject.toString());
-            teamManager2.addTeamToTeamMap(one);
+    public String adminNodesReservation(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, Model model, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
         }
 
-        if (teamId != null) {
-            log.info("Reservation called on team: {}");
-            try {
-                ResponseEntity response = restTemplate.exchange((properties.getReservationStatus(teamId)), HttpMethod.GET, request, String.class);
-                log.info("Reservation: {}", response.getBody().toString());
+        model.addAttribute(ALL_TEAMS, getTeamMap());
+        model.addAttribute(RESERVATION_STATUS_FORM, reservationStatusForm);
 
-                JSONObject reservation = new JSONObject(response.getBody().toString()).getJSONObject("reservation");
-                Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("all")));
-                Set<String> reloadSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("reload")));
-                Set<String> inUseSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("in_use")));
-
-                model.addAttribute("reservedSet", reservedSet);
-                model.addAttribute("reloadSet", reloadSet);
-                model.addAttribute("inUseSet", inUseSet);
-
-                log.info("Reserved set: {}", reservedSet);
-                log.info("Reload set: {}", reloadSet);
-                log.info("In use set: {}", inUseSet);
-            } catch (RestClientException e) {
-                log.warn("error");
-            }
-        }
-
-        model.addAttribute("allTeams", teamManager2.getTeamMap());
-        model.addAttribute("teamId", teamId);
-
-        model.addAttribute("reservationStatusForm", new ReservationStatusForm());
         return "node_reservation";
     }
 
     @PostMapping("/admin/nodesReservation")
-    public String getAdminNodesReservation(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) throws IOException {
+    public String adminNodesReservation(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws IOException {
+        HashMap<String, Team2> teamMap = getTeamMap();
+
+        // sanitization
+        if (bindingResult.hasErrors()) {
+            model.addAttribute(ALL_TEAMS, teamMap);
+            model.addAttribute(RESERVATION_STATUS_FORM, reservationStatusForm);
+            model.addAttribute(STATUS, NODES_RESERVATION_FAIL);
+            model.addAttribute(MESSAGE, "form errors");
+            return "node_reservation";
+        }
+
+        switch(reservationStatusForm.getAction()) {
+            case "release":
+                releaseNodes(reservationStatusForm, redirectAttributes);
+                break;
+            case "reserve":
+                reserveNodes(reservationStatusForm, redirectAttributes);
+                break;
+            case "check":
+                checkReservation(reservationStatusForm, redirectAttributes);
+                break;
+            default:
+                // error
+                redirectAttributes.addFlashAttribute(STATUS, NODES_RESERVATION_FAIL);
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                break;
+        }
+
+        redirectAttributes.addFlashAttribute(RESERVATION_STATUS_FORM, reservationStatusForm);
+        redirectAttributes.addFlashAttribute(ALL_TEAMS, teamMap);
 
         return "redirect:/admin/nodesReservation";
+    }
+
+    private void checkReservation(ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange((properties.getReservationStatus(reservationStatusForm.getTeamId())), HttpMethod.GET, request, String.class);
+
+        JSONObject reservation = new JSONObject(response.getBody().toString()).getJSONObject("reservation");
+        Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("all")));
+        Set<String> reloadSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("reload")));
+        Set<String> inUseSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("in_use")));
+        String status = new JSONObject(response.getBody().toString()).getString("status");
+
+        redirectAttributes.addFlashAttribute("reservedSet", reservedSet);
+        redirectAttributes.addFlashAttribute("reloadSet", reloadSet);
+        redirectAttributes.addFlashAttribute("inUseSet", inUseSet);
+        redirectAttributes.addFlashAttribute(STATUS, status);
+    }
+
+    private void releaseNodes(ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = null;
+        if (reservationStatusForm.getNumNodes() == null) {
+            // number of nodes not fill
+            // release all nodes; endpoint is the same with adminNodesReservation but with different HTTP method
+            response = restTemplate.exchange(properties.getReservationStatus(reservationStatusForm.getTeamId()), HttpMethod.DELETE, request, String.class);
+        } else {
+            // release a specific number of nodes
+            response = restTemplate.exchange((properties.releaseNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes())), HttpMethod.DELETE, request, String.class);
+        }
+
+        JSONObject object = new JSONObject(response.getBody().toString());
+        String status = object.getString(STATUS);
+        String msg = object.optString(MESSAGE);
+
+        if ("release reservation OK".equals(status) && (msg.equals("[]"))) {
+            msg = "No nodes to be released";
+        } else if ("release reservation OK".equals(status)) {
+            // node ids
+            // ["A","B"] -> A,B
+            msg = msg.replace("[", "").replace("]", "").replace("\"", "");
+        }
+
+        redirectAttributes.addFlashAttribute(STATUS, status);
+        redirectAttributes.addFlashAttribute(MESSAGE, msg);
+    }
+
+    private void reserveNodes(ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = null;
+
+        if (reservationStatusForm.getNumNodes() == null) {
+            redirectAttributes.addFlashAttribute(STATUS, NODES_RESERVATION_FAIL);
+            redirectAttributes.addFlashAttribute(MESSAGE, "Number of nodes not specify");
+            return;
+        }
+
+        if (reservationStatusForm.getMachineType() == null) {
+            // machine type not filled
+            // endpoint is the same as releaseNodes, i.e. /{id}
+            response = restTemplate.exchange(properties.reserveNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes(), null), HttpMethod.POST, request, String.class);
+        } else {
+            // reserve a specific number of machine type
+            response = restTemplate.exchange((properties.reserveNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes(), reservationStatusForm.getMachineType())), HttpMethod.POST, request, String.class);
+        }
+
+        JSONObject object = new JSONObject(response.getBody().toString());
+        String status = object.getString(STATUS);
+        String msg = object.optString(MESSAGE);
+
+        if ("nodes reservation OK".equals(status) && (msg.equals("[]"))) {
+            msg = "No nodes to be reserved";
+        } else if ("nodes reservation OK".equals(status)) {
+            // node ids
+            // ["A","B"] -> A,B
+            msg = msg.replace("[", "").replace("]", "").replace("\"", "");
+        }
+
+        redirectAttributes.addFlashAttribute(STATUS, status);
+        redirectAttributes.addFlashAttribute(MESSAGE, msg);
     }
 
     private List<String> convertJSONArrayToList(JSONArray jsonArray) {
@@ -3556,6 +3486,21 @@ public class MainController {
             resultList.add(jsonArray.getString(i));
         }
         return resultList;
+    }
+
+    private HashMap<String, Team2> getTeamMap() {
+        TeamManager2 teamManager2 = new TeamManager2();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+        }
+        return teamManager2.getTeamMap();
     }
 
     @RequestMapping("/admin/nodesStatus")
