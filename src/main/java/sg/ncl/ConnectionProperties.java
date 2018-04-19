@@ -444,9 +444,11 @@ public class ConnectionProperties {
 
     public String reserveNodes(String teamId, Integer numNodes, String machineType) {
         if (machineType == null) {
-            return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations?numNodes=" + numNodes;
+            // HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations?numNodes=" + numNodes
+            return releaseNodes(teamId, numNodes);
         } else {
-            return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations?numNodes=" + numNodes + "&machineType=" + machineType;
+            // HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/reservations?numNodes=" + numNodes + "&machineType=" + machineType;
+            return releaseNodes(teamId, numNodes) + "&machineType=" + machineType;
         }
     }
 }

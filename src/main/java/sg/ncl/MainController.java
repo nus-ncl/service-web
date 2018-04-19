@@ -3366,7 +3366,7 @@ public class MainController {
     }
 
     @PostMapping("/admin/nodesReservation")
-    public String adminNodesReservation(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws IOException {
+    public String adminNodesReservation(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         HashMap<String, Team2> teamMap = getTeamMap();
 
         // sanitization
@@ -3408,8 +3408,8 @@ public class MainController {
         JSONObject reservation = new JSONObject(response.getBody().toString()).getJSONObject("reservation");
         Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("all")));
         Set<String> reloadSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("reload")));
-        Set<String> inUseSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("in_use")));
-        String status = new JSONObject(response.getBody().toString()).getString("status");
+        Set<String> inUseSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray(NodeType.IN_USE.name().toLowerCase())));
+        String status = new JSONObject(response.getBody().toString()).getString(STATUS);
 
         redirectAttributes.addFlashAttribute("reservedSet", reservedSet);
         redirectAttributes.addFlashAttribute("reloadSet", reloadSet);
