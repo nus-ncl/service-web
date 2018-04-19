@@ -3407,7 +3407,7 @@ public class MainController {
 
         JSONObject reservation = new JSONObject(response.getBody().toString()).getJSONObject("reservation");
         Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("all")));
-        Set<String> reloadSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("reload")));
+        Set<String> reloadSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray(NodeType.RELOADING.name().toLowerCase())));
         Set<String> inUseSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray(NodeType.IN_USE.name().toLowerCase())));
         String status = new JSONObject(response.getBody().toString()).getString(STATUS);
 
