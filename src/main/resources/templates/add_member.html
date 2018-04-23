@@ -17,7 +17,7 @@
             <h2 class="team-heading team-heading-current-team" th:text="#{team.profile.addMember}">Add member</h2>
             <p>&nbsp;</p>
 
-            <form  method="post" action="#" th:action="@{/add_member}" th:object="${addMemberForm}" role="form">
+            <form  method="post" action="#" th:action="@{/add_member/{teamId}(teamId=${teamId})}" th:object="${addMemberForm}" role="form">
                 <textarea type="text" rows="10" class="form-control" placeholder="1 email per line" th:field="*{emails}"/>
                 <p>&nbsp;</p>
                 <div class="form-group">
