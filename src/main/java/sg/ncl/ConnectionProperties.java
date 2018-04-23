@@ -134,6 +134,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/quota" ;
     }
 
+    public String addMemberByEmail(String teamId, String[] emails){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/addMembers";
+    }
+
     //-------------------------------------
     // USERS
     //-------------------------------------

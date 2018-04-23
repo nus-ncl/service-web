@@ -287,8 +287,6 @@ public class SignUpMergedForm {
 
     public boolean getIsClass() {return isClass;}
 
-    public void setIsClass(boolean isClass) {this.isClass = isClass;}
-    
     public boolean getHasAcceptTeamOwnerPolicy() {
         return hasAcceptTeamOwnerPolicy;
     }

@@ -1902,6 +1902,21 @@ public class MainController {
         return REDIRECT_TEAM_PROFILE_TEAM_ID;
     }
 
+    @RequestMapping(value="/add_member", method= RequestMethod.GET)
+    public String addMember(Model model) {
+        model.addAttribute("addMemberForm", new addMemberForm());
+        return "add_member";
+    }
+
+    @RequestMapping(value="/add_member", method= RequestMethod.POST)
+    public String addMember(@Valid addMemberForm addMemberForm) {
+        String emails[] = addMemberForm.getEmails().split("\\r?\\n");
+        log.info("{}",emails[0]);
+        log.info("{}",emails[1]);
+
+        return "redirect:/add_member";
+    }
+
 //    @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
 //    public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
 //        // start experiment
