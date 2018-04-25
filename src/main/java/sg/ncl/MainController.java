@@ -2874,19 +2874,22 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
             return "redirect:/experiments";
         }
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getStatefulExperiment(expId.toString()), HttpMethod.GET, request, String.class);
+        StatefulExperiment statefulExperiment = extractStatefulExperiment(response.getBody().toString());
         getDeterUid(model, session);
         Map attributes = model.asMap();
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(vncProperties.getHttp())
                 .queryParam("host", vncProperties.getHost())
-                .queryParam("path", qencode(getNodeQualifiedName(realization, nodeId) + ":" + portNum, (String) attributes.get(DETER_UID)))
+                .queryParam("path", qencode(getNodeQualifiedName(statefulExperiment, nodeId) + ":" + portNum, (String) attributes.get(DETER_UID)))
                 .build();
         log.info("VNC URI: {}", uriComponents.toString());
         return "redirect:" + uriComponents.toString();
     }
 
-    private String getNodeQualifiedName(Realization realization, String nodeId) {
+    private String getNodeQualifiedName(StatefulExperiment statefulExperiment, String nodeId) {
         StringBuilder qualifiedName = new StringBuilder();
-        realization.getNodesInfoMap().forEach((key, value) -> {
+        statefulExperiment.getNodesInfoMap().forEach((key, value) -> {
             if (value.get(NODE_ID).equals(nodeId)) {
                 qualifiedName.append(value.get(QUALIFIED_NAME));
             }
