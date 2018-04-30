@@ -1923,11 +1923,11 @@ public class MainController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("emails", jsonArray.toString());
 
-        log.info("before create http request");
+        //log.info("before create http request");
         HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
-        log.info("before setErrorHandler");
+       // log.info("before setErrorHandler");
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        log.info("before responseEntity");
+        //log.info("before responseEntity");
         ResponseEntity responseEntity = null;
 
         log.info("before try loop loop");
