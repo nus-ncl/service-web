@@ -429,4 +429,11 @@ public class ConnectionProperties {
         }
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + params.toString();
     }
+
+    //-------------------------------------
+    // USER SSH PUBLIC KEYS
+    //-------------------------------------
+    public String getPublicKeys() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/publicKeys";
+    }
 }

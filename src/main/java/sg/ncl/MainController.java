@@ -3639,27 +3639,7 @@ public class MainController {
             MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             String logMessage = "Failed to restrict team {}: {}";
-            switch (exceptionState) {
-                case TEAM_NOT_FOUND_EXCEPTION:
-                    log.warn(logMessage, team.getId(), TEAM_NOT_FOUND);
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + TEAM_NOT_FOUND);
-                    break;
-                case INVALID_STATUS_TRANSITION_EXCEPTION:
-                    log.warn(logMessage, team.getId(), error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
-                    break;
-                case INVALID_TEAM_STATUS_EXCEPTION:
-                    log.warn(logMessage, team.getId(), error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
-                    break;
-                case FORBIDDEN_EXCEPTION:
-                    log.warn(logMessage, team.getId(), PERMISSION_DENIED);
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + PERMISSION_DENIED);
-                    break;
-                default:
-                    log.warn(logMessage, team.getId(), exceptionState.getExceptionName());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            }
+            handleException(team, redirectAttributes, error, exceptionState, logMessage);
             return "redirect:/admin";
         } else {
             // good
@@ -3682,33 +3662,37 @@ public class MainController {
             MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             String logMessage = "Failed to free team {}: {}";
-            switch (exceptionState) {
-                case TEAM_NOT_FOUND_EXCEPTION:
-                    log.warn(logMessage, team.getId(), TEAM_NOT_FOUND);
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + TEAM_NOT_FOUND);
-                    break;
-                case INVALID_STATUS_TRANSITION_EXCEPTION:
-                    log.warn(logMessage, team.getId(), error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
-                    break;
-                case INVALID_TEAM_STATUS_EXCEPTION:
-                    log.warn(logMessage, team.getId(), error.getMessage());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
-                    break;
-                case FORBIDDEN_EXCEPTION:
-                    log.warn(logMessage, team.getId(), PERMISSION_DENIED);
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + PERMISSION_DENIED);
-                    break;
-                default:
-                    log.warn(logMessage, team.getId(), exceptionState.getExceptionName());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            }
+            handleException(team, redirectAttributes, error, exceptionState, logMessage);
             return "redirect:/admin";
         } else {
             // good
             log.info("Team {} has been freed", team.getId());
             redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + team.getName() + " status has been changed to " + TeamStatus.APPROVED.name());
             return "redirect:/admin";
+        }
+    }
+
+    private void handleException(Team2 team, RedirectAttributes redirectAttributes, MyErrorResource error, ExceptionState exceptionState, String logMessage) {
+        switch (exceptionState) {
+            case TEAM_NOT_FOUND_EXCEPTION:
+                log.warn(logMessage, team.getId(), TEAM_NOT_FOUND);
+                redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + TEAM_NOT_FOUND);
+                break;
+            case INVALID_STATUS_TRANSITION_EXCEPTION:
+                log.warn(logMessage, team.getId(), error.getMessage());
+                redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
+                break;
+            case INVALID_TEAM_STATUS_EXCEPTION:
+                log.warn(logMessage, team.getId(), error.getMessage());
+                redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
+                break;
+            case FORBIDDEN_EXCEPTION:
+                log.warn(logMessage, team.getId(), PERMISSION_DENIED);
+                redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + PERMISSION_DENIED);
+                break;
+            default:
+                log.warn(logMessage, team.getId(), exceptionState.getExceptionName());
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
         }
     }
 
@@ -4043,6 +4027,20 @@ public class MainController {
         model.addAttribute("loginForm", new LoginForm());
         model.addAttribute("signUpMergedForm", new SignUpMergedForm());
         return "join_team_application_awaiting_approval";
+    }
+
+    //--------------------------SSH Public Keys------------------------------------------
+    @RequestMapping(path = "/show_pub_keys", method = RequestMethod.GET)
+    public String showPublicKeys(Model model, HttpSession session) throws WebServiceRuntimeException {
+        getDeterUid(model, session);
+        List<String> keys = new ArrayList<>();
+
+//        HttpEntity<String> request = createHttpEntityHeaderOnly();
+//        ResponseEntity response = restTemplate.exchange(properties.getPublicKeys(), HttpMethod.GET, request, String.class);
+//        String responseBody = response.getBody().toString();
+
+        model.addAttribute("keys", keys);
+        return "showpubkeys";
     }
 
     //--------------------------Get List of scenarios filenames--------------------------
