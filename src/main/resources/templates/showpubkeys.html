@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - SSH Public Keys</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
+<div class="container">
+    <p>&nbsp;</p>
+    <div class="row dashpanel">
+        <h2 class="team-heading team-heading-current-team">SSH Public Keys</h2>
+        <p>Current SSH public keys for user <span th:text="${deterUid}"></span></p>
+        <table class="table table-responsive table-striped">
+            <thead>
+            <tr>
+                <th>Key</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <th:block th:if="${keys.isEmpty()}">
+                <tbody>
+                <tr>
+                    <td>There are no public keys on file</td>
+                </tr>
+                </tbody>
+            </th:block>
+            <th:block th:if="${!keys.isEmpty()}">
+                <tbody th:each="key: ${keys}">
+                <tr>
+                    <td th:text="${key}"></td>
+                    <td>
+                        <button type="button"><i class="fa fa-trash btn-fa-red"></i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </th:block>
+        </table>
+        <p>&nbsp;</p>
+        <hr/>
+        <p>Enter SSH public key fo user <span th:text="${deterUid}"></span><br/>
+            <em>(We <b>strongly</b> encourage the use of Protocol 2 keys only!)</em></p>
+        <form method="post" class="form-horizontal" role="form">
+            <div class="form-group">
+                <label for="keyFile" class="col-sm-2 control-label">Upload Public Key</label>
+                <div class="col-sm-10">
+                    <input type="file" class="form-control" id="keyFile" placeholder="Choose file"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="keyPass" class="col-sm-2 control-label">Password</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" id="keyPass" placeholder="Enter password"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">Add New Key</button>
+                </div>
+            </div>
+        </form>
+        <p>&nbsp;</p>
+        <p>Notes:</p>
+        <ol>
+            <li>You should not hand edit your authorized_keys file on the NCL Users machine (users.ncl.sg) since modifications via this page will overwrite the file.</li>
+            <li>Typically, the file you want to upload is your id_rsa.pub, contained in the .ssh directory in your home folder.</li>
+            <li>As a security precaution, you must supply your password when adding new ssh public keys.</li>
+            <li>Protocol 2 keys are <b>required</b>.</li>
+        </ol>
+    </div>
+</div>
+</body>
+</html>
