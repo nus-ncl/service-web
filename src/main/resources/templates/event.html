@@ -32,20 +32,19 @@
         <div class="row">
             <div class="col-md-10" style="margin-left: 14px;">
                 <h3 class="news-header" style="text-transform: uppercase; color: #21b3b7;">Upcoming Events</h3>
-                <div class="col-md-6">
-                    <div style="height: 210px; border: 1px solid #ccc; padding-top: 60px; padding-left: 10px; padding-right: 10px; margin-bottom: 10px;">
-                        <img class="img-responsive" th:src="@{~/images/gtacs_2018.jpg}" alt="gtacs_logo"/>
+                <div class="col-md-6 upcoming-event-box">
+                    <img class="img-responsive" th:src="@{~/images/gtacs_2018.jpg}" style="margin-top: 60px; padding-left: 10px; padding-right: 10px;" alt="gtacs_logo"/>
+                    <div style="position:absolute; bottom: 0;">
+                        <div class="col-md-2 event-date">
+                            <p style="text-transform: uppercase">May <span style="font-size: 2em;">21</span></p>
+                            <p><a href="http://www.gtacs.sg/">Link</a></p>
+                        </div>
+                        <div class="col-md-10">
+                            <strong>GTACS 2018</strong>
+                            <p style="font-size: 14px;"><em>NCL is a supporting organisation for GTACS 2018.</em></p>
+                        </div>
                     </div>
-                    <div class="col-sm-2 event-date">
-                        <p style="text-transform: uppercase">May 21</p>
-                    </div>
-                    <div class="col-md-10">
-                        <strong>GTACS 2018</strong>
-                        <p><a href="http://www.gtacs.sg/">Link</a></p>
-                        <p style="font-size: 14px;">NCL is a supporting organisation for GTACS 2018.</p>
-                    </div>
-                </div> <!-- event list -->
-                <div class="col-md-6"></div>
+                </div>
             </div>
         </div> <!-- upcoming -->
         <p>&nbsp;</p>
