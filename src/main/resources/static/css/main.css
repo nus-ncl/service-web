@@ -807,6 +807,13 @@ Waypoints
 /*************************
 ******News Events CSS*****
 **************************/
+.event-date {
+    color: #21b3b7;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
 .news-header {
     text-align: left;
     color : #000;
