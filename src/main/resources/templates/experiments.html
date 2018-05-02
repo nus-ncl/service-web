@@ -381,7 +381,7 @@
             return true;
         }
 
-        function checkRange(hrefButton, qualifiedName) {
+        function checkRange(hrefButton) {
             var portText = hrefButton.nextElementSibling;
             var v = portText.value;
             if (isNaN(v) || v < 5901 || v > 5999) {
