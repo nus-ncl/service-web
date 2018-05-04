@@ -4035,9 +4035,24 @@ public class MainController {
         getDeterUid(model, session);
         List<String> keys = new ArrayList<>();
 
-//        HttpEntity<String> request = createHttpEntityHeaderOnly();
-//        ResponseEntity response = restTemplate.exchange(properties.getPublicKeys(), HttpMethod.GET, request, String.class);
-//        String responseBody = response.getBody().toString();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(
+                properties.getPublicKeys(session.getAttribute("id").toString()),
+                HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                log.error("Unable to get public keys for user {}", session.getAttribute("id"));
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                throw new RestClientException("[" + error.getError() + "] ");
+            } else {
+                log.info("showpubkeys: {}", responseBody);
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
 
         model.addAttribute("keys", keys);
         return "showpubkeys";
