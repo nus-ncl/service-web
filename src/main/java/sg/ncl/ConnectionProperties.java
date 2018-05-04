@@ -433,7 +433,7 @@ public class ConnectionProperties {
     //-------------------------------------
     // USER SSH PUBLIC KEYS
     //-------------------------------------
-    public String getPublicKeys() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/publicKeys";
+    public String getPublicKeys(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/publicKeys";
     }
 }
