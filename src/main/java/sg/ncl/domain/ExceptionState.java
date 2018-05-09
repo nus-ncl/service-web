@@ -55,7 +55,8 @@ public enum ExceptionState {
     USER_ALREADY_IN_TEAM_EXCEPTION("UserAlreadyInTeamException"),
     USER_ID_NULL_OR_EMPTY_EXCEPTION("UserIdNullOrEmptyException"),
     USER_IS_NOT_DELETABLE_EXCEPTION("UserIsNotDeletableException"),
-    USER_NOT_FOUND_EXCEPTION("UserNotFoundException");
+    USER_NOT_FOUND_EXCEPTION("UserNotFoundException"),
+    VERIFICATION_PASSWORD_NOT_MATCH_EXCEPTION("VerificationPasswordNotMatchException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 

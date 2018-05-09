@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.util.UriComponents;
@@ -39,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.xml.ws.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -4033,7 +4035,7 @@ public class MainController {
     @RequestMapping(path = "/show_pub_keys", method = RequestMethod.GET)
     public String showPublicKeys(Model model, HttpSession session) throws WebServiceRuntimeException {
         getDeterUid(model, session);
-        List<String> keys = new ArrayList<>();
+        SortedMap<String, Map<String, String>> keysMap = new TreeMap<>();
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -4048,14 +4050,87 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 throw new RestClientException("[" + error.getError() + "] ");
             } else {
-                log.info("showpubkeys: {}", responseBody);
+                ObjectMapper mapper = new ObjectMapper();
+                keysMap = mapper.readValue(responseBody, new TypeReference<SortedMap<String, Map<String, String>>>() {});
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
-        model.addAttribute("keys", keys);
+        model.addAttribute("keys", keysMap);
         return "showpubkeys";
+    }
+
+    @RequestMapping(path = "/show_pub_keys", method = RequestMethod.POST)
+    public String addPublicKey(@RequestParam("keyFile") MultipartFile keyFile,
+                               @RequestParam("keyPass") String keyPass,
+                               RedirectAttributes redirectAttributes,
+                               HttpSession session) throws WebServiceRuntimeException {
+        if (keyFile.isEmpty()) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Please select a keyfile to upload");
+            redirectAttributes.addFlashAttribute("hasKeyFileError", true);
+        } else if (keyPass.isEmpty()) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Please enter your password");
+            redirectAttributes.addFlashAttribute("hasKeyPassError", true);
+        } else {
+            try {
+                JSONObject keyInfo = new JSONObject();
+                keyInfo.put("publicKey", new String(keyFile.getBytes()));
+                keyInfo.put("password", keyPass);
+                HttpEntity<String> request = createHttpEntityWithBody(keyInfo.toString());
+                restTemplate.setErrorHandler(new MyResponseErrorHandler());
+                ResponseEntity response = restTemplate.exchange(
+                        properties.getPublicKeys(session.getAttribute("id").toString()),
+                        HttpMethod.POST, request, String.class
+                );
+                String responseBody = response.getBody().toString();
+
+                if (RestUtil.isError(response.getStatusCode())) {
+                    MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                    ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                    switch (exceptionState) {
+                        case VERIFICATION_PASSWORD_NOT_MATCH_EXCEPTION:
+                            log.error(error.getMessage());
+                            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid password");
+                            redirectAttributes.addFlashAttribute("hasKeyPassError", true);
+                            break;
+                        case FORBIDDEN_EXCEPTION:
+                            log.error(error.getMessage());
+                            redirectAttributes.addFlashAttribute(MESSAGE, "Adding of public key is forbidden");
+                            break;
+                        default:
+                            log.error("Unknown error when adding public key");
+                            redirectAttributes.addFlashAttribute(MESSAGE, "Unknown error when adding public key");
+                    }
+                }
+            } catch (IOException e) {
+                throw new WebServiceRuntimeException(e.getMessage());
+            }
+        }
+
+        return "redirect:/show_pub_keys";
+    }
+
+    @RequestMapping(path = "/delete_pub_key/{keyId}", method = RequestMethod.GET)
+    public String deletePublicKey(HttpSession session, @PathVariable String keyId) throws WebServiceRuntimeException {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(
+                properties.getPublicKeys(session.getAttribute("id").toString()) + "/" + keyId,
+                HttpMethod.DELETE, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                log.error("Unable to delete public key {} for user {}", keyId, session.getAttribute("id"));
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                throw new RestClientException("[" + error.getError() + "] ");
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "redirect:/show_pub_keys";
     }
 
     //--------------------------Get List of scenarios filenames--------------------------
