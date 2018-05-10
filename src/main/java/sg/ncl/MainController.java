@@ -40,10 +40,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.xml.ws.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -103,7 +101,7 @@ public class MainController {
     private static final String CONNECTION_ERROR = "Connection Error";
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
     private static final String ERR_START_DATE_AFTER_END_DATE = "End date must be after start date";
-    private static final String ERR_INVALID_EMAIL_PASSWORD = "Login failed: Invalid email/password.";
+    private static final String ERR_INVALID_CREDENTIALS = "Login failed: Invalid email/password.";
 
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
@@ -130,6 +128,16 @@ public class MainController {
     private static final String LOGIN_PAGE = "login";
     private static final String EXPERIMENTS = "experiments";
 
+    private static final String PSWD = "password";
+    private static final String FNAME = "firstName";
+    private static final String LNAME = "lastName";
+    private static final String JOB_TITLE = "jobTitle";
+    private static final String EMAIL = "email";
+    private static final String PHONE = "phone";
+    private static final String INSTITUTION = "institution";
+    private static final String INSTITUTION_ABBREVIATION = "institutionAbbreviation";
+    private static final String INSTITUTION_WEB = "institutionWeb";
+    private static final String ADDRESS = "address";
     private static final String APPLICATION_DATE = "applicationDate";
     private static final String TEAM_NAME = "teamName";
     private static final String TEAM_ID = "teamId";
@@ -141,6 +149,7 @@ public class MainController {
     private static final String EDIT_BUDGET = "editBudget";
     private static final String ORIGINAL_BUDGET = "originalBudget";
 
+    private static final String REDIRECT_SIGNUP = "redirect:/signup2";
     private static final String REDIRECT_UPDATE_EXPERIMENT = "redirect:/update_experiment/";
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
@@ -423,9 +432,9 @@ public class MainController {
         return LOGIN_PAGE;
     }
 
-    @RequestMapping(value = "/emailVerification", params = {"id", "email", "key"})
+    @RequestMapping(value = "/emailVerification", params = {"id", EMAIL, "key"})
     public String verifyEmail(@NotNull @RequestParam("id") final String id,
-                              @NotNull @RequestParam("email") final String emailBase64,
+                              @NotNull @RequestParam(EMAIL) final String emailBase64,
                               @NotNull @RequestParam("key") final String key) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -458,7 +467,7 @@ public class MainController {
             HttpSession session, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
-            loginForm.setErrorMsg(ERR_INVALID_EMAIL_PASSWORD);
+            loginForm.setErrorMsg(ERR_INVALID_CREDENTIALS);
             return LOGIN_PAGE;
         }
 
@@ -494,7 +503,7 @@ public class MainController {
         log.info("token string {}", jwtTokenString);
         if (jwtTokenString == null || jwtTokenString.isEmpty()) {
             log.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
-            loginForm.setErrorMsg(ERR_INVALID_EMAIL_PASSWORD);
+            loginForm.setErrorMsg(ERR_INVALID_CREDENTIALS);
             return LOGIN_PAGE;
         }
         if (RestUtil.isError(response.getStatusCode())) {
@@ -508,7 +517,7 @@ public class MainController {
                     return LOGIN_PAGE;
                 }
                 log.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
-                loginForm.setErrorMsg(ERR_INVALID_EMAIL_PASSWORD);
+                loginForm.setErrorMsg(ERR_INVALID_CREDENTIALS);
                 return LOGIN_PAGE;
             } catch (IOException ioe) {
                 log.warn(LOG_IOEXCEPTION, ioe);
@@ -526,7 +535,7 @@ public class MainController {
 
         if (token.trim().isEmpty() || id.trim().isEmpty() || role.trim().isEmpty()) {
             log.warn("login failed for {}: empty id {} or token {} or role {}", loginForm.getLoginEmail(), id, token, role);
-            loginForm.setErrorMsg(ERR_INVALID_EMAIL_PASSWORD);
+            loginForm.setErrorMsg(ERR_INVALID_CREDENTIALS);
             return LOGIN_PAGE;
         }
 
@@ -729,7 +738,7 @@ public class MainController {
             BindingResult bindingResult,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
-        if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
+        if (bindingResult.hasErrors() || !signUpMergedForm.getIsValid()) {
             log.warn("Register form has errors {}", signUpMergedForm.toString());
             return SIGNUP_PAGE;
         }
@@ -745,22 +754,22 @@ public class MainController {
         JSONObject mainObject = new JSONObject();
         JSONObject credentialsFields = new JSONObject();
         credentialsFields.put("username", signUpMergedForm.getEmail().trim());
-        credentialsFields.put("password", signUpMergedForm.getPassword());
+        credentialsFields.put(PSWD, signUpMergedForm.getPassword());
 
         // create the user JSON
         JSONObject userFields = new JSONObject();
         JSONObject userDetails = new JSONObject();
         JSONObject addressDetails = new JSONObject();
 
-        userDetails.put("firstName", signUpMergedForm.getFirstName().trim());
-        userDetails.put("lastName", signUpMergedForm.getLastName().trim());
-        userDetails.put("jobTitle", signUpMergedForm.getJobTitle().trim());
-        userDetails.put("email", signUpMergedForm.getEmail().trim());
-        userDetails.put("phone", signUpMergedForm.getPhone().trim());
-        userDetails.put("institution", signUpMergedForm.getInstitution().trim());
-        userDetails.put("institutionAbbreviation", signUpMergedForm.getInstitutionAbbreviation().trim());
-        userDetails.put("institutionWeb", signUpMergedForm.getWebsite().trim());
-        userDetails.put("address", addressDetails);
+        userDetails.put(FNAME, signUpMergedForm.getFirstName().trim());
+        userDetails.put(LNAME, signUpMergedForm.getLastName().trim());
+        userDetails.put(JOB_TITLE, signUpMergedForm.getJobTitle().trim());
+        userDetails.put(EMAIL, signUpMergedForm.getEmail().trim());
+        userDetails.put(PHONE, signUpMergedForm.getPhone().trim());
+        userDetails.put(INSTITUTION, signUpMergedForm.getInstitution().trim());
+        userDetails.put(INSTITUTION_ABBREVIATION, signUpMergedForm.getInstitutionAbbreviation().trim());
+        userDetails.put(INSTITUTION_WEB, signUpMergedForm.getWebsite().trim());
+        userDetails.put(ADDRESS, addressDetails);
 
         addressDetails.put("address1", signUpMergedForm.getAddress1().trim());
         addressDetails.put("address2", signUpMergedForm.getAddress2().trim());
@@ -783,86 +792,100 @@ public class MainController {
         String createNewTeamName = signUpMergedForm.getTeamName().trim();
         String joinNewTeamName = signUpMergedForm.getJoinTeamName().trim();
 
+        if (!createNewTeamName.isEmpty()) {
+            return checkNewTeamForm(signUpMergedForm, redirectAttributes, mainObject, teamFields, createNewTeamName);
+        } else if (!joinNewTeamName.isEmpty()) {
+            return checkJoinTeamForm(signUpMergedForm, redirectAttributes, mainObject, teamFields, joinNewTeamName);
+        } else {
+            log.warn("Signup unreachable statement");
+            // logic error not suppose to reach here
+            // possible if user fill up create new team but without the team name
+            redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
+            redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
+            return REDIRECT_SIGNUP;
+        }
+    }
 
-        if (createNewTeamName != null && !createNewTeamName.isEmpty()) {
-            log.info("Signup new team name {}", createNewTeamName);
-            boolean errorsFound = false;
+    private String checkJoinTeamForm(@Valid @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm, RedirectAttributes redirectAttributes, JSONObject mainObject, JSONObject teamFields, String joinNewTeamName) throws WebServiceRuntimeException {
+        log.info("Signup join team name {}", joinNewTeamName);
+        // get the team JSON from team name
+        Team2 joinTeamInfo;
 
-            if (createNewTeamName.length() < 2 || createNewTeamName.length() > 12) {
-                errorsFound = true;
-                signUpMergedForm.setErrorTeamName("Team name must be 2 to 12 alphabetic/numeric characters");
-            }
+        try {
+            joinTeamInfo = getTeamIdByName(signUpMergedForm.getJoinTeamName().trim());
+        } catch (TeamNotFoundException | AdapterConnectionException e) {
+            redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
+            redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
+            return REDIRECT_SIGNUP;
+        }
 
-            if (signUpMergedForm.getTeamDescription() == null || signUpMergedForm.getTeamDescription().isEmpty()) {
-                errorsFound = true;
-                signUpMergedForm.setErrorTeamDescription("Team description cannot be empty");
-            }
+        teamFields.put("id", joinTeamInfo.getId());
 
-            if (signUpMergedForm.getTeamWebsite() == null || signUpMergedForm.getTeamWebsite().isEmpty()) {
-                errorsFound = true;
-                signUpMergedForm.setErrorTeamWebsite("Team website cannot be empty");
-            }
+        // set the flag to indicate to controller that it is joining an existing team
+        mainObject.put("isJoinTeam", true);
 
-            if (errorsFound) {
-                log.warn("Signup new team error {}", signUpMergedForm.toString());
-                // clear join team name first before submitting the form
-                signUpMergedForm.setJoinTeamName(null);
-                return SIGNUP_PAGE;
-            } else {
+        try {
+            registerUserToDeter(mainObject);
+        } catch (
+                TeamNotFoundException |
+                        AdapterConnectionException |
+                        TeamNameAlreadyExistsException |
+                        UsernameAlreadyExistsException |
+                        EmailAlreadyExistsException |
+                        InvalidTeamNameException |
+                        InvalidPasswordException |
+                        DeterLabOperationFailedException e) {
+            redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
+            redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
+            return REDIRECT_SIGNUP;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
+            return REDIRECT_SIGNUP;
+        }
 
-                teamFields.put("name", signUpMergedForm.getTeamName().trim());
-                teamFields.put("description", signUpMergedForm.getTeamDescription().trim());
-                teamFields.put("website", signUpMergedForm.getTeamWebsite().trim());
-                teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
-                teamFields.put("visibility", signUpMergedForm.getIsPublic());
-                mainObject.put("isJoinTeam", false);
+        log.info("Signup join team success");
+        log.info("jointeam info: {}", joinTeamInfo);
+        redirectAttributes.addFlashAttribute("team", joinTeamInfo);
+        return "redirect:/join_application_submitted";
+    }
 
-                try {
-                    registerUserToDeter(mainObject);
-                } catch (
-                        TeamNotFoundException |
-                                TeamNameAlreadyExistsException |
-                                UsernameAlreadyExistsException |
-                                EmailAlreadyExistsException |
-                                InvalidTeamNameException |
-                                InvalidPasswordException |
-                                DeterLabOperationFailedException e) {
-                    redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
-                    redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
-                    return "redirect:/signup2";
-                } catch (Exception e) {
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
-                    return "redirect:/signup2";
-                }
+    private String checkNewTeamForm(@Valid @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm, RedirectAttributes redirectAttributes, JSONObject mainObject, JSONObject teamFields, String createNewTeamName) {
+        log.info("Signup new team name {}", createNewTeamName);
+        boolean errorsFound = false;
 
-                log.info("Signup new team success");
-                return "redirect:/team_application_submitted";
-            }
+        if (createNewTeamName.length() < 2 || createNewTeamName.length() > 12) {
+            errorsFound = true;
+            signUpMergedForm.setErrorTeamName("Team name must be 2 to 12 alphabetic/numeric characters");
+        }
 
-        } else if (joinNewTeamName != null && !joinNewTeamName.isEmpty()) {
-            log.info("Signup join team name {}", joinNewTeamName);
-            // get the team JSON from team name
-            Team2 joinTeamInfo;
+        if (signUpMergedForm.getTeamDescription() == null || signUpMergedForm.getTeamDescription().isEmpty()) {
+            errorsFound = true;
+            signUpMergedForm.setErrorTeamDescription("Team description cannot be empty");
+        }
 
-            try {
-                joinTeamInfo = getTeamIdByName(signUpMergedForm.getJoinTeamName().trim());
-            } catch (TeamNotFoundException | AdapterConnectionException e) {
-                redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
-                redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
-                return "redirect:/signup2";
-            }
+        if (signUpMergedForm.getTeamWebsite() == null || signUpMergedForm.getTeamWebsite().isEmpty()) {
+            errorsFound = true;
+            signUpMergedForm.setErrorTeamWebsite("Team website cannot be empty");
+        }
 
-            teamFields.put("id", joinTeamInfo.getId());
-
-            // set the flag to indicate to controller that it is joining an existing team
-            mainObject.put("isJoinTeam", true);
+        if (errorsFound) {
+            log.warn("Signup new team error {}", signUpMergedForm.toString());
+            // clear join team name first before submitting the form
+            signUpMergedForm.setJoinTeamName(null);
+            return SIGNUP_PAGE;
+        } else {
+            teamFields.put("name", signUpMergedForm.getTeamName().trim());
+            teamFields.put("description", signUpMergedForm.getTeamDescription().trim());
+            teamFields.put("website", signUpMergedForm.getTeamWebsite().trim());
+            teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
+            teamFields.put("visibility", signUpMergedForm.getIsPublic());
+            mainObject.put("isJoinTeam", false);
 
             try {
                 registerUserToDeter(mainObject);
             } catch (
                     TeamNotFoundException |
-                            AdapterConnectionException |
                             TeamNameAlreadyExistsException |
                             UsernameAlreadyExistsException |
                             EmailAlreadyExistsException |
@@ -871,24 +894,15 @@ public class MainController {
                             DeterLabOperationFailedException e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
                 redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
-                return "redirect:/signup2";
+                return REDIRECT_SIGNUP;
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                 redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
-                return "redirect:/signup2";
+                return REDIRECT_SIGNUP;
             }
 
-            log.info("Signup join team success");
-            log.info("jointeam info: {}", joinTeamInfo);
-            redirectAttributes.addFlashAttribute("team", joinTeamInfo);
-            return "redirect:/join_application_submitted";
-        } else {
-            log.warn("Signup unreachable statement");
-            // logic error not suppose to reach here
-            // possible if user fill up create new team but without the team name
-            redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
-            redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
-            return "redirect:/signup2";
+            log.info("Signup new team success");
+            return "redirect:/team_application_submitted";
         }
     }
 
@@ -939,14 +953,14 @@ public class MainController {
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
                         // throw from user service
                     {
-                        String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
+                        String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString(EMAIL);
                         log.warn("Register new users : email already exists: {}", email);
                         throw new UsernameAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
                     case EMAIL_ALREADY_EXISTS_EXCEPTION:
                         // throw from adapter deterlab
                     {
-                        String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString("email");
+                        String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString(EMAIL);
                         log.warn("Register new users : email already exists: {}", email);
                         throw new EmailAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
@@ -1092,15 +1106,15 @@ public class MainController {
             JSONObject userDetails = new JSONObject();
             JSONObject address = new JSONObject();
 
-            userDetails.put("firstName", editUser.getFirstName());
-            userDetails.put("lastName", editUser.getLastName());
-            userDetails.put("email", editUser.getEmail());
-            userDetails.put("phone", editUser.getPhone());
-            userDetails.put("jobTitle", editUser.getJobTitle());
-            userDetails.put("address", address);
-            userDetails.put("institution", editUser.getInstitution());
-            userDetails.put("institutionAbbreviation", originalUser.getInstitutionAbbreviation());
-            userDetails.put("institutionWeb", originalUser.getInstitutionWeb());
+            userDetails.put(FNAME, editUser.getFirstName());
+            userDetails.put(LNAME, editUser.getLastName());
+            userDetails.put(EMAIL, editUser.getEmail());
+            userDetails.put(PHONE, editUser.getPhone());
+            userDetails.put(JOB_TITLE, editUser.getJobTitle());
+            userDetails.put(ADDRESS, address);
+            userDetails.put(INSTITUTION, editUser.getInstitution());
+            userDetails.put(INSTITUTION_ABBREVIATION, originalUser.getInstitutionAbbreviation());
+            userDetails.put(INSTITUTION_WEB, originalUser.getInstitutionWeb());
 
             address.put("address1", originalUser.getAddress1());
             address.put("address2", originalUser.getAddress2());
@@ -1138,7 +1152,7 @@ public class MainController {
             // credential service change password
             if (editUser.isPasswordMatch()) {
                 JSONObject credObject = new JSONObject();
-                credObject.put("password", editUser.getPassword());
+                credObject.put(PSWD, editUser.getPassword());
 
                 HttpEntity<String> credRequest = createHttpEntityWithBody(credObject.toString());
                 restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -1394,7 +1408,7 @@ public class MainController {
         JSONObject object = new JSONObject(responseBody);
         JSONArray teamIdsJsonArray = object.getJSONArray("teams");
 
-        String userEmail = object.getJSONObject("userDetails").getString("email");
+        String userEmail = object.getJSONObject("userDetails").getString(EMAIL);
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
@@ -3368,7 +3382,6 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-
         // get number of active users and running experiments
         Map<String, String> testbedStatsMap = getTestbedStats();
         testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, "0");
@@ -4072,7 +4085,7 @@ public class MainController {
             try {
                 JSONObject keyInfo = new JSONObject();
                 keyInfo.put("publicKey", new String(keyFile.getBytes()));
-                keyInfo.put("password", keyPass);
+                keyInfo.put(PSWD, keyPass);
                 HttpEntity<String> request = createHttpEntityWithBody(keyInfo.toString());
                 restTemplate.setErrorHandler(new MyResponseErrorHandler());
                 ResponseEntity response = restTemplate.exchange(
@@ -4209,23 +4222,23 @@ public class MainController {
 
         JSONObject object = new JSONObject(userJson);
         JSONObject userDetails = object.getJSONObject("userDetails");
-        JSONObject address = userDetails.getJSONObject("address");
+        JSONObject address = userDetails.getJSONObject(ADDRESS);
 
         user2.setId(object.getString("id"));
-        user2.setFirstName(getJSONStr(userDetails.getString("firstName")));
-        user2.setLastName(getJSONStr(userDetails.getString("lastName")));
-        user2.setJobTitle(userDetails.getString("jobTitle"));
-        user2.setEmail(userDetails.getString("email"));
-        user2.setPhone(userDetails.getString("phone"));
+        user2.setFirstName(getJSONStr(userDetails.getString(FNAME)));
+        user2.setLastName(getJSONStr(userDetails.getString(LNAME)));
+        user2.setJobTitle(userDetails.getString(JOB_TITLE));
+        user2.setEmail(userDetails.getString(EMAIL));
+        user2.setPhone(userDetails.getString(PHONE));
         user2.setAddress1(address.getString("address1"));
         user2.setAddress2(address.getString("address2"));
         user2.setCountry(address.getString("country"));
         user2.setRegion(address.getString("region"));
         user2.setPostalCode(address.getString("zipCode"));
         user2.setCity(address.getString("city"));
-        user2.setInstitution(userDetails.getString("institution"));
-        user2.setInstitutionAbbreviation(userDetails.getString("institutionAbbreviation"));
-        user2.setInstitutionWeb(userDetails.getString("institutionWeb"));
+        user2.setInstitution(userDetails.getString(INSTITUTION));
+        user2.setInstitutionAbbreviation(userDetails.getString(INSTITUTION_ABBREVIATION));
+        user2.setInstitutionWeb(userDetails.getString(INSTITUTION_WEB));
 
         user2.setStatus(object.getString(STATUS));
         user2.setEmailVerified(object.getBoolean("emailVerified"));
