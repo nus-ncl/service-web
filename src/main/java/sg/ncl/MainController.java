@@ -90,6 +90,8 @@ public class MainController {
     private static final String EXPERIMENT_MESSAGE = "exp_message";
     private static final String ERROR_PREFIX = "Error: ";
     private static final String USER_PREFIX = "User ";
+    private static final String USER_STR = " user ";
+    private static final String REFRESH = ". Please refresh the page again. If the error persists, please contact ";
 
     private static final String MESSAGE_DELETE_IMAGE_SUCCESS = "message_success";
     private static final String MESSAGE_DELETE_IMAGE_FAILURE = "message_failure";
@@ -163,6 +165,7 @@ public class MainController {
     private static final String ORIGINAL_BUDGET = "originalBudget";
 
     private static final String REDIRECT_SIGNUP = "redirect:/signup2";
+    private static final String REDIRECT_EXPERIMENTS = "redirect:/experiments";
     private static final String REDIRECT_CREATE_EXPERIMENT = "redirect:/experiments/create";
     private static final String REDIRECT_UPDATE_EXPERIMENT = "redirect:/update_experiment/";
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
@@ -171,6 +174,7 @@ public class MainController {
     private static final String REDIRECT_ENERGY_USAGE = "redirect:/energy_usage";
     private static final String REDIRECT_TEAMS="redirect:/teams";
     private static final String REDIRECT_APPROVE_NEW_USER = "redirect:/approve_new_user";
+    private static final String REDIRECT_ADMIN = "redirect:/admin";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -2382,7 +2386,7 @@ public class MainController {
 //        // increase exp count to be display on Teams page
 //        teamManager.incrementExperimentCount(experiment.getTeamId());
 
-        return "redirect:/experiments";
+        return REDIRECT_EXPERIMENTS;
     }
 
     @RequestMapping(value = "/experiments/save_image/{teamId}/{expId}/{nodeId}", method = RequestMethod.GET)
@@ -2479,7 +2483,7 @@ public class MainController {
 
         // everything looks ok
         log.info("Saving image in progress: team {}, experiment {}, node {}, image {}", teamId, expId, nodeId, saveImageForm.getImageName());
-        return "redirect:/experiments";
+        return REDIRECT_EXPERIMENTS;
     }
 
 /*
@@ -2505,7 +2509,7 @@ public class MainController {
         } else {
             // everything ok
             log.info("Image service in progress for Team: {}, Exp: {}, Node: {}, Image: {}", teamId, expId, nodeId, saveImageForm.getImageName());
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
     }
 */
@@ -2533,13 +2537,13 @@ public class MainController {
         if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString()) && !team.getOwner().getId().equals(session.getAttribute(webProperties.getSessionUserId()))) {
             log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
             redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to remove experiment;" + permissionDeniedMessage);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             log.warn("Trying to remove Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to remove Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
-            return "redirect:/experiments";
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to remove Exp: " + realization.getExperimentName() + REFRESH + CONTACT_EMAIL);
+            return REDIRECT_EXPERIMENTS;
         }
 
         log.info("Removing experiment: at " + properties.getDeleteExperiment(teamId, expId));
@@ -2552,7 +2556,7 @@ public class MainController {
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to remove experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         String responseBody = response.getBody().toString();
@@ -2576,12 +2580,12 @@ public class MainController {
                         // do nothing
                         break;
                 }
-                return "redirect:/experiments";
+                return REDIRECT_EXPERIMENTS;
             } else {
                 // everything ok
                 log.info("remove experiment success for Team: {}, Exp: {}", teamId, expId);
                 redirectAttributes.addFlashAttribute("exp_remove_message", "Team: " + teamName + " has removed Exp: " + realization.getExperimentName());
-                return "redirect:/experiments";
+                return REDIRECT_EXPERIMENTS;
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2600,7 +2604,7 @@ public class MainController {
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         String teamId = realization.getTeamId();
@@ -2609,13 +2613,13 @@ public class MainController {
         if (!teamStatus.equals(TeamStatus.APPROVED.name())) {
             log.warn("Error: trying to realize an experiment {} on team {} with status {}", realization.getExperimentName(), teamId, teamStatus);
             redirectAttributes.addFlashAttribute(MESSAGE, teamName + " is in " + teamStatus + " status and does not have permission to start experiment. Please contact " + CONTACT_EMAIL);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             log.warn("Trying to start Team: {}, Experiment: {} with State: {} that is not running?", teamName, expId, realization.getState());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to start Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
-            return "redirect:/experiments";
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to start Exp: " + realization.getExperimentName() + REFRESH + CONTACT_EMAIL);
+            return REDIRECT_EXPERIMENTS;
         }
 
         //start experiment
@@ -2629,7 +2633,7 @@ public class MainController {
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to start experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         String responseBody = response.getBody().toString();
@@ -2644,14 +2648,14 @@ public class MainController {
                     case FORBIDDEN_EXCEPTION:
                         log.warn("start experiment failed for Team: {}, Exp: {}", teamName, expId);
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
-                        return "redirect:/experiments";
+                        return REDIRECT_EXPERIMENTS;
                     case TEAM_NOT_FOUND_EXCEPTION:
                         log.warn("Check team quota to start experiment: Team {} not found", teamName);
                         return REDIRECT_INDEX_PAGE;
                     case INSUFFICIENT_QUOTA_EXCEPTION:
                         log.warn("Check team quota to start experiment: Team {} do not have sufficient quota", teamName);
                         redirectAttributes.addFlashAttribute(MESSAGE, "There is insufficient quota for you to start this experiment. Please contact your team leader for more details.");
-                        return "redirect:/experiments";
+                        return REDIRECT_EXPERIMENTS;
                     case OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION:
                         // do nothing
                         log.info("start experiment database locking failure");
@@ -2669,7 +2673,7 @@ public class MainController {
                 // everything ok
                 log.info("start experiment success for Team: {}, Exp: {}", teamName, expId);
                 redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, getExperimentMessage(realization.getExperimentName(), teamName) + " is starting. This may take up to 10 minutes depending on the scale of your experiment. Please refresh this page later.");
-                return "redirect:/experiments";
+                return REDIRECT_EXPERIMENTS;
             }
         } catch (IOException e) {
             log.warn("start experiment error: {]", e.getMessage());
@@ -2688,13 +2692,13 @@ public class MainController {
         if (isNotAdminAndNotInTeam(session, realization)) {
             log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
             log.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to stop Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
-            return "redirect:/experiments";
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to stop Exp: " + realization.getExperimentName() + REFRESH + CONTACT_EMAIL);
+            return REDIRECT_EXPERIMENTS;
         }
 
         log.info("Stopping experiment: at " + properties.getStopExperiment(teamName, expId));
@@ -2724,8 +2728,8 @@ public class MainController {
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
             log.warn("Trying to modify Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while attempting to modify Exp: " + realization.getExperimentName() + ". Please refresh the page again. If the error persists, please contact " + CONTACT_EMAIL);
-            return "redirect:/experiments";
+            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while attempting to modify Exp: " + realization.getExperimentName() + REFRESH + CONTACT_EMAIL);
+            return REDIRECT_EXPERIMENTS;
         }
 
         Team2 team = invokeAndExtractTeamInfo(teamId);
@@ -2735,7 +2739,7 @@ public class MainController {
         if (!validateIfAdmin(session) && !editExperiment.getUserId().equals(session.getAttribute("id").toString()) && !team.getOwner().getId().equals(session.getAttribute(webProperties.getSessionUserId()))) {
             log.warn("Permission denied when updating Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
             redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to update experiment;" + permissionDeniedMessage);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         model.addAttribute("edit_experiment", editExperiment);
@@ -2778,7 +2782,7 @@ public class MainController {
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to update experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         String updateExperimentResponseBody = updateExperimentResponse.getBody().toString();
@@ -2808,7 +2812,7 @@ public class MainController {
                 // everything ok
                 log.info("update experiment success for Team:{}, Exp: {}", teamId, expId);
                 redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, getExperimentMessage(experiment.getName(), experiment.getTeamName()) + " has been modified. You may proceed to start the experiment.");
-                return "redirect:/experiments";
+                return REDIRECT_EXPERIMENTS;
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2842,7 +2846,7 @@ public class MainController {
         if(!realization.getState().equals(RealizationState.RUNNING.toString())) {
             log.warn("Trying to request internet for the experiment {} from team {} with state {}", expId, teamName,realization.getState());
             redirectAttributes.addFlashAttribute(MESSAGE, "The experiment " + realization.getExperimentName() + " need to be started before you can request for internet access" );
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         log.info("Requesting internet access at " + properties.requestInternetExperiment(teamId, expId));
@@ -2871,7 +2875,7 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             throw new WebServiceRuntimeException(e.getMessage());
         }
-        return "redirect:/experiments";
+        return REDIRECT_EXPERIMENTS;
     }
 
     @RequestMapping("/web_ssh/access_node/{qualifiedName:.+}")
@@ -2891,7 +2895,7 @@ public class MainController {
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to access experiment {} node for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getStatefulExperiment(expId.toString()), HttpMethod.GET, request, String.class);
@@ -2952,7 +2956,7 @@ public class MainController {
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to stop experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         }
 
         String responseBody = response.getBody().toString();
@@ -2974,7 +2978,7 @@ public class MainController {
                 log.info("stop experiment success for Team: {}, Exp: {}", teamName, expId);
                 redirectAttributes.addFlashAttribute(EXPERIMENT_MESSAGE, getExperimentMessage(realization.getExperimentName(), teamName) + " is stopping. Please refresh this page in a few minutes.");
             }
-            return "redirect:/experiments";
+            return REDIRECT_EXPERIMENTS;
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
@@ -3459,17 +3463,17 @@ public class MainController {
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
 //    public String addDomain(@Valid Domain domain, BindingResult bindingResult) {
 //    	if (bindingResult.hasErrors()) {
-//    		return "redirect:/admin";
+//    		return REDIRECT_ADMIN;
 //    	} else {
 //    		domainManager.addDomains(domain.getDomainName());
 //    	}
-//    	return "redirect:/admin";
+//    	return REDIRECT_ADMIN;
 //    }
 
 //    @RequestMapping("/admin/domains/remove/{domainKey}")
 //    public String removeDomain(@PathVariable String domainKey) {
 //    	domainManager.removeDomains(domainKey);
-//    	return "redirect:/admin";
+//    	return REDIRECT_ADMIN;
 //    }
 
     @RequestMapping("/admin/teams/accept/{teamId}/{teamOwnerId}")
@@ -3534,7 +3538,7 @@ public class MainController {
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
             }
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         }
 
         // http status code is OK, then need to check the response message
@@ -3545,7 +3549,7 @@ public class MainController {
             log.warn("Approve team {} FAIL", teamId);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
         }
-        return "redirect:/admin";
+        return REDIRECT_ADMIN;
     }
 
     @RequestMapping("/admin/teams/reject/{teamId}/{teamOwnerId}")
@@ -3608,7 +3612,7 @@ public class MainController {
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
             }
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         }
 
         // http status code is OK, then need to check the response message
@@ -3619,7 +3623,7 @@ public class MainController {
             log.warn("Reject team {} FAIL", teamId);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
         }
-        return "redirect:/admin";
+        return REDIRECT_ADMIN;
     }
 
     @RequestMapping("/admin/teams/{teamId}")
@@ -3666,12 +3670,12 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             String logMessage = "Failed to restrict team {}: {}";
             handleException(team, redirectAttributes, error, exceptionState, logMessage);
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         } else {
             // good
             log.info("Team {} has been restricted", team.getId());
             redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + team.getName() + " status has been changed to " + TeamStatus.RESTRICTED.name());
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         }
     }
 
@@ -3689,12 +3693,12 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             String logMessage = "Failed to free team {}: {}";
             handleException(team, redirectAttributes, error, exceptionState, logMessage);
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         } else {
             // good
             log.info("Team {} has been freed", team.getId());
             redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + team.getName() + " status has been changed to " + TeamStatus.APPROVED.name());
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         }
     }
 
@@ -3742,7 +3746,7 @@ public class MainController {
             return unfreezeUser(user, redirectAttributes);
         } else {
             log.warn("Error in freeze/unfreeze user {}: failed to {} user with status {}", userId, action, user.getStatus());
-            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "failed to " + action + " user " + user.getEmail() + " with status " + user.getStatus());
+            redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "failed to " + action + USER_STR + user.getEmail() + " with status " + user.getStatus());
             return "redirect:/admin/users";
         }
     }
@@ -3763,7 +3767,7 @@ public class MainController {
             switch (exceptionState) {
                 case USER_NOT_FOUND_EXCEPTION:
                     log.warn("Failed to freeze user {}: user not found", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + NOT_FOUND);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + USER_STR + user.getEmail() + NOT_FOUND);
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
                     log.warn("Failed to freeze user {}: invalid status transition {}", user.getId(), error.getMessage());
@@ -3782,12 +3786,12 @@ public class MainController {
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
             }
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         } else {
             // good
             log.info("User {} has been frozen", user.getId());
             redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, USER_PREFIX + user.getEmail() + " has been banned.");
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         }
     }
 
@@ -3807,7 +3811,7 @@ public class MainController {
             switch (exceptionState) {
                 case USER_NOT_FOUND_EXCEPTION:
                     log.warn("Failed to unfreeze user {}: user not found", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + NOT_FOUND);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + USER_STR + user.getEmail() + NOT_FOUND);
                     break;
                 case INVALID_STATUS_TRANSITION_EXCEPTION:
                     log.warn("Failed to unfreeze user {}: invalid status transition {}", user.getId(), error.getMessage());
@@ -3826,12 +3830,12 @@ public class MainController {
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                     break;
             }
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         } else {
             // good
             log.info("User {} has been unfrozen", user.getId());
             redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, USER_PREFIX + user.getEmail() + " has been unbanned.");
-            return "redirect:/admin";
+            return REDIRECT_ADMIN;
         }
     }
 
@@ -3857,15 +3861,15 @@ public class MainController {
             switch (exceptionState) {
                 case USER_NOT_FOUND_EXCEPTION:
                     log.warn("Failed to remove user {}: user not found", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + NOT_FOUND);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + USER_STR + user.getEmail() + NOT_FOUND);
                     break;
                 case USER_IS_NOT_DELETABLE_EXCEPTION:
                     log.warn("Failed to remove user {}: user is not deletable", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " is not deletable.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + USER_STR + user.getEmail() + " is not deletable.");
                     break;
                 case CREDENTIALS_NOT_FOUND_EXCEPTION:
                     log.warn("Failed to remove user {}: unable to find credentials", user.getId());
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " user " + user.getEmail() + " is not found.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + USER_STR + user.getEmail() + " is not found.");
                     break;
                 default:
                     log.warn("Failed to remove user {}: {}", user.getId(), exceptionState.getExceptionName());
@@ -3887,7 +3891,7 @@ public class MainController {
 //
 //        // decrease exp count to be display on Teams page
 //        teamManager.decrementExperimentCount(teamId);
-//    	return "redirect:/admin";
+//    	return REDIRECT_ADMIN;
 //    }
 
 //    @RequestMapping(value="/admin/data/contribute", method=RequestMethod.GET)
@@ -3942,13 +3946,13 @@ public class MainController {
 //			redirectAttributes.addFlashAttribute(MESSAGE,
 //					"You failed to upload " + file.getOriginalFilename() + " because the file was empty");
 //		}
-//    	return "redirect:/admin";
+//    	return REDIRECT_ADMIN;
 //    }
 
 //    @RequestMapping("/admin/data/remove/{datasetId}")
 //    public String adminRemoveDataset(@PathVariable Integer datasetId) {
 //    	datasetManager.removeDataset(datasetId);
-//    	return "redirect:/admin";
+//    	return REDIRECT_ADMIN;
 //    }
 
 //    @RequestMapping(value="/admin/node/add", method=RequestMethod.GET)
@@ -3962,7 +3966,7 @@ public class MainController {
 //    	// TODO
 //    	// validate fields, eg should be integer
 //    	nodeManager.addNode(node);
-//    	return "redirect:/admin";
+//    	return REDIRECT_ADMIN;
 //    }
 
     //--------------------------Static pages for teams--------------------------
