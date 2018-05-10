@@ -89,6 +89,7 @@ public class MainController {
     private static final String MESSAGE_SUCCESS = "messageSuccess";
     private static final String EXPERIMENT_MESSAGE = "exp_message";
     private static final String ERROR_PREFIX = "Error: ";
+    private static final String USER_PREFIX = "User ";
 
     private static final String MESSAGE_DELETE_IMAGE_SUCCESS = "message_success";
     private static final String MESSAGE_DELETE_IMAGE_FAILURE = "message_failure";
@@ -157,22 +158,26 @@ public class MainController {
     private static final String TEAM_NOT_FOUND = "Team not found";
     private static final String NOT_FOUND = " not found.";
 
+    private static final String QUOTA = "quota";
     private static final String EDIT_BUDGET = "editBudget";
     private static final String ORIGINAL_BUDGET = "originalBudget";
 
     private static final String REDIRECT_SIGNUP = "redirect:/signup2";
+    private static final String REDIRECT_CREATE_EXPERIMENT = "redirect:/experiments/create";
     private static final String REDIRECT_UPDATE_EXPERIMENT = "redirect:/update_experiment/";
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
     private static final String REDIRECT_INDEX_PAGE = "redirect:/";
     private static final String REDIRECT_ENERGY_USAGE = "redirect:/energy_usage";
     private static final String REDIRECT_TEAMS="redirect:/teams";
+    private static final String REDIRECT_APPROVE_NEW_USER = "redirect:/approve_new_user";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
     private static final String REMOVE_MEMBER_NAME = "removeMemberName";
 
     private static final String MEMBER_TYPE = "memberType";
+    private static final String MEMBER_STATUS = "memberStatus";
 
     // admin update data resource to track what fields have been updated
     private static final String ORIGINAL_DATARESOURCE = "original_dataresource";
@@ -195,6 +200,7 @@ public class MainController {
     private static final String SUCCESS = "success";
     private static final String TEAMS = "teams";
     private static final String MEMBERS = "members";
+    private static final String ORIGINAL_TEAM = "originalTeam";
 
     private static final String LOG_IOEXCEPTION = "IOException {}";
 
@@ -950,6 +956,7 @@ public class MainController {
                 log.warn("Register user exception error: {}", error.getError());
 
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                String email = mainObject.getJSONObject("user").getJSONObject(USER_DETAILS).getString(EMAIL);
 
                 switch (exceptionState) {
                     case DETERLAB_OPERATION_FAILED_EXCEPTION:
@@ -966,18 +973,12 @@ public class MainController {
                         throw new InvalidPasswordException("Password is too simple");
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
                         // throw from user service
-                    {
-                        String email = mainObject.getJSONObject("user").getJSONObject(USER_DETAILS).getString(EMAIL);
                         log.warn("Register new users : email already exists: {}", email);
                         throw new UsernameAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
-                    }
                     case EMAIL_ALREADY_EXISTS_EXCEPTION:
                         // throw from adapter deterlab
-                    {
-                        String email = mainObject.getJSONObject("user").getJSONObject(USER_DETAILS).getString(EMAIL);
                         log.warn("Register new users : email already exists: {}", email);
                         throw new EmailAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
-                    }
                     default:
                         log.warn("Registration or adapter connection fail");
                         // possible sio or adapter connection fail
@@ -1063,13 +1064,9 @@ public class MainController {
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws WebServiceRuntimeException {
 
-        boolean errorsFound = false;
         String editPhrase = "editPhrase";
 
-        // check fields first
-        errorsFound = checkEditUserFields(editUser, redirectAttributes, errorsFound, editPhrase);
-
-        if (errorsFound) {
+        if (checkEditUserFields(editUser, redirectAttributes, editPhrase)) {
             session.removeAttribute(webProperties.getSessionUserAccount());
             return "redirect:/account_settings";
         } else {
@@ -1104,24 +1101,7 @@ public class MainController {
             HttpEntity<String> request = createHttpEntityWithBody(userObject.toString());
             restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
 
-            if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
-                redirectAttributes.addFlashAttribute("editFirstName", SUCCESS);
-            }
-            if (!originalUser.getLastName().equals(editUser.getLastName())) {
-                redirectAttributes.addFlashAttribute("editLastName", SUCCESS);
-            }
-            if (!originalUser.getPhone().equals(editUser.getPhone())) {
-                redirectAttributes.addFlashAttribute("editPhone", SUCCESS);
-            }
-            if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
-                redirectAttributes.addFlashAttribute("editJobTitle", SUCCESS);
-            }
-            if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
-                redirectAttributes.addFlashAttribute("editInstitution", SUCCESS);
-            }
-            if (!originalUser.getCountry().equals(editUser.getCountry())) {
-                redirectAttributes.addFlashAttribute("editCountry", SUCCESS);
-            }
+            checkUserUpdate(editUser, redirectAttributes, originalUser);
 
             // credential service change password
             if (editUser.isPasswordMatch()) {
@@ -1150,7 +1130,29 @@ public class MainController {
         return "redirect:/account_settings";
     }
 
-    private boolean checkEditUserFields(@ModelAttribute("editUser") User2 editUser, RedirectAttributes redirectAttributes, boolean errorsFound, String editPhrase) {
+    private void checkUserUpdate(@ModelAttribute("editUser") User2 editUser, RedirectAttributes redirectAttributes, User2 originalUser) {
+        if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
+            redirectAttributes.addFlashAttribute("editFirstName", SUCCESS);
+        }
+        if (!originalUser.getLastName().equals(editUser.getLastName())) {
+            redirectAttributes.addFlashAttribute("editLastName", SUCCESS);
+        }
+        if (!originalUser.getPhone().equals(editUser.getPhone())) {
+            redirectAttributes.addFlashAttribute("editPhone", SUCCESS);
+        }
+        if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
+            redirectAttributes.addFlashAttribute("editJobTitle", SUCCESS);
+        }
+        if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
+            redirectAttributes.addFlashAttribute("editInstitution", SUCCESS);
+        }
+        if (!originalUser.getCountry().equals(editUser.getCountry())) {
+            redirectAttributes.addFlashAttribute("editCountry", SUCCESS);
+        }
+    }
+
+    private boolean checkEditUserFields(@ModelAttribute("editUser") User2 editUser, RedirectAttributes redirectAttributes, String editPhrase) {
+        boolean errorsFound = false;
         if (!errorsFound && editUser.getFirstName().isEmpty()) {
             redirectAttributes.addFlashAttribute("editFirstName", "fail");
             errorsFound = true;
@@ -1227,9 +1229,9 @@ public class MainController {
 
             for (int j = 0; j < membersArray.length(); j++) {
                 JSONObject memberObject = membersArray.getJSONObject(j);
-                String userId = memberObject.getString("userId");
+                String userId = memberObject.getString(USER_ID);
                 String teamMemberType = memberObject.getString(MEMBER_TYPE);
-                String teamMemberStatus = memberObject.getString("memberStatus");
+                String teamMemberStatus = memberObject.getString(MEMBER_STATUS);
                 String teamJoinedDate = formatZonedDateTime(memberObject.get("joinedDate").toString());
 
                 JoinRequestApproval joinRequestApproval = new JoinRequestApproval();
@@ -1284,7 +1286,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/approve_new_user";
+            return REDIRECT_APPROVE_NEW_USER;
         }
 
         String responseBody = response.getBody().toString();
@@ -1307,7 +1309,7 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                         break;
                 }
-                return "redirect:/approve_new_user";
+                return REDIRECT_APPROVE_NEW_USER;
             } catch (IOException ioe) {
                 log.warn(LOG_IOEXCEPTION, ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
@@ -1316,7 +1318,7 @@ public class MainController {
         // everything looks OK?
         log.info("Join request has been APPROVED, User {}, Team {}", userId, teamId);
         redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Join request has been APPROVED.");
-        return "redirect:/approve_new_user";
+        return REDIRECT_APPROVE_NEW_USER;
     }
 
     @RequestMapping("/approve_new_user/reject/{teamId}/{userId}")
@@ -1340,7 +1342,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/approve_new_user";
+            return REDIRECT_APPROVE_NEW_USER;
         }
 
         String responseBody = response.getBody().toString();
@@ -1359,7 +1361,7 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                         break;
                 }
-                return "redirect:/approve_new_user";
+                return REDIRECT_APPROVE_NEW_USER;
             } catch (IOException ioe) {
                 log.warn(LOG_IOEXCEPTION, ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
@@ -1368,7 +1370,7 @@ public class MainController {
         // everything looks OK?
         log.info("Join request has been REJECTED, User {}, Team {}", userId, teamId);
         redirectAttributes.addFlashAttribute(MESSAGE, "Join request has been REJECTED.");
-        return "redirect:/approve_new_user";
+        return REDIRECT_APPROVE_NEW_USER;
     }
 
     //--------------------------Teams Page--------------------------
@@ -1446,7 +1448,7 @@ public class MainController {
         model.addAttribute("userJoinRequestMap", teamManager2.getUserJoinRequestMap());
         model.addAttribute("isInnerImageMapPresent", isInnerImageMapPresent);
         model.addAttribute("imageMap", imageMap);
-        return "teams";
+        return TEAMS;
     }
 
     /**
@@ -1531,7 +1533,7 @@ public class MainController {
 //        String teamName = teamManager.getTeamNameByTeamId(teamId);
 //        teamManager.setInfoMsg("You have just joined Team " + teamName + " !");
 //
-//        return "redirect:/teams";
+//        return REDIRECT_TEAMS;
 //    }
 
 //    @RequestMapping("/ignore_participation/{teamId}")
@@ -1542,7 +1544,7 @@ public class MainController {
 //        teamManager.ignoreParticipationRequest2(getSessionIdOfLoggedInUser(session), teamId);
 //        teamManager.setInfoMsg("You have just ignored a team request from Team " + teamName + " !");
 //
-//        return "redirect:/teams";
+//        return REDIRECT_TEAMS;
 //    }
 
     //    @RequestMapping("/withdraw/{teamId}")
@@ -1553,7 +1555,7 @@ public class MainController {
         teamManager.removeUserJoinRequest2(getSessionIdOfLoggedInUser(session), teamId);
         teamManager.setInfoMsg("You have withdrawn your join request for Team " + teamName);
 
-        return "redirect:/teams";
+        return REDIRECT_TEAMS;
     }
 
 //    @RequestMapping(value="/teams/invite_members/{teamId}", method=RequestMethod.GET)
@@ -1567,7 +1569,7 @@ public class MainController {
 //    public String sendInvitation(@PathVariable Integer teamId, @ModelAttribute TeamPageInviteMemberForm teamPageInviteMemberForm,Model model) {
 //        int userId = userManager.getUserIdByEmail(teamPageInviteMemberForm.getInviteUserEmail());
 //        teamManager.addInvitedToParticipateMap(userId, teamId);
-//        return "redirect:/teams";
+//        return REDIRECT_TEAMS;
 //    }
 
     @RequestMapping(value = "/teams/members_approval/{teamId}", method = RequestMethod.GET)
@@ -1693,7 +1695,7 @@ public class MainController {
         model.addAttribute("team", team);
         model.addAttribute("owner", team.getOwner());
         model.addAttribute("membersList", team.getMembersStatusMap().get(MemberStatus.APPROVED));
-        session.setAttribute("originalTeam", team);
+        session.setAttribute(ORIGINAL_TEAM, team);
 
         List<StatefulExperiment> experimentList = getStatefulExperiments(teamId);
 
@@ -1749,7 +1751,7 @@ public class MainController {
 
         if (errorsFound) {
             // safer to remove
-            session.removeAttribute("originalTeam");
+            session.removeAttribute(ORIGINAL_TEAM);
             return REDIRECT_TEAM_PROFILE + editTeam.getId();
         }
 
@@ -1766,16 +1768,16 @@ public class MainController {
         teamfields.put(MEMBERS, editTeam.getMembersList());
 
         HttpEntity<String> request = createHttpEntityWithBody(teamfields.toString());
-        ResponseEntity response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
+        restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
 
-        Team2 originalTeam = (Team2) session.getAttribute("originalTeam");
+        Team2 originalTeam = (Team2) session.getAttribute(ORIGINAL_TEAM);
 
         if (!originalTeam.getDescription().equals(editTeam.getDescription())) {
             redirectAttributes.addFlashAttribute("editDesc", SUCCESS);
         }
 
         // safer to remove
-        session.removeAttribute("originalTeam");
+        session.removeAttribute(ORIGINAL_TEAM);
         return REDIRECT_TEAM_PROFILE + teamId;
     }
 
@@ -1801,7 +1803,7 @@ public class MainController {
             }
         }
 
-        teamQuotaJSONObject.put("quota", editTeamQuota.getBudget());
+        teamQuotaJSONObject.put(QUOTA, editTeamQuota.getBudget());
         HttpEntity<String> request = createHttpEntityWithBody(teamQuotaJSONObject.toString());
         ResponseEntity response;
         try {
@@ -1854,9 +1856,9 @@ public class MainController {
     public String removeMember(@PathVariable String teamId, @PathVariable String userId, final RedirectAttributes redirectAttributes) throws IOException {
 
         JSONObject teamMemberFields = new JSONObject();
-        teamMemberFields.put("userId", userId);
+        teamMemberFields.put(USER_ID, userId);
         teamMemberFields.put(MEMBER_TYPE, MemberType.MEMBER.name());
-        teamMemberFields.put("memberStatus", MemberStatus.APPROVED.name());
+        teamMemberFields.put(MEMBER_STATUS, MemberStatus.APPROVED.name());
 
         HttpEntity<String> request = createHttpEntityWithBody(teamMemberFields.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -2083,7 +2085,7 @@ public class MainController {
 
         teamFields.put("name", teamPageJoinForm.getTeamName());
 
-        log.info(LOG_PREFIX, "User " + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
+        log.info(LOG_PREFIX, USER_PREFIX + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity response;
@@ -2272,28 +2274,28 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE, "Form not filled up");
                 }
             }
-            return "redirect:/experiments/create";
+            return REDIRECT_CREATE_EXPERIMENT;
         }
 
         if (!experimentForm.getMaxDuration().toString().matches("\\d+")) {
             redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
-            return "redirect:/experiments/create";
+            return REDIRECT_CREATE_EXPERIMENT;
         }
 
         if (experimentForm.getName() == null || experimentForm.getName().isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Experiment Name cannot be empty");
-            return "redirect:/experiments/create";
+            return REDIRECT_CREATE_EXPERIMENT;
         }
 
         if (experimentForm.getDescription() == null || experimentForm.getDescription().isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Description cannot be empty");
-            return "redirect:/experiments/create";
+            return REDIRECT_CREATE_EXPERIMENT;
         }
 
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
         JSONObject experimentObject = new JSONObject();
-        experimentObject.put("userId", session.getAttribute("id").toString());
+        experimentObject.put(USER_ID, session.getAttribute("id").toString());
         experimentObject.put(TEAM_ID, experimentForm.getTeamId());
         experimentObject.put(TEAM_NAME, experimentForm.getTeamName());
         experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
@@ -2331,7 +2333,7 @@ public class MainController {
                         break;
                 }
                 log.info("Experiment {} created", experimentForm);
-                return "redirect:/experiments/create";
+                return REDIRECT_CREATE_EXPERIMENT;
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -2354,7 +2356,7 @@ public class MainController {
 //			catch (Exception e) {
 //				redirectAttributes.addFlashAttribute(MESSAGE,
 //						"You failed to upload " + networkFile.getOriginalFilename() + " => " + e.getMessage());
-//				return "redirect:/experiments/create";
+//				return REDIRECT_CREATE_EXPERIMENT;
 //			}
 //		}
 //
@@ -3784,7 +3786,7 @@ public class MainController {
         } else {
             // good
             log.info("User {} has been frozen", user.getId());
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + user.getEmail() + " has been banned.");
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, USER_PREFIX + user.getEmail() + " has been banned.");
             return "redirect:/admin";
         }
     }
@@ -3828,7 +3830,7 @@ public class MainController {
         } else {
             // good
             log.info("User {} has been unfrozen", user.getId());
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + user.getEmail() + " has been unbanned.");
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, USER_PREFIX + user.getEmail() + " has been unbanned.");
             return "redirect:/admin";
         }
     }
@@ -3872,7 +3874,7 @@ public class MainController {
             }
         } else {
             log.info("User {} has been removed", userId);
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User " + user.getEmail() + " has been removed.");
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, USER_PREFIX + user.getEmail() + " has been removed.");
         }
 
         return "redirect:/admin/users";
@@ -4292,9 +4294,9 @@ public class MainController {
 
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
-            String userId = memberObject.getString("userId");
+            String userId = memberObject.getString(USER_ID);
             String teamMemberType = memberObject.getString(MEMBER_TYPE);
-            String teamMemberStatus = memberObject.getString("memberStatus");
+            String teamMemberStatus = memberObject.getString(MEMBER_STATUS);
 
             User2 myUser = invokeAndExtractUserInfo(userId);
             if (teamMemberType.equals(MemberType.MEMBER.name())) {
@@ -4341,8 +4343,8 @@ public class MainController {
 
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
-            String userId = memberObject.getString("userId");
-            String teamMemberStatus = memberObject.getString("memberStatus");
+            String userId = memberObject.getString(USER_ID);
+            String teamMemberStatus = memberObject.getString(MEMBER_STATUS);
 
             if (userId.equals(loginUserId) && !teamMemberStatus.equals(MemberStatus.APPROVED.toString())) {
                 return true;
@@ -4359,8 +4361,8 @@ public class MainController {
 
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
-            String uid = memberObject.getString("userId");
-            String teamMemberStatus = memberObject.getString("memberStatus");
+            String uid = memberObject.getString(USER_ID);
+            String teamMemberStatus = memberObject.getString(MEMBER_STATUS);
             if (uid.equals(userId) && teamMemberStatus.equals(MemberStatus.PENDING.toString())) {
 
                 team2.setId(object.getString("id"));
@@ -4584,7 +4586,7 @@ public class MainController {
 
         realization.setExperimentId(object.getLong("experimentId"));
         realization.setExperimentName(object.getString("experimentName"));
-        realization.setUserId(object.getString("userId"));
+        realization.setUserId(object.getString(USER_ID));
         realization.setTeamId(object.getString(TEAM_ID));
         realization.setState(object.getString("state"));
 
@@ -5004,13 +5006,13 @@ public class MainController {
         amountUsed = amountUsed.multiply(new BigDecimal(charges));   // usage X charges
 
         //quota passed from SIO can be null , so we have to check for null value
-        if (object.has("quota")) {
-            Object budgetObject = object.optString("quota", null);
+        if (object.has(QUOTA)) {
+            Object budgetObject = object.optString(QUOTA, null);
             if (budgetObject == null) {
                 teamQuota.setBudget("");                  // there is placeholder here
                 teamQuota.setResourcesLeft("Unlimited"); // not placeholder so can pass string over
             } else {
-                Double budgetInDouble = object.getDouble("quota");          // retrieve budget from SIO in Double
+                Double budgetInDouble = object.getDouble(QUOTA);          // retrieve budget from SIO in Double
                 BigDecimal budgetInBD = BigDecimal.valueOf(budgetInDouble);     // handling currency using BigDecimal
 
                 // calculate resoucesLeft
