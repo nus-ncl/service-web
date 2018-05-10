@@ -74,6 +74,7 @@ public class MainController {
 
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
     public static final String APPLICATION_FORCE_DOWNLOAD = "application/force-download";
+    private static final String AUTHORIZATION = "Authorization";
     private static final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
 
     private TeamManager teamManager = TeamManager.getInstance();
@@ -102,6 +103,7 @@ public class MainController {
     private static final String CONNECTION_ERROR = "Connection Error";
     private final String permissionDeniedMessage = "Permission denied. If the error persists, please contact " + CONTACT_EMAIL;
     private static final String ERR_START_DATE_AFTER_END_DATE = "End date must be after start date";
+    private static final String ERR_INVALID_EMAIL_PASSWORD = "Login failed: Invalid email/password.";
 
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
@@ -123,6 +125,9 @@ public class MainController {
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
     private static final String NO_PERMISSION_PAGE = "nopermission";
 
+    private static final String SIGNUP_PAGE = "signup2";
+    private static final String SIGNUP_MERGED_FORM = "signUpMergedForm";
+    private static final String LOGIN_PAGE = "login";
     private static final String EXPERIMENTS = "experiments";
 
     private static final String APPLICATION_DATE = "applicationDate";
@@ -166,6 +171,9 @@ public class MainController {
     private static final String CREATED_DATE = "createdDate";
     private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
     private static final String MAX_DURATION = "maxDuration";
+    private static final String STATUS = "status";
+
+    private static final String LOG_IOEXCEPTION = "IOException {}";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -365,10 +373,10 @@ public class MainController {
         nodesStatus.entrySet().forEach(machineTypeListEntry -> {
             Map<String, Long> nodesCountMap = new HashMap<>();
 
-            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get("status"))).count();
-            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get("status"))).count();
-            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get("status"))).count();
-            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
+            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
+            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
             long total = free + inUse + reserved + reload;
             long currentTotal = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES)) + total;
             long currentFree = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_FREE_NODES)) + free;
@@ -436,7 +444,7 @@ public class MainController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model) {
         model.addAttribute("loginForm", new LoginForm());
-        return "login";
+        return LOGIN_PAGE;
     }
 
     @RequestMapping(value = "/emailVerification", params = {"id", "email", "key"})
@@ -476,15 +484,15 @@ public class MainController {
             HttpSession session, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors()) {
-            loginForm.setErrorMsg("Login failed: Invalid email/password.");
-            return "login";
+            loginForm.setErrorMsg(ERR_INVALID_EMAIL_PASSWORD);
+            return LOGIN_PAGE;
         }
 
         String inputEmail = loginForm.getLoginEmail();
         String inputPwd = loginForm.getLoginPassword();
         if (inputEmail.trim().isEmpty() || inputPwd.trim().isEmpty()) {
             loginForm.setErrorMsg("Email or Password cannot be empty!");
-            return "login";
+            return LOGIN_PAGE;
         }
 
         String plainCreds = inputEmail + ":" + inputPwd;
@@ -495,7 +503,7 @@ public class MainController {
         ResponseEntity response;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Basic " + base64Creds);
+        headers.set(AUTHORIZATION, "Basic " + base64Creds);
 
         HttpEntity<String> request = new HttpEntity<>(headers);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -505,15 +513,15 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio authentication service: {}", e);
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
-            return "login";
+            return LOGIN_PAGE;
         }
 
         String jwtTokenString = response.getBody().toString();
         log.info("token string {}", jwtTokenString);
         if (jwtTokenString == null || jwtTokenString.isEmpty()) {
             log.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
-            loginForm.setErrorMsg("Login failed: Invalid email/password.");
-            return "login";
+            loginForm.setErrorMsg(ERR_INVALID_EMAIL_PASSWORD);
+            return LOGIN_PAGE;
         }
         if (RestUtil.isError(response.getStatusCode())) {
             try {
@@ -523,13 +531,13 @@ public class MainController {
                 if (exceptionState == ExceptionState.CREDENTIALS_NOT_FOUND_EXCEPTION) {
                     log.warn("login failed for {}: credentials not found", loginForm.getLoginEmail());
                     loginForm.setErrorMsg("Login failed: Account does not exist. Please register.");
-                    return "login";
+                    return LOGIN_PAGE;
                 }
                 log.warn("login failed for {}: {}", loginForm.getLoginEmail(), error.getError());
-                loginForm.setErrorMsg("Login failed: Invalid email/password.");
-                return "login";
+                loginForm.setErrorMsg(ERR_INVALID_EMAIL_PASSWORD);
+                return LOGIN_PAGE;
             } catch (IOException ioe) {
-                log.warn("IOException {}", ioe);
+                log.warn(LOG_IOEXCEPTION, ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
@@ -544,11 +552,17 @@ public class MainController {
 
         if (token.trim().isEmpty() || id.trim().isEmpty() || role.trim().isEmpty()) {
             log.warn("login failed for {}: empty id {} or token {} or role {}", loginForm.getLoginEmail(), id, token, role);
-            loginForm.setErrorMsg("Login failed: Invalid email/password.");
-            return "login";
+            loginForm.setErrorMsg(ERR_INVALID_EMAIL_PASSWORD);
+            return LOGIN_PAGE;
         }
 
         // now check user status to decide what to show to the user
+        return checkUserStatus(loginForm, session, redirectAttributes, token, id, role);
+    }
+
+    private String checkUserStatus(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
+                                   HttpSession session, RedirectAttributes redirectAttributes,
+                                   String token, String id, String role) {
         User2 user = invokeAndExtractUserInfo(id);
 
         try {
@@ -558,7 +572,7 @@ public class MainController {
             if (UserStatus.FROZEN.toString().equals(userStatus)) {
                 log.warn("User {} login failed: account has been frozen", id);
                 loginForm.setErrorMsg("Login Failed: Account Frozen. Please contact " + CONTACT_EMAIL);
-                return "login";
+                return LOGIN_PAGE;
             } else if (!emailVerified || (UserStatus.CREATED.toString()).equals(userStatus)) {
                 redirectAttributes.addAttribute("statuschecklist", userStatus);
                 log.info("User {} not validated, redirected to email verification page", id);
@@ -575,14 +589,13 @@ public class MainController {
             } else {
                 log.warn("login failed for user {}: account is rejected or closed", id);
                 loginForm.setErrorMsg("Login Failed: Account Rejected/Closed.");
-                return "login";
+                return LOGIN_PAGE;
             }
         } catch (Exception e) {
             log.warn("Error parsing json object for user: {}", e.getMessage());
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
-            return "login";
+            return LOGIN_PAGE;
         }
-
     }
 
     // triggered when user clicks "Forget Password?"
@@ -727,30 +740,30 @@ public class MainController {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
         if (inputFlashMap != null) {
             log.debug((String) inputFlashMap.get(MESSAGE));
-            model.addAttribute("signUpMergedForm", (SignUpMergedForm) inputFlashMap.get("signUpMergedForm"));
+            model.addAttribute(SIGNUP_MERGED_FORM, (SignUpMergedForm) inputFlashMap.get(SIGNUP_MERGED_FORM));
         } else {
             log.debug("InputFlashMap is null");
-            model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+            model.addAttribute(SIGNUP_MERGED_FORM, new SignUpMergedForm());
         }
-        return "signup2";
+        return SIGNUP_PAGE;
     }
 
     @RequestMapping(value = "/signup2", method = RequestMethod.POST)
     public String validateDetails(
             @Valid
-            @ModelAttribute("signUpMergedForm") SignUpMergedForm signUpMergedForm,
+            @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || signUpMergedForm.getIsValid() == false) {
             log.warn("Register form has errors {}", signUpMergedForm.toString());
-            return "signup2";
+            return SIGNUP_PAGE;
         }
 
         if (!signUpMergedForm.getHasAcceptTeamOwnerPolicy()) {
             signUpMergedForm.setErrorTeamOwnerPolicy("Please accept the team owner policy");
             log.warn("Policy not accepted");
-            return "signup2";
+            return SIGNUP_PAGE;
         }
 
         // get form fields
@@ -820,7 +833,7 @@ public class MainController {
                 log.warn("Signup new team error {}", signUpMergedForm.toString());
                 // clear join team name first before submitting the form
                 signUpMergedForm.setJoinTeamName(null);
-                return "signup2";
+                return SIGNUP_PAGE;
             } else {
 
                 teamFields.put("name", signUpMergedForm.getTeamName().trim());
@@ -841,11 +854,11 @@ public class MainController {
                                 InvalidPasswordException |
                                 DeterLabOperationFailedException e) {
                     redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
-                    redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
+                    redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
                     return "redirect:/signup2";
                 } catch (Exception e) {
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
+                    redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
                     return "redirect:/signup2";
                 }
 
@@ -862,7 +875,7 @@ public class MainController {
                 joinTeamInfo = getTeamIdByName(signUpMergedForm.getJoinTeamName().trim());
             } catch (TeamNotFoundException | AdapterConnectionException e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
-                redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
+                redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
                 return "redirect:/signup2";
             }
 
@@ -883,11 +896,11 @@ public class MainController {
                             InvalidPasswordException |
                             DeterLabOperationFailedException e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
-                redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
+                redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
                 return "redirect:/signup2";
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
+                redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
                 return "redirect:/signup2";
             }
 
@@ -900,7 +913,7 @@ public class MainController {
             // logic error not suppose to reach here
             // possible if user fill up create new team but without the team name
             redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
-            redirectAttributes.addFlashAttribute("signUpMergedForm", signUpMergedForm);
+            redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
             return "redirect:/signup2";
         }
     }
@@ -1298,7 +1311,7 @@ public class MainController {
                 }
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
-                log.warn("IOException {}", ioe);
+                log.warn(LOG_IOEXCEPTION, ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
@@ -1350,7 +1363,7 @@ public class MainController {
                 }
                 return "redirect:/approve_new_user";
             } catch (IOException ioe) {
-                log.warn("IOException {}", ioe);
+                log.warn(LOG_IOEXCEPTION, ioe);
                 throw new WebServiceRuntimeException(ioe.getMessage());
             }
         }
@@ -1751,7 +1764,7 @@ public class MainController {
         teamfields.put("website", "http://default.com");
         teamfields.put("organisationType", editTeam.getOrganisationType());
         teamfields.put("privacy", "OPEN");
-        teamfields.put("status", editTeam.getStatus());
+        teamfields.put(STATUS, editTeam.getStatus());
         teamfields.put("members", editTeam.getMembersList());
 
         HttpEntity<String> request = createHttpEntityWithBody(teamfields.toString());
@@ -3388,10 +3401,10 @@ public class MainController {
         nodesStatus.entrySet().forEach(machineTypeListEntry -> {
             Map<String, Long> nodesCountMap = new HashMap<>();
 
-            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get("status"))).count();
-            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get("status"))).count();
-            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get("status"))).count();
-            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get("status"))).count();
+            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
+            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
+            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
             long total = free + inUse + reserved + reload;
             long currentTotal = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES)) + total;
             long currentFree = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_FREE_NODES)) + free;
@@ -3681,9 +3694,6 @@ public class MainController {
                 redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + TEAM_NOT_FOUND);
                 break;
             case INVALID_STATUS_TRANSITION_EXCEPTION:
-                log.warn(logMessage, team.getId(), error.getMessage());
-                redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
-                break;
             case INVALID_TEAM_STATUS_EXCEPTION:
                 log.warn(logMessage, team.getId(), error.getMessage());
                 redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
@@ -4027,7 +4037,7 @@ public class MainController {
     @RequestMapping("/join_application_awaiting_approval")
     public String joinTeamAppAwaitingApproval(Model model) {
         model.addAttribute("loginForm", new LoginForm());
-        model.addAttribute("signUpMergedForm", new SignUpMergedForm());
+        model.addAttribute(SIGNUP_MERGED_FORM, new SignUpMergedForm());
         return "join_team_application_awaiting_approval";
     }
 
@@ -4252,7 +4262,7 @@ public class MainController {
         user2.setInstitutionAbbreviation(userDetails.getString("institutionAbbreviation"));
         user2.setInstitutionWeb(userDetails.getString("institutionWeb"));
 
-        user2.setStatus(object.getString("status"));
+        user2.setStatus(object.getString(STATUS));
         user2.setEmailVerified(object.getBoolean("emailVerified"));
 
         // applicationDate is ZonedDateTime
@@ -4289,7 +4299,7 @@ public class MainController {
         team2.setDescription(object.getString("description"));
         team2.setWebsite(object.getString("website"));
         team2.setOrganisationType(object.getString("organisationType"));
-        team2.setStatus(object.getString("status"));
+        team2.setStatus(object.getString(STATUS));
         team2.setVisibility(object.getString("visibility"));
 
         for (int i = 0; i < membersArray.length(); i++) {
@@ -4370,7 +4380,7 @@ public class MainController {
                 team2.setDescription(object.getString("description"));
                 team2.setWebsite(object.getString("website"));
                 team2.setOrganisationType(object.getString("organisationType"));
-                team2.setStatus(object.getString("status"));
+                team2.setStatus(object.getString(STATUS));
                 team2.setVisibility(object.getString("visibility"));
                 team2.setMembersCount(membersArray.length());
 
@@ -4688,7 +4698,7 @@ public class MainController {
     protected HttpEntity<String> createHttpEntityWithBody(String jsonString) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
+        headers.set(AUTHORIZATION, httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
         return new HttpEntity<>(jsonString, headers);
     }
 
@@ -4702,7 +4712,7 @@ public class MainController {
     protected HttpEntity<String> createHttpEntityHeaderOnly() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
+        headers.set(AUTHORIZATION, httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
         return new HttpEntity<>(headers);
     }
 
