@@ -366,31 +366,7 @@ public class MainController {
         Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
         Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
 
-        /* loop through each of the machine type
-           tabulate the different nodes type
-           count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
-        */
-        nodesStatus.entrySet().forEach(machineTypeListEntry -> {
-            Map<String, Long> nodesCountMap = new HashMap<>();
-
-            long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
-            long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
-            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
-            long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
-            long total = free + inUse + reserved + reload;
-            long currentTotal = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES)) + total;
-            long currentFree = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_FREE_NODES)) + free;
-
-            nodesCountMap.put(NodeType.FREE.name(), free);
-            nodesCountMap.put(NodeType.IN_USE.name(), inUse);
-            nodesCountMap.put(NodeType.RESERVED.name(), reserved);
-            nodesCountMap.put(NodeType.RELOADING.name(), reload);
-
-
-            nodesStatusCount.put(machineTypeListEntry.getKey(), nodesCountMap);
-            testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, Long.toString(currentFree));
-            testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, Long.toString(currentTotal));
-        });
+        countNodeStatus(testbedStatsMap, nodesStatus, nodesStatusCount);
 
         model.addAttribute("nodesStatus", nodesStatus);
         model.addAttribute("nodesStatusCount", nodesStatusCount);
@@ -448,11 +424,9 @@ public class MainController {
     }
 
     @RequestMapping(value = "/emailVerification", params = {"id", "email", "key"})
-    public String verifyEmail(
-            @NotNull @RequestParam("id") final String id,
-            @NotNull @RequestParam("email") final String emailBase64,
-            @NotNull @RequestParam("key") final String key
-    ) throws UnsupportedEncodingException {
+    public String verifyEmail(@NotNull @RequestParam("id") final String id,
+                              @NotNull @RequestParam("email") final String emailBase64,
+                              @NotNull @RequestParam("key") final String key) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -2520,7 +2494,9 @@ public class MainController {
 //    }
 
     @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}")
-    public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId, @PathVariable String expId, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
+    public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId,
+                                   @PathVariable String expId, final RedirectAttributes redirectAttributes,
+                                   HttpSession session) throws WebServiceRuntimeException {
         // ensure experiment is stopped first
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
@@ -2676,7 +2652,9 @@ public class MainController {
     }
 
     @RequestMapping("/stop_experiment/{teamName}/{expId}")
-    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
+    public String stopExperiment(@PathVariable String teamName, @PathVariable String expId,
+                                 Model model, final RedirectAttributes redirectAttributes,
+                                 HttpSession session) throws WebServiceRuntimeException {
 
         // ensure experiment is active first before stopping
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
@@ -2939,7 +2917,9 @@ public class MainController {
         return java.util.Base64.getEncoder().encodeToString((hash + tstr + ":" + str + ":" + deterUid).getBytes());
     }
 
-    private String abc(@PathVariable String teamName, @PathVariable String expId, RedirectAttributes redirectAttributes, Realization realization, HttpEntity<String> request) throws WebServiceRuntimeException {
+    private String abc(@PathVariable String teamName, @PathVariable String expId,
+                       RedirectAttributes redirectAttributes, Realization realization,
+                       HttpEntity<String> request) throws WebServiceRuntimeException {
         ResponseEntity response;
         try {
             response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
@@ -3101,7 +3081,11 @@ public class MainController {
 
     // updates the malicious status of a data resource
     @RequestMapping(value = "/admin/data/{datasetId}/resources/{resourceId}/update", method = RequestMethod.POST)
-    public String adminUpdateResourceFormSubmit(@PathVariable String datasetId, @PathVariable String resourceId, @ModelAttribute DataResource dataResource, Model model, HttpSession session, RedirectAttributes redirectAttributes) throws IOException {
+    public String adminUpdateResourceFormSubmit(@PathVariable String datasetId,
+                                                @PathVariable String resourceId,
+                                                @ModelAttribute DataResource dataResource,
+                                                Model model, HttpSession session,
+                                                RedirectAttributes redirectAttributes) throws IOException {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
@@ -3393,11 +3377,24 @@ public class MainController {
         Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
         Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
 
-        /*
-         loop through each of the machine type
-         tabulate the different nodes type
-         count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
-        */
+        countNodeStatus(testbedStatsMap, nodesStatus, nodesStatusCount);
+
+        model.addAttribute("nodesStatus", nodesStatus);
+        model.addAttribute("nodesStatusCount", nodesStatusCount);
+
+        model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
+        model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
+        model.addAttribute(USER_DASHBOARD_FREE_NODES, testbedStatsMap.get(USER_DASHBOARD_FREE_NODES));
+        model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
+        return "node_status";
+    }
+
+    /**
+     * loop through each of the machine type
+     * tabulate the different nodes type
+     * count the number of different nodes status, e.g. SYSTEMX = { FREE = 10, IN_USE = 11, ... }
+     */
+    private void countNodeStatus(Map<String, String> testbedStatsMap, Map<String, List<Map<String, String>>> nodesStatus, Map<String, Map<String, Long>> nodesStatusCount) {
         nodesStatus.entrySet().forEach(machineTypeListEntry -> {
             Map<String, Long> nodesCountMap = new HashMap<>();
 
@@ -3414,20 +3411,10 @@ public class MainController {
             nodesCountMap.put(NodeType.RESERVED.name(), reserved);
             nodesCountMap.put(NodeType.RELOADING.name(), reload);
 
-
             nodesStatusCount.put(machineTypeListEntry.getKey(), nodesCountMap);
             testbedStatsMap.put(USER_DASHBOARD_FREE_NODES, Long.toString(currentFree));
             testbedStatsMap.put(USER_DASHBOARD_TOTAL_NODES, Long.toString(currentTotal));
         });
-
-        model.addAttribute("nodesStatus", nodesStatus);
-        model.addAttribute("nodesStatusCount", nodesStatusCount);
-
-        model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
-        model.addAttribute(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT, testbedStatsMap.get(USER_DASHBOARD_RUNNING_EXPERIMENTS_COUNT));
-        model.addAttribute(USER_DASHBOARD_FREE_NODES, testbedStatsMap.get(USER_DASHBOARD_FREE_NODES));
-        model.addAttribute(USER_DASHBOARD_TOTAL_NODES, testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES));
-        return "node_status";
     }
 
     /**
@@ -3459,7 +3446,6 @@ public class MainController {
 //    	domainManager.removeDomains(domainKey);
 //    	return "redirect:/admin";
 //    }
-
 
     @RequestMapping("/admin/teams/accept/{teamId}/{teamOwnerId}")
     public String approveTeam(
@@ -4045,7 +4031,7 @@ public class MainController {
     @RequestMapping(path = "/show_pub_keys", method = RequestMethod.GET)
     public String showPublicKeys(Model model, HttpSession session) throws WebServiceRuntimeException {
         getDeterUid(model, session);
-        SortedMap<String, Map<String, String>> keysMap = new TreeMap<>();
+        SortedMap<String, Map<String, String>> keysMap;
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -4144,27 +4130,8 @@ public class MainController {
     }
 
     //--------------------------Get List of scenarios filenames--------------------------
-    private List<String> getScenarioFileNameList() throws WebServiceRuntimeException {
+    private List<String> getScenarioFileNameList() {
         log.info("Retrieving scenario file names");
-//        List<String> scenarioFileNameList = null;
-//        try {
-//            scenarioFileNameList = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("scenarios"), StandardCharsets.UTF_8);
-//        } catch (IOException e) {
-//            throw new WebServiceRuntimeException(e.getMessage());
-//        }
-//        File folder = null;
-//        try {
-//            folder = new ClassPathResource("scenarios").getFile();
-//        } catch (IOException e) {
-//            throw new WebServiceRuntimeException(e.getMessage());
-//        }
-//        List<String> scenarioFileNameList = new ArrayList<>();
-//		File[] files = folder.listFiles();
-//		for (File file : files) {
-//			if (file.isFile()) {
-//				scenarioFileNameList.add(file.getError());
-//			}
-//		}
         // FIXME: hardcode list of filenames for now
         List<String> scenarioFileNameList = new ArrayList<>();
         scenarioFileNameList.add("Scenario 1 - Experiment with a single node");
@@ -4173,8 +4140,6 @@ public class MainController {
         scenarioFileNameList.add("Scenario 4 - Experiment with 2 nodes and customized link property");
         scenarioFileNameList.add("Scenario 5 - Single SDN switch connected to two nodes");
         scenarioFileNameList.add("Scenario 6 - Tree Topology with configurable SDN switches");
-//        scenarioFileNameList.add("Scenario 4 - Two nodes linked with a 10Gbps SDN switch");
-//        scenarioFileNameList.add("Scenario 5 - Three nodes with Blockchain capabilities");
         log.info("Scenario file list: {}", scenarioFileNameList);
         return scenarioFileNameList;
     }
