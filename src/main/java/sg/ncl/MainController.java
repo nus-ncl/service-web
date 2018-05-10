@@ -138,6 +138,17 @@ public class MainController {
     private static final String INSTITUTION_ABBREVIATION = "institutionAbbreviation";
     private static final String INSTITUTION_WEB = "institutionWeb";
     private static final String ADDRESS = "address";
+    private static final String WEBSITE = "website";
+    private static final String ORGANISATION_TYPE = "organisationType";
+    private static final String VISIBILITY = "visibility";
+    private static final String ADDRESS1 = "address1";
+    private static final String ADDRESS2 = "address2";
+    private static final String COUNTRY = "country";
+    private static final String REGION = "region";
+    private static final String CITY = "city";
+    private static final String ZIP_CODE = "zipCode";
+
+    private static final String USER_DETAILS = "userDetails";
     private static final String APPLICATION_DATE = "applicationDate";
     private static final String TEAM_NAME = "teamName";
     private static final String TEAM_ID = "teamId";
@@ -181,6 +192,9 @@ public class MainController {
     private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
     private static final String MAX_DURATION = "maxDuration";
     private static final String STATUS = "status";
+    private static final String SUCCESS = "success";
+    private static final String TEAMS = "teams";
+    private static final String MEMBERS = "members";
 
     private static final String LOG_IOEXCEPTION = "IOException {}";
 
@@ -771,14 +785,14 @@ public class MainController {
         userDetails.put(INSTITUTION_WEB, signUpMergedForm.getWebsite().trim());
         userDetails.put(ADDRESS, addressDetails);
 
-        addressDetails.put("address1", signUpMergedForm.getAddress1().trim());
-        addressDetails.put("address2", signUpMergedForm.getAddress2().trim());
-        addressDetails.put("country", signUpMergedForm.getCountry().trim());
-        addressDetails.put("region", signUpMergedForm.getProvince().trim());
-        addressDetails.put("city", signUpMergedForm.getCity().trim());
-        addressDetails.put("zipCode", signUpMergedForm.getPostalCode().trim());
+        addressDetails.put(ADDRESS1, signUpMergedForm.getAddress1().trim());
+        addressDetails.put(ADDRESS2, signUpMergedForm.getAddress2().trim());
+        addressDetails.put(COUNTRY, signUpMergedForm.getCountry().trim());
+        addressDetails.put(REGION, signUpMergedForm.getProvince().trim());
+        addressDetails.put(CITY, signUpMergedForm.getCity().trim());
+        addressDetails.put(ZIP_CODE, signUpMergedForm.getPostalCode().trim());
 
-        userFields.put("userDetails", userDetails);
+        userFields.put(USER_DETAILS, userDetails);
         userFields.put(APPLICATION_DATE, ZonedDateTime.now());
 
         JSONObject teamFields = new JSONObject();
@@ -876,10 +890,10 @@ public class MainController {
             return SIGNUP_PAGE;
         } else {
             teamFields.put("name", signUpMergedForm.getTeamName().trim());
-            teamFields.put("description", signUpMergedForm.getTeamDescription().trim());
-            teamFields.put("website", signUpMergedForm.getTeamWebsite().trim());
-            teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
-            teamFields.put("visibility", signUpMergedForm.getIsPublic());
+            teamFields.put(DESCRIPTION, signUpMergedForm.getTeamDescription().trim());
+            teamFields.put(WEBSITE, signUpMergedForm.getTeamWebsite().trim());
+            teamFields.put(ORGANISATION_TYPE, signUpMergedForm.getTeamOrganizationType());
+            teamFields.put(VISIBILITY, signUpMergedForm.getIsPublic());
             mainObject.put("isJoinTeam", false);
 
             try {
@@ -953,14 +967,14 @@ public class MainController {
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
                         // throw from user service
                     {
-                        String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString(EMAIL);
+                        String email = mainObject.getJSONObject("user").getJSONObject(USER_DETAILS).getString(EMAIL);
                         log.warn("Register new users : email already exists: {}", email);
                         throw new UsernameAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
                     case EMAIL_ALREADY_EXISTS_EXCEPTION:
                         // throw from adapter deterlab
                     {
-                        String email = mainObject.getJSONObject("user").getJSONObject("userDetails").getString(EMAIL);
+                        String email = mainObject.getJSONObject("user").getJSONObject(USER_DETAILS).getString(EMAIL);
                         log.warn("Register new users : email already exists: {}", email);
                         throw new EmailAlreadyExistsException(ERROR_PREFIX + email + " already in use.");
                     }
@@ -1053,47 +1067,7 @@ public class MainController {
         String editPhrase = "editPhrase";
 
         // check fields first
-        if (errorsFound == false && editUser.getFirstName().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editFirstName", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getLastName().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editLastName", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getPhone().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editPhone", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && (editUser.getPhone().matches("(.*)[a-zA-Z](.*)") || editUser.getPhone().length() < 6)) {
-            // previously already check if phone is empty
-            // now check phone must contain only digits
-            redirectAttributes.addFlashAttribute("editPhone", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && !editUser.getConfirmPassword().isEmpty() && !editUser.isPasswordValid()) {
-            redirectAttributes.addFlashAttribute(editPhrase, "invalid");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getJobTitle().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editJobTitle", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getInstitution().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editInstitution", "fail");
-            errorsFound = true;
-        }
-
-        if (errorsFound == false && editUser.getCountry().isEmpty()) {
-            redirectAttributes.addFlashAttribute("editCountry", "fail");
-            errorsFound = true;
-        }
+        errorsFound = checkEditUserFields(editUser, redirectAttributes, errorsFound, editPhrase);
 
         if (errorsFound) {
             session.removeAttribute(webProperties.getSessionUserAccount());
@@ -1116,14 +1090,14 @@ public class MainController {
             userDetails.put(INSTITUTION_ABBREVIATION, originalUser.getInstitutionAbbreviation());
             userDetails.put(INSTITUTION_WEB, originalUser.getInstitutionWeb());
 
-            address.put("address1", originalUser.getAddress1());
-            address.put("address2", originalUser.getAddress2());
-            address.put("country", editUser.getCountry());
-            address.put("city", originalUser.getCity());
-            address.put("region", originalUser.getRegion());
-            address.put("zipCode", originalUser.getPostalCode());
+            address.put(ADDRESS1, originalUser.getAddress1());
+            address.put(ADDRESS2, originalUser.getAddress2());
+            address.put(COUNTRY, editUser.getCountry());
+            address.put(CITY, originalUser.getCity());
+            address.put(REGION, originalUser.getRegion());
+            address.put(ZIP_CODE, originalUser.getPostalCode());
 
-            userObject.put("userDetails", userDetails);
+            userObject.put(USER_DETAILS, userDetails);
 
             String userId_uri = properties.getSioUsersUrl() + session.getAttribute(webProperties.getSessionUserId());
 
@@ -1131,22 +1105,22 @@ public class MainController {
             restTemplate.exchange(userId_uri, HttpMethod.PUT, request, String.class);
 
             if (!originalUser.getFirstName().equals(editUser.getFirstName())) {
-                redirectAttributes.addFlashAttribute("editFirstName", "success");
+                redirectAttributes.addFlashAttribute("editFirstName", SUCCESS);
             }
             if (!originalUser.getLastName().equals(editUser.getLastName())) {
-                redirectAttributes.addFlashAttribute("editLastName", "success");
+                redirectAttributes.addFlashAttribute("editLastName", SUCCESS);
             }
             if (!originalUser.getPhone().equals(editUser.getPhone())) {
-                redirectAttributes.addFlashAttribute("editPhone", "success");
+                redirectAttributes.addFlashAttribute("editPhone", SUCCESS);
             }
             if (!originalUser.getJobTitle().equals(editUser.getJobTitle())) {
-                redirectAttributes.addFlashAttribute("editJobTitle", "success");
+                redirectAttributes.addFlashAttribute("editJobTitle", SUCCESS);
             }
             if (!originalUser.getInstitution().equals(editUser.getInstitution())) {
-                redirectAttributes.addFlashAttribute("editInstitution", "success");
+                redirectAttributes.addFlashAttribute("editInstitution", SUCCESS);
             }
             if (!originalUser.getCountry().equals(editUser.getCountry())) {
-                redirectAttributes.addFlashAttribute("editCountry", "success");
+                redirectAttributes.addFlashAttribute("editCountry", SUCCESS);
             }
 
             // credential service change password
@@ -1164,7 +1138,7 @@ public class MainController {
                         MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                         redirectAttributes.addFlashAttribute(editPhrase, "fail");
                     } else {
-                        redirectAttributes.addFlashAttribute(editPhrase, "success");
+                        redirectAttributes.addFlashAttribute(editPhrase, SUCCESS);
                     }
                 } catch (IOException e) {
                     throw new WebServiceRuntimeException(e.getMessage());
@@ -1174,6 +1148,44 @@ public class MainController {
             }
         }
         return "redirect:/account_settings";
+    }
+
+    private boolean checkEditUserFields(@ModelAttribute("editUser") User2 editUser, RedirectAttributes redirectAttributes, boolean errorsFound, String editPhrase) {
+        if (!errorsFound && editUser.getFirstName().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editFirstName", "fail");
+            errorsFound = true;
+        }
+
+        if (!errorsFound && editUser.getLastName().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editLastName", "fail");
+            errorsFound = true;
+        }
+
+        if (!errorsFound && (editUser.getPhone().isEmpty() || editUser.getPhone().matches("(.*)[a-zA-Z](.*)") || editUser.getPhone().length() < 6)) {
+            redirectAttributes.addFlashAttribute("editPhone", "fail");
+            errorsFound = true;
+        }
+
+        if (!errorsFound && !editUser.getConfirmPassword().isEmpty() && !editUser.isPasswordValid()) {
+            redirectAttributes.addFlashAttribute(editPhrase, "invalid");
+            errorsFound = true;
+        }
+
+        if (!errorsFound && editUser.getJobTitle().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editJobTitle", "fail");
+            errorsFound = true;
+        }
+
+        if (!errorsFound && editUser.getInstitution().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editInstitution", "fail");
+            errorsFound = true;
+        }
+
+        if (!errorsFound && editUser.getCountry().isEmpty()) {
+            redirectAttributes.addFlashAttribute("editCountry", "fail");
+            errorsFound = true;
+        }
+        return errorsFound;
     }
 
     //--------------------User Side Approve Members Page------------
@@ -1195,7 +1207,7 @@ public class MainController {
         String responseBody = response.getBody().toString();
 
         JSONObject object = new JSONObject(responseBody);
-        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
@@ -1205,7 +1217,7 @@ public class MainController {
 
             Team2 team2 = new Team2();
             JSONObject teamObject = new JSONObject(teamResponseBody);
-            JSONArray membersArray = teamObject.getJSONArray("members");
+            JSONArray membersArray = teamObject.getJSONArray(MEMBERS);
 
             team2.setId(teamObject.getString("id"));
             team2.setName(teamObject.getString("name"));
@@ -1240,10 +1252,8 @@ public class MainController {
                 }
             }
 
-            if (isTeamLeader) {
-                if (!temp.isEmpty()) {
-                    rv.addAll(temp);
-                }
+            if (isTeamLeader && !temp.isEmpty()) {
+                rv.addAll(temp);
             }
 
         }
@@ -1406,9 +1416,9 @@ public class MainController {
         String responseBody = response.getBody().toString();
 
         JSONObject object = new JSONObject(responseBody);
-        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
 
-        String userEmail = object.getJSONObject("userDetails").getString(EMAIL);
+        String userEmail = object.getJSONObject(USER_DETAILS).getString(EMAIL);
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
@@ -1748,12 +1758,12 @@ public class MainController {
         JSONObject teamfields = new JSONObject();
         teamfields.put("id", teamId);
         teamfields.put("name", editTeam.getName());
-        teamfields.put("description", editTeam.getDescription());
-        teamfields.put("website", "http://default.com");
-        teamfields.put("organisationType", editTeam.getOrganisationType());
+        teamfields.put(DESCRIPTION, editTeam.getDescription());
+        teamfields.put(WEBSITE, "http://default.com");
+        teamfields.put(ORGANISATION_TYPE, editTeam.getOrganisationType());
         teamfields.put("privacy", "OPEN");
         teamfields.put(STATUS, editTeam.getStatus());
-        teamfields.put("members", editTeam.getMembersList());
+        teamfields.put(MEMBERS, editTeam.getMembersList());
 
         HttpEntity<String> request = createHttpEntityWithBody(teamfields.toString());
         ResponseEntity response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
@@ -1761,7 +1771,7 @@ public class MainController {
         Team2 originalTeam = (Team2) session.getAttribute("originalTeam");
 
         if (!originalTeam.getDescription().equals(editTeam.getDescription())) {
-            redirectAttributes.addFlashAttribute("editDesc", "success");
+            redirectAttributes.addFlashAttribute("editDesc", SUCCESS);
         }
 
         // safer to remove
@@ -1831,7 +1841,7 @@ public class MainController {
         //check if new budget is different in order to display successful message to user
         String originalBudget = (String) session.getAttribute(ORIGINAL_BUDGET);
         if (!originalBudget.equals(editTeamQuota.getBudget())) {
-            redirectAttributes.addFlashAttribute(EDIT_BUDGET, "success");
+            redirectAttributes.addFlashAttribute(EDIT_BUDGET, SUCCESS);
         }
 
         // safer to remove
@@ -1976,10 +1986,10 @@ public class MainController {
         JSONObject teamFields = new JSONObject();
         mainObject.put("team", teamFields);
         teamFields.put("name", teamPageApplyTeamForm.getTeamName());
-        teamFields.put("description", teamPageApplyTeamForm.getTeamDescription());
-        teamFields.put("website", teamPageApplyTeamForm.getTeamWebsite());
-        teamFields.put("organisationType", teamPageApplyTeamForm.getTeamOrganizationType());
-        teamFields.put("visibility", teamPageApplyTeamForm.getIsPublic());
+        teamFields.put(DESCRIPTION, teamPageApplyTeamForm.getTeamDescription());
+        teamFields.put(WEBSITE, teamPageApplyTeamForm.getTeamWebsite());
+        teamFields.put(ORGANISATION_TYPE, teamPageApplyTeamForm.getTeamOrganizationType());
+        teamFields.put(VISIBILITY, teamPageApplyTeamForm.getIsPublic());
 
         String nclUserId = session.getAttribute("id").toString();
 
@@ -2128,7 +2138,7 @@ public class MainController {
         ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
 
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
-        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
@@ -2226,7 +2236,7 @@ public class MainController {
 
         JSONObject object = new JSONObject(responseBody);
 
-        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
@@ -2287,7 +2297,7 @@ public class MainController {
         experimentObject.put(TEAM_ID, experimentForm.getTeamId());
         experimentObject.put(TEAM_NAME, experimentForm.getTeamName());
         experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
-        experimentObject.put("description", experimentForm.getDescription());
+        experimentObject.put(DESCRIPTION, experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
         experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
@@ -3110,7 +3120,7 @@ public class MainController {
 
         // add redirect attributes variable to notify what has been modified
         if (!original.getMaliciousFlag().equalsIgnoreCase(dataResource.getMaliciousFlag())) {
-            redirectAttributes.addFlashAttribute("editMaliciousFlag", "success");
+            redirectAttributes.addFlashAttribute("editMaliciousFlag", SUCCESS);
         }
 
         log.info("Data updated... {}", dataset.getName());
@@ -3229,8 +3239,8 @@ public class MainController {
 
             // get list of teams' names for each user
             List<String> perUserTeamList = new ArrayList<>();
-            if (userObject.get("teams") != null) {
-                JSONArray teamJsonArray = userObject.getJSONArray("teams");
+            if (userObject.get(TEAMS) != null) {
+                JSONArray teamJsonArray = userObject.getJSONArray(TEAMS);
                 for (int k = 0; k < teamJsonArray.length(); k++) {
                     Team2 team = invokeAndExtractTeamInfo(teamJsonArray.get(k).toString());
                     perUserTeamList.add(team.getName());
@@ -4221,7 +4231,7 @@ public class MainController {
         }
 
         JSONObject object = new JSONObject(userJson);
-        JSONObject userDetails = object.getJSONObject("userDetails");
+        JSONObject userDetails = object.getJSONObject(USER_DETAILS);
         JSONObject address = userDetails.getJSONObject(ADDRESS);
 
         user2.setId(object.getString("id"));
@@ -4230,12 +4240,12 @@ public class MainController {
         user2.setJobTitle(userDetails.getString(JOB_TITLE));
         user2.setEmail(userDetails.getString(EMAIL));
         user2.setPhone(userDetails.getString(PHONE));
-        user2.setAddress1(address.getString("address1"));
-        user2.setAddress2(address.getString("address2"));
-        user2.setCountry(address.getString("country"));
-        user2.setRegion(address.getString("region"));
-        user2.setPostalCode(address.getString("zipCode"));
-        user2.setCity(address.getString("city"));
+        user2.setAddress1(address.getString(ADDRESS1));
+        user2.setAddress2(address.getString(ADDRESS2));
+        user2.setCountry(address.getString(COUNTRY));
+        user2.setRegion(address.getString(REGION));
+        user2.setPostalCode(address.getString(ZIP_CODE));
+        user2.setCity(address.getString(CITY));
         user2.setInstitution(userDetails.getString(INSTITUTION));
         user2.setInstitutionAbbreviation(userDetails.getString(INSTITUTION_ABBREVIATION));
         user2.setInstitutionWeb(userDetails.getString(INSTITUTION_WEB));
@@ -4258,7 +4268,7 @@ public class MainController {
     private Team2 extractTeamInfo(String json) {
         Team2 team2 = new Team2();
         JSONObject object = new JSONObject(json);
-        JSONArray membersArray = object.getJSONArray("members");
+        JSONArray membersArray = object.getJSONArray(MEMBERS);
 
         // createdDate is ZonedDateTime
         // processedDate is ZonedDateTime
@@ -4274,11 +4284,11 @@ public class MainController {
         }
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));
-        team2.setDescription(object.getString("description"));
-        team2.setWebsite(object.getString("website"));
-        team2.setOrganisationType(object.getString("organisationType"));
+        team2.setDescription(object.getString(DESCRIPTION));
+        team2.setWebsite(object.getString(WEBSITE));
+        team2.setOrganisationType(object.getString(ORGANISATION_TYPE));
         team2.setStatus(object.getString(STATUS));
-        team2.setVisibility(object.getString("visibility"));
+        team2.setVisibility(object.getString(VISIBILITY));
 
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
@@ -4327,7 +4337,7 @@ public class MainController {
         }
 
         JSONObject object = new JSONObject(json);
-        JSONArray membersArray = object.getJSONArray("members");
+        JSONArray membersArray = object.getJSONArray(MEMBERS);
 
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
@@ -4345,7 +4355,7 @@ public class MainController {
     private Team2 extractTeamInfoUserJoinRequest(String userId, String json) {
         Team2 team2 = new Team2();
         JSONObject object = new JSONObject(json);
-        JSONArray membersArray = object.getJSONArray("members");
+        JSONArray membersArray = object.getJSONArray(MEMBERS);
 
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
@@ -4355,11 +4365,11 @@ public class MainController {
 
                 team2.setId(object.getString("id"));
                 team2.setName(object.getString("name"));
-                team2.setDescription(object.getString("description"));
-                team2.setWebsite(object.getString("website"));
-                team2.setOrganisationType(object.getString("organisationType"));
+                team2.setDescription(object.getString(DESCRIPTION));
+                team2.setWebsite(object.getString(WEBSITE));
+                team2.setOrganisationType(object.getString(ORGANISATION_TYPE));
                 team2.setStatus(object.getString(STATUS));
-                team2.setVisibility(object.getString("visibility"));
+                team2.setVisibility(object.getString(VISIBILITY));
                 team2.setMembersCount(membersArray.length());
 
                 return team2;
@@ -4384,9 +4394,9 @@ public class MainController {
 
         dataset.setId(object.getInt("id"));
         dataset.setName(object.getString("name"));
-        dataset.setDescription(object.getString("description"));
+        dataset.setDescription(object.getString(DESCRIPTION));
         dataset.setContributorId(object.getString("contributorId"));
-        dataset.addVisibility(object.getString("visibility"));
+        dataset.addVisibility(object.getString(VISIBILITY));
         dataset.addAccessibility(object.getString("accessibility"));
         try {
             dataset.setReleasedDate(getZonedDateTime(object.get("releasedDate").toString()));
@@ -4435,7 +4445,7 @@ public class MainController {
 
         dataCategory.setId(object.getLong("id"));
         dataCategory.setName(object.getString("name"));
-        dataCategory.setDescription(object.getString("description"));
+        dataCategory.setDescription(object.getString(DESCRIPTION));
 
         return dataCategory;
     }
@@ -4449,7 +4459,7 @@ public class MainController {
         dataLicense.setId(object.getLong("id"));
         dataLicense.setName(object.getString("name"));
         dataLicense.setAcronym(object.getString("acronym"));
-        dataLicense.setDescription(object.getString("description"));
+        dataLicense.setDescription(object.getString(DESCRIPTION));
         dataLicense.setLink(object.getString("link"));
 
         return dataLicense;
@@ -4512,7 +4522,7 @@ public class MainController {
         experiment2.setTeamId(object.getString(TEAM_ID));
         experiment2.setTeamName(object.getString(TEAM_NAME));
         experiment2.setName(object.getString("name"));
-        experiment2.setDescription(object.getString("description"));
+        experiment2.setDescription(object.getString(DESCRIPTION));
         experiment2.setNsFile(object.getString("nsFile"));
         experiment2.setNsFileContent(object.getString("nsFileContent"));
         experiment2.setIdleSwap(object.getInt("idleSwap"));
@@ -4732,7 +4742,7 @@ public class MainController {
         ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, request, String.class);
 
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
-        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
@@ -4778,7 +4788,7 @@ public class MainController {
         ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
 
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
-        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
@@ -4948,7 +4958,7 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity userRespEntity = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
         JSONObject object = new JSONObject(userRespEntity.getBody().toString());
-        JSONArray teamIdsJsonArray = object.getJSONArray("teams");
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
 
         // get team info by team id
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
