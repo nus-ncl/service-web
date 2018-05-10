@@ -114,6 +114,11 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/teams/" + teamId + "/members/" + userId;
     }
 
+    public String addMemberByEmail(String teamId){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/" + teamId + "/addMembers";
+    }
+
+
     //-------------------------------------
     // TEAMS
     //-------------------------------------
@@ -132,10 +137,6 @@ public class ConnectionProperties {
 
     public String getQuotaByTeamId(String teamId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/quota" ;
-    }
-
-    public String addMemberByEmail(String teamId){
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/addMembers";
     }
 
     //-------------------------------------
