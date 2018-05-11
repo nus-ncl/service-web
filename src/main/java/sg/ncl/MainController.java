@@ -5044,7 +5044,7 @@ public class MainController {
 
     // when user clicks password reset link in the email
     @RequestMapping(path = "/newClassMemberResetPassword", params = {"uid", "key"})
-    public String newClassMemberPasswordReset(@NotNull @RequestParam("key") final String key,
+    public String activateNewMember(@NotNull @RequestParam("key") final String key,
                                               @NotNull @RequestParam("uid") final String uid,
                                               Model model) {
         NewClassMemberPasswordResetForm form = new NewClassMemberPasswordResetForm();
@@ -5056,8 +5056,8 @@ public class MainController {
     }
 
     // send to SIO to process resetting password for new member
-    @PostMapping("/new_member_password_reset")
-    public String newMemberPasswordResetProcess(
+    @PostMapping("/activate_new_member_process")
+    public String activateNewMemberProcess(
             @ModelAttribute("newClassMemberPasswordResetForm") NewClassMemberPasswordResetForm form
                                  ) throws IOException{
 
@@ -5067,7 +5067,7 @@ public class MainController {
         obj.put("firstName", form.getFirstName());
         obj.put("phone", form.getPhone());
         obj.put("key", form.getPhone());
-        
+
         log.info("Connecting to sio for password reset, key = {}", form.getKey());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -5075,7 +5075,7 @@ public class MainController {
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = null;
         try {
-            response = restTemplate.exchange(properties.newMemberResetPassword(form.getUid()), HttpMethod.PUT, request, String.class);
+            response = restTemplate.exchange(properties. activateNewMember(form.getUid()), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for new member password reset! {}", e);
             form.setErrMsg("Cannot connect to server! Please try again later.");
