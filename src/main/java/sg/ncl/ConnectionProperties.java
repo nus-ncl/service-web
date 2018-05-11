@@ -118,7 +118,6 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/" + teamId + "/addMembers";
     }
 
-
     //-------------------------------------
     // TEAMS
     //-------------------------------------
@@ -384,6 +383,11 @@ public class ConnectionProperties {
     public String getPasswordResetURI() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" +credEndpoint + "/password";
     }
+
+    public String newMemberResetPassword(String uid){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/" + "/newMembers/" + uid;
+    }
+
 
     //-------------------------------------
     // DATA RESOURCE UPLOAD

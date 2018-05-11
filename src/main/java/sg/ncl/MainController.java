@@ -5039,4 +5039,65 @@ public class MainController {
     private String getExperimentMessage(String expName, String teamName) {
         return "Experiment " + expName + " in team " + teamName;
     }
+
+
+
+    // when user clicks password reset link in the email
+    @RequestMapping(path = "/newClassMemberResetPassword", params = {"uid", "key"})
+    public String newClassMemberPasswordReset(@NotNull @RequestParam("key") final String key,
+                                              @NotNull @RequestParam("uid") final String uid,
+                                              Model model) {
+        NewClassMemberPasswordResetForm form = new NewClassMemberPasswordResetForm();
+        form.setKey(key);
+        form.setUid(uid);
+        model.addAttribute("newClassMemberPasswordResetForm", form);
+        // redirect to the page for user to enter new password
+        return "new_class_member_reset_password";
+    }
+
+    // send to SIO to process resetting password for new member
+    @PostMapping("/new_member_password_reset")
+    public String newMemberPasswordResetProcess(
+            @ModelAttribute("newClassMemberPasswordResetForm") NewClassMemberPasswordResetForm form
+                                 ) throws IOException{
+
+        JSONObject obj = new JSONObject();
+        obj.put("firstName", form.getFirstName());
+        obj.put("lastName", form.getLastName());
+        obj.put("firstName", form.getFirstName());
+        obj.put("phone", form.getPhone());
+        obj.put("key", form.getPhone());
+        
+        log.info("Connecting to sio for password reset, key = {}", form.getKey());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = null;
+        try {
+            response = restTemplate.exchange(properties.newMemberResetPassword(form.getUid()), HttpMethod.PUT, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio for new member password reset! {}", e);
+            form.setErrMsg("Cannot connect to server! Please try again later.");
+            return "new_class_member_reset_password";
+        }
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
+            exceptionMessageMap.put(PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION, "Password reset request timed out. Please request a new reset email.");
+            exceptionMessageMap.put(PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION, "Invalid password reset request. Please request a new reset email.");
+            exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
+
+            MyErrorResource error = objectMapper.readValue(response.getBody().toString(), MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            final String errMsg = exceptionMessageMap.get(exceptionState) == null ? ERR_SERVER_OVERLOAD : exceptionMessageMap.get(exceptionState);
+            form.setErrMsg(errMsg);
+            log.warn("Server responded error for password reset: {}", exceptionState.toString());
+            return "new_class_member_reset_password";
+        }
+        log.info("Password was reset, key = {}", form.getKey());
+        return "password_reset_success";
+    }
+
 }
