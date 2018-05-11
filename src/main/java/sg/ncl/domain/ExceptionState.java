@@ -56,7 +56,9 @@ public enum ExceptionState {
     USER_ID_NULL_OR_EMPTY_EXCEPTION("UserIdNullOrEmptyException"),
     USER_IS_NOT_DELETABLE_EXCEPTION("UserIsNotDeletableException"),
     USER_NOT_FOUND_EXCEPTION("UserNotFoundException"),
-    VERIFICATION_PASSWORD_NOT_MATCH_EXCEPTION("VerificationPasswordNotMatchException");
+    VERIFICATION_PASSWORD_NOT_MATCH_EXCEPTION("VerificationPasswordNotMatchException"),
+    INVALID_PUBLIC_KEY_FILE_EXCEPTION("InvalidPublicKeyFileException"),
+    INVALID_PUBLIC_KEY_FORMAT_EXCEPTION("InvalidPublicKeyFormatException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 

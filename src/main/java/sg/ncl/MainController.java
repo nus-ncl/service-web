@@ -4119,6 +4119,14 @@ public class MainController {
                             redirectAttributes.addFlashAttribute(MESSAGE, "Invalid password");
                             redirectAttributes.addFlashAttribute("hasKeyPassError", true);
                             break;
+                        case INVALID_PUBLIC_KEY_FILE_EXCEPTION:
+                            log.error(error.getMessage());
+                            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid key file");
+                            break;
+                        case INVALID_PUBLIC_KEY_FORMAT_EXCEPTION:
+                            log.error(error.getMessage());
+                            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid key format");
+                            break;
                         case FORBIDDEN_EXCEPTION:
                             log.error(error.getMessage());
                             redirectAttributes.addFlashAttribute(MESSAGE, "Adding of public key is forbidden");
