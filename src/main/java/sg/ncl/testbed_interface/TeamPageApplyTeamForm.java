@@ -24,7 +24,7 @@ public class TeamPageApplyTeamForm {
     @NotNull(message="Please select one of them")
     private String isPublic = TeamVisibility.PUBLIC.toString();
 
-    private boolean isClass;
+    private boolean isClass = false;
     
     public TeamPageApplyTeamForm() {   
     }
@@ -70,6 +70,7 @@ public class TeamPageApplyTeamForm {
     }
 
     public boolean getIsClass() {return isClass;}
+    public void setIsClass(boolean isClass) {this.isClass = isClass;}
 
     
     @Override
@@ -79,6 +80,6 @@ public class TeamPageApplyTeamForm {
                 "Website: " + teamWebsite + "\n" +
                 "Organization Type: " + teamOrganizationType + "\n" +
                 "Visibility: " + isPublic + "\n" +
-                "Class" + isClass;
+                "isClass: " + isClass;
     }
 }

@@ -38,6 +38,11 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <div class="radio">
+                                <label><input type="radio" th:field="*{isClass}" th:value="true"/><strong><span th:text="#{signup.class}">Class</span></strong><em><span>This is the Class project</span></em></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <span class="text-danger" th:if="${#fields.hasErrors('isPublic')}" th:errors="*{isPublic}">Public or Private</span>
                             <div class="radio">
                                 <label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span>Include your team info in the <a th:href="@{/public_teams}">Public List</a> of NCL teams.</span></em></label>

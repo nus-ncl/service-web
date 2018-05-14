@@ -1902,46 +1902,6 @@ public class MainController {
         return REDIRECT_TEAM_PROFILE_TEAM_ID;
     }
 
-    @RequestMapping(value="/add_member/{teamId}", method= RequestMethod.GET)
-    public String addMember(@PathVariable String teamId, Model model) {
-        model.addAttribute("addMemberForm", new addMemberForm());
-        model.addAttribute("teamId", teamId);
-        return "add_member";
-    }
-
-    @RequestMapping(value="/add_member/{teamId}", method= RequestMethod.POST)
-    public String addMember(@PathVariable String teamId, @Valid addMemberForm addMemberForm, final RedirectAttributes redirectAttributes)  throws IOException {
-
-        String emails[] = addMemberForm.getEmails().split("\\r?\\n");
-
-        JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i< emails.length; i++){
-            jsonArray.put(emails[i]);
-        }
-        log.info("{}",jsonArray.toString());
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("emails", jsonArray.toString());
-
-        //log.info("before create http request");
-        HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
-       // log.info("before setErrorHandler");
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        //log.info("before responseEntity");
-        ResponseEntity responseEntity = null;
-
-        log.info("before try loop loop");
-        try {
-            log.info("inside loop");
-            responseEntity = restTemplate.exchange(properties.addMemberByEmail(teamId), HttpMethod.POST, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service for adding members by email: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/add_member/{teamId}";
-        }
-
-        return "redirect:/add_member/{teamId}";
-    }
 
 //    @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
 //    public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
@@ -2019,7 +1979,7 @@ public class MainController {
         teamFields.put("website", teamPageApplyTeamForm.getTeamWebsite());
         teamFields.put("organisationType", teamPageApplyTeamForm.getTeamOrganizationType());
         teamFields.put("visibility", teamPageApplyTeamForm.getIsPublic());
-        teamFields.put("class", teamPageApplyTeamForm.getIsClass());
+        teamFields.put("isClass", teamPageApplyTeamForm.getIsClass());
 
         String nclUserId = session.getAttribute("id").toString();
 
@@ -5040,6 +5000,40 @@ public class MainController {
         return "Experiment " + expName + " in team " + teamName;
     }
 
+    @RequestMapping(value="/add_member/{teamId}", method= RequestMethod.GET)
+    public String addMember(@PathVariable String teamId, Model model) {
+        model.addAttribute("addMemberForm", new addMemberForm());
+        model.addAttribute("teamId", teamId);
+        return "add_member";
+    }
+
+    @RequestMapping(value="/add_member/{teamId}", method= RequestMethod.POST)
+    public String addMember(@PathVariable String teamId, @Valid addMemberForm addMemberForm, final RedirectAttributes redirectAttributes)  throws IOException {
+
+        String emails[] = addMemberForm.getEmails().split("\\r?\\n");
+
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i< emails.length; i++){
+            jsonArray.put(emails[i]);
+        }
+        log.info("{}",jsonArray.toString());
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("emails", jsonArray.toString());
+
+        HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity responseEntity = null;
+        try {
+            responseEntity = restTemplate.exchange(properties.addMemberByEmail(teamId), HttpMethod.POST, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for adding members by email: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return "redirect:/add_member/{teamId}";
+        }
+
+        return "redirect:/add_member/{teamId}";
+    }
 
 
     // when user clicks password reset link in the email
