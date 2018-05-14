@@ -157,9 +157,6 @@
 
                     </tbody>
                 </table>
-                <div>
-                    <a href="addMember" th:href="@{/add_member/{teamId}(teamId=${team.id})}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Add member</a>
-                </div>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
@@ -260,6 +257,42 @@
                 </form>
             </div>
         </div> <!-- tab -->
+
+
+        <div id="class" class="tab-pane fade">
+            <h3 th:text="#{teamProfile.nav.class}">Class</h3>
+            <form method="post" action="#" th:action="@{/team_class/{teamId}(teamId=${team.id})}"
+                  th:object="${teamClass}" role="form">
+                <table class="table table-responsive">
+                    <tr>
+                        <td><Strong th:text="#{team.class.endDate}">Class End Date</Strong></td>
+                        <td>
+                            <div class="input-group input-daterange" id="datepicker">
+                                <input type="text" class="form-control" th:name="start" th:value="${endDate}" placeholder="Start Date" />
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><Strong th:text="#{team.class.numberOfStudents}">Anticipated number of students</Strong></td>
+                        <!--
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="form-control" th:field="*{numberOfStudents}" readonly="readonly"/>
+                            </div>
+                        </td>
+                         tab -->
+                    </tr>
+                </table>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-standard">Set Up</button>
+                </div>
+            </form>
+            <div>
+                    <a href="addMember" th:href="@{/add_member/{teamId}(teamId=${team.id})}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Add member</a>
+            </div>
+        </div> <!-- tab -->
+
 
         </div> <!-- row -->
         <div class="cc-wraper">

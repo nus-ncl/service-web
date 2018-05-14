@@ -5000,6 +5000,17 @@ public class MainController {
         return "Experiment " + expName + " in team " + teamName;
     }
 
+
+    @RequestMapping(value = "/team_class/{teamId}", method = RequestMethod.POST)
+    public String editTeamQuota(
+            @PathVariable String teamId,
+            @ModelAttribute("teamClass") TeamClass editTeamClass,
+            final RedirectAttributes redirectAttributes,
+            HttpSession session) throws IOException {
+
+        return null;
+    }
+
     @RequestMapping(value="/add_member/{teamId}", method= RequestMethod.GET)
     public String addMember(@PathVariable String teamId, Model model) {
         model.addAttribute("addMemberForm", new addMemberForm());
