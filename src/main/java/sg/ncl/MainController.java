@@ -5064,9 +5064,9 @@ public class MainController {
         JSONObject obj = new JSONObject();
         obj.put("firstName", form.getFirstName());
         obj.put("lastName", form.getLastName());
-        obj.put("firstName", form.getFirstName());
         obj.put("phone", form.getPhone());
         obj.put("key", form.getPhone());
+        obj.put("newPassword", form.getPassword1());
 
         log.info("Connecting to sio for password reset, key = {}", form.getKey());
         HttpHeaders headers = new HttpHeaders();
