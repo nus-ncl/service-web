@@ -39,6 +39,8 @@ public class Team2 implements Serializable {
     private List<User2> pendingMembersList;
     private EnumMap<MemberStatus, List<User2>> membersStatusMap; // membership status, list of members with the specific status, e.g. APPROVED -> [UserA, UserB ...]
 
+    private String isClass;
+
     public Team2() {
         pendingMembersList = new ArrayList<>();
         membersList = new ArrayList<>();
