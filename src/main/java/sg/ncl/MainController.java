@@ -5008,15 +5008,20 @@ public class MainController {
     }
 
     @RequestMapping(value="/add_member/{teamId}", method= RequestMethod.POST)
-    public String addMember(@PathVariable String teamId, @Valid addMemberForm addMemberForm, final RedirectAttributes redirectAttributes)  throws IOException {
+    public String addMember(@PathVariable String teamId, @Valid addMemberForm addMemberForm, final RedirectAttributes redirectAttributes)  throws WebServiceRuntimeException {
 
         String emails[] = addMemberForm.getEmails().split("\\r?\\n");
 
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i< emails.length; i++){
+            log.info("debug {}", emails[i]);
+            if (!VALID_EMAIL_ADDRESS_REGEX.matcher(emails[i]).matches()) {
+                addMemberForm.setErrMsg("Email address is not valid");
+                redirectAttributes.addFlashAttribute(MESSAGE, "Email address is not valid");
+                return "redirect:/add_member/{teamId}";
+            }
             jsonArray.put(emails[i]);
         }
-        log.info("{}",jsonArray.toString());
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("emails", jsonArray.toString());
@@ -5026,12 +5031,34 @@ public class MainController {
         ResponseEntity responseEntity = null;
         try {
             responseEntity = restTemplate.exchange(properties.addMemberByEmail(teamId), HttpMethod.POST, request, String.class);
+            log.info("debug {}", responseEntity.toString());
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for adding members by email: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             return "redirect:/add_member/{teamId}";
         }
+        String responseBody = responseEntity.getBody().toString();
+        if (RestUtil.isError(responseEntity.getStatusCode())) {
+            MyErrorResource error;
+            try {
+                error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    case INVALID_EMAIL_ADDRESS_EXCEPTION:
+                        log.warn("Adding members by emails: Invalid Emaill address");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Email address is not valid");
+                        break;
+                    default:
+                        log.warn("Reject team : sio or deterlab adapter connection error");
+                        // possible sio or adapter connection fail
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                        break;
+                }
 
+            } catch (IOException e) {
+                throw new WebServiceRuntimeException(e.getMessage());
+            }
+        }
         return "redirect:/add_member/{teamId}";
     }
 

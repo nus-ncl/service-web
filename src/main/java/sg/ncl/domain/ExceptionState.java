@@ -33,6 +33,7 @@ public enum ExceptionState {
     INSUFFICIENT_PERMISSION_EXCEPTION("InsufficientPermissionException"),
     INSUFFICIENT_QUOTA_EXCEPTION("InsufficientQuotaException"),
     INVALID_CREDENTIALS_EXCEPTION("InvalidCredentialsException"),
+    INVALID_EMAIL_ADDRESS_EXCEPTION("InvalidEmailAddressException"),
     INVALID_PASSWORD_EXCEPTION("InvalidPasswordException"),
     INVALID_STATUS_TRANSITION_EXCEPTION("InvalidStatusTransitionException"),
     INVALID_TEAM_NAME_EXCEPTION("InvalidTeamNameException"),

@@ -11,7 +11,11 @@
     <p>&nbsp;</p>
 
     <div class="container">
-
+        <p>&nbsp;</p>
+        <div th:if="${message}">
+            <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail"
+                                                                         th:text="${message}"></span></p>
+        </div>
         <p>&nbsp;</p>
         <div class="row dashpanel">
             <h2 class="team-heading team-heading-current-team" th:text="#{team.profile.addMember}">Add member</h2>
