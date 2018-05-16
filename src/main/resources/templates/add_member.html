@@ -22,8 +22,12 @@
             <p>&nbsp;</p>
 
             <form  method="post" action="#" th:action="@{/add_member/{teamId}(teamId=${teamId})}" th:object="${addMemberForm}" role="form">
-                <textarea type="text" rows="10" class="form-control" placeholder="1 email per line" th:field="*{emails}"/>
+
+                <div class="form-group">
+                    <textarea type="text" rows="10" class="form-control" placeholder="1 email per line" th:field="*{emails}"/>
+                </div>
                 <p>&nbsp;</p>
+
                 <div class="form-group">
                     <button type="submit" class="btn btn-standard">Submit</button>
                 </div>

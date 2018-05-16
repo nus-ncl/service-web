@@ -120,7 +120,7 @@ public class ConnectionProperties {
 
 
     public String activateNewMember(String uid){
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/" + "/activateMember/" + uid;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/activateMember/" + uid;
     }
 
     //-------------------------------------

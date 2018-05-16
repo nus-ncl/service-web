@@ -5002,13 +5002,13 @@ public class MainController {
 
     @RequestMapping(value="/add_member/{teamId}", method= RequestMethod.GET)
     public String addMember(@PathVariable String teamId, Model model) {
-        model.addAttribute("addMemberForm", new addMemberForm());
-        model.addAttribute("teamId", teamId);
+        model.addAttribute("addMemberForm", new AddMemberForm());
         return "add_member";
     }
 
     @RequestMapping(value="/add_member/{teamId}", method= RequestMethod.POST)
-    public String addMember(@PathVariable String teamId, @Valid addMemberForm addMemberForm, final RedirectAttributes redirectAttributes)  throws WebServiceRuntimeException {
+    public String addMember(@PathVariable String teamId, @Valid AddMemberForm addMemberForm, final RedirectAttributes redirectAttributes)  throws WebServiceRuntimeException {
+        log.info("Starting to adding members by email for team {}", teamId);
 
         String emails[] = addMemberForm.getEmails().split("\\r?\\n");
 
@@ -5017,7 +5017,7 @@ public class MainController {
             if (!VALID_EMAIL_ADDRESS_REGEX.matcher(emails[i]).matches()) {
                 addMemberForm.setErrMsg("Email address is not valid");
                 redirectAttributes.addFlashAttribute(MESSAGE, "Email address is not valid");
-                return "redirect:/add_member/{teamId}";
+                return "redirect:/add_member/" + teamId;
             }
             jsonArray.put(emails[i]);
         }
@@ -5033,9 +5033,11 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for adding members by email: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:/add_member/{teamId}";
+            return "redirect:/add_member/" + teamId;
         }
+
         String responseBody = responseEntity.getBody().toString();
+
         if (RestUtil.isError(responseEntity.getStatusCode())) {
             MyErrorResource error;
             try {
@@ -5043,7 +5045,7 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
                 switch (exceptionState) {
                     case INVALID_EMAIL_ADDRESS_EXCEPTION:
-                        log.warn("Adding members by emails: Invalid Emaill address");
+                        log.warn("Adding members by emails: Invalid email address");
                         redirectAttributes.addFlashAttribute(MESSAGE, "Email address is not valid");
                         break;
                     default:
@@ -5057,19 +5059,22 @@ public class MainController {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
         }
-        return "redirect:/add_member/{teamId}";
+        log.info("Adding members by email for team {} successful", teamId);
+
+        return "add_member";
     }
 
 
     // when user clicks password reset link in the email
     @RequestMapping(path = "/newClassMemberResetPassword", params = {"uid", "key"})
-    public String activateNewMember(@NotNull @RequestParam("key") final String key,
-                                              @NotNull @RequestParam("uid") final String uid,
+    public String activateNewMember(@NotNull @RequestParam("uid") final String uid,
+                                    @NotNull @RequestParam("key") final String key,
                                               Model model) {
-        NewClassMemberPasswordResetForm form = new NewClassMemberPasswordResetForm();
-        form.setKey(key);
-        form.setUid(uid);
-        model.addAttribute("newClassMemberPasswordResetForm", form);
+        NewClassMemberPasswordResetForm newClassMemberPasswordResetForm = new NewClassMemberPasswordResetForm();
+        newClassMemberPasswordResetForm.setKey(key);
+        newClassMemberPasswordResetForm.setUid(uid);
+
+        model.addAttribute("newClassMemberPasswordResetForm", newClassMemberPasswordResetForm );
         // redirect to the page for user to enter new password
         return "new_class_member_reset_password";
     }
@@ -5077,29 +5082,30 @@ public class MainController {
     // send to SIO to process resetting password for new member
     @PostMapping("/activate_new_member_process")
     public String activateNewMemberProcess(
-            @ModelAttribute("newClassMemberPasswordResetForm") NewClassMemberPasswordResetForm form
+                        @ModelAttribute("newClassMemberPasswordResetForm") NewClassMemberPasswordResetForm newClassMemberPasswordResetForm
                                  ) throws IOException{
 
         JSONObject obj = new JSONObject();
-        obj.put("firstName", form.getFirstName());
-        obj.put("lastName", form.getLastName());
-        obj.put("phone", form.getPhone());
-        obj.put("key", form.getPhone());
-        obj.put("newPassword", form.getPassword1());
+        obj.put("firstName", newClassMemberPasswordResetForm.getFirstName());
+        obj.put("lastName", newClassMemberPasswordResetForm.getLastName());
+        obj.put("phone", newClassMemberPasswordResetForm.getPhone());
+        obj.put("key", newClassMemberPasswordResetForm.getPhone());
+        obj.put("newPassword", newClassMemberPasswordResetForm.getPassword1());
 
-        log.info("Connecting to sio for password reset, key = {}", form.getKey());
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = null;
         try {
-            response = restTemplate.exchange(properties. activateNewMember(form.getUid()), HttpMethod.PUT, request, String.class);
+            response = restTemplate.exchange(properties.activateNewMember(newClassMemberPasswordResetForm.getUid()), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for new member password reset! {}", e);
-            form.setErrMsg("Cannot connect to server! Please try again later.");
+            newClassMemberPasswordResetForm.setErrMsg("Cannot connect to server! Please try again later.");
             return "new_class_member_reset_password";
         }
+
 
         if (RestUtil.isError(response.getStatusCode())) {
             EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
@@ -5111,11 +5117,12 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
             final String errMsg = exceptionMessageMap.get(exceptionState) == null ? ERR_SERVER_OVERLOAD : exceptionMessageMap.get(exceptionState);
-            form.setErrMsg(errMsg);
+            newClassMemberPasswordResetForm.setErrMsg(errMsg);
             log.warn("Server responded error for password reset: {}", exceptionState.toString());
             return "new_class_member_reset_password";
         }
-        log.info("Password was reset, key = {}", form.getKey());
+
+        log.info("Password was reset, key = {}", newClassMemberPasswordResetForm.getKey());
         return "password_reset_success";
     }
 

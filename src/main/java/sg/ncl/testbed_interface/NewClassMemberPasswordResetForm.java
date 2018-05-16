@@ -14,7 +14,6 @@ import static sg.ncl.validation.Validator.isValidPassword;
 public class NewClassMemberPasswordResetForm {
     private String key;
     private String uid;
-    // todo : check firstname, last name and phone
     private String firstName;
     private String lastName;
     private String phone;
