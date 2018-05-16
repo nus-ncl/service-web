@@ -5014,7 +5014,6 @@ public class MainController {
 
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i< emails.length; i++){
-            log.info("debug {}", emails[i]);
             if (!VALID_EMAIL_ADDRESS_REGEX.matcher(emails[i]).matches()) {
                 addMemberForm.setErrMsg("Email address is not valid");
                 redirectAttributes.addFlashAttribute(MESSAGE, "Email address is not valid");
@@ -5031,7 +5030,6 @@ public class MainController {
         ResponseEntity responseEntity = null;
         try {
             responseEntity = restTemplate.exchange(properties.addMemberByEmail(teamId), HttpMethod.POST, request, String.class);
-            log.info("debug {}", responseEntity.toString());
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for adding members by email: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -5049,7 +5047,7 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE, "Email address is not valid");
                         break;
                     default:
-                        log.warn("Reject team : sio or deterlab adapter connection error");
+                        log.warn("Adding members by emails : sio or deterlab adapter connection error");
                         // possible sio or adapter connection fail
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                         break;
