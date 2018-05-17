@@ -5061,7 +5061,7 @@ public class MainController {
         }
         log.info("Adding members by email for team {} successful", teamId);
 
-        return "add_member";
+        return "redirect:/add_member/" + teamId;
     }
 
 
@@ -5083,29 +5083,29 @@ public class MainController {
     @PostMapping("/activate_new_member_process")
     public String activateNewMemberProcess(
                         @ModelAttribute("newClassMemberPasswordResetForm") NewClassMemberPasswordResetForm newClassMemberPasswordResetForm
-                                 ) throws IOException{
+                                 ) throws IOException {
 
         JSONObject obj = new JSONObject();
         obj.put("firstName", newClassMemberPasswordResetForm.getFirstName());
         obj.put("lastName", newClassMemberPasswordResetForm.getLastName());
         obj.put("phone", newClassMemberPasswordResetForm.getPhone());
-        obj.put("key", newClassMemberPasswordResetForm.getPhone());
+        obj.put("key", newClassMemberPasswordResetForm.getKey());
         obj.put("newPassword", newClassMemberPasswordResetForm.getPassword1());
 
+        String uid = newClassMemberPasswordResetForm.getUid();
+        String key = newClassMemberPasswordResetForm.getKey();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
+
+        HttpEntity<String> request =  createHttpEntityWithBodyNoAuthHeader(obj.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = null;
         try {
-            response = restTemplate.exchange(properties.activateNewMember(newClassMemberPasswordResetForm.getUid()), HttpMethod.PUT, request, String.class);
+            response = restTemplate.exchange(properties.activateNewMember(uid), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for new member password reset! {}", e);
             newClassMemberPasswordResetForm.setErrMsg("Cannot connect to server! Please try again later.");
-            return "new_class_member_reset_password";
+            return "redirect:/newClassMemberResetPassword?uid=" + uid + "&key=" + key;
         }
-
 
         if (RestUtil.isError(response.getStatusCode())) {
             EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
@@ -5119,11 +5119,10 @@ public class MainController {
             final String errMsg = exceptionMessageMap.get(exceptionState) == null ? ERR_SERVER_OVERLOAD : exceptionMessageMap.get(exceptionState);
             newClassMemberPasswordResetForm.setErrMsg(errMsg);
             log.warn("Server responded error for password reset: {}", exceptionState.toString());
-            return "new_class_member_reset_password";
+            return "redirect:/newClassMemberResetPassword?uid=" + uid + "&key=" + key;
         }
 
         log.info("Password was reset, key = {}", newClassMemberPasswordResetForm.getKey());
-        return "password_reset_success";
+        return "redirect:/newClassMemberResetPassword?uid=" + uid + "&key=" + key;
     }
-
 }
