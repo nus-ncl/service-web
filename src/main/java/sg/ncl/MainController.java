@@ -5083,7 +5083,8 @@ public class MainController {
     @PostMapping("/activate_new_member_process")
     public String activateNewMemberProcess(
                         @ModelAttribute("newClassMemberPasswordResetForm") NewClassMemberPasswordResetForm newClassMemberPasswordResetForm
-                                 ) throws IOException {
+                        ) throws WebServiceRuntimeException {
+
 
         JSONObject obj = new JSONObject();
         obj.put("firstName", newClassMemberPasswordResetForm.getFirstName());
@@ -5095,34 +5096,65 @@ public class MainController {
         String uid = newClassMemberPasswordResetForm.getUid();
         String key = newClassMemberPasswordResetForm.getKey();
 
+        if (!newClassMemberPasswordResetForm.isPasswordOk()) {
+            return "redirect:/newClassMemberResetPassword?uid=" + uid + "&key=" + key;
+        }
 
         HttpEntity<String> request =  createHttpEntityWithBodyNoAuthHeader(obj.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = null;
+        ResponseEntity responseEntity = null;
         try {
-            response = restTemplate.exchange(properties.activateNewMember(uid), HttpMethod.PUT, request, String.class);
+            responseEntity = restTemplate.exchange(properties.activateNewMember(uid), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for new member password reset! {}", e);
-            newClassMemberPasswordResetForm.setErrMsg("Cannot connect to server! Please try again later.");
+            newClassMemberPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
             return "redirect:/newClassMemberResetPassword?uid=" + uid + "&key=" + key;
         }
 
-        if (RestUtil.isError(response.getStatusCode())) {
-            EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
-            exceptionMessageMap.put(PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION, "Password reset request timed out. Please request a new reset email.");
-            exceptionMessageMap.put(PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION, "Invalid password reset request. Please request a new reset email.");
-            exceptionMessageMap.put(ADAPTER_CONNECTION_EXCEPTION, "Server-side error. Please contact " + CONTACT_EMAIL);
+        String responseBody = responseEntity.getBody().toString();
 
-            MyErrorResource error = objectMapper.readValue(response.getBody().toString(), MyErrorResource.class);
-            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+        if (RestUtil.isError(responseEntity.getStatusCode())) {
+            MyErrorResource error;
+            try {
+                error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    case PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION:
+                        log.warn("Error for class member password reset for user {}: password reset key timeout", uid);
+                        newClassMemberPasswordResetForm.setErrMsg( "Password reset request timed out. Please request a new reset email.");
+                        break;
 
-            final String errMsg = exceptionMessageMap.get(exceptionState) == null ? ERR_SERVER_OVERLOAD : exceptionMessageMap.get(exceptionState);
-            newClassMemberPasswordResetForm.setErrMsg(errMsg);
-            log.warn("Server responded error for password reset: {}", exceptionState.toString());
-            return "redirect:/newClassMemberResetPassword?uid=" + uid + "&key=" + key;
+                    case INVALID_USERNAME_EXCEPTION:
+                        log.warn("Error for class member password reset for user {}: invalid username", uid);
+                        newClassMemberPasswordResetForm.setErrMsg( "You must enter a valid first and last name.");
+                        break;
+
+                    case PASSWORD_NULL_OR_EMPTY_EXCEPTION:
+                        log.warn("Error for class member password reset for user {}: invalid username", uid);
+                        newClassMemberPasswordResetForm.setErrMsg( "You must supply a password.");
+                        break;
+
+                    default:
+                        log.warn("Adding members by emails : sio or deterlab adapter connection error");
+                        newClassMemberPasswordResetForm.setErrMsg( ERR_SERVER_OVERLOAD);
+                }
+                return "redirect:/newClassMemberResetPassword?uid=" + uid + "&key=" + key;
+            } catch (IOException e) {
+                throw new WebServiceRuntimeException(e.getMessage());
+            }
         }
 
-        log.info("Password was reset, key = {}", newClassMemberPasswordResetForm.getKey());
-        return "redirect:/newClassMemberResetPassword?uid=" + uid + "&key=" + key;
+
+        log.info("New class member password reset successful for user {}", uid);
+        newClassMemberPasswordResetForm.setSuccessMsg("Password reset is successful");
+        return "new_class_member_reset_password";
+    }
+
+    // when class member clicks password reset key link in the email
+    @PostMapping(path = "/newClassMemberResetKey", params = {"uid"})
+    public String activateNewMember(@NotNull @RequestParam("uid") final String uid,
+                                    Model model) {
+
+        return "new_class_member_reset_password";
     }
 }

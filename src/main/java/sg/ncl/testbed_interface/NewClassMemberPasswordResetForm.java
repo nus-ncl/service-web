@@ -20,6 +20,7 @@ public class NewClassMemberPasswordResetForm {
     private String password1;
     private String password2;
     private String errMsg;
+    private String successMsg;
 
     public boolean isPasswordOk() {
         // order of check determines which error message to display first
