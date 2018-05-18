@@ -83,6 +83,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/" + id;
     }
 
+    public String newMemberResetKey(String uid){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/resetKey/" + uid;
+    }
+
     //-------------------------------------
     // REGISTRATIONS
     //-------------------------------------
@@ -119,9 +123,10 @@ public class ConnectionProperties {
     }
 
 
-    public String activateNewMember(String uid){
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/activateMember/" + uid;
+    public String resetPasswordNewMember(String uid){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/" + uid + "/resetPasswordNewMember";
     }
+
 
     //-------------------------------------
     // TEAMS

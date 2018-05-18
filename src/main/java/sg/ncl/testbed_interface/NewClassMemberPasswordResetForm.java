@@ -33,7 +33,7 @@ public class NewClassMemberPasswordResetForm {
 
     private boolean isPasswordMatch() {
         if(!this.getPassword1().equals(this.getPassword2())) {
-            this.setErrMsg("Password not match!");
+            this.setErrMsg("Password does not match!");
             return false;
         }
         return true;
