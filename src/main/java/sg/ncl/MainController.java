@@ -1983,7 +1983,7 @@ public class MainController {
         JSONObject teamFields = new JSONObject();
         mainObject.put("team", teamFields);
         teamFields.put("name", teamPageApplyTeamForm.getTeamName());
-        teamFields.put("description", teamPageApplyTeamForm.getTeamDescription());
+        teamFields.put(DESCRIPTION, teamPageApplyTeamForm.getTeamDescription());
         teamFields.put(WEBSITE, teamPageApplyTeamForm.getTeamWebsite());
         teamFields.put(ORGANIZATION_TYPE, teamPageApplyTeamForm.getTeamOrganizationType());
         teamFields.put(VISIBILITY, teamPageApplyTeamForm.getIsPublic());
@@ -2295,7 +2295,7 @@ public class MainController {
         experimentObject.put(TEAM_ID, experimentForm.getTeamId());
         experimentObject.put(TEAM_NAME, experimentForm.getTeamName());
         experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
-        experimentObject.put("description", experimentForm.getDescription());
+        experimentObject.put(DESCRIPTION, experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
         experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
@@ -4207,9 +4207,11 @@ public class MainController {
             // since created date and proccessed date is a ZonedDateTime and not String
             // both is set to '?' at the html page if exception
         }
+
+        team2.setIsClass(object.getBoolean("isClass"));
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));
-        team2.setDescription(object.getString("description"));
+        team2.setDescription(object.getString(DESCRIPTION));
         team2.setWebsite(object.getString(WEBSITE));
         team2.setOrganisationType(object.getString(ORGANIZATION_TYPE));
         team2.setStatus(object.getString("status"));
@@ -4290,7 +4292,7 @@ public class MainController {
 
                 team2.setId(object.getString("id"));
                 team2.setName(object.getString("name"));
-                team2.setDescription(object.getString("description"));
+                team2.setDescription(object.getString(DESCRIPTION));
                 team2.setWebsite(object.getString(WEBSITE));
                 team2.setOrganisationType(object.getString(ORGANIZATION_TYPE));
                 team2.setStatus(object.getString("status"));
@@ -4319,7 +4321,7 @@ public class MainController {
 
         dataset.setId(object.getInt("id"));
         dataset.setName(object.getString("name"));
-        dataset.setDescription(object.getString("description"));
+        dataset.setDescription(object.getString(DESCRIPTION));
         dataset.setContributorId(object.getString("contributorId"));
         dataset.addVisibility(object.getString(VISIBILITY));
         dataset.addAccessibility(object.getString("accessibility"));
@@ -4370,7 +4372,7 @@ public class MainController {
 
         dataCategory.setId(object.getLong("id"));
         dataCategory.setName(object.getString("name"));
-        dataCategory.setDescription(object.getString("description"));
+        dataCategory.setDescription(object.getString(DESCRIPTION));
 
         return dataCategory;
     }
@@ -4384,7 +4386,7 @@ public class MainController {
         dataLicense.setId(object.getLong("id"));
         dataLicense.setName(object.getString("name"));
         dataLicense.setAcronym(object.getString("acronym"));
-        dataLicense.setDescription(object.getString("description"));
+        dataLicense.setDescription(object.getString(DESCRIPTION));
         dataLicense.setLink(object.getString("link"));
 
         return dataLicense;
@@ -4447,7 +4449,7 @@ public class MainController {
         experiment2.setTeamId(object.getString(TEAM_ID));
         experiment2.setTeamName(object.getString(TEAM_NAME));
         experiment2.setName(object.getString("name"));
-        experiment2.setDescription(object.getString("description"));
+        experiment2.setDescription(object.getString(DESCRIPTION));
         experiment2.setNsFile(object.getString("nsFile"));
         experiment2.setNsFileContent(object.getString("nsFileContent"));
         experiment2.setIdleSwap(object.getInt("idleSwap"));

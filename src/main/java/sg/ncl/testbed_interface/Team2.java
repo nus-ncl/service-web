@@ -39,7 +39,7 @@ public class Team2 implements Serializable {
     private List<User2> pendingMembersList;
     private EnumMap<MemberStatus, List<User2>> membersStatusMap; // membership status, list of members with the specific status, e.g. APPROVED -> [UserA, UserB ...]
 
-    private String isClass;
+    private boolean isClass;
 
     public Team2() {
         pendingMembersList = new ArrayList<>();
@@ -77,6 +77,9 @@ public class Team2 implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public void setIsClass(boolean isClass) {this.isClass = isClass;}
+    public boolean getIsClass() {return isClass;}
 
     // reads the JSON representation of the ZonedDateTime, e.g. 1.4912345E
     // converts to a proper ZonedDateTime object

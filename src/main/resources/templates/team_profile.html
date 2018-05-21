@@ -157,7 +157,7 @@
 
                     </tbody>
                 </table>
-                <div>
+                <div th:if="${team.isClass == true}">
                     <a href="addMember" th:href="@{/add_member/{teamId}(teamId=${team.id})}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Add member</a>
                 </div>
                 <p>&nbsp;</p>
