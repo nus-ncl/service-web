@@ -2867,16 +2867,37 @@ public class MainController {
         return "webssh";
     }
 
-    @RequestMapping("/web_vnc/access_node/{qualifiedName:.+}/{portnum}")
-    public String vncAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName, @PathVariable String portnum) throws WebServiceRuntimeException, NoSuchAlgorithmException {
+    @RequestMapping(value = "/web_vnc/access_node/{teamName}/{expId}/{nodeId}", params = {"portNum"})
+    public String vncAccessNode(Model model, HttpSession session, RedirectAttributes redirectAttributes,
+                                @PathVariable String teamName, @PathVariable Long expId, @PathVariable String nodeId,
+                                @NotNull @RequestParam("portNum") Integer portNum) throws WebServiceRuntimeException, NoSuchAlgorithmException {
+        Realization realization = invokeAndExtractRealization(teamName, expId);
+        if (!checkPermissionRealizeExperiment(realization, session)) {
+            log.warn("Permission denied to access experiment {} node for team: {}", realization.getExperimentName(), teamName);
+            redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
+            return "redirect:/experiments";
+        }
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getStatefulExperiment(expId.toString()), HttpMethod.GET, request, String.class);
+        StatefulExperiment statefulExperiment = extractStatefulExperiment(response.getBody().toString());
         getDeterUid(model, session);
         Map attributes = model.asMap();
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(vncProperties.getHttp())
                 .queryParam("host", vncProperties.getHost())
-                .queryParam("path", qencode(qualifiedName + ":" + portnum, (String) attributes.get(DETER_UID)))
+                .queryParam("path", qencode(getNodeQualifiedName(statefulExperiment, nodeId) + ":" + portNum, (String) attributes.get(DETER_UID)))
                 .build();
         log.info("VNC URI: {}", uriComponents.toString());
         return "redirect:" + uriComponents.toString();
+    }
+
+    private String getNodeQualifiedName(StatefulExperiment statefulExperiment, String nodeId) {
+        StringBuilder qualifiedName = new StringBuilder();
+        statefulExperiment.getNodesInfoMap().forEach((key, value) -> {
+            if (value.get(NODE_ID).equals(nodeId)) {
+                qualifiedName.append(value.get(QUALIFIED_NAME));
+            }
+        });
+        return qualifiedName.toString();
     }
 
     // Reference: http://www.baeldung.com/sha-256-hashing-java

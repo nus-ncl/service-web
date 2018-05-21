@@ -150,4 +150,25 @@
     <div th:replace="fragments/footer:: footer"></div>
     <object th:include="fragments/javascript :: javascript" th:remove="tag"/>
 </body>
+    <script type="text/javascript">
+        // auto-refresh activity log
+        if ($('#activityLog').length > 0) {
+            setInterval(function() {
+                var log = $('#activityLog').find('> pre')[0];
+                var max = log.scrollHeight - log.clientHeight;
+                var current = log.scrollTop;
+
+                $('#activityLog').load(document.URL +  ' #activityLog *', function() {
+                    var new_log = $('#activityLog').find('> pre')[0];
+                    var new_max = new_log.scrollHeight - new_log.clientHeight;
+
+                    if (current == max) {
+                        new_log.scrollTop = new_max;
+                    } else {
+                        new_log.scrollTop = current;
+                    }
+                });
+            }, 5000);
+        }
+    </script>
 </html>
