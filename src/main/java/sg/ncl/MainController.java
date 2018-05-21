@@ -120,6 +120,7 @@ public class MainController {
     private static final String FORGET_PSWD_PAGE = "password_reset_email";
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
     private static final String NO_PERMISSION_PAGE = "nopermission";
+    private static final String NEW_MEMBER_RESET_PASSWORD = "new_member_reset_password";
 
     private static final String EXPERIMENTS = "experiments";
 
@@ -130,6 +131,7 @@ public class MainController {
     private static final String PERMISSION_DENIED = "Permission denied";
     private static final String TEAM_NOT_FOUND = "Team not found";
     private static final String NOT_FOUND = " not found.";
+    private static final String EMAIL_ADDRESS_IS_NOT_VALID = "Email address is not valid";
 
     private static final String EDIT_BUDGET = "editBudget";
     private static final String ORIGINAL_BUDGET = "originalBudget";
@@ -140,6 +142,7 @@ public class MainController {
     private static final String REDIRECT_INDEX_PAGE = "redirect:/";
     private static final String REDIRECT_ENERGY_USAGE = "redirect:/energy_usage";
     private static final String REDIRECT_TEAMS="redirect:/teams";
+    private static final String REDIRECT_ADD_MEMBER = "redirect:add_member";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -164,6 +167,9 @@ public class MainController {
     private static final String CREATED_DATE = "createdDate";
     private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
     private static final String MAX_DURATION = "maxDuration";
+
+    private static final String WEBSITE = "website";
+    private static final String VISIBILITY = "visibility";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -823,9 +829,9 @@ public class MainController {
 
                 teamFields.put("name", signUpMergedForm.getTeamName().trim());
                 teamFields.put("description", signUpMergedForm.getTeamDescription().trim());
-                teamFields.put("website", signUpMergedForm.getTeamWebsite().trim());
+                teamFields.put(WEBSITE, signUpMergedForm.getTeamWebsite().trim());
                 teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
-                teamFields.put("visibility", signUpMergedForm.getIsPublic());
+                teamFields.put(VISIBILITY, signUpMergedForm.getIsPublic());
                 teamFields.put("isClass", signUpMergedForm.getIsClass());
                 mainObject.put("isJoinTeam", false);
 
@@ -1747,7 +1753,7 @@ public class MainController {
         teamfields.put("id", teamId);
         teamfields.put("name", editTeam.getName());
         teamfields.put("description", editTeam.getDescription());
-        teamfields.put("website", "http://default.com");
+        teamfields.put(WEBSITE, "http://default.com");
         teamfields.put("organisationType", editTeam.getOrganisationType());
         teamfields.put("privacy", "OPEN");
         teamfields.put("status", editTeam.getStatus());
@@ -1976,9 +1982,9 @@ public class MainController {
         mainObject.put("team", teamFields);
         teamFields.put("name", teamPageApplyTeamForm.getTeamName());
         teamFields.put("description", teamPageApplyTeamForm.getTeamDescription());
-        teamFields.put("website", teamPageApplyTeamForm.getTeamWebsite());
+        teamFields.put(WEBSITE, teamPageApplyTeamForm.getTeamWebsite());
         teamFields.put("organisationType", teamPageApplyTeamForm.getTeamOrganizationType());
-        teamFields.put("visibility", teamPageApplyTeamForm.getIsPublic());
+        teamFields.put(VISIBILITY, teamPageApplyTeamForm.getIsPublic());
         teamFields.put("isClass", teamPageApplyTeamForm.getIsClass());
 
         String nclUserId = session.getAttribute("id").toString();
@@ -4181,10 +4187,10 @@ public class MainController {
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));
         team2.setDescription(object.getString("description"));
-        team2.setWebsite(object.getString("website"));
+        team2.setWebsite(object.getString(WEBSITE));
         team2.setOrganisationType(object.getString("organisationType"));
         team2.setStatus(object.getString("status"));
-        team2.setVisibility(object.getString("visibility"));
+        team2.setVisibility(object.getString(VISIBILITY));
 
         for (int i = 0; i < membersArray.length(); i++) {
             JSONObject memberObject = membersArray.getJSONObject(i);
@@ -4262,10 +4268,10 @@ public class MainController {
                 team2.setId(object.getString("id"));
                 team2.setName(object.getString("name"));
                 team2.setDescription(object.getString("description"));
-                team2.setWebsite(object.getString("website"));
+                team2.setWebsite(object.getString(WEBSITE));
                 team2.setOrganisationType(object.getString("organisationType"));
                 team2.setStatus(object.getString("status"));
-                team2.setVisibility(object.getString("visibility"));
+                team2.setVisibility(object.getString(VISIBILITY));
                 team2.setMembersCount(membersArray.length());
 
                 return team2;
@@ -4292,7 +4298,7 @@ public class MainController {
         dataset.setName(object.getString("name"));
         dataset.setDescription(object.getString("description"));
         dataset.setContributorId(object.getString("contributorId"));
-        dataset.addVisibility(object.getString("visibility"));
+        dataset.addVisibility(object.getString(VISIBILITY));
         dataset.addAccessibility(object.getString("accessibility"));
         try {
             dataset.setReleasedDate(getZonedDateTime(object.get("releasedDate").toString()));
@@ -5016,9 +5022,9 @@ public class MainController {
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i< emails.length; i++){
             if (!VALID_EMAIL_ADDRESS_REGEX.matcher(emails[i]).matches()) {
-                addMemberForm.setErrMsg("Email address is not valid");
-                redirectAttributes.addFlashAttribute(MESSAGE, "Email address is not valid");
-                return "redirect:add_member";
+                addMemberForm.setErrMsg(EMAIL_ADDRESS_IS_NOT_VALID);
+                redirectAttributes.addFlashAttribute(MESSAGE, EMAIL_ADDRESS_IS_NOT_VALID);
+                return REDIRECT_ADD_MEMBER;
             }
             jsonArray.put(emails[i]);
         }
@@ -5034,7 +5040,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for adding members by email: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return "redirect:add_member";
+            return REDIRECT_ADD_MEMBER;
         }
 
         String responseBody = responseEntity.getBody().toString();
@@ -5047,7 +5053,7 @@ public class MainController {
                 switch (exceptionState) {
                     case INVALID_EMAIL_ADDRESS_EXCEPTION:
                         log.warn("Adding members by emails: Invalid email address");
-                        redirectAttributes.addFlashAttribute(MESSAGE, "Email address is not valid");
+                        redirectAttributes.addFlashAttribute(MESSAGE, EMAIL_ADDRESS_IS_NOT_VALID);
                         break;
                     default:
                         log.warn("Adding members by emails : sio or deterlab adapter connection error");
@@ -5055,14 +5061,14 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                         break;
                 }
-                return "redirect:add_member";
+                return REDIRECT_ADD_MEMBER;
             } catch (IOException e) {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
         }
         log.info("Adding members by email for team {} successful", teamId);
         redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "New members have been added successful!");
-        return "redirect:add_member";
+        return REDIRECT_ADD_MEMBER;
     }
 
 
@@ -5077,7 +5083,7 @@ public class MainController {
 
         model.addAttribute("newClassMemberPasswordResetForm", newClassMemberPasswordResetForm );
         // redirect to the page for user to enter new password
-        return "new_member_reset_password";
+        return NEW_MEMBER_RESET_PASSWORD;
     }
 
     // send to SIO to process resetting password for new member
@@ -5095,10 +5101,9 @@ public class MainController {
         obj.put("newPassword", newClassMemberPasswordResetForm.getPassword1());
 
         String uid = newClassMemberPasswordResetForm.getUid();
-        String key = newClassMemberPasswordResetForm.getKey();
 
         if (!newClassMemberPasswordResetForm.isPasswordOk()) {
-            return "new_member_reset_password";
+            return NEW_MEMBER_RESET_PASSWORD;
         }
 
         HttpEntity<String> request =  createHttpEntityWithBodyNoAuthHeader(obj.toString());
@@ -5109,7 +5114,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for new member password reset! {}", e);
             newClassMemberPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
-            return "new_member_reset_password";
+            return NEW_MEMBER_RESET_PASSWORD;
         }
 
         String responseBody = responseEntity.getBody().toString();
@@ -5150,7 +5155,7 @@ public class MainController {
                         newClassMemberPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
                 }
 
-                return "new_member_reset_password";
+                return NEW_MEMBER_RESET_PASSWORD;
             } catch (IOException e) {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
@@ -5170,9 +5175,8 @@ public class MainController {
 
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity responseEntity = null;
         try {
-            responseEntity = restTemplate.exchange(properties.newMemberResetKey(uid), HttpMethod.PUT, request, String.class);
+            ResponseEntity responseEntity = restTemplate.exchange(properties.newMemberResetKey(uid), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for new member password reset! {}", e);
             return "error";

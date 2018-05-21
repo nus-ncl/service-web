@@ -72,7 +72,6 @@ public class TeamPageApplyTeamForm {
     public boolean getIsClass() {return isClass;}
     public void setIsClass(boolean isClass) {this.isClass = isClass;}
 
-    
     @Override
     public String toString() {
         return  "\n" + "Name: " + teamName + "\n" +
