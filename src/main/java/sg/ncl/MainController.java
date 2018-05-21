@@ -171,6 +171,7 @@ public class MainController {
     private static final String WEBSITE = "website";
     private static final String VISIBILITY = "visibility";
     private static final String ORGANIZATION_TYPE = "organisationType";
+    private static final String IS_CLASS = "isClass";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -833,7 +834,7 @@ public class MainController {
                 teamFields.put(WEBSITE, signUpMergedForm.getTeamWebsite().trim());
                 teamFields.put(ORGANIZATION_TYPE, signUpMergedForm.getTeamOrganizationType());
                 teamFields.put(VISIBILITY, signUpMergedForm.getIsPublic());
-                teamFields.put("isClass", signUpMergedForm.getIsClass());
+                teamFields.put(IS_CLASS, signUpMergedForm.getIsClass());
                 mainObject.put("isJoinTeam", false);
 
                 try {
@@ -1987,7 +1988,7 @@ public class MainController {
         teamFields.put(WEBSITE, teamPageApplyTeamForm.getTeamWebsite());
         teamFields.put(ORGANIZATION_TYPE, teamPageApplyTeamForm.getTeamOrganizationType());
         teamFields.put(VISIBILITY, teamPageApplyTeamForm.getIsPublic());
-        teamFields.put("isClass", teamPageApplyTeamForm.getIsClass());
+        teamFields.put(IS_CLASS, teamPageApplyTeamForm.getIsClass());
 
         String nclUserId = session.getAttribute("id").toString();
 
@@ -4208,7 +4209,7 @@ public class MainController {
             // both is set to '?' at the html page if exception
         }
 
-        team2.setIsClass(object.getBoolean("isClass"));
+        team2.setIsClass(object.getBoolean(IS_CLASS));
         team2.setId(object.getString("id"));
         team2.setName(object.getString("name"));
         team2.setDescription(object.getString(DESCRIPTION));

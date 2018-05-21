@@ -2,7 +2,6 @@ package sg.ncl.testbed_interface;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -24,7 +23,6 @@ public class TeamPageApplyTeamForm {
     @NotNull(message="Please select one of them")
     private String isPublic = TeamVisibility.PUBLIC.toString();
 
-    @NotNull(message = "")
     private boolean isClass = false;
     
     public TeamPageApplyTeamForm() {   
