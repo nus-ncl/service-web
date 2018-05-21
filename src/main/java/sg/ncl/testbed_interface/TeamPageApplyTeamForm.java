@@ -24,6 +24,7 @@ public class TeamPageApplyTeamForm {
     @NotNull(message="Please select one of them")
     private String isPublic = TeamVisibility.PUBLIC.toString();
 
+    @NotNull
     private boolean isClass = false;
     
     public TeamPageApplyTeamForm() {   

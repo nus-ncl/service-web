@@ -120,7 +120,7 @@ public class MainController {
     private static final String FORGET_PSWD_PAGE = "password_reset_email";
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
     private static final String NO_PERMISSION_PAGE = "nopermission";
-    private static final String NEW_MEMBER_RESET_PASSWORD = "new_member_reset_password";
+    private static final String NEW_MEMBER_RESET_PSWD = "new_member_reset_password";
 
     private static final String EXPERIMENTS = "experiments";
 
@@ -170,6 +170,7 @@ public class MainController {
 
     private static final String WEBSITE = "website";
     private static final String VISIBILITY = "visibility";
+    private static final String ORGANIZATION_TYPE = "organisationType";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -828,9 +829,9 @@ public class MainController {
             } else {
 
                 teamFields.put("name", signUpMergedForm.getTeamName().trim());
-                teamFields.put("description", signUpMergedForm.getTeamDescription().trim());
+                teamFields.put(DESCRIPTION, signUpMergedForm.getTeamDescription().trim());
                 teamFields.put(WEBSITE, signUpMergedForm.getTeamWebsite().trim());
-                teamFields.put("organisationType", signUpMergedForm.getTeamOrganizationType());
+                teamFields.put(ORGANIZATION_TYPE, signUpMergedForm.getTeamOrganizationType());
                 teamFields.put(VISIBILITY, signUpMergedForm.getIsPublic());
                 teamFields.put("isClass", signUpMergedForm.getIsClass());
                 mainObject.put("isJoinTeam", false);
@@ -1752,9 +1753,9 @@ public class MainController {
         JSONObject teamfields = new JSONObject();
         teamfields.put("id", teamId);
         teamfields.put("name", editTeam.getName());
-        teamfields.put("description", editTeam.getDescription());
+        teamfields.put(DESCRIPTION, editTeam.getDescription());
         teamfields.put(WEBSITE, "http://default.com");
-        teamfields.put("organisationType", editTeam.getOrganisationType());
+        teamfields.put(ORGANIZATION_TYPE, editTeam.getOrganisationType());
         teamfields.put("privacy", "OPEN");
         teamfields.put("status", editTeam.getStatus());
         teamfields.put("members", editTeam.getMembersList());
@@ -1928,7 +1929,7 @@ public class MainController {
 //    @RequestMapping("/team_profile/{teamId}/remove_experiment/{expId}")
 //    public String removeExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
 //        // remove experiment
-//        // TODO check userid is indeed the experiment owner or team owner
+//        // TO DO check userid is indeed the experiment owner or team owner
 //        // ensure experiment is stopped first
 //        if (experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId) == true) {
 //            // decrease exp count to be display on Teams page
@@ -1983,7 +1984,7 @@ public class MainController {
         teamFields.put("name", teamPageApplyTeamForm.getTeamName());
         teamFields.put("description", teamPageApplyTeamForm.getTeamDescription());
         teamFields.put(WEBSITE, teamPageApplyTeamForm.getTeamWebsite());
-        teamFields.put("organisationType", teamPageApplyTeamForm.getTeamOrganizationType());
+        teamFields.put(ORGANIZATION_TYPE, teamPageApplyTeamForm.getTeamOrganizationType());
         teamFields.put(VISIBILITY, teamPageApplyTeamForm.getIsPublic());
         teamFields.put("isClass", teamPageApplyTeamForm.getIsClass());
 
@@ -4209,7 +4210,7 @@ public class MainController {
         team2.setName(object.getString("name"));
         team2.setDescription(object.getString("description"));
         team2.setWebsite(object.getString(WEBSITE));
-        team2.setOrganisationType(object.getString("organisationType"));
+        team2.setOrganisationType(object.getString(ORGANIZATION_TYPE));
         team2.setStatus(object.getString("status"));
         team2.setVisibility(object.getString(VISIBILITY));
 
@@ -4290,7 +4291,7 @@ public class MainController {
                 team2.setName(object.getString("name"));
                 team2.setDescription(object.getString("description"));
                 team2.setWebsite(object.getString(WEBSITE));
-                team2.setOrganisationType(object.getString("organisationType"));
+                team2.setOrganisationType(object.getString(ORGANIZATION_TYPE));
                 team2.setStatus(object.getString("status"));
                 team2.setVisibility(object.getString(VISIBILITY));
                 team2.setMembersCount(membersArray.length());
@@ -5104,7 +5105,7 @@ public class MainController {
 
         model.addAttribute("newClassMemberPasswordResetForm", newClassMemberPasswordResetForm );
         // redirect to the page for user to enter new password
-        return NEW_MEMBER_RESET_PASSWORD;
+        return NEW_MEMBER_RESET_PSWD;
     }
 
     // send to SIO to process resetting password for new member
@@ -5124,7 +5125,7 @@ public class MainController {
         String uid = newClassMemberPasswordResetForm.getUid();
 
         if (!newClassMemberPasswordResetForm.isPasswordOk()) {
-            return NEW_MEMBER_RESET_PASSWORD;
+            return NEW_MEMBER_RESET_PSWD;
         }
 
         HttpEntity<String> request =  createHttpEntityWithBodyNoAuthHeader(obj.toString());
@@ -5135,7 +5136,7 @@ public class MainController {
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for new member password reset! {}", e);
             newClassMemberPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
-            return NEW_MEMBER_RESET_PASSWORD;
+            return NEW_MEMBER_RESET_PSWD;
         }
 
         String responseBody = responseEntity.getBody().toString();
@@ -5176,7 +5177,7 @@ public class MainController {
                         newClassMemberPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
                 }
 
-                return NEW_MEMBER_RESET_PASSWORD;
+                return NEW_MEMBER_RESET_PSWD;
             } catch (IOException e) {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
@@ -5197,7 +5198,7 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         try {
-            ResponseEntity responseEntity = restTemplate.exchange(properties.newMemberResetKey(uid), HttpMethod.PUT, request, String.class);
+            restTemplate.exchange(properties.newMemberResetKey(uid), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for new member password reset! {}", e);
             return "error";
