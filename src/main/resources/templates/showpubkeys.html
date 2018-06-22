@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - SSH Public Keys</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+    <style>
+        table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        table td {
+            word-wrap: break-word;         /* All browsers since IE 5.5+ */
+            overflow-wrap: break-word;     /* Renamed property in CSS3 draft spec */
+        }
+    </style>
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
+<div class="container">
+    <p>&nbsp;</p>
+    <div th:if="${message}">
+        <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+    </div>
+    <div class="row dashpanel">
+        <h2 class="team-heading team-heading-current-team">SSH Public Keys</h2>
+        <p>Current SSH public keys for user <span th:text="${deterUid}"></span></p>
+        <table class="table table-responsive table-striped">
+            <thead>
+            <tr>
+                <th width="75%">Key</th>
+                <th width="25%">Action</th>
+            </tr>
+            </thead>
+            <th:block th:if="${keys.isEmpty()}">
+                <tbody>
+                <tr>
+                    <td>There are no public keys on file</td>
+                </tr>
+                </tbody>
+            </th:block>
+            <th:block th:if="${!keys.isEmpty()}">
+                <tbody th:each="key: ${keys}">
+                <tr>
+                    <td th:text="${key.value.pubkey}"></td>
+                    <td style="vertical-align: middle">
+                        <button type="button" class="btn btn-standard"
+                                title="Are you sure you want to delete this SSH public key?"
+                                data-tooltip="tooltip" data-toggle="modal"
+                                data-target="#deletePublicKey" data-placement="bottom"
+                                th:attr="data-deteruid=${deterUid},
+                                         data-delete=@{/delete_pub_key/{id}(id=${key.key})}">
+                            <i class="fa fa-trash btn-fa-red"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </th:block>
+        </table>
+        <p>&nbsp;</p>
+        <hr/>
+        <p>Enter SSH public key for user <span th:text="${deterUid}"></span><br/>
+            <em>(We <b>strongly</b> encourage the use of Protocol 2 keys only!)</em></p>
+        <form method="post" enctype="multipart/form-data" th:action="@{/show_pub_keys}" class="form-horizontal" role="form">
+            <div th:class="${hasKeyFileError != null} ? 'form-group has-error' : 'form-group'">
+                <label for="keyFile" class="col-sm-2 control-label">Upload Public Key</label>
+                <div class="col-sm-10">
+                    <input type="file" class="form-control" name="keyFile" id="keyFile" placeholder="Choose file"/>
+                </div>
+            </div>
+            <div th:class="${hasKeyPassError != null} ? 'form-group has-error' : 'form-group'">
+                <label for="keyPass" class="col-sm-2 control-label">Password</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" name="keyPass" id="keyPass" placeholder="Enter password"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">Add New Key</button>
+                </div>
+            </div>
+        </form>
+        <p>&nbsp;</p>
+        <p>Notes:</p>
+        <ol>
+            <li>You should not hand edit your authorized_keys file on the NCL Users machine (users.ncl.sg) since modifications via this page will overwrite the file.</li>
+            <li>Typically, the file you want to upload is your id_rsa.pub, contained in the .ssh directory in your home folder.</li>
+            <li>As a security precaution, you must supply your password when adding new ssh public keys.</li>
+            <li>Protocol 2 keys are <b>required</b>.</li>
+        </ol>
+    </div>
+    <div class="cc-wraper">
+        <div class="cc-contactpop fixed">
+            <h1>Do you need Help? <span>Get in touch.</span></h1>
+            <div class="renseignement">
+                <i class="fa fa-times"></i>
+                <p>We will get back to you as soon as possible. </p>
+            </div>
+            <form>
+                <ul>
+                    <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+                    <li><i class=""></i><span>Email:</span><a href="mailto:support@ncl.sg"> support@ncl.sg</a></li>
+                    <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                </ul>
+                <p>&nbsp;</p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- delete public key modal -->
+<div id="deletePublicKey" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog">
+        <!-- modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you <b>REALLY</b> sure you want to delete this SSH Public Key for user '<span id="deterUid"></span>'?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-primary" id="deleteButton" onclick="return closeDeleteModal();">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+
+<script>
+    //<![CDATA[
+    function closeDeleteModal() {
+        $('#deletePublicKey').modal('hide');
+        return true;
+    }
+
+    $('#deletePublicKey').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var deterUid = anchor.data('deteruid');
+        var deleteKey = anchor.data('delete');
+        var modal = $(this);
+        modal.find('#deterUid').text(deterUid);
+        modal.find('#deleteButton').attr('href', deleteKey);
+    });
+    //]]>
+</script>
+</body>
+</html>
