@@ -903,7 +903,7 @@ public class MainController {
                 log.warn("Signup new team error {}", signUpMergedForm.toString());
                 // clear join team name first before submitting the form
                 signUpMergedForm.setJoinTeamName(null);
-                return "signup2";
+                return SIGNUP_PAGE;
             } else {
 
                 teamFields.put("name", signUpMergedForm.getTeamName().trim());
@@ -5231,9 +5231,9 @@ public class MainController {
 
 
         JSONObject obj = new JSONObject();
-        obj.put("firstName", newClassMemberPasswordResetForm.getFirstName());
-        obj.put("lastName", newClassMemberPasswordResetForm.getLastName());
-        obj.put("phone", newClassMemberPasswordResetForm.getPhone());
+        obj.put(FNAME, newClassMemberPasswordResetForm.getFirstName());
+        obj.put(LNAME, newClassMemberPasswordResetForm.getLastName());
+        obj.put(PHONE, newClassMemberPasswordResetForm.getPhone());
         obj.put("key", newClassMemberPasswordResetForm.getKey());
         obj.put("newPassword", newClassMemberPasswordResetForm.getPassword1());
 
