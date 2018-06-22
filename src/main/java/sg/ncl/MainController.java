@@ -1898,11 +1898,13 @@ public class MainController {
                     log.warn("Remove member from team: User {}, Team {} fail - {}", userId, teamId, error.getMessage());
 
                     if ("user has experiments".equals(error.getMessage())) {
+                        /*
                         // case 1 - user has experiments
                         // display the list of experiments that have to be terminated first
 
                         // since the team profile page has experiments already, we don't have to retrieve them again
                         // use the userid to filter out the experiment list at the web pages
+                        */
                         redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " Member " + name + " has experiments.");
                         redirectAttributes.addFlashAttribute(REMOVE_MEMBER_UID, userId);
                         redirectAttributes.addFlashAttribute(REMOVE_MEMBER_NAME, name);
