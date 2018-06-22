@@ -1929,7 +1929,6 @@ public class MainController {
         return REDIRECT_TEAM_PROFILE_TEAM_ID;
     }
 
-/*
  //   @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
   //  public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
 //         start experiment
@@ -1973,7 +1972,7 @@ public class MainController {
 //        return "redirect:/team_profile/{teamId}";
 //    }
 
-*/
+
     //--------------------------Apply for New Team Page--------------------------
 
     @RequestMapping(value = "/teams/apply_team", method = RequestMethod.GET)
