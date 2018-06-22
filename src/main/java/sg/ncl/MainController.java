@@ -1899,11 +1899,11 @@ public class MainController {
 
                     if ("user has experiments".equals(error.getMessage())) {
                         /*
-                        // case 1 - user has experiments
-                        // display the list of experiments that have to be terminated first
+                        case 1 - user has experiments
+                        display the list of experiments that have to be terminated first
 
-                        // since the team profile page has experiments already, we don't have to retrieve them again
-                        // use the userid to filter out the experiment list at the web pages
+                        since the team profile page has experiments already, we don't have to retrieve them again
+                        use the userid to filter out the experiment list at the web pages
                         */
                         redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " Member " + name + " has experiments.");
                         redirectAttributes.addFlashAttribute(REMOVE_MEMBER_UID, userId);
@@ -1930,8 +1930,8 @@ public class MainController {
     }
 
 /*
-    @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
-    public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
+ //   @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
+  //  public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
 //         start experiment
 //        // ensure experiment is stopped first before starting
 //        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
