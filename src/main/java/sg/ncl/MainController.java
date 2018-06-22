@@ -913,19 +913,6 @@ public class MainController {
                 teamFields.put(VISIBILITY, signUpMergedForm.getIsPublic());
                 teamFields.put(IS_CLASS, signUpMergedForm.getIsClass());
                 mainObject.put("isJoinTeam", false);
-        if (errorsFound) {
-            log.warn("Signup new team error {}", signUpMergedForm.toString());
-            // clear join team name first before submitting the form
-            signUpMergedForm.setJoinTeamName(null);
-            return SIGNUP_PAGE;
-        } else {
-            teamFields.put("name", signUpMergedForm.getTeamName().trim());
-            teamFields.put(DESCRIPTION, signUpMergedForm.getTeamDescription().trim());
-            teamFields.put(WEBSITE, signUpMergedForm.getTeamWebsite().trim());
-            teamFields.put(ORGANISATION_TYPE, signUpMergedForm.getTeamOrganizationType());
-            teamFields.put(VISIBILITY, signUpMergedForm.getIsPublic());
-            mainObject.put("isJoinTeam", false);
-
             try {
                 registerUserToDeter(mainObject);
             } catch (
@@ -948,7 +935,7 @@ public class MainController {
             log.info("Signup new team success");
             return "redirect:/team_application_submitted";
         }
-    }}
+    }
 
     /**
      * Use when registering new accounts
