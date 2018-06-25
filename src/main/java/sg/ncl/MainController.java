@@ -5217,6 +5217,27 @@ public class MainController {
                         @ModelAttribute("newClassMemberPasswordResetForm") NewClassMemberPasswordResetForm newClassMemberPasswordResetForm
                         ) throws WebServiceRuntimeException {
 
+        if (newClassMemberPasswordResetForm.getFirstName().isEmpty()) {
+            newClassMemberPasswordResetForm.setErrMsg("First name cannot be empty");
+            return NEW_MEMBER_RESET_PSWD;
+        }
+
+        if (newClassMemberPasswordResetForm.getLastName().isEmpty()) {
+            newClassMemberPasswordResetForm.setErrMsg("Last name cannot be empty");
+            return NEW_MEMBER_RESET_PSWD;
+        }
+
+        if (newClassMemberPasswordResetForm.getPhone().isEmpty() ||
+                newClassMemberPasswordResetForm.getPhone().matches("(.*)[a-zA-Z](.*)") ||
+                newClassMemberPasswordResetForm.getPhone().length() < 6) {
+            newClassMemberPasswordResetForm.setErrMsg("Phone is invalid");
+            return NEW_MEMBER_RESET_PSWD;
+        }
+
+        if (!newClassMemberPasswordResetForm.isPasswordOk()) {
+            return NEW_MEMBER_RESET_PSWD;
+        }
+
 
         JSONObject obj = new JSONObject();
         obj.put(FNAME, newClassMemberPasswordResetForm.getFirstName());
@@ -5226,10 +5247,6 @@ public class MainController {
         obj.put("newPassword", newClassMemberPasswordResetForm.getPassword1());
 
         String uid = newClassMemberPasswordResetForm.getUid();
-
-        if (!newClassMemberPasswordResetForm.isPasswordOk()) {
-            return NEW_MEMBER_RESET_PSWD;
-        }
 
         HttpEntity<String> request =  createHttpEntityWithBodyNoAuthHeader(obj.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());

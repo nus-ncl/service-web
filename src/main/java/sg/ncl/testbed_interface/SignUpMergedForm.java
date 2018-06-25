@@ -79,7 +79,7 @@ public class SignUpMergedForm {
     // defaults to public
     private String isPublic = "PUBLIC";
 
-    private boolean isClass= false;
+    private boolean isClass = false;
 
     private boolean hasAcceptTeamOwnerPolicy;
     

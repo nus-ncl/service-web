@@ -16,8 +16,14 @@
         <div th:if="${message}">
             <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
         </div>
-        <div th:if="${messageSuccess}">
-            <p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+
+        <div th:if="${messageSuccess}" class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> <p th:text="${messageSuccess}"></p>
+        </div>
+
+        <div id="display-message" class="hidden">
+            <p><span class="account-change-success">Please be patient. Each account will take about 15 seconds to create!</span></p>
         </div>
 
         <p>&nbsp;</p>
@@ -33,7 +39,7 @@
                 <p>&nbsp;</p>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-standard">Submit</button>
+                    <button type="submit" class="btn btn-standard" onclick="displayMessage()">Submit</button>
                 </div>
             </form>
 
@@ -59,5 +65,11 @@
     </div> <!-- container -->
     <div th:replace="fragments/footer :: footer"></div>
     <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+    <script>
+        function displayMessage() {
+            $("#display-message").removeClass('hidden');
+        }
+    </script>
+
 </body>
 </html>

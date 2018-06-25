@@ -14,9 +14,11 @@
                     <div class="row dashpanel">
                 <h2  class="team-heading team-heading-current-team" th:text="#{teamPageApply.header}">Apply for a New Team</h2>
                  <p>&nbsp;</p>
+
                 <div th:if="${message}">
                     <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
                 </div>
+
                 <form  method="post" action="#" th:action="@{/teams/apply_team}" th:object="${teamPageApplyTeamForm}" role="form">
                     <fieldset>
                         <div class="form-group">
@@ -38,8 +40,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <div class="radio">
-                                <label><input type="radio" th:field="*{isClass}" th:value="true"/><strong><span th:text="#{signup.class}">Class</span></strong><em><span>This is the Class project</span></em></label>
+                            <div class="checkbox">
+                                <label><input type="checkbox" th:field="*{isClass}" th:value="true"/><strong><span th:text="#{signup.class}">Class</span></strong><em><span>This is the Class project</span></em></label>
                             </div>
                         </div>
                         <div class="form-group">
