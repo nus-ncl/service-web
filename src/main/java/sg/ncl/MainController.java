@@ -439,7 +439,7 @@ public class MainController {
 
     @RequestMapping("/notfound")
     public String redirectNotFound(HttpSession session) {
-        if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
+        if (session.getAttribute(ID) != null && !session.getAttribute(ID).toString().isEmpty()) {
             // user is already logged on and has encountered an error
             // redirect to dashboard
             return "redirect:/dashboard";
@@ -456,8 +456,8 @@ public class MainController {
         return LOGIN_PAGE;
     }
 
-    @RequestMapping(value = "/emailVerification", params = {"id", EMAIL, "key"})
-    public String verifyEmail(@NotNull @RequestParam("id") final String id,
+    @RequestMapping(value = "/emailVerification", params = {ID, EMAIL, "key"})
+    public String verifyEmail(@NotNull @RequestParam(ID) final String id,
                               @NotNull @RequestParam(EMAIL) final String emailBase64,
                               @NotNull @RequestParam("key") final String key) {
         HttpHeaders headers = new HttpHeaders();
