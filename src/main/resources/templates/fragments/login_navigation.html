@@ -1,65 +1,68 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories</title>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories</title>
+</head>
+<body>
+<!-- give a fragment name so that we can import from other html files -->
+<div class="main-nav navbar-fixed-top" th:fragment="loginnav">
+    <div class="container">
 
-    </head>
-  <body>
-      <!-- give a fragment name so that we can import from other html files -->
-   		<div class="main-nav navbar-fixed-top" th:fragment="loginnav">
-   			<div class="container">
-
-				<div class="navbar-header">
-					<a href="index.html" th:href="@{/}"><img src="/images/ncl_favicon1.png" alt="logo" width="53" height="53" class="logo1" /></a>
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-				</div> <!-- navbar-header -->
-				<div class="collapse navbar-collapse">
-					<ul class="nav navbar-nav navbar-left login-navbar-left">
-						<li class="scroll"><a href="../plan.html" th:href="@{~/plan}">Features</a></li>
-						<!--<li class="scroll"><a href="../tools.html" th:href="@{~/tools}">Tools</a></li>-->
-						<li class="scroll"><a href="../research.html" th:href="@{~/research}">Research</a></li>
-						<li class="scroll"><a href="../pricing.html" th:href="@{~/pricing}">Pricing</a></li>
-						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#">Testbed
-								<span class="caret"></span></a>
-							<ul class="dropdown-menu ">
-								<li><a href="TestbedInformation.html" th:href="@{~/testbedInformation}">General Info</a></li>
-								<li><a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}">Node Status</a></li>
-								<li><a href="calendar.html" th:href="@{~/calendar}">Usage Calendar</a></li>
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
-								<span class="caret"></span></a>
-							<ul class="dropdown-menu ">
-								<li><a href="/tutorials.html" th:href="@{/tutorials}"><span th:text="#{nav.tutorial}">Tutorials</span></a></li>
-								<li><a href="resources.html" th:href="@{~/resources}">External Links</a></li>
-								<li><a href="contactus.html" th:href="@{~/contactus}">Contact Us</a></li>
-							</ul>
-						</li>
-						<li class="scroll"><a href="../event.html" th:href="@{~/event}">Events</a></li>
-						<li class="scroll"><a href="../about.html" th:href="@{~/about}">About</a></li>
-						<li class="scroll"><a href="../career.html" th:href="@{~/career}">Career</a></li>
-					</ul>
-					<ul class="nav navbar-nav navbar-right login-navbar-right">
-						<li><a href="#" th:href="@{/signup2}">Create account</a></li>
-					</ul>
-					<ul class="nav navbar-nav navbar-right login-navbar-right1">
-						<li><a href="#" th:href="@{/login}">Log In</a></li>
-					</ul>
-				</div> <!-- navigation links -->
-   			</div> <!-- container -->
-			<div class="container-fluid" th:if="${@environment.getProperty('ncl.web.service.maintenance.enabled')}" >
-				<div class="row maintenance-navbar" th:text="${@environment.getProperty('ncl.web.service.maintenance.notice')}">MAINTENANCE NOTICE</div>
-			</div>
-   		</div> <!-- main-nav -->
-	  <object th:include="fragments/javascript :: javascript" th:remove="tag" />
-  </body>
-
+        <div class="navbar-header">
+            <a href="index.html" th:href="@{/}"><img src="/images/ncl_favicon1.png" alt="logo" width="53" height="53"
+                                                     class="logo1"/></a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div> <!-- navbar-header -->
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-left login-navbar-left">
+                <li class="scroll"><a href="../plan.html" th:href="@{~/plan}">Features</a></li>
+                <!--<li class="scroll"><a href="../tools.html" th:href="@{~/tools}">Tools</a></li>-->
+                <li class="scroll"><a href="../research.html" th:href="@{~/research}">Research</a></li>
+                <li class="scroll"><a href="../pricing.html" th:href="@{~/pricing}">Pricing</a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Testbed
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="TestbedInformation.html" th:href="@{~/testbedInformation}">General Info</a></li>
+                        <li><a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}">Node Status</a></li>
+                        <li><a href="calendar.html" th:href="@{~/calendar}">Usage Calendar</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Support
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="/tutorials.html" th:href="@{/tutorials}"><span
+                                th:text="#{nav.tutorial}">Tutorials</span></a></li>
+                        <li><a href="resources.html" th:href="@{~/resources}">External Links</a></li>
+                        <li><a href="NCL_Testbed_Documentation_(201806).pdf">Documentation</a></li>
+                        <li><a href="contactus.html" th:href="@{~/contactus}">Contact Us</a></li>
+                    </ul>
+                </li>
+                <li class="scroll"><a href="../event.html" th:href="@{~/event}">Events</a></li>
+                <li class="scroll"><a href="../about.html" th:href="@{~/about}">About</a></li>
+                <li class="scroll"><a href="../career.html" th:href="@{~/career}">Career</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right login-navbar-right">
+                <li><a href="#" th:href="@{/signup2}">Create account</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right login-navbar-right1">
+                <li><a href="#" th:href="@{/login}">Log In</a></li>
+            </ul>
+        </div> <!-- navigation links -->
+    </div> <!-- container -->
+    <div class="container-fluid" th:if="${@environment.getProperty('ncl.web.service.maintenance.enabled')}">
+        <div class="row maintenance-navbar" th:text="${@environment.getProperty('ncl.web.service.maintenance.notice')}">
+            MAINTENANCE NOTICE
+        </div>
+    </div>
+</div> <!-- main-nav -->
+<object th:include="fragments/javascript :: javascript" th:remove="tag"/>
+</body>
 </html>
