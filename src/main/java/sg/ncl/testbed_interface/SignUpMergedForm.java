@@ -79,7 +79,7 @@ public class SignUpMergedForm {
     // defaults to public
     private String isPublic = "PUBLIC";
 
-    private boolean isClass = false;
+    private Boolean isClass;
 
     private boolean hasAcceptTeamOwnerPolicy;
     
@@ -280,12 +280,17 @@ public class SignUpMergedForm {
     public String getIsPublic() {
         return isPublic;
     }
-    
+
+    public void setIsClass(Boolean isClass) {
+        this.isClass = isClass;
+    }
+    public Boolean getIsClass() {return isClass;}
+
+
     public void setIsPublic(String isPublic) {
         this.isPublic = isPublic;
     }
 
-    public boolean getIsClass() {return isClass;}
 
     public boolean getHasAcceptTeamOwnerPolicy() {
         return hasAcceptTeamOwnerPolicy;
