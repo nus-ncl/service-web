@@ -287,6 +287,11 @@ public class MainController {
         return "calendar";
     }
 
+    @RequestMapping("/updates")
+    public String updates() {
+        return "updates";
+    }
+
     @RequestMapping("/tutorials/createaccount")
     public String createAccount() {
         return "createaccount";
