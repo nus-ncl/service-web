@@ -12,7 +12,7 @@
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <div class="container">
-        <div th:if="${status != null and (status == 'nodes reservation FAIL' or status == 'release reservation FAIL')}">
+        <div th:if="${status == 'FAIL'}">
             <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
         </div>
         <h2 class="team-heading team-heading-current-team">Nodes Reservation</h2>
@@ -57,7 +57,7 @@
             </fieldset>
         </form>
         <div id="information">
-            <h3 th:if="${status != null and (status == 'nodes reservation OK' or status == 'release reservation OK')}"><span id="reservedTeamName">Team</span>: <span id="actionTitle">Nodes Reservation</span></h3>
+            <h3 th:if="${status == 'OK'}"><span id="reservedTeamName">Team</span>: <span id="actionTitle">Nodes Reservation</span></h3>
             <th:block th:if="${reservedSet != null and !reservedSet.isEmpty()}">
                 <table class="table table-responsive table-striped">
                     <thead>
@@ -68,24 +68,22 @@
                         <tr>
                             <td th:text="${nodeId}"></td>
                             <td>
-                                <span th:if="${reloadSet.contains(nodeId)}" th:text="'reloading'"></span>
-                                <span th:if="${inUseSet.contains(nodeId)}" th:text="'in-use'"></span>
-                                <span th:if="not ${reloadSet.contains(nodeId) or inUseSet.contains(nodeId)}" th:text="'free'"></span>
+                                <span th:if="${inUseHashMap.containsKey(nodeId)}" th:text="${inUseHashMap.get(nodeId)}"></span>
+                                <span th:if="not ${inUseHashMap.containsKey(nodeId)}" th:text="'free'"></span>
                             </td>
                         </tr>
                     </th:block>
                 </table>
             </th:block>
-            <div th:if="${status != null and (status == 'nodes reservation OK' or status == 'release reservation OK')}">
+            <div th:if="${status == 'OK'}">
                 <table class="table table-responsive table-striped">
                     <thead>
                     <tr>
-                        <th th:if = "${status == 'nodes reservation OK'}">Reserved Node ID</th>
-                        <th th:if = "${status == 'release reservation OK'}">Released Node ID</th>
+                        <span th:if="${nodesUpdated != null}" th:text="'Reserved/Released Nodes'"></span>
                     </tr>
                     </thead>
                     <tr>
-                        <td th:text="${message}"></td>
+                        <td th:text="${nodesUpdated}"></td>
                     </tr>
                 </table>
             </div>

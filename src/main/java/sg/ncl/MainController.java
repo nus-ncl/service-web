@@ -3405,79 +3405,65 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange((properties.getReservationStatus(reservationStatusForm.getTeamId())), HttpMethod.GET, request, String.class);
 
-        JSONObject reservation = new JSONObject(response.getBody().toString()).getJSONObject("reservation");
-        Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray("all")));
-        Set<String> reloadSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray(NodeType.RELOADING.name().toLowerCase())));
-        Set<String> inUseSet = new HashSet<> (convertJSONArrayToList(reservation.getJSONArray(NodeType.IN_USE.name().toLowerCase())));
-        String status = new JSONObject(response.getBody().toString()).getString(STATUS);
+        /**
+         * @return  a json string in the format:
+         *   {
+         *       "status" : "ok/fail",
+         *       "reserved": ["pc1", "pc4", "pc2"],
+         *       "in_use": [["pc4", "ncltest01", "vnctest"], ["pc2", "testbed-ncl", "thales-poc"]]
+         *   }
+         */
+        JSONObject result = new JSONObject(response.getBody().toString());
+        String status = result.getString(STATUS);
+        Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(result.getJSONArray("reserved")));
+        JSONArray inUseNodesArray = result.getJSONArray("in_use");
+        HashMap<String, String> inUseHashMap = new HashMap<>();
+        for (int i=0; i < inUseNodesArray.length(); i++) {
+            JSONArray nodeArray = inUseNodesArray.getJSONArray(i);
+            inUseHashMap.put(nodeArray.getString(0), nodeArray.getString(1) + "/" + nodeArray.getString(2));
+
+        }
 
         redirectAttributes.addFlashAttribute("reservedSet", reservedSet);
-        redirectAttributes.addFlashAttribute("reloadSet", reloadSet);
-        redirectAttributes.addFlashAttribute("inUseSet", inUseSet);
+        redirectAttributes.addFlashAttribute("inUseHashMap", inUseHashMap);
         redirectAttributes.addFlashAttribute(STATUS, status);
     }
 
     private void releaseNodes(ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = null;
-        if (reservationStatusForm.getNumNodes() == null) {
-            // number of nodes not fill
-            // release all nodes; endpoint is the same with adminNodesReservation but with different HTTP method
-            response = restTemplate.exchange(properties.getReservationStatus(reservationStatusForm.getTeamId()), HttpMethod.DELETE, request, String.class);
-        } else {
-            // release a specific number of nodes
-            response = restTemplate.exchange((properties.releaseNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes())), HttpMethod.DELETE, request, String.class);
-        }
+
+        int numNodesToRelease = reservationStatusForm.getNumNodes() == null ? -1 : reservationStatusForm.getNumNodes();
+
+        ResponseEntity response = restTemplate.exchange((properties.releaseNodes(reservationStatusForm.getTeamId(),
+                numNodesToRelease)), HttpMethod.DELETE, request, String.class);
+
 
         JSONObject object = new JSONObject(response.getBody().toString());
         String status = object.getString(STATUS);
-        String msg = object.optString(MESSAGE);
-
-        if ("release reservation OK".equals(status) && (msg.equals("[]"))) {
-            msg = "No nodes to be released";
-        } else if ("release reservation OK".equals(status)) {
-            // node ids
-            // ["A","B"] -> A,B
-            msg = msg.replace("[", "").replace("]", "").replace("\"", "");
-        }
+        String nodesUpdated = object.getJSONArray("released").toString();
 
         redirectAttributes.addFlashAttribute(STATUS, status);
-        redirectAttributes.addFlashAttribute(MESSAGE, msg);
+        redirectAttributes.addFlashAttribute("nodesUpdated", nodesUpdated);
     }
 
     private void reserveNodes(ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = null;
 
         if (reservationStatusForm.getNumNodes() == null) {
-            redirectAttributes.addFlashAttribute(STATUS, NODES_RESERVATION_FAIL);
+            redirectAttributes.addFlashAttribute(STATUS, "FAIL");
             redirectAttributes.addFlashAttribute(MESSAGE, "Number of nodes not specify");
             return;
         }
 
-        if (reservationStatusForm.getMachineType() == null) {
-            // machine type not filled
-            // endpoint is the same as releaseNodes, i.e. /{id}
-            response = restTemplate.exchange(properties.reserveNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes(), null), HttpMethod.POST, request, String.class);
-        } else {
-            // reserve a specific number of machine type
-            response = restTemplate.exchange((properties.reserveNodes(reservationStatusForm.getTeamId(), reservationStatusForm.getNumNodes(), reservationStatusForm.getMachineType())), HttpMethod.POST, request, String.class);
-        }
+        ResponseEntity response = restTemplate.exchange((properties.reserveNodes(reservationStatusForm.getTeamId(),
+                reservationStatusForm.getNumNodes(), reservationStatusForm.getMachineType())), HttpMethod.POST, request, String.class);
 
         JSONObject object = new JSONObject(response.getBody().toString());
         String status = object.getString(STATUS);
-        String msg = object.optString(MESSAGE);
-
-        if ("nodes reservation OK".equals(status) && (msg.equals("[]"))) {
-            msg = "No nodes to be reserved";
-        } else if ("nodes reservation OK".equals(status)) {
-            // node ids
-            // ["A","B"] -> A,B
-            msg = msg.replace("[", "").replace("]", "").replace("\"", "");
-        }
+        String nodesUpdated = object.getJSONArray("released").toString();
 
         redirectAttributes.addFlashAttribute(STATUS, status);
-        redirectAttributes.addFlashAttribute(MESSAGE, msg);
+        redirectAttributes.addFlashAttribute("nodesUpdated", nodesUpdated);
     }
 
     private List<String> convertJSONArrayToList(JSONArray jsonArray) {
