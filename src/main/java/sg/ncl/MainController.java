@@ -3451,7 +3451,7 @@ public class MainController {
 
         if (reservationStatusForm.getNumNodes() == null) {
             redirectAttributes.addFlashAttribute(STATUS, "FAIL");
-            redirectAttributes.addFlashAttribute(MESSAGE, "Number of nodes not specify");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Number of nodes not specified");
             return;
         }
 
@@ -3460,9 +3460,13 @@ public class MainController {
 
         JSONObject object = new JSONObject(response.getBody().toString());
         String status = object.getString(STATUS);
-        String nodesUpdated = object.getJSONArray("released").toString();
+        String message = object.getString(MESSAGE);
+        String nodesUpdated = object.getJSONArray("reserved").toString();
 
         redirectAttributes.addFlashAttribute(STATUS, status);
+        if (!"OK".equals(STATUS)) {
+            redirectAttributes.addFlashAttribute(MESSAGE, message);
+        }
         redirectAttributes.addFlashAttribute("nodesUpdated", nodesUpdated);
     }
 
