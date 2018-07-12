@@ -57,10 +57,13 @@
             </fieldset>
         </form>
         <div id="information">
-            <h3 th:if="${status == 'OK'}"><span id="reservedTeamName">Team</span>: <span id="actionTitle">Nodes Reservation</span><span> (Total: </span><span th:text="${reservedSet.size()}"></span><span>)</span></h3>
+            <h3 th:if="${status == 'OK'}"><span id="reservedTeamName">Team</span>: <span id="actionTitle">Nodes Reservation</span></h3>
             <th:block th:if="${reservedSet != null and !reservedSet.isEmpty()}">
                 <table class="table table-responsive table-striped">
                     <thead>
+                    <tr>
+                        <span> Total Number of Reserved Nodes : </span><span th:text="${reservedSet.size()}"></span>
+                    </tr>
                     <th>Node ID</th>
                     <th>Status</th>
                     </thead>

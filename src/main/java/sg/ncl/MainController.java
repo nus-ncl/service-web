@@ -212,6 +212,7 @@ public class MainController {
     private static final String ALL_TEAMS = "allTeams";
     private static final String NODES_RESERVATION_FAIL = "nodes reservation FAIL";
     private static final String RESERVATION_STATUS_FORM = "reservationStatusForm";
+    private static final String RESERVED = "reserved";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -3469,7 +3470,7 @@ public class MainController {
          */
         JSONObject result = new JSONObject(response.getBody().toString());
         String status = result.getString(STATUS);
-        Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(result.getJSONArray("reserved")));
+        Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(result.getJSONArray(RESERVED)));
         JSONArray inUseNodesArray = result.getJSONArray("in_use");
         HashMap<String, String> inUseHashMap = new HashMap<>();
         for (int i=0; i < inUseNodesArray.length(); i++) {
@@ -3515,7 +3516,7 @@ public class MainController {
         JSONObject object = new JSONObject(response.getBody().toString());
         String status = object.getString(STATUS);
         String message = object.getString(MESSAGE);
-        String nodesUpdated = object.getJSONArray("reserved").toString();
+        String nodesUpdated = object.getJSONArray(RESERVED).toString();
 
         redirectAttributes.addFlashAttribute(STATUS, status);
         if (!"OK".equals(STATUS)) {
@@ -3525,7 +3526,7 @@ public class MainController {
     }
 
     private List<String> convertJSONArrayToList(JSONArray jsonArray) {
-        List<String> resultList = new ArrayList<String>();
+        List<String> resultList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             resultList.add(jsonArray.getString(i));
         }
