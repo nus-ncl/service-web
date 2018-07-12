@@ -412,6 +412,7 @@ public class ConnectionPropertiesTest {
     public void reserveNodesMachineTypeNull() {
         String teamId = RandomStringUtils.randomAlphanumeric(20);
         Integer numNodes = Integer.parseInt(RandomStringUtils.randomNumeric(3));
-        assertThat(properties.reserveNodes(teamId, numNodes, null)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + teamId + "/reservations?numNodes=" + numNodes);
+        String machineType = null;
+        assertThat(properties.reserveNodes(teamId, numNodes, null)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + teamId + "/reservations?numNodes=" + numNodes + "&machineType=" + machineType);
     }
 }
