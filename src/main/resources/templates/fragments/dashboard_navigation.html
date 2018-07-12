@@ -1,104 +1,129 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<title>National Cybersecurity Laboratories</title>
-	<link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{~/css/bootstrap.min.css}" media="screen"/>
-	<link rel="stylesheet" type="text/css" href="static/css/animate.min.css" th:href="@{~/css/animate.min.css}"/>
-	<link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{~/css/font-awesome/css/font-awesome.min.css}"/>
-	<link rel="stylesheet" type="text/css" href="static/css/lightbox.css" th:href="@{~/css/lightbox.css}"/>
-	<link rel="stylesheet" type="text/css" href="static/css/main.css" th:href="@{~/css/main.css}"/>
-	<link rel="stylesheet" type="text/css" href="static/css/responsive.css" th:href="@{~/css/responsive.css}"/>
-	<link rel="stylesheet" type="text/css" id="static/css-preset" href="css/presets/preset1.css" th:href="@{~/css/presets/preset1.css}"/>
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
-	<link rel="shortcut icon" href="images/ncl_favicon1.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories</title>
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{~/css/bootstrap.min.css}"
+          media="screen"/>
+    <link rel="stylesheet" type="text/css" href="static/css/animate.min.css" th:href="@{~/css/animate.min.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/font-awesome/css/font-awesome.min.css"
+          th:href="@{~/css/font-awesome/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/lightbox.css" th:href="@{~/css/lightbox.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/main.css" th:href="@{~/css/main.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/responsive.css" th:href="@{~/css/responsive.css}"/>
+    <link rel="stylesheet" type="text/css" id="static/css-preset" href="css/presets/preset1.css"
+          th:href="@{~/css/presets/preset1.css}"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="images/ncl_favicon1.png"/>
 
-	<!--[if lt IE 9]>
-	<script type="text/javascript" src="static/js/html5shiv.js" th:src="@{~/js/html5shiv.js}"></script>
-	<script type="text/javascript" src="static/js/respond.min.js" th:src="@{~/js/respond.min.js}"></script>
-					<![endif]-->
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="static/js/html5shiv.js" th:src="@{~/js/html5shiv.js}"></script>
+    <script type="text/javascript" src="static/js/respond.min.js" th:src="@{~/js/respond.min.js}"></script>
+    <![endif]-->
 
-					<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
-					<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
-	<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
-
-					</head>
+    <script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+</head>
 <body>
 <!-- give a fragment name so that we can import from other html files -->
 <div class="main-nav navbar-fixed-top" th:fragment="dashboardnav">
-	<div class="container">
+    <div class="container">
+        <div class="navbar-header">
+            <a href="#" th:href="@{/dashboard}"><img src="images/ncl_favicon1.png" alt="logo" width="53" height="53"
+                                                     class="logo1" th:src="@{~/images/ncl_favicon1.png}"/></a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div> <!-- navbar-header -->
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-left login-navbar-left">
+                <li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
+                <li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a>
+                </li>
+                <li><a href="/data" th:href="@{/data}"><span th:text="#{nav.data}">Data</span></a></li>
 
-		<div class="navbar-header">
-			<a href="#" th:href="@{/dashboard}"><img src="images/ncl_favicon1.png" alt="logo" width="53" height="53" class="logo1" th:src="@{~/images/ncl_favicon1.png}"/></a>
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-		</div> <!-- navbar-header -->
-		<div class="collapse navbar-collapse">
-			<ul class="nav navbar-nav navbar-left login-navbar-left">
-				<li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
-				<li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a></li>
-				<li><a href="/data" th:href="@{/data}"><span th:text="#{nav.data}">Data</span></a></li>
-
-				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" th:if="${(session.roles != null) and (session.roles == 'ADMIN')}"><span th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span><span class="caret"></span></span></a>
-					<ul class="dropdown-menu ">
-						<li><a href="/admin" th:href="@{/admin}">New Teams Approval</a></li>
-						<li><hr/></li>
-						<li><a th:href="@{/admin/teams}">Teams Management</a></li>
-						<li><a th:href="@{/admin/users}">Users Management</a></li>
-						<li><a th:href="@{/admin/experiments}">Expts Management</a></li>
-						<li><a th:href="@{/admin/data}">Data Management</a></li>
-						<li><hr/></li>
+                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                        th:if="${(session.roles != null) and (session.roles == 'ADMIN')}"><span
+                        th:href="@{/admin}"><span th:text="#{nav.admin}">Admin</span><span class="caret"></span></span></a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="/admin" th:href="@{/admin}">New Teams Approval</a></li>
+                        <li>
+                            <hr/>
+                        </li>
+                        <li><a th:href="@{/admin/teams}">Teams Management</a></li>
+                        <li><a th:href="@{/admin/users}">Users Management</a></li>
+                        <li><a th:href="@{/admin/experiments}">Expts Management</a></li>
+                        <li><a th:href="@{/admin/data}">Data Management</a></li>
+                        <li>
+                            <hr/>
+                        </li>
                         <li><a th:href="@{/admin/usage}">Team Usage</a></li>
-						<li><a th:href="@{/admin/energy}">Energy Usage</a></li>
-						<li><hr/></li>
-						<li><a th:href="@{/admin/nodesReservation}">Node Reservation</a></li>
-						<li><a th:href="@{/admin/nodesStatus}">Node Status</a></li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Testbed
-						<span class="caret"></span></a>
-					<ul class="dropdown-menu ">
-						<li><a href="TestbedInformation.html" th:href="@{~/testbedInformation}">General Info</a></li>
-						<li><a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}">Node Status</a></li>
-						<li><a href="calendar.html" th:href="@{~/calendar}">Usage Calendar</a></li>
-					</ul>
-				</li>
-				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="#{nav.help}">Support</span> <span class="caret"></span></a>
-					<ul class="dropdown-menu ">
-						<li><a href="tutorials.html" th:href="@{/tutorials}">Tutorials</a></li>
-						<li><a href="resources.html" th:href="@{/resources}">External Links</a></li>
-					</ul>
-				</li>
-				<li><a href="http://openstack.ncl.sg/horizon"><navsmall>Switch to OpenStack</navsmall></a></li>
-			</ul>
-
-			<ul class="nav navbar-nav navbar-right dashboard-navbar-right">
-				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg fa-2x"></i> <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<!-- TODO need to check if user is a team owner -->
-								<li style="border-bottom: 1px solid #cacaca;">
-									<p th:if="${session.name != null}" style="margin-left: 10px">Signed in as <strong><span th:text="${session.name}" class="h13"></span></strong></p>
-									<p th:if="${session.name == null}" style="margin-left: 10px">Signed in as <strong><span th:text="#{nav.error}" class="h13"></span></strong></p>
-								</li>
-								<li><a href="/approve_new_user" th:href="@{/approve_new_user}"><span th:text="#{nav.approveNewUser}">Pending Requests</span></a></li>
-								<li><a href="/account_settings" th:href="@{/account_settings}"><span th:text="#{nav.editAccount}">Account Settings</span></a></li>
-						<li><a href="/logout" th:href="@{/logout}"><i class="fa fa-sign-out"></i> <span th:text="#{nav.signOut}">Sign Out</span></a></li>
-					</ul>
-				</li>
-			</ul>
-	 <!-- navigation links -->
-		</div>
-	</div> <!-- container -->
-	<div class="container-fluid" th:if="${@environment.getProperty('ncl.web.service.maintenance.enabled')}">
-		<div class="row maintenance-navbar" th:text="${@environment.getProperty('ncl.web.service.maintenance.notice')}">MAINTENANCE NOTICE</div>
-	</div>
+                        <li><a th:href="@{/admin/energy}">Energy Usage</a></li>
+                        <li>
+                            <hr/>
+                        </li>
+                        <li><a th:href="@{/admin/nodesReservation}">Node Reservation</a></li>
+                        <li><a th:href="@{/admin/nodesStatus}">Node Status</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Testbed
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="updates.html" th:href="@{~/updates}">Updates</a></li>
+                        <li><a href="TestbedInformation.html" th:href="@{~/testbedInformation}">General Info</a></li>
+                        <li><a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}">Node Status</a></li>
+                        <li><a href="calendar.html" th:href="@{~/calendar}">Usage Calendar</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
+                        th:text="#{nav.help}">Support</span> <span class="caret"></span></a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="NCL_Testbed_Documentation.pdf">Documentation</a></li>
+                        <li><a href="tutorials.html" th:href="@{/tutorials}">Tutorials</a></li>
+                        <li><a href="resources.html" th:href="@{/resources}">External Links</a></li>
+                    </ul>
+                </li>
+                <li><a href="http://openstack.ncl.sg/horizon">
+                    <navsmall>Switch to OpenStack</navsmall>
+                </a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right dashboard-navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg fa-2x"></i>
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <!-- TODO need to check if user is a team owner -->
+                        <li style="border-bottom: 1px solid #cacaca;">
+                            <p th:if="${session.name != null}" style="margin-left: 10px">Signed in as <strong><span
+                                    th:text="${session.name}" class="h13"></span></strong></p>
+                            <p th:if="${session.name == null}" style="margin-left: 10px">Signed in as <strong><span
+                                    th:text="#{nav.error}" class="h13"></span></strong></p>
+                        </li>
+                        <li><a href="/approve_new_user" th:href="@{/approve_new_user}"><span
+                                th:text="#{nav.approveNewUser}">Pending Requests</span></a></li>
+                        <li><a href="/account_settings" th:href="@{/account_settings}"><span
+                                th:text="#{nav.editAccount}">Account Settings</span></a></li>
+                        <li><a href="/show_pub_keys" th:href="@{/show_pub_keys}"><span th:text="#{nav.editSshKeys}">Edit SSH Keys</span></a>
+                        </li>
+                        <li><a href="/logout" th:href="@{/logout}"><i class="fa fa-sign-out"></i> <span
+                                th:text="#{nav.signOut}">Sign Out</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- navigation links -->
+        </div>
+    </div> <!-- container -->
+    <div class="container-fluid" th:if="${@environment.getProperty('ncl.web.service.maintenance.enabled')}">
+        <div class="row maintenance-navbar" th:text="${@environment.getProperty('ncl.web.service.maintenance.notice')}">
+            MAINTENANCE NOTICE
+        </div>
+    </div>
 </div> <!-- main-nav -->
-<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+<object th:include="fragments/javascript :: javascript" th:remove="tag"/>
 </body>
 </html>

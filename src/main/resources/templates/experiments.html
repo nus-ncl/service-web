@@ -10,7 +10,7 @@
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
         <p>&nbsp;</p>
         <p>&nbsp;</p>
-        <div class="container ">
+        <div class="container">
             <div class="row dashpanel">
                 <h2 class="team-heading team-heading-current-team" th:text="#{exp.header}">Experiments</h2>
                 <div th:if="${message}">
@@ -29,7 +29,7 @@
                     <p th:text="#{exp.noExpRunning}">You do not have any experiments running yet.</p>
                 </div>
                 <!-- user has some experiments -->
-                <div class="team-panel team-panel-current-team">
+                <div class="team-panel team-panel-current-team" id="experimentPanel">
                     <div class="panel-body" th:if="not ${#lists.isEmpty(experimentList)}">
                         <table id="experimentTable" class="table table-responsive">
                             <thead>
@@ -73,53 +73,61 @@
                                                         data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">View</a>
                                         </td>
                                         <td>
-                                            <a th:href="'#'+${expEntry.id}" data-toggle="modal">View</a>
-                                            <!-- Modal -->
-                                            <div class="modal fade exp-modal" th:id="${expEntry.id}" aria-labelledby="expId" tabindex="-1" role="dialog" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header team-owner-info-header">
-                                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="btn-fa-red">&times;</span><span class="sr-only">Close</span></button>
-                                                            <h4 class="modal-title" id="expId"><span th:text="${expEntry.name}">Realization</span></h4>
-                                                        </div>
-                                                        <div class="modal-body team-owner-info-body">
-                                                            <h4>Instructions to Access Nodes</h4>
-                                                            <div class="exp-details">
-                                                                <p><strong>Step 1</strong>: <code>ssh</code> to NCL gateway:</p>
-                                                                <pre>ssh <span th:text="${deterUid}"></span>@users.ncl.sg</pre>
-                                                                <p>&nbsp;</p>
-                                                                <p><strong>Step 2</strong>: <code>ssh</code> into your experiment node using its Qualified Name, for example:</p>
-                                                                <pre>ssh <span th:text="${!expEntry.nodesInfoMap.isEmpty()} ? ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg' "></span></pre>
-                                                                <p>&nbsp;</p>
-                                                            </div>
-                                                            <h4>Info</h4>
-                                                            <th:block th:if="${!expEntry.nodesInfoMap.isEmpty()}">
-                                                                <table class="table table-responsive table-striped">
-                                                                    <thead>
-                                                                    <th th:text="#{experiment.table.header.nodes}">Node</th>
-                                                                    <th th:text="#{experiment.table.header.os}">OS</th>
-                                                                    <th th:text="#{experiment.table.header.qualifiedName}">Qualified Name</th>
-                                                                    <th>Actions</th>
-                                                                </thead>
-                                                                <th:block th:each="nodesDetailsMap: ${expEntry.nodesInfoMap}">
-                                                                    <tr>
-                                                                        <td th:text="${nodesDetailsMap.key}"></td>
-                                                                        <td th:text="${nodesDetailsMap.value.os}"></td>
-                                                                        <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
-                                                                        <td><a th:href="@{/web_ssh/access_node/{qualifiedName}(qualifiedName = ${nodesDetailsMap.value.qualifiedName})}" data-toggle="tooltip" data-placement="bottom" title="SSH into this node" target="_blank"><button type="button" class="btn btn-standard"><i class="fa fa-terminal btn-fa-green"></i></button></a>&nbsp;
-                                                                            <a th:href="@{/web_vnc/access_node/{qualifiedName}/5901(qualifiedName = ${nodesDetailsMap.value.qualifiedName})}" data-toggle="tooltip" data-placement="bottom" title="VNC into this node" target="_blank"><button type="button" class="btn btn-standard"><i class="fa fa-desktop btn-fa-green"></i></button></a>&nbsp;
-                                                                            <a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId = ${expEntry.teamId}, expId=${expEntry.id}, nodeId = ${nodesDetailsMap.value.nodeId})}" data-toggle="tooltip" data-placement="bottom" title="Save this node's image"><button type="button" class="btn btn-standard"><i class="fa fa-floppy-o btn-fa-green"></i></button></a></td>
-                                                                    </tr>
-                                                                </th:block>
-                                                            </table>
-                                                        </th:block>
-                                                        <th:block th:if="${expEntry.nodesInfoMap.isEmpty()}">
-                                                            <p th:text="#{form.expNotStarted}"></p>
-                                                        </th:block>
-                                                       </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            <th:block th:if="${!expEntry.nodesInfoMap.isEmpty()}">
+                                                <table class="table table-responsive table-striped hide"
+                                                       th:id="${expEntry.id}">
+                                                    <thead>
+                                                    <th th:text="#{experiment.table.header.nodes}">Node</th>
+                                                    <th th:text="#{experiment.table.header.os}">OS</th>
+                                                    <th th:text="#{experiment.table.header.qualifiedName}">Qualified Name</th>
+                                                    <th>Actions</th>
+                                                    </thead>
+                                                    <th:block th:each="nodesDetailsMap: ${expEntry.nodesInfoMap}">
+                                                        <tr>
+                                                            <td th:text="${nodesDetailsMap.key}"></td>
+                                                            <td th:text="${nodesDetailsMap.value.os}"></td>
+                                                            <td th:text="${nodesDetailsMap.value.qualifiedName}"></td>
+                                                            <td>
+                                                                <a th:href="@{/experiments/save_image/{teamId}/{expId}/{nodeId}(teamId=${expEntry.teamId}, expId=${expEntry.id}, nodeId=${nodesDetailsMap.value.nodeId})}"
+                                                                   data-toggle="tooltip" data-placement="bottom"
+                                                                   role="button" class="btn btn-standard"
+                                                                   title="Save this node's image">
+                                                                    <i class="fa fa-floppy-o btn-fa-green"></i>
+                                                                </a>
+                                                                <a th:href="@{/web_ssh/access_node/{qualifiedName}(qualifiedName=${nodesDetailsMap.value.qualifiedName})}"
+                                                                   data-toggle="tooltip" data-placement="bottom"
+                                                                   role="button" class="btn btn-standard"
+                                                                   title="SSH into this node" target="_blank">
+                                                                    <i class="fa fa-terminal btn-fa-green"></i>
+                                                                </a>
+                                                                <a th:href="@{/web_vnc/access_node/{teamId}/{expId}/{nodeId}(teamId=${expEntry.teamId}, expId=${expEntry.id}, nodeId=${nodesDetailsMap.value.nodeId}, portNum=5901)}"
+                                                                   data-toggle="tooltip" data-placement="bottom"
+                                                                   role="button" class="btn btn-standard"
+                                                                   title="VNC into this node" target="_blank"
+                                                                   onclick="checkRange(this);">
+                                                                    <i class="fa fa-desktop btn-fa-green"></i>
+                                                                </a>
+                                                                <input th:type="number" th:value="5901" th:min="5901"
+                                                                       th:max="5999" data-toggle="tooltip"
+                                                                       data-placement="bottom"
+                                                                       title="You can specify the VNC port to connect to (5901-5999)"/>
+                                                            </td>
+                                                        </tr>
+                                                    </th:block>
+                                                </table>
+                                            </th:block>
+                                            <th:block th:if="${expEntry.nodesInfoMap.isEmpty()}">
+                                                <table th:id="${expEntry.id}" class="hide">
+                                                    <tr>
+                                                        <td th:text="#{form.expNotStarted}"></td>
+                                                    </tr>
+                                                </table>
+                                            </th:block>
+                                            <a href="#expModal" data-toggle="modal"
+                                               th:attr="data-expEntryName=${expEntry.name},
+                                                        data-deterUid=${deterUid},
+                                                        data-domainName=${!expEntry.nodesInfoMap.isEmpty()} ? ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg',
+                                                        data-expEntryId=${expEntry.id}">View</a>
                                        </td>
                                         <td>
                                             <span th:if="${expEntry.state == 'STARTING'}">
@@ -269,7 +277,6 @@
             </div>
         </div>
 
-
         <!-- topo thumbnail modal -->
         <div class="modal fade exp-modal" id="topoModal" tabindex="-1" role="dialog" aria-labelledby="topoModalLabel">
             <div class="modal-dialog" role="document">
@@ -281,6 +288,31 @@
                     <div class="modal-body">
                         <span id="loading">Loading...</span>
                         <img id="topoThumb" class="center-block" src=""/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- experiment realization modal -->
+        <div class="modal fade exp-modal" id="expModal" tabindex="-1" role="dialog" aria-labelledby="expModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header team-owner-info-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="btn-fa-red">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="expId"><span id="expEntryName">Realization</span></h4>
+                    </div>
+                    <div class="modal-body team-owner-info-body">
+                        <h4>Instructions to Access Nodes</h4>
+                        <div class="exp-details">
+                            <p><strong>Step 1</strong>: <code>ssh</code> to NCL gateway:</p>
+                            <pre>ssh <span id="deterUid"></span>@users.ncl.sg</pre>
+                            <p>&nbsp;</p>
+                            <p><strong>Step 2</strong>: <code>ssh</code> into your experiment node using its Qualified Name, for example:</p>
+                            <pre>ssh <span id="domainName">node.expname.teamname.ncl.sg</span></pre>
+                            <p>&nbsp;</p>
+                        </div>
+                        <h4>Info</h4>
+                        <table></table>
                     </div>
                 </div>
             </div>
@@ -301,14 +333,32 @@
     <script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
     <script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
     <script>
+        //<![CDATA[
         $(document).ready(function () {
             //----------------- sort table -------------
             // disable sorting for last three columns; visualization, realization, actions
             $('#experimentTable').dataTable({
                 "columnDefs": [
-                    { "orderable": false, "targets": [4, 5, 6]},
-                ]
+                    { "orderable": false, "targets": [4, 5, 6]}
+                ],
+                // refresh the cookie on page load
+                "iCookieDuration": 1,
+                "bStateSave": true
             });
+
+            // for the reloading portion
+            // cookie must be more than reload interval to keep the state
+            setInterval(function() {
+                $('#experimentPanel').load(document.URL +  ' #experimentPanel ' , function() {
+                    $('#experimentTable').dataTable({
+                        "columnDefs": [
+                            { "orderable": false, "targets": [4, 5, 6]}
+                        ],
+                        "iCookieDuration": 31,
+                        "bStateSave": true
+                    });
+                });
+            }, 30000);
         });
 
         function closeStartModal() {
@@ -330,5 +380,35 @@
             $('#internetRequest').modal('hide');
             return true;
         }
+
+        function checkRange(hrefButton) {
+            var portText = hrefButton.nextElementSibling;
+            var v = portText.value;
+            if (isNaN(v) || v < 5901 || v > 5999) {
+                alert("Port number must be in the range of 5901-5999.");
+                return false;
+            }
+            var h = hrefButton.href;
+            var i = h.indexOf("?portNum=") + 9;
+            var s = h.substr(i);
+            hrefButton.href = h.replace(s, portText.value);
+            return true;
+        }
+
+        $('#expModal').on('show.bs.modal', function (event) {
+            var anchor = $(event.relatedTarget);
+            var expEntryName = anchor.data('expentryname');
+            var deterUid = anchor.data('deteruid');
+            var domainName = anchor.data('domainname');
+            var expEntryId = anchor.data('expentryid');
+            var table = $('#' + expEntryId).clone();
+            var modal = $(this);
+            modal.find('#expEntryName').text(expEntryName);
+            modal.find('#deterUid').text(deterUid);
+            modal.find('#domainName').text(domainName);
+            modal.find('table').replaceWith(table);
+            modal.find('table').toggleClass("hide show");
+        });
+        //]]>
     </script>
 </html>
