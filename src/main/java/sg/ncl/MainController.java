@@ -3586,7 +3586,7 @@ public class MainController {
 
             long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
             long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
-            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> RESERVED.equalsIgnoreCase(stringStringMap.get(STATUS))).count();
             long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
             long total = free + inUse + reserved + reload;
             long currentTotal = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES)) + total;
