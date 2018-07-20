@@ -6,6 +6,8 @@
         <object th:include="fragments/header :: header" th:remove="tag" />
 
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css"/>
     </head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
@@ -44,17 +46,35 @@
                         <div class="form-group">
                             <label for="usage" class="col-sm-3 control-label">Usage (Node x Hour) :</label>
                             <div class="col-sm-7">
-                                <span id="usage" th:text="${usage != null ? usage : ''}"></span>
+                                <span id="usage" th:text="${usage != null ? #numbers.formatDecimal(usage, 1, 'COMMA', 2, 'POINT') : ''}"></span>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-10 col-sm-2">
+                            <div class="col-sm-2">
                                 <button type="submit" class="btn btn-default">Query</button>
                             </div>
                         </div>
                     </fieldset>
                 </form>
                 <p>&nbsp;</p>
+                <div class="row" style="overflow-x: scroll" th:if="${usages}">
+                    <div class="col-sm-12">
+                        <table id="myTable" class="display nowrap" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th:block th:each="usage : ${usages}">
+                                    <th th:text="${#strings.substring(usage.getDate(), 5)}"></th>
+                                </th:block>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th:block th:each="usage : ${usages}">
+                                    <td th:text="${#numbers.formatDecimal(usage.getUsageInHours(), 1, 'COMMA', 2, 'POINT')}"></td>
+                                </th:block>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div> <!-- row -->
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">
@@ -78,13 +98,44 @@
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
+        <!-- script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script -->
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
         <script>
+            // <![CDATA[
+            var buttonCommon = {
+                exportOptions: {
+                    format: {
+                        body: function ( data, row, column, node ) {
+                            return data;
+                        }
+                    }
+                }
+            };
+
             $(document).ready(function () {
                 $('.input-daterange').datepicker({
                     clearBtn: true,
                     format: "yyyy-mm-dd"
                 });
+                $('#myTable').DataTable({
+                    "scrollX": true,
+                    "searching": false,
+                    "paging": false,
+                    "dom": "B",
+                    "buttons": [
+                        $.extend( true, {}, buttonCommon, {
+                            extend: 'copyHtml5'
+                        } ),
+                        $.extend( true, {}, buttonCommon, {
+                            extend: 'excelHtml5'
+                        } )
+                    ]
+                });
             });
+            // ]]>
         </script>
     </body>
 </html>

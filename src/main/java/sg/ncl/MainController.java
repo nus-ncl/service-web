@@ -171,7 +171,8 @@ public class MainController {
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
     private static final String REDIRECT_INDEX_PAGE = "redirect:/";
-    private static final String REDIRECT_ENERGY_USAGE = "redirect:/energy_usage";
+    private static final String REDIRECT_TEAM_USAGE = "redirect:/admin/usage";
+    private static final String REDIRECT_ENERGY_USAGE = "redirect:/admin/energy";
     private static final String REDIRECT_TEAMS="redirect:/teams";
     private static final String REDIRECT_APPROVE_NEW_USER = "redirect:/approve_new_user";
     private static final String REDIRECT_ADMIN = "redirect:/admin";
@@ -3277,7 +3278,8 @@ public class MainController {
                                  @RequestParam(value = "team", required = false) String team,
                                  @RequestParam(value = "start", required = false) String start,
                                  @RequestParam(value = "end", required = false) String end,
-                                 HttpSession session) {
+                                 final RedirectAttributes redirectAttributes,
+                                 HttpSession session) throws IOException {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
@@ -3305,9 +3307,45 @@ public class MainController {
         }
 
         if (team != null) {
-            responseEntity = restTemplate.exchange(properties.getUsageStat(team, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
-            String usage = responseEntity.getBody().toString();
-            model.addAttribute("usage", usage);
+            try {
+                responseEntity = restTemplate.exchange(properties.getUsageStat(team, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+            } catch (RestClientException rce) {
+                log.warn("Error connecting to sio analytics service for team usage: {}", rce);
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                return REDIRECT_TEAM_USAGE;
+            }
+
+            String responseBody = responseEntity.getBody().toString();
+            jsonArray = new JSONArray(responseBody);
+
+            // handling exceptions from SIO
+            if (RestUtil.isError(responseEntity.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    case START_DATE_AFTER_END_DATE_EXCEPTION:
+                        log.warn("Get team usage : Start date after end date error");
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
+                        return REDIRECT_TEAM_USAGE;
+                    default:
+                        log.warn("Get team usage : sio or deterlab adapter connection error");
+                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                        return REDIRECT_TEAM_USAGE;
+                }
+            } else {
+                log.info("Get team usage info : {}", responseBody);
+                ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
+                List<DayUsage> dayUsages = new ArrayList<>();
+                Long usage = 0L;
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    Long mins = jsonArray.getLong(i);
+                    dayUsages.add(new DayUsage(currentZonedDateTime.format(formatter), mins));
+                    usage += mins;
+                    currentZonedDateTime = currentZonedDateTime.plusDays(1);
+                }
+                model.addAttribute("usages", dayUsages);
+                model.addAttribute("usage", usage.doubleValue() / 60);
+            }
         }
 
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
