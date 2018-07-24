@@ -1,4 +1,4 @@
-package sg.ncl.domain;
+package sg.ncl.testbed_interface;
 
 import lombok.Getter;
 

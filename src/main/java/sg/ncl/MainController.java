@@ -3275,9 +3275,10 @@ public class MainController {
 
     @RequestMapping("/admin/usage")
     public String adminTeamUsage(Model model,
-                                 @RequestParam(value = "team", required = false) String team,
                                  @RequestParam(value = "start", required = false) String start,
                                  @RequestParam(value = "end", required = false) String end,
+                                 @RequestParam(value = "organizationType", required = false) String organizationType,
+                                 @RequestParam(value = "team", required = false) String team,
                                  final RedirectAttributes redirectAttributes,
                                  HttpSession session) throws IOException {
         if (!validateIfAdmin(session)) {
@@ -5199,7 +5200,12 @@ public class MainController {
             log.warn("Error connecting to sio get usage statistics {}", e);
             return "?";
         }
-        return response.getBody().toString();
+        JSONArray jsonArray = new JSONArray(response.getBody().toString());
+        Long usage = 0L;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            usage += jsonArray.getLong(i);
+        }
+        return String.format("%.2f", usage.doubleValue() / 60);
     }
 
     private TeamQuota extractTeamQuotaInfo(String responseBody) {
