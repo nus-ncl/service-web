@@ -209,9 +209,14 @@ public class MainController {
 
     private static final String LOG_IOEXCEPTION = "IOException {}";
 
+    // nodes reservation
+    private static final String ALL_TEAMS = "allTeams";
+    private static final String NODES_RESERVATION_FAIL = "nodes reservation FAIL";
+    private static final String RESERVATION_STATUS_FORM = "reservationStatusForm";
+    private static final String RESERVED = "reserved";
+
     private static final String WEBSITE = "website";
     private static final String VISIBILITY = "visibility";
-    private static final String ORGANIZATION_TYPE = "organisationType";
     private static final String IS_CLASS = "isClass";
     private static final String KEY = "key";
 
@@ -292,6 +297,11 @@ public class MainController {
     @RequestMapping("/calendar")
     public String calendar() {
         return "calendar";
+    }
+
+    @RequestMapping("/updates")
+    public String updates() {
+        return "updates";
     }
 
     @RequestMapping("/tutorials/createaccount")
@@ -446,7 +456,7 @@ public class MainController {
 
     @RequestMapping("/notfound")
     public String redirectNotFound(HttpSession session) {
-        if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
+        if (session.getAttribute(ID) != null && !session.getAttribute(ID).toString().isEmpty()) {
             // user is already logged on and has encountered an error
             // redirect to dashboard
             return "redirect:/dashboard";
@@ -463,8 +473,8 @@ public class MainController {
         return LOGIN_PAGE;
     }
 
-    @RequestMapping(value = "/emailVerification", params = {"id", EMAIL, "key"})
-    public String verifyEmail(@NotNull @RequestParam("id") final String id,
+    @RequestMapping(value = "/emailVerification", params = {ID, EMAIL, "key"})
+    public String verifyEmail(@NotNull @RequestParam(ID) final String id,
                               @NotNull @RequestParam(EMAIL) final String emailBase64,
                               @NotNull @RequestParam("key") final String key) {
         HttpHeaders headers = new HttpHeaders();
@@ -910,7 +920,7 @@ public class MainController {
                 teamFields.put("name", signUpMergedForm.getTeamName().trim());
                 teamFields.put(DESCRIPTION, signUpMergedForm.getTeamDescription().trim());
                 teamFields.put(WEBSITE, signUpMergedForm.getTeamWebsite().trim());
-                teamFields.put(ORGANIZATION_TYPE, signUpMergedForm.getTeamOrganizationType());
+                teamFields.put(ORGANISATION_TYPE, signUpMergedForm.getTeamOrganizationType());
                 teamFields.put(VISIBILITY, signUpMergedForm.getIsPublic());
                 teamFields.put(IS_CLASS, signUpMergedForm.getIsClass());
                 mainObject.put("isJoinTeam", false);
@@ -1976,7 +1986,7 @@ public class MainController {
 //    @RequestMapping("/team_profile/{teamId}/remove_experiment/{expId}")
 //    public String removeExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
 //        // remove experiment
-//        // TO DO check userid is indeed the experiment owner or team owner
+//        // TODO check userid is indeed the experiment owner or team owner
 //        // ensure experiment is stopped first
 //        if (experimentManager.removeExperiment(getSessionIdOfLoggedInUser(session), expId) == true) {
 //            // decrease exp count to be display on Teams page
@@ -2032,7 +2042,7 @@ public class MainController {
         teamFields.put("name", teamPageApplyTeamForm.getTeamName());
         teamFields.put(DESCRIPTION, teamPageApplyTeamForm.getTeamDescription());
         teamFields.put(WEBSITE, teamPageApplyTeamForm.getTeamWebsite());
-        teamFields.put(ORGANIZATION_TYPE, teamPageApplyTeamForm.getTeamOrganizationType());
+        teamFields.put(ORGANISATION_TYPE, teamPageApplyTeamForm.getTeamOrganizationType());
         teamFields.put(VISIBILITY, teamPageApplyTeamForm.getIsPublic());
         teamFields.put(IS_CLASS, teamPageApplyTeamForm.getIsClass());
 
@@ -3430,6 +3440,152 @@ public class MainController {
         return "energy_usage";
     }
 
+    /**
+     * Allows admins to:
+     * view reservations
+     * reserve nodes
+     * release nodes
+     */
+    @GetMapping("/admin/nodesReservation")
+    public String adminNodesReservation(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, Model model, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        model.addAttribute(ALL_TEAMS, getTeamMap());
+        model.addAttribute(RESERVATION_STATUS_FORM, reservationStatusForm);
+
+        return "node_reservation";
+    }
+
+    @PostMapping("/admin/nodesReservation")
+    public String adminNodesReservation(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+        HashMap<String, Team2> teamMap = getTeamMap();
+
+        // sanitization
+        if (bindingResult.hasErrors()) {
+            model.addAttribute(ALL_TEAMS, teamMap);
+            model.addAttribute(RESERVATION_STATUS_FORM, reservationStatusForm);
+            model.addAttribute(STATUS, NODES_RESERVATION_FAIL);
+            model.addAttribute(MESSAGE, "form errors");
+            return "node_reservation";
+        }
+
+        switch(reservationStatusForm.getAction()) {
+            case "release":
+                releaseNodes(reservationStatusForm, redirectAttributes);
+                break;
+            case "reserve":
+                reserveNodes(reservationStatusForm, redirectAttributes);
+                break;
+            case "check":
+                checkReservation(reservationStatusForm, redirectAttributes);
+                break;
+            default:
+                // error
+                redirectAttributes.addFlashAttribute(STATUS, NODES_RESERVATION_FAIL);
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                break;
+        }
+
+        redirectAttributes.addFlashAttribute(RESERVATION_STATUS_FORM, reservationStatusForm);
+        redirectAttributes.addFlashAttribute(ALL_TEAMS, teamMap);
+
+        return "redirect:/admin/nodesReservation";
+    }
+
+    private void checkReservation(ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange((properties.getReservationStatus(reservationStatusForm.getTeamId())), HttpMethod.GET, request, String.class);
+
+        /**
+         * @return  a json string in the format:
+         *   {
+         *       "status" : "ok/fail",
+         *       "reserved": ["pc1", "pc4", "pc2"],
+         *       "in_use": [["pc4", "ncltest01", "vnctest"], ["pc2", "testbed-ncl", "thales-poc"]]
+         *   }
+         */
+        JSONObject result = new JSONObject(response.getBody().toString());
+        String status = result.getString(STATUS);
+        Set<String> reservedSet = new HashSet<> (convertJSONArrayToList(result.getJSONArray(RESERVED)));
+        JSONArray inUseNodesArray = result.getJSONArray("in_use");
+        HashMap<String, String> inUseHashMap = new HashMap<>();
+        for (int i=0; i < inUseNodesArray.length(); i++) {
+            JSONArray nodeArray = inUseNodesArray.getJSONArray(i);
+            inUseHashMap.put(nodeArray.getString(0), nodeArray.getString(1) + "/" + nodeArray.getString(2));
+
+        }
+
+        redirectAttributes.addFlashAttribute("reservedSet", reservedSet);
+        redirectAttributes.addFlashAttribute("inUseHashMap", inUseHashMap);
+        redirectAttributes.addFlashAttribute(STATUS, status);
+    }
+
+    private void releaseNodes(ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+
+        int numNodesToRelease = reservationStatusForm.getNumNodes() == null ? -1 : reservationStatusForm.getNumNodes();
+
+        ResponseEntity response = restTemplate.exchange((properties.releaseNodes(reservationStatusForm.getTeamId(),
+                numNodesToRelease)), HttpMethod.DELETE, request, String.class);
+
+
+        JSONObject object = new JSONObject(response.getBody().toString());
+        String status = object.getString(STATUS);
+        String nodesUpdated = object.getJSONArray("released").toString();
+
+        redirectAttributes.addFlashAttribute(STATUS, status);
+        redirectAttributes.addFlashAttribute("nodesUpdated", nodesUpdated);
+    }
+
+    private void reserveNodes(ReservationStatusForm reservationStatusForm, RedirectAttributes redirectAttributes) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+
+        if (reservationStatusForm.getNumNodes() == null) {
+            redirectAttributes.addFlashAttribute(STATUS, "FAIL");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Number of nodes not specified");
+            return;
+        }
+
+        ResponseEntity response = restTemplate.exchange((properties.reserveNodes(reservationStatusForm.getTeamId(),
+                reservationStatusForm.getNumNodes(), reservationStatusForm.getMachineType())), HttpMethod.POST, request, String.class);
+
+        JSONObject object = new JSONObject(response.getBody().toString());
+        String status = object.getString(STATUS);
+        String message = object.getString(MESSAGE);
+        String nodesUpdated = object.getJSONArray(RESERVED).toString();
+
+        redirectAttributes.addFlashAttribute(STATUS, status);
+        if (!"OK".equals(STATUS)) {
+            redirectAttributes.addFlashAttribute(MESSAGE, message);
+        }
+        redirectAttributes.addFlashAttribute("nodesUpdated", nodesUpdated);
+    }
+
+    private List<String> convertJSONArrayToList(JSONArray jsonArray) {
+        List<String> resultList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            resultList.add(jsonArray.getString(i));
+        }
+        return resultList;
+    }
+
+    private HashMap<String, Team2> getTeamMap() {
+        TeamManager2 teamManager2 = new TeamManager2();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
+
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+        }
+        return teamManager2.getTeamMap();
+    }
+
     @RequestMapping("/admin/nodesStatus")
     public String adminNodesStatus(Model model, HttpSession session) throws IOException {
 
@@ -3468,7 +3624,7 @@ public class MainController {
 
             long free = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "free".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
             long inUse = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "in_use".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
-            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reserved".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
+            long reserved = machineTypeListEntry.getValue().stream().filter(stringStringMap -> RESERVED.equalsIgnoreCase(stringStringMap.get(STATUS))).count();
             long reload = machineTypeListEntry.getValue().stream().filter(stringStringMap -> "reload".equalsIgnoreCase(stringStringMap.get(STATUS))).count();
             long total = free + inUse + reserved + reload;
             long currentTotal = Long.parseLong(testbedStatsMap.get(USER_DASHBOARD_TOTAL_NODES)) + total;
@@ -4733,7 +4889,6 @@ public class MainController {
     /**
      * Creates a HttpEntity with a request body and header
      *
-     * @param jsonString The JSON request converted to string
      * @param jsonString The JSON request converted to string
      * @return A HttpEntity request
      * @implNote Authorization header must be set to the JwTToken in the format [Bearer: TOKEN_ID]

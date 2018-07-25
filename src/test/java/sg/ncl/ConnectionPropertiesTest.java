@@ -386,4 +386,33 @@ public class ConnectionPropertiesTest {
         String teamId = RandomStringUtils.randomAlphanumeric(20);
         assertThat(properties.getExperimentDetails(teamId, expId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getExpEndpoint() + "/teams/" + teamId + "/experiments/" + expId + "/experimentDetails");
     }
+
+    @Test
+    public void getReservationStatus() {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.getReservationStatus(teamId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + teamId + "/reservations");
+    }
+
+    @Test
+    public void releaseNodes() {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        Integer numNodes = Integer.parseInt(RandomStringUtils.randomNumeric(3));
+        assertThat(properties.releaseNodes(teamId, numNodes)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + teamId + "/reservations?numNodes=" + numNodes);
+    }
+
+    @Test
+    public void reserveNodes() {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        Integer numNodes = Integer.parseInt(RandomStringUtils.randomNumeric(3));
+        String machineType = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.reserveNodes(teamId, numNodes, machineType)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + teamId + "/reservations?numNodes=" + numNodes + "&machineType=" + machineType);
+    }
+
+    @Test
+    public void reserveNodesMachineTypeNull() {
+        String teamId = RandomStringUtils.randomAlphanumeric(20);
+        Integer numNodes = Integer.parseInt(RandomStringUtils.randomNumeric(3));
+        String machineType = null;
+        assertThat(properties.reserveNodes(teamId, numNodes, null)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getTeamEndpoint() + "/" + teamId + "/reservations?numNodes=" + numNodes + "&machineType=" + machineType);
+    }
 }

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Nodes Reservation</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+</head>
+<body class="mybg loginbackground">
+    <div th:replace="fragments/dashboard_navigation :: dashboardnav"></div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="container">
+        <div th:if="${status == 'FAIL'}">
+            <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+        </div>
+        <h2 class="team-heading team-heading-current-team">Nodes Reservation</h2>
+        <p>&nbsp;</p>
+        <form class="form-horizontal" method="post" th:object="${reservationStatusForm}" th:action="@{/admin/nodesReservation}" role="form">
+            <fieldset>
+                <div class="form-group">
+                    <label for="team" class="col-sm-3 control-label">Team :</label>
+                    <div class="col-sm-7">
+                        <select id="team" th:name="teamId" th:field="*{teamId}">
+                            <option th:each="teamEntry : ${allTeams}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="action" class="col-sm-3 control-label">Action :</label>
+                    <div class="col-sm-7">
+                        <select id="action" th:field="*{action}" onchange="showHide()">
+                            <option value="reserve">Reserve</option>
+                            <option value="release">Release</option>
+                            <option value="check">Check</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="number_of_nodes" class="form-group optional">
+                    <label for="numNodes" class="col-sm-3 control-label">Number of Nodes :</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control col-sm-3" id="numNodes" th:field="*{numNodes}"/>
+                    </div>
+                </div>
+                <div id="machine_type" class="form-group optional">
+                    <label for="machineType" class="col-sm-3 control-label">MachineType :</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control col-sm-3" id="machineType" placeholder="Optional" th:field="*{machineType}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-10 col-sm-2">
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <div id="information">
+            <h3 th:if="${status == 'OK'}"><span id="reservedTeamName">Team</span>: <span id="actionTitle">Nodes Reservation</span></h3>
+            <th:block th:if="${reservedSet != null and !reservedSet.isEmpty()}">
+                <table class="table table-responsive table-striped">
+                    <thead>
+                    <tr>
+                        <span> Total Number of Reserved Nodes : </span><span th:text="${reservedSet.size()}"></span>
+                    </tr>
+                    <th>Node ID</th>
+                    <th>Status</th>
+                    </thead>
+                    <th:block th:each="nodeId : ${reservedSet}">
+                        <tr>
+                            <td th:text="${nodeId}"></td>
+                            <td>
+                                <span th:if="${inUseHashMap.containsKey(nodeId)}" th:text="${inUseHashMap.get(nodeId)}"></span>
+                                <span th:if="not ${inUseHashMap.containsKey(nodeId)}" th:text="'free'"></span>
+                            </td>
+                        </tr>
+                    </th:block>
+                </table>
+            </th:block>
+            <div th:if="${status == 'OK'}">
+                <table class="table table-responsive table-striped">
+                    <thead>
+                    <tr>
+                        <span th:if="${nodesUpdated != null}" th:text="'Reserved/Released Nodes'"></span>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td th:text="${nodesUpdated}"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="cc-wraper">
+            <div class="cc-contactpop fixed">
+                <h1>Do you need  Help? Get in touch. </h1>
+                <div class="renseignement">
+                    <i class="fa fa-times"></i>
+                    <p>We will get back to you as soon as possible. </p>
+                </div>
+                <form>
+                    <ul>
+                        <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+                        <li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
+                        <li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
+                    </ul>
+                    <p>&nbsp;</p>
+                </form>
+            </div>
+        </div>
+    </div><!-- container -->
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+
+<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+<script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+<script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+
+<script th:inline="javascript">
+    // toggle show hide for initial page load and subsequent page reload
+    showHide();
+
+    function showHide() {
+        setTeamName();
+        toggleFields();
+    }
+
+    // display the respective selected team name taken from the dropdown
+    function setTeamName() {
+        var dropdown = document.getElementById("team");
+        var selectedValue = dropdown.options[dropdown.selectedIndex].text;
+        var spanText = document.getElementById("reservedTeamName");
+
+        if (spanText != null) {
+            spanText.innerHTML = selectedValue;
+        }
+    }
+
+    // toggle the form fields
+    function toggleFields() {
+        $(".optional").css('display', 'none');
+        var action = document.getElementById("action").value;
+        var actionTitle = document.getElementById("actionTitle");
+        var numNodesField = document.getElementById("numNodes");
+        var machineTypeField = document.getElementById("machineType");
+
+        numNodesField.value = "";
+        machineTypeField.value = "";
+
+        if (action == "release") {
+            $('#number_of_nodes').css('display', 'block');
+            numNodesField.placeholder = "Optional";
+            actionTitle.innerHTML = "Released Nodes";
+
+        } else if (action == "reserve") {
+            $('#number_of_nodes').css('display', 'block');
+            $('#machine_type').css('display', 'block');
+            numNodesField.placeholder = "";
+            actionTitle.innerHTML = "Reserved Nodes";
+
+        } else if (action == "check") {
+            $(".optional").css('display', 'none');
+            actionTitle.innerHTML = "Reserved Nodes";
+        } else {
+            location.reload();
+        }
+    }
+</script>
+</html>

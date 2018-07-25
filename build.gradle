@@ -105,7 +105,7 @@ bintray {
     pkg {
         repo = 'generic'
         name = 'service-web'
-        userOrg = 'nus-ncl'
+        userOrg = 'ncl'
         desc = 'NCL web service'
         websiteUrl = 'https://github.com/nus-ncl/service-web'
         issueTrackerUrl = 'https://github.com/nus-ncl/service-web/issues'

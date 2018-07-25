@@ -20,6 +20,7 @@ public class ConnectionProperties {
     private static final String EXPERIMENT = "/experiment/";
     private static final String TEAMS = "/teams/";
     private static final String RESOURCES = "resources";
+    private static final String RESERVATIONS = "reservations";
 
     private String sioAddress;
     private String sioPort;
@@ -142,7 +143,7 @@ public class ConnectionProperties {
     }
 
     public String getQuotaByTeamId(String teamId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/quota" ;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/quota";
     }
 
     //-------------------------------------
@@ -173,7 +174,7 @@ public class ConnectionProperties {
     }
 
     public String getExperimentDetails(String teamId, String expId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId + "/" +  expEndpoint + "/" + expId + "/experimentDetails";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId + "/" + expEndpoint + "/" + expId + "/experimentDetails";
     }
 
     public String getExpListByTeamId(String teamId) {
@@ -200,7 +201,7 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + EXPERIMENT + expId;
     }
 
-    public String requestInternetExperiment (String teamId, String expId) {
+    public String requestInternetExperiment(String teamId, String expId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId + EXPERIMENTS + expId + "/internet";
     }
 
@@ -355,14 +356,14 @@ public class ConnectionProperties {
     }
 
     public String deleteImage(String teamId, String imageName) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint + "/" + imageName + "?teamId=" + teamId ;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + imageEndpoint + "/" + imageName + "?teamId=" + teamId;
     }
 
     //-------------------------------------
     // USAGE STATISTICS
     //-------------------------------------
     public String getUsageStatisticsByTeamId(String id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +realEndpoint + TEAMS + id + "/usage";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + TEAMS + id + "/usage";
     }
 
     //-------------------------------------
@@ -381,18 +382,18 @@ public class ConnectionProperties {
             }
         }
         String params = bld.toString();
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +analyticsEndpoint + "/energy" + params;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/energy" + params;
     }
 
     //-------------------------------------
     // PASSWORD RESET
     //-------------------------------------
     public String getPasswordResetRequestURI() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +credEndpoint + "/password/resets";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/password/resets";
     }
 
     public String getPasswordResetURI() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" +credEndpoint + "/password";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/password";
     }
 
 
@@ -451,5 +452,20 @@ public class ConnectionProperties {
     //-------------------------------------
     public String getPublicKeys(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/publicKeys";
+    }
+
+    //-------------------------------------
+    // RESERVATION
+    //-------------------------------------
+    public String getReservationStatus(String teamId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/" + RESERVATIONS;
+    }
+
+    public String releaseNodes(String teamId, Integer numNodes) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/" + RESERVATIONS + "?numNodes=" + numNodes;
+    }
+
+    public String reserveNodes(String teamId, Integer numNodes, String machineType) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/" + RESERVATIONS + "?numNodes=" + numNodes + "&machineType=" + machineType;
     }
 }
