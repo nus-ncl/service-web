@@ -166,6 +166,7 @@
         function doLoadJSON() {
             document.getElementById('paintarea').innerHTML = "";
             workflow = new Workflow('paintarea');
+            workflow.scrollArea = document.getElementById("paint_div");
             loadJSONtext(document.getElementById('json_text').value);
         }
 
@@ -314,7 +315,7 @@
     var workflow = new Workflow("paintarea");
 
     jQuery(document).ready(function ($) {
-        workflow.scrollArea = document.getElementById("paint_div").parentNode;
+        workflow.scrollArea = document.getElementById("paint_div");
 
         //addLibraryIcon('a100baset_hub');
         addLibraryIcon('asa', 'Physical Node');
