@@ -44,6 +44,7 @@ public enum ExceptionState {
     NS_FILE_PARSE_EXCEPTION("NSFileParseException"),
     OBJECT_OPTIMISTIC_LOCKING_FAILURE_EXCEPTION("ObjectOptimisticLockingFailureException"),
     PASSWORD_RESET_REQUEST_NOT_FOUND_EXCEPTION("PasswordResetRequestNotFoundException"),
+    PASSWORD_RESET_REQUEST_NOT_MATCH_EXCEPTION("PasswordResetRequestNotMatchException"),
     PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION("PasswordResetRequestTimeoutException"),
     PASSWORD_NULL_OR_EMPTY_EXCEPTION("PasswordNullOrEmptyException"),
     START_DATE_AFTER_END_DATE_EXCEPTION("StartDateAfterEndDateException"),

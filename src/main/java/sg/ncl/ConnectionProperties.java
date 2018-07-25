@@ -85,8 +85,8 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/" + id;
     }
 
-    public String newMemberResetKey(String uid){
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/resetKey/" + uid;
+    public String resetKeyStudent(String uid){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/" + uid + "/keys";
     }
 
     //-------------------------------------
@@ -120,13 +120,8 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + TEAMS + teamId + "/members/" + userId;
     }
 
-    public String addMemberByEmail(String teamId){
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/" + teamId + "/addMembers";
-    }
-
-
-    public String resetPasswordNewMember(String uid){
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/" + uid + "/resetPasswordNewMember";
+    public String addStudentsByEmail(String teamId){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + TEAMS + teamId + "/students";
     }
 
 
@@ -160,6 +155,10 @@ public class ConnectionProperties {
 
     public String removeUserFromTeam(String teamId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/members";
+    }
+
+    public String changePasswordStudent(String uid){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + uid + "/studentInfo";
     }
 
     //-------------------------------------

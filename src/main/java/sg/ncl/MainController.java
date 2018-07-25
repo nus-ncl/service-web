@@ -125,7 +125,7 @@ public class MainController {
     private static final String FORGET_PSWD_PAGE = "password_reset_email";
     private static final String FORGET_PSWD_NEW_PSWD_PAGE = "password_reset_new_password";
     private static final String NO_PERMISSION_PAGE = "nopermission";
-    private static final String NEW_MEMBER_RESET_PSWD = "new_member_reset_password";
+    private static final String STUDENT_RESET_PSWD = "student_reset_password";
 
     private static final String SIGNUP_PAGE = "signup2";
     private static final String SIGNUP_MERGED_FORM = "signUpMergedForm";
@@ -175,7 +175,7 @@ public class MainController {
     private static final String REDIRECT_TEAMS="redirect:/teams";
     private static final String REDIRECT_APPROVE_NEW_USER = "redirect:/approve_new_user";
     private static final String REDIRECT_ADMIN = "redirect:/admin";
-    private static final String REDIRECT_ADD_MEMBER = "redirect:add_member";
+    private static final String REDIRECT_ADD_MEMBER = "redirect:/add_member";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -213,6 +213,7 @@ public class MainController {
     private static final String VISIBILITY = "visibility";
     private static final String ORGANIZATION_TYPE = "organisationType";
     private static final String IS_CLASS = "isClass";
+    private static final String KEY = "key";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -476,7 +477,7 @@ public class MainController {
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
         final String link = properties.getSioRegUrl() + "/users/" + id + "/emails/" + emailBase64;
-        log.info("Activation link: {}, verification key {}", link, key);
+        // log.info("Activation link: {}, verification key {}", link, key);
         ResponseEntity response = restTemplate.exchange(link, HttpMethod.PUT, request, String.class);
 
         if (RestUtil.isError(response.getStatusCode())) {
@@ -530,7 +531,7 @@ public class MainController {
         }
 
         String jwtTokenString = response.getBody().toString();
-        log.info("token string {}", jwtTokenString);
+        // log.info("token string {}", jwtTokenString);
         if (jwtTokenString == null || jwtTokenString.isEmpty()) {
             log.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
             loginForm.setErrorMsg(ERR_INVALID_CREDENTIALS);
@@ -1751,7 +1752,7 @@ public class MainController {
             @PathVariable String teamId,
             @ModelAttribute("team") Team2 editTeam,
             final RedirectAttributes redirectAttributes,
-            HttpSession session) {
+            HttpSession session) throws IOException {
 
         boolean errorsFound = false;
 
@@ -1779,7 +1780,34 @@ public class MainController {
         teamfields.put(MEMBERS, editTeam.getMembersList());
 
         HttpEntity<String> request = createHttpEntityWithBody(teamfields.toString());
-        restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
+        ResponseEntity response;
+        try {
+            response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for edit team profile: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return REDIRECT_TEAM_PROFILE + teamId;
+        }
+
+        String responseBody = response.getBody().toString();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            switch (exceptionState) {
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    log.warn("Edit team profile: Team {} not found", teamId);
+                    return REDIRECT_INDEX_PAGE;
+                case FORBIDDEN_EXCEPTION:
+                    log.warn("Edit team profile: Profile can only be updated by team owner.");
+                    redirectAttributes.addFlashAttribute(MESSAGE, "Profile can only be updated by team owner.");
+                    return REDIRECT_TEAM_PROFILE + teamId;
+                default:
+                    log.warn("Edit team profile: sio or deterlab adapter connection error");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    return REDIRECT_TEAM_PROFILE + teamId;
+            }
+        }
 
         Team2 originalTeam = (Team2) session.getAttribute(ORIGINAL_TEAM);
 
@@ -4220,7 +4248,7 @@ public class MainController {
                 sb.append(line);
                 sb.append(System.getProperty("line.separator"));
             }
-            log.info("Experiment ns file contents: {}", sb);
+            //log.info("Experiment ns file contents: {}", sb);
             return sb.toString();
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
@@ -4739,7 +4767,7 @@ public class MainController {
         session.setAttribute(webProperties.getSessionUserFirstName(), firstName);
         session.setAttribute(webProperties.getSessionRoles(), userRoles);
         session.setAttribute(webProperties.getSessionJwtToken(), "Bearer " + token);
-        log.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}, token: {}", loginEmail, id, user.getFirstName(), userRoles, token);
+        log.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}, token: {}", loginEmail, id, user.getFirstName(), userRoles, "########");
     }
 
     private void removeSessionVariables(HttpSession session) {
@@ -4856,7 +4884,7 @@ public class MainController {
         }
 
         String result = respEntity.getBody().toString();
-        log.info(result);
+        // log.info(result);
         if (result.isEmpty() || "[]".equals(result)) {
             return new ArrayList<>();
         }
@@ -5137,192 +5165,223 @@ public class MainController {
         return "add_member";
     }
 
+    /**
+     * For a class project leader to add students to his class using their emails
+     *
+     * @param teamId
+     * @param addMemberForm
+     * @param redirectAttributes
+     * @return
+     * @throws WebServiceRuntimeException
+     */
     @RequestMapping(value="/add_member/{teamId}", method= RequestMethod.POST)
     public String addMember(@PathVariable String teamId, @Valid AddMemberForm addMemberForm,
                             final RedirectAttributes redirectAttributes)  throws WebServiceRuntimeException {
-        log.info("Starting to adding members by email for team {}", teamId);
+
+        log.info("Adding members to team {}", teamId);
 
         String emails[] = addMemberForm.getEmails().split("\\r?\\n");
 
-        JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i< emails.length; i++){
+        for (int i = 0; i < emails.length; i++){
             if (!VALID_EMAIL_ADDRESS_REGEX.matcher(emails[i]).matches()) {
-                addMemberForm.setErrMsg(EMAIL_ADDRESS_IS_NOT_VALID);
                 redirectAttributes.addFlashAttribute(MESSAGE, EMAIL_ADDRESS_IS_NOT_VALID);
-                return REDIRECT_ADD_MEMBER;
+                return REDIRECT_ADD_MEMBER + "/" + teamId;
             }
-            jsonArray.put(emails[i]);
         }
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("emails", jsonArray.toString());
-
-        HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
+        HttpEntity<String> request = createHttpEntityWithBody(addMemberForm.getEmails());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity responseEntity = null;
-        try {
-            responseEntity = restTemplate.exchange(properties.addMemberByEmail(teamId), HttpMethod.POST, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service for adding members by email: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_ADD_MEMBER;
-        }
+        ResponseEntity responseEntity;
 
-        String responseBody = responseEntity.getBody().toString();
+        try {
+            responseEntity = restTemplate.exchange(properties.addStudentsByEmail(teamId), HttpMethod.POST, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for adding members: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return REDIRECT_ADD_MEMBER + "/" + teamId;
+        }
 
         if (RestUtil.isError(responseEntity.getStatusCode())) {
+            String responseBody = responseEntity.getBody().toString();
+            String logPrefix = "Error in adding members to team " + teamId + ": {}";
             MyErrorResource error;
+            String reason;
             try {
                 error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
                 switch (exceptionState) {
-                    case INVALID_EMAIL_ADDRESS_EXCEPTION:
-                        log.warn("Adding members by emails: Invalid email address");
-                        redirectAttributes.addFlashAttribute(MESSAGE, EMAIL_ADDRESS_IS_NOT_VALID);
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        reason = "Team " + teamId + " is not found.";
+                        log.warn(logPrefix, reason);
+                        redirectAttributes.addFlashAttribute(MESSAGE, reason);
+                        break;
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                        log.warn(logPrefix, error.getMessage());
+                        redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
+                        break;
+                    case USERNAME_ALREADY_EXISTS_EXCEPTION:
+                        reason = "User " + error.getMessage() + " already exists.";
+                        log.warn(logPrefix, reason);
+                        redirectAttributes.addFlashAttribute(MESSAGE, reason);
+                        break;
+                    case USER_ALREADY_IN_TEAM_EXCEPTION:
+                    case TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION:
+                        reason = "User " + error.getMessage() + " is already a member.";
+                        log.warn(logPrefix, reason);
+                        redirectAttributes.addFlashAttribute(MESSAGE, reason);
                         break;
                     default:
-                        log.warn("Adding members by emails : sio or deterlab adapter connection error");
+                        log.warn("Error in adding members to team {}: sio or deterlab adapter connection error", teamId);
                         // possible sio or adapter connection fail
                         redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
                         break;
                 }
-                return REDIRECT_ADD_MEMBER;
+                return REDIRECT_ADD_MEMBER + "/" + teamId;
             } catch (IOException e) {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
         }
-        log.info("Adding members by email for team {} successful", teamId);
-        redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "New members have been added successful!");
-        return REDIRECT_ADD_MEMBER;
+
+        log.info("Adding members to team {} succeeded", teamId);
+        redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "New members have been added successfully!");
+        return REDIRECT_ADD_MEMBER + "/" + teamId;
     }
 
 
-    // when user clicks password reset link in the email
-    @GetMapping(path = "/newMemberResetPassword", params = {"uid", "key"})
-    public String resetPasswordForNewMember(@NotNull @RequestParam("uid") final String uid,
-                                    @NotNull @RequestParam("key") final String key,
-                                              Model model) {
-        NewClassMemberPasswordResetForm newClassMemberPasswordResetForm = new NewClassMemberPasswordResetForm();
-        newClassMemberPasswordResetForm.setKey(key);
-        newClassMemberPasswordResetForm.setUid(uid);
+    // when student clicks password reset link in the email
+    @GetMapping(path = "/changePasswordStudent", params = {"uid", "key"})
+    public String resetPasswordStudent(@NotNull @RequestParam("uid") final String uid,
+                                       @NotNull @RequestParam("key") final String key,
+                                       Model model) {
+        StudentPasswordResetForm studentPasswordResetForm = new StudentPasswordResetForm();
+        studentPasswordResetForm.setKey(key);
+        studentPasswordResetForm.setUid(uid);
 
-        model.addAttribute("newClassMemberPasswordResetForm", newClassMemberPasswordResetForm );
+        model.addAttribute("studentPasswordResetForm", studentPasswordResetForm);
         // redirect to the page for user to enter new password
-        return NEW_MEMBER_RESET_PSWD;
+        return STUDENT_RESET_PSWD;
     }
 
-    // send to SIO to process resetting password for new member
-    @PostMapping("/new_member_reset_password")
-    public String processResetPasswordForNewMember(
-                        @ModelAttribute("newClassMemberPasswordResetForm") NewClassMemberPasswordResetForm newClassMemberPasswordResetForm
+    // send to SIO to process resetting password for new student member
+    @PostMapping("/student_reset_password")
+    public String processResetPasswordStudent(
+                        @ModelAttribute("studentPasswordResetForm") StudentPasswordResetForm studentPasswordResetForm
                         ) throws WebServiceRuntimeException {
 
-        if (newClassMemberPasswordResetForm.getFirstName().isEmpty()) {
-            newClassMemberPasswordResetForm.setErrMsg("First name cannot be empty");
-            return NEW_MEMBER_RESET_PSWD;
+        if (studentPasswordResetForm.getFirstName().isEmpty() || studentPasswordResetForm.getLastName().isEmpty()) {
+            studentPasswordResetForm.setErrMsg("First name or last name cannot be empty");
+            return STUDENT_RESET_PSWD;
         }
 
-        if (newClassMemberPasswordResetForm.getLastName().isEmpty()) {
-            newClassMemberPasswordResetForm.setErrMsg("Last name cannot be empty");
-            return NEW_MEMBER_RESET_PSWD;
+        if (studentPasswordResetForm.getPhone().isEmpty() ||
+                studentPasswordResetForm.getPhone().matches("(.*)[a-zA-Z](.*)") ||
+                studentPasswordResetForm.getPhone().length() < 6) {
+            studentPasswordResetForm.setErrMsg("Phone is invalid");
+            return STUDENT_RESET_PSWD;
         }
 
-        if (newClassMemberPasswordResetForm.getPhone().isEmpty() ||
-                newClassMemberPasswordResetForm.getPhone().matches("(.*)[a-zA-Z](.*)") ||
-                newClassMemberPasswordResetForm.getPhone().length() < 6) {
-            newClassMemberPasswordResetForm.setErrMsg("Phone is invalid");
-            return NEW_MEMBER_RESET_PSWD;
+        if (!studentPasswordResetForm.isPasswordOk()) {
+            return STUDENT_RESET_PSWD;
         }
-
-        if (!newClassMemberPasswordResetForm.isPasswordOk()) {
-            return NEW_MEMBER_RESET_PSWD;
-        }
-
 
         JSONObject obj = new JSONObject();
-        obj.put(FNAME, newClassMemberPasswordResetForm.getFirstName());
-        obj.put(LNAME, newClassMemberPasswordResetForm.getLastName());
-        obj.put(PHONE, newClassMemberPasswordResetForm.getPhone());
-        obj.put("key", newClassMemberPasswordResetForm.getKey());
-        obj.put("newPassword", newClassMemberPasswordResetForm.getPassword1());
+        obj.put(FNAME, studentPasswordResetForm.getFirstName());
+        obj.put(LNAME, studentPasswordResetForm.getLastName());
+        obj.put(PHONE, studentPasswordResetForm.getPhone());
+        obj.put(KEY, studentPasswordResetForm.getKey());
+        obj.put(PSWD, studentPasswordResetForm.getPassword1());
 
-        String uid = newClassMemberPasswordResetForm.getUid();
+        String uid = studentPasswordResetForm.getUid();
 
         HttpEntity<String> request =  createHttpEntityWithBodyNoAuthHeader(obj.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity responseEntity = null;
+        ResponseEntity responseEntity;
         try {
-            responseEntity = restTemplate.exchange(properties.resetPasswordNewMember(uid), HttpMethod.PUT, request, String.class);
+            responseEntity = restTemplate.exchange(properties.changePasswordStudent(uid), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
-            log.warn("Error connecting to sio for new member password reset! {}", e);
-            newClassMemberPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
-            return NEW_MEMBER_RESET_PSWD;
+            log.warn("Error connecting to sio for student password reset! {}", e);
+            studentPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
+            return STUDENT_RESET_PSWD;
         }
 
         String responseBody = responseEntity.getBody().toString();
 
         if (RestUtil.isError(responseEntity.getStatusCode())) {
             MyErrorResource error;
+            String logPrefix = "Error in password reset for student " + uid + ": {}";
             try {
                 error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
                 switch (exceptionState) {
+                    case DETERLAB_OPERATION_FAILED_EXCEPTION:
+                        log.warn(logPrefix, error.getMessage());
+                        studentPasswordResetForm.setErrMsg(error.getMessage());
+                        break;
+
                     case PASSWORD_RESET_REQUEST_TIMEOUT_EXCEPTION:
-                        log.warn("Error for class member password reset for user {}: password reset key timeout", uid);
-                        newClassMemberPasswordResetForm.setErrMsg("Password reset request timed out. Please request a new reset email.");
+                        log.warn(logPrefix, "Password reset key timeout");
+                        studentPasswordResetForm.setErrMsg("Password reset request timed out. Please request a new reset email.");
                         break;
 
                     case INVALID_USERNAME_EXCEPTION:
-                        log.warn("Error for class member password reset for user {}: invalid username", uid);
-                        newClassMemberPasswordResetForm.setErrMsg("You must enter a valid first and last name.");
+                        log.warn(logPrefix, "Invalid username");
+                        studentPasswordResetForm.setErrMsg("You must enter a valid first and last name.");
                         break;
 
                     case INVALID_PASSWORD_EXCEPTION:
-                        log.warn("Error for class member password reset for user {}: password is invalid", uid);
-                        newClassMemberPasswordResetForm.setErrMsg("You must supply a valid password.");
+                        log.warn(logPrefix, "Password is invalid");
+                        studentPasswordResetForm.setErrMsg("You must supply a valid password.");
                         break;
 
-                    case INVALID_CREDENTIALS_EXCEPTION:
-                        log.warn("Error for class member password reset for user {}: uid and key do not match", uid);
-                        newClassMemberPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
+                    case PASSWORD_RESET_REQUEST_NOT_MATCH_EXCEPTION:
+                        log.warn(logPrefix, "Uid and key do not match");
+                        studentPasswordResetForm.setErrMsg("Password reset request does not match with the user.");
                         break;
 
                     case CREDENTIALS_NOT_FOUND_EXCEPTION:
-                        log.warn("Error for class member password reset for user {}: credentials not found", uid);
-                        newClassMemberPasswordResetForm.setErrMsg("Key is not valid");
+                        log.warn(logPrefix, "Credentials or key not found");
+                        studentPasswordResetForm.setErrMsg("Credentials or key is not valid.");
                         break;
 
                     default:
-                        log.warn("Adding members by emails : sio or deterlab adapter connection error");
-                        newClassMemberPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
+                        log.warn(logPrefix, "Sio or deterlab adapter connection error");
+                        studentPasswordResetForm.setErrMsg(ERR_SERVER_OVERLOAD);
                 }
 
-                return NEW_MEMBER_RESET_PSWD;
+                return STUDENT_RESET_PSWD;
             } catch (IOException e) {
                 throw new WebServiceRuntimeException(e.getMessage());
             }
         }
 
-
-        log.info("New class member password reset successful for user {}", uid);
-        newClassMemberPasswordResetForm.setSuccessMsg("Password reset is successful");
+        log.info("Password was reset for student {}", uid);
+        studentPasswordResetForm.setSuccessMsg("Password has been reset");
         return "password_reset_success";
     }
 
 
 
     // when class member clicks password reset key link in the email
-    @GetMapping(path = "/newMemberResetKey", params = {"uid"})
-    public String resetKey(@NotNull @RequestParam("uid") final String uid) {
+    @GetMapping(path = "/resetKeyStudent", params = {"uid"})
+    public String resetKeyStudent(@NotNull @RequestParam("uid") final String uid) {
 
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity responseEntity;
         try {
-            restTemplate.exchange(properties.newMemberResetKey(uid), HttpMethod.PUT, request, String.class);
+            responseEntity = restTemplate.exchange(properties.resetKeyStudent(uid), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
-            log.warn("Error connecting to sio for new member password reset! {}", e);
+            // CredentialsNotFoundException and PasswordResetRequestNotFoundException is not caught here
+            log.warn("Error in password key reset: {}", e);
             return "error";
         }
-        return "new_member_reset_key_success";
+
+        if (RestUtil.isError(responseEntity.getStatusCode())) {
+            log.warn("Error in password key reset: {}", responseEntity.getBody().toString());
+            return "student_reset_key_error";
+        }
+
+        log.info("Password key was reset for {}", uid);
+        return "student_reset_key_success";
     }
 }

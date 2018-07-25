@@ -12,7 +12,7 @@ import static sg.ncl.validation.Validator.isValidPassword;
 @Getter
 @Setter
 public class
-NewClassMemberPasswordResetForm {
+StudentPasswordResetForm {
     private String key;
     private String uid;
     private String firstName;
