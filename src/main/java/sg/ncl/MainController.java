@@ -3869,7 +3869,7 @@ public class MainController {
         } else {
             // good
             log.info("Team {} has been restricted", team.getId());
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + team.getName() + " status has been changed to " + TeamStatus.RESTRICTED.name());
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team status has been changed to " + TeamStatus.RESTRICTED.name());
             return REDIRECT_ADMIN;
         }
     }
@@ -3892,7 +3892,7 @@ public class MainController {
         } else {
             // good
             log.info("Team {} has been freed", team.getId());
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team " + team.getName() + " status has been changed to " + TeamStatus.APPROVED.name());
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Team status has been changed to " + TeamStatus.APPROVED.name());
             return REDIRECT_ADMIN;
         }
     }
@@ -5335,7 +5335,7 @@ public class MainController {
 
         log.info("Adding members to team {}", teamId);
 
-        String emails[] = addMemberForm.getEmails().split("\\r?\\n");
+        String[] emails = addMemberForm.getEmails().split("\\r?\\n");
 
         for (int i = 0; i < emails.length; i++){
             if (!VALID_EMAIL_ADDRESS_REGEX.matcher(emails[i]).matches()) {
@@ -5375,13 +5375,13 @@ public class MainController {
                         redirectAttributes.addFlashAttribute(MESSAGE, error.getMessage());
                         break;
                     case USERNAME_ALREADY_EXISTS_EXCEPTION:
-                        reason = "User " + error.getMessage() + " already exists.";
+                        reason = USER_PREFIX + error.getMessage() + " already exists.";
                         log.warn(logPrefix, reason);
                         redirectAttributes.addFlashAttribute(MESSAGE, reason);
                         break;
                     case USER_ALREADY_IN_TEAM_EXCEPTION:
                     case TEAM_MEMBER_ALREADY_EXISTS_EXCEPTION:
-                        reason = "User " + error.getMessage() + " is already a member.";
+                        reason = USER_PREFIX + error.getMessage() + " is already a member.";
                         log.warn(logPrefix, reason);
                         redirectAttributes.addFlashAttribute(MESSAGE, reason);
                         break;
