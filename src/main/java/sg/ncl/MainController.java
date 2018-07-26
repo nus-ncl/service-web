@@ -5194,7 +5194,7 @@ public class MainController {
     }
 
     private Long getTeamUsageStatistics(Team2 team2, String start, String end, HttpEntity<String> request, List<Long> usages)
-            throws IOException, RestClientException, StartDateAfterEndDateException, WebServiceRuntimeException {
+            throws IOException, StartDateAfterEndDateException, WebServiceRuntimeException {
         Long usage = 0L;
         ResponseEntity responseEntity = restTemplate.exchange(properties.getUsageStat(team2.getId(), "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
         String responseBody = responseEntity.getBody().toString();
