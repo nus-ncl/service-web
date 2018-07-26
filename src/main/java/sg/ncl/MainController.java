@@ -3280,7 +3280,7 @@ public class MainController {
                                  @RequestParam(value = "organizationType", required = false) String organizationType,
                                  @RequestParam(value = "team", required = false) String team,
                                  final RedirectAttributes redirectAttributes,
-                                 HttpSession session) throws IOException {
+                                 HttpSession session) {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
@@ -3302,16 +3302,7 @@ public class MainController {
 
         List<Team2> searchTeams = new ArrayList<>();
         TeamManager2 teamManager2 = new TeamManager2();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Team2 one = extractTeamInfo(jsonObject.toString());
-            teamManager2.addTeamToTeamMap(one);
-            if (team != null) {
-                if (team.equals(one.getId()) || (team.equals("All") && (organizationType.equals(one.getOrganisationType()) || organizationType.equals("All")))) {
-                    searchTeams.add(one);
-                }
-            }
-        }
+        getSearchTeams(organizationType, team, jsonArray, searchTeams, teamManager2);
 
         if (!searchTeams.isEmpty()) {
             List<String> dates = new ArrayList<>();
@@ -3354,6 +3345,17 @@ public class MainController {
         model.addAttribute("organizationType", organizationType);
         model.addAttribute("team", team);
         return "usage_statistics";
+    }
+
+    private void getSearchTeams(@RequestParam(value = "organizationType", required = false) String organizationType, @RequestParam(value = "team", required = false) String team, JSONArray jsonArray, List<Team2> searchTeams, TeamManager2 teamManager2) {
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+            if (team != null && (team.equals(one.getId()) || (team.equals("All") && (organizationType.equals(one.getOrganisationType()) || organizationType.equals("All"))))) {
+                searchTeams.add(one);
+            }
+        }
     }
 
     @RequestMapping(value = "/admin/energy", method = RequestMethod.GET)
