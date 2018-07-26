@@ -3280,7 +3280,7 @@ public class MainController {
                                  @RequestParam(value = "organizationType", required = false) String organizationType,
                                  @RequestParam(value = "team", required = false) String team,
                                  final RedirectAttributes redirectAttributes,
-                                 HttpSession session) {
+                                 HttpSession session) throws IOException, WebServiceRuntimeException {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
@@ -3305,15 +3305,7 @@ public class MainController {
         getSearchTeams(organizationType, team, jsonArray, searchTeams, teamManager2);
 
         if (!searchTeams.isEmpty()) {
-            List<String> dates = new ArrayList<>();
-            ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
-            ZonedDateTime endZoneDateTime = convertToZonedDateTime(end);
-            while (currentZonedDateTime.isBefore(endZoneDateTime)) {
-                String date = currentZonedDateTime.format(formatter);
-                dates.add(date);
-                currentZonedDateTime = currentZonedDateTime.plusDays(1);
-            }
-            dates.add(currentZonedDateTime.format(formatter));
+            List<String> dates = getDates(start, end, formatter);
 
             Map<String, List<Long>> teamUsages = new HashMap<>();
             Long totalUsage = 0L;
@@ -3329,9 +3321,6 @@ public class MainController {
                 } catch (StartDateAfterEndDateException sde) {
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
                     return REDIRECT_TEAM_USAGE;
-                } catch (Exception e) {
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    return REDIRECT_TEAM_USAGE;
                 }
             }
             model.addAttribute("dates", dates);
@@ -3345,6 +3334,19 @@ public class MainController {
         model.addAttribute("organizationType", organizationType);
         model.addAttribute("team", team);
         return "usage_statistics";
+    }
+
+    private List<String> getDates(@RequestParam(value = "start", required = false) String start, @RequestParam(value = "end", required = false) String end, DateTimeFormatter formatter) {
+        List<String> dates = new ArrayList<>();
+        ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
+        ZonedDateTime endZoneDateTime = convertToZonedDateTime(end);
+        while (currentZonedDateTime.isBefore(endZoneDateTime)) {
+            String date = currentZonedDateTime.format(formatter);
+            dates.add(date);
+            currentZonedDateTime = currentZonedDateTime.plusDays(1);
+        }
+        dates.add(currentZonedDateTime.format(formatter));
+        return dates;
     }
 
     private void getSearchTeams(@RequestParam(value = "organizationType", required = false) String organizationType, @RequestParam(value = "team", required = false) String team, JSONArray jsonArray, List<Team2> searchTeams, TeamManager2 teamManager2) {
@@ -5191,7 +5193,8 @@ public class MainController {
         return usageInfoList;
     }
 
-    private Long getTeamUsageStatistics(Team2 team2, String start, String end, HttpEntity<String> request, List<Long> usages) throws Exception {
+    private Long getTeamUsageStatistics(Team2 team2, String start, String end, HttpEntity<String> request, List<Long> usages)
+            throws IOException, RestClientException, StartDateAfterEndDateException, WebServiceRuntimeException {
         Long usage = 0L;
         ResponseEntity responseEntity = restTemplate.exchange(properties.getUsageStat(team2.getId(), "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
         String responseBody = responseEntity.getBody().toString();
@@ -5201,13 +5204,12 @@ public class MainController {
         if (RestUtil.isError(responseEntity.getStatusCode())) {
             MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-            switch (exceptionState) {
-                case START_DATE_AFTER_END_DATE_EXCEPTION:
-                    log.warn("Get team usage : Start date after end date error");
-                    throw new StartDateAfterEndDateException(ERR_START_DATE_AFTER_END_DATE);
-                default:
-                    log.warn("Get team usage : sio or deterlab adapter connection error");
-                    throw new Exception(ERR_SERVER_OVERLOAD);
+            if (exceptionState == START_DATE_AFTER_END_DATE_EXCEPTION) {
+                log.warn("Get team usage : Start date after end date error");
+                throw new StartDateAfterEndDateException(ERR_START_DATE_AFTER_END_DATE);
+            } else {
+                log.warn("Get team usage : sio or deterlab adapter connection error");
+                throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
             }
         } else {
             log.info("Get team {} usage info : {}", team2.getName(), responseBody);
