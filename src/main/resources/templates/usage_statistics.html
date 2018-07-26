@@ -37,10 +37,11 @@
                             <label for="organizationType" class="col-sm-3 control-label" th:text="#{signup.organizationType}">Organization Type:</label>
                             <div class="col-sm-7">
                                 <select id="organizationType" class="form-control" th:name="organizationType">
-                                    <option value="Academic" th:text="#{signup.academia}">Academic</option>
-                                    <option value="Government" th:text="#{signup.government}">Government</option>
-                                    <option value="Industry" th:text="#{signup.industry}">Industry</option>
-                                    <option value="Internal" th:text="#{signup.internal}">Internal</option>
+                                    <option value="All" th:selected="${organizationType == 'All'}">[All Types]</option>
+                                    <option value="Academic" th:text="#{signup.academia}" th:selected="${organizationType == 'Academic'}">Academic</option>
+                                    <option value="Government" th:text="#{signup.government}" th:selected="${organizationType == 'Government'}">Government</option>
+                                    <option value="Industry" th:text="#{signup.industry}" th:selected="${organizationType == 'Industry'}">Industry</option>
+                                    <option value="Internal" th:text="#{signup.internal}" th:selected="${organizationType == 'Internal'}">Internal</option>
                                 </select>
                             </div>
                         </div>
@@ -48,15 +49,16 @@
                             <label for="team" class="col-sm-3 control-label">Team :</label>
                             <div class="col-sm-7">
                                 <select id="team" class="form-control" th:name="team">
+                                    <option value="All" class="Academic Government Industry Internal">[All Teams]</option>
                                     <option th:each="teamEntry : ${teamsMap}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}"
-                                            th:selected="${team == teamEntry.value.id}"></option>
+                                            th:selected="${team == teamEntry.value.id}" th:class="${teamEntry.value.organisationType}"></option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="usage" class="col-sm-3 control-label">Usage (Node x Hour) :</label>
                             <div class="col-sm-7">
-                                <span id="usage" th:text="${usage != null ? #numbers.formatDecimal(usage, 1, 'COMMA', 2, 'POINT') : ''}"></span>
+                                <span id="usage" th:text="${totalUsage != null ? #numbers.formatDecimal(totalUsage.doubleValue() / 60, 1, 'COMMA', 2, 'POINT') : ''}"></span>
                             </div>
                             <div class="col-sm-2">
                                 <button type="submit" class="btn btn-default">Query</button>
@@ -65,20 +67,22 @@
                     </fieldset>
                 </form>
                 <p>&nbsp;</p>
-                <div class="row" style="overflow-x: scroll" th:if="${usages}">
+                <div class="row" th:if="${teamUsages}">
                     <div class="col-sm-12">
                         <table id="myTable" class="display nowrap" style="width:100%">
                             <thead>
                             <tr>
-                                <th:block th:each="usage : ${usages}">
-                                    <th th:text="${#strings.substring(usage.getDate(), 5)}"></th>
+                                <th></th>
+                                <th:block th:each="date : ${dates}">
+                                    <th th:text="${#strings.substring(date, 5)}"></th>
                                 </th:block>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <th:block th:each="usage : ${usages}">
-                                    <td th:text="${#numbers.formatDecimal(usage.getUsageInHours(), 1, 'COMMA', 2, 'POINT')}"></td>
+                            <tr th:each="usage : ${teamUsages}">
+                                <td th:text="${usage.key}"></td>
+                                <th:block th:each="val : ${usage.value}">
+                                    <td th:text="${#numbers.formatDecimal(val.doubleValue() / 60, 1, 'COMMA', 2, 'POINT')}"></td>
                                 </th:block>
                             </tr>
                             </tbody>
@@ -115,6 +119,15 @@
         <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
         <script>
             // <![CDATA[
+            $('#organizationType').change(function () {
+                if ($(this).val() == 'All') {
+                    $('#team').children().show();
+                } else {
+                    $('#team').children().hide();
+                    $('#team').children("." + $(this).val()).show();
+                }
+            });
+
             var buttonCommon = {
                 exportOptions: {
                     format: {
@@ -133,9 +146,7 @@
                 });
                 $('#myTable').DataTable({
                     scrollX: true,
-                    searching: false,
-                    paging: false,
-                    dom: "B",
+                    dom: "Bfrtip",
                     buttons: [
                         $.extend( true, {}, buttonCommon, {
                             extend: 'copyHtml5'

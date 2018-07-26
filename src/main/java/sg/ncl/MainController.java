@@ -3300,58 +3300,58 @@ public class MainController {
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
         JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
 
+        List<Team2> searchTeams = new ArrayList<>();
         TeamManager2 teamManager2 = new TeamManager2();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             Team2 one = extractTeamInfo(jsonObject.toString());
             teamManager2.addTeamToTeamMap(one);
+            if (team != null) {
+                if (team.equals(one.getId()) || (team.equals("All") && (organizationType.equals(one.getOrganisationType()) || organizationType.equals("All")))) {
+                    searchTeams.add(one);
+                }
+            }
         }
 
-        if (team != null) {
-            try {
-                responseEntity = restTemplate.exchange(properties.getUsageStat(team, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
-            } catch (RestClientException rce) {
-                log.warn("Error connecting to sio analytics service for team usage: {}", rce);
-                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                return REDIRECT_TEAM_USAGE;
+        if (!searchTeams.isEmpty()) {
+            List<String> dates = new ArrayList<>();
+            ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
+            ZonedDateTime endZoneDateTime = convertToZonedDateTime(end);
+            while (currentZonedDateTime.isBefore(endZoneDateTime)) {
+                String date = currentZonedDateTime.format(formatter);
+                dates.add(date);
+                currentZonedDateTime = currentZonedDateTime.plusDays(1);
             }
+            dates.add(currentZonedDateTime.format(formatter));
 
-            String responseBody = responseEntity.getBody().toString();
-            jsonArray = new JSONArray(responseBody);
-
-            // handling exceptions from SIO
-            if (RestUtil.isError(responseEntity.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-                switch (exceptionState) {
-                    case START_DATE_AFTER_END_DATE_EXCEPTION:
-                        log.warn("Get team usage : Start date after end date error");
-                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
-                        return REDIRECT_TEAM_USAGE;
-                    default:
-                        log.warn("Get team usage : sio or deterlab adapter connection error");
-                        redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                        return REDIRECT_TEAM_USAGE;
+            Map<String, List<Long>> teamUsages = new HashMap<>();
+            Long totalUsage = 0L;
+            for (Team2 team2 : searchTeams) {
+                try {
+                    List<Long> usages = new ArrayList<>();
+                    totalUsage += getTeamUsageStatistics(team2, start, end, request, usages);
+                    teamUsages.put(team2.getName(), usages);
+                } catch (RestClientException rce) {
+                    log.warn("Error connecting to sio analytics service for team usage: {}", rce);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    return REDIRECT_TEAM_USAGE;
+                } catch (StartDateAfterEndDateException sde) {
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
+                    return REDIRECT_TEAM_USAGE;
+                } catch (Exception e) {
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    return REDIRECT_TEAM_USAGE;
                 }
-            } else {
-                log.info("Get team usage info : {}", responseBody);
-                ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
-                List<DayUsage> dayUsages = new ArrayList<>();
-                Long usage = 0L;
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    Long mins = jsonArray.getLong(i);
-                    dayUsages.add(new DayUsage(currentZonedDateTime.format(formatter), mins));
-                    usage += mins;
-                    currentZonedDateTime = currentZonedDateTime.plusDays(1);
-                }
-                model.addAttribute("usages", dayUsages);
-                model.addAttribute("usage", usage.doubleValue() / 60);
             }
+            model.addAttribute("dates", dates);
+            model.addAttribute("teamUsages", teamUsages);
+            model.addAttribute("totalUsage", totalUsage);
         }
 
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("start", start);
         model.addAttribute("end", end);
+        model.addAttribute("organizationType", organizationType);
         model.addAttribute("team", team);
         return "usage_statistics";
     }
@@ -5189,6 +5189,34 @@ public class MainController {
         return usageInfoList;
     }
 
+    private Long getTeamUsageStatistics(Team2 team2, String start, String end, HttpEntity<String> request, List<Long> usages) throws Exception {
+        Long usage = 0L;
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getUsageStat(team2.getId(), "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+        String responseBody = responseEntity.getBody().toString();
+        JSONArray jsonArray = new JSONArray(responseBody);
+
+        // handling exceptions from SIO
+        if (RestUtil.isError(responseEntity.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            switch (exceptionState) {
+                case START_DATE_AFTER_END_DATE_EXCEPTION:
+                    log.warn("Get team usage : Start date after end date error");
+                    throw new StartDateAfterEndDateException(ERR_START_DATE_AFTER_END_DATE);
+                default:
+                    log.warn("Get team usage : sio or deterlab adapter connection error");
+                    throw new Exception(ERR_SERVER_OVERLOAD);
+            }
+        } else {
+            log.info("Get team {} usage info : {}", team2.getName(), responseBody);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                Long mins = jsonArray.getLong(i);
+                usages.add(mins);
+                usage += mins;
+            }
+        }
+        return usage;
+    }
 
     private String getUsageStatisticsByTeamId(String id) {
         log.info("Getting usage statistics for team {}", id);
