@@ -182,6 +182,11 @@
             var BORDERSIZE = 20;
             var $nodes = jQuery('#paintarea').children();
 
+            if ($nodes.length <= 0) {
+                alert("There is no diagram to export.");
+                return;
+            }
+
             // Find offset and bounds
             var left = Infinity;
             var top = Infinity;
@@ -216,8 +221,8 @@
                                     (jQuery(node).css('zIndex') != '5000' && 
                                     jQuery(node).css('zIndex') != '10000'));
                     },
-                    width: right - left + BORDERSIZE*2,
-                    height: bottom - top + BORDERSIZE*2,
+                    width: (right - left + BORDERSIZE*2) * window.devicePixelRatio,
+                    height: (bottom - top + BORDERSIZE*2) * window.devicePixelRatio,
                     bgcolor: 'white',
                 })
                 .then(function(dataUrl) {
