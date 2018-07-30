@@ -86,6 +86,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/" + id;
     }
 
+    public String resetKeyStudent(String uid){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/" + uid + "/keys";
+    }
+
     //-------------------------------------
     // REGISTRATIONS
     //-------------------------------------
@@ -117,6 +121,11 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + TEAMS + teamId + "/members/" + userId;
     }
 
+    public String addStudentsByEmail(String teamId){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + TEAMS + teamId + "/students";
+    }
+
+
     //-------------------------------------
     // TEAMS
     //-------------------------------------
@@ -147,6 +156,10 @@ public class ConnectionProperties {
 
     public String removeUserFromTeam(String teamId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/members";
+    }
+
+    public String changePasswordStudent(String uid){
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + uid + "/studentInfo";
     }
 
     //-------------------------------------
@@ -382,6 +395,7 @@ public class ConnectionProperties {
     public String getPasswordResetURI() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/password";
     }
+
 
     //-------------------------------------
     // DATA RESOURCE UPLOAD

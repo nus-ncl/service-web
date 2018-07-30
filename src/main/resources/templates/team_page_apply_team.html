@@ -14,9 +14,11 @@
                     <div class="row dashpanel">
                 <h2  class="team-heading team-heading-current-team" th:text="#{teamPageApply.header}">Apply for a New Team</h2>
                  <p>&nbsp;</p>
+
                 <div th:if="${message}">
                     <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
                 </div>
+
                 <form  method="post" action="#" th:action="@{/teams/apply_team}" th:object="${teamPageApplyTeamForm}" role="form">
                     <fieldset>
                         <div class="form-group">
@@ -36,6 +38,11 @@
                                 <option value="Government" th:text="#{signup.government}">Government</option>
                                 <option value="Industry" th:text="#{signup.industry}">Industry</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label><input type="checkbox" th:field="*{isClass}"/><strong><span th:text="#{signup.class}">Class</span></strong><em><span>This is a Class project</span></em></label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <span class="text-danger" th:if="${#fields.hasErrors('isPublic')}" th:errors="*{isPublic}">Public or Private</span>
