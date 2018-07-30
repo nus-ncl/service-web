@@ -123,16 +123,16 @@ Node.prototype.addAnnotation = function(aForWhat, aText, aAnnX, aAnnY) {
 
 	
 	//var textarea = '<div id="'+obj.id+'_editor" style="position: absolute; left:'+this.getX()+'; top:' + this.getY() +'"><textarea id="'+obj.id+'_edit" name="'+obj.id+'" rows="4" cols="60">'+obj.innerHTML+'</textarea>';
-	var textarea = '<div id="'+obj.id+'_editor" style="position: fixed; z-index:99999; left:'+this.getX()+'; top:' + this.getY() +'"><input type="text" id="'+obj.id+'_edit" name="'+obj.id+'" value="'+obj.innerHTML+'"></input>';
+	var textarea = '<div id="'+obj.id+'_modal" style="position:fixed;left:0;top:0;right:0;bottom:0;z-index:99998;"></div><div id="'+obj.id+'_editor" style="position: fixed; z-index:99999; left:'+this.getX()+'; top:' + this.getY() +'"><input type="text" id="'+obj.id+'_edit" name="'+obj.id+'" value="'+obj.innerHTML+'"></input>';
 	var button	 = '<div><input id="'+obj.id+'_save" type="button" value="SAVE" /> OR <input id="'+obj.id+'_cancel" type="button" value="CANCEL" /></div></div>';
 	
 	new Insertion.After(obj, textarea+button);
 	$(obj.id+'_edit').focus();
 	$(obj.id+'_edit').select();
 		
-	Event.observe(obj.id+'_save', 'click', function(){aThat.setText($F(obj.id+'_edit'));Element.remove(obj.id+'_editor'); Element.show(obj);}, false);
-	Event.observe(obj.id+'_cancel', 'click', function(){Element.remove(obj.id+'_editor'); Element.show(obj);}, false);
-        Event.observe(obj.id+'_edit', 'keydown', function(event) { var key = event.which || event.keyCode;if(key==13) { aThat.setText($F(obj.id+'_edit'));Element.remove(obj.id+'_editor'); Element.show(obj);}}, false);
+	Event.observe(obj.id+'_save', 'click', function(){aThat.setText($F(obj.id+'_edit'));Element.remove(obj.id+'_editor');Element.remove(obj.id+'_modal'); Element.show(obj);}, false);
+	Event.observe(obj.id+'_cancel', 'click', function(){Element.remove(obj.id+'_editor');Element.remove(obj.id+'_modal'); Element.show(obj);}, false);
+        Event.observe(obj.id+'_edit', 'keydown', function(event) { var key = event.which || event.keyCode;if(key==13) { aThat.setText($F(obj.id+'_edit'));Element.remove(obj.id+'_editor');Element.remove(obj.id+'_modal'); Element.show(obj);}}, false);
   }
   ann.onDoubleClick=function(){
     this.doEdit();
