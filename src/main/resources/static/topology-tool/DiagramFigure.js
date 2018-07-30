@@ -123,7 +123,7 @@ Node.prototype.addAnnotation = function(aForWhat, aText, aAnnX, aAnnY) {
 
 	
 	//var textarea = '<div id="'+obj.id+'_editor" style="position: absolute; left:'+this.getX()+'; top:' + this.getY() +'"><textarea id="'+obj.id+'_edit" name="'+obj.id+'" rows="4" cols="60">'+obj.innerHTML+'</textarea>';
-	var textarea = '<div id="'+obj.id+'_editor" style="position: absolute; z-index:99999; left:'+this.getX()+'; top:' + this.getY() +'"><input type="text" id="'+obj.id+'_edit" name="'+obj.id+'" value="'+obj.innerHTML+'"></input>';
+	var textarea = '<div id="'+obj.id+'_editor" style="position: fixed; z-index:99999; left:'+this.getX()+'; top:' + this.getY() +'"><input type="text" id="'+obj.id+'_edit" name="'+obj.id+'" value="'+obj.innerHTML+'"></input>';
 	var button	 = '<div><input id="'+obj.id+'_save" type="button" value="SAVE" /> OR <input id="'+obj.id+'_cancel" type="button" value="CANCEL" /></div></div>';
 	
 	new Insertion.After(obj, textarea+button);
