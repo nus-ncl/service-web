@@ -47,6 +47,7 @@
     <script th:src="@{~/topology-tool/MyOutputPort.js}"></script>
     <script th:src="@{~/topology-tool/JSONSerializer.js}"></script>
     <script th:src="@{~/topology-tool/DiagramFigure.js}"></script>
+    <script th:src="@{~/topology-tool/dom-to-image.min.js}"></script>
 
     <script type="text/javascript" th:src="@{~/topology-tool/adapter/prototype/prototype.js}"></script>
     <script type="text/javascript" th:src="@{~/js/jquery.min.js}"></script>
@@ -170,6 +171,80 @@
             loadJSONtext(document.getElementById('json_text').value);
         }
 
+        // To enable function click() in Firefox
+        HTMLElement.prototype.click = function() {
+            var evt = this.ownerDocument.createEvent('MouseEvents');
+            evt.initMouseEvent('click', true, true, this.ownerDocument.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+            this.dispatchEvent(evt);
+        }
+
+        function doExportDiagramToImage() {
+            var BORDERSIZE = 20;
+            var $nodes = jQuery('#paintarea').children();
+
+            if ($nodes.length <= 0) {
+                alert("There is no diagram to export.");
+                return;
+            }
+
+            // Find offset and bounds
+            var left = Infinity;
+            var top = Infinity;
+            var right = 0;
+            var bottom = 0;
+            $nodes.each(function(index, node) {
+                var $node = jQuery(node);
+                var zIndex = $node.css('zIndex');
+                // Calculate bounds for all nodes except line groups
+                if (zIndex != '20') {
+                    var pos = $node.position();
+                    var posRight = pos.left + $node[0].scrollWidth;
+                    var posBottom = pos.top + $node[0].scrollHeight;
+                    left = (pos.left < left) ? pos.left : left;
+                    top = (pos.top < top) ? pos.top : top;
+                    right = (posRight > right) ? posRight : right;
+                    bottom = (posBottom > bottom) ? posBottom : bottom;
+                }
+            });
+
+            // Offset all nodes to origin
+            $nodes.each(function(index, node) {
+                var $node = jQuery(node);
+                var pos = $node.position();
+                $node.css({ left: pos.left - left + BORDERSIZE, top: pos.top - top + BORDERSIZE });
+            });
+
+            domtoimage.toJpeg(document.getElementById('paintarea'), { 
+                    filter: function(node) {
+                        // Exclude link anchor points
+                        return (node.tagName !== 'DIV' || 
+                                    (jQuery(node).css('zIndex') != '5000' && 
+                                    jQuery(node).css('zIndex') != '10000'));
+                    },
+                    width: (right - left + BORDERSIZE*2) * window.devicePixelRatio,
+                    height: (bottom - top + BORDERSIZE*2) * window.devicePixelRatio,
+                    bgcolor: 'white',
+                })
+                .then(function(dataUrl) {
+                    // Download as image
+                    var link = document.createElement('a');
+                    link.download = 'network-diagram.jpg';
+                    link.href = dataUrl;
+                    link.click();
+                })
+                .catch(function(error) {
+                    console.error('Oops, something went wrong!', error);
+                })
+                .finally(function() {
+                    // Revert the offset from origin
+                    $nodes.each(function(index, node) {
+                        var $node = jQuery(node);
+                        var pos = $node.position();
+                        $node.css({ left: pos.left + left - BORDERSIZE, top: pos.top + top - BORDERSIZE });
+                    });
+                });
+        }
+
         function debug(message) {
             console.log(message);
         }
@@ -224,6 +299,12 @@
                         <li><a href="#" onclick="doLoadJSON();"><i class="fa fa-upload"></i> Load</a></li>
                         <li><a href="#" onclick="doSaveJSON();"><i class="fa fa-download"></i> Save</a></li>
                         <li><a href="#" onclick="doSendJSON();"><i class="fa fa-cloud-upload"></i> Analyze</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Export <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" onclick="doExportDiagramToImage();"><i class="fa fa-file-image-o"></i> Diagram As Image (.JPG)</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
