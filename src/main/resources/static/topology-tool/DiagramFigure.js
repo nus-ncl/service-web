@@ -150,9 +150,13 @@ Node.prototype.addAnnotation = function(aForWhat, aText, aAnnX, aAnnY) {
       Element.remove(obj.id+'_modal');
       Element.show(obj);
     }
-    Event.observe(obj.id+'_save', 'click', function(){finishAnnEdit(aThat, obj, forWhatType, true);}, false);
-    Event.observe(obj.id+'_cancel', 'click', function(){finishAnnEdit(aThat, obj, forWhatType, false);}, false);
-    Event.observe(obj.id+'_edit', 'keydown', function(event) { var key = event.which || event.keyCode; if(key==13){finishAnnEdit(aThat, obj, forWhatType, true);} else if(key==27){finishAnnEdit(aThat, obj, forWhatType, false);} }, false);
+    Event.observe(obj.id+'_save', 'click', function(){ finishAnnEdit(aThat, obj, forWhatType, true); }, false);
+    Event.observe(obj.id+'_cancel', 'click', function(){ finishAnnEdit(aThat, obj, forWhatType, false); }, false);
+    Event.observe(obj.id+'_editor', 'keydown', function(event) { 
+      var key = event.which || event.keyCode; 
+      if (key==13) { finishAnnEdit(aThat, obj, forWhatType, true); }
+      else if (key==27) { finishAnnEdit(aThat, obj, forWhatType, false); }
+    }, false);
   }
   ann.onDoubleClick=function(){
     this.doEdit();
