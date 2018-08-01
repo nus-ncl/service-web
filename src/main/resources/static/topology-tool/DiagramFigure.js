@@ -116,23 +116,43 @@ Node.prototype.addAnnotation = function(aForWhat, aText, aAnnX, aAnnY) {
     }
   };
   ann.doEdit=function(){
-        var obj = this.html;
-        var aThat = this;
-	Element.hide(obj);
-        workflow.setCurrentSelection(null);
+    var obj = this.html;
+    var aThat = this;
+    Element.hide(obj);
+    workflow.setCurrentSelection(null);
 
-	
-	//var textarea = '<div id="'+obj.id+'_editor" style="position: absolute; left:'+this.getX()+'; top:' + this.getY() +'"><textarea id="'+obj.id+'_edit" name="'+obj.id+'" rows="4" cols="60">'+obj.innerHTML+'</textarea>';
-	var textarea = '<div id="'+obj.id+'_modal" style="position:fixed;left:0;top:0;right:0;bottom:0;z-index:99998;"></div><div id="'+obj.id+'_editor" style="position: fixed; z-index:99999; left:'+this.getX()+'; top:' + this.getY() +'"><input type="text" id="'+obj.id+'_edit" name="'+obj.id+'" value="'+obj.innerHTML+'"></input>';
-	var button	 = '<div><input id="'+obj.id+'_save" type="button" value="SAVE" /> OR <input id="'+obj.id+'_cancel" type="button" value="CANCEL" /></div></div>';
-	
-	new Insertion.After(obj, textarea+button);
-	$(obj.id+'_edit').focus();
-	$(obj.id+'_edit').select();
-		
-	Event.observe(obj.id+'_save', 'click', function(){aThat.setText($F(obj.id+'_edit'));Element.remove(obj.id+'_editor');Element.remove(obj.id+'_modal'); Element.show(obj);}, false);
-	Event.observe(obj.id+'_cancel', 'click', function(){Element.remove(obj.id+'_editor');Element.remove(obj.id+'_modal'); Element.show(obj);}, false);
-        Event.observe(obj.id+'_edit', 'keydown', function(event) { var key = event.which || event.keyCode;if(key==13) { aThat.setText($F(obj.id+'_edit'));Element.remove(obj.id+'_editor');Element.remove(obj.id+'_modal'); Element.show(obj);}}, false);
+    var forWhatType = ANN_FORWHAT_TYPES.UNKNOWN;
+    if (aThat.forWhat.type == 'DiagramFigure') {
+      if (aThat.forWhat.subtype == 'cloud_filled') {
+        forWhatType = ANN_FORWHAT_TYPES.CLOUD;
+      } else {
+        forWhatType = ANN_FORWHAT_TYPES.NODE;
+      }
+    } else if (aThat.forWhat.type == 'MyInputPort') {
+      forWhatType = ANN_FORWHAT_TYPES.PORT;
+    }
+
+    var modal = '<div id="'+obj.id+'_modal" style="position:fixed;left:0;top:0;right:0;bottom:0;z-index:99998;"></div>';
+    //var textarea = '<div id="'+obj.id+'_editor" style="position: absolute; left:'+this.getX()+'; top:' + this.getY() +'"><textarea id="'+obj.id+'_edit" name="'+obj.id+'" rows="4" cols="60">'+obj.innerHTML+'</textarea>';
+    var textarea = '<div id="'+obj.id+'_editor" style="position: fixed; z-index:99999; left:'+this.getX()+'; top:' + this.getY() +'">' + annTextToFormInputs(obj.innerHTML, obj.id, forWhatType);
+    var button	 = '<div><input id="'+obj.id+'_save" type="button" value="SAVE" /> OR <input id="'+obj.id+'_cancel" type="button" value="CANCEL" /></div></div>';
+
+    new Insertion.After(obj, modal+textarea+button);
+    $(obj.id+'_edit').focus();
+    $(obj.id+'_edit').select();
+
+    function finishAnnEdit(aThat, obj, forWhatType, isSave) {
+      if (isSave) {
+        annText = annFormInputsToText(obj.id, forWhatType);
+        aThat.setText(annText);
+      }
+      Element.remove(obj.id+'_editor');
+      Element.remove(obj.id+'_modal');
+      Element.show(obj);
+    }
+    Event.observe(obj.id+'_save', 'click', function(){finishAnnEdit(aThat, obj, forWhatType, true);}, false);
+    Event.observe(obj.id+'_cancel', 'click', function(){finishAnnEdit(aThat, obj, forWhatType, false);}, false);
+    Event.observe(obj.id+'_edit', 'keydown', function(event) { var key = event.which || event.keyCode; if(key==13){finishAnnEdit(aThat, obj, forWhatType, true);} else if(key==27){finishAnnEdit(aThat, obj, forWhatType, false);} }, false);
   }
   ann.onDoubleClick=function(){
     this.doEdit();
@@ -141,6 +161,147 @@ Node.prototype.addAnnotation = function(aForWhat, aText, aAnnX, aAnnY) {
   this.annotations.push(ann);
   workflow.addFigure(ann,this.getX() + ann.DX,this.getY() + ann.DY);
   return ann;
+}
+
+var ANN_FORWHAT_TYPES = {
+  UNKNOWN: 0,
+  NODE: 1,
+  CLOUD: 2,
+  PORT: 3
+}
+
+function annTextToFormInputs(text, id, forWhatType) {
+  var forminputs = '<input type="text" id="'+id+'_edit" value="'+text+'">';
+  if (forWhatType == ANN_FORWHAT_TYPES.NODE) {
+    var nparts = text.split(";");
+    var name = "";
+    var install = [];
+    var run = [];
+    var box = "";
+    var forward = false;
+    for (i = 0; i < nparts.length; i++) {
+      npart = nparts[i].trim();
+      if (npart.startsWith("install.")) {
+        install.push(npart.substr(8));
+      } else if (npart.startsWith("run:")) {
+        run.push(npart.substr(4).trim());
+      } else if (npart.startsWith("box:")) {
+        box = npart.substr(4).trim();
+      } else if (npart.toLowerCase() == "forward") {
+        forward = true;
+      } else {  // name?
+        if (name == "") {
+          name = npart;
+        } else {
+          debug("Error: cannot recognize " + npart + " from annotation");
+        }
+      }
+    }
+    forminputs =
+      '<div class="form-group><label for="'+id+'_edit">Name</label>&nbsp;<input type="text" id="'+id+'_edit" value="'+name+'" placeholder="node1"></div>' +
+      '<div class="form-group><label for="'+id+'_install">Install</label>&nbsp;<input type="text" id="'+id+'_install" value="'+install.join(", ")+'" placeholder="splunk, web"></div>' +
+      '<div class="form-group><label for="'+id+'_run">Run</label>&nbsp;<input type="text" id="'+id+'_run" value="'+run.join(", ")+'" placeholder="ls, hostname"></div>' +
+      '<div class="form-group><label for="'+id+'_box">Box</label>&nbsp;<input type="text" id="'+id+'_box" value="'+box+'" placeholder="bento/ubuntu-16.04"></div>' +
+      '<div class="form-group><label for="'+id+'_forward">Forward</label>&nbsp;<input type="checkbox" id="'+id+'_forward"' + (forward ? 'checked="checked"' : '') + '></div>';
+  } else if (forWhatType == ANN_FORWHAT_TYPES.CLOUD) {
+    var nparts = text.split(";");
+    var name = "";
+    var reserve = "";
+    for (i = 0; i < nparts.length; i++) {
+      npart = nparts[i].trim();
+      if (npart.startsWith("reserve:")) {
+        reserve = npart.substr(8).trim();
+      } else {  // name?
+        if (name == "") {
+          name = npart;
+        } else {
+          debug("Error: cannot recognize " + npart + " from annotation");
+        }
+      }
+    }
+    forminputs =
+      '<div class="form-group><label for="'+id+'_edit">Name</label>&nbsp;<input type="text" id="'+id+'_edit" value="'+name+'" placeholder="exp1.teamname"></div>' +
+      '<div class="form-group><label for="'+id+'_reserve">Reserve</label>&nbsp;<input type="text" id="'+id+'_reserve" value="'+reserve+'" placeholder="pc18h, pc4a"></div>';
+  } else if (forWhatType == ANN_FORWHAT_TYPES.PORT) {
+    var nparts = text.split(";");
+    var ipaddress = "";
+    var bridge = false;
+    var nat = [];
+    for (i = 0; i < nparts.length; i++) {
+      npart = nparts[i].trim();
+      if (npart.startsWith("NAT:")) {
+        nat.push(npart.substr(4));
+      } else {
+        var nbridge = npart.indexOf("bridge");
+        if (nbridge >= 0) {
+          bridge = true;
+          ipaddress = npart.substring(0, nbridge).trim();
+        } else {
+          ipaddress = npart;
+        }
+      }
+    }
+    forminputs =
+      '<div class="form-group><label for="'+id+'_edit">IP Address</label>&nbsp;<input type="text" id="'+id+'_edit" value="'+ipaddress+'" placeholder="172.16.1.1"></div>' +
+      '<div class="form-group><label for="'+id+'_bridge">Bridge</label>&nbsp;<input type="checkbox" id="'+id+'_bridge"' + (bridge ? 'checked="checked"' : '') + '></div>' +
+      '<div class="form-group><label for="'+id+'_nat">NAT</label>&nbsp;<input type="text" id="'+id+'_nat" value="'+nat+'" placeholder="-A PREROUTING -p tcp -d 172.16.20.2 --dport 80 -j DNAT --to-destination 172.16.2.2"></div>';
+  }
+  return forminputs;
+}
+
+function annFormInputsToText(id, forWhatType) {
+  var ann = [];
+  if (forWhatType == ANN_FORWHAT_TYPES.NODE) {
+    var name = $F(id+'_edit').trim();
+    var install = $F(id+'_install').split(",");
+    var run = $F(id+'_run').split(",");
+    var box = $F(id+'_box').trim();
+    var forward = $(id+'_forward').checked;
+    ann.push(name);
+    for (i = 0; i < install.length; i++) {
+      part = install[i].trim();
+      if (part.length > 0) {
+        ann.push("install." + part);
+      }
+    }
+    for (i = 0; i < run.length; i++) {
+      part = run[i].trim();
+      if (part.length > 0) {
+        ann.push("run: " + part);
+      }
+    }
+    if (box.length > 0) {
+      ann.push("box: " + box);
+    }
+    if (forward == true) {
+      ann.push("forward");
+    }
+  } else if (forWhatType == ANN_FORWHAT_TYPES.CLOUD) {
+    var name = $F(id+'_edit').trim();
+    var reserve = $F(id+'_reserve').trim();
+    ann.push(name);
+    if (reserve.length > 0) {
+      ann.push("reserve: " + reserve);
+    }
+  } else if (forWhatType == ANN_FORWHAT_TYPES.PORT) {
+    var ipaddress = $F(id+'_edit').trim();
+    var bridge = $(id+'_bridge').checked;
+    var nat = $F(id+'_nat').split(",");
+    if (bridge == true) {
+      ann.push(ipaddress + " bridge");
+    } else {
+      ann.push(ipaddress);
+    }
+    for (i = 0; i < nat.length; i++) {
+      part = nat[i].trim();
+      if (part.length > 0) {
+        ann.push("NAT: " + part);
+      }
+    }
+  } else {
+    ann.push($F(id+'_edit').trim());
+  }
+  return ann.join("; ");
 }
 
 DiagramFigure=function(){
@@ -334,4 +495,3 @@ if(oThis.inputPort8.annotation != undefined)
 }));
 return menu;
 };
-
