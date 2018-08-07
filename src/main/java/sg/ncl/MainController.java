@@ -3284,15 +3284,24 @@ public class MainController {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime nowDate = ZonedDateTime.now();
+        String now = nowDate.format(formatter);
         if (start == null) {
-            ZonedDateTime startDate = now.with(firstDayOfMonth());
+            ZonedDateTime startDate = nowDate.with(firstDayOfMonth());
+            if (nowDate.getDayOfMonth() == 1) {
+                startDate = startDate.minusMonths(1);
+            }
             start = startDate.format(formatter);
         }
         if (end == null) {
-            ZonedDateTime endDate = now.with(lastDayOfMonth());
+            ZonedDateTime endDate = nowDate.minusDays(1);
             end = endDate.format(formatter);
+        }
+        if (now.compareTo(start) <= 0 || now.compareTo(end) <= 0) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Period selected is on or beyond current date (today).");
+            return REDIRECT_TEAM_USAGE;
         }
 
         // get list of teamids
@@ -3336,7 +3345,7 @@ public class MainController {
         return "usage_statistics";
     }
 
-    private List<String> getDates(@RequestParam(value = "start", required = false) String start, @RequestParam(value = "end", required = false) String end, DateTimeFormatter formatter) {
+    private List<String> getDates(String start, String end, DateTimeFormatter formatter) {
         List<String> dates = new ArrayList<>();
         ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
         ZonedDateTime endZoneDateTime = convertToZonedDateTime(end);
@@ -3349,7 +3358,7 @@ public class MainController {
         return dates;
     }
 
-    private void getSearchTeams(@RequestParam(value = "organizationType", required = false) String organizationType, @RequestParam(value = "team", required = false) String team, JSONArray jsonArray, List<Team2> searchTeams, TeamManager2 teamManager2) {
+    private void getSearchTeams(String organizationType, String team, JSONArray jsonArray, List<Team2> searchTeams, TeamManager2 teamManager2) {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             Team2 one = extractTeamInfo(jsonObject.toString());
