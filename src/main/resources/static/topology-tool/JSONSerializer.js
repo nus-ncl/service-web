@@ -165,11 +165,12 @@ JSONSerializer.prototype.fromJSON=function(js)
         tports[j].setPosition(ports[j]['x'], ports[j]['y']);
         tports[j].setOrigin(ports[j]['x'], ports[j]['y']);
       } else {
-        var aPort = new MyInputPort();
-	aPort.setWorkflow(fig.getWorkflow());
-	fig.addPort(aPort, ports[j]['x'], ports[j]['y']);
-	Port.prototype.paint.call(aPort);
-        tports.push(aPort);
+        tports[j] = new MyInputPort();
+        tports[j].setWorkflow(workflow);
+        tports[j].id = ports[j]['id'];
+        obj.addPort(tports[j], ports[j]['x'], ports[j]['y']);
+        obj.inputPort.push(tports[j]);
+        Port.prototype.paint.call(tports[j]);
       }
       allPorts[tports[j].id] = tports[j];
       idx[tports[j].id] = tports[j];
