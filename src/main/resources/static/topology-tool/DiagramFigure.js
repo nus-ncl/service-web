@@ -185,7 +185,7 @@ function annTextToFormInputs(text, id, forWhatType) {
     var run = [];
     var box = "";
     var forward = false;
-    for (i = 0; i < nparts.length; i++) {
+    for (var i = 0; i < nparts.length; i++) {
       npart = nparts[i].trim();
       if (npart.startsWith("install.")) {
         install.push(npart.substr(8));
@@ -213,7 +213,7 @@ function annTextToFormInputs(text, id, forWhatType) {
     var nparts = text.split(";");
     var name = "";
     var reserve = "";
-    for (i = 0; i < nparts.length; i++) {
+    for (var i = 0; i < nparts.length; i++) {
       npart = nparts[i].trim();
       if (npart.startsWith("reserve:")) {
         reserve = npart.substr(8).trim();
@@ -233,7 +233,7 @@ function annTextToFormInputs(text, id, forWhatType) {
     var ipaddress = "";
     var bridge = false;
     var nat = [];
-    for (i = 0; i < nparts.length; i++) {
+    for (var i = 0; i < nparts.length; i++) {
       npart = nparts[i].trim();
       if (npart.startsWith("NAT:")) {
         nat.push(npart.substr(4));
@@ -264,13 +264,13 @@ function annFormInputsToText(id, forWhatType) {
     var box = $F(id+'_box').trim();
     var forward = $(id+'_forward').checked;
     ann.push(name);
-    for (i = 0; i < install.length; i++) {
+    for (var i = 0; i < install.length; i++) {
       part = install[i].trim();
       if (part.length > 0) {
         ann.push("install." + part);
       }
     }
-    for (i = 0; i < run.length; i++) {
+    for (var i = 0; i < run.length; i++) {
       part = run[i].trim();
       if (part.length > 0) {
         ann.push("run: " + part);
@@ -298,7 +298,7 @@ function annFormInputsToText(id, forWhatType) {
     } else {
       ann.push(ipaddress);
     }
-    for (i = 0; i < nat.length; i++) {
+    for (var i = 0; i < nat.length; i++) {
       part = nat[i].trim();
       if (part.length > 0) {
         ann.push("NAT: " + part);
@@ -403,35 +403,21 @@ DiagramFigure.prototype.onDoubleClick=function(){
   }
 }
 
+// Supports up to 8 ports for now, add more if required
+var PORT_OFFSET_X = [0, 1, 0.5, 0.5, 0, 1, 0, 1];
+var PORT_OFFSET_Y = [0.5, 0.5, 0, 1, 0, 1, 1, 0];
 DiagramFigure.prototype.setWorkflow=function(_3a5c){
 ImageFigure.prototype.setWorkflow.call(this,_3a5c);
 if(_3a5c!=null&&this.inputPort==null){
-this.inputPort=new MyInputPort();
-this.inputPort.setWorkflow(_3a5c);
-this.addPort(this.inputPort,0,this.height/2);
-this.inputPort2=new MyInputPort();
-this.inputPort2.setWorkflow(_3a5c);
-this.addPort(this.inputPort2,this.width/2,0);
-this.inputPort3=new MyInputPort();
-this.inputPort3.setWorkflow(_3a5c);
-this.addPort(this.inputPort3,this.width,this.height/2);
-this.inputPort4=new MyInputPort();
-this.inputPort4.setWorkflow(_3a5c);
-this.addPort(this.inputPort4,this.width/2,this.height);
-
-this.inputPort5=new MyInputPort();
-this.inputPort5.setWorkflow(_3a5c);
-this.addPort(this.inputPort5,this.width,this.height);
-this.inputPort6=new MyInputPort();
-this.inputPort6.setWorkflow(_3a5c);
-this.addPort(this.inputPort6,0,this.height);
-this.inputPort7=new MyInputPort();
-this.inputPort7.setWorkflow(_3a5c);
-this.addPort(this.inputPort7,this.width,0);
-this.inputPort8=new MyInputPort();
-this.inputPort8.setWorkflow(_3a5c);
-this.addPort(this.inputPort8,0,0);
-
+  this.inputPort = [];
+  if (this.numOfPorts === undefined) {
+    this.numOfPorts = 8;
+  }
+  for (var i = 0; i < this.numOfPorts; i++) {
+    this.inputPort[i]=new MyInputPort();
+    this.inputPort[i].setWorkflow(_3a5c);
+    this.addPort(this.inputPort[i], this.width * PORT_OFFSET_X[i], this.height * PORT_OFFSET_Y[i]);
+  }
 this.workflow.addSelectionListener(this);
 //workflow.addFigure(this.annotation,this.getX(),this.getY());
 };
@@ -481,22 +467,11 @@ menu.appendMenuItem(new MenuItem("Delete",null,function(){
 
 workflow.commandStack.execute(new CommandDelete(oThis));
 workflow.commandStack.execute(new CommandDelete(oThis.annotation));
-if(oThis.inputPort.annotation != undefined)
-	workflow.commandStack.execute(new CommandDelete(oThis.inputPort.annotation));
-if(oThis.inputPort2.annotation != undefined)
-	workflow.commandStack.execute(new CommandDelete(oThis.inputPort2.annotation));
-if(oThis.inputPort3.annotation != undefined)
-	workflow.commandStack.execute(new CommandDelete(oThis.inputPort3.annotation));
-if(oThis.inputPort4.annotation != undefined)
-	workflow.commandStack.execute(new CommandDelete(oThis.inputPort4.annotation));
-if(oThis.inputPort5.annotation != undefined)
-	workflow.commandStack.execute(new CommandDelete(oThis.inputPort5.annotation));
-if(oThis.inputPort6.annotation != undefined)
-	workflow.commandStack.execute(new CommandDelete(oThis.inputPort6.annotation));
-if(oThis.inputPort7.annotation != undefined)
-	workflow.commandStack.execute(new CommandDelete(oThis.inputPort7.annotation));
-if(oThis.inputPort8.annotation != undefined)
-	workflow.commandStack.execute(new CommandDelete(oThis.inputPort8.annotation));
+var tports = oThis.getPorts();
+for (var i = 0; i < tports.length; i++) {
+  if(tports[i].annotation != undefined)
+  	workflow.commandStack.execute(new CommandDelete(tports[i].annotation));
+}
 //oThis.getParent().removePort(oThis);
 }));
 return menu;
