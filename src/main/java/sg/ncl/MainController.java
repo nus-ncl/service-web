@@ -3289,11 +3289,7 @@ public class MainController {
         ZonedDateTime nowDate = ZonedDateTime.now();
         String now = nowDate.format(formatter);
         if (start == null) {
-            ZonedDateTime startDate = nowDate.with(firstDayOfMonth());
-            if (nowDate.getDayOfMonth() == 1) {
-                startDate = startDate.minusMonths(1);
-            }
-            start = startDate.format(formatter);
+            start = getStartDate(formatter, nowDate);
         }
         if (end == null) {
             ZonedDateTime endDate = nowDate.minusDays(1);
@@ -3343,6 +3339,16 @@ public class MainController {
         model.addAttribute("organizationType", organizationType);
         model.addAttribute("team", team);
         return "usage_statistics";
+    }
+
+    private String getStartDate(DateTimeFormatter formatter, ZonedDateTime nowDate) {
+        String start;
+        ZonedDateTime startDate = nowDate.with(firstDayOfMonth());
+        if (nowDate.getDayOfMonth() == 1) {
+            startDate = startDate.minusMonths(1);
+        }
+        start = startDate.format(formatter);
+        return start;
     }
 
     private List<String> getDates(String start, String end, DateTimeFormatter formatter) {
