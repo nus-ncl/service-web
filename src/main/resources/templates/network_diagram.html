@@ -229,7 +229,7 @@
                 $node.css({ left: pos.left - left + BORDERSIZE, top: pos.top - top + BORDERSIZE });
             });
 
-            domtoimage.toJpeg(document.getElementById('paintarea'), { 
+            domtoimage.toPng(document.getElementById('paintarea'), {
                     filter: function(node) {
                         // Exclude link anchor points
                         return (node.tagName !== 'DIV' || 
@@ -243,7 +243,7 @@
                 .then(function(dataUrl) {
                     // Download as image
                     var link = document.createElement('a');
-                    link.download = 'network-diagram.jpg';
+                    link.download = 'network-diagram.png';
                     link.href = dataUrl;
                     link.click();
                 })
@@ -319,7 +319,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Export <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" onclick="doExportDiagramToImage();"><i class="fa fa-file-image-o"></i> Diagram As Image (.JPG)</a></li>
+                        <li><a href="#" onclick="doExportDiagramToImage();"><i class="fa fa-file-image-o"></i> Diagram As Image (.PNG)</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
