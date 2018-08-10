@@ -126,9 +126,9 @@
             addDragIconPic(aName, aWhere, aPic, aDisplay);
         }
 
-        function addLibraryIcon(aName, aDisplay) {
+        function addLibraryIcon(aName, aWhere, aDisplay) {
             if(aDisplay == undefined) aDisplay = aName;
-            addDragIcon2(aName, "icons_div", aDisplay);
+            addDragIcon2(aName, aWhere, aDisplay);
         }
 
         function createNewIconDiv(aID) {
@@ -139,6 +139,21 @@
             div.appendChild(txt);
             document.getElementById("icons_div").appendChild(div);
             return div;
+        }
+
+        function createNewCollapseIconDiv(aID, aParentID, headerText) {
+            var html =
+                '<div class="panel panel-default">\
+                    <div class="panel-heading">\
+                        <div class="panel-title">\
+                            <a data-toggle="collapse" href="#collapse-'+aID+'"><h4>'+headerText+'</h4></a>\
+                        </div>\
+                    </div>\
+                    <div id="collapse-'+aID+'" class="panel-collapse collapse in">\
+                        <div id="'+aID+'" class="panel-body"></div>\
+                    </div>\
+                </div>';
+            $j('#'+aParentID).append(html);
         }
 
         function doSendJSON() {
@@ -214,7 +229,7 @@
                 $node.css({ left: pos.left - left + BORDERSIZE, top: pos.top - top + BORDERSIZE });
             });
 
-            domtoimage.toJpeg(document.getElementById('paintarea'), { 
+            domtoimage.toPng(document.getElementById('paintarea'), {
                     filter: function(node) {
                         // Exclude link anchor points
                         return (node.tagName !== 'DIV' || 
@@ -228,7 +243,7 @@
                 .then(function(dataUrl) {
                     // Download as image
                     var link = document.createElement('a');
-                    link.download = 'network-diagram.jpg';
+                    link.download = 'network-diagram.png';
                     link.href = dataUrl;
                     link.click();
                 })
@@ -304,7 +319,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Export <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" onclick="doExportDiagramToImage();"><i class="fa fa-file-image-o"></i> Diagram As Image (.JPG)</a></li>
+                        <li><a href="#" onclick="doExportDiagramToImage();"><i class="fa fa-file-image-o"></i> Diagram As Image (.PNG)</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -398,14 +413,29 @@
     jQuery(document).ready(function ($) {
         workflow.scrollArea = document.getElementById("paint_div");
 
+        createNewCollapseIconDiv('icons-physicaldevices', 'icons_div', 'Physical Devices');
+        createNewCollapseIconDiv('icons-virtualmachines', 'icons_div', 'Virtual Machines');
+
         //addLibraryIcon('a100baset_hub');
-        addLibraryIcon('asa', 'Physical Node');
-        addLibraryIcon('cloud_filled', 'Internet');
-        addLibraryIcon('laptop', 'Kali');
-        addLibraryIcon('layer_3_switch', 'Windows 7');
-        addLibraryIcon('router', 'Router');
-        addLibraryIcon('web_server', 'Windows 10');
-        addLibraryIcon('workstation', 'Ubuntu 16');
+        addLibraryIcon('asa', 'icons-physicaldevices', 'Physical Node');
+        addLibraryIcon('cloud_filled', 'icons-physicaldevices', 'Internet');
+        addLibraryIcon('laptop', 'icons-virtualmachines', 'Kali');
+        addLibraryIcon('layer_3_switch', 'icons-virtualmachines', 'Windows 7');
+        addLibraryIcon('router', 'icons-physicaldevices', 'Router');
+        addLibraryIcon('web_server', 'icons-virtualmachines', 'Windows 10');
+        addLibraryIcon('workstation', 'icons-virtualmachines', 'Ubuntu 16');
+
+        // TEMPORARY SOLUTION: Hardcoded number of interfaces for each icon
+        // TODO: dynamically fetch a XML file from server that specifies the icon details
+        var NUM_OF_PORTS = {
+            'asa' : 3,
+            'cloud_filled' : 1,
+            'laptop' : 8,
+            'layer_3_switch' : 8,
+            'router' : 8,
+            'web_server' : 8,
+            'workstation' : 8,
+        };
 
         var droptarget = new Ext.dd.DropTarget("paint_div", {ddGroup: 'TreeDD'});
         droptarget.notifyDrop = function (dd, e, data) {
@@ -426,6 +456,7 @@
                     aFig.setDimension(aWidth, aHeight);
                     aFig.setPic(data.pic);
                     aFig.subtype = data.type;
+                    aFig.numOfPorts = NUM_OF_PORTS[data.type];
 
                     workflow.addFigure(aFig, e.xy[0] - xOffset + scrollLeft, e.xy[1] - yOffset + scrollTop);
 
