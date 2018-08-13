@@ -1804,7 +1804,7 @@ public class MainController {
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException {
 
-        final String QUOTA = "#quota";
+        final String NUMBER_QUOTA = "#quota";
         JSONObject teamQuotaJSONObject = new JSONObject();
         teamQuotaJSONObject.put(TEAM_ID, teamId);
 
@@ -1812,10 +1812,10 @@ public class MainController {
         if (!editTeamQuota.getBudget().equals("")) {
             if (Double.parseDouble(editTeamQuota.getBudget()) < 0) {
                 redirectAttributes.addFlashAttribute(EDIT_BUDGET, "negativeError");
-                return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
             } else if(Double.parseDouble(editTeamQuota.getBudget()) > 99999999.99) {
                 redirectAttributes.addFlashAttribute(EDIT_BUDGET, "exceedingLimit");
-                return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
             }
         }
 
@@ -1841,15 +1841,15 @@ public class MainController {
                     return REDIRECT_INDEX_PAGE;
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
-                    return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                    return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
                 case FORBIDDEN_EXCEPTION:
                     log.warn("Get team quota: Budget can only be updated by team owner.");
                     redirectAttributes.addFlashAttribute(EDIT_BUDGET, "editDeny");
-                    return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                    return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
                 default:
                     log.warn("Get team quota : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                    return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
             }
         }  else {
             log.info("Edit team quota info : {}", responseBody);
@@ -1865,7 +1865,7 @@ public class MainController {
         // safer to remove
         session.removeAttribute(ORIGINAL_BUDGET);
 
-        return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+        return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
     }
 
     @RequestMapping("/remove_member/{teamId}/{userId}")
@@ -4577,7 +4577,7 @@ public class MainController {
                 return true;
             }
         }
-        log.info("User: {} is viewing experiment page", loginUserId);
+        //log.info("User: {} is viewing experiment page", loginUserId);
         return false;
     }
 
@@ -5057,7 +5057,7 @@ public class MainController {
         }
 
         String result = respEntity.getBody().toString();
-        log.info(result);
+        //log.info(result);
         if (result.isEmpty() || "[]".equals(result)) {
             return new ArrayList<>();
         }
@@ -5196,8 +5196,9 @@ public class MainController {
             HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
             ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
             String teamResponseBody = teamResponse.getBody().toString();
+            Team2 team = extractTeamInfo(teamResponseBody);
 
-            if (!isMemberJoinRequestPending(userId, teamResponseBody)) {
+            if (team.getOwner().getId().equals(userId) && !isMemberJoinRequestPending(userId, teamResponseBody)) {
                 TeamUsageInfo usageInfo = new TeamUsageInfo();
                 usageInfo.setId(teamId);
                 usageInfo.setName(new JSONObject(teamResponseBody).getString("name"));

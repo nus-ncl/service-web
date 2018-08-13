@@ -20,10 +20,10 @@
                 </div>
                 <div class="panel panel-primary dashpanel">
                     <div class="alert alert-warning">
-                        <strong>Info!</strong> Use your username: <strong><span th:text="${deterUid}"></span></strong> to access the experiments' nodes.
+                        <strong>Info!</strong> Use your username <strong><span th:text="${deterUid}"></span></strong> to access the experimental nodes.
                     </div>
                     <div class="alert alert-warning">
-                        <strong>Reservation: </strong>To ensure that you always have the resources you need, you may like to make reservation ahead of time, please fill up the <a href="#" th:href="@{/orderform/download}">Reservation Form</a>.
+                        <strong>Reservation: </strong>To guarantee resource availability, you may make reservation at least one month in advance. Please fill up the <a href="#" th:href="@{/orderform/download}">Reservation Form</a>.
                     </div>
                         <!--<h2 class="team-heading team-heading-current-team" >Overview</h2>-->
                     <div class="panel-body">
@@ -44,10 +44,10 @@
 
                 <!--  team resource usage -->
                 <div class="panel panel-primary dashpanel">
-                    <h2 class="team-heading team-heading-current-team">Resource Usage Information (Current Month)</h2>
+                    <h2 class="team-heading team-heading-current-team">Resource Usage (Current Month)</h2>
                     <div class="panel-body">
                         <div th:if="${#lists.isEmpty(usageInfoList)}">
-                            <p> You are not in any teams yet. </p>
+                            <p> You are not an owner of any teams. </p>
                         </div>
                         <table class="table table-responsive" th:if="not ${#lists.isEmpty(usageInfoList)}">
                             <thead>
