@@ -125,6 +125,13 @@
 											<option value="Internal" th:text="#{signup.internal}">Internal</option>
 										</select>
 									</div>
+
+									<div class="form-group">
+										<div class="checkbox">
+											<label><input type="checkbox" th:field="*{isClass}"/><strong><span th:text="#{signup.class}">Class</span></strong><em><span>This is a Class project</span></em></label>
+										</div>
+									</div>
+
 									<div class="form-group">
 										<div class="radio">
 											<label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span>Include your team info in the <a th:href="@{/public_teams}">Public List</a> of NCL teams.</span></em></label>
@@ -182,7 +189,7 @@
 
 	// Validate email
 	function validateEmail(email){
-		var re = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		var re = /^([a-zA-Z0-9+_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 		if (re.test(document.getElementById(email).value)){
 			document.getElementById(email).style.borderBottomColor ='#fff';
 			document.getElementById(email + 'Error').style.display = "none";
