@@ -3327,14 +3327,13 @@ public class MainController {
         ZonedDateTime nowDate = ZonedDateTime.now();
         String now = nowDate.format(formatter);
         if (start == null) {
-            start = getStartDate(formatter, nowDate);
+            start = nowDate.with(firstDayOfMonth()).format(formatter);
         }
         if (end == null) {
-            ZonedDateTime endDate = nowDate.minusDays(1);
-            end = endDate.format(formatter);
+            end = now;
         }
-        if (now.compareTo(start) <= 0 || now.compareTo(end) <= 0) {
-            redirectAttributes.addFlashAttribute(MESSAGE, "Period selected is on or beyond current date (today).");
+        if (now.compareTo(start) < 0 || now.compareTo(end) < 0) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Period selected is beyond current date (today).");
             return REDIRECT_TEAM_USAGE;
         }
 
@@ -3379,6 +3378,7 @@ public class MainController {
         return "usage_statistics";
     }
 
+/*
     private String getStartDate(DateTimeFormatter formatter, ZonedDateTime nowDate) {
         String start;
         ZonedDateTime startDate = nowDate.with(firstDayOfMonth());
@@ -3388,6 +3388,7 @@ public class MainController {
         start = startDate.format(formatter);
         return start;
     }
+*/
 
     private List<String> getDates(String start, String end, DateTimeFormatter formatter) {
         List<String> dates = new ArrayList<>();
