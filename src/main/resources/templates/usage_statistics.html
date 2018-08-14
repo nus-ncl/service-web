@@ -6,6 +6,8 @@
         <object th:include="fragments/header :: header" th:remove="tag" />
 
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css"/>
     </head>
     <body class="mybg loginbackground">
         <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
@@ -13,7 +15,6 @@
         <p>&nbsp;</p>
         <p>&nbsp;</p>
         <div class="container">
-
             <p>&nbsp;</p>
             <div class="row dashpanel">
                 <div th:if="${message}">
@@ -33,28 +34,61 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="organizationType" class="col-sm-3 control-label" th:text="#{signup.organizationType}">Organization Type:</label>
+                            <div class="col-sm-7">
+                                <select id="organizationType" class="form-control" th:name="organizationType">
+                                    <option value="All" th:selected="${organizationType == 'All'}">[All Types]</option>
+                                    <option value="Academic" th:text="#{signup.academia}" th:selected="${organizationType == 'Academic'}">Academic</option>
+                                    <option value="Government" th:text="#{signup.government}" th:selected="${organizationType == 'Government'}">Government</option>
+                                    <option value="Industry" th:text="#{signup.industry}" th:selected="${organizationType == 'Industry'}">Industry</option>
+                                    <option value="Internal" th:text="#{signup.internal}" th:selected="${organizationType == 'Internal'}">Internal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="team" class="col-sm-3 control-label">Team :</label>
                             <div class="col-sm-7">
-                                <select id="team" th:name="team">
+                                <select id="team" class="form-control" th:name="team">
+                                    <option value="All" class="Academic Government Industry Internal">[All Teams]</option>
                                     <option th:each="teamEntry : ${teamsMap}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}"
-                                            th:selected="${team == teamEntry.value.id}"></option>
+                                            th:selected="${team == teamEntry.value.id}" th:class="${teamEntry.value.organisationType}"></option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="usage" class="col-sm-3 control-label">Usage (Node x Hour) :</label>
                             <div class="col-sm-7">
-                                <span id="usage" th:text="${usage != null ? usage : ''}"></span>
+                                <span id="usage" th:text="${totalUsage != null ? #numbers.formatDecimal(totalUsage.doubleValue() / 60, 1, 'COMMA', 2, 'POINT') : ''}"></span>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-10 col-sm-2">
+                            <div class="col-sm-2">
                                 <button type="submit" class="btn btn-default">Query</button>
                             </div>
                         </div>
                     </fieldset>
                 </form>
                 <p>&nbsp;</p>
+                <div class="row" th:if="${teamUsages}">
+                    <div class="col-sm-12">
+                        <table id="myTable" class="display nowrap" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th:block th:each="date : ${dates}">
+                                    <th th:text="${#strings.substring(date, 5)}"></th>
+                                </th:block>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="usage : ${teamUsages}">
+                                <td th:text="${usage.key}"></td>
+                                <th:block th:each="val : ${usage.value}">
+                                    <td th:text="${#numbers.formatDecimal(val.doubleValue() / 60, 1, 'COMMA', 2, 'POINT')}"></td>
+                                </th:block>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div> <!-- row -->
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">
@@ -78,13 +112,52 @@
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
+        <!-- script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script -->
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
         <script>
+            // <![CDATA[
+            $('#organizationType').change(function () {
+                if ($(this).val() == 'All') {
+                    $('#team').children().show();
+                } else {
+                    $('#team').children().hide();
+                    $('#team').children("." + $(this).val()).show();
+                }
+            });
+
+            var buttonCommon = {
+                exportOptions: {
+                    format: {
+                        body: function ( data, row, column, node ) {
+                            return data;
+                        }
+                    }
+                }
+            };
+
             $(document).ready(function () {
                 $('.input-daterange').datepicker({
                     clearBtn: true,
-                    format: "yyyy-mm-dd"
+                    format: "yyyy-mm-dd",
+                    orientation: "bottom"
+                });
+                $('#myTable').DataTable({
+                    scrollX: true,
+                    dom: "Bfrtip",
+                    buttons: [
+                        $.extend( true, {}, buttonCommon, {
+                            extend: 'copyHtml5'
+                        } ),
+                        $.extend( true, {}, buttonCommon, {
+                            extend: 'excelHtml5'
+                        } )
+                    ]
                 });
             });
+            // ]]>
         </script>
     </body>
 </html>

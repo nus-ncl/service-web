@@ -171,7 +171,8 @@ public class MainController {
     private static final String REDIRECT_TEAM_PROFILE_TEAM_ID = "redirect:/team_profile/{teamId}";
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
     private static final String REDIRECT_INDEX_PAGE = "redirect:/";
-    private static final String REDIRECT_ENERGY_USAGE = "redirect:/energy_usage";
+    private static final String REDIRECT_TEAM_USAGE = "redirect:/admin/usage";
+    private static final String REDIRECT_ENERGY_USAGE = "redirect:/admin/energy";
     private static final String REDIRECT_TEAMS="redirect:/teams";
     private static final String REDIRECT_APPROVE_NEW_USER = "redirect:/approve_new_user";
     private static final String REDIRECT_ADMIN = "redirect:/admin";
@@ -1837,7 +1838,7 @@ public class MainController {
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException {
 
-        final String QUOTA = "#quota";
+        final String NUMBER_QUOTA = "#quota";
         JSONObject teamQuotaJSONObject = new JSONObject();
         teamQuotaJSONObject.put(TEAM_ID, teamId);
 
@@ -1845,10 +1846,10 @@ public class MainController {
         if (!editTeamQuota.getBudget().equals("")) {
             if (Double.parseDouble(editTeamQuota.getBudget()) < 0) {
                 redirectAttributes.addFlashAttribute(EDIT_BUDGET, "negativeError");
-                return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
             } else if(Double.parseDouble(editTeamQuota.getBudget()) > 99999999.99) {
                 redirectAttributes.addFlashAttribute(EDIT_BUDGET, "exceedingLimit");
-                return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
             }
         }
 
@@ -1874,15 +1875,15 @@ public class MainController {
                     return REDIRECT_INDEX_PAGE;
                 case TEAM_QUOTA_OUT_OF_RANGE_EXCEPTION:
                     log.warn("Get team quota: Budget is out of range");
-                    return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                    return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
                 case FORBIDDEN_EXCEPTION:
                     log.warn("Get team quota: Budget can only be updated by team owner.");
                     redirectAttributes.addFlashAttribute(EDIT_BUDGET, "editDeny");
-                    return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                    return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
                 default:
                     log.warn("Get team quota : sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+                    return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
             }
         }  else {
             log.info("Edit team quota info : {}", responseBody);
@@ -1898,7 +1899,7 @@ public class MainController {
         // safer to remove
         session.removeAttribute(ORIGINAL_BUDGET);
 
-        return REDIRECT_TEAM_PROFILE + teamId + QUOTA;
+        return REDIRECT_TEAM_PROFILE + teamId + NUMBER_QUOTA;
     }
 
     @RequestMapping("/remove_member/{teamId}/{userId}")
@@ -3312,22 +3313,28 @@ public class MainController {
 
     @RequestMapping("/admin/usage")
     public String adminTeamUsage(Model model,
-                                 @RequestParam(value = "team", required = false) String team,
                                  @RequestParam(value = "start", required = false) String start,
                                  @RequestParam(value = "end", required = false) String end,
-                                 HttpSession session) {
+                                 @RequestParam(value = "organizationType", required = false) String organizationType,
+                                 @RequestParam(value = "team", required = false) String team,
+                                 final RedirectAttributes redirectAttributes,
+                                 HttpSession session) throws IOException, WebServiceRuntimeException {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime nowDate = ZonedDateTime.now();
+        String now = nowDate.format(formatter);
         if (start == null) {
-            ZonedDateTime startDate = now.with(firstDayOfMonth());
-            start = startDate.format(formatter);
+            start = nowDate.with(firstDayOfMonth()).format(formatter);
         }
         if (end == null) {
-            ZonedDateTime endDate = now.with(lastDayOfMonth());
-            end = endDate.format(formatter);
+            end = now;
+        }
+        if (now.compareTo(start) < 0 || now.compareTo(end) < 0) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Period selected is beyond current date (today).");
+            return REDIRECT_TEAM_USAGE;
         }
 
         // get list of teamids
@@ -3335,24 +3342,76 @@ public class MainController {
         ResponseEntity responseEntity = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request, String.class);
         JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
 
+        List<Team2> searchTeams = new ArrayList<>();
         TeamManager2 teamManager2 = new TeamManager2();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Team2 one = extractTeamInfo(jsonObject.toString());
-            teamManager2.addTeamToTeamMap(one);
-        }
+        getSearchTeams(organizationType, team, jsonArray, searchTeams, teamManager2);
 
-        if (team != null) {
-            responseEntity = restTemplate.exchange(properties.getUsageStat(team, "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
-            String usage = responseEntity.getBody().toString();
-            model.addAttribute("usage", usage);
+        if (!searchTeams.isEmpty()) {
+            List<String> dates = getDates(start, end, formatter);
+
+            Map<String, List<Long>> teamUsages = new HashMap<>();
+            Long totalUsage = 0L;
+            for (Team2 team2 : searchTeams) {
+                try {
+                    List<Long> usages = new ArrayList<>();
+                    totalUsage += getTeamUsageStatistics(team2, start, end, request, usages);
+                    teamUsages.put(team2.getName(), usages);
+                } catch (RestClientException rce) {
+                    log.warn("Error connecting to sio analytics service for team usage: {}", rce);
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    return REDIRECT_TEAM_USAGE;
+                } catch (StartDateAfterEndDateException sde) {
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
+                    return REDIRECT_TEAM_USAGE;
+                }
+            }
+            model.addAttribute("dates", dates);
+            model.addAttribute("teamUsages", teamUsages);
+            model.addAttribute("totalUsage", totalUsage);
         }
 
         model.addAttribute("teamsMap", teamManager2.getTeamMap());
         model.addAttribute("start", start);
         model.addAttribute("end", end);
+        model.addAttribute("organizationType", organizationType);
         model.addAttribute("team", team);
         return "usage_statistics";
+    }
+
+/*
+    private String getStartDate(DateTimeFormatter formatter, ZonedDateTime nowDate) {
+        String start;
+        ZonedDateTime startDate = nowDate.with(firstDayOfMonth());
+        if (nowDate.getDayOfMonth() == 1) {
+            startDate = startDate.minusMonths(1);
+        }
+        start = startDate.format(formatter);
+        return start;
+    }
+*/
+
+    private List<String> getDates(String start, String end, DateTimeFormatter formatter) {
+        List<String> dates = new ArrayList<>();
+        ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
+        ZonedDateTime endZoneDateTime = convertToZonedDateTime(end);
+        while (currentZonedDateTime.isBefore(endZoneDateTime)) {
+            String date = currentZonedDateTime.format(formatter);
+            dates.add(date);
+            currentZonedDateTime = currentZonedDateTime.plusDays(1);
+        }
+        dates.add(currentZonedDateTime.format(formatter));
+        return dates;
+    }
+
+    private void getSearchTeams(String organizationType, String team, JSONArray jsonArray, List<Team2> searchTeams, TeamManager2 teamManager2) {
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Team2 one = extractTeamInfo(jsonObject.toString());
+            teamManager2.addTeamToTeamMap(one);
+            if (team != null && (team.equals(one.getId()) || (team.equals("All") && (organizationType.equals(one.getOrganisationType()) || organizationType.equals("All"))))) {
+                searchTeams.add(one);
+            }
+        }
     }
 
     @RequestMapping(value = "/admin/energy", method = RequestMethod.GET)
@@ -4559,7 +4618,7 @@ public class MainController {
                 return true;
             }
         }
-        log.info("User: {} is viewing experiment page", loginUserId);
+        //log.info("User: {} is viewing experiment page", loginUserId);
         return false;
     }
 
@@ -5178,8 +5237,9 @@ public class MainController {
             HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
             ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
             String teamResponseBody = teamResponse.getBody().toString();
+            Team2 team = extractTeamInfo(teamResponseBody);
 
-            if (!isMemberJoinRequestPending(userId, teamResponseBody)) {
+            if (team.getOwner().getId().equals(userId) && !isMemberJoinRequestPending(userId, teamResponseBody)) {
                 TeamUsageInfo usageInfo = new TeamUsageInfo();
                 usageInfo.setId(teamId);
                 usageInfo.setName(new JSONObject(teamResponseBody).getString("name"));
@@ -5190,6 +5250,34 @@ public class MainController {
         return usageInfoList;
     }
 
+    private Long getTeamUsageStatistics(Team2 team2, String start, String end, HttpEntity<String> request, List<Long> usages)
+            throws IOException, StartDateAfterEndDateException, WebServiceRuntimeException {
+        Long usage = 0L;
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getUsageStat(team2.getId(), "startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+        String responseBody = responseEntity.getBody().toString();
+        JSONArray jsonArray = new JSONArray(responseBody);
+
+        // handling exceptions from SIO
+        if (RestUtil.isError(responseEntity.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            if (exceptionState == START_DATE_AFTER_END_DATE_EXCEPTION) {
+                log.warn("Get team usage : Start date after end date error");
+                throw new StartDateAfterEndDateException(ERR_START_DATE_AFTER_END_DATE);
+            } else {
+                log.warn("Get team usage : sio or deterlab adapter connection error");
+                throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
+            }
+        } else {
+            log.info("Get team {} usage info : {}", team2.getName(), responseBody);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                Long mins = jsonArray.getLong(i);
+                usages.add(mins);
+                usage += mins;
+            }
+        }
+        return usage;
+    }
 
     private String getUsageStatisticsByTeamId(String id) {
         log.info("Getting usage statistics for team {}", id);
@@ -5201,7 +5289,12 @@ public class MainController {
             log.warn("Error connecting to sio get usage statistics {}", e);
             return "?";
         }
-        return response.getBody().toString();
+        JSONArray jsonArray = new JSONArray(response.getBody().toString());
+        Long usage = 0L;
+        for (int i = 0; i < jsonArray.length(); i++) {
+            usage += jsonArray.getLong(i);
+        }
+        return String.format("%.2f", usage.doubleValue() / 60);
     }
 
     private TeamQuota extractTeamQuotaInfo(String responseBody) {
