@@ -447,6 +447,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + params.toString();
     }
 
+    public String getMonthlyUsage() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects";
+    }
+
     //-------------------------------------
     // USER SSH PUBLIC KEYS
     //-------------------------------------

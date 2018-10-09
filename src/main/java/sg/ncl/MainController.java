@@ -3373,18 +3373,6 @@ public class MainController {
         return "usage_statistics";
     }
 
-/*
-    private String getStartDate(DateTimeFormatter formatter, ZonedDateTime nowDate) {
-        String start;
-        ZonedDateTime startDate = nowDate.with(firstDayOfMonth());
-        if (nowDate.getDayOfMonth() == 1) {
-            startDate = startDate.minusMonths(1);
-        }
-        start = startDate.format(formatter);
-        return start;
-    }
-*/
-
     private List<String> getDates(String start, String end, DateTimeFormatter formatter) {
         List<String> dates = new ArrayList<>();
         ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
@@ -3492,6 +3480,86 @@ public class MainController {
         model.addAttribute("end", end);
         model.addAttribute("energy", sumEnergy);
         return "energy_usage";
+    }
+
+    @GetMapping("/admin/monthly")
+    public String adminMonthly(HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getMonthlyUsage(), HttpMethod.GET, request, String.class);
+        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+
+        List<ProjectDetails> projectsList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            ProjectDetails projectDetails = new ProjectDetails();
+            projectDetails.setId(jsonObject.getInt("id"));
+            projectDetails.setOrganisationType(jsonObject.getString("organisationType"));
+            projectDetails.setOrganisationName(jsonObject.getString("organisationName"));
+            projectDetails.setProjectName(jsonObject.getString("projectName"));
+            projectDetails.setOwner(jsonObject.getString("owner"));
+            projectDetails.setDateCreated(jsonObject.get("dateCreated").toString());
+            projectDetails.setEducation(jsonObject.getBoolean("education"));
+            projectDetails.setServiceTool(jsonObject.getBoolean("serviceTool"));
+            projectDetails.setSupportedBy(jsonObject.getString("supportedBy"));
+            projectsList.add(projectDetails);
+        }
+        model.addAttribute("projectsList", projectsList);
+
+        if (!model.containsAttribute("project")) {
+            model.addAttribute("project", new ProjectDetails());
+        }
+
+        return "monthly_usage";
+    }
+
+    @PostMapping("/admin/monthly")
+    public String adminMonthlyValidate(@Valid @ModelAttribute("project") ProjectDetails project,
+                                       BindingResult binding, RedirectAttributes attr, HttpSession session) {
+        if (binding.hasErrors()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Error(s):");
+            message.append("<ul class=\"fa-ul\">");
+            for (ObjectError objectError : binding.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+                switch (fieldError.getField()) {
+                    case "organisationType":
+                        message.append("Organisation Type ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "organisationName":
+                        message.append("Organisation Name ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "projectName":
+                        message.append("Project Name ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "owner":
+                        message.append("Owner ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "dateCreated":
+                        message.append("Date Created ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    default:
+                        message.append(fieldError.getField());
+                        message.append(" ");
+                        message.append(fieldError.getDefaultMessage());
+                }
+                message.append("</li>");
+            }
+            message.append("</ul>");
+            attr.addFlashAttribute(MESSAGE, message.toString());
+            attr.addFlashAttribute("org.springframework.validation.BindingResult.project", binding);
+            attr.addFlashAttribute("project", project);
+        }
+        return "redirect:/admin/monthly";
     }
 
     /**
