@@ -3489,7 +3489,7 @@ public class MainController {
         }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getMonthlyUsage(), HttpMethod.GET, request, String.class);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getMonthlyUsage(null), HttpMethod.GET, request, String.class);
         JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
 
         List<ProjectDetails> projectsList = new ArrayList<>();
@@ -3501,7 +3501,12 @@ public class MainController {
             projectDetails.setOrganisationName(jsonObject.getString("organisationName"));
             projectDetails.setProjectName(jsonObject.getString("projectName"));
             projectDetails.setOwner(jsonObject.getString("owner"));
-            projectDetails.setDateCreated(jsonObject.get("dateCreated").toString());
+            try {
+                projectDetails.setZonedDateCreated(getZonedDateTime(jsonObject.get("dateCreated").toString()));
+            } catch (IOException e) {
+                log.warn("Error getting date created {}", e);
+                projectDetails.setDateCreated("");
+            }
             projectDetails.setEducation(jsonObject.getBoolean("education"));
             projectDetails.setServiceTool(jsonObject.getBoolean("serviceTool"));
             projectDetails.setSupportedBy(jsonObject.getString("supportedBy"));
@@ -3518,7 +3523,12 @@ public class MainController {
 
     @PostMapping("/admin/monthly")
     public String adminMonthlyValidate(@Valid @ModelAttribute("project") ProjectDetails project,
-                                       BindingResult binding, RedirectAttributes attr, HttpSession session) {
+                                       BindingResult binding, RedirectAttributes attr,
+                                       HttpSession session) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
         if (binding.hasErrors()) {
             StringBuilder message = new StringBuilder();
             message.append("Error(s):");
@@ -3558,7 +3568,53 @@ public class MainController {
             attr.addFlashAttribute(MESSAGE, message.toString());
             attr.addFlashAttribute("org.springframework.validation.BindingResult.project", binding);
             attr.addFlashAttribute("project", project);
+        } else {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("organisationType", project.getOrganisationType());
+            jsonObject.put("organisationName", project.getOrganisationName());
+            jsonObject.put("projectName", project.getProjectName());
+            jsonObject.put("owner", project.getOwner());
+            jsonObject.put("dateCreated", project.getZonedDateCreated());
+            jsonObject.put("education", project.isEducation());
+            jsonObject.put("serviceTool", project.isServiceTool());
+            jsonObject.put("supportedBy", project.getSupportedBy());
+
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+            HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
+            ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage(project.getId()), HttpMethod.POST, request, String.class);
+            String responseBody = response.getBody().toString();
+
+            try {
+                if (RestUtil.isError(response.getStatusCode())) {
+                    MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                    ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                    switch (exceptionState) {
+                        case PROJECT_DETAILS_NOT_FOUND_EXCEPTION:
+                            log.warn("Project not found for updating");
+                            attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>project not found for editing</li></ul>");
+                            break;
+                        case PROJECT_NAME_ALREADY_EXISTS_EXCEPTION:
+                            log.warn("Project name already exists: {}", project.getProjectName());
+                            attr.addFlashAttribute(MESSAGE, "Error(s):<ul<li>project name already exist</li></ul>");
+                            break;
+                        case FORBIDDEN_EXCEPTION:
+                            log.warn("Saving of project forbidden.");
+                            attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>saving project forbidden</li></ul>");
+                            break;
+                        default:
+                            log.warn("Unknown error for validating project.");
+                            attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error for validating project</li></ul>");
+                    }
+                    attr.addFlashAttribute("project", project);
+                } else {
+                    log.info("Project details saved: {}", responseBody);
+                }
+            } catch (IOException e) {
+                log.error("adminMonthlyValidate: {}", e.toString());
+                throw new WebServiceRuntimeException(e.getMessage());
+            }
         }
+
         return "redirect:/admin/monthly";
     }
 

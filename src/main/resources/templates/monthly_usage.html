@@ -73,7 +73,7 @@
                         <label for="datepicker" class="col-sm-3 control-label">Date Created :</label>
                         <div class="col-sm-6">
                             <div class="input-group date" id="datepicker">
-                                <input type="text" class="form-control" th:field="*{dateCreated}" placeholder="Date Created"/>
+                                <input type="text" class="form-control" th:field="*{dateCreated}" placeholder="MMM-dd-yyyy"/>
                                 <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
                             </div>
                         </div>
@@ -119,7 +119,7 @@
     // <![CDATA[
     $(document).ready(function () {
         $('.input-group.date').datepicker({
-            format: "yyyy-mm-dd",
+            format: "M-dd-yyyy",
             orientation: "auto right"
         });
 
