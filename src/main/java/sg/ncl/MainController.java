@@ -3629,6 +3629,46 @@ public class MainController {
         return "redirect:/admin/monthly";
     }
 
+    @GetMapping("/admin/monthly/remove/{id}")
+    public String adminMonthlyRemove(@PathVariable String id, RedirectAttributes attr, HttpSession session) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage() + "/" + id, HttpMethod.DELETE, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    case PROJECT_DETAILS_NOT_FOUND_EXCEPTION:
+                        log.warn("Project not found for deleting");
+                        attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>project not found for deleting</li></ul>");
+                        break;
+                    case FORBIDDEN_EXCEPTION:
+                        log.warn("Saving of project forbidden.");
+                        attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>deleting project forbidden</li></ul>");
+                        break;
+                    default:
+                        log.warn("Unknown error for validating project.");
+                        attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error for deleting project</li></ul>");
+                }
+                attr.addFlashAttribute("project", new ProjectDetails());
+            } else {
+                log.info("Project details deleted: {}", responseBody);
+            }
+        } catch (IOException e) {
+            log.error("adminMonthlyRemove: {}", e.toString());
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "redirect:/admin/monthly";
+    }
+
     /**
      * Allows admins to:
      * view reservations
