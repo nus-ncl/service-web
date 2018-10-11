@@ -49,10 +49,11 @@
                     <td><i class="fa fa-check" th:if="${project.isEducation()}"></i></td>
                     <td><i class="fa fa-check" th:if="${project.isServiceTool()}"></i></td>
                     <td th:text="${project.getSupportedBy()}">Supported By</td>
-                    <td>
-                        <a th:href="@{/admin/monthly/{id}(id=${project.getId()})}"><i class="fa fa-pencil"></i></a>
-                        <a data-toggle="modal" data-target="#confirmDelete"
+                    <td class="text-nowrap">
+                        <a class="btn btn-default" th:href="@{/admin/monthly/{id}(id=${project.getId()})}"><i class="fa fa-pencil"></i></a>
+                        <a class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete"
                            th:attr="data-id=${project.getId()},data-name=${project.getProjectName()}"><i class="fa fa-trash"></i></a>
+                        <a class="btn btn-info" href=""><i class="fa fa-info"></i></a>
                     </td>
                 </tr>
                 </tbody>
@@ -105,7 +106,7 @@
                         <div class="col-sm-6">
                             <div class="input-group date" id="datepicker">
                                 <input type="text" class="form-control" th:field="*{dateCreated}" placeholder="MMM-dd-yyyy"/>
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
                     </div>
@@ -155,7 +156,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <a href="#" class="btn btn-primary" id="deleteButton">Delete</a>
+                <a href="#" class="btn btn-danger" id="deleteButton">Delete</a>
             </div>
         </div>
     </div>
