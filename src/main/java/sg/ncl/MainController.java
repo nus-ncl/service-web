@@ -3482,14 +3482,14 @@ public class MainController {
         return "energy_usage";
     }
 
-    @GetMapping("/admin/monthly")
-    public String adminMonthly(HttpSession session, Model model) {
+    @GetMapping(value = {"/admin/monthly", "/admin/monthly/{id}"})
+    public String adminMonthly(@PathVariable Optional<Integer> id, HttpSession session, Model model) {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getMonthlyUsage(null), HttpMethod.GET, request, String.class);
+        ResponseEntity responseEntity = restTemplate.exchange(properties.getMonthlyUsage(), HttpMethod.GET, request, String.class);
         JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
 
         List<ProjectDetails> projectsList = new ArrayList<>();
@@ -3511,6 +3511,10 @@ public class MainController {
             projectDetails.setServiceTool(jsonObject.getBoolean("serviceTool"));
             projectDetails.setSupportedBy(jsonObject.getString("supportedBy"));
             projectsList.add(projectDetails);
+            if (id.isPresent() && id.get().equals(projectDetails.getId())) {
+                model.addAttribute("project", projectDetails);
+                model.addAttribute(MESSAGE, "Edit Project " + projectDetails.getId());
+            }
         }
         model.addAttribute("projectsList", projectsList);
 
@@ -3583,7 +3587,12 @@ public class MainController {
 
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
-            ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage(project.getId()), HttpMethod.POST, request, String.class);
+            ResponseEntity response;
+            if (project.getId() == null) {
+                response = restTemplate.exchange(properties.getMonthlyUsage(), HttpMethod.POST, request, String.class);
+            } else {
+                response = restTemplate.exchange(properties.getMonthlyUsage() + "/" + project.getId(), HttpMethod.PUT, request, String.class);
+            }
             String responseBody = response.getBody().toString();
 
             try {
