@@ -3578,6 +3578,8 @@ public class MainController {
             jsonObject.put("education", project.isEducation());
             jsonObject.put("serviceTool", project.isServiceTool());
             jsonObject.put("supportedBy", project.getSupportedBy());
+            jsonObject.put("projectUsages", new ArrayList());
+            log.debug("JsonObject: {}", jsonObject);
 
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());

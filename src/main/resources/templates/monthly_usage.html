@@ -25,6 +25,32 @@
             <th:block th:if="${projectsList.isEmpty()}">
                 <p>There is no projects in the system</p>
             </th:block>
+            <table class="table table-responsive" th:if="not ${projectsList.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Organisation Type</th>
+                    <th>Organisation Name</th>
+                    <th>Project Name</th>
+                    <th>Owner</th>
+                    <th>Date Created</th>
+                    <th>Education?</th>
+                    <th>Service and Tools?</th>
+                    <th>Supported By</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${projectsList}">
+                    <td th:text="${project.getOrganisationType()}">Organisation Type</td>
+                    <td th:text="${project.getOrganisationName()}">Organisation Name</td>
+                    <td th:text="${project.getProjectName()}">Project Name</td>
+                    <td th:text="${project.getOwner()}">Owner</td>
+                    <td th:text="${project.getDateCreated()}">Date Created</td>
+                    <td><i class="fa fa-check" th:if="${project.isEducation()}"></i></td>
+                    <td><i class="fa fa-check" th:if="${project.isServiceTool()}"></i></td>
+                    <td th:text="${project.getSupportedBy()}">Supported By</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
         <div id="edit" class="tab-pane fade">
             <p>&nbsp;</p>

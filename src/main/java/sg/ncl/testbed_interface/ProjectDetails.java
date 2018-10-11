@@ -5,13 +5,14 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 @Setter
 public class ProjectDetails implements Serializable {
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-d-yyyy");
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-dd-yyyy");
 
     private Integer id;
     @NotEmpty
@@ -27,13 +28,14 @@ public class ProjectDetails implements Serializable {
     private boolean education;
     private boolean serviceTool;
     private String supportedBy;
+    private List<ProjectUsage> projectUsages;
 
     public ProjectDetails() {
         this.dateCreated = formatter.format(ZonedDateTime.now());
     }
 
     public ZonedDateTime getZonedDateCreated() {
-        return ZonedDateTime.parse(dateCreated, formatter);
+        return ZonedDateTime.of(LocalDate.parse(dateCreated, formatter), LocalTime.now(), ZoneId.of("Asia/Singapore"));
     }
 
     public void setZonedDateCreated(ZonedDateTime zonedDateCreated) {
