@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -32,6 +33,7 @@ public class ProjectDetails implements Serializable {
 
     public ProjectDetails() {
         this.dateCreated = formatter.format(ZonedDateTime.now());
+        this.projectUsages = new ArrayList<>();
     }
 
     public ZonedDateTime getZonedDateCreated() {
@@ -40,6 +42,10 @@ public class ProjectDetails implements Serializable {
 
     public void setZonedDateCreated(ZonedDateTime zonedDateCreated) {
         this.dateCreated = formatter.format(zonedDateCreated);
+    }
+
+    public void addProjectUsage(ProjectUsage projectUsage) {
+        this.projectUsages.add(projectUsage);
     }
 
     @Override

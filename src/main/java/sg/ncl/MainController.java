@@ -23,7 +23,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.util.UriComponents;
@@ -3483,6 +3482,35 @@ public class MainController {
         return "energy_usage";
     }
 
+    private ProjectDetails getProjectDetails(JSONObject jsonObject) {
+        ProjectDetails projectDetails = new ProjectDetails();
+        projectDetails.setId(jsonObject.getInt("id"));
+        projectDetails.setOrganisationType(jsonObject.getString("organisationType"));
+        projectDetails.setOrganisationName(jsonObject.getString("organisationName"));
+        projectDetails.setProjectName(jsonObject.getString("projectName"));
+        projectDetails.setOwner(jsonObject.getString("owner"));
+        try {
+            projectDetails.setZonedDateCreated(getZonedDateTime(jsonObject.get("dateCreated").toString()));
+        } catch (IOException e) {
+            log.warn("Error getting date created {}", e);
+            projectDetails.setDateCreated("");
+        }
+        projectDetails.setEducation(jsonObject.getBoolean("education"));
+        projectDetails.setServiceTool(jsonObject.getBoolean("serviceTool"));
+        projectDetails.setSupportedBy(jsonObject.getString("supportedBy"));
+        JSONArray usages = jsonObject.getJSONArray("projectUsages");
+        for (int i = 0; i < usages.length(); i++) {
+            JSONObject usage = usages.getJSONObject(i);
+            JSONObject usageId = usage.getJSONObject("id");
+            ProjectUsage projectUsage = new ProjectUsage();
+            projectUsage.setId(usageId.getInt("projectDetailsId"));
+            projectUsage.setMonth(usageId.getString("monthYear"));
+            projectUsage.setUsage(usage.getInt("monthlyUsage"));
+            projectDetails.addProjectUsage(projectUsage);
+        }
+        return projectDetails;
+    }
+
     @GetMapping("/admin/monthly")
     public String adminMonthly(HttpSession session, Model model) {
         if (!validateIfAdmin(session)) {
@@ -3490,63 +3518,37 @@ public class MainController {
         }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage(), HttpMethod.GET, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getMonthly(), HttpMethod.GET, request, String.class);
         JSONArray jsonArray = new JSONArray(response.getBody().toString());
 
         List<ProjectDetails> projectsList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            ProjectDetails projectDetails = new ProjectDetails();
-            projectDetails.setId(jsonObject.getInt("id"));
-            projectDetails.setOrganisationType(jsonObject.getString("organisationType"));
-            projectDetails.setOrganisationName(jsonObject.getString("organisationName"));
-            projectDetails.setProjectName(jsonObject.getString("projectName"));
-            projectDetails.setOwner(jsonObject.getString("owner"));
-            try {
-                projectDetails.setZonedDateCreated(getZonedDateTime(jsonObject.get("dateCreated").toString()));
-            } catch (IOException e) {
-                log.warn("Error getting date created {}", e);
-                projectDetails.setDateCreated("");
-            }
-            projectDetails.setEducation(jsonObject.getBoolean("education"));
-            projectDetails.setServiceTool(jsonObject.getBoolean("serviceTool"));
-            projectDetails.setSupportedBy(jsonObject.getString("supportedBy"));
+            ProjectDetails projectDetails = getProjectDetails(jsonObject);
             projectsList.add(projectDetails);
         }
         model.addAttribute("projectsList", projectsList);
 
-        return "monthly_usage";
+        return "admin_monthly";
     }
 
     @GetMapping(value = {"/admin/monthly/contribute", "/admin/monthly/contribute/{id}"})
-    public String adminMonthlyContribute(@PathVariable Optional<Integer> id, HttpSession session, Model model) {
+    public String adminMonthlyContribute(@PathVariable Optional<String> id, HttpSession session, Model model) {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
 
-        ProjectDetails projectDetails = new ProjectDetails();
         if (id.isPresent()) {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
-            ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage() + "/" + id.get(), HttpMethod.GET, request, String.class);
+            ResponseEntity response = restTemplate.exchange(properties.getMonthly() + "/" + id.get(), HttpMethod.GET, request, String.class);
             JSONObject jsonObject = new JSONObject(response.getBody().toString());
-            projectDetails.setId(jsonObject.getInt("id"));
-            projectDetails.setOrganisationType(jsonObject.getString("organisationType"));
-            projectDetails.setOrganisationName(jsonObject.getString("organisationName"));
-            projectDetails.setProjectName(jsonObject.getString("projectName"));
-            projectDetails.setOwner(jsonObject.getString("owner"));
-            try {
-                projectDetails.setZonedDateCreated(getZonedDateTime(jsonObject.get("dateCreated").toString()));
-            } catch (IOException e) {
-                log.warn("Error getting date created {}", e);
-                projectDetails.setDateCreated("");
-            }
-            projectDetails.setEducation(jsonObject.getBoolean("education"));
-            projectDetails.setServiceTool(jsonObject.getBoolean("serviceTool"));
-            projectDetails.setSupportedBy(jsonObject.getString("supportedBy"));
+            ProjectDetails projectDetails = getProjectDetails(jsonObject);
+            model.addAttribute("project", projectDetails);
+        } else {
+            model.addAttribute("project", new ProjectDetails());
         }
-        model.addAttribute("project", projectDetails);
 
-        return "monthly_usage_contribute";
+        return "admin_monthly_contribute";
     }
 
     @PostMapping("/admin/monthly/contribute")
@@ -3594,7 +3596,7 @@ public class MainController {
             message.append("</ul>");
             model.addAttribute(MESSAGE, message.toString());
             model.addAttribute("project", project);
-            return "monthly_usage_contribute";
+            return "admin_monthly_contribute";
         } else {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("organisationType", project.getOrganisationType());
@@ -3605,16 +3607,15 @@ public class MainController {
             jsonObject.put("education", project.isEducation());
             jsonObject.put("serviceTool", project.isServiceTool());
             jsonObject.put("supportedBy", project.getSupportedBy());
-            jsonObject.put("projectUsages", new ArrayList());
             log.debug("JsonObject: {}", jsonObject);
 
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
             ResponseEntity response;
             if (project.getId() == null) {
-                response = restTemplate.exchange(properties.getMonthlyUsage(), HttpMethod.POST, request, String.class);
+                response = restTemplate.exchange(properties.getMonthly(), HttpMethod.POST, request, String.class);
             } else {
-                response = restTemplate.exchange(properties.getMonthlyUsage() + "/" + project.getId(), HttpMethod.PUT, request, String.class);
+                response = restTemplate.exchange(properties.getMonthly() + "/" + project.getId(), HttpMethod.PUT, request, String.class);
             }
             String responseBody = response.getBody().toString();
 
@@ -3640,7 +3641,7 @@ public class MainController {
                             model.addAttribute(MESSAGE, "Error(s):<ul><li>unknown error for validating project</li></ul>");
                     }
                     model.addAttribute("project", project);
-                    return "monthly_usage_contribute";
+                    return "admin_monthly_contribute";
                 } else {
                     log.info("Project details saved: {}", responseBody);
                 }
@@ -3661,7 +3662,7 @@ public class MainController {
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage() + "/" + id, HttpMethod.DELETE, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getMonthly() + "/" + id, HttpMethod.DELETE, request, String.class);
         String responseBody = response.getBody().toString();
 
         try {
@@ -3674,14 +3675,13 @@ public class MainController {
                         attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>project not found for deleting</li></ul>");
                         break;
                     case FORBIDDEN_EXCEPTION:
-                        log.warn("Saving of project forbidden.");
+                        log.warn("Removing of project forbidden.");
                         attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>deleting project forbidden</li></ul>");
                         break;
                     default:
                         log.warn("Unknown error for validating project.");
                         attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error for deleting project</li></ul>");
                 }
-                attr.addFlashAttribute("project", new ProjectDetails());
             } else {
                 log.info("Project details deleted: {}", responseBody);
             }
@@ -3691,6 +3691,170 @@ public class MainController {
         }
 
         return "redirect:/admin/monthly";
+    }
+
+    @GetMapping("/admin/monthly/{id}/usage")
+    public String adminMonthlyUsage(@PathVariable String id, HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getMonthly() + "/" + id, HttpMethod.GET, request, String.class);
+        JSONObject jsonObject = new JSONObject(response.getBody().toString());
+        ProjectDetails projectDetails = getProjectDetails(jsonObject);
+        model.addAttribute("project", projectDetails);
+
+        return "admin_monthly_usage";
+    }
+
+    @GetMapping(value = {"/admin/monthly/{id}/usage/contribute", "/admin/monthly/{id}/usage/contribute/{month}"})
+    public String adminMonthlyUsageContribute(@PathVariable String id, @PathVariable Optional<String> month,
+                                              HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        if (month.isPresent()) {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage(id) + "/" + month.get(), HttpMethod.GET, request, String.class);
+            JSONObject usage = new JSONObject(response.getBody().toString());
+            JSONObject usageId = usage.getJSONObject("id");
+            ProjectUsage projectUsage = new ProjectUsage();
+            projectUsage.setId(usageId.getInt("projectDetailsId"));
+            projectUsage.setMonth(usageId.getString("monthYear"));
+            projectUsage.setUsage(usage.getInt("monthlyUsage"));
+            model.addAttribute("usage", projectUsage);
+        } else {
+            model.addAttribute("usage", new ProjectUsage());
+        }
+        model.addAttribute("pid", id);
+
+        return "admin_monthly_usage_contribute";
+    }
+
+    @PostMapping("/admin/monthly/{pid}/usage/contribute")
+    public String adminMonthlyUsageValidate(@Valid @ModelAttribute("usage") ProjectUsage usage, BindingResult binding,
+                                            @PathVariable String pid, HttpSession session, Model model) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        if (binding.hasErrors()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Error(s):");
+            message.append("<ul class=\"fa-ul\">");
+            for (ObjectError objectError : binding.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+                switch (fieldError.getField()) {
+                    case "month":
+                        message.append("Month ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    default:
+                        message.append(fieldError.getField());
+                        message.append(" ");
+                        message.append(fieldError.getDefaultMessage());
+                }
+                message.append("</li>");
+            }
+            message.append("</ul>");
+            model.addAttribute(MESSAGE, message.toString());
+            model.addAttribute("usage", usage);
+            model.addAttribute("pid", pid);
+            return "admin_monthly_usage_contribute";
+        } else {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("projectDetailsId", pid);
+            jsonObject.put("month", usage.getMonth());
+            jsonObject.put("usage", usage.getUsage());
+            log.debug("JsonObject: {}", jsonObject);
+
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+            HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
+            ResponseEntity response;
+            if (usage.getId() == null) {
+                response = restTemplate.exchange(properties.getMonthlyUsage(pid), HttpMethod.POST, request, String.class);
+            } else {
+                response = restTemplate.exchange(properties.getMonthlyUsage(pid), HttpMethod.PUT, request, String.class);
+            }
+            String responseBody = response.getBody().toString();
+
+            try {
+                if (RestUtil.isError(response.getStatusCode())) {
+                    MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                    ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                    switch (exceptionState) {
+                        case PROJECT_USAGE_NOT_FOUND_EXCEPTION:
+                            log.warn("Project usage not found for updating");
+                            model.addAttribute(MESSAGE, "Error(s):<ul><li>project usage not found for editing</li></ul>");
+                            break;
+                        case PROJECT_USAGE_ALREADY_EXISTS_EXCEPTION:
+                            log.warn("Project usage already exists: {} {}", usage.getId(), usage.getMonth());
+                            model.addAttribute(MESSAGE, "Error(s):<ul<li>project usage already exist</li></ul>");
+                            break;
+                        case FORBIDDEN_EXCEPTION:
+                            log.warn("Saving of project usage forbidden.");
+                            model.addAttribute(MESSAGE, "Error(s):<ul><li>saving project forbidden</li></ul>");
+                            break;
+                        default:
+                            log.warn("Unknown error for validating project usage.");
+                            model.addAttribute(MESSAGE, "Error(s):<ul><li>unknown error for validating project usage</li></ul>");
+                    }
+                    model.addAttribute("usage", usage);
+                    model.addAttribute("pid", pid);
+                    return "admin_monthly_usage_contribute";
+                } else {
+                    log.info("Project details saved: {}", responseBody);
+                }
+            } catch (IOException e) {
+                log.error("adminMonthlyValidate: {}", e.toString());
+                throw new WebServiceRuntimeException(e.getMessage());
+            }
+        }
+
+        return "redirect:/admin/monthly/" + pid + "/usage";
+    }
+
+    @GetMapping("/admin/monthly/{id}/usage/remove/{month}")
+    public String adminMonthlyUsageRemove(@PathVariable String id, @PathVariable String month,
+                                          RedirectAttributes attr, HttpSession session) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage(id) + "/" + month, HttpMethod.DELETE, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    case PROJECT_USAGE_NOT_FOUND_EXCEPTION:
+                        log.warn("Project usage not found for deleting");
+                        attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>project usage not found for deleting</li></ul>");
+                        break;
+                    case FORBIDDEN_EXCEPTION:
+                        log.warn("Removing of project usage forbidden.");
+                        attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>deleting project forbidden</li></ul>");
+                        break;
+                    default:
+                        log.warn("Unknown error for validating project usage.");
+                        attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error for deleting project usage</li></ul>");
+                }
+            } else {
+                log.info("Project usage deleted: {}", responseBody);
+            }
+        } catch (IOException e) {
+            log.error("adminMonthlyRemove: {}", e.toString());
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "redirect:/admin/monthly/" + id + "/usage";
     }
 
     /**

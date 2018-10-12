@@ -447,8 +447,12 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + params.toString();
     }
 
-    public String getMonthlyUsage() {
+    public String getMonthly() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects";
+    }
+
+    public String getMonthlyUsage(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects/" + id + "/months";
     }
 
     //-------------------------------------
