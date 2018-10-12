@@ -23,6 +23,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.util.UriComponents;
@@ -3482,15 +3483,15 @@ public class MainController {
         return "energy_usage";
     }
 
-    @GetMapping(value = {"/admin/monthly", "/admin/monthly/{id}"})
-    public String adminMonthly(@PathVariable Optional<Integer> id, HttpSession session, Model model) {
+    @GetMapping("/admin/monthly")
+    public String adminMonthly(HttpSession session, Model model) {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(properties.getMonthlyUsage(), HttpMethod.GET, request, String.class);
-        JSONArray jsonArray = new JSONArray(responseEntity.getBody().toString());
+        ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage(), HttpMethod.GET, request, String.class);
+        JSONArray jsonArray = new JSONArray(response.getBody().toString());
 
         List<ProjectDetails> projectsList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -3511,24 +3512,46 @@ public class MainController {
             projectDetails.setServiceTool(jsonObject.getBoolean("serviceTool"));
             projectDetails.setSupportedBy(jsonObject.getString("supportedBy"));
             projectsList.add(projectDetails);
-            if (id.isPresent() && id.get().equals(projectDetails.getId())) {
-                model.addAttribute("project", projectDetails);
-                model.addAttribute(MESSAGE, "Edit Project " + projectDetails.getId());
-            }
         }
         model.addAttribute("projectsList", projectsList);
-
-        if (!model.containsAttribute("project")) {
-            model.addAttribute("project", new ProjectDetails());
-        }
 
         return "monthly_usage";
     }
 
-    @PostMapping("/admin/monthly")
+    @GetMapping(value = {"/admin/monthly/contribute", "/admin/monthly/contribute/{id}"})
+    public String adminMonthlyContribute(@PathVariable Optional<Integer> id, HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        ProjectDetails projectDetails = new ProjectDetails();
+        if (id.isPresent()) {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity response = restTemplate.exchange(properties.getMonthlyUsage() + "/" + id.get(), HttpMethod.GET, request, String.class);
+            JSONObject jsonObject = new JSONObject(response.getBody().toString());
+            projectDetails.setId(jsonObject.getInt("id"));
+            projectDetails.setOrganisationType(jsonObject.getString("organisationType"));
+            projectDetails.setOrganisationName(jsonObject.getString("organisationName"));
+            projectDetails.setProjectName(jsonObject.getString("projectName"));
+            projectDetails.setOwner(jsonObject.getString("owner"));
+            try {
+                projectDetails.setZonedDateCreated(getZonedDateTime(jsonObject.get("dateCreated").toString()));
+            } catch (IOException e) {
+                log.warn("Error getting date created {}", e);
+                projectDetails.setDateCreated("");
+            }
+            projectDetails.setEducation(jsonObject.getBoolean("education"));
+            projectDetails.setServiceTool(jsonObject.getBoolean("serviceTool"));
+            projectDetails.setSupportedBy(jsonObject.getString("supportedBy"));
+        }
+        model.addAttribute("project", projectDetails);
+
+        return "monthly_usage_contribute";
+    }
+
+    @PostMapping("/admin/monthly/contribute")
     public String adminMonthlyValidate(@Valid @ModelAttribute("project") ProjectDetails project,
-                                       BindingResult binding, RedirectAttributes attr,
-                                       HttpSession session) throws WebServiceRuntimeException {
+                                       BindingResult binding, HttpSession session, Model model) throws WebServiceRuntimeException {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
@@ -3569,9 +3592,9 @@ public class MainController {
                 message.append("</li>");
             }
             message.append("</ul>");
-            attr.addFlashAttribute(MESSAGE, message.toString());
-            attr.addFlashAttribute("org.springframework.validation.BindingResult.project", binding);
-            attr.addFlashAttribute("project", project);
+            model.addAttribute(MESSAGE, message.toString());
+            model.addAttribute("project", project);
+            return "monthly_usage_contribute";
         } else {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("organisationType", project.getOrganisationType());
@@ -3602,21 +3625,22 @@ public class MainController {
                     switch (exceptionState) {
                         case PROJECT_DETAILS_NOT_FOUND_EXCEPTION:
                             log.warn("Project not found for updating");
-                            attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>project not found for editing</li></ul>");
+                            model.addAttribute(MESSAGE, "Error(s):<ul><li>project not found for editing</li></ul>");
                             break;
                         case PROJECT_NAME_ALREADY_EXISTS_EXCEPTION:
                             log.warn("Project name already exists: {}", project.getProjectName());
-                            attr.addFlashAttribute(MESSAGE, "Error(s):<ul<li>project name already exist</li></ul>");
+                            model.addAttribute(MESSAGE, "Error(s):<ul<li>project name already exist</li></ul>");
                             break;
                         case FORBIDDEN_EXCEPTION:
                             log.warn("Saving of project forbidden.");
-                            attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>saving project forbidden</li></ul>");
+                            model.addAttribute(MESSAGE, "Error(s):<ul><li>saving project forbidden</li></ul>");
                             break;
                         default:
                             log.warn("Unknown error for validating project.");
-                            attr.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error for validating project</li></ul>");
+                            model.addAttribute(MESSAGE, "Error(s):<ul><li>unknown error for validating project</li></ul>");
                     }
-                    attr.addFlashAttribute("project", project);
+                    model.addAttribute("project", project);
+                    return "monthly_usage_contribute";
                 } else {
                     log.info("Project details saved: {}", responseBody);
                 }
