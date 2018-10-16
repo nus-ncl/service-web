@@ -3857,6 +3857,43 @@ public class MainController {
         return "redirect:/admin/monthly/" + id + "/usage";
     }
 
+    @GetMapping("/admin/statistics")
+    public String adminUsageStatistics(HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        model.addAttribute("query", new ProjectUsageQuery());
+
+        return "admin_usage_statistics";
+    }
+
+    @PostMapping("/admin/statistics")
+    public String adminUsageStatisticsQuery(@Valid @ModelAttribute("query") ProjectUsageQuery query, BindingResult result,
+                                            RedirectAttributes attributes, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        if (result.hasErrors()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Error(s):");
+            message.append("<ul class=\"fa-ul\">");
+            for (ObjectError objectError : result.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+                message.append(fieldError.getField());
+                message.append(" ");
+                message.append(fieldError.getDefaultMessage());
+                message.append("</li>");
+            }
+            message.append("</ul>");
+            attributes.addFlashAttribute(MESSAGE, message.toString());
+        }
+
+        return "redirect:/admin/statistics";
+    }
+
     /**
      * Allows admins to:
      * view reservations

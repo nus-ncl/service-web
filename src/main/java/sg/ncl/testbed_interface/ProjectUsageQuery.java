@@ -4,16 +4,19 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
+import sg.ncl.validation.StartDateNotAfterEndDate;
 
 import java.io.Serializable;
 
 @Getter
 @Setter
-public class ProjectUsage implements Serializable {
+@StartDateNotAfterEndDate(pattern = "MMM-yyyy")
+public class ProjectUsageQuery implements Serializable {
 
-    private Integer id;
     @NotEmpty
     @DateTimeFormat(pattern = "MMM-yyyy")
-    private String month;
-    private int usage;
+    private String start;
+    @NotEmpty
+    @DateTimeFormat(pattern = "MMM-yyyy")
+    private String end;
 }
