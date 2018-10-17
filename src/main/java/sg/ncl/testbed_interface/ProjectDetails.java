@@ -60,4 +60,19 @@ public class ProjectDetails implements Serializable {
                 ",serviceTool=" + serviceTool +
                 ",supportedBy=" + supportedBy + "}";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        ProjectDetails that = (ProjectDetails) o;
+        return id.equals(that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

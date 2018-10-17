@@ -48,9 +48,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -3511,12 +3514,7 @@ public class MainController {
         return projectDetails;
     }
 
-    @GetMapping("/admin/monthly")
-    public String adminMonthly(HttpSession session, Model model) {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
-
+    private List<ProjectDetails> getProjects() {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getMonthly(), HttpMethod.GET, request, String.class);
         JSONArray jsonArray = new JSONArray(response.getBody().toString());
@@ -3527,6 +3525,16 @@ public class MainController {
             ProjectDetails projectDetails = getProjectDetails(jsonObject);
             projectsList.add(projectDetails);
         }
+        return projectsList;
+    }
+
+    @GetMapping("/admin/monthly")
+    public String adminMonthly(HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        List<ProjectDetails> projectsList = getProjects();
         model.addAttribute("projectsList", projectsList);
 
         return "admin_monthly";
@@ -3863,7 +3871,12 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-        model.addAttribute("query", new ProjectUsageQuery());
+        if (!model.containsAttribute("query")) {
+            model.addAttribute("query", new ProjectUsageQuery());
+            model.addAttribute("newProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("activeProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("inactiveProjects", new ArrayList<ProjectDetails>());
+        }
 
         return "admin_usage_statistics";
     }
@@ -3874,6 +3887,10 @@ public class MainController {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
+
+        List<ProjectDetails> newProjects = new ArrayList<>();
+        List<ProjectDetails> activeProjects = new ArrayList<>();
+        List<ProjectDetails> inactiveProjects = new ArrayList<>();
 
         if (result.hasErrors()) {
             StringBuilder message = new StringBuilder();
@@ -3889,7 +3906,42 @@ public class MainController {
             }
             message.append("</ul>");
             attributes.addFlashAttribute(MESSAGE, message.toString());
+        } else {
+            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                    .appendPattern("MMM-yyyy").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter();
+            LocalDate m_s = LocalDate.parse(query.getStart(), formatter);
+            LocalDate m_e = LocalDate.parse(query.getEnd(), formatter);
+            LocalDate m_e_m2 = m_e.minusMonths(2);
+            LocalDate m_active = m_e_m2.isBefore(m_s) ? m_e_m2 : m_s;
+
+            List<ProjectDetails> projectsList = getProjects();
+
+            for (ProjectDetails project : projectsList) {
+                LocalDate created = project.getZonedDateCreated().toLocalDate();
+
+                // projects created within the period
+                if (!(created.isBefore(m_s) || created.isAfter(m_e))) {
+                    newProjects.add(project);
+                }
+
+                // active projects = projects with resources within the period + projects created
+                boolean hasUsage = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(m_active, m_e));
+                if (hasUsage || !(created.isBefore(m_e_m2) || created.isAfter(m_e))) {
+                    activeProjects.add(project);
+                }
+
+                // inactive projects
+                if (!hasUsage && created.isBefore(m_e_m2)) {
+                    inactiveProjects.add(project);
+                }
+
+            }
         }
+
+        attributes.addFlashAttribute("query", query);
+        attributes.addFlashAttribute("newProjects", newProjects);
+        attributes.addFlashAttribute("activeProjects", activeProjects);
+        attributes.addFlashAttribute("inactiveProjects", inactiveProjects);
 
         return "redirect:/admin/statistics";
     }
