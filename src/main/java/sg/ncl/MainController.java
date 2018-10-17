@@ -49,6 +49,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -3876,6 +3877,7 @@ public class MainController {
             model.addAttribute("newProjects", new ArrayList<ProjectDetails>());
             model.addAttribute("activeProjects", new ArrayList<ProjectDetails>());
             model.addAttribute("inactiveProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("utilization", new HashMap<String, MonthlyUtilization>());
         }
 
         return "admin_usage_statistics";
@@ -3891,6 +3893,7 @@ public class MainController {
         List<ProjectDetails> newProjects = new ArrayList<>();
         List<ProjectDetails> activeProjects = new ArrayList<>();
         List<ProjectDetails> inactiveProjects = new ArrayList<>();
+        Map<String, MonthlyUtilization> utilizationMap = new HashMap<>();
 
         if (result.hasErrors()) {
             StringBuilder message = new StringBuilder();
@@ -3907,17 +3910,22 @@ public class MainController {
             message.append("</ul>");
             attributes.addFlashAttribute(MESSAGE, message.toString());
         } else {
-            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                    .appendPattern("MMM-yyyy").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter();
-            LocalDate m_s = LocalDate.parse(query.getStart(), formatter);
-            LocalDate m_e = LocalDate.parse(query.getEnd(), formatter);
-            LocalDate m_e_m2 = m_e.minusMonths(2);
-            LocalDate m_active = m_e_m2.isBefore(m_s) ? m_e_m2 : m_s;
+            DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("MMM-yyyy").toFormatter();
+            YearMonth m_s = YearMonth.parse(query.getStart(), formatter);
+            YearMonth m_e = YearMonth.parse(query.getEnd(), formatter);
+            YearMonth m_e_m2 = m_e.minusMonths(2);
+            YearMonth m_active = m_e_m2.isBefore(m_s) ? m_e_m2 : m_s;
 
+            YearMonth counter = m_s;
+            while (!counter.isAfter(m_e)) {
+                String monthYear = counter.format(formatter);
+                utilizationMap.put(monthYear, new MonthlyUtilization(monthYear));
+                counter = counter.plusMonths(1);
+            }
             List<ProjectDetails> projectsList = getProjects();
 
             for (ProjectDetails project : projectsList) {
-                LocalDate created = project.getZonedDateCreated().toLocalDate();
+                YearMonth created = YearMonth.from(project.getZonedDateCreated());
 
                 // projects created within the period
                 if (!(created.isBefore(m_s) || created.isAfter(m_e))) {
@@ -3935,6 +3943,14 @@ public class MainController {
                     inactiveProjects.add(project);
                 }
 
+                // monthly utilisation
+                counter = m_s;
+                while (!counter.isAfter(m_e)) {
+                    String monthYear = counter.format(formatter);
+                    int usageSum = project.getProjectUsages().stream().filter(p -> p.getMonth().equals(monthYear)).mapToInt(ProjectUsage::getUsage).sum();
+                    utilizationMap.get(monthYear).addNodeHours(usageSum);
+                    counter = counter.plusMonths(1);
+                }
             }
         }
 
@@ -3942,6 +3958,7 @@ public class MainController {
         attributes.addFlashAttribute("newProjects", newProjects);
         attributes.addFlashAttribute("activeProjects", activeProjects);
         attributes.addFlashAttribute("inactiveProjects", inactiveProjects);
+        attributes.addFlashAttribute("utilization", utilizationMap);
 
         return "redirect:/admin/statistics";
     }

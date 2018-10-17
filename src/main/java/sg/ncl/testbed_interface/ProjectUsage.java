@@ -6,16 +6,14 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 
 @Getter
 @Setter
 public class ProjectUsage implements Serializable {
-    private static DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            .appendPattern("MMM-yyyy").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter();
+    private static DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("MMM-yyyy").toFormatter();
 
     private Integer id;
     @NotEmpty
@@ -23,8 +21,8 @@ public class ProjectUsage implements Serializable {
     private String month;
     private int usage;
 
-    public boolean hasUsageWithinPeriod(LocalDate start, LocalDate end) {
-        LocalDate current = LocalDate.parse(month, formatter);
+    public boolean hasUsageWithinPeriod(YearMonth start, YearMonth end) {
+        YearMonth current = YearMonth.parse(month, formatter);
         return !(current.isBefore(start) || current.isAfter(end)) && usage > 0;
     }
 
