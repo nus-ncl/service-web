@@ -3878,6 +3878,8 @@ public class MainController {
             model.addAttribute("activeProjects", new ArrayList<ProjectDetails>());
             model.addAttribute("inactiveProjects", new ArrayList<ProjectDetails>());
             model.addAttribute("utilization", new HashMap<String, MonthlyUtilization>());
+            model.addAttribute("statsCategory", new HashMap<String, Integer>());
+            model.addAttribute("statsAcademic", new HashMap<String, Integer>());
         }
 
         return "admin_usage_statistics";
@@ -3894,6 +3896,8 @@ public class MainController {
         List<ProjectDetails> activeProjects = new ArrayList<>();
         List<ProjectDetails> inactiveProjects = new ArrayList<>();
         Map<String, MonthlyUtilization> utilizationMap = new HashMap<>();
+        Map<String, Integer> statsCategory = new HashMap<>();
+        Map<String, Integer> statsAcademic = new HashMap<>();
 
         if (result.hasErrors()) {
             StringBuilder message = new StringBuilder();
@@ -3951,6 +3955,18 @@ public class MainController {
                     utilizationMap.get(monthYear).addNodeHours(usageSum);
                     counter = counter.plusMonths(1);
                 }
+
+                // usage statistics by category
+                int nodeHours = statsCategory.getOrDefault(project.getOrganisationType(), 0);
+                nodeHours += project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToInt(ProjectUsage::getUsage).sum();
+                statsCategory.put(project.getOrganisationType(), nodeHours);
+
+                // usage statistics by academic institutes
+                if (project.getOrganisationType().equals("Academic")) {
+                    nodeHours = statsAcademic.getOrDefault(project.getOrganisationName(), 0);
+                    nodeHours += project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToInt(ProjectUsage::getUsage).sum();
+                    statsAcademic.put(project.getOrganisationName(), nodeHours);
+                }
             }
         }
 
@@ -3959,6 +3975,8 @@ public class MainController {
         attributes.addFlashAttribute("activeProjects", activeProjects);
         attributes.addFlashAttribute("inactiveProjects", inactiveProjects);
         attributes.addFlashAttribute("utilization", utilizationMap);
+        attributes.addFlashAttribute("statsCategory", statsCategory);
+        attributes.addFlashAttribute("statsAcademic", statsAcademic);
 
         return "redirect:/admin/statistics";
     }
