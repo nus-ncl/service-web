@@ -9,6 +9,8 @@ public class UtilizationUtil {
     private static YearMonth dec2017 = YearMonth.of(2017, Month.DECEMBER);
     private static YearMonth oct2019 = YearMonth.of(2019, Month.OCTOBER);
 
+    private UtilizationUtil() {}
+
     public static int getNumberofNodes(YearMonth yearMonth) {
         int numNodes = 0;
 

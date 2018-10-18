@@ -48,13 +48,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -147,6 +145,7 @@ public class MainController {
     private static final String INSTITUTION_WEB = "institutionWeb";
     private static final String ADDRESS = "address";
     private static final String ORGANISATION_TYPE = "organisationType";
+    private static final String ORGANISATION_NAME = "organisationName";
     private static final String ADDRESS1 = "address1";
     private static final String ADDRESS2 = "address2";
     private static final String COUNTRY = "country";
@@ -224,6 +223,26 @@ public class MainController {
     private static final String VISIBILITY = "visibility";
     private static final String IS_CLASS = "isClass";
     private static final String KEY = "key";
+
+    private static final String TAG_ERRORS = "Error(s):";
+    private static final String TAG_UL = "<ul class=\"fa-ul\">";
+    private static final String TAG_LI = "<li><i class=\"fa fa-exclamation-circle\"></i> ";
+    private static final String TAG_SPACE = " ";
+    private static final String TAG_LI_CLOSE = "</li>";
+    private static final String TAG_UL_CLOSE = "</ul>";
+
+    private static final String KEY_PROJECT_DETAILS_ID = "projectDetailsId";
+    private static final String KEY_PROJECT_NAME = "projectName";
+    private static final String KEY_MONTH_YEAR = "monthYear";
+    private static final String KEY_MONTHLY_USAGE = "monthlyUsage";
+    private static final String KEY_USAGE = "usage";
+    private static final String KEY_PROJECT = "project";
+    private static final String KEY_QUERY = "query";
+    private static final String KEY_DATE_CREATED = "dateCreated";
+    private static final String KEY_OWNER = "owner";
+
+    private static final String ADMIN_MONTHLY_USAGE_CONTRIBUTE = "admin_monthly_usage_contribute";
+    private static final String ADMIN_MONTHLY_CONTRIBUTE = "admin_monthly_contribute";
 
     @Autowired
     protected RestTemplate restTemplate;
@@ -1271,7 +1290,7 @@ public class MainController {
                     User2 myUser = invokeAndExtractUserInfo(userId);
                     joinRequestApproval.setUserId(myUser.getId());
                     joinRequestApproval.setUserEmail(myUser.getEmail());
-                    joinRequestApproval.setUserName(myUser.getFirstName() + " " + myUser.getLastName());
+                    joinRequestApproval.setUserName(myUser.getFirstName() + TAG_SPACE + myUser.getLastName());
                     joinRequestApproval.setApplicationDate(teamJoinedDate);
                     joinRequestApproval.setTeamId(team2.getId());
                     joinRequestApproval.setTeamName(team2.getName());
@@ -1720,7 +1739,7 @@ public class MainController {
 
         Team2 team = extractTeamInfo(responseBody);
         model.addAttribute("team", team);
-        model.addAttribute("owner", team.getOwner());
+        model.addAttribute(KEY_OWNER, team.getOwner());
         model.addAttribute("membersList", team.getMembersStatusMap().get(MemberStatus.APPROVED));
         session.setAttribute(ORIGINAL_TEAM, team);
 
@@ -1929,7 +1948,7 @@ public class MainController {
         String responseBody = response.getBody().toString();
 
         User2 user = invokeAndExtractUserInfo(userId);
-        String name = user.getFirstName() + " " + user.getLastName();
+        String name = user.getFirstName() + TAG_SPACE + user.getLastName();
 
         if (RestUtil.isError(response.getStatusCode())) {
             MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
@@ -3489,12 +3508,12 @@ public class MainController {
     private ProjectDetails getProjectDetails(JSONObject jsonObject) {
         ProjectDetails projectDetails = new ProjectDetails();
         projectDetails.setId(jsonObject.getInt("id"));
-        projectDetails.setOrganisationType(jsonObject.getString("organisationType"));
-        projectDetails.setOrganisationName(jsonObject.getString("organisationName"));
-        projectDetails.setProjectName(jsonObject.getString("projectName"));
-        projectDetails.setOwner(jsonObject.getString("owner"));
+        projectDetails.setOrganisationType(jsonObject.getString(ORGANISATION_TYPE));
+        projectDetails.setOrganisationName(jsonObject.getString(ORGANISATION_NAME));
+        projectDetails.setProjectName(jsonObject.getString(KEY_PROJECT_NAME));
+        projectDetails.setOwner(jsonObject.getString(KEY_OWNER));
         try {
-            projectDetails.setZonedDateCreated(getZonedDateTime(jsonObject.get("dateCreated").toString()));
+            projectDetails.setZonedDateCreated(getZonedDateTime(jsonObject.get(KEY_DATE_CREATED).toString()));
         } catch (IOException e) {
             log.warn("Error getting date created {}", e);
             projectDetails.setDateCreated("");
@@ -3507,9 +3526,9 @@ public class MainController {
             JSONObject usage = usages.getJSONObject(i);
             JSONObject usageId = usage.getJSONObject("id");
             ProjectUsage projectUsage = new ProjectUsage();
-            projectUsage.setId(usageId.getInt("projectDetailsId"));
-            projectUsage.setMonth(usageId.getString("monthYear"));
-            projectUsage.setUsage(usage.getInt("monthlyUsage"));
+            projectUsage.setId(usageId.getInt(KEY_PROJECT_DETAILS_ID));
+            projectUsage.setMonth(usageId.getString(KEY_MONTH_YEAR));
+            projectUsage.setUsage(usage.getInt(KEY_MONTHLY_USAGE));
             projectDetails.addProjectUsage(projectUsage);
         }
         return projectDetails;
@@ -3552,12 +3571,12 @@ public class MainController {
             ResponseEntity response = restTemplate.exchange(properties.getMonthly() + "/" + id.get(), HttpMethod.GET, request, String.class);
             JSONObject jsonObject = new JSONObject(response.getBody().toString());
             ProjectDetails projectDetails = getProjectDetails(jsonObject);
-            model.addAttribute("project", projectDetails);
+            model.addAttribute(KEY_PROJECT, projectDetails);
         } else {
-            model.addAttribute("project", new ProjectDetails());
+            model.addAttribute(KEY_PROJECT, new ProjectDetails());
         }
 
-        return "admin_monthly_contribute";
+        return ADMIN_MONTHLY_CONTRIBUTE;
     }
 
     @PostMapping("/admin/monthly/contribute")
@@ -3568,51 +3587,17 @@ public class MainController {
         }
 
         if (binding.hasErrors()) {
-            StringBuilder message = new StringBuilder();
-            message.append("Error(s):");
-            message.append("<ul class=\"fa-ul\">");
-            for (ObjectError objectError : binding.getAllErrors()) {
-                FieldError fieldError = (FieldError) objectError;
-                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
-                switch (fieldError.getField()) {
-                    case "organisationType":
-                        message.append("Organisation Type ");
-                        message.append(fieldError.getDefaultMessage());
-                        break;
-                    case "organisationName":
-                        message.append("Organisation Name ");
-                        message.append(fieldError.getDefaultMessage());
-                        break;
-                    case "projectName":
-                        message.append("Project Name ");
-                        message.append(fieldError.getDefaultMessage());
-                        break;
-                    case "owner":
-                        message.append("Owner ");
-                        message.append(fieldError.getDefaultMessage());
-                        break;
-                    case "dateCreated":
-                        message.append("Date Created ");
-                        message.append(fieldError.getDefaultMessage());
-                        break;
-                    default:
-                        message.append(fieldError.getField());
-                        message.append(" ");
-                        message.append(fieldError.getDefaultMessage());
-                }
-                message.append("</li>");
-            }
-            message.append("</ul>");
-            model.addAttribute(MESSAGE, message.toString());
-            model.addAttribute("project", project);
-            return "admin_monthly_contribute";
+            String message = buildErrorMessage(binding);
+            model.addAttribute(MESSAGE, message);
+            model.addAttribute(KEY_PROJECT, project);
+            return ADMIN_MONTHLY_CONTRIBUTE;
         } else {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("organisationType", project.getOrganisationType());
-            jsonObject.put("organisationName", project.getOrganisationName());
-            jsonObject.put("projectName", project.getProjectName());
-            jsonObject.put("owner", project.getOwner());
-            jsonObject.put("dateCreated", project.getZonedDateCreated());
+            jsonObject.put(ORGANISATION_TYPE, project.getOrganisationType());
+            jsonObject.put(ORGANISATION_NAME, project.getOrganisationName());
+            jsonObject.put(KEY_PROJECT_NAME, project.getProjectName());
+            jsonObject.put(KEY_OWNER, project.getOwner());
+            jsonObject.put(KEY_DATE_CREATED, project.getZonedDateCreated());
             jsonObject.put("education", project.isEducation());
             jsonObject.put("serviceTool", project.isServiceTool());
             jsonObject.put("supportedBy", project.getSupportedBy());
@@ -3649,8 +3634,8 @@ public class MainController {
                             log.warn("Unknown error for validating project.");
                             model.addAttribute(MESSAGE, "Error(s):<ul><li>unknown error for validating project</li></ul>");
                     }
-                    model.addAttribute("project", project);
-                    return "admin_monthly_contribute";
+                    model.addAttribute(KEY_PROJECT, project);
+                    return ADMIN_MONTHLY_CONTRIBUTE;
                 } else {
                     log.info("Project details saved: {}", responseBody);
                 }
@@ -3661,6 +3646,45 @@ public class MainController {
         }
 
         return "redirect:/admin/monthly";
+    }
+
+    private String buildErrorMessage(BindingResult binding) {
+        StringBuilder message = new StringBuilder();
+        message.append(TAG_ERRORS);
+        message.append(TAG_UL);
+        for (ObjectError objectError : binding.getAllErrors()) {
+            FieldError fieldError = (FieldError) objectError;
+            message.append(TAG_LI);
+            switch (fieldError.getField()) {
+                case ORGANISATION_TYPE:
+                    message.append("Organisation Type ");
+                    message.append(fieldError.getDefaultMessage());
+                    break;
+                case ORGANISATION_NAME:
+                    message.append("Organisation Name ");
+                    message.append(fieldError.getDefaultMessage());
+                    break;
+                case KEY_PROJECT_NAME:
+                    message.append("Project Name ");
+                    message.append(fieldError.getDefaultMessage());
+                    break;
+                case KEY_OWNER:
+                    message.append("Owner ");
+                    message.append(fieldError.getDefaultMessage());
+                    break;
+                case KEY_DATE_CREATED:
+                    message.append("Date Created ");
+                    message.append(fieldError.getDefaultMessage());
+                    break;
+                default:
+                    message.append(fieldError.getField());
+                    message.append(TAG_SPACE);
+                    message.append(fieldError.getDefaultMessage());
+            }
+            message.append(TAG_LI_CLOSE);
+        }
+        message.append(TAG_UL_CLOSE);
+        return message.toString();
     }
 
     @GetMapping("/admin/monthly/remove/{id}")
@@ -3712,7 +3736,7 @@ public class MainController {
         ResponseEntity response = restTemplate.exchange(properties.getMonthly() + "/" + id, HttpMethod.GET, request, String.class);
         JSONObject jsonObject = new JSONObject(response.getBody().toString());
         ProjectDetails projectDetails = getProjectDetails(jsonObject);
-        model.addAttribute("project", projectDetails);
+        model.addAttribute(KEY_PROJECT, projectDetails);
 
         return "admin_monthly_usage";
     }
@@ -3730,16 +3754,16 @@ public class MainController {
             JSONObject usage = new JSONObject(response.getBody().toString());
             JSONObject usageId = usage.getJSONObject("id");
             ProjectUsage projectUsage = new ProjectUsage();
-            projectUsage.setId(usageId.getInt("projectDetailsId"));
-            projectUsage.setMonth(usageId.getString("monthYear"));
-            projectUsage.setUsage(usage.getInt("monthlyUsage"));
-            model.addAttribute("usage", projectUsage);
+            projectUsage.setId(usageId.getInt(KEY_PROJECT_DETAILS_ID));
+            projectUsage.setMonth(usageId.getString(KEY_MONTH_YEAR));
+            projectUsage.setUsage(usage.getInt(KEY_MONTHLY_USAGE));
+            model.addAttribute(KEY_USAGE, projectUsage);
         } else {
-            model.addAttribute("usage", new ProjectUsage());
+            model.addAttribute(KEY_USAGE, new ProjectUsage());
         }
         model.addAttribute("pid", id);
 
-        return "admin_monthly_usage_contribute";
+        return ADMIN_MONTHLY_USAGE_CONTRIBUTE;
     }
 
     @PostMapping("/admin/monthly/{pid}/usage/contribute")
@@ -3751,33 +3775,31 @@ public class MainController {
 
         if (binding.hasErrors()) {
             StringBuilder message = new StringBuilder();
-            message.append("Error(s):");
-            message.append("<ul class=\"fa-ul\">");
+            message.append(TAG_ERRORS);
+            message.append(TAG_UL);
             for (ObjectError objectError : binding.getAllErrors()) {
                 FieldError fieldError = (FieldError) objectError;
-                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
-                switch (fieldError.getField()) {
-                    case "month":
-                        message.append("Month ");
-                        message.append(fieldError.getDefaultMessage());
-                        break;
-                    default:
-                        message.append(fieldError.getField());
-                        message.append(" ");
-                        message.append(fieldError.getDefaultMessage());
+                message.append(TAG_LI);
+                if (fieldError.getField().equals("month")) {
+                    message.append("Month ");
+                    message.append(fieldError.getDefaultMessage());
+                } else {
+                    message.append(fieldError.getField());
+                    message.append(TAG_SPACE);
+                    message.append(fieldError.getDefaultMessage());
                 }
-                message.append("</li>");
+                message.append(TAG_LI_CLOSE);
             }
-            message.append("</ul>");
+            message.append(TAG_UL_CLOSE);
             model.addAttribute(MESSAGE, message.toString());
-            model.addAttribute("usage", usage);
+            model.addAttribute(KEY_USAGE, usage);
             model.addAttribute("pid", pid);
-            return "admin_monthly_usage_contribute";
+            return ADMIN_MONTHLY_USAGE_CONTRIBUTE;
         } else {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("projectDetailsId", pid);
+            jsonObject.put(KEY_PROJECT_DETAILS_ID, pid);
             jsonObject.put("month", usage.getMonth());
-            jsonObject.put("usage", usage.getUsage());
+            jsonObject.put(KEY_USAGE, usage.getUsage());
             log.debug("JsonObject: {}", jsonObject);
 
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -3811,9 +3833,9 @@ public class MainController {
                             log.warn("Unknown error for validating project usage.");
                             model.addAttribute(MESSAGE, "Error(s):<ul><li>unknown error for validating project usage</li></ul>");
                     }
-                    model.addAttribute("usage", usage);
+                    model.addAttribute(KEY_USAGE, usage);
                     model.addAttribute("pid", pid);
-                    return "admin_monthly_usage_contribute";
+                    return ADMIN_MONTHLY_USAGE_CONTRIBUTE;
                 } else {
                     log.info("Project details saved: {}", responseBody);
                 }
@@ -3872,8 +3894,8 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-        if (!model.containsAttribute("query")) {
-            model.addAttribute("query", new ProjectUsageQuery());
+        if (!model.containsAttribute(KEY_QUERY)) {
+            model.addAttribute(KEY_QUERY, new ProjectUsageQuery());
             model.addAttribute("newProjects", new ArrayList<ProjectDetails>());
             model.addAttribute("activeProjects", new ArrayList<ProjectDetails>());
             model.addAttribute("inactiveProjects", new ArrayList<ProjectDetails>());
@@ -3904,17 +3926,17 @@ public class MainController {
 
         if (result.hasErrors()) {
             StringBuilder message = new StringBuilder();
-            message.append("Error(s):");
-            message.append("<ul class=\"fa-ul\">");
+            message.append(TAG_ERRORS);
+            message.append(TAG_UL);
             for (ObjectError objectError : result.getAllErrors()) {
                 FieldError fieldError = (FieldError) objectError;
-                message.append("<li><i class=\"fa fa-exclamation-circle\"></i> ");
+                message.append(TAG_LI);
                 message.append(fieldError.getField());
-                message.append(" ");
+                message.append(TAG_SPACE);
                 message.append(fieldError.getDefaultMessage());
-                message.append("</li>");
+                message.append(TAG_LI_CLOSE);
             }
-            message.append("</ul>");
+            message.append(TAG_UL_CLOSE);
             attributes.addFlashAttribute(MESSAGE, message.toString());
         } else {
             DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("MMM-yyyy").toFormatter();
@@ -3933,54 +3955,21 @@ public class MainController {
             List<ProjectDetails> projectsList = getProjects();
 
             for (ProjectDetails project : projectsList) {
-                YearMonth created = YearMonth.from(project.getZonedDateCreated());
-
-                // projects created within the period
-                if (!(created.isBefore(m_s) || created.isAfter(m_e))) {
-                    newProjects.add(project);
-                }
-
-                // active projects = projects with resources within the period + projects created
-                boolean hasUsage = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(m_active, m_e));
-                if (hasUsage || !(created.isBefore(m_e_m2) || created.isAfter(m_e))) {
-                    activeProjects.add(project);
-                }
-
-                // inactive projects
-                if (!hasUsage && created.isBefore(m_e_m2)) {
-                    inactiveProjects.add(project);
-                }
+                // compute active and inactive projects
+                differentiateProjects(newProjects, activeProjects, inactiveProjects, m_s, m_e, m_e_m2, m_active, project);
 
                 // monthly utilisation
-                counter = m_s;
-                while (!counter.isAfter(m_e)) {
-                    String monthYear = counter.format(formatter);
-                    int usageSum = project.getProjectUsages().stream().filter(p -> p.getMonth().equals(monthYear)).mapToInt(ProjectUsage::getUsage).sum();
-                    utilizationMap.get(monthYear).addNodeHours(usageSum);
-                    counter = counter.plusMonths(1);
-                }
+                computeMonthlyUtilisation(utilizationMap, formatter, m_s, m_e, project);
 
                 // usage statistics by category
-                String key = project.getOrganisationType();
-                if (key.equals("Academic")) {
-                    key = project.isEducation() ? "Academia (Education)" : "Academia  (R&D)";
-                }
-                int nodeHours = statsCategoryMap.getOrDefault(key, 0);
-                nodeHours += project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToInt(ProjectUsage::getUsage).sum();
-                statsCategoryMap.put(key, nodeHours);
-                totalCategoryUsage += nodeHours;
+                totalCategoryUsage += getCategoryUsage(statsCategoryMap, m_s, m_e, project);
 
                 // usage statistics by academic institutes
-                if (project.getOrganisationType().equals("Academic")) {
-                    nodeHours = statsAcademicMap.getOrDefault(project.getOrganisationName(), 0);
-                    nodeHours += project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToInt(ProjectUsage::getUsage).sum();
-                    statsAcademicMap.put(project.getOrganisationName(), nodeHours);
-                    totalAcademicUsage += nodeHours;
-                }
+                totalAcademicUsage += getAcademicUsage(statsAcademicMap, m_s, m_e, project);
             }
         }
 
-        attributes.addFlashAttribute("query", query);
+        attributes.addFlashAttribute(KEY_QUERY, query);
         attributes.addFlashAttribute("newProjects", newProjects);
         attributes.addFlashAttribute("activeProjects", activeProjects);
         attributes.addFlashAttribute("inactiveProjects", inactiveProjects);
@@ -3992,6 +3981,61 @@ public class MainController {
         attributes.addFlashAttribute("totalAcademicUsage", totalAcademicUsage);
 
         return "redirect:/admin/statistics";
+    }
+
+    private void differentiateProjects(List<ProjectDetails> newProjects,
+                                       List<ProjectDetails> activeProjects,
+                                       List<ProjectDetails> inactiveProjects,
+                                       YearMonth m_s, YearMonth m_e, YearMonth m_e_m2, YearMonth m_active,
+                                       ProjectDetails project) {
+        YearMonth created = YearMonth.from(project.getZonedDateCreated());
+
+        // projects created within the period
+        if (!(created.isBefore(m_s) || created.isAfter(m_e))) {
+            newProjects.add(project);
+        }
+
+        // active projects = projects with resources within the period + projects created
+        boolean hasUsage = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(m_active, m_e));
+        if (hasUsage || !(created.isBefore(m_e_m2) || created.isAfter(m_e))) {
+            activeProjects.add(project);
+        }
+
+        // inactive projects
+        if (!hasUsage && created.isBefore(m_e_m2)) {
+            inactiveProjects.add(project);
+        }
+    }
+
+    private void computeMonthlyUtilisation(Map<String, MonthlyUtilization> utilizationMap, DateTimeFormatter formatter, YearMonth m_s, YearMonth m_e, ProjectDetails project) {
+        YearMonth counter = m_s;
+        while (!counter.isAfter(m_e)) {
+            String monthYear = counter.format(formatter);
+            int usageSum = project.getProjectUsages().stream().filter(p -> p.getMonth().equals(monthYear)).mapToInt(ProjectUsage::getUsage).sum();
+            utilizationMap.get(monthYear).addNodeHours(usageSum);
+            counter = counter.plusMonths(1);
+        }
+    }
+
+    private int getCategoryUsage(Map<String, Integer> statsCategoryMap, YearMonth m_s, YearMonth m_e, ProjectDetails project) {
+        String key = project.getOrganisationType();
+        if (key.equals("Academic")) {
+            key = project.isEducation() ? "Academia (Education)" : "Academia  (R&D)";
+        }
+        int totalNodeHours = statsCategoryMap.getOrDefault(key, 0);
+        int nodeHours = project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToInt(ProjectUsage::getUsage).sum();
+        statsCategoryMap.put(key, totalNodeHours + nodeHours);
+        return nodeHours;
+    }
+
+    private int getAcademicUsage(Map<String, Integer> statsAcademicMap, YearMonth m_s, YearMonth m_e, ProjectDetails project) {
+        int nodeHours = 0;
+        if (project.getOrganisationType().equals("Academic")) {
+            int totalNodeHours = statsAcademicMap.getOrDefault(project.getOrganisationName(), 0);
+            nodeHours = project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToInt(ProjectUsage::getUsage).sum();
+            statsAcademicMap.put(project.getOrganisationName(), totalNodeHours + nodeHours);
+        }
+        return nodeHours;
     }
 
     /**
@@ -5798,7 +5842,7 @@ public class MainController {
         Double charges = Double.parseDouble(accountingProperties.getCharges());
 
         // amountUsed from SIO will never be null => not checking for null value
-        String usage = object.getString("usage");                 // getting usage in String
+        String usage = object.getString(KEY_USAGE);                 // getting usage in String
         BigDecimal amountUsed = new BigDecimal(usage);                //  using BigDecimal to handle currency
         amountUsed = amountUsed.multiply(new BigDecimal(charges));   // usage X charges
 
