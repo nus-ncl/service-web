@@ -21,7 +21,7 @@ public class MonthlyUtilization implements Serializable {
     public double getUtilizationInPercentage() {
         YearMonth monthYear = YearMonth.parse(month, formatter);
         int maxHours = monthYear.lengthOfMonth() * 24 * UtilizationUtil.getNumberofNodes(monthYear);
-        return nodeHours / maxHours;
+        return nodeHours / maxHours * 100;
     }
 
     public void addNodeHours(double nodeHours) {

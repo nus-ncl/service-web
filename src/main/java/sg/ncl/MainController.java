@@ -3895,9 +3895,12 @@ public class MainController {
         List<ProjectDetails> newProjects = new ArrayList<>();
         List<ProjectDetails> activeProjects = new ArrayList<>();
         List<ProjectDetails> inactiveProjects = new ArrayList<>();
+        List<String> months = new ArrayList<>();
         Map<String, MonthlyUtilization> utilizationMap = new HashMap<>();
-        Map<String, Integer> statsCategory = new HashMap<>();
-        Map<String, Integer> statsAcademic = new HashMap<>();
+        Map<String, Integer> statsCategoryMap = new HashMap<>();
+        Map<String, Integer> statsAcademicMap = new HashMap<>();
+        int totalCategoryUsage = 0;
+        int totalAcademicUsage = 0;
 
         if (result.hasErrors()) {
             StringBuilder message = new StringBuilder();
@@ -3924,6 +3927,7 @@ public class MainController {
             while (!counter.isAfter(m_e)) {
                 String monthYear = counter.format(formatter);
                 utilizationMap.put(monthYear, new MonthlyUtilization(monthYear));
+                months.add(monthYear);
                 counter = counter.plusMonths(1);
             }
             List<ProjectDetails> projectsList = getProjects();
@@ -3957,15 +3961,21 @@ public class MainController {
                 }
 
                 // usage statistics by category
-                int nodeHours = statsCategory.getOrDefault(project.getOrganisationType(), 0);
+                String key = project.getOrganisationType();
+                if (key.equals("Academic")) {
+                    key = project.isEducation() ? "Academia (Education)" : "Academia  (R&D)";
+                }
+                int nodeHours = statsCategoryMap.getOrDefault(key, 0);
                 nodeHours += project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToInt(ProjectUsage::getUsage).sum();
-                statsCategory.put(project.getOrganisationType(), nodeHours);
+                statsCategoryMap.put(key, nodeHours);
+                totalCategoryUsage += nodeHours;
 
                 // usage statistics by academic institutes
                 if (project.getOrganisationType().equals("Academic")) {
-                    nodeHours = statsAcademic.getOrDefault(project.getOrganisationName(), 0);
+                    nodeHours = statsAcademicMap.getOrDefault(project.getOrganisationName(), 0);
                     nodeHours += project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToInt(ProjectUsage::getUsage).sum();
-                    statsAcademic.put(project.getOrganisationName(), nodeHours);
+                    statsAcademicMap.put(project.getOrganisationName(), nodeHours);
+                    totalAcademicUsage += nodeHours;
                 }
             }
         }
@@ -3974,9 +3984,12 @@ public class MainController {
         attributes.addFlashAttribute("newProjects", newProjects);
         attributes.addFlashAttribute("activeProjects", activeProjects);
         attributes.addFlashAttribute("inactiveProjects", inactiveProjects);
+        attributes.addFlashAttribute("months", months);
         attributes.addFlashAttribute("utilization", utilizationMap);
-        attributes.addFlashAttribute("statsCategory", statsCategory);
-        attributes.addFlashAttribute("statsAcademic", statsAcademic);
+        attributes.addFlashAttribute("statsCategory", statsCategoryMap);
+        attributes.addFlashAttribute("totalCategoryUsage", totalCategoryUsage);
+        attributes.addFlashAttribute("statsAcademic", statsAcademicMap);
+        attributes.addFlashAttribute("totalAcademicUsage", totalAcademicUsage);
 
         return "redirect:/admin/statistics";
     }

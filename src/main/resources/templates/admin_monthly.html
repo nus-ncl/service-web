@@ -21,7 +21,7 @@
     <th:block th:if="${projectsList.isEmpty()}">
         <p>There is no projects in the system</p>
     </th:block>
-    <table class="table table-responsive" th:if="not ${projectsList.isEmpty()}">
+    <table id="myTable" class="table table-responsive" th:if="not ${projectsList.isEmpty()}">
         <thead>
         <tr>
             <th>Organisation Type</th>
@@ -85,6 +85,7 @@
 <script th:inline="javascript">
     // <![CDATA[
     $(document).ready(function () {
+        $('#myTable').dataTable();
         $('#confirmDelete').on('show.bs.modal', function (event) {
             var anchor = $(event.relatedTarget);
             var name = anchor.data('name');

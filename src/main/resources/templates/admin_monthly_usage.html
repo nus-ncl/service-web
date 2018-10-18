@@ -21,7 +21,7 @@
     <th:block th:if="${project.getProjectUsages().isEmpty()}">
         <p>There is no project usages in the system</p>
     </th:block>
-    <table class="table table-responsive" th:if="not ${project.getProjectUsages().isEmpty()}">
+    <table id="myTable" class="table table-responsive" th:if="not ${project.getProjectUsages().isEmpty()}">
         <thead>
         <tr>
             <th>Month</th>
@@ -72,6 +72,7 @@
 <script th:inline="javascript">
     // <![CDATA[
     $(document).ready(function () {
+        $('#myTable').dataTable();
         $('#confirmDelete').on('show.bs.modal', function (event) {
             var anchor = $(event.relatedTarget);
             var month = anchor.data('month');
