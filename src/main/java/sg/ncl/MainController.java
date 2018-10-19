@@ -3816,23 +3816,7 @@ public class MainController {
                 if (RestUtil.isError(response.getStatusCode())) {
                     MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                     ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-                    switch (exceptionState) {
-                        case PROJECT_USAGE_NOT_FOUND_EXCEPTION:
-                            log.warn("Project usage not found for updating");
-                            model.addAttribute(MESSAGE, "Error(s):<ul><li>project usage not found for editing</li></ul>");
-                            break;
-                        case PROJECT_USAGE_ALREADY_EXISTS_EXCEPTION:
-                            log.warn("Project usage already exists: {} {}", usage.getId(), usage.getMonth());
-                            model.addAttribute(MESSAGE, "Error(s):<ul<li>project usage already exist</li></ul>");
-                            break;
-                        case FORBIDDEN_EXCEPTION:
-                            log.warn("Saving of project usage forbidden.");
-                            model.addAttribute(MESSAGE, "Error(s):<ul><li>saving project forbidden</li></ul>");
-                            break;
-                        default:
-                            log.warn("Unknown error for validating project usage.");
-                            model.addAttribute(MESSAGE, "Error(s):<ul><li>unknown error for validating project usage</li></ul>");
-                    }
+                    checkProjectUsageExceptionState(usage, model, exceptionState);
                     model.addAttribute(KEY_USAGE, usage);
                     model.addAttribute("pid", pid);
                     return ADMIN_MONTHLY_USAGE_CONTRIBUTE;
@@ -3846,6 +3830,26 @@ public class MainController {
         }
 
         return "redirect:/admin/monthly/" + pid + "/usage";
+    }
+
+    private void checkProjectUsageExceptionState(@Valid @ModelAttribute("usage") ProjectUsage usage, Model model, ExceptionState exceptionState) {
+        switch (exceptionState) {
+            case PROJECT_USAGE_NOT_FOUND_EXCEPTION:
+                log.warn("Project usage not found for updating");
+                model.addAttribute(MESSAGE, "Error(s):<ul><li>project usage not found for editing</li></ul>");
+                break;
+            case PROJECT_USAGE_ALREADY_EXISTS_EXCEPTION:
+                log.warn("Project usage already exists: {} {}", usage.getId(), usage.getMonth());
+                model.addAttribute(MESSAGE, "Error(s):<ul<li>project usage already exist</li></ul>");
+                break;
+            case FORBIDDEN_EXCEPTION:
+                log.warn("Saving of project usage forbidden.");
+                model.addAttribute(MESSAGE, "Error(s):<ul><li>saving project forbidden</li></ul>");
+                break;
+            default:
+                log.warn("Unknown error for validating project usage.");
+                model.addAttribute(MESSAGE, "Error(s):<ul><li>unknown error for validating project usage</li></ul>");
+        }
     }
 
     @GetMapping("/admin/monthly/{id}/usage/remove/{month}")
@@ -3942,8 +3946,6 @@ public class MainController {
             DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("MMM-yyyy").toFormatter();
             YearMonth m_s = YearMonth.parse(query.getStart(), formatter);
             YearMonth m_e = YearMonth.parse(query.getEnd(), formatter);
-            YearMonth m_e_m2 = m_e.minusMonths(2);
-            YearMonth m_active = m_e_m2.isBefore(m_s) ? m_e_m2 : m_s;
 
             YearMonth counter = m_s;
             while (!counter.isAfter(m_e)) {
@@ -3956,7 +3958,7 @@ public class MainController {
 
             for (ProjectDetails project : projectsList) {
                 // compute active and inactive projects
-                differentiateProjects(newProjects, activeProjects, inactiveProjects, m_s, m_e, m_e_m2, m_active, project);
+                differentiateProjects(newProjects, activeProjects, inactiveProjects, m_s, m_e, project);
 
                 // monthly utilisation
                 computeMonthlyUtilisation(utilizationMap, formatter, m_s, m_e, project);
@@ -3986,9 +3988,11 @@ public class MainController {
     private void differentiateProjects(List<ProjectDetails> newProjects,
                                        List<ProjectDetails> activeProjects,
                                        List<ProjectDetails> inactiveProjects,
-                                       YearMonth m_s, YearMonth m_e, YearMonth m_e_m2, YearMonth m_active,
+                                       YearMonth m_s, YearMonth m_e,
                                        ProjectDetails project) {
         YearMonth created = YearMonth.from(project.getZonedDateCreated());
+        YearMonth m_e_m2 = m_e.minusMonths(2);
+        YearMonth m_active = m_e_m2.isBefore(m_s) ? m_e_m2 : m_s;
 
         // projects created within the period
         if (!(created.isBefore(m_s) || created.isAfter(m_e))) {
