@@ -3676,6 +3676,10 @@ public class MainController {
                     message.append("Date Created ");
                     message.append(fieldError.getDefaultMessage());
                     break;
+                case "month":
+                    message.append("Month ");
+                    message.append(fieldError.getDefaultMessage());
+                    break;
                 default:
                     message.append(fieldError.getField());
                     message.append(TAG_SPACE);
@@ -3774,24 +3778,8 @@ public class MainController {
         }
 
         if (binding.hasErrors()) {
-            StringBuilder message = new StringBuilder();
-            message.append(TAG_ERRORS);
-            message.append(TAG_UL);
-            for (ObjectError objectError : binding.getAllErrors()) {
-                FieldError fieldError = (FieldError) objectError;
-                message.append(TAG_LI);
-                if (fieldError.getField().equals("month")) {
-                    message.append("Month ");
-                    message.append(fieldError.getDefaultMessage());
-                } else {
-                    message.append(fieldError.getField());
-                    message.append(TAG_SPACE);
-                    message.append(fieldError.getDefaultMessage());
-                }
-                message.append(TAG_LI_CLOSE);
-            }
-            message.append(TAG_UL_CLOSE);
-            model.addAttribute(MESSAGE, message.toString());
+            String message = buildErrorMessage(binding);
+            model.addAttribute(MESSAGE, message);
             model.addAttribute(KEY_USAGE, usage);
             model.addAttribute("pid", pid);
             return ADMIN_MONTHLY_USAGE_CONTRIBUTE;
