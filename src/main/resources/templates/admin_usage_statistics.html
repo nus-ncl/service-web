@@ -138,7 +138,7 @@
                 <tr>
                     <th>Month</th>
                     <th>Node Hours</th>
-                    <th>Percentage</th>
+                    <th>Usage (%)</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -156,12 +156,14 @@
                 <thead>
                 <tr>
                     <th>Category</th>
+                    <th>Node Hours</th>
                     <th>Usage (%)</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="category : ${statsCategory}">
                     <td th:text="${category.key}">Category</td>
+                    <td th:text="${category.value}">Node Hours</td>
                     <td th:text="${#numbers.formatDecimal(category.value.doubleValue() / totalCategoryUsage * 100, 1, 'COMMA', 2, 'POINT')}">Usage Statistics</td>
                 </tr>
                 </tbody>
@@ -173,12 +175,14 @@
                 <thead>
                 <tr>
                     <th>Academic Institute</th>
+                    <th>Node Hours</th>
                     <th>Usage (%)</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="academic : ${statsAcademic}">
                     <td th:text="${academic.key}">Academic Institute</td>
+                    <td th:text="${academic.value}">Node Hours</td>
                     <td th:text="${#numbers.formatDecimal(academic.value.doubleValue() / totalAcademicUsage * 100, 1, 'COMMA', 2, 'POINT')}">Usage Statistics</td>
                 </tr>
                 </tbody>
