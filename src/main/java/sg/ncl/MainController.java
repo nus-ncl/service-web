@@ -3618,7 +3618,6 @@ public class MainController {
                 if (RestUtil.isError(response.getStatusCode())) {
                     MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                     ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-                    log.info(exceptionState.getExceptionName());
                     switch (exceptionState) {
                         case PROJECT_DETAILS_NOT_FOUND_EXCEPTION:
                             log.warn("Project not found for updating");
