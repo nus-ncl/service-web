@@ -3601,6 +3601,7 @@ public class MainController {
             jsonObject.put("education", project.isEducation());
             jsonObject.put("serviceTool", project.isServiceTool());
             jsonObject.put("supportedBy", project.getSupportedBy());
+            jsonObject.put("projectUsages", new ArrayList());
             log.debug("JsonObject: {}", jsonObject);
 
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -3617,6 +3618,7 @@ public class MainController {
                 if (RestUtil.isError(response.getStatusCode())) {
                     MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                     ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                    log.info(exceptionState.getExceptionName());
                     switch (exceptionState) {
                         case PROJECT_DETAILS_NOT_FOUND_EXCEPTION:
                             log.warn("Project not found for updating");

@@ -18,7 +18,7 @@ public class ProjectUsage implements Serializable {
     private Integer id = 0;
     @NotEmpty
     @DateTimeFormat(pattern = "MMM-yyyy")
-    private String month;
+    private String month = "";
     private int usage;
 
     public boolean hasUsageWithinPeriod(YearMonth start, YearMonth end) {

@@ -64,9 +64,9 @@ public enum ExceptionState {
     INVALID_PUBLIC_KEY_FILE_EXCEPTION("InvalidPublicKeyFileException"),
     INVALID_PUBLIC_KEY_FORMAT_EXCEPTION("InvalidPublicKeyFormatException"),
     PROJECT_DETAILS_NOT_FOUND_EXCEPTION("ProjectDetailsNotFoundException"),
-    PROJECT_NAME_ALREADY_EXISTS_EXCEPTION("ProjectNameAlreadyExistException"),
+    PROJECT_NAME_ALREADY_EXISTS_EXCEPTION("ProjectNameAlreadyExistsException"),
     PROJECT_USAGE_NOT_FOUND_EXCEPTION("ProjectUsageNotFoundException"),
-    PROJECT_USAGE_ALREADY_EXISTS_EXCEPTION("ProjectUsageAlreadyExistException");
+    PROJECT_USAGE_ALREADY_EXISTS_EXCEPTION("ProjectUsageAlreadyExistsException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 
