@@ -15,7 +15,7 @@ import java.util.List;
 public class ProjectDetails implements Serializable {
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-dd-yyyy");
 
-    private Integer id;
+    private Integer id = 0;
     @NotEmpty
     private String organisationType;
     @NotEmpty

@@ -3606,7 +3606,7 @@ public class MainController {
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
             ResponseEntity response;
-            if (project.getId() == null) {
+            if (project.getId() == null || project.getId() == 0) {
                 response = restTemplate.exchange(properties.getMonthly(), HttpMethod.POST, request, String.class);
             } else {
                 response = restTemplate.exchange(properties.getMonthly() + "/" + project.getId(), HttpMethod.PUT, request, String.class);
@@ -3793,7 +3793,7 @@ public class MainController {
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
             ResponseEntity response;
-            if (usage.getId() == null) {
+            if (usage.getId() == null || usage.getId() == 0) {
                 response = restTemplate.exchange(properties.getMonthlyUsage(pid), HttpMethod.POST, request, String.class);
             } else {
                 response = restTemplate.exchange(properties.getMonthlyUsage(pid), HttpMethod.PUT, request, String.class);

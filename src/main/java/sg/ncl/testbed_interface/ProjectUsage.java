@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatterBuilder;
 public class ProjectUsage implements Serializable {
     private static DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("MMM-yyyy").toFormatter();
 
-    private Integer id;
+    private Integer id = 0;
     @NotEmpty
     @DateTimeFormat(pattern = "MMM-yyyy")
     private String month;
