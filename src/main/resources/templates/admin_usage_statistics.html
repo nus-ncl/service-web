@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Admin</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" />
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="container">
+    <h2 class="team-heading team-heading-current-team">Usage Statistics</h2>
+    <p>&nbsp;</p>
+    <div class="alert alert-danger" th:if="${message}">
+        <h4 th:utext="${message}"></h4>
+    </div>
+    <form class="form-horizontal" method="post" action="#" th:action="@{/admin/statistics}" th:object="${query}" role="form">
+        <div class="form-group">
+            <label for="datepicker" class="col-sm-2 control-label">Period :</label>
+            <div class="col-sm-7">
+                <div class="input-group input-daterange" id="datepicker">
+                    <input type="text" class="form-control" th:name="start" th:value="*{start}" placeholder="Start Month (MMM-yyyy)" />
+                    <span class="input-group-addon">to</span>
+                    <input type="text" class="form-control" th:name="end" th:value="*{end}" placeholder="End Month (MMM-yyyy)" />
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <button type="submit" class="btn btn-default">Query</button>
+            </div>
+        </div>
+    </form>
+    <p>&nbsp;</p>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">New Projects</a></li>
+        <li><a data-toggle="tab" href="#menu1">Active Projects</a></li>
+        <li><a data-toggle="tab" href="#menu2">Inactive Projects</a></li>
+        <li><a data-toggle="tab" href="#menu3">Utilization</a></li>
+        <li><a data-toggle="tab" href="#menu4">By Category</a></li>
+        <li><a data-toggle="tab" href="#menu5">By Academic</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <p>&nbsp;</p>
+            <table id="newProjectTable" class="table table-responsive" th:if="not ${newProjects.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Organisation Type</th>
+                    <th>Organisation Name</th>
+                    <th>Project Name</th>
+                    <th>Owner</th>
+                    <th>Date Created</th>
+                    <th>Education?</th>
+                    <th>Service and Tools?</th>
+                    <th>Supported By</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${newProjects}">
+                    <td th:text="${project.getOrganisationType()}">Organisation Type</td>
+                    <td th:text="${project.getOrganisationName()}">Organisation Name</td>
+                    <td th:text="${project.getProjectName()}">Project Name</td>
+                    <td th:text="${project.getOwner()}">Owner</td>
+                    <td th:text="${project.getDateCreated()}">Date Created</td>
+                    <td><i class="fa fa-check" th:if="${project.isEducation()}"></i></td>
+                    <td><i class="fa fa-check" th:if="${project.isServiceTool()}"></i></td>
+                    <td th:text="${project.getSupportedBy()}">Supported By</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="menu1" class="tab-pane fade">
+            <p>&nbsp;</p>
+            <table id="activeProjectTable" class="table table-responsive" th:if="not ${activeProjects.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Organisation Type</th>
+                    <th>Organisation Name</th>
+                    <th>Project Name</th>
+                    <th>Owner</th>
+                    <th>Date Created</th>
+                    <th>Education?</th>
+                    <th>Service and Tools?</th>
+                    <th>Supported By</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${activeProjects}">
+                    <td th:text="${project.getOrganisationType()}">Organisation Type</td>
+                    <td th:text="${project.getOrganisationName()}">Organisation Name</td>
+                    <td th:text="${project.getProjectName()}">Project Name</td>
+                    <td th:text="${project.getOwner()}">Owner</td>
+                    <td th:text="${project.getDateCreated()}">Date Created</td>
+                    <td><i class="fa fa-check" th:if="${project.isEducation()}"></i></td>
+                    <td><i class="fa fa-check" th:if="${project.isServiceTool()}"></i></td>
+                    <td th:text="${project.getSupportedBy()}">Supported By</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="menu2" class="tab-pane fade">
+            <p>&nbsp;</p>
+            <table id="inactiveProjectTable" class="table table-responsive" th:if="not ${inactiveProjects.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Organisation Type</th>
+                    <th>Organisation Name</th>
+                    <th>Project Name</th>
+                    <th>Owner</th>
+                    <th>Date Created</th>
+                    <th>Education?</th>
+                    <th>Service and Tools?</th>
+                    <th>Supported By</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${inactiveProjects}">
+                    <td th:text="${project.getOrganisationType()}">Organisation Type</td>
+                    <td th:text="${project.getOrganisationName()}">Organisation Name</td>
+                    <td th:text="${project.getProjectName()}">Project Name</td>
+                    <td th:text="${project.getOwner()}">Owner</td>
+                    <td th:text="${project.getDateCreated()}">Date Created</td>
+                    <td><i class="fa fa-check" th:if="${project.isEducation()}"></i></td>
+                    <td><i class="fa fa-check" th:if="${project.isServiceTool()}"></i></td>
+                    <td th:text="${project.getSupportedBy()}">Supported By</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="menu3" class="tab-pane fade">
+            <p>&nbsp;</p>
+            <table id="utilizationTable" class="table table-responsive" th:if="not ${utilization.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Node Hours</th>
+                    <th>Usage (%)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="month : ${months}">
+                    <td th:text="${month}">Month</td>
+                    <td th:text="${utilization.get(month).getNodeHours()}">Node Hours</td>
+                    <td th:text="${#numbers.formatDecimal(utilization.get(month).getUtilizationInPercentage(), 1, 'COMMA', 2, 'POINT')}">Percentage</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="menu4" class="tab-pane fade">
+            <p>&nbsp;</p>
+            <table id="statsCategoryTable" class="table table-responsive" th:if="not ${statsCategory.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Node Hours</th>
+                    <th>Usage (%)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category : ${statsCategory}">
+                    <td th:text="${category.key}">Category</td>
+                    <td th:text="${category.value}">Node Hours</td>
+                    <td th:text="${#numbers.formatDecimal(category.value.doubleValue() / totalCategoryUsage * 100, 1, 'COMMA', 2, 'POINT')}">Usage Statistics</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="menu5" class="tab-pane fade">
+            <p>&nbsp;</p>
+            <table id="statsAcademicTable" class="table table-responsive" th:if="not ${statsAcademic.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Academic Institute</th>
+                    <th>Node Hours</th>
+                    <th>Usage (%)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="academic : ${statsAcademic}">
+                    <td th:text="${academic.key}">Academic Institute</td>
+                    <td th:text="${academic.value}">Node Hours</td>
+                    <td th:text="${#numbers.formatDecimal(academic.value.doubleValue() / totalAcademicUsage * 100, 1, 'COMMA', 2, 'POINT')}">Usage Statistics</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
+<script th:inline="javascript">
+    // <![CDATA[
+    $(document).ready(function () {
+        $('.input-daterange').datepicker({
+            clearBtn: true,
+            format: "M-yyyy",
+            startView: 1,
+            minViewMode: 1,
+            orientation: "bottom"
+        });
+        $('#newProjectTable').dataTable();
+        $('#activeProjectTable').dataTable();
+        $('#inactiveProjectTable').dataTable();
+        $('utilizationTable').dataTable();
+        $('statsCategoryTable').dataTable();
+        $('statsAcademicTable').dataTable();
+    });
+    // ]]>
+</script>
+</body>
+</html>
