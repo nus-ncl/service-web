@@ -50,8 +50,8 @@
                             <div class="col-sm-7">
                                 <select id="team" class="form-control" th:name="team">
                                     <option value="All" class="Academic Government Industry Internal">[All Teams]</option>
-                                    <option th:each="teamEntry : ${teamsMap}" th:value="${teamEntry.value.id}" th:text="${teamEntry.value.name}"
-                                            th:selected="${team == teamEntry.value.id}" th:class="${teamEntry.value.organisationType}"></option>
+                                    <option th:each="teamEntry : ${allTeams}" th:value="${teamEntry.id}" th:text="${teamEntry.name}"
+                                            th:selected="${team == teamEntry.id}" th:class="${teamEntry.organisationType}"></option>
                                 </select>
                             </div>
                         </div>
