@@ -4198,9 +4198,13 @@ public class MainController {
         Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
         Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
 
-        countNodeStatus(testbedStatsMap, nodesStatus, nodesStatusCount);
+        List<Map<String, String>> allNodes = new ArrayList<>();
+        nodesStatus.forEach((key, value) -> allNodes.addAll(value));
+        Map<String, List<Map<String, String>>> allNodesStatus = new HashMap<>();
+        allNodesStatus.put("All Servers", allNodes);
+        countNodeStatus(testbedStatsMap, allNodesStatus, nodesStatusCount);
 
-        model.addAttribute("nodesStatus", nodesStatus);
+        model.addAttribute("nodesStatus", allNodesStatus);
         model.addAttribute("nodesStatusCount", nodesStatusCount);
 
         model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
