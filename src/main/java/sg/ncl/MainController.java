@@ -3892,6 +3892,7 @@ public class MainController {
             model.addAttribute("newProjects", new ArrayList<ProjectDetails>());
             model.addAttribute("activeProjects", new ArrayList<ProjectDetails>());
             model.addAttribute("inactiveProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("stoppedProjects", new ArrayList<ProjectDetails>());
             model.addAttribute("utilization", new HashMap<String, MonthlyUtilization>());
             model.addAttribute("statsCategory", new HashMap<String, Integer>());
             model.addAttribute("statsAcademic", new HashMap<String, Integer>());
@@ -3910,6 +3911,7 @@ public class MainController {
         List<ProjectDetails> newProjects = new ArrayList<>();
         List<ProjectDetails> activeProjects = new ArrayList<>();
         List<ProjectDetails> inactiveProjects = new ArrayList<>();
+        List<ProjectDetails> stoppedProjects = new ArrayList<>();
         List<String> months = new ArrayList<>();
         Map<String, MonthlyUtilization> utilizationMap = new HashMap<>();
         Map<String, Integer> statsCategoryMap = new HashMap<>();
@@ -3947,7 +3949,7 @@ public class MainController {
 
             for (ProjectDetails project : projectsList) {
                 // compute active and inactive projects
-                differentiateProjects(newProjects, activeProjects, inactiveProjects, m_s, m_e, project);
+                differentiateProjects(newProjects, activeProjects, inactiveProjects, stoppedProjects, m_s, m_e, project);
 
                 // monthly utilisation
                 computeMonthlyUtilisation(utilizationMap, formatter, m_s, m_e, project);
@@ -3964,6 +3966,7 @@ public class MainController {
         attributes.addFlashAttribute("newProjects", newProjects);
         attributes.addFlashAttribute("activeProjects", activeProjects);
         attributes.addFlashAttribute("inactiveProjects", inactiveProjects);
+        attributes.addFlashAttribute("stoppedProjects", stoppedProjects);
         attributes.addFlashAttribute("months", months);
         attributes.addFlashAttribute("utilization", utilizationMap);
         attributes.addFlashAttribute("statsCategory", statsCategoryMap);
@@ -3977,9 +3980,11 @@ public class MainController {
     private void differentiateProjects(List<ProjectDetails> newProjects,
                                        List<ProjectDetails> activeProjects,
                                        List<ProjectDetails> inactiveProjects,
+                                       List<ProjectDetails> stoppedProjects,
                                        YearMonth m_s, YearMonth m_e,
                                        ProjectDetails project) {
         YearMonth created = YearMonth.from(project.getZonedDateCreated());
+        YearMonth m_e_m1 = m_e.minusMonths(1);
         YearMonth m_e_m2 = m_e.minusMonths(2);
         YearMonth m_active = m_e_m2.isBefore(m_s) ? m_e_m2 : m_s;
 
@@ -3997,6 +4002,13 @@ public class MainController {
         // inactive projects
         if (!hasUsage && created.isBefore(m_e_m2)) {
             inactiveProjects.add(project);
+        }
+
+        // stopped projects
+        boolean hasUsagePreviousMonth = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(m_e_m1, m_e_m1));
+        boolean hasUsageCurrentMonth = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(m_e, m_e));
+        if (hasUsagePreviousMonth && !hasUsageCurrentMonth) {
+            stoppedProjects.add(project);
         }
     }
 

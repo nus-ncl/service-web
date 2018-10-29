@@ -39,6 +39,7 @@
         <li class="active"><a data-toggle="tab" href="#home">New Projects</a></li>
         <li><a data-toggle="tab" href="#menu1">Active Projects</a></li>
         <li><a data-toggle="tab" href="#menu2">Inactive Projects</a></li>
+        <li><a data-toggle="tab" href="#menu6">Stopped Projects</a></li>
         <li><a data-toggle="tab" href="#menu3">Utilization</a></li>
         <li><a data-toggle="tab" href="#menu4">By Category</a></li>
         <li><a data-toggle="tab" href="#menu5">By Academic</a></li>
@@ -119,6 +120,35 @@
                 </thead>
                 <tbody>
                 <tr th:each="project : ${inactiveProjects}">
+                    <td th:text="${project.getOrganisationType()}">Organisation Type</td>
+                    <td th:text="${project.getOrganisationName()}">Organisation Name</td>
+                    <td th:text="${project.getProjectName()}">Project Name</td>
+                    <td th:text="${project.getOwner()}">Owner</td>
+                    <td th:text="${project.getDateCreated()}">Date Created</td>
+                    <td><i class="fa fa-check" th:if="${project.isEducation()}"></i></td>
+                    <td><i class="fa fa-check" th:if="${project.isServiceTool()}"></i></td>
+                    <td th:text="${project.getSupportedBy()}">Supported By</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="menu6" class="tab-pane fade">
+            <p>&nbsp;</p>
+            <table id="stoppedProjectTable" class="table table-responsive" th:if="not ${stoppedProjects.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>Organisation Type</th>
+                    <th>Organisation Name</th>
+                    <th>Project Name</th>
+                    <th>Owner</th>
+                    <th>Date Created</th>
+                    <th>Education?</th>
+                    <th>Service and Tools?</th>
+                    <th>Supported By</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${stoppedProjects}">
                     <td th:text="${project.getOrganisationType()}">Organisation Type</td>
                     <td th:text="${project.getOrganisationName()}">Organisation Name</td>
                     <td th:text="${project.getProjectName()}">Project Name</td>
