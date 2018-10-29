@@ -3388,7 +3388,9 @@ public class MainController {
             model.addAttribute("totalUsage", totalUsage);
         }
 
-        model.addAttribute("teamsMap", teamManager2.getTeamMap());
+        List<Team2> allTeams = new ArrayList<>(teamManager2.getTeamMap().values());
+        allTeams.sort(Comparator.comparing(Team2::getName, String.CASE_INSENSITIVE_ORDER));
+        model.addAttribute(ALL_TEAMS, allTeams);
         model.addAttribute("start", start);
         model.addAttribute("end", end);
         model.addAttribute("organizationType", organizationType);
@@ -4055,7 +4057,9 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-        model.addAttribute(ALL_TEAMS, getTeamMap());
+        List<Team2> allTeams = new ArrayList<>(getTeamMap().values());
+        allTeams.sort(Comparator.comparing(Team2::getName, String.CASE_INSENSITIVE_ORDER));
+        model.addAttribute(ALL_TEAMS, allTeams);
         model.addAttribute(RESERVATION_STATUS_FORM, reservationStatusForm);
 
         return "node_reservation";
@@ -4063,11 +4067,13 @@ public class MainController {
 
     @PostMapping("/admin/nodesReservation")
     public String adminNodesReservation(@ModelAttribute("reservationStatusForm") ReservationStatusForm reservationStatusForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
-        HashMap<String, Team2> teamMap = getTeamMap();
+        List<Team2> allTeams = new ArrayList<>(getTeamMap().values());
+        allTeams.sort(Comparator.comparing(Team2::getName, String.CASE_INSENSITIVE_ORDER));
+        model.addAttribute(ALL_TEAMS, allTeams);
 
         // sanitization
         if (bindingResult.hasErrors()) {
-            model.addAttribute(ALL_TEAMS, teamMap);
+            model.addAttribute(ALL_TEAMS, allTeams);
             model.addAttribute(RESERVATION_STATUS_FORM, reservationStatusForm);
             model.addAttribute(STATUS, NODES_RESERVATION_FAIL);
             model.addAttribute(MESSAGE, "form errors");
@@ -4092,7 +4098,7 @@ public class MainController {
         }
 
         redirectAttributes.addFlashAttribute(RESERVATION_STATUS_FORM, reservationStatusForm);
-        redirectAttributes.addFlashAttribute(ALL_TEAMS, teamMap);
+        redirectAttributes.addFlashAttribute(ALL_TEAMS, allTeams);
 
         return "redirect:/admin/nodesReservation";
     }
@@ -4204,9 +4210,13 @@ public class MainController {
         Map<String, List<Map<String, String>>> nodesStatus = getNodesStatus();
         Map<String, Map<String, Long>> nodesStatusCount = new HashMap<>();
 
-        countNodeStatus(testbedStatsMap, nodesStatus, nodesStatusCount);
+        List<Map<String, String>> allNodes = new ArrayList<>();
+        nodesStatus.forEach((key, value) -> allNodes.addAll(value));
+        Map<String, List<Map<String, String>>> allNodesStatus = new HashMap<>();
+        allNodesStatus.put("All Servers", allNodes);
+        countNodeStatus(testbedStatsMap, allNodesStatus, nodesStatusCount);
 
-        model.addAttribute("nodesStatus", nodesStatus);
+        model.addAttribute("nodesStatus", allNodesStatus);
         model.addAttribute("nodesStatusCount", nodesStatusCount);
 
         model.addAttribute(USER_DASHBOARD_LOGGED_IN_USERS_COUNT, testbedStatsMap.get(USER_DASHBOARD_LOGGED_IN_USERS_COUNT));
