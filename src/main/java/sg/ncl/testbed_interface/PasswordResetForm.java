@@ -42,7 +42,7 @@ public class PasswordResetForm {
         }
 
         if (!isSafeHtmlCharacters(this.getPassword1())) {
-            this.setErrMsg("Password cannot contain &, <, >, \"");
+            this.setErrMsg("Password cannot contain & < > | / \\ ` ' \"");
             return false;
         }
         return true;

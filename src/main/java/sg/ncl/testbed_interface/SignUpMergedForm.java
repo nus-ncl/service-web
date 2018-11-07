@@ -20,7 +20,7 @@ public class SignUpMergedForm {
             @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit"),
             @Pattern(regexp = "(?=.*[a-zA-Z]).+", message = "Password must contain one alphabet"),
             @Pattern(regexp = "[^\\s]+", message = "Password cannot contain whitespace"),
-            @Pattern(regexp = "[^&<>\"]+", message = "Password cannot contain '&', '<', '>', '\"'")
+            @Pattern(regexp = "[^&<>|/`'\"\\\\]+", message = "Password cannot contain '&' '<' '>' '|' '/' '\\' '`' '\'' '\"'")
     })
     private String password;
 

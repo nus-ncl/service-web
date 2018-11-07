@@ -18,7 +18,7 @@ public class Validator {
      * @return True if the string does not contain any of the special characters, false otherwise
      */
     public static boolean isSafeHtmlCharacters(final String str) {
-        return str.matches("[^&<>\"]+");
+        return str.matches("[^&<>|/`'\"\\\\]+");
     }
 
     /**

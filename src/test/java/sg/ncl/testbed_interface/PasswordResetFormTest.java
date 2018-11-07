@@ -77,7 +77,7 @@ public class PasswordResetFormTest {
         passwordResetForm.setPassword1("1234567A&");
         passwordResetForm.setPassword2("1234567A&");
         assertThat(passwordResetForm.isPasswordOk()).isFalse();
-        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain &, <, >, \"");
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain & < > | / \\ ` ' \"");
     }
 
     @Test
@@ -86,7 +86,7 @@ public class PasswordResetFormTest {
         passwordResetForm.setPassword1("1234567A<");
         passwordResetForm.setPassword2("1234567A<");
         assertThat(passwordResetForm.isPasswordOk()).isFalse();
-        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain &, <, >, \"");
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain & < > | / \\ ` ' \"");
     }
 
     @Test
@@ -95,7 +95,7 @@ public class PasswordResetFormTest {
         passwordResetForm.setPassword1("1234567A>");
         passwordResetForm.setPassword2("1234567A>");
         assertThat(passwordResetForm.isPasswordOk()).isFalse();
-        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain &, <, >, \"");
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain & < > | / \\ ` ' \"");
     }
 
     @Test
@@ -104,6 +104,6 @@ public class PasswordResetFormTest {
         passwordResetForm.setPassword1("1234567A\"");
         passwordResetForm.setPassword2("1234567A\"");
         assertThat(passwordResetForm.isPasswordOk()).isFalse();
-        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain &, <, >, \"");
+        assertThat(passwordResetForm.getErrMsg()).isEqualTo("Password cannot contain & < > | / \\ ` ' \"");
     }
 }
