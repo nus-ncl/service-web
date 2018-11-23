@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Admin</title>
+    <object th:include="fragments/header :: header" th:remove="tag"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<div class="container">
+    <div class="row">
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p th:unless="${message}">&nbsp;</p>
+        <p th:unless="${messageSuccess}">&nbsp;</p>
+        <p th:if="${message}"><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+        <p th:if="${messageSuccess}"><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+        <h2 class="team-heading team-heading-current-team">GPU Management - Users</h2>
+        <p>&nbsp;</p>
+        <form class="form-horizontal" method="post" action="#" th:action="@{/admin/gpus}" role="form">
+            <div class="form-group">
+                <label for="gpu" class="col-sm-2 control-label">GPU :</label>
+                <div class="col-sm-7">
+                    <select id="gpu" class="form-control" th:name="gpu">
+                        <option th:each="domain,iter : ${domains}" th:value="${iter.index}"
+                                th:text="${domain.getHost()}" th:selected="${selectedGpu == iter.index}"></option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <button type="submit" class="btn btn-default">Query</button>
+                </div>
+            </div>
+        </form>
+        <p>&nbsp;</p>
+        <table id="myTable" class="table table-responsive" th:if="${gpuUsersMap}">
+            <thead>
+            <tr>
+                <th>Unix Username</th>
+                <th>Full Name</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:if="${gpuUsersMap.isEmpty()}">
+                <tr>
+                    <td colspan="5">There is no user available</td>
+                </tr>
+            </th:block>
+            <th:block th:if="${!gpuUsersMap.isEmpty()}">
+                <tr th:each="gpuUser : ${gpuUsersMap}">
+                    <td th:text="${gpuUser.key}"></td>
+                    <td th:text="${gpuUser.value.get('fullname')}"></td>
+                    <td th:text="${gpuUser.value.get('status')}"></td>
+                    <td class="text-nowrap">
+                        <a class="btn btn-default"
+                           th:href="'/admin/gpus/' + ${selectedGpu} + '/' + (${gpuUser.value.get('status') == 'enabled'} ? 'disable' : 'enable') + '/' + ${gpuUser.key}"
+                           th:title="${gpuUser.value.get('status') == 'enabled'} ? 'Disable User' : 'Enable User'">
+                            <i th:class="${gpuUser.value.get('status') == 'enabled'} ? 'fa fa-times' : 'fa fa-check'"></i>
+                        </a>
+                        <a class="btn btn-primary" title="Change Password" data-toggle="modal" data-target="#changePassword"
+                           th:attr="data-id=${gpuUser.key}"><i class="fa fa-pencil"></i></a>
+                        <a class="btn btn-danger" title="Remove User" data-toggle="modal" data-target="#confirmDelete"
+                           th:attr="data-id=${gpuUser.key}"><i class="fa fa-trash"></i></a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- change user password -->
+<div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="changePasswordLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="changeLabel">Change User Password?</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="post" action="#" role="form" id="passwdForm">
+                    <div class="form-group">
+                        <label for="newpasswd" class="col-sm-3 control-label">New Password for "<span id="name"></span>" :</label>
+                        <div class="col-sm-7">
+                            <input type="password" class="form-control" id="newpasswd" th:name="newpasswd"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="changeButton">Change</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- confirm delete user -->
+<div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="deleteLabel">Delete User?</h4>
+            </div>
+            <div class="modal-body">
+                Confirm deleting "<span id="name"></span>"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-danger" id="deleteButton">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag"/>
+
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script th:inline="javascript">
+    // <![CDATA[
+    $(document).ready(function () {
+        $('#myTable').dataTable();
+        $('#changePassword').on('show.bs.modal', function (event) {
+            var anchor = $(event.relatedTarget);
+            var id = anchor.data('id');
+            var gpu = /*[[${selectedGpu}]]*/ 0;
+            var href = '/admin/gpus/' + gpu + '/passwd/' + id;
+            var modal = $(this);
+            modal.find('#name').text(id);
+            modal.find('#passwdForm').attr('action', href);
+            modal.find('#changeButton').click(function () {
+                modal.find('#passwdForm').submit();
+            });
+        });
+        $('#confirmDelete').on('show.bs.modal', function (event) {
+            var anchor = $(event.relatedTarget);
+            var id = anchor.data('id');
+            var gpu = /*[[${selectedGpu}]]*/ 0;
+            var href = '/admin/gpus/' + gpu + '/remove/' + id;
+            var modal = $(this);
+            modal.find('#name').text(id);
+            modal.find('#deleteButton').attr('href', href);
+        });
+    });
+    // ]]>
+</script>
+</body>
+</html>
