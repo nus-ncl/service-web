@@ -22,14 +22,17 @@
         <form class="form-horizontal" method="post" action="#" th:action="@{/admin/gpus}" role="form">
             <div class="form-group">
                 <label for="gpu" class="col-sm-2 control-label">GPU :</label>
-                <div class="col-sm-7">
+                <div class="col-sm-6">
                     <select id="gpu" class="form-control" th:name="gpu">
                         <option th:each="domain,iter : ${domains}" th:value="${iter.index}"
                                 th:text="${domain.getHost()}" th:selected="${selectedGpu == iter.index}"></option>
                     </select>
                 </div>
+                <div class="col-sm-1">
+                    <button type="submit" class="btn btn-default" title="Get GPU Users">Get Users</button>
+                </div>
                 <div class="col-sm-3">
-                    <button type="submit" class="btn btn-default">Query</button>
+                    <a class="btn btn-primary" title="Add New User" data-toggle="modal" data-target="#addUser" th:if="${selectedGpu}">Add User</a>
                 </div>
             </div>
         </form>
@@ -72,6 +75,49 @@
     </div>
 </div>
 
+<!-- add new user -->
+<div class="modal fade" id="addUser" tabindex="-1" role="dialog" aria-labelledby="addUserLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addLabel">Add New User?</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="#" th:action="@{/admin/gpus/{gpu}/users/add(gpu=${selectedGpu})}" th:object="${gpuUserForm}" role="form" id="addUserForm">
+                    <p class="account-change-fail" th:if="${#fields.hasErrors('username')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{username}"></span></p>
+                    <p class="account-change-fail" th:if="${#fields.hasErrors('fullname')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{fullname}"></span></p>
+                    <p class="account-change-fail" th:if="${#fields.hasErrors('password')}">
+                        <span th:each="err : ${#fields.errors('password')}">
+                            <i class="fa fa-exclamation-circle"></i> <span th:text="${err}"></span><br/>
+                        </span>
+                    </p>
+                    <p class="account-change-fail" th:if="${(gpuUserForm.password != null and gpuUserForm.confirmPassword != null) and (!gpuUserForm.isValid())}">
+                        <i class="fa fa-exclamation-circle"></i> <span th:text="#{acc.info.pwdMismatch}"></span>
+                    </p>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="username" placeholder="Username" th:field="*{username}" onblur="validateUsername(name)"/>
+                        <span id="usernameError" style="display: none;"><h34>You can only use lowercase alphabetic characters</h34></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="fullname" placeholder="Full Name" th:field="*{fullname}" onblur="validateFullName(name)"/>
+                        <span id="fullnameError" style="display: none;"><h34>You can only use alphabetic characters, hyphens and apostrophes</h34></span>
+                    </div>
+                    <div class="form-group">
+                        <div class='pwdwidgetdiv' id='thepwddiv'/>
+                        <span id="confirmMessage" class="confirmMessage"></span>
+                    </div>
+                    <div>&nbsp;</div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="addButton">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- change user password -->
 <div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="changePasswordLabel">
     <div class="modal-dialog" role="document">
@@ -81,12 +127,10 @@
                 <h4 class="modal-title" id="changeLabel">Change User Password?</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" method="post" action="#" role="form" id="passwdForm">
+                <form method="post" action="#" role="form" id="passwdForm">
                     <div class="form-group">
-                        <label for="newpasswd" class="col-sm-3 control-label">New Password for "<span id="name"></span>" :</label>
-                        <div class="col-sm-7">
-                            <input type="password" class="form-control" id="newpasswd" th:name="newpasswd"/>
-                        </div>
+                        <label for="newpasswd">New Password for "<span id="name"></span>" :</label>
+                        <input type="password" class="form-control" id="newpasswd" placeholder="Password" th:name="newpasswd"/>
                     </div>
                 </form>
             </div>
@@ -123,8 +167,96 @@
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script th:inline="javascript">
     // <![CDATA[
+    var toggle = /*[[${toggleModal}]]*/ 'hide';
+
+    function validateUsername(x) {
+        // Validation rule
+        var re = /[a-z]$/;
+        // Check input
+        if (re.test(document.getElementById(x).value)) {
+            // Style green
+            document.getElementById(x).style.borderBottomColor ='#fff';
+            // Hide error prompt
+            document.getElementById(x + 'Error').style.display = "none";
+            return true;
+        } else {
+            // Style red
+            document.getElementById(x).style.borderBottomColor ='#dd4b39';
+            // Show error prompt
+            document.getElementById(x + 'Error').style.display = "block";
+            return false;
+        }
+    }
+
+    function validateFullName(x){
+        // Validation rule
+        var re = /[A-Za-z -']$/;
+        // Check input
+        if(re.test(document.getElementById(x).value)){
+            // Style green
+            document.getElementById(x).style.borderBottomColor ='#fff';
+            // Hide error prompt
+            document.getElementById(x + 'Error').style.display = "none";
+            return true;
+        }else{
+            // Style red
+            document.getElementById(x).style.borderBottomColor ='#dd4b39';
+            // Show error prompt
+            document.getElementById(x + 'Error').style.display = "block";
+            return false;
+        }
+    }
+
+    function checkPass() {
+        //Store the password field objects into variables ...
+        var pass1 = document.getElementById('password');
+        var pass2 = document.getElementById('confirmPassword');
+        //Store the Confirmation Message Object ...
+        var message = document.getElementById('confirmMessage');
+        //Set the colors we will be using ...
+        var goodColor = "#fff";
+        var badColor = "#dd4b39";
+
+        //Compare the values in the password field
+        //and the confirmation field
+        if (pass1.value.length >= 8) {
+            pass1.style.borderBottomColor = '#fff';
+            message.style.color = goodColor;
+            message.innerHTML = "Character number ok"
+        } else {
+            pass1.style.borderBottomColor = badColor;
+            message.style.color = badColor;
+            message.innerHTML = "You have to enter at least 8 digit";
+            return;
+        }
+
+        if (pass1.value == pass2.value) {
+            //The passwords match.
+            //Set the color to the good color and inform
+            //the user that they have entered the correct password
+            pass2.style.backgroundColor = '#fff';
+            message.style.color = goodColor;
+            message.innerHTML = "Passwords Match!"
+        } else {
+            //The passwords do not match.
+            //Set the color to the bad color and
+            //notify the user.
+            pass2.style.backgroundColor = badColor;
+            message.style.color = badColor;
+            message.innerHTML = "Passwords Do Not Match!"
+        }
+    }
+
     $(document).ready(function () {
+        var pwdwidget = new PasswordWidget('thepwddiv','password');
+        pwdwidget.MakePWDWidget();
         $('#myTable').dataTable();
+        $('#addUser').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            modal.find('#addButton').click(function () {
+                modal.find('#addUserForm').submit();
+            });
+        });
         $('#changePassword').on('show.bs.modal', function (event) {
             var anchor = $(event.relatedTarget);
             var id = anchor.data('id');
@@ -146,6 +278,8 @@
             modal.find('#name').text(id);
             modal.find('#deleteButton').attr('href', href);
         });
+
+        $('#addUser').modal(toggle);
     });
     // ]]>
 </script>

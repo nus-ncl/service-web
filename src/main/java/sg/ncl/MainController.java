@@ -3098,6 +3098,10 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
+        if (!model.containsAttribute("gpuUserForm")) {
+            model.addAttribute("gpuUserForm", new GpuUserForm());
+            model.addAttribute("toggleModal", "hide");
+        }
         model.addAttribute("domains", gpuProperties.getDomains());
         return "gpu_dashboard";
     }
@@ -3115,6 +3119,48 @@ public class MainController {
         return "redirect:/admin/gpus";
     }
 
+    @RequestMapping(value = "/admin/gpus/{gpu}/users/add", method = RequestMethod.POST)
+    public String adminAddGpuUsers(@PathVariable("gpu") Integer gpu,
+                                   @Valid @ModelAttribute("gpuUserForm") GpuUserForm gpuUserForm,
+                                   BindingResult bindingResult,
+                                   RedirectAttributes redirectAttributes,
+                                   HttpSession session) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        if (bindingResult.hasErrors() || !gpuUserForm.isValid()) {
+            log.warn("Gpu user form has errors {}", gpuUserForm.toString());
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.gpuUserForm", bindingResult);
+            redirectAttributes.addFlashAttribute("gpuUserForm", gpuUserForm);
+            redirectAttributes.addFlashAttribute("toggleModal", "show");
+        } else {
+            GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
+            String url = "http://" + domain.getHost() + ":" + domain.getPort() + "/users";
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("username", gpuUserForm.getUsername());
+            jsonObject.put("fullname", gpuUserForm.getFullname());
+            jsonObject.put("password", gpuUserForm.getPassword());
+
+            HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(jsonObject.toString());
+            ResponseEntity response = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
+            String responseBody = response.getBody().toString();
+
+            jsonObject = new JSONObject(responseBody);
+            String message = jsonObject.getString(gpuUserForm.getUsername());
+            if (message.contains("Failed")) {
+                redirectAttributes.addFlashAttribute("message", message);
+            } else {
+                redirectAttributes.addFlashAttribute("messageSuccess", message);
+            }
+        }
+
+        redirectAttributes.addFlashAttribute("gpuUsersMap", getGpuUsers(gpu));
+        redirectAttributes.addFlashAttribute("selectedGpu", gpu);
+        return "redirect:/admin/gpus";
+    }
+
     private Map<String, String> getGpuUsers(@RequestParam("gpu") Integer gpu) throws WebServiceRuntimeException {
         GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
         String url = "http://" + domain.getHost() + ":" + domain.getPort() + "/users";
@@ -3124,8 +3170,7 @@ public class MainController {
 
         ObjectMapper mapper = new ObjectMapper();
         try {
-            Map<String, String> gpuUsersMap = mapper.readValue(responseBody, new TypeReference<Map<String, Map<String, String>>>(){});
-            return gpuUsersMap;
+            return mapper.readValue(responseBody, new TypeReference<Map<String, Map<String, String>>>(){});
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
