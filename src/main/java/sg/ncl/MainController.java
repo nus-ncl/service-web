@@ -3144,7 +3144,7 @@ public class MainController {
             jsonObject.put("password", gpuUserForm.getPassword());
 
             HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(jsonObject.toString());
-            ResponseEntity response = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
+            ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
             String responseBody = response.getBody().toString();
 
             jsonObject = new JSONObject(responseBody);
