@@ -53,6 +53,11 @@ public class WebApplication {
         return new WebSocketProperties();
     }
 
+    @Bean
+    GpuProperties gpuProperties() {
+        return new GpuProperties();
+    }
+
     public static void main(String[] args) {
         final SpringApplication application = new SpringApplication(WebApplication.class);
         application.addListeners(new ApplicationPidFileWriter());
