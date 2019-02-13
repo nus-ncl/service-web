@@ -20,6 +20,8 @@ public class ProjectUsage implements Serializable {
     @DateTimeFormat(pattern = "MMM-yyyy")
     private String month = "";
     private int usage;
+    private double incurred;
+    private double waived;
 
     public boolean hasUsageWithinPeriod(YearMonth start, YearMonth end) {
         YearMonth current = YearMonth.parse(month, formatter);

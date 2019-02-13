@@ -237,6 +237,8 @@ public class MainController {
     private static final String KEY_MONTH_YEAR = "monthYear";
     private static final String KEY_MONTHLY_USAGE = "monthlyUsage";
     private static final String KEY_USAGE = "usage";
+    private static final String KEY_INCURRED = "incurred";
+    private static final String KEY_WAIVED = "waived";
     private static final String KEY_PROJECT = "project";
     private static final String KEY_QUERY = "query";
     private static final String KEY_DATE_CREATED = "dateCreated";
@@ -3765,6 +3767,8 @@ public class MainController {
             projectUsage.setId(usageId.getInt(KEY_PROJECT_DETAILS_ID));
             projectUsage.setMonth(usageId.getString(KEY_MONTH_YEAR));
             projectUsage.setUsage(usage.getInt(KEY_MONTHLY_USAGE));
+            projectUsage.setIncurred(usage.getDouble(KEY_INCURRED));
+            projectUsage.setWaived(usage.getDouble(KEY_WAIVED));
             projectDetails.addProjectUsage(projectUsage);
         }
         return projectDetails;
@@ -4301,6 +4305,8 @@ public class MainController {
             projectUsage.setId(usageId.getInt(KEY_PROJECT_DETAILS_ID));
             projectUsage.setMonth(usageId.getString(KEY_MONTH_YEAR));
             projectUsage.setUsage(usage.getInt(KEY_MONTHLY_USAGE));
+            projectUsage.setIncurred(usage.getDouble(KEY_INCURRED));
+            projectUsage.setWaived(usage.getDouble(KEY_WAIVED));
             model.addAttribute(KEY_USAGE, projectUsage);
         } else {
             model.addAttribute(KEY_USAGE, new ProjectUsage());
@@ -4328,6 +4334,8 @@ public class MainController {
             jsonObject.put(KEY_PROJECT_DETAILS_ID, pid);
             jsonObject.put("month", usage.getMonth());
             jsonObject.put(KEY_USAGE, usage.getUsage());
+            jsonObject.put(KEY_INCURRED, usage.getIncurred());
+            jsonObject.put(KEY_WAIVED, usage.getWaived());
             log.debug("JsonObject: {}", jsonObject);
 
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
