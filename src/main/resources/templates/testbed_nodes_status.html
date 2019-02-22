@@ -20,7 +20,10 @@
     <p class="heading h15 text-center">Testbed Nodes Status</p>
     <p>&nbsp;</p>
     <div class="row" id="statistics">
-        <div class="col-md-4">
+        <div class="alert alert-danger" th:if="${freeNodes == '0'}">
+            <h4>There are currently no nodes available, please contact <a th:href="#{support.email.link}" th:text="#{support.email}"></a> if you have any queries</h4>
+        </div>
+        <!-- div class="col-md-4">
             <div class="stats" style="border-color: #fa9b2b;">
                 <i class="fa fa-group active-users pull-left" style="background: #fa9b2b;"></i>
                 <span class="pull-right stats-info">
@@ -28,8 +31,8 @@
                     <p class="stats-category">Active Users</p>
                 </span>
             </div>
-        </div>
-        <div class="col-md-4">
+        </div -->
+        <div class="col-md-6">
             <div class="stats" style="border-color: #00A4E1;">
                 <i class="fa fa-cloud active-users pull-left" style="background: #00A4E1;"></i>
                 <span class="pull-right stats-info">
@@ -38,7 +41,7 @@
                 </span>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="stats" style="border-color: #1EAFBB;">
                 <i class="fa fa-tv active-users pull-left" style="background: #1EAFBB;"></i><a href="#" data-toggle="tooltip" title="Reserved for : 60% nodes for research, 40% nodes for education" data-placement="bottom"><img src="images/information.png" width="20" height="20"/></a>
                 <span class="pull-right stats-info">
