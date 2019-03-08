@@ -21,6 +21,7 @@ public class ConnectionProperties {
     private static final String TEAMS = "/teams/";
     private static final String RESOURCES = "resources";
     private static final String RESERVATIONS = "reservations";
+    private static final String NODESRESERVATIONS = "nodesreservations";
 
     private String sioAddress;
     private String sioPort;
@@ -475,5 +476,9 @@ public class ConnectionProperties {
 
     public String reserveNodes(String teamId, Integer numNodes, String machineType) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/" + RESERVATIONS + "?numNodes=" + numNodes + "&machineType=" + machineType;
+    }
+
+   public String applyNodesReserve(String projectId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/" + projectId + "/" + NODESRESERVATIONS;
     }
 }

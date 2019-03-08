@@ -2043,6 +2043,16 @@ public class MainController {
     @RequestMapping(value = "/teams/apply_team", method = RequestMethod.GET)
     public String teamPageApplyTeam(Model model) {
         model.addAttribute("teamPageApplyTeamForm", new TeamPageApplyTeamForm());
+        if (!model.containsAttribute(KEY_QUERY)) {
+            model.addAttribute(KEY_QUERY, new ProjectUsageQuery());
+           /* model.addAttribute("newProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("activeProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("inactiveProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("stoppedProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("utilization", new HashMap<String, MonthlyUtilization>());
+            model.addAttribute("statsCategory", new HashMap<String, Integer>());
+            model.addAttribute("statsAcademic", new HashMap<String, Integer>());*/
+        }
         return "team_page_apply_team";
     }
 
@@ -2083,6 +2093,7 @@ public class MainController {
             String responseBody = response.getBody().toString();
 
             if (RestUtil.isError(response.getStatusCode())) {
+
                 // prepare the exception mapping
                 EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
                 exceptionMessageMap.put(USER_ID_NULL_OR_EMPTY_EXCEPTION, "User id is null or empty ");
@@ -3919,6 +3930,85 @@ public class MainController {
 
         return "admin_monthly_usage";
     }
+
+    @RequestMapping(value = "/admin/usage/reservation", method = RequestMethod.GET)
+    public String adminMonthlyReservation(Model model) {
+        model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
+        final String LOG_PREFIX = "Node Usage Reservation Form: {}";
+        List<Team2> allTeams = new ArrayList<>(getTeamMap().values());
+        allTeams.sort(Comparator.comparing(Team2::getName, String.CASE_INSENSITIVE_ORDER));
+        model.addAttribute(ALL_TEAMS, allTeams);
+        List<ProjectDetails> projectsList = getProjects();
+        model.addAttribute("projectsList", projectsList);
+        return "admin_node_usage_reservation";
+    }
+
+    @RequestMapping(value = "/admin/usage/reservation", method = RequestMethod.POST)
+    public String checkApplyNodeReservationInfo(
+            @Valid NodeUsageReservationForm nodeUsageReservationForm,
+            BindingResult bindingResult,
+            HttpSession session,
+            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+
+        final String LOG_PREFIX = "Apply for Node Reservation: {}";
+        if (bindingResult.hasErrors()) {
+            log.warn(LOG_PREFIX, "Application form error " + nodeUsageReservationForm.toString());
+            return "admin_node_usage_reservation";
+        }
+        log.info(LOG_PREFIX, nodeUsageReservationForm.toString());
+
+        JSONObject nodeReserveFields = new JSONObject();
+        nodeReserveFields.put("startDate", nodeUsageReservationForm.getStartDate());
+        nodeReserveFields.put("endDate", nodeUsageReservationForm.getEndDate());
+        nodeReserveFields.put("numNodes", nodeUsageReservationForm.getNoOfNodes());
+        if( nodeUsageReservationForm.getNoOfNodes()<=0)
+        {
+            redirectAttributes.addFlashAttribute(MESSAGE, "You must reserve atleast 1 node.");
+            return "redirect:/admin/usage/reservation";
+        }
+        if( nodeUsageReservationForm.getStartDate()==null || nodeUsageReservationForm.getStartDate().equals("") ||  nodeUsageReservationForm.getEndDate()==null || nodeUsageReservationForm.getEndDate().equals(""))
+        {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Please enter the node usage reservation dates.");
+            return "redirect:/admin/usage/reservation";
+        }
+        HttpEntity<String> request = createHttpEntityWithBody(nodeReserveFields.toString());
+        ResponseEntity response;
+
+        try {
+            response = restTemplate.exchange(properties.applyNodesReserve(nodeUsageReservationForm.getProjectId()), HttpMethod.PUT, request, String.class);
+            log.info(LOG_PREFIX, "-------------------error on response------------------------");
+            String responseBody = response.getBody().toString();
+            log.info(LOG_PREFIX, "***********************************inside try *************************************");
+            if (RestUtil.isError(response.getStatusCode())) {
+                // prepare the exception mapping
+                EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
+               log.warn(LOG_PREFIX, responseBody);
+                redirectAttributes.addFlashAttribute(MESSAGE, errorMessage);
+                return "redirect:/admin/usage/reservation";
+
+            } else {
+                // no errors, everything ok
+                log.info(LOG_PREFIX, "Application for"+ nodeUsageReservationForm.getNoOfNodes()+" node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation done.");
+                return "redirect:/admin/usage/reservation";
+            }
+
+        } catch (Exception e) {
+            log.error(LOG_PREFIX, e);
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+    }
+
+
+
+
+
+
+
+
 
     @GetMapping(value = {"/admin/monthly/{id}/usage/contribute", "/admin/monthly/{id}/usage/contribute/{month}"})
     public String adminMonthlyUsageContribute(@PathVariable String id, @PathVariable Optional<String> month,
