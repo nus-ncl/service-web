@@ -1,60 +1,53 @@
 package sg.ncl.testbed_interface;
 
-import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.format.annotation.DateTimeFormat;
 
-public class NodeUsageReservationForm {
+import javax.validation.constraints.Min;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
+@Getter
+@Setter
+public class NodeUsageReservationForm implements Serializable {
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    @NotEmpty
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private String startDate;
+
+    @NotEmpty
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private String endDate;
-    private int noOfNodes;
+
+    @Min(value = 1)
+    private Integer noOfNodes = 1;
+
     private String teamId;
+
+    @NotEmpty
     private String projectId;
 
-
-    public String getProjectId() {
-        return projectId;
+    public ZonedDateTime getZonedStartDate() {
+        return ZonedDateTime.of(LocalDate.parse(startDate, formatter), LocalTime.now(), ZoneId.of("Asia/Singapore"));
     }
 
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
+    public ZonedDateTime getZonedEndDate() {
+        return ZonedDateTime.of(LocalDate.parse(endDate, formatter), LocalTime.now(), ZoneId.of("Asia/Singapore"));
     }
 
-
-
-    public String getTeamId() {
-        return teamId;
+    public String toString() {
+        return "NodeUsageReservationForm{" +
+                "startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", noOfNodes=" + noOfNodes +
+                ", projectId=" + projectId + "}";
     }
-
-    public void setTeamId(String teamId) {
-        this.teamId = teamId;
-    }
-
-
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
-
-    public int getNoOfNodes() {
-        return noOfNodes;
-    }
-
-    public void setNoOfNodes(int noOfNodes) {
-        this.noOfNodes = noOfNodes;
-    }
-
 
 }

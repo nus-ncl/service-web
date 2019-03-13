@@ -66,7 +66,8 @@ public enum ExceptionState {
     PROJECT_DETAILS_NOT_FOUND_EXCEPTION("ProjectDetailsNotFoundException"),
     PROJECT_NAME_ALREADY_EXISTS_EXCEPTION("ProjectNameAlreadyExistsException"),
     PROJECT_USAGE_NOT_FOUND_EXCEPTION("ProjectUsageNotFoundException"),
-    PROJECT_USAGE_ALREADY_EXISTS_EXCEPTION("ProjectUsageAlreadyExistsException");
+    PROJECT_USAGE_ALREADY_EXISTS_EXCEPTION("ProjectUsageAlreadyExistsException"),
+    NODES_RESERVATION_ALREADY_EXISTS_EXCEPTION("NodesReservationAlreadyExistsException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 
