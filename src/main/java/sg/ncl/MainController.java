@@ -3932,83 +3932,110 @@ public class MainController {
     }
 
     @RequestMapping(value = "/admin/usage/reservation", method = RequestMethod.GET)
-    public String adminMonthlyReservation(Model model) {
+    public String adminMonthlyReservation(HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
         model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
-        final String LOG_PREFIX = "Node Usage Reservation Form: {}";
-        List<Team2> allTeams = new ArrayList<>(getTeamMap().values());
-        allTeams.sort(Comparator.comparing(Team2::getName, String.CASE_INSENSITIVE_ORDER));
-        model.addAttribute(ALL_TEAMS, allTeams);
+//        List<Team2> allTeams = new ArrayList<>(getTeamMap().values());
+//        allTeams.sort(Comparator.comparing(Team2::getName, String.CASE_INSENSITIVE_ORDER));
+//        model.addAttribute(ALL_TEAMS, allTeams);
         List<ProjectDetails> projectsList = getProjects();
         model.addAttribute("projectsList", projectsList);
         return "admin_node_usage_reservation";
     }
 
     @RequestMapping(value = "/admin/usage/reservation", method = RequestMethod.POST)
-    public String checkApplyNodeReservationInfo(
-            @Valid NodeUsageReservationForm nodeUsageReservationForm,
-            BindingResult bindingResult,
-            HttpSession session,
-            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    public String checkApplyNodeReservationInfo(@Valid @ModelAttribute("nodeUsageReservationForm") NodeUsageReservationForm nodeUsageReservationForm,
+                                                BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                                HttpSession session, Model model) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
 
         final String LOG_PREFIX = "Apply for Node Reservation: {}";
         if (bindingResult.hasErrors()) {
             log.warn(LOG_PREFIX, "Application form error " + nodeUsageReservationForm.toString());
+            StringBuilder message = new StringBuilder();
+            message.append(TAG_ERRORS);
+            message.append(TAG_UL);
+            for (ObjectError objectError : bindingResult.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append(TAG_LI);
+                switch (fieldError.getField()) {
+                    case "startDate":
+                        message.append("Start Date ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "endDate":
+                        message.append("End Date ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "noOfNodes":
+                        message.append("Number of Nodes ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "projectId":
+                        message.append("Project ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    default:
+                        message.append(fieldError.getField());
+                        message.append(TAG_SPACE);
+                        message.append(fieldError.getDefaultMessage());
+                }
+                message.append(TAG_LI_CLOSE);
+            }
+            message.append(TAG_UL_CLOSE);
+            model.addAttribute(MESSAGE, message);
+            List<ProjectDetails> projectsList = getProjects();
+            model.addAttribute("projectsList", projectsList);
             return "admin_node_usage_reservation";
         }
         log.info(LOG_PREFIX, nodeUsageReservationForm.toString());
 
         JSONObject nodeReserveFields = new JSONObject();
-        nodeReserveFields.put("startDate", nodeUsageReservationForm.getStartDate());
-        nodeReserveFields.put("endDate", nodeUsageReservationForm.getEndDate());
+        nodeReserveFields.put("startDate", nodeUsageReservationForm.getZonedStartDate());
+        nodeReserveFields.put("endDate", nodeUsageReservationForm.getZonedEndDate());
         nodeReserveFields.put("numNodes", nodeUsageReservationForm.getNoOfNodes());
-        if( nodeUsageReservationForm.getNoOfNodes()<=0)
-        {
-            redirectAttributes.addFlashAttribute(MESSAGE, "You must reserve atleast 1 node.");
-            return "redirect:/admin/usage/reservation";
-        }
-        if( nodeUsageReservationForm.getStartDate()==null || nodeUsageReservationForm.getStartDate().equals("") ||  nodeUsageReservationForm.getEndDate()==null || nodeUsageReservationForm.getEndDate().equals(""))
-        {
-            redirectAttributes.addFlashAttribute(MESSAGE, "Please enter the node usage reservation dates.");
-            return "redirect:/admin/usage/reservation";
-        }
         HttpEntity<String> request = createHttpEntityWithBody(nodeReserveFields.toString());
         ResponseEntity response;
 
         try {
-            response = restTemplate.exchange(properties.applyNodesReserve(nodeUsageReservationForm.getProjectId()), HttpMethod.PUT, request, String.class);
-            log.info(LOG_PREFIX, "-------------------error on response------------------------");
+            response = restTemplate.exchange(properties.applyNodesReserve(nodeUsageReservationForm.getProjectId()), HttpMethod.POST, request, String.class);
             String responseBody = response.getBody().toString();
-            log.info(LOG_PREFIX, "***********************************inside try *************************************");
             if (RestUtil.isError(response.getStatusCode())) {
-                // prepare the exception mapping
-                EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-                final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
-               log.warn(LOG_PREFIX, responseBody);
-                redirectAttributes.addFlashAttribute(MESSAGE, errorMessage);
-                return "redirect:/admin/usage/reservation";
-
+                switch (exceptionState) {
+                    case PROJECT_DETAILS_NOT_FOUND_EXCEPTION:
+                        log.warn("Project not found for reserving node usage.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>project not found for reserving node usage</li></ul>");
+                        break;
+                    case NODES_RESERVATION_ALREADY_EXISTS_EXCEPTION:
+                        log.warn("Overlapping node usage reservations found for same project.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>overlapping node usage reservations found for same project</li></ul>");
+                        break;
+                    case FORBIDDEN_EXCEPTION:
+                        log.warn("Reserving of node usage forbidden.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>reserving of node usage forbidden</li></ul>");
+                        break;
+                    default:
+                        log.warn("Unknown error for validating node usage reservation.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error for reserving node usage</li></ul>");
+                }
             } else {
                 // no errors, everything ok
                 log.info(LOG_PREFIX, "Application for"+ nodeUsageReservationForm.getNoOfNodes()+" node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
                 redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation done.");
-                return "redirect:/admin/usage/reservation";
             }
-
         } catch (Exception e) {
             log.error(LOG_PREFIX, e);
             throw new WebServiceRuntimeException(e.getMessage());
         }
+        return "redirect:/admin/usage/reservation";
     }
-
-
-
-
-
-
-
-
 
     @GetMapping(value = {"/admin/monthly/{id}/usage/contribute", "/admin/monthly/{id}/usage/contribute/{month}"})
     public String adminMonthlyUsageContribute(@PathVariable String id, @PathVariable Optional<String> month,
