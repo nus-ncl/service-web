@@ -16,8 +16,8 @@ group_defaults:
 groups:
   code-quality:
     required: 1
-    teams:
-      - reviewers
+    users:
+      - wangfl-nus
     conditions:
       branches:
         - master
