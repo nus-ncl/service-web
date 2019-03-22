@@ -1,27 +1,2 @@
 version: 2
 
-group_defaults:
-  approve_by_comment:
-    enabled: true
-    approve_regex: '^([Aa]pprove(d)?|:\+1:|:thumbsup:)'
-    reject_regex: '^([Rr]eject(ed)?|:-1:|:thumbsdown:)'
-  reset_on_push:
-    enabled: true
-  reset_on_reopened:
-    enabled: true
-  author_approval:
-    ignored: true
-  reject_value: -1
-
-groups:
-  code-quality:
-    required: 1
-    teams:
-      - reviewers
-    conditions:
-      branches:
-        - master
-  code-review:
-    required: 1
-    teams:
-      - developers
