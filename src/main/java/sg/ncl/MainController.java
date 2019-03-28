@@ -48,6 +48,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -322,7 +323,58 @@ public class MainController {
     }
 
     @RequestMapping("/calendar")
-    public String calendar() {
+    public String calendar(Model model,
+                           @RequestParam(value = "start", required = false) String start,
+                           @RequestParam(value = "end", required = false) String end,
+                           final RedirectAttributes redirectAttributes,
+                           HttpSession session) throws IOException, StartDateAfterEndDateException, WebServiceRuntimeException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startDate = (start == null) ? LocalDate.now() : LocalDate.parse(start, formatter);
+        LocalDate endDate = (end == null) ? startDate.plusDays(7) : LocalDate.parse(end, formatter);
+        LocalDate maxDate = startDate.plusDays(30);
+
+        if (endDate.compareTo(maxDate) > 0) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Period selected is more than 30 days.");
+            return "redirect:/calendar";
+        }
+
+        start = startDate.format(formatter);
+        end = endDate.format(formatter);
+
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+        ResponseEntity response = restTemplate.exchange(properties.getUsageCalendar("startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+        JSONObject jsonObject = new JSONObject(responseBody);
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            if (exceptionState == START_DATE_AFTER_END_DATE_EXCEPTION) {
+                log.warn("Get calendar : Start date after end date error");
+                throw new StartDateAfterEndDateException(ERR_START_DATE_AFTER_END_DATE);
+            } else {
+                log.warn("Get calendar : unknown error");
+                throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
+            }
+        } else {
+            List<String> dates = getDates(start, end, formatter);
+            Map<String, List<Integer>> projectUsages = new HashMap<>();
+            jsonObject.keys().forEachRemaining(
+                    key -> {
+                        JSONArray jsonArray = new JSONArray(jsonObject.getJSONArray((String) key).toString());
+                        List<Integer> usages = new ArrayList<>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            usages.add(jsonArray.getInt(i));
+                        }
+                        projectUsages.put((String) key, usages);
+                    }
+            );
+            model.addAttribute("dates", dates);
+            model.addAttribute("projectUsages", projectUsages);
+        }
+
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
         return "calendar";
     }
 
@@ -4000,10 +4052,10 @@ public class MainController {
         nodeReserveFields.put("endDate", nodeUsageReservationForm.getZonedEndDate());
         nodeReserveFields.put("numNodes", nodeUsageReservationForm.getNoOfNodes());
         HttpEntity<String> request = createHttpEntityWithBody(nodeReserveFields.toString());
-        ResponseEntity response;
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
         try {
-            response = restTemplate.exchange(properties.applyNodesReserve(nodeUsageReservationForm.getProjectId()), HttpMethod.POST, request, String.class);
+            ResponseEntity response = restTemplate.exchange(properties.applyNodesReserve(nodeUsageReservationForm.getProjectId()), HttpMethod.POST, request, String.class);
             String responseBody = response.getBody().toString();
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);

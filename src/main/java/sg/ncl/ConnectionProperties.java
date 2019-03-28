@@ -469,4 +469,8 @@ public class ConnectionProperties {
    public String applyNodesReserve(String projectId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
     }
+
+    public String getUsageCalendar(String... paramString) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/calendar" + getStringBuilder(paramString).toString();
+    }
 }

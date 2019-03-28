@@ -35,11 +35,11 @@ public class NodeUsageReservationForm implements Serializable {
     private String projectId;
 
     public ZonedDateTime getZonedStartDate() {
-        return ZonedDateTime.of(LocalDate.parse(startDate, formatter), LocalTime.now(), ZoneId.of("Asia/Singapore"));
+        return ZonedDateTime.of(LocalDate.parse(startDate, formatter), LocalTime.of(0, 0, 0, 0), ZoneId.of("Asia/Singapore"));
     }
 
     public ZonedDateTime getZonedEndDate() {
-        return ZonedDateTime.of(LocalDate.parse(endDate, formatter), LocalTime.now(), ZoneId.of("Asia/Singapore"));
+        return ZonedDateTime.of(LocalDate.parse(endDate, formatter), LocalTime.of(0, 0, 0, 0), ZoneId.of("Asia/Singapore"));
     }
 
     public String toString() {
