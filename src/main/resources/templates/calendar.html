@@ -51,7 +51,7 @@
                             <tr>
                                 <th></th>
                                 <th:block th:each="date : ${dates}">
-                                    <th th:text="${#strings.substring(date, 5)}"></th>
+                                    <th th:text="${#strings.substring(date, 5)}" class="sum"></th>
                                 </th:block>
                             </tr>
                             </thead>
@@ -63,6 +63,14 @@
                                 </th:block>
                             </tr>
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>Total</th>
+                                <th:block th:each="date : ${dates}">
+                                    <th></th>
+                                </th:block>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -103,7 +111,19 @@
                     orientation: "bottom"
                 });
                 $('#myTable').DataTable({
-                    scrollX: true
+                    scrollX: true,
+                    bPaginate: false,
+                    "initComplete": function () {
+                        this.api().columns('.sum').every(function () {
+                            var column = this;
+                            var sum = column
+                                .data()
+                                .reduce(function (a, b) {
+                                    return parseInt(a) + parseInt(b);
+                                });
+                            $(column.footer()).html(sum);
+                        });
+                    }
                 });
             });
             // ]]>
