@@ -444,9 +444,10 @@ jQuery(function($) {
 		var rangeTop    =   200;
 		var rangeBottom =   500;
 		$('.navbar-collapse').find('.scroll a').each(function(){
-			contentTop.push( $( $(this).attr('href') ).offset().top);
-			contentBottom.push( $( $(this).attr('href') ).offset().top + $( $(this).attr('href') ).height() );
-		})
+			var href_elem = $("[href='" + $(this).attr('href') + "']");
+			contentTop.push( href_elem.offset().top);
+			contentBottom.push( href_elem.offset().top + href_elem.height() );
+		});
 		$.each( contentTop, function(i){
 			if ( winTop > contentTop[i] - rangeTop ){
 				$('.navbar-collapse li.scroll')
