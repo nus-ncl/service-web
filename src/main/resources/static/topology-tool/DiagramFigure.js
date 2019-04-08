@@ -156,8 +156,8 @@ Node.prototype.addAnnotation = function(aForWhat, aText, aAnnX, aAnnY) {
       var KEYCODE_ENTER = 13;
       var KEYCODE_ESC = 27;
       var key = event.which || event.keyCode;
-      if (key == KEYCODE_ENTER) { finishAnnEdit(aThat, obj, forWhatType, true); }
-      else if (key == KEYCODE_ESC) { finishAnnEdit(aThat, obj, forWhatType, false); }
+      if (key==KEYCODE_ENTER) { finishAnnEdit(aThat, obj, forWhatType, true); }
+      else if (key==KEYCODE_ESC) { finishAnnEdit(aThat, obj, forWhatType, false); }
     }, false);
   }
   ann.onDoubleClick=function(){
