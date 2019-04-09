@@ -155,6 +155,14 @@
                 </div>';
             $j('#'+aParentID).append(html);
         }
+        
+        function doGetTemplate(jsonFile) {
+            $j.get("/topology-tool/"+ jsonFile).done(function(data) {
+                console.log(data);
+                document.getElementById('json_text').value = JSON.stringify(data);
+                doLoadJSON();
+            });
+        }
 
         function doSendJSON() {
             var str = $j.trim($j('#json_text').val());
@@ -304,8 +312,8 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Template <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fa fa-check" style="visibility:hidden"></i> 2 nodes</a></li>
-                        <li><a href="#"><i class="fa fa-check" style="visibility:hidden"></i> 3 nodes</a></li>
+                        <li><a href="#" onclick="doGetTemplate('one.json')"><i class="fa fa-file-archive-o"></i> 1 node</a></li>
+                        <li><a href="#" onclick="doGetTemplate('six.json')"><i class="fa fa-file-archive-o"></i> 6 nodes</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
