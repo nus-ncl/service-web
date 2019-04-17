@@ -434,9 +434,27 @@ public class MainController {
 
     @RequestMapping(value = "/networkTool", method = RequestMethod.POST)
     public @ResponseBody String networkTopologyAnalysis(@RequestParam("jsonText") String jsonText) {
-        String nsfilename = null;
         JSONObject jsonObject = new JSONObject();
+        StringBuilder nsBuilder = new StringBuilder();
         StringBuilder logBuilder = new StringBuilder();
+        if (networkToolProperties.isAdapterEnabled()) {
+            String url = "http://" + networkToolProperties.getAdapterHost() + ":" + networkToolProperties.getAdapterPort() + "/netdef";
+            jsonObject.put("jsonText", jsonText);
+            HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(jsonObject.toString());
+            ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+            JSONObject responseBody = new JSONObject(response.getBody().toString());
+            jsonObject.put("nsText", responseBody.getString("nsText"));
+            jsonObject.put("logText", responseBody.getString("logText"));
+        } else {
+            analyzeJsonText(jsonText, nsBuilder, logBuilder);
+            jsonObject.put("nsText", nsBuilder.toString());
+            jsonObject.put("logText", logBuilder.toString());
+        }
+        return jsonObject.toString();
+    }
+
+    private void analyzeJsonText(@RequestParam("jsonText") String jsonText, StringBuilder nsBuilder, StringBuilder logBuilder) {
+        String nsfilename = null;
         String filename = networkToolProperties.getTemp() + System.currentTimeMillis() + ".json";
         try (FileWriter fw = new FileWriter(filename)) {
             fw.write(jsonText);
@@ -463,7 +481,6 @@ public class MainController {
                 log.error(ioe.toString());
             }
         }
-        StringBuilder nsBuilder = new StringBuilder();
         if (nsfilename != null) {
             try (BufferedReader br = new BufferedReader(new FileReader(nsfilename))) {
                 for (String line = br.readLine(); line != null; line = br.readLine()) {
@@ -473,9 +490,6 @@ public class MainController {
                 log.error(ioe.toString());
             }
         }
-        jsonObject.put("nsText", nsBuilder.toString());
-        jsonObject.put("logText", logBuilder.toString());
-        return jsonObject.toString();
     }
 
     private String generateNSfile(InputStream inputStream, StringBuilder logBuilder) {
