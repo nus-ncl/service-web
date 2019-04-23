@@ -31,6 +31,8 @@ public class NodeUsageReservationForm implements Serializable {
 
     private String teamId;
 
+    private String id;
+
     @NotEmpty
     private String projectId;
 

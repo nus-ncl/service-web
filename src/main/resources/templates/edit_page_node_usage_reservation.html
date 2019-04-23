@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Edit Node Usage Reservation</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" />
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="container">
+    <p>&nbsp;</p>
+    <div class="row dashpanel">
+       <div class="alert alert-danger" th:if="${message}">
+            <h4 th:utext="${message}"></h4>
+        </div>
+        <div th:if="${messageSuccess}" class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> <p th:text="${messageSuccess}"></p>
+        </div>
+        <h2 class="team-heading team-heading-current-team" th:text="#{editNodesReservation.header}">Edit Nodes Usage Reservation</h2>
+        <form class="form-horizontal" method="post" action="#" th:action="@{/admin/edit/usage/reservation}" th:object="${nodeUsageReservationForm}" role="form">
+            <fieldset>
+
+                <div class="form-group" th:classappend="${#fields.hasErrors('projectId')} ? has-error">
+                    <label for="project" class="col-sm-3 control-label">Project :</label>
+                    <div class="col-sm-7">
+                        <select id="project" class="form-control" th:field="*{projectId}">
+                            <option th:each="project : ${projectsList}" th:value="${project.id}" th:text="${project.projectName}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-7">
+                        <button type="submit" class="btn btn-standard">Submit</button>
+                   </div>
+                </div>
+
+                <div class="panel-body">
+
+                    <table class="table table-responsive" th:if="${mapNodeReservationInfo}">
+                        <thead>
+                        <th th:text="#{reservation.startDt.header}">Reservation Start Date</th>
+                        <th th:text="#{reservation.endDt.header}">Reservation End Date</th>
+                        <th th:text="#{reservation.noOfNodes.header}">Number of Nodes</th>
+                        <th th:text="#{team.table.header.actions}">Actions</th>
+
+                        </thead>
+                        <th:block>
+                            <tr th:each="nodeusage : ${mapNodeReservationInfo}">
+                                <th:block>
+                                    <td th:text="${nodeusage.startDate}"></td>
+                                    <td th:text="${nodeusage.endDate}"></td>
+                                    <td th:text="${nodeusage.noOfNodes}"></td>
+
+
+                                    <td>
+                                        <button type="button" class="btn btn-primary"
+                                                data-toggle="modal" data-target="#editNodeReservationModal"
+                                                th:attr="data-id=${nodeusage.id},
+                                        data-startdate=${nodeusage.startDate},
+                                        data-enddate=${nodeusage.endDate},
+                                        data-nbrnodes=${nodeusage.noOfNodes},
+                                        data-projectid=${nodeusage.projectId},
+                                        data-edit=@{/admin/edit/node_reservation/}"><i class="fa fa-plus btn-fa-green" aria-hidden="true"></i>Edit</button>
+
+                                    </td>
+                                </th:block>
+                            </tr>
+                        </th:block>
+                    </table>
+                </div>
+            </fieldset>
+
+        </form>
+    </div>
+
+</div> <!--container -->
+
+<!-- Confirm Edit Resource Modal -->
+<div class="modal fade" id="editNodeReservationModal" tabindex="-1" role="dialog" aria-labelledby="editNodeReservationModal">
+   <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="post" action="#" th:object="${nodeUsageReservationForm}" role="form" id="editNodeUsageReservationForm">
+                    <fieldset>
+                    <div class="form-group">
+                        <label for="datepicker" class="col-sm-3 control-label">Reservation Period</label>
+                        <div class="col-sm-7">
+                            <div class="input-group input-daterange" id="datepicker">
+                                <input type="text" class="form-control" id="inputStartDate" th:field="*{startDate}" placeholder="Start Date (yyyy-MM-dd)" />
+                                <span class="input-group-addon">to</span>
+                                <input type="text" class="form-control" id="inputEndDate"  th:field="*{endDate}" placeholder="End Date (yyyy-MM-dd)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" th:classappend="${#fields.hasErrors('noOfNodes')} ? has-error">
+                        <label for="inputNbrNodes" class="col-sm-3 control-label">Number of Nodes</label>
+                        <div class="col-sm-7">
+                            <input type="number" class="form-control" id="inputNbrNodes" th:field="*{noOfNodes}" min="1" />
+                        </div>
+                    </div>
+                        <input type="hidden" id="hidprojectid" th:field="*{projectId}"/>
+                        <input type="hidden" id="hidreservationid" th:field="*{id}"/>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="editButton">Edit</button>
+                     </div>
+                </fieldset>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
+<script>
+
+     // <![CDATA[
+   /* $(document).ready(function () {
+       /!* $('.input-daterange').datepicker({
+            clearBtn: true,
+            format: "yyyy-mm-dd",
+            orientation: "bottom"
+        });*/
+
+       $('#editNodeReservationModal').on('show.bs.modal', function (event) {
+
+            var anchor = $(event.relatedTarget);
+            var reservationid = anchor.data('id');
+            var startdate = anchor.data('startdate');
+            var enddate = anchor.data('enddate');
+            var nbrnodes= anchor.data('nbrnodes');
+            var projectid= anchor.data('projectid');
+            var editButton = anchor.data('edit');
+
+            var modal = $(this);
+            modal.find('#reservationid').text(reservationid);
+            modal.find('#startdate').text(startdate);
+            modal.find('#enddate').text(enddate);
+            modal.find('#nbrnodes').text(nbrnodes);
+            modal.find('#projectid').text(projectid);
+            modal.find('#editButton').attr('href', editButton);
+           var href;
+
+            if(startdate!=null && !(startdate==('undefined')))
+            {
+                document.getElementById("inputStartDate").value=startdate;
+            }
+           if(enddate!=null && !(enddate==('undefined')))
+           {
+               document.getElementById("inputEndDate").value=enddate;
+           }
+           if(nbrnodes!=null && !(nbrnodes==('undefined')))
+           {
+               document.getElementById("inputNbrNodes").value=nbrnodes;
+           }
+           if(projectid!=null && !(projectid==('undefined')))
+           {
+               document.getElementById("hidprojectid").value=projectid;
+           }
+           if(reservationid!=null && !(reservationid==('undefined')))
+           {
+               document.getElementById("hidreservationid").value=reservationid;
+           }
+
+
+           $('.input-daterange').datepicker({
+                clearBtn: true,
+                format: "yyyy-mm-dd",
+                orientation: "bottom"
+            });
+           if(editButton!=null && !(editButton==('undefined')))
+           {
+               href = editButton;
+           }
+
+            modal.find('#editNodeUsageReservationForm').attr('action', href);
+            modal.find('#editButton').click(function () {
+
+                modal.find('#editNodeUsageReservationForm').submit();
+            });
+        });
+
+
+        // ]]>
+</script>
+</body>
+</html>
