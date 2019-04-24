@@ -22,7 +22,6 @@ public class ConnectionProperties {
     private static final String RESOURCES = "resources";
     private static final String RESERVATIONS = "reservations";
     private static final String NODESRESERVATIONS = "nodesreservations";
-    private static final String NODESRESERVATIONS_INFO = "reservationInfo";
     private String sioAddress;
     private String sioPort;
     private String authEndpoint;
@@ -474,12 +473,12 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/calendar" + getStringBuilder(paramString).toString();
     }
 
-    public String getProjNodesUsageInfo(String projectId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/nodes/" + projectId + "/" + NODESRESERVATIONS_INFO;
+    public String getNodesReserveByProject(String projectId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
     }
 
     public String editNodesReserve(String reservationid) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/edit/usage/nodes/" + reservationid + "/" + NODESRESERVATIONS;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/" + NODESRESERVATIONS + "/" + reservationid;
     }
 
 }
