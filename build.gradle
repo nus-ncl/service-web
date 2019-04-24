@@ -69,7 +69,7 @@ compileJava {
     dependsOn processResources
 }
 
-jacocoTestReport {
+tasks.jacocoTestReport {
     reports {
         xml.enabled true
     }
