@@ -209,18 +209,6 @@ public class MainControllerTest {
     }
 
     @Test
-    public void testCalendarPage() throws Exception {
-        // calendar page display BEFORE login
-        mockMvc.perform(get("/calendar"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("main.css")))
-                .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("navbar-header")))
-                .andExpect(content().string(containsString("iframe src=\"https://calendar.google.com/calendar/embed")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")));
-    }
-
-    @Test
     public void testContactUsPage() throws Exception {
         // calendar page display BEFORE login
         mockMvc.perform(get("/contactus"))

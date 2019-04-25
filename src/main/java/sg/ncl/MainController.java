@@ -48,6 +48,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -264,7 +265,6 @@ public class MainController {
 
     @Inject
     protected PtyProperties ptyProperties;
-
     @Inject
     protected VncProperties vncProperties;
 
@@ -322,7 +322,58 @@ public class MainController {
     }
 
     @RequestMapping("/calendar")
-    public String calendar() {
+    public String calendar(Model model,
+                           @RequestParam(value = "start", required = false) String start,
+                           @RequestParam(value = "end", required = false) String end,
+                           final RedirectAttributes redirectAttributes,
+                           HttpSession session) throws IOException, StartDateAfterEndDateException, WebServiceRuntimeException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startDate = (start == null) ? LocalDate.now() : LocalDate.parse(start, formatter);
+        LocalDate endDate = (end == null) ? startDate.plusDays(7) : LocalDate.parse(end, formatter);
+        LocalDate maxDate = startDate.plusDays(30);
+
+        if (endDate.compareTo(maxDate) > 0) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Period selected is more than 30 days.");
+            return "redirect:/calendar";
+        }
+
+        start = startDate.format(formatter);
+        end = endDate.format(formatter);
+
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+        ResponseEntity response = restTemplate.exchange(properties.getUsageCalendar("startDate=" + start, "endDate=" + end), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+        JSONObject jsonObject = new JSONObject(responseBody);
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            if (exceptionState == START_DATE_AFTER_END_DATE_EXCEPTION) {
+                log.warn("Get calendar : Start date after end date error");
+                throw new StartDateAfterEndDateException(ERR_START_DATE_AFTER_END_DATE);
+            } else {
+                log.warn("Get calendar : unknown error");
+                throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
+            }
+        } else {
+            List<String> dates = getDates(start, end, formatter);
+            Map<String, List<Integer>> projectUsages = new HashMap<>();
+            jsonObject.keys().forEachRemaining(
+                    key -> {
+                        JSONArray jsonArray = new JSONArray(jsonObject.getJSONArray((String) key).toString());
+                        List<Integer> usages = new ArrayList<>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            usages.add(jsonArray.getInt(i));
+                        }
+                        projectUsages.put((String) key, usages);
+                    }
+            );
+            model.addAttribute("dates", dates);
+            model.addAttribute("projectUsages", projectUsages);
+        }
+
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
         return "calendar";
     }
 
@@ -2043,6 +2094,16 @@ public class MainController {
     @RequestMapping(value = "/teams/apply_team", method = RequestMethod.GET)
     public String teamPageApplyTeam(Model model) {
         model.addAttribute("teamPageApplyTeamForm", new TeamPageApplyTeamForm());
+        if (!model.containsAttribute(KEY_QUERY)) {
+            model.addAttribute(KEY_QUERY, new ProjectUsageQuery());
+           /* model.addAttribute("newProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("activeProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("inactiveProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("stoppedProjects", new ArrayList<ProjectDetails>());
+            model.addAttribute("utilization", new HashMap<String, MonthlyUtilization>());
+            model.addAttribute("statsCategory", new HashMap<String, Integer>());
+            model.addAttribute("statsAcademic", new HashMap<String, Integer>());*/
+        }
         return "team_page_apply_team";
     }
 
@@ -2083,6 +2144,7 @@ public class MainController {
             String responseBody = response.getBody().toString();
 
             if (RestUtil.isError(response.getStatusCode())) {
+
                 // prepare the exception mapping
                 EnumMap<ExceptionState, String> exceptionMessageMap = new EnumMap<>(ExceptionState.class);
                 exceptionMessageMap.put(USER_ID_NULL_OR_EMPTY_EXCEPTION, "User id is null or empty ");
@@ -3918,6 +3980,309 @@ public class MainController {
         model.addAttribute(KEY_PROJECT, projectDetails);
 
         return "admin_monthly_usage";
+    }
+
+    @RequestMapping(value = "/admin/usage/reservation", method = RequestMethod.GET)
+    public String adminMonthlyReservation(HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
+        List<ProjectDetails> projectsList = getProjects();
+        model.addAttribute("projectsList", projectsList);
+        return "admin_node_usage_reservation";
+    }
+
+    @RequestMapping(value = "/admin/usage/reservation", method = RequestMethod.POST)
+    public String checkApplyNodeReservationInfo(@Valid @ModelAttribute("nodeUsageReservationForm") NodeUsageReservationForm nodeUsageReservationForm,
+                                                BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                                HttpSession session, Model model) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        final String LOG_PREFIX = "Apply for Node Reservation: {}";
+        if (bindingResult.hasErrors()) {
+            log.warn(LOG_PREFIX, "Application form error " + nodeUsageReservationForm.toString());
+            StringBuilder message = new StringBuilder();
+            message.append(TAG_ERRORS);
+            message.append(TAG_UL);
+            for (ObjectError objectError : bindingResult.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append(TAG_LI);
+                switch (fieldError.getField()) {
+                    case "startDate":
+                        message.append("Start Date ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "endDate":
+                        message.append("End Date ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "noOfNodes":
+                        message.append("Number of Nodes ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "projectId":
+                        message.append("Project ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    default:
+                        message.append(fieldError.getField());
+                        message.append(TAG_SPACE);
+                        message.append(fieldError.getDefaultMessage());
+                }
+                message.append(TAG_LI_CLOSE);
+            }
+            message.append(TAG_UL_CLOSE);
+            model.addAttribute(MESSAGE, message);
+            List<ProjectDetails> projectsList = getProjects();
+            model.addAttribute("projectsList", projectsList);
+            return "admin_node_usage_reservation";
+        }
+        log.info(LOG_PREFIX, nodeUsageReservationForm.toString());
+
+        JSONObject nodeReserveFields = new JSONObject();
+        nodeReserveFields.put("startDate", nodeUsageReservationForm.getZonedStartDate());
+        nodeReserveFields.put("endDate", nodeUsageReservationForm.getZonedEndDate());
+        nodeReserveFields.put("numNodes", nodeUsageReservationForm.getNoOfNodes());
+        HttpEntity<String> request = createHttpEntityWithBody(nodeReserveFields.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+
+        try {
+            ResponseEntity response = restTemplate.exchange(properties.applyNodesReserve(nodeUsageReservationForm.getProjectId()), HttpMethod.POST, request, String.class);
+            String responseBody = response.getBody().toString();
+
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    case PROJECT_DETAILS_NOT_FOUND_EXCEPTION:
+                        log.warn("Project not found for reserving node usage.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>project not found for reserving node usage</li></ul>");
+                        break;
+                    case NODES_RESERVATION_ALREADY_EXISTS_EXCEPTION:
+                        log.warn("Overlapping node usage reservations found for same project.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>overlapping node usage reservations found for same project</li></ul>");
+                        break;
+                    case FORBIDDEN_EXCEPTION:
+                        log.warn("Reserving of node usage forbidden.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>reserving of node usage forbidden</li></ul>");
+                        break;
+                    default:
+                        log.warn("Unknown error for validating node usage reservation.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error for reserving node usage</li></ul>");
+                }
+            } else {
+                // no errors, everything ok
+                log.info(LOG_PREFIX, "Application for"+ nodeUsageReservationForm.getNoOfNodes()+" node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation done.");
+            }
+        } catch (Exception e) {
+            log.error(LOG_PREFIX, e);
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+        return "redirect:/admin/usage/reservation";
+    }
+
+    @RequestMapping(value = "/admin/edit/usage/reservation", method = RequestMethod.GET)
+    public String editNodeUsageReservation(HttpSession session,Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+        model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
+        List<ProjectDetails> projectsList = getProjects();
+        model.addAttribute("projectsList", projectsList);
+        return "edit_page_node_usage_reservation";
+    }
+
+   @RequestMapping(value = "/admin/edit/usage/reservation", method = RequestMethod.POST)
+   public String findNodeUsageReservationInfo(@Valid @ModelAttribute("nodeUsageReservationForm") NodeUsageReservationForm nodeUsageReservationForm,
+                                                BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                                HttpSession session, Model model) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        final String LOG_PREFIX = "findNodeUsageReservationInfo: {}";
+
+       JSONObject reqObj = new JSONObject();
+       HttpEntity<String> request = createHttpEntityWithBody(reqObj.toString());
+       restTemplate.setErrorHandler(new MyResponseErrorHandler());
+       try {
+           ResponseEntity response = restTemplate.exchange(properties.getNodesReserveByProject(nodeUsageReservationForm.getProjectId()), HttpMethod.GET, request, String.class);
+           String responseBody = response.getBody().toString();
+           JSONObject jsonObject = new JSONObject(responseBody);
+           if (RestUtil.isError(response.getStatusCode())) {
+               MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+               ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+               switch (exceptionState) {
+                   default:
+                       log.warn("Unknown error.");
+                       redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error : No Reservation Info found</li></ul>");
+               }
+           } else {
+               List<NodeUsageReservationForm> tmplist = new ArrayList<>();
+               Iterator iter = jsonObject.keys();
+               while (iter.hasNext()) {
+                   String key = (String) iter.next();
+
+                   JSONArray jsonArray = jsonObject.getJSONArray(key);
+                   String tmpstr = jsonArray.toString();
+                   String[] str = tmpstr.substring(1, tmpstr.length() - 1).split(",");
+                   NodeUsageReservationForm obj = new NodeUsageReservationForm();
+                   obj.setId(key);
+                   obj.setStartDate(str[0].replace("\"", ""));
+                   obj.setEndDate(str[1].replace("\"", ""));
+                   obj.setNoOfNodes(Integer.parseInt(str[2].replace("\"", "")));
+                   obj.setProjectId(nodeUsageReservationForm.getProjectId());
+                   tmplist.add(obj);
+               }
+
+               List<ProjectDetails> projectsList = getProjects();
+               model.addAttribute("projectsList", projectsList);
+               model.addAttribute("mapNodeReservationInfo", tmplist);
+           }
+       } catch (Exception e) {
+           log.error(LOG_PREFIX, e);
+           throw new WebServiceRuntimeException(e.getMessage());
+       }
+       return "edit_page_node_usage_reservation";
+    }
+
+    @RequestMapping(value = "/admin/edit/node_reservation/", method = RequestMethod.POST)
+    public String editNodeReservation(@Valid @ModelAttribute("nodeUsageReservationForm") NodeUsageReservationForm nodeUsageReservationForm,
+                                      BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                      HttpSession session, Model model) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        final String LOG_PREFIX = "Edit Node Usage Reservation: {}";
+
+        if (bindingResult.hasErrors()) {
+            log.warn(LOG_PREFIX, "Application form error " + nodeUsageReservationForm.toString());
+            StringBuilder message = new StringBuilder();
+            message.append(TAG_ERRORS);
+            message.append(TAG_UL);
+            for (ObjectError objectError : bindingResult.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append(TAG_LI);
+                switch (fieldError.getField()) {
+                    case "startDate":
+                        message.append("Start Date ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "endDate":
+                        message.append("End Date ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "noOfNodes":
+                        message.append("Number of Nodes ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    case "projectId":
+                        message.append("Project ");
+                        message.append(fieldError.getDefaultMessage());
+                        break;
+                    default:
+                        message.append(fieldError.getField());
+                        message.append(TAG_SPACE);
+                        message.append(fieldError.getDefaultMessage());
+                }
+                message.append(TAG_LI_CLOSE);
+            }
+            message.append(TAG_UL_CLOSE);
+            model.addAttribute(MESSAGE, message);
+            List<ProjectDetails> projectsList = getProjects();
+            model.addAttribute("projectsList", projectsList);
+            return "edit_page_node_usage_reservation";
+        }
+
+        JSONObject nodeReserveFields = new JSONObject();
+        nodeReserveFields.put("startDate", nodeUsageReservationForm.getZonedStartDate());
+        nodeReserveFields.put("endDate", nodeUsageReservationForm.getZonedEndDate());
+        nodeReserveFields.put("noNodes", nodeUsageReservationForm.getNoOfNodes());
+        nodeReserveFields.put("projectId", nodeUsageReservationForm.getProjectId());
+        HttpEntity<String> request = createHttpEntityWithBody(nodeReserveFields.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        try {
+            ResponseEntity response = restTemplate.exchange(properties.editNodesReserve(nodeUsageReservationForm.getId()), HttpMethod.POST, request, String.class);
+            String responseBody = response.getBody().toString();
+
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    case NODES_RESERVATION_NOT_FOUND_EXCEPTION:
+                        log.warn("No Reservation found.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>project not found for reserving node usage</li></ul>");
+                        break;
+                    case NODES_RESERVATION_ALREADY_EXISTS_EXCEPTION:
+                        log.warn("Overlapping node usage reservations found for same project.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>overlapping node usage reservations found for same project</li></ul>");
+                        break;
+                    case FORBIDDEN_EXCEPTION:
+                        log.warn("Reserving of node usage forbidden.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>reserving of node usage forbidden</li></ul>");
+                        break;
+                    default:
+                        log.warn("Unknown error for validating node usage reservation.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error for reserving node usage</li></ul>");
+                }
+            } else {
+                // no errors, everything ok
+                log.info(LOG_PREFIX, "Application for" + nodeUsageReservationForm.getNoOfNodes() + " node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation done.");
+            }
+        } catch (Exception e) {
+            log.error(LOG_PREFIX, e);
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "redirect:/admin/edit/usage/reservation";
+    }
+
+    @RequestMapping(value = "/admin/delete/node_reservation/{id}", method = RequestMethod.GET)
+    public String deleteNodeReservation(@PathVariable String id, RedirectAttributes redirectAttributes,
+                                        HttpSession session) throws WebServiceRuntimeException {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        ResponseEntity response = restTemplate.exchange(properties.editNodesReserve(id), HttpMethod.DELETE, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    case NODES_RESERVATION_NOT_FOUND_EXCEPTION:
+                        log.warn("No Reservation found.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>project not found for reserving node usage</li></ul>");
+                        break;
+                    case FORBIDDEN_EXCEPTION:
+                        log.warn("Deleting of node usage reservation forbidden.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>reserving of node usage forbidden</li></ul>");
+                        break;
+                    default:
+                        log.warn("Unknown error for deleting node usage reservation.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error for reserving node usage</li></ul>");
+                }
+            } else {
+                log.info("Nodes usage reservation deleted: {}", responseBody);
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation deleted.");
+            }
+        } catch (IOException e) {
+            log.error("deleteNodeReservation: {}", e.toString());
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "redirect:/admin/edit/usage/reservation";
     }
 
     @GetMapping(value = {"/admin/monthly/{id}/usage/contribute", "/admin/monthly/{id}/usage/contribute/{month}"})

@@ -21,7 +21,7 @@ public class ConnectionProperties {
     private static final String TEAMS = "/teams/";
     private static final String RESOURCES = "resources";
     private static final String RESERVATIONS = "reservations";
-
+    private static final String NODESRESERVATIONS = "nodesreservations";
     private String sioAddress;
     private String sioPort;
     private String authEndpoint;
@@ -412,30 +412,18 @@ public class ConnectionProperties {
     // ANALYTICS (DATA DOWNLOADS)
     //-------------------------------------
     public String getDownloadStat(String... paramString) {
-        StringBuilder params = new StringBuilder();
-        for (int i = 0; i < paramString.length; i++) {
-            if (i == 0) {
-                params.append("?").append(paramString[i]);
-            } else {
-                params.append("&").append(paramString[i]);
-            }
-        }
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads" + params.toString();
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads" + getStringBuilder(paramString).toString();
     }
 
     public String getPublicDownloadStat(String... paramString) {
-        StringBuilder params = new StringBuilder();
-        for (int i = 0; i < paramString.length; i++) {
-            if (i == 0) {
-                params.append("?").append(paramString[i]);
-            } else {
-                params.append("&").append(paramString[i]);
-            }
-        }
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads/public" + params.toString();
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/datasets/downloads/public" + getStringBuilder(paramString).toString();
     }
 
     public String getUsageStat(String teamId, String... paramString) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + getStringBuilder(paramString).toString();
+    }
+
+    private StringBuilder getStringBuilder(String[] paramString) {
         StringBuilder params = new StringBuilder();
         for (int i = 0; i < paramString.length; i++) {
             if (i == 0) {
@@ -444,7 +432,7 @@ public class ConnectionProperties {
                 params.append("&").append(paramString[i]);
             }
         }
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/teams/" + teamId + params.toString();
+        return params;
     }
 
     public String getMonthly() {
@@ -476,4 +464,21 @@ public class ConnectionProperties {
     public String reserveNodes(String teamId, Integer numNodes, String machineType) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/" + RESERVATIONS + "?numNodes=" + numNodes + "&machineType=" + machineType;
     }
+
+   public String applyNodesReserve(String projectId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
+    }
+
+    public String getUsageCalendar(String... paramString) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/calendar" + getStringBuilder(paramString).toString();
+    }
+
+    public String getNodesReserveByProject(String projectId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
+    }
+
+    public String editNodesReserve(String reservationid) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/" + NODESRESERVATIONS + "/" + reservationid;
+    }
+
 }
