@@ -237,6 +237,8 @@ public class MainController {
     private static final String KEY_MONTH_YEAR = "monthYear";
     private static final String KEY_MONTHLY_USAGE = "monthlyUsage";
     private static final String KEY_USAGE = "usage";
+    private static final String KEY_INCURRED = "incurred";
+    private static final String KEY_WAIVED = "waived";
     private static final String KEY_PROJECT = "project";
     private static final String KEY_QUERY = "query";
     private static final String KEY_DATE_CREATED = "dateCreated";
@@ -3765,6 +3767,8 @@ public class MainController {
             projectUsage.setId(usageId.getInt(KEY_PROJECT_DETAILS_ID));
             projectUsage.setMonth(usageId.getString(KEY_MONTH_YEAR));
             projectUsage.setUsage(usage.getInt(KEY_MONTHLY_USAGE));
+            projectUsage.setIncurred(usage.getDouble(KEY_INCURRED));
+            projectUsage.setWaived(usage.getDouble(KEY_WAIVED));
             projectDetails.addProjectUsage(projectUsage);
         }
         return projectDetails;
@@ -4301,6 +4305,8 @@ public class MainController {
             projectUsage.setId(usageId.getInt(KEY_PROJECT_DETAILS_ID));
             projectUsage.setMonth(usageId.getString(KEY_MONTH_YEAR));
             projectUsage.setUsage(usage.getInt(KEY_MONTHLY_USAGE));
+            projectUsage.setIncurred(usage.getDouble(KEY_INCURRED));
+            projectUsage.setWaived(usage.getDouble(KEY_WAIVED));
             model.addAttribute(KEY_USAGE, projectUsage);
         } else {
             model.addAttribute(KEY_USAGE, new ProjectUsage());
@@ -4328,6 +4334,8 @@ public class MainController {
             jsonObject.put(KEY_PROJECT_DETAILS_ID, pid);
             jsonObject.put("month", usage.getMonth());
             jsonObject.put(KEY_USAGE, usage.getUsage());
+            jsonObject.put(KEY_INCURRED, usage.getIncurred());
+            jsonObject.put(KEY_WAIVED, usage.getWaived());
             log.debug("JsonObject: {}", jsonObject);
 
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -4580,6 +4588,100 @@ public class MainController {
             statsAcademicMap.put(project.getOrganisationName(), totalNodeHours + nodeHours);
         }
         return nodeHours;
+    }
+
+    @GetMapping("/admin/analysis")
+    public String adminUsageAnalysis(HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        if (!model.containsAttribute(KEY_QUERY)) {
+            model.addAttribute(KEY_QUERY, new ProjectUsageQuery());
+            model.addAttribute("usageAnalysis", new HashMap<String, UsageAnalysis>());
+            model.addAttribute("analysisCategory", new HashMap<String, UsageAnalysis>());
+            model.addAttribute("analysisAcademic", new HashMap<String, UsageAnalysis>());
+        }
+
+        return "admin_usage_analysis";
+    }
+
+    @PostMapping("/admin/analysis")
+    public String adminUsageAnalysisQuery(@Valid @ModelAttribute("query") ProjectUsageQuery query, BindingResult result,
+                                          RedirectAttributes attributes, HttpSession session) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+
+        List<String> months = new ArrayList<>();
+        Map<String, UsageAnalysis> usageAnalysis = new HashMap<>();
+        Map<String, UsageAnalysis> analysisCategory = new HashMap<>();
+        Map<String, UsageAnalysis> analysisAcademic = new HashMap<>();
+
+        if (result.hasErrors()) {
+            StringBuilder message = new StringBuilder();
+            message.append(TAG_ERRORS);
+            message.append(TAG_UL);
+            for (ObjectError objectError : result.getAllErrors()) {
+                FieldError fieldError = (FieldError) objectError;
+                message.append(TAG_LI);
+                message.append(fieldError.getField());
+                message.append(TAG_SPACE);
+                message.append(fieldError.getDefaultMessage());
+                message.append(TAG_LI_CLOSE);
+            }
+            message.append(TAG_UL_CLOSE);
+            attributes.addFlashAttribute(MESSAGE, message.toString());
+        } else {
+            DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("MMM-yyyy").toFormatter();
+            YearMonth m_s = YearMonth.parse(query.getStart(), formatter);
+            YearMonth m_e = YearMonth.parse(query.getEnd(), formatter);
+
+            List<ProjectDetails> projectsList = getProjects();
+            YearMonth counter = m_s;
+            while (!counter.isAfter(m_e)) {
+                String monthYear = counter.format(formatter);
+                usageAnalysis.put(monthYear, new UsageAnalysis());
+                months.add(monthYear);
+
+                // compute monthly usage costs
+                for (ProjectDetails project : projectsList) {
+                    double incurredSum = project.getProjectUsages().stream().filter(p -> p.getMonth().equals(monthYear)).mapToDouble(ProjectUsage::getIncurred).sum();
+                    double waivedSum = project.getProjectUsages().stream().filter(p -> p.getMonth().equals(monthYear)).mapToDouble(ProjectUsage::getWaived).sum();
+                    UsageAnalysis usage = usageAnalysis.get(monthYear);
+                    usage.addIncurred(incurredSum);
+                    usage.addWaived(waivedSum);
+                }
+
+                counter = counter.plusMonths(1);
+            }
+
+            // compute usage analysis by category and academic
+            for (ProjectDetails project : projectsList) {
+                double incurredSum = project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToDouble(ProjectUsage::getIncurred).sum();
+                double waivedSum = project.getProjectUsages().stream().filter(p -> p.hasUsageWithinPeriod(m_s, m_e)).mapToDouble(ProjectUsage::getWaived).sum();
+                String key = project.getOrganisationType();
+                if (key.equals("Academic")) {
+                    UsageAnalysis usageAcademic = analysisAcademic.getOrDefault(key, new UsageAnalysis());
+                    usageAcademic.addIncurred(incurredSum);
+                    usageAcademic.addWaived(waivedSum);
+                    analysisAcademic.putIfAbsent(key, usageAcademic);
+                    key = project.isEducation() ? "Academia (Education)" : "Academia  (R&D)";
+                }
+                UsageAnalysis usageCategory = analysisCategory.getOrDefault(key, new UsageAnalysis());
+                usageCategory.addIncurred(incurredSum);
+                usageCategory.addWaived(waivedSum);
+                analysisCategory.putIfAbsent(key, usageCategory);
+            }
+        }
+
+        attributes.addFlashAttribute(KEY_QUERY, query);
+        attributes.addFlashAttribute("months", months);
+        attributes.addFlashAttribute("usageAnalysis", usageAnalysis);
+        attributes.addFlashAttribute("analysisCategory", analysisCategory);
+        attributes.addFlashAttribute("analysisAcademic", analysisAcademic);
+
+        return "redirect:/admin/analysis";
     }
 
     /**

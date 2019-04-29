@@ -27,6 +27,9 @@
         <tr>
             <th>Month</th>
             <th>Usage (hours)</th>
+            <th>Cost Incurred (SGD)</th>
+            <th>Amount Waived (SGD)</th>
+            <th>Amount Billed (SGD)</th>
             <th></th>
         </tr>
         </thead>
@@ -34,6 +37,9 @@
         <tr th:each="projectUsage : ${project.getProjectUsages()}">
             <td th:text="${projectUsage.getMonth()}">Month</td>
             <td th:text="${projectUsage.getUsage()}">Usage</td>
+            <td th:text="${#numbers.formatDecimal(projectUsage.getIncurred(), 1, 'COMMA', 2, 'POINT')}">Cost Incurred</td>
+            <td th:text="${#numbers.formatDecimal(projectUsage.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Waived</td>
+            <td th:text="${#numbers.formatDecimal(projectUsage.getIncurred() - projectUsage.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Billed</td>
             <td class="text-nowrap">
                 <a class="btn btn-default" th:href="@{/admin/monthly/{pid}/usage/contribute/{month}(pid=${projectUsage.getId()},month=${projectUsage.getMonth()})}"><i class="fa fa-pencil"></i></a>
                 <a class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete"

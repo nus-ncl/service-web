@@ -35,9 +35,21 @@
                 </div>
             </div>
             <div class="form-group" th:classappend="${#fields.hasErrors('usage')} ? has-error">
-                <label for="owner" class="col-sm-3 control-label">Usage :</label>
+                <label for="usage" class="col-sm-3 control-label">Usage :</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" id="owner" th:field="*{usage}" placeholder="Usage (hours)"/>
+                    <input type="number" min="0" step="1" class="form-control" id="usage" th:field="*{usage}" placeholder="Usage (hours)"/>
+                </div>
+            </div>
+            <div class="form-group" th:classappend="${#fields.hasErrors('incurred')} ? has-error">
+                <label for="incurred" class="col-sm-3 control-label">Cost Incurred :</label>
+                <div class="col-sm-6">
+                    <input type="number" min="0.00" step="0.01" class="form-control" id="incurred" th:field="*{incurred}" placeholder="Amount (SGD)"/>
+                </div>
+            </div>
+            <div class="form-group" th:classappend="${#fields.hasErrors('waived')} ? has-error">
+                <label for="waived" class="col-sm-3 control-label">Amount Waived :</label>
+                <div class="col-sm-6">
+                    <input type="number" min="0.00" step="0.01" class="form-control" id="waived" th:field="*{waived}" placeholder="Amount (SGD)"/>
                 </div>
             </div>
             <div class="form-group">
