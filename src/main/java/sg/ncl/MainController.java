@@ -429,7 +429,11 @@ public class MainController {
 
     @RequestMapping(value = "/networkTool", method = RequestMethod.GET)
     public String networkTopologyTool() {
-        return "network_diagram";
+        if (networkToolProperties.getEnabled()) {
+            return "network_diagram";
+        } else {
+            return NO_PERMISSION_PAGE;
+        }
     }
 
     @RequestMapping(value = "/networkTool", method = RequestMethod.POST)

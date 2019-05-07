@@ -12,6 +12,7 @@ public class NetworkToolProperties {
 
     public static final String PREFIX = "ncl.network.tool";
 
+    private Boolean enabled;
     private Map<String, String> python;
     private Map<String, String> adapter;
 
