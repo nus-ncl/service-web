@@ -40,10 +40,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -56,6 +58,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
@@ -273,6 +276,9 @@ public class MainController {
     @Inject
     protected GpuProperties gpuProperties;
 
+    @Inject
+    protected NetworkToolProperties networkToolProperties;
+
     @RequestMapping("/")
     public String index() {
         return "index";
@@ -472,6 +478,94 @@ public class MainController {
     @RequestMapping("/maintainance")
     public String maintainance() {
         return "maintainance";
+    }
+
+    @RequestMapping(value = "/networkTool", method = RequestMethod.GET)
+    public String networkTopologyTool() {
+        if (networkToolProperties.getEnabled()) {
+            return "network_diagram";
+        } else {
+            return NO_PERMISSION_PAGE;
+        }
+    }
+
+    @RequestMapping(value = "/networkTool", method = RequestMethod.POST)
+    public @ResponseBody String networkTopologyAnalysis(@RequestParam("jsonText") String jsonText) {
+        JSONObject jsonObject = new JSONObject();
+        StringBuilder nsBuilder = new StringBuilder();
+        StringBuilder logBuilder = new StringBuilder();
+        if (networkToolProperties.isAdapterEnabled()) {
+            String url = "http://" + networkToolProperties.getAdapterHost() + ":" + networkToolProperties.getAdapterPort() + "/netdef";
+            jsonObject.put("jsonText", jsonText);
+            HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(jsonObject.toString());
+            ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+            JSONObject responseBody = new JSONObject(response.getBody().toString());
+            jsonObject.put("nsText", responseBody.getString("nsText"));
+            jsonObject.put("logText", responseBody.getString("logText"));
+        } else {
+            analyzeJsonText(jsonText, nsBuilder, logBuilder);
+            jsonObject.put("nsText", nsBuilder.toString());
+            jsonObject.put("logText", logBuilder.toString());
+        }
+        return jsonObject.toString();
+    }
+
+    private void analyzeJsonText(@RequestParam("jsonText") String jsonText, StringBuilder nsBuilder, StringBuilder logBuilder) {
+        String nsfilename = null;
+        String filename = networkToolProperties.getTemp() + System.currentTimeMillis() + ".json";
+        try (FileWriter fw = new FileWriter(filename)) {
+            fw.write(jsonText);
+        } catch (IOException ioe) {
+            log.error(ioe.toString());
+        }
+        try {
+            ProcessBuilder pb = new ProcessBuilder(
+                    networkToolProperties.getCommand(),
+                    networkToolProperties.getVersion(),
+                    networkToolProperties.getProgram(),
+                    networkToolProperties.getOption(),
+                    filename);
+            final Process p = pb.start();
+            nsfilename = generateNSfile(p.getInputStream(), logBuilder);
+        } catch (IOException ioe) {
+            log.error(ioe.toString());
+        }
+        Path filePath = Paths.get(filename);
+        if (filePath.toFile().exists()) {
+            try {
+                Files.delete(filePath);
+            } catch (IOException ioe) {
+                log.error(ioe.toString());
+            }
+        }
+        if (nsfilename != null) {
+            try (BufferedReader br = new BufferedReader(new FileReader(nsfilename))) {
+                for (String line = br.readLine(); line != null; line = br.readLine()) {
+                    nsBuilder.append(line).append("&#010;");
+                }
+            } catch (IOException ioe) {
+                log.error(ioe.toString());
+            }
+        }
+    }
+
+    private String generateNSfile(InputStream inputStream, StringBuilder logBuilder) {
+        String nsfilename = null;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            for (String line = br.readLine(); line != null; line = br.readLine()) {
+                if (line.contains("Produce NSfile")) {
+                    Pattern pattern = Pattern.compile("\\[([^]]+)\\]");
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        nsfilename = matcher.group(1) + "/NSfile.txt";
+                    }
+                }
+                logBuilder.append(line).append("&#010;");
+            }
+        } catch (IOException ioe) {
+            log.error(ioe.toString());
+        }
+        return nsfilename;
     }
 
     @RequestMapping("/testbedInformation")
