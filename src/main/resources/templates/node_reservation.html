@@ -12,6 +12,7 @@
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <div class="container">
+        <div class="row dashpanel">
         <div th:if="${status == 'FAIL'}">
             <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
         </div>
@@ -56,6 +57,7 @@
                 </div>
             </fieldset>
         </form>
+        </div>
         <div id="information">
             <h3 th:if="${status == 'OK'}"><span id="reservedTeamName">Team</span>: <span id="actionTitle">Nodes Reservation</span></h3>
             <th:block th:if="${reservedSet != null and !reservedSet.isEmpty()}">
