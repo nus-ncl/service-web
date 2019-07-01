@@ -3837,6 +3837,46 @@ public class MainController {
         return "energy_usage";
     }
 
+    @RequestMapping(value = "/admin/diskspace", method = RequestMethod.GET)
+    public String adminDiskSpace(HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        try {
+            ResponseEntity response = restTemplate.exchange(properties.getDiskStatistics(), HttpMethod.GET, request, String.class);
+            String responseBody = response.getBody().toString();
+            JSONObject jsonObject = new JSONObject(responseBody);
+            List<JSONObject> projects = new ArrayList<>();
+            List<JSONObject> users = new ArrayList<>();
+            String[] names = JSONObject.getNames(jsonObject);
+            JSONArray jsonArray = jsonObject.getJSONArray(names[0]);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject item = jsonArray.getJSONObject(i);
+                if (item.getString("directory").contains("/big/proj/")) {
+                    if (item.getString("directory").equals("/big/proj/")) {
+                        model.addAttribute("projectsTotal", item);
+                    } else {
+                        projects.add(item);
+                    }
+                } else if (item.getString("directory").contains("/big/users/")) {
+                    if (item.getString("directory").equals("/big/users/")) {
+                        model.addAttribute("usersTotal", item);
+                    } else {
+                        users.add(item);
+                    }
+                }
+            }
+            model.addAttribute("projects", projects);
+            model.addAttribute("users", users);
+            model.addAttribute("timestamp", names[0]);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio analytics service for disk space usage: {}", e);
+            model.addAttribute(MESSAGE, "There is a problem in retrieving information.");
+        }
+        return "diskspace_usage";
+    }
+
     private ProjectDetails getProjectDetails(JSONObject jsonObject) {
         ProjectDetails projectDetails = new ProjectDetails();
         projectDetails.setId(jsonObject.getInt("id"));
