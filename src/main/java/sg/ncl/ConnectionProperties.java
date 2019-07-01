@@ -386,6 +386,14 @@ public class ConnectionProperties {
     }
 
     //-------------------------------------
+    // DISK SPACE STATISTICS
+    //-------------------------------------
+
+    public String getDiskStatistics() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/diskspace";
+    }
+
+    //-------------------------------------
     // PASSWORD RESET
     //-------------------------------------
     public String getPasswordResetRequestURI() {
@@ -395,7 +403,6 @@ public class ConnectionProperties {
     public String getPasswordResetURI() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/password";
     }
-
 
     //-------------------------------------
     // DATA RESOURCE UPLOAD
