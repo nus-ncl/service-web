@@ -27,12 +27,12 @@
 </head>
 <body>
 <!-- give a fragment name so that we can import from other html files -->
-<div class="main-nav navbar-fixed-top" th:fragment="dashboardnav">
+  <div class="main-nav navbar-fixed-top" th:fragment="dashboardnav" style="background-color: #B4B4B4">
     <div class="container">
         <div class="navbar-header">
-            <a href="#" th:href="@{/dashboard}"><img src="images/ncl_favicon1.png" alt="logo" width="53" height="53"
-                                                     class="logo1" th:src="@{~/images/ncl_favicon1.png}"/></a>
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <a href="#" th:href="@{/dashboard}"><img src="/images/ncl_logo1.jpg" alt="logo" width="180" height="90"
+                                                     class="logo1" th:src="@{~/images/ncl_logo1.jpg}"/></a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" style="background-color: #333333">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -99,7 +99,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right dashboard-navbar-right">
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg fa-2x"></i>
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg fa-3x"></i>
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <!-- TODO need to check if user is a team owner -->
