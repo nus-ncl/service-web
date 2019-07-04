@@ -11,98 +11,99 @@
 <body class="mybg loginbackground">
 <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
 <div class="container">
-    <h2 class="team-heading team-heading-current-team">Usage Analysis</h2>
     <p>&nbsp;</p>
-    <div class="alert alert-danger" th:if="${message}">
-        <h4 th:utext="${message}"></h4>
-    </div>
-    <form class="form-horizontal" method="post" action="#" th:action="@{/admin/analysis}" th:object="${query}" role="form">
-        <div class="form-group">
-            <label for="datepicker" class="col-sm-2 control-label">Period :</label>
-            <div class="col-sm-7">
-                <div class="input-group input-daterange" id="datepicker">
-                    <input type="text" class="form-control" th:name="start" th:value="*{start}" placeholder="Start Month (MMM-yyyy)" />
-                    <span class="input-group-addon">to</span>
-                    <input type="text" class="form-control" th:name="end" th:value="*{end}" placeholder="End Month (MMM-yyyy)" />
+    <div class="row dashpanel">
+        <div class="alert alert-danger" th:if="${message}">
+            <h4 th:utext="${message}"></h4>
+        </div>
+        <h2 class="team-heading team-heading-current-team">Usage Analysis</h2>
+        <p>&nbsp;</p>
+        <form class="form-horizontal" method="post" action="#" th:action="@{/admin/analysis}" th:object="${query}" role="form">
+            <div class="form-group">
+                <label for="datepicker" class="col-sm-2 control-label">Period :</label>
+                <div class="col-sm-7">
+                    <div class="input-group input-daterange" id="datepicker">
+                        <input type="text" class="form-control" th:name="start" th:value="*{start}" placeholder="Start Month (MMM-yyyy)" />
+                        <span class="input-group-addon">to</span>
+                        <input type="text" class="form-control" th:name="end" th:value="*{end}" placeholder="End Month (MMM-yyyy)" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <button type="submit" class="btn btn-default">Query</button>
                 </div>
             </div>
-            <div class="col-sm-3">
-                <button type="submit" class="btn btn-default">Query</button>
+        </form>
+        <p>&nbsp;</p>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#home">Billing</a></li>
+            <li><a data-toggle="tab" href="#menu1">By Category</a></li>
+            <li><a data-toggle="tab" href="#menu2">By Academic</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="home" class="tab-pane fade in active">
+                <p>&nbsp;</p>
+                <table id="billingTable" class="table table-responsive" th:if="not ${usageAnalysis.isEmpty()}">
+                    <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Cost Incurred ($)</th>
+                        <th>Amount Waived ($)</th>
+                        <th>Amount Billed ($)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="month : ${months}">
+                        <td th:text="${month}">Month</td>
+                        <td th:text="${#numbers.formatDecimal(usageAnalysis.get(month).getIncurred(), 1, 'COMMA', 2, 'POINT')}">Cost Incurred</td>
+                        <td th:text="${#numbers.formatDecimal(usageAnalysis.get(month).getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Waived</td>
+                        <td th:text="${#numbers.formatDecimal(usageAnalysis.get(month).getIncurred() - usageAnalysis.get(month).getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Billed</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
-    </form>
-    <p>&nbsp;</p>
-    <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#home">Billing</a></li>
-        <li><a data-toggle="tab" href="#menu1">By Category</a></li>
-        <li><a data-toggle="tab" href="#menu2">By Academic</a></li>
-    </ul>
-    <div class="tab-content">
-        <div id="home" class="tab-pane fade in active">
-            <p>&nbsp;</p>
-            <table id="billingTable" class="table table-responsive" th:if="not ${usageAnalysis.isEmpty()}">
-                <thead>
-                <tr>
-                    <th>Month</th>
-                    <th>Cost Incurred ($)</th>
-                    <th>Amount Waived ($)</th>
-                    <th>Amount Billed ($)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="month : ${months}">
-                    <td th:text="${month}">Month</td>
-                    <td th:text="${#numbers.formatDecimal(usageAnalysis.get(month).getIncurred(), 1, 'COMMA', 2, 'POINT')}">Cost Incurred</td>
-                    <td th:text="${#numbers.formatDecimal(usageAnalysis.get(month).getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Waived</td>
-                    <td th:text="${#numbers.formatDecimal(usageAnalysis.get(month).getIncurred() - usageAnalysis.get(month).getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Billed</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div id="menu1" class="tab-pane fade">
-            <p>&nbsp;</p>
-            <table id="analysisCategoryTable" class="table table-responsive" th:if="not ${analysisCategory.isEmpty()}">
-                <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Cost Incurred ($)</th>
-                    <th>Amount Waived ($)</th>
-                    <th>Amount Billed ($)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="category : ${analysisCategory}">
-                    <td th:text="${category.key}">Category</td>
-                    <td th:text="${#numbers.formatDecimal(category.value.getIncurred(), 1, 'COMMA', 2, 'POINT')}">Cost Incurred</td>
-                    <td th:text="${#numbers.formatDecimal(category.value.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Waived</td>
-                    <td th:text="${#numbers.formatDecimal(category.value.getIncurred() - category.value.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Billed</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div id="menu2" class="tab-pane fade">
-            <p>&nbsp;</p>
-            <table id="analysisAcademicTable" class="table table-responsive" th:if="not ${analysisAcademic.isEmpty()}">
-                <thead>
-                <tr>
-                    <th>Academic Institute</th>
-                    <th>Cost Incurred ($)</th>
-                    <th>Amount Waived ($)</th>
-                    <th>Amount Billed ($)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="academic : ${analysisAcademic}">
-                    <td th:text="${academic.key}">Academic Institute</td>
-                    <td th:text="${#numbers.formatDecimal(academic.value.getIncurred(), 1, 'COMMA', 2, 'POINT')}">Cost Incurred</td>
-                    <td th:text="${#numbers.formatDecimal(academic.value.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Waived</td>
-                    <td th:text="${#numbers.formatDecimal(academic.value.getIncurred() - academic.value.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Billed</td>
-                </tr>
-                </tbody>
-            </table>
+            <div id="menu1" class="tab-pane fade">
+                <p>&nbsp;</p>
+                <table id="analysisCategoryTable" class="table table-responsive" th:if="not ${analysisCategory.isEmpty()}">
+                    <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Cost Incurred ($)</th>
+                        <th>Amount Waived ($)</th>
+                        <th>Amount Billed ($)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="category : ${analysisCategory}">
+                        <td th:text="${category.key}">Category</td>
+                        <td th:text="${#numbers.formatDecimal(category.value.getIncurred(), 1, 'COMMA', 2, 'POINT')}">Cost Incurred</td>
+                        <td th:text="${#numbers.formatDecimal(category.value.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Waived</td>
+                        <td th:text="${#numbers.formatDecimal(category.value.getIncurred() - category.value.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Billed</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="menu2" class="tab-pane fade">
+                <p>&nbsp;</p>
+                <table id="analysisAcademicTable" class="table table-responsive" th:if="not ${analysisAcademic.isEmpty()}">
+                    <thead>
+                    <tr>
+                        <th>Academic Institute</th>
+                        <th>Cost Incurred ($)</th>
+                        <th>Amount Waived ($)</th>
+                        <th>Amount Billed ($)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="academic : ${analysisAcademic}">
+                        <td th:text="${academic.key}">Academic Institute</td>
+                        <td th:text="${#numbers.formatDecimal(academic.value.getIncurred(), 1, 'COMMA', 2, 'POINT')}">Cost Incurred</td>
+                        <td th:text="${#numbers.formatDecimal(academic.value.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Waived</td>
+                        <td th:text="${#numbers.formatDecimal(academic.value.getIncurred() - academic.value.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Billed</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
