@@ -10,8 +10,6 @@
 <body class="mybg loginbackground">
     <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
     <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
     <div class="container">
         <p>&nbsp;</p>
         <div class="row dashpanel">
@@ -23,6 +21,7 @@
                 <strong>Success!</strong> <p th:text="${messageSuccess}"></p>
             </div>
             <h2 class="team-heading team-heading-current-team" th:text="#{applyForNodesReservation.header}">Apply For Nodes Reservation</h2>
+            <p>&nbsp;</p>
             <form class="form-horizontal" method="post" action="#" th:action="@{/admin/usage/reservation}" th:object="${nodeUsageReservationForm}" role="form">
                 <fieldset>
                     <div class="form-group">

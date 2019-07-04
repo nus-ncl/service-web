@@ -10,47 +10,48 @@
 <body class="mybg loginbackground">
 <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
 <div class="container">
-    <h2 class="team-heading team-heading-current-team">Monthly Usage - Usage List</h2>
-    <h3>Project: <span th:text="${project.getProjectName()}"></span></h3>
     <p>&nbsp;</p>
-    <div class="alert alert-danger" th:if="${message}">
-        <h4 th:utext="${message}"></h4>
+    <div class="row dashpanel">
+        <div class="alert alert-danger" th:if="${message}">
+            <h4 th:utext="${message}"></h4>
+        </div>
+        <h2 class="team-heading team-heading-current-team">Monthly Usage - Usage List</h2>
+        <h3>Project: <span th:text="${project.getProjectName()}"></span></h3>
+        <p>&nbsp;</p>
+        <th:block th:if="${project.getProjectUsages().isEmpty()}">
+            <p>There is no project usages in the system</p>
+        </th:block>
+        <table id="myTable" class="table table-responsive" th:if="not ${project.getProjectUsages().isEmpty()}">
+            <thead>
+            <tr>
+                <th>Month</th>
+                <th>Usage (hours)</th>
+                <th>Cost Incurred (SGD)</th>
+                <th>Amount Waived (SGD)</th>
+                <th>Amount Billed (SGD)</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="projectUsage : ${project.getProjectUsages()}">
+                <td th:text="${projectUsage.getMonth()}">Month</td>
+                <td th:text="${projectUsage.getUsage()}">Usage</td>
+                <td th:text="${#numbers.formatDecimal(projectUsage.getIncurred(), 1, 'COMMA', 2, 'POINT')}">Cost Incurred</td>
+                <td th:text="${#numbers.formatDecimal(projectUsage.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Waived</td>
+                <td th:text="${#numbers.formatDecimal(projectUsage.getIncurred() - projectUsage.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Billed</td>
+                <td class="text-nowrap">
+                    <a class="btn btn-default" th:href="@{/admin/monthly/{pid}/usage/contribute/{month}(pid=${projectUsage.getId()},month=${projectUsage.getMonth()})}"><i class="fa fa-pencil"></i></a>
+                    <a class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete"
+                       th:attr="data-id=${projectUsage.getId()},data-month=${projectUsage.getMonth()}"><i class="fa fa-trash"></i></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p><a href="#" th:href="@{/admin/monthly/{pid}/usage/contribute(pid=${project.getId()})}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Usage</button></a></p>
     </div>
-    <th:block th:if="${project.getProjectUsages().isEmpty()}">
-        <p>There is no project usages in the system</p>
-    </th:block>
-    <table id="myTable" class="table table-responsive" th:if="not ${project.getProjectUsages().isEmpty()}">
-        <thead>
-        <tr>
-            <th>Month</th>
-            <th>Usage (hours)</th>
-            <th>Cost Incurred (SGD)</th>
-            <th>Amount Waived (SGD)</th>
-            <th>Amount Billed (SGD)</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="projectUsage : ${project.getProjectUsages()}">
-            <td th:text="${projectUsage.getMonth()}">Month</td>
-            <td th:text="${projectUsage.getUsage()}">Usage</td>
-            <td th:text="${#numbers.formatDecimal(projectUsage.getIncurred(), 1, 'COMMA', 2, 'POINT')}">Cost Incurred</td>
-            <td th:text="${#numbers.formatDecimal(projectUsage.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Waived</td>
-            <td th:text="${#numbers.formatDecimal(projectUsage.getIncurred() - projectUsage.getWaived(), 1, 'COMMA', 2, 'POINT')}">Amount Billed</td>
-            <td class="text-nowrap">
-                <a class="btn btn-default" th:href="@{/admin/monthly/{pid}/usage/contribute/{month}(pid=${projectUsage.getId()},month=${projectUsage.getMonth()})}"><i class="fa fa-pencil"></i></a>
-                <a class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete"
-                   th:attr="data-id=${projectUsage.getId()},data-month=${projectUsage.getMonth()}"><i class="fa fa-trash"></i></a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p><a href="#" th:href="@{/admin/monthly/{pid}/usage/contribute(pid=${project.getId()})}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Usage</button></a></p>
 </div>
 
 <!-- confirm delete project -->
