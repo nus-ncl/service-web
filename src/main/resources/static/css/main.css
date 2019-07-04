@@ -432,7 +432,7 @@ h19{
 }
 
 .nav > li.dropdown > a:focus {
-    background-color: #333;
+    background-color: #B4B4B4;
 }
 
 .navbar-nav li a:hover,
@@ -999,7 +999,7 @@ Waypoints
 }
 
 .login-navbar-left li.active a {
-    background-color: rgba(0,0,0,.4);
+    background-color: #B4B4B4;
     padding-top: 39px;
     padding-bottom: 30px;
 }
@@ -1580,11 +1580,10 @@ ul.address {
 }
 
 .h16{
-    font-size: 18px;
-    alignment : center;
-    color : #333;
-
-}
+     font-size: 18px;
+     alignment : center;
+     color : #333;
+ }
 
 .agency {
     margin-left: 150px;

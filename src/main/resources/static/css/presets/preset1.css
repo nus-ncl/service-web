@@ -6,16 +6,16 @@ a,
 .single-table.featured .btn.btn-primary, 
 .contact-info ul li a:hover, 
 #footer .footer-bottom a  {
-  color: #21b3b7;
+  color: #5499C7;;
 }
 
 .btn.btn-primary:hover,
 .btn-submit:hover {
-  background-color: #1eafbb
+  background-color: #1eafbb;
 }
 
 a:hover, a:focus {
-	color: #1eafbb;
+	color: #5499C7;
 }
 
 
