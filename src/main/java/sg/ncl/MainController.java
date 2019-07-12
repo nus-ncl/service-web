@@ -901,7 +901,6 @@ public class MainController {
         ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute(webProperties.getSessionUserId()).toString()), HttpMethod.GET, request, String.class);
 
         String responseBody = response.getBody().toString();
-
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 log.error("No user exists : {}", session.getAttribute(webProperties.getSessionUserId()));
@@ -916,11 +915,23 @@ public class MainController {
         }
 
         // retrieve user dashboard stats
-
         Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute(webProperties.getSessionUserId()).toString());
         List<TeamUsageInfo> usageInfoList = getTeamsUsageStatisticsForUser(session.getAttribute(webProperties.getSessionUserId()).toString());
         model.addAttribute("userDashboardMap", userDashboardMap);
         model.addAttribute("usageInfoList", usageInfoList);
+
+        try {
+            response = restTemplate.exchange(properties.getDiskStatistics() + "/users/" + session.getAttribute(webProperties.getSessionUserId()).toString(), HttpMethod.GET, request, String.class);
+            responseBody = response.getBody().toString();
+            log.info(responseBody);
+            JSONObject jsonObject = new JSONObject(responseBody);
+            model.addAttribute("spaceSize", jsonObject.getString("spaceSize"));
+            model.addAttribute("directory", jsonObject.getString("directory"));
+            model.addAttribute("alert", jsonObject.getString("alert"));
+            model.addAttribute("quota", jsonObject.getString("quota"));
+        } catch (Exception e) {
+            log.error("Unable to get user disk usage: {}", session.getAttribute(webProperties.getSessionUserId()));
+        }
 
         return "dashboard";
     }
