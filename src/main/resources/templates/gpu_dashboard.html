@@ -8,13 +8,10 @@
 </head>
 <body class="mybg loginbackground">
 <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
 <div class="container">
-    <div class="row">
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p th:unless="${message}">&nbsp;</p>
-        <p th:unless="${messageSuccess}">&nbsp;</p>
+    <p>&nbsp;</p>
+    <div class="row dashpanel">
         <p th:if="${message}"><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
         <p th:if="${messageSuccess}"><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
         <h2 class="team-heading team-heading-current-team">GPU Management - Users</h2>

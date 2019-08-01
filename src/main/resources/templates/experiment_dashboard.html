@@ -6,38 +6,33 @@
 	<object th:include="fragments/header :: header" th:remove="tag" />
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
 </head>
-
 <body class="mybg loginbackground">
 <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
 <div class="container">
-	<div class="row">
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-	<div id="expManagement" class="tab-pane fade in active">
-		<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.users.experiments}">Experiments Management</h2>
-		<p>&nbsp;</p>
-		<table id="myTable" class="table table-responsive">
-			<thead>
-			<th th:text="#{admin.users.header.runningExp}">Running Experiment</th>
-			<th th:text="#{admin.users.teamname}">Team Name</th>
-			<th th:text="#{admin.users.header.nodes}">No.of Nodes</th>
-			<th th:text="#{admin.users.header.action}">Action</th>
-			</thead>
-			<tbody>
-			<tr th:each="expEntry : ${runningExpMap}" >
-				<td th:text="${expEntry.key.name}">Name</td>
-				<td th:text="${expEntry.key.teamName}">Team</td>
-				<td th:text="${expEntry.value.numberOfNodes}"></td>
-				<td></td>
-			</tr>
-			</tbody>
-		</table>
+	<p>&nbsp;</p>
+	<div class="row dashpanel">
+		<div id="expManagement" class="tab-pane fade in active">
+			<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.users.experiments}">Experiments Management</h2>
+			<p>&nbsp;</p>
+			<table id="myTable" class="table table-responsive">
+				<thead>
+				<th th:text="#{admin.users.header.runningExp}">Running Experiment</th>
+				<th th:text="#{admin.users.teamname}">Team Name</th>
+				<th th:text="#{admin.users.header.nodes}">No.of Nodes</th>
+				<th th:text="#{admin.users.header.action}">Action</th>
+				</thead>
+				<tbody>
+				<tr th:each="expEntry : ${runningExpMap}" >
+					<td th:text="${expEntry.key.name}">Name</td>
+					<td th:text="${expEntry.key.teamName}">Team</td>
+					<td th:text="${expEntry.value.numberOfNodes}"></td>
+					<td></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
-
-</div>
 </div>
 <div th:replace="fragments/footer:: footer"></div>
 </body>

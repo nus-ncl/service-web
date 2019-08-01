@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Admin</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
+<div class="container">
+    <p>&nbsp;</p>
+    <div class="row dashpanel">
+        <div th:if="${message}">
+            <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+        </div>
+        <h2 class="team-heading team-heading-current-team">Disk Space Usage</h2>
+        <div th:if="${timestamp}">
+            <h4 th:text="${timestamp}"></h4>
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#home">Users</a></li>
+            <li><a data-toggle="tab" href="#menu1">Projects</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="home" class="tab-pane fade in active">
+                <p>&nbsp;</p>
+                <table id="usersTable" class="table table-responsive" th:if="not ${users.isEmpty()}">
+                    <thead>
+                    <tr>
+                        <th>Disk Space Used</th>
+                        <th>User Directory</th>
+                        <th>User Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.getString('spaceSize')}"></td>
+                        <td th:text="${user.getString('directory')}"></td>
+                        <td th:if="${usersMap.containsKey(user.getString('nclId'))}" th:with="user2=${usersMap.get(user.getString('nclId'))}">
+                            <a th:href="'#'+${user2.id}" data-toggle="modal"><span th:text="${user2.firstName + ' ' + user2.lastName}"></span></a>
+                            <!-- Modal -->
+                            <div class="modal fade admin-modal" th:id="${user2.id}" aria-labelledby="userId" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header team-owner-info-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title" id="userId"><span th:text="#{admin.users.header.modal}">User Info</span></h4>
+                                        </div>
+                                        <div class="modal-body team-owner-info-body">
+                                            <ul>
+                                                <li><strong th:text="#{acc.info.fullName}"></strong>: <span th:text="${user2.firstName + ' ' + user2.lastName}"></span></li>
+                                                <li><strong th:text="#{acc.info.email}"></strong>: <span th:text="${user2.email}"></span></li>
+                                                <li><strong th:text="#{acc.info.phone}"></strong>: <span th:text="${user2.phone}"></span></li>
+                                                <li><strong th:text="#{acc.info.jobTitle}"></strong>: <span th:text="${user2.jobTitle}"></span></li>
+                                                <li><strong th:text="#{acc.info.institution}"></strong>: <span th:text="${user2.institution}"></span></li>
+                                                <li><strong th:text="#{acc.info.country}"></strong>: <span th:text="${user2.country}"></span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td th:unless="${usersMap.containsKey(user.getString('nclId'))}" th:text="${user.getString('nclId')}"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th th:text="${usersTotal.getString('spaceSize')}"></th>
+                        <th th:text="${usersTotal.getString('directory')}"></th>
+                        <th></th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div id="menu1" class="tab-pane fade">
+                <p>&nbsp;</p>
+                <table id="projectsTable" class="table table-responsive" th:if="not ${projects.isEmpty()}">
+                    <thead>
+                    <tr>
+                        <th>Disk Space Used</th>
+                        <th>Project Directory</th>
+                        <th>Project/Team Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="project : ${projects}">
+                        <td th:text="${project.getString('spaceSize')}"></td>
+                        <td th:text="${project.getString('directory')}"></td>
+                        <td th:if="${teamsMap.containsKey(project.getString('nclId'))}" th:with="team2=${teamsMap.get(project.getString('nclId'))}">
+                            <a th:href="'#'+${team2.name}" data-toggle="modal"><span th:text="${team2.name}"></span></a>
+                            <!-- Modal -->
+                            <div class="modal fade admin-modal" th:id="${team2.name}" aria-labelledby="ownerId2" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header team-owner-info-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title"><span th:text="#{admin.teams.header.descriptions}">Team Info</span></h4>
+                                        </div>
+                                        <div class="modal-body team-owner-info-body">
+                                            <ul>
+                                                <li><strong>Team Name: </strong> <span th:text="${team2.name}"></span></li>
+                                                <li><strong>Description: </strong> <span th:text="${team2.description}"></span></li>
+                                                <li><strong>Type: </strong> <span th:text="${team2.organisationType}"></span></li>
+                                                <li><strong>Visibility: </strong> <span th:text="${team2.visibility}"></span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td th:unless="${teamsMap.containsKey(project.getString('nclId'))}" th:text="${project.getString('nclId')}"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th th:text="${projectsTotal.getString('spaceSize')}"></th>
+                        <th th:text="${projectsTotal.getString('directory')}"></th>
+                        <th></th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> <!-- container -->
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script th:inline="javascript">
+    // <![CDATA[
+    $(document).ready(function () {
+        $('#usersTable').dataTable({"ordering": false});
+        $('#projectsTable').dataTable({"ordering": false});
+    });
+    // ]]>
+</script>
+</body>
+</html>

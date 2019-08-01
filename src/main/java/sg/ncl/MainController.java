@@ -901,7 +901,6 @@ public class MainController {
         ResponseEntity response = restTemplate.exchange(properties.getDeterUid(session.getAttribute(webProperties.getSessionUserId()).toString()), HttpMethod.GET, request, String.class);
 
         String responseBody = response.getBody().toString();
-
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 log.error("No user exists : {}", session.getAttribute(webProperties.getSessionUserId()));
@@ -916,11 +915,23 @@ public class MainController {
         }
 
         // retrieve user dashboard stats
-
         Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute(webProperties.getSessionUserId()).toString());
         List<TeamUsageInfo> usageInfoList = getTeamsUsageStatisticsForUser(session.getAttribute(webProperties.getSessionUserId()).toString());
         model.addAttribute("userDashboardMap", userDashboardMap);
         model.addAttribute("usageInfoList", usageInfoList);
+
+        try {
+            response = restTemplate.exchange(properties.getDiskStatistics() + "/users/" + session.getAttribute(webProperties.getSessionUserId()).toString(), HttpMethod.GET, request, String.class);
+            responseBody = response.getBody().toString();
+            log.info(responseBody);
+            JSONObject jsonObject = new JSONObject(responseBody);
+            model.addAttribute("spaceSize", jsonObject.getString("spaceSize"));
+            model.addAttribute("directory", jsonObject.getString("directory"));
+            model.addAttribute("alert", jsonObject.getString("alert"));
+            model.addAttribute("quota", jsonObject.getString("quota"));
+        } catch (Exception e) {
+            log.error("Unable to get user disk usage: {}", session.getAttribute(webProperties.getSessionUserId()));
+        }
 
         return "dashboard";
     }
@@ -3835,6 +3846,80 @@ public class MainController {
         model.addAttribute("end", end);
         model.addAttribute("energy", sumEnergy);
         return "energy_usage";
+    }
+
+    @RequestMapping(value = "/admin/diskspace", method = RequestMethod.GET)
+    public String adminDiskSpace(HttpSession session, Model model) {
+        if (!validateIfAdmin(session)) {
+            return NO_PERMISSION_PAGE;
+        }
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        try {
+            ResponseEntity response = restTemplate.exchange(properties.getDiskStatistics(), HttpMethod.GET, request, String.class);
+            String responseBody = response.getBody().toString();
+            JSONObject jsonObject = new JSONObject(responseBody);
+            String[] names = JSONObject.getNames(jsonObject);
+            JSONObject diskSpaces = jsonObject.getJSONObject(names[0]);
+            JSONArray userSpaces = diskSpaces.getJSONArray("userSpaces");
+            JSONArray projSpaces = diskSpaces.getJSONArray("projSpaces");
+            List<JSONObject> users = new ArrayList<>();
+            List<JSONObject> projects = new ArrayList<>();
+            for (int i = 0; i < userSpaces.length(); i++) {
+                JSONObject item = userSpaces.getJSONObject(i);
+                if (item.getString("directory").equals("/big/users/")) {
+                    model.addAttribute("usersTotal", item);
+                } else {
+                    users.add(item);
+                }
+            }
+            for (int i = 0; i < projSpaces.length(); i++) {
+                JSONObject item = projSpaces.getJSONObject(i);
+                if (item.getString("directory").equals("/big/proj/")) {
+                    model.addAttribute("projectsTotal", item);
+                } else {
+                    projects.add(item);
+                }
+            }
+            model.addAttribute("users", users);
+            model.addAttribute("projects", projects);
+            model.addAttribute("timestamp", names[0]);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio analytics service for disk space usage: {}", e);
+            model.addAttribute(MESSAGE, "There is a problem in retrieving information.");
+        }
+        HttpEntity<String> request2 = createHttpEntityHeaderOnly();
+        try {
+            ResponseEntity response2 = restTemplate.exchange(properties.getSioUsersUrl(), HttpMethod.GET, request2, String.class);
+            String responseBody2 = response2.getBody().toString();
+            JSONArray jsonUserArray = new JSONArray(responseBody2);
+            Map<String, User2> usersMap = new HashMap<>();
+            for (int i = 0; i < jsonUserArray.length(); i++) {
+                JSONObject userObject = jsonUserArray.getJSONObject(i);
+                User2 user = extractUserInfo(userObject.toString());
+                usersMap.put(user.getId(), user);
+            }
+            model.addAttribute("usersMap", usersMap);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio users service for users list: {}", e);
+            model.addAttribute(MESSAGE, "There is a problem in retrieving information.");
+        }
+        HttpEntity<String> request3 = createHttpEntityHeaderOnly();
+        try {
+            ResponseEntity response3 = restTemplate.exchange(properties.getSioTeamsUrl(), HttpMethod.GET, request3, String.class);
+            String responseBody3 = response3.getBody().toString();
+            JSONArray jsonTeamArray = new JSONArray(responseBody3);
+            Map<String, Team2> teamsMap = new HashMap<>();
+            for (int i = 0; i < jsonTeamArray.length(); i++) {
+                JSONObject jsonObject = jsonTeamArray.getJSONObject(i);
+                Team2 team = extractTeamInfo(jsonObject.toString());
+                teamsMap.put(team.getId(), team);
+            }
+            model.addAttribute("teamsMap", teamsMap);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio teams service for teams list: {}", e);
+            model.addAttribute(MESSAGE, "There is a problem in retrieving information.");
+        }
+        return "diskspace_usage";
     }
 
     private ProjectDetails getProjectDetails(JSONObject jsonObject) {

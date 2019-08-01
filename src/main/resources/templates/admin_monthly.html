@@ -10,53 +10,54 @@
 <body class="mybg loginbackground">
 <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
 <div class="container">
-    <h2 class="team-heading team-heading-current-team">Monthly Usage - Project List</h2>
     <p>&nbsp;</p>
-    <div class="alert alert-danger" th:if="${message}">
-        <h4 th:utext="${message}"></h4>
+    <div class="row dashpanel">
+        <div class="alert alert-danger" th:if="${message}">
+            <h4 th:utext="${message}"></h4>
+        </div>
+        <h2 class="team-heading team-heading-current-team">Monthly Usage - Project List</h2>
+        <p>&nbsp;</p>
+        <th:block th:if="${projectsList.isEmpty()}">
+            <p>There is no projects in the system</p>
+        </th:block>
+        <table id="myTable" class="table table-responsive" th:if="not ${projectsList.isEmpty()}">
+            <thead>
+            <tr>
+                <th>Organisation Type</th>
+                <th>Organisation Name</th>
+                <th>Project Name</th>
+                <th>Owner</th>
+                <th>Date Created</th>
+                <th>Education?</th>
+                <th>Service and Tools?</th>
+                <th>Supported By</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="project : ${projectsList}">
+                <td th:text="${project.getOrganisationType()}">Organisation Type</td>
+                <td th:text="${project.getOrganisationName()}">Organisation Name</td>
+                <td th:text="${project.getProjectName()}">Project Name</td>
+                <td th:text="${project.getOwner()}">Owner</td>
+                <td th:text="${project.getDateCreated()}">Date Created</td>
+                <td><i class="fa fa-check" th:if="${project.isEducation()}"></i></td>
+                <td><i class="fa fa-check" th:if="${project.isServiceTool()}"></i></td>
+                <td th:text="${project.getSupportedBy()}">Supported By</td>
+                <td class="text-nowrap">
+                    <a class="btn btn-default" th:href="@{/admin/monthly/contribute/{id}(id=${project.getId()})}"><i class="fa fa-pencil"></i></a>
+                    <a class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete"
+                       th:attr="data-id=${project.getId()},data-name=${project.getProjectName()}"><i class="fa fa-trash"></i></a>
+                    <a class="btn btn-info" th:href="@{/admin/monthly/{id}/usage(id=${project.getId()})}"><i class="fa fa-info"></i></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p><a href="#" th:href="@{/admin/monthly/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Project</button></a></p>
     </div>
-    <th:block th:if="${projectsList.isEmpty()}">
-        <p>There is no projects in the system</p>
-    </th:block>
-    <table id="myTable" class="table table-responsive" th:if="not ${projectsList.isEmpty()}">
-        <thead>
-        <tr>
-            <th>Organisation Type</th>
-            <th>Organisation Name</th>
-            <th>Project Name</th>
-            <th>Owner</th>
-            <th>Date Created</th>
-            <th>Education?</th>
-            <th>Service and Tools?</th>
-            <th>Supported By</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="project : ${projectsList}">
-            <td th:text="${project.getOrganisationType()}">Organisation Type</td>
-            <td th:text="${project.getOrganisationName()}">Organisation Name</td>
-            <td th:text="${project.getProjectName()}">Project Name</td>
-            <td th:text="${project.getOwner()}">Owner</td>
-            <td th:text="${project.getDateCreated()}">Date Created</td>
-            <td><i class="fa fa-check" th:if="${project.isEducation()}"></i></td>
-            <td><i class="fa fa-check" th:if="${project.isServiceTool()}"></i></td>
-            <td th:text="${project.getSupportedBy()}">Supported By</td>
-            <td class="text-nowrap">
-                <a class="btn btn-default" th:href="@{/admin/monthly/contribute/{id}(id=${project.getId()})}"><i class="fa fa-pencil"></i></a>
-                <a class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete"
-                   th:attr="data-id=${project.getId()},data-name=${project.getProjectName()}"><i class="fa fa-trash"></i></a>
-                <a class="btn btn-info" th:href="@{/admin/monthly/{id}/usage(id=${project.getId()})}"><i class="fa fa-info"></i></a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p><a href="#" th:href="@{/admin/monthly/contribute}"><button type="button" class="btn btn-standard"><i class="fa fa-plus"></i> Contribute Project</button></a></p>
 </div>
 
 <!-- confirm delete project -->

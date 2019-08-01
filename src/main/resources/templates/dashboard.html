@@ -13,8 +13,6 @@
             <div class="row">
                 <p>&nbsp;</p>
                 <h1 class="dashhead">Dashboard</h1>
-                <!--<div class="panel panel-primary dashpanel">-->
-                        <!--<h2 class="team-heading team-heading-current-team" >Overview</h2>-->
                 <div class="alert alert-danger">
                     <strong>News: </strong>We hold regular scheduled maintenance on <strong>every first Sunday of the month, 0700 to 1900 (Singapore Time, UTC/GMT+8)</strong> for updating new features. We thank you for the understanding.
                 </div>
@@ -25,7 +23,6 @@
                     <div class="alert alert-warning">
                         <strong>Reservation: </strong>To guarantee resource availability, you may make reservation at least one month in advance. Please fill up the <a href="#" th:href="@{/orderform/download}">Reservation Form</a>.
                     </div>
-                        <!--<h2 class="team-heading team-heading-current-team" >Overview</h2>-->
                     <div class="panel-body">
                         <a th:href="@{/teams}">
                             <div class="col-sm-5 dashpanel_teams pull-left">
@@ -61,17 +58,6 @@
                         </table>
                     </div> <!-- panel body -->
                 </div> <!-- panel -->
-
-                <!--  total/free nodes information -->
-                <!--
-                <div class="panel panel-primary dashpanel">
-                    <h2 class="team-heading team-heading-current-team">Nodes Availability</h2>
-                    <div class="panel-body">
-                        <p>Free nodes: <span th:text="${userDashboardMap.get('freeNodes')}">ConnectionError</span></p>
-                    </div>
-                </div> -->
-
-
             </div>
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">
@@ -92,7 +78,30 @@
             </div>
         </div> <!-- container -->
 
+        <!-- diskspace alert modal -->
+        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header" th:classappend="${'alert alert-' + alert}">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="alertLabel"><i class="fa fa-exclamation-triangle"></i> Disk Space Alert</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p th:if="${alert} == 'danger'" th:text="#{diskspace.alert.danger(${directory}, ${quota})}" class="text-danger"></p>
+                        <p th:if="${alert} == 'warning'" th:text="#{diskspace.alert.warning(${directory}, ${spaceSize})}" class="text-warning"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div th:replace="fragments/footer :: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var alert = /*[[${alert}]]*/ 'info';
+            if (alert !== 'info') {
+                $('#alertModal').modal('show');
+            }
+            /*]]>*/
+        </script>
     </body>
 </html>
