@@ -931,6 +931,7 @@ public class MainController {
             model.addAttribute("quota", jsonObject.getString("quota"));
         } catch (Exception e) {
             log.error("Unable to get user disk usage: {}", session.getAttribute(webProperties.getSessionUserId()));
+            model.addAttribute("alert", "info");
         }
 
         return "dashboard";
