@@ -1,5 +1,6 @@
 package sg.ncl.testbed_interface;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
@@ -13,6 +14,7 @@ public class SignUpMergedForm {
 	
 	// Account Details Fields
     @Size(min=1, message="Email cannot be empty")
+    @Email(message = "Email must be a valid email address")
     private String email;
 
     @Size(min=8, message="Password must have at least 8 characters")
@@ -29,9 +31,11 @@ public class SignUpMergedForm {
     
 	// Personal Details Fields
     @Size(min=1, message = "First name cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "First name cannot have special characters")
     private String firstName;
 
     @Size(min=1, message ="Last name cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Last name cannot have special characters")
     private String lastName;
 
     @Pattern(regexp="^[0-9]*$", message = "Phone cannot have special characters" )
@@ -39,9 +43,11 @@ public class SignUpMergedForm {
     private String phone;
 
     @NotEmpty(message = "Job title cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Job title cannot have special characters")
     private String jobTitle;
 
     @NotEmpty(message = "Institution cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Institution cannot have special characters")
     private String institution;
 
     @NotEmpty(message = "Institution Abbreviation cannot be empty")
@@ -56,6 +62,7 @@ public class SignUpMergedForm {
     private String address2 = DEFAULT;
 
     @NotEmpty(message = "Country cannot be empty")
+    @Pattern(regexp = "[^<>|/`'\"\\\\]*", message = "Country cannot contain '<' '>' '|' '/' '\\' '`' '\'' '\"'")
     private String country;
 
     @NotEmpty(message = "City cannot be empty")
