@@ -944,7 +944,7 @@ public class MainController {
     }
 
     //--------------------------Sign Up Page--------------------------
-
+    /*  //Comment out as per G/J request to remove log in for users momentary
     @RequestMapping(value = "/signup2", method = RequestMethod.GET)
     public String signup2(Model model, HttpServletRequest request) {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
@@ -1032,6 +1032,7 @@ public class MainController {
             return REDIRECT_SIGNUP;
         }
     }
+     */
 
     private String checkJoinTeamForm(@Valid @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm, RedirectAttributes redirectAttributes, JSONObject mainObject, JSONObject teamFields, String joinNewTeamName) throws WebServiceRuntimeException {
         log.info("Signup join team name {}", joinNewTeamName);
