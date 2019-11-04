@@ -228,7 +228,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/login")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("form method=\"post\" action=\"/login\"")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -251,6 +251,7 @@ public class MainControllerTest {
                 .andExpect(model().attributeExists("loginForm"));
     }
 
+    /*
     @Test
     public void testGetSignUpPage() throws Exception {
         mockMvc.perform(get("/signup2"))
@@ -264,6 +265,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("footer id=\"footer\"")))
                 .andExpect(model().attributeExists("signUpMergedForm"));
     }
+    */
 
     @Test
     public void testRedirectNotFoundNotLoggedOn() throws Exception {
@@ -295,7 +297,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -318,7 +320,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -340,7 +342,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -363,7 +365,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -386,7 +388,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -409,7 +411,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -432,7 +434,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -455,7 +457,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -501,7 +503,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
@@ -652,6 +654,7 @@ public class MainControllerTest {
                         .andReturn();
     }
 
+    /*
     @Test
     public void signUpNewUserApplyNewTeam() throws Exception {
 
@@ -692,7 +695,9 @@ public class MainControllerTest {
                 .andExpect(redirectedUrl("/team_application_submitted"))
                 .andReturn();
     }
+    */
 
+    /*
     @Test
     @Ignore
     public void signUpNewUserJoinExistingTeam() throws Exception {
@@ -736,6 +741,7 @@ public class MainControllerTest {
 //                .andExpect(method(HttpMethod.POST))
 //                .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
     }
+    */
 
     @Test
     public void testGetJoinTeamPageFromTeamPage() throws Exception {
@@ -909,7 +915,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("Fill in all required information here. ALL fields are required.")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
@@ -955,7 +961,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("After logging in, click on “Experiment” on the navigation bar at the top")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
@@ -1001,7 +1007,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("At the Teams page, under the section “Your teams’ saved operating system images”, pick an image that you have saved previously.")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
@@ -1047,7 +1053,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("Click on “View” under Details to see more details about the started experiment")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
@@ -1093,7 +1099,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("Go to team dashboard and click the apply a team button.")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
@@ -1139,7 +1145,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("Go to team dashboard and click the join a team button.")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
@@ -1185,7 +1191,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("How to Create an Account")))
                 .andExpect(content().string(containsString("How to Apply a Team")))
@@ -1272,7 +1278,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("/contactus")))
                 .andExpect(content().string(containsString("/event")))
                 .andExpect(content().string(containsString("/about")))
-                .andExpect(content().string(containsString("/signup2")))
+                //.andExpect(content().string(containsString("/signup2")))
                 .andExpect(content().string(containsString("/login")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
