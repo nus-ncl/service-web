@@ -22,6 +22,7 @@ public class ExperimentForm {
 
     @NotEmpty(message = "Description cannot be empty")
     @Size(min = 1, message = "Description cannot be empty")
+    @Pattern(regexp="^[a-zA-Z0-9]*$", message="Description cannot have special characters")
     private String description;
     private String nsFile;
 

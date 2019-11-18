@@ -2,6 +2,10 @@ package sg.ncl.testbed_interface;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import static sg.ncl.validation.Validator.isSafeHtmlCharacters;
 import static sg.ncl.validation.Validator.isValidPassword;
@@ -15,9 +19,21 @@ public class
 StudentPasswordResetForm {
     private String key;
     private String uid;
+
+    @Size(min=1, message = "First name cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "First name cannot have special characters")
     private String firstName;
+
+
+    @Size(min=1, message ="Last name cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Last name cannot have special characters")
     private String lastName;
+
+    @Pattern(regexp="^[0-9]*$", message = "Phone cannot have special characters" )
+    @Range(min=6, message="Phone minimum 6 digits")
     private String phone;
+
+
     private String password1;
     private String password2;
     private String errMsg;

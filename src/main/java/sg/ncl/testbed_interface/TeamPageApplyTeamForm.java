@@ -12,7 +12,8 @@ public class TeamPageApplyTeamForm {
     @Pattern(regexp="^[a-zA-Z0-9-]*$", message ="Team name cannot have special characters")
     private String teamName;
     
-    @NotEmpty(message="Team description cannot be empty")
+    @NotEmpty(message = "Team Description cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Team Description  cannot have special characters")
     private String teamDescription;
 
     @NotEmpty(message = "Team website cannot be empty")
