@@ -51,14 +51,19 @@ public class SignUpMergedForm {
     private String institution;
 
     @NotEmpty(message = "Institution Abbreviation cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Institution Abbreviation cannot have special characters")
     private String institutionAbbreviation = "defaultAbbrev";
 
     @NotEmpty(message = "Website cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Website cannot have special characters")
     private String website = "http://default.com";
 
     @NotEmpty(message = "Address 1 cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Address 1 cannot have special characters")
     private String address1 = DEFAULT;
 
+    @NotEmpty(message = "Address 1 cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Address 2 cannot have special characters")
     private String address2 = DEFAULT;
 
     @NotEmpty(message = "Country cannot be empty")
@@ -66,9 +71,11 @@ public class SignUpMergedForm {
     private String country;
 
     @NotEmpty(message = "City cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "City cannot have special characters")
     private String city = DEFAULT;
 
     @NotEmpty(message = "Province cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Province cannot have special characters")
     private String province = DEFAULT;
 
     @Pattern(regexp="^[0-9]*$", message = "Postal code cannot have special characters" )
@@ -78,9 +85,13 @@ public class SignUpMergedForm {
     @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team name cannot have special characters")
     private String teamName;
 
+    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team description cannot have special characters")
     private String teamDescription;
-    
+
+    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team website cannot have special characters")
     private String teamWebsite = "http://default.com";
+
+    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team organization type cannot have special characters")
     private String teamOrganizationType;
     
     // defaults to public

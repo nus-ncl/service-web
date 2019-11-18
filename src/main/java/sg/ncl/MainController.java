@@ -944,7 +944,7 @@ public class MainController {
     }
 
     //--------------------------Sign Up Page--------------------------
-    /*  //Comment out as per G/J request to remove log in for users momentary
+      //Comment out as per G/J request to remove log in for users momentary
     @RequestMapping(value = "/signup2", method = RequestMethod.GET)
     public String signup2(Model model, HttpServletRequest request) {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
@@ -964,7 +964,6 @@ public class MainController {
             @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
-
         if (bindingResult.hasErrors() || !signUpMergedForm.getIsValid()) {
             log.warn("Register form has errors {}", signUpMergedForm.toString());
             return SIGNUP_PAGE;
@@ -1025,6 +1024,7 @@ public class MainController {
             return checkJoinTeamForm(signUpMergedForm, redirectAttributes, mainObject, teamFields, joinNewTeamName);
         } else {
             log.warn("Signup unreachable statement");
+
             // logic error not suppose to reach here
             // possible if user fill up create new team but without the team name
             redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
@@ -1032,7 +1032,6 @@ public class MainController {
             return REDIRECT_SIGNUP;
         }
     }
-     */
 
     private String checkJoinTeamForm(@Valid @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm, RedirectAttributes redirectAttributes, JSONObject mainObject, JSONObject teamFields, String joinNewTeamName) throws WebServiceRuntimeException {
         log.info("Signup join team name {}", joinNewTeamName);
@@ -2218,21 +2217,21 @@ public class MainController {
 
     @RequestMapping(value = "/teams/apply_team", method = RequestMethod.POST)
     public String checkApplyTeamInfo(
-            @Valid TeamPageApplyTeamForm teamPageApplyTeamForm,
+            @Valid
+            @ModelAttribute TeamPageApplyTeamForm teamPageApplyTeamForm,
             BindingResult bindingResult,
             HttpSession session,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         final String LOG_PREFIX = "Existing user apply for new team: {}";
-
         if (bindingResult.hasErrors()) {
             log.warn(LOG_PREFIX, "Application form error " + teamPageApplyTeamForm.toString());
             return "team_page_apply_team";
         }
+
         // log data to ensure data has been parsed
         log.debug(LOG_PREFIX, properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
         log.info(LOG_PREFIX, teamPageApplyTeamForm.toString());
-
         JSONObject mainObject = new JSONObject();
         JSONObject teamFields = new JSONObject();
         mainObject.put("team", teamFields);
@@ -2244,14 +2243,12 @@ public class MainController {
         teamFields.put(IS_CLASS, teamPageApplyTeamForm.getIsClass());
 
         String nclUserId = session.getAttribute("id").toString();
-
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity response;
 
         try {
             response = restTemplate.exchange(properties.getRegisterRequestToApplyTeam(nclUserId), HttpMethod.POST, request, String.class);
             String responseBody = response.getBody().toString();
-
             if (RestUtil.isError(response.getStatusCode())) {
 
                 // prepare the exception mapping
@@ -2270,7 +2267,6 @@ public class MainController {
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
 
                 final String errorMessage = exceptionMessageMap.containsKey(exceptionState) ? error.getMessage() : ERR_SERVER_OVERLOAD;
-
                 log.warn(LOG_PREFIX, responseBody);
                 redirectAttributes.addFlashAttribute(MESSAGE, errorMessage);
                 return "redirect:/teams/apply_team";
@@ -2523,20 +2519,59 @@ public class MainController {
             return REDIRECT_CREATE_EXPERIMENT;
         }
 
+
+
         if (!experimentForm.getMaxDuration().toString().matches("\\d+")) {
             redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
             return REDIRECT_CREATE_EXPERIMENT;
         }
+
+
 
         if (experimentForm.getName() == null || experimentForm.getName().isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Experiment Name cannot be empty");
             return REDIRECT_CREATE_EXPERIMENT;
         }
 
+        if(experimentForm.getName()!= null && (!experimentForm.getName().isEmpty()))
+        {
+            Pattern special = Pattern.compile ("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+            Matcher matcher = special.matcher(experimentForm.getName());
+            boolean b = matcher.find();
+
+            if (b==true) {
+                redirectAttributes.addFlashAttribute(MESSAGE, "Experiment Name cannot contain special characters");
+                return REDIRECT_CREATE_EXPERIMENT;
+
+            }
+
+        }
+
+
         if (experimentForm.getDescription() == null || experimentForm.getDescription().isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Description cannot be empty");
             return REDIRECT_CREATE_EXPERIMENT;
         }
+
+
+        if(experimentForm.getDescription()!= null && (!experimentForm.getDescription().isEmpty()))
+        {
+
+            Pattern special = Pattern.compile ("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+            Matcher matcher = special.matcher(experimentForm.getDescription());
+
+            boolean b = matcher.find();
+
+            if (b==true) {
+
+                redirectAttributes.addFlashAttribute(MESSAGE, "Description cannot contain special characters");
+                return REDIRECT_CREATE_EXPERIMENT;
+
+            }
+
+        }
+        System.out.println(" service to create experiment");
+
 
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
