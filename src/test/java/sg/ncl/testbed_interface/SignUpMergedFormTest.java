@@ -68,8 +68,6 @@ public class SignUpMergedFormTest {
         assertThat(one.getConfirmPassword(), is(str));
     }
 
-    /*
-
     @Test
     public void testPasswordMinimumCharacters() {
         // craft from constructor to ensure only the password field will give errors
@@ -102,7 +100,6 @@ public class SignUpMergedFormTest {
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain whitespace")));
     }
-
 
     @Test
     public void testPasswordUpperCaseGood() {
@@ -576,5 +573,5 @@ public class SignUpMergedFormTest {
         one.setConfirmPassword(str2);
         assertThat(one.isValid(), is(false));
     }
-    */
+
 }
