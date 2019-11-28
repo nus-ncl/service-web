@@ -55,14 +55,14 @@ public class SignUpMergedForm {
     private String institutionAbbreviation = "defaultAbbrev";
 
     @NotEmpty(message = "Website cannot be empty")
-    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Website cannot have special characters")
+    @Pattern(regexp = "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}$", message = "Website cannot have special characters")
     private String website = "http://default.com";
 
     @NotEmpty(message = "Address 1 cannot be empty")
     @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Address 1 cannot have special characters")
     private String address1 = DEFAULT;
 
-    @NotEmpty(message = "Address 1 cannot be empty")
+    @NotEmpty(message = "Address 2 cannot be empty")
     @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Address 2 cannot have special characters")
     private String address2 = DEFAULT;
 
@@ -85,15 +85,15 @@ public class SignUpMergedForm {
     @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team name cannot have special characters")
     private String teamName;
 
-    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team description cannot have special characters")
+    @Pattern(regexp="^[a-zA-Z0-9- ]*$", message="Team description cannot have special characters")
     private String teamDescription;
 
-    @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team website cannot have special characters")
+    @Pattern(regexp="(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}$", message="Team website cannot have special characters")
     private String teamWebsite = "http://default.com";
 
     @Pattern(regexp="^[a-zA-Z0-9-]*$", message="Team organization type cannot have special characters")
     private String teamOrganizationType;
-    
+
     // defaults to public
     private String isPublic = "PUBLIC";
 
