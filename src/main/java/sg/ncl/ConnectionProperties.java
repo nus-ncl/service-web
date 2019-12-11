@@ -408,7 +408,30 @@ public class ConnectionProperties {
     // DATA RESOURCE UPLOAD
     //-------------------------------------
     public String checkUploadChunk(String dataId, Integer chunkNumber, String identifier) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber + "/files/" + identifier;
+        String parsedUrl = "";
+        boolean validResumableIdentifierFlag=true;
+        String[] tempList;
+
+        if(identifier.contains("-"))
+        {
+            tempList = identifier.split("-");
+
+            if (!tempList[0].matches("[0-9]+") )
+            {
+                validResumableIdentifierFlag = false;
+            }
+            if (tempList[1].contains(".") || tempList[1].contains("/"))
+            {
+                validResumableIdentifierFlag = false;
+            }
+
+            if(validResumableIdentifierFlag == true)
+            {
+                parsedUrl = HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber + "/files/" + tempList[0] + "-" + tempList[1];
+            }
+        }
+
+        return parsedUrl;
     }
 
     public String sendUploadChunk(String dataId, Integer chunkNumber) {

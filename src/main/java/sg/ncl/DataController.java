@@ -676,7 +676,6 @@ public class DataController extends MainController {
     public ResponseEntity<String> checkChunk(@PathVariable String datasetId, HttpServletRequest request) {
         int resumableChunkNumber = getResumableChunkNumber(request);
         ResumableInfo info = getResumableInfo(request);
-
         String url = properties.checkUploadChunk(datasetId, resumableChunkNumber, info.resumableIdentifier);
         log.debug("URL: {}", url);
         HttpEntity<String> httpEntity = createHttpEntityHeaderOnly();
