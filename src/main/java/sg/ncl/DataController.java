@@ -675,9 +675,34 @@ public class DataController extends MainController {
     @RequestMapping(value="{datasetId}/resources/upload", method=RequestMethod.GET)
     public ResponseEntity<String> checkChunk(@PathVariable String datasetId, HttpServletRequest request) {
         int resumableChunkNumber = getResumableChunkNumber(request);
+        boolean validResumableIdentifierFlag=true;
         ResumableInfo info = getResumableInfo(request);
+        String url = "";
+        if(info.resumableIdentifier.contains("-"))
+        {
+            String[] tempList = info.resumableIdentifier.split("-");
 
-        String url = properties.checkUploadChunk(datasetId, resumableChunkNumber, info.resumableIdentifier);
+            if (!tempList[0].matches("[0-9]+") )
+            {
+
+                validResumableIdentifierFlag=false;
+            }
+            if (tempList[1].contains(".") || tempList[1].contains("//") )
+            {
+
+                validResumableIdentifierFlag=false;
+             }
+        }
+        else
+         {
+             validResumableIdentifierFlag=false;
+         }
+
+        if(validResumableIdentifierFlag)
+        {
+            url = properties.checkUploadChunk(datasetId, resumableChunkNumber, info.resumableIdentifier);
+
+        }
         log.debug("URL: {}", url);
         HttpEntity<String> httpEntity = createHttpEntityHeaderOnly();
         ResponseEntity responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
