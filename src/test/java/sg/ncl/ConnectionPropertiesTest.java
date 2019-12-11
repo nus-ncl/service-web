@@ -354,10 +354,26 @@ public class ConnectionPropertiesTest {
     }
 
     @Test
-    public void testCheckUploadChunk() throws Exception {
+    public void testCheckUploadChunkFalse() throws Exception {
         Integer chunkNumber = Integer.parseInt(RandomStringUtils.randomNumeric(8));
         String dataId = RandomStringUtils.randomAlphanumeric(20);
         String identifier = RandomStringUtils.randomAlphanumeric(20);
+        assertThat(properties.checkUploadChunk(dataId, chunkNumber, identifier)).isEqualTo("");
+    }
+
+    @Test
+    public void testCheckUploadChunkMalicious() throws Exception {
+        Integer chunkNumber = Integer.parseInt(RandomStringUtils.randomNumeric(8));
+        String dataId = RandomStringUtils.randomAlphanumeric(20);
+        String identifier = RandomStringUtils.randomNumeric(20) + "-" + RandomStringUtils.randomAlphanumeric(20) + "-" + "/../../";
+        assertThat(properties.checkUploadChunk(dataId, chunkNumber, identifier)).isNotEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "/" + dataId + "/chunks/" + chunkNumber + "/files/" + identifier);
+    }
+
+    @Test
+    public void testCheckUploadChunk() throws Exception {
+        Integer chunkNumber = Integer.parseInt(RandomStringUtils.randomNumeric(8));
+        String dataId = RandomStringUtils.randomAlphanumeric(20);
+        String identifier = RandomStringUtils.randomNumeric(20) + "-" + RandomStringUtils.randomAlphanumeric(20);
         assertThat(properties.checkUploadChunk(dataId, chunkNumber, identifier)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getDataEndpoint() + "/" + dataId + "/chunks/" + chunkNumber + "/files/" + identifier);
     }
 
