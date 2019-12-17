@@ -250,6 +250,11 @@ public class MainController {
     private static final String ADMIN_MONTHLY_USAGE_CONTRIBUTE = "admin_monthly_usage_contribute";
     private static final String ADMIN_MONTHLY_CONTRIBUTE = "admin_monthly_contribute";
 
+    @ModelAttribute
+    public void setXFrameResponseHeader(HttpServletResponse response) {
+        response.setHeader("X-Frame-Options", "DENY");
+    }
+
     @Autowired
     protected RestTemplate restTemplate;
 

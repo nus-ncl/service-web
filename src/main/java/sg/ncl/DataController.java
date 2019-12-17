@@ -58,6 +58,11 @@ public class DataController extends MainController {
     private static final String LI_END_TAG = "</li>";
     private static final String UL_END_TAG = "</ul>";
 
+    @ModelAttribute
+    public void setXFrameResponseHeader(HttpServletResponse response) {
+        response.setHeader("X-Frame-Options", "DENY");
+    }
+
     @RequestMapping
     public String data(Model model) {
         DatasetManager datasetManager = new DatasetManager();
