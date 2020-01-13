@@ -250,6 +250,7 @@ public class MainController {
     private static final String ADMIN_MONTHLY_USAGE_CONTRIBUTE = "admin_monthly_usage_contribute";
     private static final String ADMIN_MONTHLY_CONTRIBUTE = "admin_monthly_contribute";
 
+
     @ModelAttribute
     public void setXFrameResponseHeader(HttpServletResponse response) {
         response.setHeader("X-Frame-Options", "DENY");
@@ -1644,10 +1645,17 @@ public class MainController {
             //Tran: check if team is approved for userId
             Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(userId, teamResponseBody);
             if (joinRequestTeam != null) {
+
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
             } else {
                 Team2 team2 = extractTeamInfo(teamResponseBody);
+                String encryptedId="";
+                AesEncryptDecrypt objAES= new AesEncryptDecrypt();
+                encryptedId=objAES.encrypt(team2.getId());
+                encryptedId= encryptedId.replaceAll("\\/","@1@1");
+                team2.setEncryptedId(encryptedId);
                 teamManager2.addTeamToTeamMap(team2);
+
                 imageMap.put(team2.getName(), invokeAndGetImageList(teamId));  //Tran : only retrieve images of approved teams
             }
         }
@@ -1897,7 +1905,7 @@ public class MainController {
 
     //--------------------------Team Profile Page--------------------------
 
-    @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
+/*    @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
     public String teamProfile(@PathVariable String teamId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws IOException {
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -1946,11 +1954,69 @@ public class MainController {
         model.addAttribute("teamQuota", teamQuota);
         session.setAttribute(ORIGINAL_BUDGET, teamQuota.getBudget()); // this is to check if budget changed later
         return "team_profile";
+    }*/
+
+    // Fix for pentesting issue NCL-MED-02 – Broken Object Level Authorisation//
+    @RequestMapping(value = "/team_profile/{encryptedId}", method = RequestMethod.GET)
+    public String teamProfile(@PathVariable String encryptedId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws IOException {
+
+
+        AesEncryptDecrypt objAES= new AesEncryptDecrypt();
+        encryptedId= encryptedId.replaceAll("@1@1","\\/");
+        String decryptedId=objAES.decrypt(encryptedId);
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getTeamById(decryptedId), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+
+        Team2 team = extractTeamInfo(responseBody);
+        model.addAttribute("team", team);
+        model.addAttribute(KEY_OWNER, team.getOwner());
+        model.addAttribute("membersList", team.getMembersStatusMap().get(MemberStatus.APPROVED));
+        session.setAttribute(ORIGINAL_TEAM, team);
+
+        List<StatefulExperiment> experimentList = getStatefulExperiments(decryptedId);
+
+        model.addAttribute("teamExperimentList", experimentList);
+
+        //Starting to get quota
+        try {
+            response = restTemplate.exchange(properties.getQuotaByTeamId(decryptedId), HttpMethod.GET, request, String.class);
+        } catch (RestClientException e) {
+            log.warn("Error connecting to sio team service for display team quota: {}", e);
+            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+            return REDIRECT_TEAM_PROFILE_TEAM_ID;
+        }
+
+        responseBody = response.getBody().toString();
+
+        // handling exceptions from SIO
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+            switch (exceptionState) {
+                case TEAM_NOT_FOUND_EXCEPTION:
+                    log.warn("Get team quota: Team {} not found", decryptedId);
+                    return REDIRECT_INDEX_PAGE;
+                default:
+                    log.warn("Get team quota : sio or deterlab adapter connection error");
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+        } else {
+            log.info("Get team quota info : {}", responseBody);
+        }
+
+        TeamQuota teamQuota = extractTeamQuotaInfo(responseBody);
+        model.addAttribute("teamQuota", teamQuota);
+        session.setAttribute(ORIGINAL_BUDGET, teamQuota.getBudget()); // this is to check if budget changed later
+        return "team_profile";
     }
 
-    @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.POST)
+
+// Fix for pentesting issue NCL-MED-02 – Broken Object Level Authorisation//
+    @RequestMapping(value = "/team_profile/{encryptedId}", method = RequestMethod.POST)
     public String editTeamProfile(
-            @PathVariable String teamId,
+            @PathVariable String encryptedId,
             @ModelAttribute("team") Team2 editTeam,
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException {
@@ -1971,7 +2037,10 @@ public class MainController {
         // can edit team description and team website for now
 
         JSONObject teamfields = new JSONObject();
-        teamfields.put("id", teamId);
+        AesEncryptDecrypt objAES= new AesEncryptDecrypt();
+        String decryptedId=objAES.decrypt(encryptedId);
+
+        teamfields.put("id", decryptedId);
         teamfields.put("name", editTeam.getName());
         teamfields.put(DESCRIPTION, editTeam.getDescription());
         teamfields.put(WEBSITE, "http://default.com");
@@ -1983,11 +2052,11 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(teamfields.toString());
         ResponseEntity response;
         try {
-            response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
+            response = restTemplate.exchange(properties.getTeamById(decryptedId), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for edit team profile: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_TEAM_PROFILE + teamId;
+            return REDIRECT_TEAM_PROFILE + decryptedId;
         }
 
         String responseBody = response.getBody().toString();
@@ -1997,16 +2066,16 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
-                    log.warn("Edit team profile: Team {} not found", teamId);
+                    log.warn("Edit team profile: Team {} not found", decryptedId);
                     return REDIRECT_INDEX_PAGE;
                 case FORBIDDEN_EXCEPTION:
                     log.warn("Edit team profile: Profile can only be updated by team owner.");
                     redirectAttributes.addFlashAttribute(MESSAGE, "Profile can only be updated by team owner.");
-                    return REDIRECT_TEAM_PROFILE + teamId;
+                    return REDIRECT_TEAM_PROFILE + decryptedId;
                 default:
                     log.warn("Edit team profile: sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    return REDIRECT_TEAM_PROFILE + teamId;
+                    return REDIRECT_TEAM_PROFILE + decryptedId;
             }
         }
 
@@ -2018,7 +2087,7 @@ public class MainController {
 
         // safer to remove
         session.removeAttribute(ORIGINAL_TEAM);
-        return REDIRECT_TEAM_PROFILE + teamId;
+        return REDIRECT_TEAM_PROFILE + decryptedId;
     }
 
     @RequestMapping(value = "/team_quota/{teamId}", method = RequestMethod.POST)
@@ -2315,7 +2384,6 @@ public class MainController {
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         final String LOG_PREFIX = "Existing user join team: {}";
-
         if (bindingResult.hasErrors()) {
             log.warn(LOG_PREFIX, "Application form error " + teamPageJoinForm.toString());
             return "team_page_join_team";
@@ -2366,7 +2434,9 @@ public class MainController {
 
             } else {
                 log.info(LOG_PREFIX, "Application for join team " + teamPageJoinForm.getTeamName() + " submitted");
-                return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
+                 AesEncryptDecrypt objAES= new AesEncryptDecrypt();
+                String encryptTeamname=objAES.encrypt(teamPageJoinForm.getTeamName());
+                return "redirect:/teams/join_application_submitted/" + encryptTeamname;
             }
 
         } catch (ResourceAccessException | IOException e) {
@@ -2575,9 +2645,6 @@ public class MainController {
             }
 
         }
-        System.out.println(" service to create experiment");
-
-
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
         JSONObject experimentObject = new JSONObject();
@@ -3107,7 +3174,7 @@ public class MainController {
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
             ResponseEntity response = restTemplate.exchange(properties.getTopology(teamName, expId), HttpMethod.GET, request, String.class);
-            log.info("Retrieve experiment topo success");
+           log.info("Retrieve experiment topo success");
             return "data:image/png;base64," + response.getBody();
         } catch (Exception e) {
             log.error("Error getting topology thumbnail", e.getMessage());
@@ -5587,10 +5654,11 @@ public class MainController {
         log.info("Redirecting to join application submitted page");
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
+        AesEncryptDecrypt objAES= new AesEncryptDecrypt();
+        String decryptedteamName=objAES.decrypt(teamName);
+        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(decryptedteamName), HttpMethod.GET, request, String.class);
 
         String responseBody = response.getBody().toString();
-
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
