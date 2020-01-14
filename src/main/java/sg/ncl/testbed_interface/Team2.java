@@ -41,6 +41,12 @@ public class Team2 implements Serializable {
 
     private boolean isClass;
 
+    public void setEncryptedId(String encryptedId) {
+        this.encryptedId = encryptedId;
+    }
+
+    private String encryptedId;
+
     public Team2() {
         pendingMembersList = new ArrayList<>();
         membersList = new ArrayList<>();
