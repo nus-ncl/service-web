@@ -66,7 +66,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static sg.ncl.domain.ExceptionState.*;
 
 /**
- * 
+ *
  * Spring Controller
  * Direct the views to appropriate locations and invoke the respective REST API
  *
@@ -357,14 +357,14 @@ public class MainController {
 
 
 
-   /* @RequestMapping("/contact_us")
-    public String contact_us() {
-        return "contactus";
-    }*/
-   @RequestMapping("/people")
-   public String people() {
-       return "people";
-   }
+    /* @RequestMapping("/contact_us")
+     public String contact_us() {
+         return "contactus";
+     }*/
+    @RequestMapping("/people")
+    public String people() {
+        return "people";
+    }
 
     @RequestMapping("/calendar")
     public String calendar(Model model,
@@ -981,7 +981,7 @@ public class MainController {
     }
 
     //--------------------------Sign Up Page--------------------------
-      //Comment out as per G/J request to remove log in for users momentary
+    //Comment out as per G/J request to remove log in for users momentary
     @RequestMapping(value = "/signup2", method = RequestMethod.GET)
     public String signup2(Model model, HttpServletRequest request) {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
@@ -1133,20 +1133,20 @@ public class MainController {
             signUpMergedForm.setErrorTeamWebsite("Team website cannot be empty");
         }
 
-            if (errorsFound) {
-                log.warn("Signup new team error {}", signUpMergedForm.toString());
-                // clear join team name first before submitting the form
-                signUpMergedForm.setJoinTeamName(null);
-                return SIGNUP_PAGE;
-            } else {
+        if (errorsFound) {
+            log.warn("Signup new team error {}", signUpMergedForm.toString());
+            // clear join team name first before submitting the form
+            signUpMergedForm.setJoinTeamName(null);
+            return SIGNUP_PAGE;
+        } else {
 
-                teamFields.put("name", signUpMergedForm.getTeamName().trim());
-                teamFields.put(DESCRIPTION, signUpMergedForm.getTeamDescription().trim());
-                teamFields.put(WEBSITE, signUpMergedForm.getTeamWebsite().trim());
-                teamFields.put(ORGANISATION_TYPE, signUpMergedForm.getTeamOrganizationType());
-                teamFields.put(VISIBILITY, signUpMergedForm.getIsPublic());
-                teamFields.put(IS_CLASS, signUpMergedForm.getIsClass());
-                mainObject.put("isJoinTeam", false);
+            teamFields.put("name", signUpMergedForm.getTeamName().trim());
+            teamFields.put(DESCRIPTION, signUpMergedForm.getTeamDescription().trim());
+            teamFields.put(WEBSITE, signUpMergedForm.getTeamWebsite().trim());
+            teamFields.put(ORGANISATION_TYPE, signUpMergedForm.getTeamOrganizationType());
+            teamFields.put(VISIBILITY, signUpMergedForm.getIsPublic());
+            teamFields.put(IS_CLASS, signUpMergedForm.getIsClass());
+            mainObject.put("isJoinTeam", false);
             try {
                 registerUserToDeter(mainObject);
             } catch (
@@ -1680,11 +1680,6 @@ public class MainController {
                 teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
             } else {
                 Team2 team2 = extractTeamInfo(teamResponseBody);
-                String encryptedId="";
-                AesEncryptDecrypt objAES= new AesEncryptDecrypt();
-                encryptedId=objAES.encrypt(team2.getId());
-                encryptedId= encryptedId.replaceAll("\\/","@1@1");
-                team2.setEncryptedId(encryptedId);
                 teamManager2.addTeamToTeamMap(team2);
 
                 imageMap.put(team2.getName(), invokeAndGetImageList(teamId));  //Tran : only retrieve images of approved teams
@@ -1857,7 +1852,7 @@ public class MainController {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             ResponseEntity response = restTemplate.exchange(properties.deleteImage(teamId, imageName),
-                                            HttpMethod.DELETE, request, String.class);
+                    HttpMethod.DELETE, request, String.class);
             String responseBody = response.getBody().toString();
 
             if (RestUtil.isError(response.getStatusCode())) {
@@ -1868,7 +1863,7 @@ public class MainController {
                     case INSUFFICIENT_PERMISSION_EXCEPTION:
                         log.warn(errorMessage + ": insufficient permission", imageName, teamId);
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_FAILURE, "You do not have permission to delete this image. Only " +
-                                                                                " team leader or creator of this image can delete the image.");
+                                " team leader or creator of this image can delete the image.");
                         break;
                     case TEAM_NOT_FOUND_EXCEPTION:
                         log.warn(errorMessage + ": team not found", imageName, teamId);
@@ -1917,7 +1912,7 @@ public class MainController {
                     case "delete image OK from web but there is unknown error when deleting physical image":
                         log.warn(errorMessage + ": {}", imageName, teamId, sioMessage);
                         redirectAttributes.addFlashAttribute(MESSAGE_DELETE_IMAGE_WARNING, imageMessage + " is successfully deleted. " +
-                                                                                    "However, " + ERR_SERVER_OVERLOAD);
+                                "However, " + ERR_SERVER_OVERLOAD);
                         break;
                     default:
                         log.info("Deleting image '{}' of team '{}' is successful ", imageName, teamId);
@@ -1936,7 +1931,7 @@ public class MainController {
 
     //--------------------------Team Profile Page--------------------------
 
-/*    @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
     public String teamProfile(@PathVariable String teamId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws IOException {
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -1985,69 +1980,11 @@ public class MainController {
         model.addAttribute("teamQuota", teamQuota);
         session.setAttribute(ORIGINAL_BUDGET, teamQuota.getBudget()); // this is to check if budget changed later
         return "team_profile";
-    }*/
-
-    // Fix for pentesting issue NCL-MED-02 – Broken Object Level Authorisation//
-    @RequestMapping(value = "/team_profile/{encryptedId}", method = RequestMethod.GET)
-    public String teamProfile(@PathVariable String encryptedId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws IOException {
-
-
-        AesEncryptDecrypt objAES= new AesEncryptDecrypt();
-        encryptedId= encryptedId.replaceAll("@1@1","\\/");
-        String decryptedId=objAES.decrypt(encryptedId);
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getTeamById(decryptedId), HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody().toString();
-
-        Team2 team = extractTeamInfo(responseBody);
-        model.addAttribute("team", team);
-        model.addAttribute(KEY_OWNER, team.getOwner());
-        model.addAttribute("membersList", team.getMembersStatusMap().get(MemberStatus.APPROVED));
-        session.setAttribute(ORIGINAL_TEAM, team);
-
-        List<StatefulExperiment> experimentList = getStatefulExperiments(decryptedId);
-
-        model.addAttribute("teamExperimentList", experimentList);
-
-        //Starting to get quota
-        try {
-            response = restTemplate.exchange(properties.getQuotaByTeamId(decryptedId), HttpMethod.GET, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio team service for display team quota: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_TEAM_PROFILE_TEAM_ID;
-        }
-
-        responseBody = response.getBody().toString();
-
-        // handling exceptions from SIO
-        if (RestUtil.isError(response.getStatusCode())) {
-            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-            switch (exceptionState) {
-                case TEAM_NOT_FOUND_EXCEPTION:
-                    log.warn("Get team quota: Team {} not found", decryptedId);
-                    return REDIRECT_INDEX_PAGE;
-                default:
-                    log.warn("Get team quota : sio or deterlab adapter connection error");
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    break;
-            }
-        } else {
-            log.info("Get team quota info : {}", responseBody);
-        }
-
-        TeamQuota teamQuota = extractTeamQuotaInfo(responseBody);
-        model.addAttribute("teamQuota", teamQuota);
-        session.setAttribute(ORIGINAL_BUDGET, teamQuota.getBudget()); // this is to check if budget changed later
-        return "team_profile";
     }
 
-
-// Fix for pentesting issue NCL-MED-02 – Broken Object Level Authorisation//
-    @RequestMapping(value = "/team_profile/{encryptedId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.POST)
     public String editTeamProfile(
-            @PathVariable String encryptedId,
+            @PathVariable String teamId,
             @ModelAttribute("team") Team2 editTeam,
             final RedirectAttributes redirectAttributes,
             HttpSession session) throws IOException {
@@ -2068,10 +2005,7 @@ public class MainController {
         // can edit team description and team website for now
 
         JSONObject teamfields = new JSONObject();
-        AesEncryptDecrypt objAES= new AesEncryptDecrypt();
-        String decryptedId=objAES.decrypt(encryptedId);
-
-        teamfields.put("id", decryptedId);
+        teamfields.put("id", teamId);
         teamfields.put("name", editTeam.getName());
         teamfields.put(DESCRIPTION, editTeam.getDescription());
         teamfields.put(WEBSITE, "http://default.com");
@@ -2083,11 +2017,11 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(teamfields.toString());
         ResponseEntity response;
         try {
-            response = restTemplate.exchange(properties.getTeamById(decryptedId), HttpMethod.PUT, request, String.class);
+            response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for edit team profile: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_TEAM_PROFILE + decryptedId;
+            return REDIRECT_TEAM_PROFILE + teamId;
         }
 
         String responseBody = response.getBody().toString();
@@ -2097,16 +2031,16 @@ public class MainController {
             ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
             switch (exceptionState) {
                 case TEAM_NOT_FOUND_EXCEPTION:
-                    log.warn("Edit team profile: Team {} not found", decryptedId);
+                    log.warn("Edit team profile: Team {} not found", teamId);
                     return REDIRECT_INDEX_PAGE;
                 case FORBIDDEN_EXCEPTION:
                     log.warn("Edit team profile: Profile can only be updated by team owner.");
                     redirectAttributes.addFlashAttribute(MESSAGE, "Profile can only be updated by team owner.");
-                    return REDIRECT_TEAM_PROFILE + decryptedId;
+                    return REDIRECT_TEAM_PROFILE + teamId;
                 default:
                     log.warn("Edit team profile: sio or deterlab adapter connection error");
                     redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    return REDIRECT_TEAM_PROFILE + decryptedId;
+                    return REDIRECT_TEAM_PROFILE + teamId;
             }
         }
 
@@ -2118,7 +2052,7 @@ public class MainController {
 
         // safer to remove
         session.removeAttribute(ORIGINAL_TEAM);
-        return REDIRECT_TEAM_PROFILE + decryptedId;
+        return REDIRECT_TEAM_PROFILE + teamId;
     }
 
     @RequestMapping(value = "/team_quota/{teamId}", method = RequestMethod.POST)
@@ -2258,8 +2192,8 @@ public class MainController {
         return REDIRECT_TEAM_PROFILE_TEAM_ID;
     }
 
- //   @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
-  //  public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
+    //   @RequestMapping("/team_profile/{teamId}/start_experiment/{expId}")
+    //  public String startExperimentFromTeamProfile(@PathVariable Integer teamId, @PathVariable Integer expId, Model model, HttpSession session) {
 //         start experiment
 //        // ensure experiment is stopped first before starting
 //        experimentManager.startExperiment(getSessionIdOfLoggedInUser(session), expId);
@@ -2415,6 +2349,7 @@ public class MainController {
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         final String LOG_PREFIX = "Existing user join team: {}";
+
         if (bindingResult.hasErrors()) {
             log.warn(LOG_PREFIX, "Application form error " + teamPageJoinForm.toString());
             return "team_page_join_team";
@@ -2465,9 +2400,7 @@ public class MainController {
 
             } else {
                 log.info(LOG_PREFIX, "Application for join team " + teamPageJoinForm.getTeamName() + " submitted");
-                 AesEncryptDecrypt objAES= new AesEncryptDecrypt();
-                String encryptTeamname=objAES.encrypt(teamPageJoinForm.getTeamName());
-                return "redirect:/teams/join_application_submitted/" + encryptTeamname;
+                return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
             }
 
         } catch (ResourceAccessException | IOException e) {
@@ -2676,6 +2609,9 @@ public class MainController {
             }
 
         }
+        System.out.println(" service to create experiment");
+
+
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
         JSONObject experimentObject = new JSONObject();
@@ -3205,7 +3141,7 @@ public class MainController {
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
             ResponseEntity response = restTemplate.exchange(properties.getTopology(teamName, expId), HttpMethod.GET, request, String.class);
-           log.info("Retrieve experiment topo success");
+            log.info("Retrieve experiment topo success");
             return "data:image/png;base64," + response.getBody();
         } catch (Exception e) {
             log.error("Error getting topology thumbnail", e.getMessage());
@@ -3219,7 +3155,7 @@ public class MainController {
                                   @PathVariable String expId,
                                   @ModelAttribute InternetRequestForm internetRequestForm,
                                   final RedirectAttributes redirectAttributes
-                                 ) throws WebServiceRuntimeException {
+    ) throws WebServiceRuntimeException {
 
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
@@ -3237,7 +3173,7 @@ public class MainController {
             HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
             ResponseEntity response = restTemplate.exchange(properties.requestInternetExperiment(teamId, expId),
-                                             HttpMethod.POST, request, String.class);
+                    HttpMethod.POST, request, String.class);
             String responseBody = response.getBody().toString();
 
             if (RestUtil.isError(response.getStatusCode())) {
@@ -4420,58 +4356,58 @@ public class MainController {
         return "edit_page_node_usage_reservation";
     }
 
-   @RequestMapping(value = "/admin/edit/usage/reservation", method = RequestMethod.POST)
-   public String findNodeUsageReservationInfo(@Valid @ModelAttribute("nodeUsageReservationForm") NodeUsageReservationForm nodeUsageReservationForm,
-                                                BindingResult bindingResult, RedirectAttributes redirectAttributes,
-                                                HttpSession session, Model model) throws WebServiceRuntimeException {
+    @RequestMapping(value = "/admin/edit/usage/reservation", method = RequestMethod.POST)
+    public String findNodeUsageReservationInfo(@Valid @ModelAttribute("nodeUsageReservationForm") NodeUsageReservationForm nodeUsageReservationForm,
+                                               BindingResult bindingResult, RedirectAttributes redirectAttributes,
+                                               HttpSession session, Model model) throws WebServiceRuntimeException {
         if (!validateIfAdmin(session)) {
             return NO_PERMISSION_PAGE;
         }
 
         final String LOG_PREFIX = "findNodeUsageReservationInfo: {}";
 
-       JSONObject reqObj = new JSONObject();
-       HttpEntity<String> request = createHttpEntityWithBody(reqObj.toString());
-       restTemplate.setErrorHandler(new MyResponseErrorHandler());
-       try {
-           ResponseEntity response = restTemplate.exchange(properties.getNodesReserveByProject(nodeUsageReservationForm.getProjectId()), HttpMethod.GET, request, String.class);
-           String responseBody = response.getBody().toString();
-           JSONObject jsonObject = new JSONObject(responseBody);
-           if (RestUtil.isError(response.getStatusCode())) {
-               MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-               ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-               switch (exceptionState) {
-                   default:
-                       log.warn("Unknown error.");
-                       redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error : No Reservation Info found</li></ul>");
-               }
-           } else {
-               List<NodeUsageReservationForm> tmplist = new ArrayList<>();
-               Iterator iter = jsonObject.keys();
-               while (iter.hasNext()) {
-                   String key = (String) iter.next();
+        JSONObject reqObj = new JSONObject();
+        HttpEntity<String> request = createHttpEntityWithBody(reqObj.toString());
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        try {
+            ResponseEntity response = restTemplate.exchange(properties.getNodesReserveByProject(nodeUsageReservationForm.getProjectId()), HttpMethod.GET, request, String.class);
+            String responseBody = response.getBody().toString();
+            JSONObject jsonObject = new JSONObject(responseBody);
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                switch (exceptionState) {
+                    default:
+                        log.warn("Unknown error.");
+                        redirectAttributes.addFlashAttribute(MESSAGE, "Error(s):<ul><li>unknown error : No Reservation Info found</li></ul>");
+                }
+            } else {
+                List<NodeUsageReservationForm> tmplist = new ArrayList<>();
+                Iterator iter = jsonObject.keys();
+                while (iter.hasNext()) {
+                    String key = (String) iter.next();
 
-                   JSONArray jsonArray = jsonObject.getJSONArray(key);
-                   String tmpstr = jsonArray.toString();
-                   String[] str = tmpstr.substring(1, tmpstr.length() - 1).split(",");
-                   NodeUsageReservationForm obj = new NodeUsageReservationForm();
-                   obj.setId(key);
-                   obj.setStartDate(str[0].replace("\"", ""));
-                   obj.setEndDate(str[1].replace("\"", ""));
-                   obj.setNoOfNodes(Integer.parseInt(str[2].replace("\"", "")));
-                   obj.setProjectId(nodeUsageReservationForm.getProjectId());
-                   tmplist.add(obj);
-               }
+                    JSONArray jsonArray = jsonObject.getJSONArray(key);
+                    String tmpstr = jsonArray.toString();
+                    String[] str = tmpstr.substring(1, tmpstr.length() - 1).split(",");
+                    NodeUsageReservationForm obj = new NodeUsageReservationForm();
+                    obj.setId(key);
+                    obj.setStartDate(str[0].replace("\"", ""));
+                    obj.setEndDate(str[1].replace("\"", ""));
+                    obj.setNoOfNodes(Integer.parseInt(str[2].replace("\"", "")));
+                    obj.setProjectId(nodeUsageReservationForm.getProjectId());
+                    tmplist.add(obj);
+                }
 
-               List<ProjectDetails> projectsList = getProjects();
-               model.addAttribute("projectsList", projectsList);
-               model.addAttribute("mapNodeReservationInfo", tmplist);
-           }
-       } catch (Exception e) {
-           log.error(LOG_PREFIX, e);
-           throw new WebServiceRuntimeException(e.getMessage());
-       }
-       return "edit_page_node_usage_reservation";
+                List<ProjectDetails> projectsList = getProjects();
+                model.addAttribute("projectsList", projectsList);
+                model.addAttribute("mapNodeReservationInfo", tmplist);
+            }
+        } catch (Exception e) {
+            log.error(LOG_PREFIX, e);
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+        return "edit_page_node_usage_reservation";
     }
 
     @RequestMapping(value = "/admin/edit/node_reservation/", method = RequestMethod.POST)
@@ -5218,12 +5154,12 @@ public class MainController {
      * @return      ZonedDateTime of
      */
     private ZonedDateTime convertToZonedDateTime(String date) {
-            String[] result = date.split("-");
-            return ZonedDateTime.of(
-                    Integer.parseInt(result[0]),
-                    Integer.parseInt(result[1]),
-                    Integer.parseInt(result[2]),
-                    0, 0, 0, 0, ZoneId.of("Asia/Singapore"));
+        String[] result = date.split("-");
+        return ZonedDateTime.of(
+                Integer.parseInt(result[0]),
+                Integer.parseInt(result[1]),
+                Integer.parseInt(result[2]),
+                0, 0, 0, 0, ZoneId.of("Asia/Singapore"));
     }
 
 //    @RequestMapping(value="/admin/domains/add", method=RequestMethod.POST)
@@ -5685,9 +5621,7 @@ public class MainController {
         log.info("Redirecting to join application submitted page");
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        AesEncryptDecrypt objAES= new AesEncryptDecrypt();
-        String decryptedteamName=objAES.decrypt(teamName);
-        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(decryptedteamName), HttpMethod.GET, request, String.class);
+        ResponseEntity response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
 
         String responseBody = response.getBody().toString();
         try {
@@ -6965,8 +6899,8 @@ public class MainController {
     // send to SIO to process resetting password for new student member
     @PostMapping("/student_reset_password")
     public String processResetPasswordStudent(
-                        @ModelAttribute("studentPasswordResetForm") StudentPasswordResetForm studentPasswordResetForm
-                        ) throws WebServiceRuntimeException {
+            @ModelAttribute("studentPasswordResetForm") StudentPasswordResetForm studentPasswordResetForm
+    ) throws WebServiceRuntimeException {
 
         if (studentPasswordResetForm.getFirstName().isEmpty() || studentPasswordResetForm.getLastName().isEmpty()) {
             studentPasswordResetForm.setErrMsg("First name or last name cannot be empty");

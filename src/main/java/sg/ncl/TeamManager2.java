@@ -30,7 +30,7 @@ public class TeamManager2 {
 
     public void addTeamToTeamMap(Team2 team2) {
         teamMap.put(team2.getId(), team2);
-       }
+    }
 
     public HashMap<String, Team2> getPublicTeamMap() {
         return publicTeamMap;
