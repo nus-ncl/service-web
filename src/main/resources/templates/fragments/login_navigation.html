@@ -10,8 +10,12 @@
     <div class="container">
 
         <div class="navbar-header">
-            <a href="index.html" th:href="@{/}"><img src="/images/ncl_logo1.jpg" alt="logo" width="180" height="90"
+
+            <a href="index.html" th:href="@{/}"><img src="/images/ncl_logo_image9.jpg" alt="logo" width="180" height="90"
                                                      class="logo1"/></a>
+           <!-- <a href="index.html" th:href="@{/}"><img src="/images/ncl_logo1.jpg" alt="logo" width="180" height="90"
+                                                     class="logo1"/></a>
+-->
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" style="background-color: #333333">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -24,11 +28,23 @@
                 <li class="scroll"><a href="../plan.html" th:href="@{~/plan}">Features</a></li>
                 <!--<li class="scroll"><a href="../tools.html" th:href="@{~/tools}">Tools</a></li>-->
                 <li class="scroll"><a href="../research.html" th:href="@{~/research}">Research</a></li>
+               <!-- <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Research
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="../research.html" th:href="@{~/research}">Research Areas</a></li>
+                       &lt;!&ndash; <li><a href="../acknowledgements.html" th:href="@{~/acknowledgements}">Acknowledgement</a></li>&ndash;&gt;
+                        <li><a href="../publications.html" th:href="@{~/publications}">NCL Publications</a></li>
+
+                    </ul>
+                </li>-->
                 <li class="scroll"><a href="../pricing.html" th:href="@{~/pricing}">Pricing</a></li>
+              <!--  <li><a href="../acknowledgements.html" th:href="@{~/acknowledgements}">Projects</a></li>-->
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Testbed
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu ">
+                        <!--<li><a href="pricing.html" th:href="@{~/pricing}">Pricing</a></li>-->
                         <li><a href="updates.html" th:href="@{~/updates}">Updates</a></li>
                         <li><a href="TestbedInformation.html" th:href="@{~/testbedInformation}">General Info</a></li>
                         <li><a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}">Node Status</a></li>
@@ -47,8 +63,28 @@
                     </ul>
                 </li>
                 <li class="scroll"><a href="../event.html" th:href="@{~/event}">Events</a></li>
-                <li class="scroll"><a href="../about.html" th:href="@{~/about}">About</a></li>
+               <!-- <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">News
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="../event.html" th:href="@{~/event}">Events</a></li>
+                        <li><a href="../news_updates.html" th:href="@{~/news_updates}">Updates</a></li>
+                    </ul>
+                </li>-->
+                <!--<li class="scroll"><a href="../about.html" th:href="@{~/about}">About</a></li>-->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">About Us
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="../about.html" th:href="@{~/about}">About NCL</a></li>
+                         <li><a href="../people.html" th:href="@{~/people}">Team</a></li>
+                         <li><a href="collaborators.html" th:href="@{~/collaborators}">Collaborators</a></li>
+                         <li><a href="contactus.html" th:href="@{~/contactus}">Contact Us</a></li>
+
+                    </ul>
+                </li>
                 <!--li class="scroll"><a href="../career.html" th:href="@{~/career}">Career</a></li-->
+
             </ul>
             <ul class="nav navbar-nav navbar-right login-navbar-right">
                 <li><a href="#" th:href="@{/signup2}">Create account</a></li>
@@ -57,7 +93,11 @@
             <!-- <ul class="nav navbar-nav navbar-right login-navbar-right">-->
                 <li><a href="#" th:href="@{/login}">Log In</a></li>
             </ul>
+
+
         </div> <!-- navigation links -->
+
+
     </div> <!-- container -->
     <div class="container-fluid" th:if="${@environment.getProperty('ncl.web.service.maintenance.enabled')}">
         <div class="row maintenance-navbar" th:text="${@environment.getProperty('ncl.web.service.maintenance.notice')}">

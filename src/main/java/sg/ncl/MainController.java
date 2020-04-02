@@ -335,6 +335,37 @@ public class MainController {
         return "research";
     }
 
+    /*@RequestMapping("/acknowledgements")
+    public String acknowledgements() {
+        return "acknowledgements";
+    }*/
+
+    /*@RequestMapping("/publications")
+    public String publications() {
+        return "publications";
+    }*/
+
+    /*@RequestMapping("/news_updates")
+    public String news_updates() {
+        return "news_updates";
+    }*/
+
+    @RequestMapping("/collaborators")
+    public String news_updates() {
+        return "collaborators";
+    }
+
+
+
+   /* @RequestMapping("/contact_us")
+    public String contact_us() {
+        return "contactus";
+    }*/
+   @RequestMapping("/people")
+   public String people() {
+       return "people";
+   }
+
     @RequestMapping("/calendar")
     public String calendar(Model model,
                            @RequestParam(value = "start", required = false) String start,
