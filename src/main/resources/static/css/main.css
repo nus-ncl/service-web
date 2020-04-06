@@ -861,6 +861,12 @@ Waypoints
     padding-bottom: 30px;
 }
 
+/*.social-icons {
+    margin-top:30px;
+    margin-left: 25px;
+    padding-bottom: 30px;
+}*/
+
 .social-icons ul {
     list-style: none;
     padding: 0;
@@ -1563,8 +1569,24 @@ ul.address {
 
 }
 
-.h15{
+/*.h15{
     font-size: 6em;
+    color : #1eafbb;
+    font-weight: bold;
+    line-height: 70px;
+    !*
+    font-size: 80px;
+    margin: 20px;
+    alignment : center;
+    margin-bottom: 10px;
+    color : #1eafbb;
+    font-weight: bold;
+    padding:20px;
+    *!
+}*/
+
+.h15{
+    font-size: 5em;
     color : #1eafbb;
     font-weight: bold;
     line-height: 70px;
