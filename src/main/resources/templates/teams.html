@@ -53,7 +53,8 @@
                     <tr th:each="teamEntry : ${teamMap2}">
                         <td th:if="${teamEntry.value.isUserTeamOwner(userEmail)} == true"><span class="glyphicon glyphicon-king" data-toggle="tooltip" data-placement="bottom" title="You are the owner of this team"></span></td>
                         <td th:unless="${teamEntry.value.isUserTeamOwner(userEmail)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
-                        <td><a href="#" th:href="@{/team_profile/{teamId}(teamId=${teamEntry.key})}"><span th:text="${teamEntry.value.name}">Name-Id</span></a></td>
+                        <!--<td><a href="#" th:href="@{/team_profile/{teamId}(teamId=${teamEntry.key})}"><span th:text="${teamEntry.value.name}">Name-Id</span></a></td>-->
+                        <td><a href="#" th:href="@{/team_profile/{teamEncryptedId}(teamEncryptedId=${hidTeamId})}"><span th:text="${teamEntry.value.name}">Name-Id</span></a></td>
                         <td th:text="${teamEntry.value.description}">Description</td>
                         <td>
                             <span th:text="${teamEntry.value.membersCount}">Members</span>
