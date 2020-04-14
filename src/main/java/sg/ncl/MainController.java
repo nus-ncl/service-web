@@ -1944,6 +1944,18 @@ public class MainController {
         model.addAttribute("membersList", team.getMembersStatusMap().get(MemberStatus.APPROVED));
         session.setAttribute(ORIGINAL_TEAM, team);
 
+        //// check if user belongs to this team or not - show team profile page only if user is owner or a approved team member or  admin //
+        //above check applies to only private teams//
+        //public teams are visible to all
+        String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
+        int memberCount = team.getMembersStatusMap().size();
+        boolean ismember = false;
+        List<User2> membersList = team.getMembersStatusMap().get(MemberStatus.APPROVED);
+        for (int i = 0; i < membersList.size(); i++) {
+           if (membersList.get(i).getId().equals(userId)) {
+                ismember = true;
+            }
+        }
         List<StatefulExperiment> experimentList = getStatefulExperiments(teamId);
 
         model.addAttribute("teamExperimentList", experimentList);
@@ -1979,8 +1991,17 @@ public class MainController {
         TeamQuota teamQuota = extractTeamQuotaInfo(responseBody);
         model.addAttribute("teamQuota", teamQuota);
         session.setAttribute(ORIGINAL_BUDGET, teamQuota.getBudget()); // this is to check if budget changed later
-        return "team_profile";
-    }
+        if (team.getVisibility().equalsIgnoreCase("PRIVATE") && ismember == true) {
+           return "team_profile";
+        }
+
+        if (team.getVisibility().equalsIgnoreCase("PUBLIC")) {
+           return "team_profile";
+        }
+        log.warn("Cannot display team profile:Only team members can see privte team's profile");
+        redirectAttributes.addFlashAttribute(MESSAGE, "Only team members can see team profile");
+       return REDIRECT_INDEX_PAGE;
+       }
 
     @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.POST)
     public String editTeamProfile(
