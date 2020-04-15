@@ -1933,7 +1933,6 @@ public class MainController {
 
     @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.GET)
     public String teamProfile(@PathVariable String teamId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws IOException {
-
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody().toString();
@@ -1991,17 +1990,18 @@ public class MainController {
         TeamQuota teamQuota = extractTeamQuotaInfo(responseBody);
         model.addAttribute("teamQuota", teamQuota);
         session.setAttribute(ORIGINAL_BUDGET, teamQuota.getBudget()); // this is to check if budget changed later
-        if (team.getVisibility().equalsIgnoreCase("PRIVATE") && ismember == true) {
+        if (team.getVisibility().equalsIgnoreCase("PRIVATE") && (ismember == true || validateIfAdmin(session))){
            return "team_profile";
         }
-
-        if (team.getVisibility().equalsIgnoreCase("PUBLIC")) {
+        else if (team.getVisibility().equalsIgnoreCase("PUBLIC")) {
            return "team_profile";
         }
-        log.warn("Cannot display team profile:Only team members can see privte team's profile");
-        redirectAttributes.addFlashAttribute(MESSAGE, "Only team members can see team profile");
-       return REDIRECT_INDEX_PAGE;
-       }
+        else{
+            log.warn("Cannot display team profile:Only team members can see private team's profile");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Only team members can see team profile");
+            return REDIRECT_INDEX_PAGE;
+        }
+    }
 
     @RequestMapping(value = "/team_profile/{teamId}", method = RequestMethod.POST)
     public String editTeamProfile(
