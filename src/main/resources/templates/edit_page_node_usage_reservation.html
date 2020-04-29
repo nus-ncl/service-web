@@ -23,7 +23,7 @@
             <strong>Success!</strong> <p th:text="${messageSuccess}"></p>
         </div>
         <h2 class="team-heading team-heading-current-team" th:text="#{editNodesReservation.header}">Edit Nodes Usage Reservation</h2>
-        <form class="form-horizontal" method="post" action="#" th:action="@{/admin/edit/usage/reservation}" th:object="${nodeUsageReservationForm}" role="form">
+        <form class="form-horizontal" method="post" action="#" th:action="@{/edit/usage/reservation}" th:object="${nodeUsageReservationForm}" role="form">
             <fieldset>
                 <div class="form-group" th:classappend="${#fields.hasErrors('projectId')} ? has-error">
                     <label for="project" class="col-sm-2 control-label">Project :</label>
@@ -62,16 +62,16 @@
                                         data-enddate=${nodeusage.endDate},
                                         data-nbrnodes=${nodeusage.noOfNodes},
                                         data-projectid=${nodeusage.projectId},
-                                        data-edit=@{/admin/edit/node_reservation/}">
-                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        data-edit=@{/edit/node_reservation/}">
+                                      <i class="fa fa-pencil" aria-hidden="true"></i>
                                 </button>
                                 <button type="button" class="btn btn-danger"
                                         data-toggle="modal" data-target="#deleteNodeReservationModal"
                                         th:attr="data-id=${nodeusage.id},
                                         data-startdate=${nodeusage.startDate},
                                         data-enddate=${nodeusage.endDate},
-                                        data-delete=@{/admin/delete/node_reservation/}">
-                                    <i class="fa fa-trash"></i>
+                                         data-delete=@{/delete/node_reservation/}">
+                                       <i class="fa fa-trash"></i>
                                 </button>
                             </td>
                         </th:block>
