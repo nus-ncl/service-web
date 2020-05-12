@@ -22,7 +22,7 @@
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <strong>Success!</strong> <p th:text="${messageSuccess}"></p>
         </div>
-        <h2 class="team-heading team-heading-current-team" th:text="#{editNodesReservation.header}">Edit Nodes Usage Reservation</h2>
+        <h2 class="team-heading team-heading-current-team" th:text="#{editNodesReservation.header}">Edit Nodes Usage Booking</h2>
         <form class="form-horizontal" method="post" action="#" th:action="@{/edit/usage/reservation}" th:object="${nodeUsageReservationForm}" role="form">
             <fieldset>
                 <div class="form-group" th:classappend="${#fields.hasErrors('projectId')} ? has-error">
@@ -42,8 +42,8 @@
             <table class="table table-responsive" th:if="${mapNodeReservationInfo}">
                 <thead>
                 <tr>
-                    <th th:text="#{reservation.startDt.header}">Reservation Start Date</th>
-                    <th th:text="#{reservation.endDt.header}">Reservation End Date</th>
+                    <th th:text="#{reservation.startDt.header}">Booking Start Date</th>
+                    <th th:text="#{reservation.endDt.header}">Booking End Date</th>
                     <th th:text="#{reservation.noOfNodes.header}">Number of Nodes</th>
                     <th th:text="#{team.table.header.actions}">Actions</th>
                 </tr>
@@ -88,13 +88,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="editLabel">Edit Node Reservation</h4>
+                <h4 class="modal-title" id="editLabel">Edit Node Booking</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" method="post" action="#" th:object="${nodeUsageReservationForm}" role="form" id="editNodeUsageReservationForm">
                     <fieldset>
                     <div class="form-group">
-                        <label for="datepicker" class="col-sm-3 control-label">Reservation Period</label>
+                        <label for="datepicker" class="col-sm-3 control-label">Booking Period</label>
                         <div class="col-sm-7">
                             <div class="input-group input-daterange" id="datepicker">
                                 <input type="text" class="form-control" id="inputStartDate" th:field="*{startDate}" placeholder="Start Date (yyyy-MM-dd)" />
@@ -128,7 +128,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="deleteLabel">Delete Node Reservation?</h4>
+                <h4 class="modal-title" id="deleteLabel">Delete Node Booking?</h4>
             </div>
             <div class="modal-body">
                 Confirm deleting <span id="resStart"></span> - <span id="resEnd"></span>?

@@ -4267,7 +4267,17 @@ public class MainController {
         String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
         model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
         List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
-        model.addAttribute("projectsList", userProjectsOwnerList);
+        // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+        if (validateIfAdmin(session))
+        {
+            List<ProjectDetails> projectsList = getProjects();
+            model.addAttribute("projectsList", projectsList);
+        }
+        else  // non admin users can only see their own projects
+        {
+            model.addAttribute("projectsList", userProjectsOwnerList);
+        }
+
         return "admin_node_usage_reservation";
     }
     private List<ProjectDetails> getProjectsList() {
@@ -4399,7 +4409,16 @@ public class MainController {
             message.append(TAG_UL_CLOSE);
             model.addAttribute(MESSAGE, message);
             List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
-            model.addAttribute("projectsList", userProjectsOwnerList);
+            // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+            if (validateIfAdmin(session))
+            {
+                List<ProjectDetails> projectsList = getProjects();
+                model.addAttribute("projectsList", projectsList);
+            }
+            else  // non admin users can only see their own projects
+            {
+                model.addAttribute("projectsList", userProjectsOwnerList);
+            }
             return "admin_node_usage_reservation";
         }
         log.info(LOG_PREFIX, nodeUsageReservationForm.toString());
@@ -4436,7 +4455,7 @@ public class MainController {
             } else {
                 // no errors, everything ok
                 log.info(LOG_PREFIX, "Application for"+ nodeUsageReservationForm.getNoOfNodes()+" node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
-                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation done.");
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking done.");
             }
         } catch (Exception e) {
             log.error(LOG_PREFIX, e);
@@ -4451,7 +4470,16 @@ public class MainController {
         String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
         model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
         List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
-        model.addAttribute("projectsList", userProjectsOwnerList);
+        // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+        if (validateIfAdmin(session))
+        {
+            List<ProjectDetails> projectsList = getProjects();
+            model.addAttribute("projectsList", projectsList);
+        }
+        else  // non admin users can only see their own projects
+        {
+            model.addAttribute("projectsList", userProjectsOwnerList);
+        }
         return "edit_page_node_usage_reservation";
     }
 
@@ -4496,7 +4524,16 @@ public class MainController {
                     tmplist.add(obj);
                 }
                 List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
-                model.addAttribute("projectsList", userProjectsOwnerList);
+                // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+                if (validateIfAdmin(session))
+                {
+                    List<ProjectDetails> projectsList = getProjects();
+                    model.addAttribute("projectsList", projectsList);
+                }
+                else  // non admin users can only see their own projects
+                {
+                    model.addAttribute("projectsList", userProjectsOwnerList);
+                }
                 model.addAttribute("mapNodeReservationInfo", tmplist);
             }
         } catch (Exception e) {
@@ -4549,7 +4586,16 @@ public class MainController {
             message.append(TAG_UL_CLOSE);
             model.addAttribute(MESSAGE, message);
             List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
-            model.addAttribute("projectsList", userProjectsOwnerList);
+            // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+            if (validateIfAdmin(session))
+            {
+                List<ProjectDetails> projectsList = getProjects();
+                model.addAttribute("projectsList", projectsList);
+            }
+            else  // non admin users can only see their own projects
+            {
+                model.addAttribute("projectsList", userProjectsOwnerList);
+            }
             return "edit_page_node_usage_reservation";
         }
 
@@ -4587,7 +4633,7 @@ public class MainController {
             } else {
                 // no errors, everything ok
                 log.info(LOG_PREFIX, "Application for" + nodeUsageReservationForm.getNoOfNodes() + " node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
-                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation done.");
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking done.");
             }
         } catch (Exception e) {
             log.error(LOG_PREFIX, e);
@@ -4624,7 +4670,7 @@ public class MainController {
                 }
             } else {
                 log.info("Nodes usage reservation deleted: {}", responseBody);
-                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation deleted.");
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking deleted.");
             }
         } catch (IOException e) {
             log.error("deleteNodeReservation: {}", e.toString());
