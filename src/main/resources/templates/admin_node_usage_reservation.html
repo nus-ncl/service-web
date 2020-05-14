@@ -20,12 +20,12 @@
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <strong>Success!</strong> <p th:text="${messageSuccess}"></p>
             </div>
-            <h2 class="team-heading team-heading-current-team" th:text="#{applyForNodesReservation.header}">Apply For Nodes Reservation</h2>
+            <h2 class="team-heading team-heading-current-team" th:text="#{applyForNodesReservation.header}">Apply For Nodes Booking</h2>
             <p>&nbsp;</p>
-            <form class="form-horizontal" method="post" action="#" th:action="@{/admin/usage/reservation}" th:object="${nodeUsageReservationForm}" role="form">
+            <form class="form-horizontal" method="post" action="#" th:action="@{/usage/reservation}" th:object="${nodeUsageReservationForm}" role="form">
                 <fieldset>
                     <div class="form-group">
-                        <label for="datepicker" class="col-sm-3 control-label">Reservation Period :</label>
+                        <label for="datepicker" class="col-sm-3 control-label">Booking Period :</label>
                         <div class="col-sm-7">
                             <div class="input-group input-daterange" id="datepicker">
                                 <input type="text" class="form-control" id="inputStartDate" th:field="*{startDate}" placeholder="Start Date (yyyy-MM-dd)" />
@@ -57,7 +57,7 @@
             </form>
         </div>
         <div class="panel-footer team-panel-footer ">
-              <a href="editNodeUsageReservation" th:href="@{/admin/edit/usage/reservation}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Edit Node Usage Reservation</a>
+            <a href="editNodeUsageReservation" th:href="@{/edit/usage/reservation}" class="btn btn-standard"><i class="fa fa-plus btn-fa-green"></i> Edit Node Usage Booking</a>
         </div>
     </div> <!-- container -->
 

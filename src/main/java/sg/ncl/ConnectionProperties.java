@@ -331,6 +331,22 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/testbed/stats";
     }
 
+    public String getProjectDetails() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/usage/projects";
+    }
+
+    public String applyNodesReserve(String projectId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
+    }
+
+    public String editNodesReserve(String reservationid) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/usage/" + NODESRESERVATIONS + "/" + reservationid;
+    }
+
+    public String getNodesReserveByProject(String projectId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
+    }
+
     //-------------------------------------
     // IMAGES
     //-------------------------------------
@@ -495,20 +511,9 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/" + RESERVATIONS + "?numNodes=" + numNodes + "&machineType=" + machineType;
     }
 
-   public String applyNodesReserve(String projectId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
-    }
-
     public String getUsageCalendar(String... paramString) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/calendar" + getStringBuilder(paramString).toString();
     }
 
-    public String getNodesReserveByProject(String projectId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
-    }
-
-    public String editNodesReserve(String reservationid) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/" + NODESRESERVATIONS + "/" + reservationid;
-    }
 
 }

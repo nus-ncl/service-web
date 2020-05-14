@@ -4054,7 +4054,6 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getMonthly(), HttpMethod.GET, request, String.class);
         JSONArray jsonArray = new JSONArray(response.getBody().toString());
-
         List<ProjectDetails> projectsList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -4262,27 +4261,119 @@ public class MainController {
         return "admin_monthly_usage";
     }
 
-    @RequestMapping(value = "/admin/usage/reservation", method = RequestMethod.GET)
+    @RequestMapping(value = "/usage/reservation", method = RequestMethod.GET)
     public String adminMonthlyReservation(HttpSession session, Model model) {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
+
+        String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
+        model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
+        List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
+        // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+        if (validateIfAdmin(session))
+        {
+            List<ProjectDetails> projectsList = getProjects();
+            model.addAttribute("projectsList", projectsList);
+        }
+        else  // non admin users can only see their own projects
+        {
+            model.addAttribute("projectsList", userProjectsOwnerList);
         }
 
-        model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
-        List<ProjectDetails> projectsList = getProjects();
-        model.addAttribute("projectsList", projectsList);
         return "admin_node_usage_reservation";
     }
+    private List<ProjectDetails> getProjectsList() {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getProjectDetails(), HttpMethod.GET, request, String.class);
+        JSONArray jsonArray = new JSONArray(response.getBody().toString());
+        List<ProjectDetails> projectsList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            ProjectDetails projectDetails = getProjectDetails(jsonObject);
+            projectsList.add(projectDetails);
+        }
+        return projectsList;
+    }
 
-    @RequestMapping(value = "/admin/usage/reservation", method = RequestMethod.POST)
+    private String findTeamOwner(String json) {
+        String returnStr=null;
+        Team2 team2 = new Team2();
+        JSONObject object = new JSONObject(json);
+        JSONArray membersArray = object.getJSONArray(MEMBERS);
+
+        String teamid=object.getString("id");
+        String teamOwnerId="";
+
+        for (int i = 0; i < membersArray.length(); i++) {
+            JSONObject memberObject = membersArray.getJSONObject(i);
+            String userId = memberObject.getString(USER_ID);
+            String teamMemberType = memberObject.getString(MEMBER_TYPE);
+            if (teamMemberType.equals(MemberType.OWNER.name())) {
+                teamOwnerId=userId;
+            }
+
+        }
+        returnStr=teamid+":"+teamOwnerId;
+        return returnStr;
+    }
+
+    private List<ProjectDetails> loggedInuserOwnedProjects(String userId)
+    {
+        List<ProjectDetails> projectsList = getProjectsList();
+        List<ProjectDetails> userProjectsOwnerList = new ArrayList();
+
+        //////////////// fetch list of teams for this user//////////////////////////////////
+        TeamManager2 teamManager2 = new TeamManager2();
+        List<Team2> lstofTeams= new ArrayList();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody().toString();
+        JSONObject object = new JSONObject(responseBody);
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody().toString();
+
+            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(userId, teamResponseBody);
+            if (joinRequestTeam != null) {
+                teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
+
+            } else { // only list teams for which this user is approved
+                Team2 objteam2 = extractTeamInfo(teamResponseBody);
+                String tempstr=findTeamOwner(teamResponseBody);
+                String[] ownerId=tempstr.split(":");
+                // only add team to list if user owns this team
+                if(userId.equals(ownerId[1]))
+                {
+                    lstofTeams.add(objteam2);
+                }
+            }
+        }
+        // only populate teams/project for which the user is owner //
+        for(int i=0;i<projectsList.size();i++)
+        {
+            String projectName=projectsList.get(i).getProjectName();
+            for(int j=0;j<lstofTeams.size();j++)
+            {
+                String teamname=lstofTeams.get(j).getName();
+                if(projectName.equals(teamname))
+                {
+                    userProjectsOwnerList.add(projectsList.get(i));
+                }
+            }
+
+        }
+        return userProjectsOwnerList;
+    }
+
+    @RequestMapping(value = "/usage/reservation", method = RequestMethod.POST)  // Fix- make this feature avaible to all users and not just admins
     public String checkApplyNodeReservationInfo(@Valid @ModelAttribute("nodeUsageReservationForm") NodeUsageReservationForm nodeUsageReservationForm,
                                                 BindingResult bindingResult, RedirectAttributes redirectAttributes,
                                                 HttpSession session, Model model) throws WebServiceRuntimeException {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
 
         final String LOG_PREFIX = "Apply for Node Reservation: {}";
+        String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
         if (bindingResult.hasErrors()) {
             log.warn(LOG_PREFIX, "Application form error " + nodeUsageReservationForm.toString());
             StringBuilder message = new StringBuilder();
@@ -4317,8 +4408,17 @@ public class MainController {
             }
             message.append(TAG_UL_CLOSE);
             model.addAttribute(MESSAGE, message);
-            List<ProjectDetails> projectsList = getProjects();
-            model.addAttribute("projectsList", projectsList);
+            List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
+            // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+            if (validateIfAdmin(session))
+            {
+                List<ProjectDetails> projectsList = getProjects();
+                model.addAttribute("projectsList", projectsList);
+            }
+            else  // non admin users can only see their own projects
+            {
+                model.addAttribute("projectsList", userProjectsOwnerList);
+            }
             return "admin_node_usage_reservation";
         }
         log.info(LOG_PREFIX, nodeUsageReservationForm.toString());
@@ -4329,11 +4429,9 @@ public class MainController {
         nodeReserveFields.put("numNodes", nodeUsageReservationForm.getNoOfNodes());
         HttpEntity<String> request = createHttpEntityWithBody(nodeReserveFields.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-
         try {
             ResponseEntity response = restTemplate.exchange(properties.applyNodesReserve(nodeUsageReservationForm.getProjectId()), HttpMethod.POST, request, String.class);
             String responseBody = response.getBody().toString();
-
             if (RestUtil.isError(response.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
@@ -4357,35 +4455,41 @@ public class MainController {
             } else {
                 // no errors, everything ok
                 log.info(LOG_PREFIX, "Application for"+ nodeUsageReservationForm.getNoOfNodes()+" node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
-                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation done.");
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking done.");
             }
         } catch (Exception e) {
             log.error(LOG_PREFIX, e);
             throw new WebServiceRuntimeException(e.getMessage());
         }
-        return "redirect:/admin/usage/reservation";
+        return "redirect:/usage/reservation";
     }
 
-    @RequestMapping(value = "/admin/edit/usage/reservation", method = RequestMethod.GET)
+    @RequestMapping(value = "/edit/usage/reservation", method = RequestMethod.GET)
     public String editNodeUsageReservation(HttpSession session,Model model) {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
         model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
-        List<ProjectDetails> projectsList = getProjects();
-        model.addAttribute("projectsList", projectsList);
+        String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
+        model.addAttribute("nodeUsageReservationForm", new NodeUsageReservationForm());
+        List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
+        // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+        if (validateIfAdmin(session))
+        {
+            List<ProjectDetails> projectsList = getProjects();
+            model.addAttribute("projectsList", projectsList);
+        }
+        else  // non admin users can only see their own projects
+        {
+            model.addAttribute("projectsList", userProjectsOwnerList);
+        }
         return "edit_page_node_usage_reservation";
     }
 
-    @RequestMapping(value = "/admin/edit/usage/reservation", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit/usage/reservation", method = RequestMethod.POST)
     public String findNodeUsageReservationInfo(@Valid @ModelAttribute("nodeUsageReservationForm") NodeUsageReservationForm nodeUsageReservationForm,
                                                BindingResult bindingResult, RedirectAttributes redirectAttributes,
                                                HttpSession session, Model model) throws WebServiceRuntimeException {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
 
-        final String LOG_PREFIX = "findNodeUsageReservationInfo: {}";
+       final String LOG_PREFIX = "findNodeUsageReservationInfo: {}";
+       String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
 
         JSONObject reqObj = new JSONObject();
         HttpEntity<String> request = createHttpEntityWithBody(reqObj.toString());
@@ -4419,9 +4523,17 @@ public class MainController {
                     obj.setProjectId(nodeUsageReservationForm.getProjectId());
                     tmplist.add(obj);
                 }
-
-                List<ProjectDetails> projectsList = getProjects();
-                model.addAttribute("projectsList", projectsList);
+                List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
+                // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+                if (validateIfAdmin(session))
+                {
+                    List<ProjectDetails> projectsList = getProjects();
+                    model.addAttribute("projectsList", projectsList);
+                }
+                else  // non admin users can only see their own projects
+                {
+                    model.addAttribute("projectsList", userProjectsOwnerList);
+                }
                 model.addAttribute("mapNodeReservationInfo", tmplist);
             }
         } catch (Exception e) {
@@ -4431,15 +4543,13 @@ public class MainController {
         return "edit_page_node_usage_reservation";
     }
 
-    @RequestMapping(value = "/admin/edit/node_reservation/", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit/node_reservation/", method = RequestMethod.POST)
     public String editNodeReservation(@Valid @ModelAttribute("nodeUsageReservationForm") NodeUsageReservationForm nodeUsageReservationForm,
                                       BindingResult bindingResult, RedirectAttributes redirectAttributes,
                                       HttpSession session, Model model) throws WebServiceRuntimeException {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
 
         final String LOG_PREFIX = "Edit Node Usage Reservation: {}";
+        String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
 
         if (bindingResult.hasErrors()) {
             log.warn(LOG_PREFIX, "Application form error " + nodeUsageReservationForm.toString());
@@ -4475,8 +4585,17 @@ public class MainController {
             }
             message.append(TAG_UL_CLOSE);
             model.addAttribute(MESSAGE, message);
-            List<ProjectDetails> projectsList = getProjects();
-            model.addAttribute("projectsList", projectsList);
+            List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
+            // admin can make node booking on behalf of user.If logged in user is admin show complete list of projects//
+            if (validateIfAdmin(session))
+            {
+                List<ProjectDetails> projectsList = getProjects();
+                model.addAttribute("projectsList", projectsList);
+            }
+            else  // non admin users can only see their own projects
+            {
+                model.addAttribute("projectsList", userProjectsOwnerList);
+            }
             return "edit_page_node_usage_reservation";
         }
 
@@ -4514,22 +4633,18 @@ public class MainController {
             } else {
                 // no errors, everything ok
                 log.info(LOG_PREFIX, "Application for" + nodeUsageReservationForm.getNoOfNodes() + " node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
-                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation done.");
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking done.");
             }
         } catch (Exception e) {
             log.error(LOG_PREFIX, e);
             throw new WebServiceRuntimeException(e.getMessage());
         }
-
-        return "redirect:/admin/edit/usage/reservation";
+        return "redirect:/edit/usage/reservation";
     }
 
-    @RequestMapping(value = "/admin/delete/node_reservation/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/node_reservation/{id}", method = RequestMethod.GET)
     public String deleteNodeReservation(@PathVariable String id, RedirectAttributes redirectAttributes,
                                         HttpSession session) throws WebServiceRuntimeException {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -4555,14 +4670,13 @@ public class MainController {
                 }
             } else {
                 log.info("Nodes usage reservation deleted: {}", responseBody);
-                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Reservation deleted.");
+                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking deleted.");
             }
         } catch (IOException e) {
             log.error("deleteNodeReservation: {}", e.toString());
             throw new WebServiceRuntimeException(e.getMessage());
         }
-
-        return "redirect:/admin/edit/usage/reservation";
+        return "redirect:/edit/usage/reservation";
     }
 
     @GetMapping(value = {"/admin/monthly/{id}/usage/contribute", "/admin/monthly/{id}/usage/contribute/{month}"})
@@ -5215,9 +5329,10 @@ public class MainController {
         log.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        System.out.println("-----------------------10101010101010 Before approve team-----------------------");
         ResponseEntity response = restTemplate.exchange(
                 properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
-
+        System.out.println("-----------------------1211212121212121212121 after approve team-----------------------");
         String responseBody = response.getBody().toString();
         if (RestUtil.isError(response.getStatusCode())) {
             MyErrorResource error;
@@ -5941,6 +6056,7 @@ public class MainController {
     }
 
     private Team2 extractTeamInfo(String json) {
+        //System.out.println("json------------>"+json);
         Team2 team2 = new Team2();
         JSONObject object = new JSONObject(json);
         JSONArray membersArray = object.getJSONArray(MEMBERS);

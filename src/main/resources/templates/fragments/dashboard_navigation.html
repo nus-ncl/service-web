@@ -43,6 +43,7 @@
             <ul class="nav navbar-nav navbar-left login-navbar-left">
                 <li><a href="/teams" th:href="@{/teams}"><span th:text="#{nav.teams}">Teams</span></a></li>
                 <li><a href="/experiments" th:href="@{/experiments}"><span th:text="#{nav.exp}">Experiment</span></a>
+
                 </li>
                 <li><a href="/data" th:href="@{/data}"><span th:text="#{nav.data}">Data</span></a></li>
 
@@ -60,6 +61,7 @@
                         <li><a th:href="@{/admin/data}">Data Management</a></li>
                         <li><a th:href="@{/admin/gpus}">GPU Management</a></li>
                         <li><a th:href="@{/admin/monthly}">Usage Management</a></li>
+                        <li><a href="calendar.html" th:href="@{~/calendar}">View Node Usage Booking</a></li>
                         <li>
                             <hr/>
                         </li>
@@ -73,8 +75,7 @@
                         </li>
                         <li><a th:href="@{/admin/nodesReservation}">Node Reservation</a></li>
                         <li><a th:href="@{/admin/nodesStatus}">Node Status</a></li>
-                        <li><a th:href="@{/admin/usage/reservation}">Node Usage Reservation</a></li>
-                    </ul>
+                        </ul>
                 </li>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Testbed
@@ -83,7 +84,7 @@
                         <li><a href="updates.html" th:href="@{~/updates}">Updates</a></li>
                         <li><a href="TestbedInformation.html" th:href="@{~/testbedInformation}">General Info</a></li>
                         <li><a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}">Node Status</a></li>
-                        <li><a href="calendar.html" th:href="@{~/calendar}">Usage Calendar</a></li>
+                        <li><a th:href="@{/usage/reservation}">Node Usage Booking</a></li>
                     </ul>
                 </li>
                 <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
