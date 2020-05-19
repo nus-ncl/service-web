@@ -4075,6 +4075,14 @@ public class MainController {
         return "admin_monthly";
     }
 
+    @GetMapping("/user/monthly")
+    public String userMonthly(HttpSession session, Model model) {
+        String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
+        List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
+        model.addAttribute("projectsList", userProjectsOwnerList);
+        return "user_monthly";
+    }
+
     @GetMapping(value = {"/admin/monthly/contribute", "/admin/monthly/contribute/{id}"})
     public String adminMonthlyContribute(@PathVariable Optional<String> id, HttpSession session, Model model) {
         if (!validateIfAdmin(session)) {
@@ -4259,6 +4267,16 @@ public class MainController {
         model.addAttribute(KEY_PROJECT, projectDetails);
 
         return "admin_monthly_usage";
+    }
+
+    @GetMapping("/user/monthly/{id}/usage")
+    public String userMonthlyUsage(@PathVariable String id, HttpSession session, Model model) {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity response = restTemplate.exchange(properties.getProjectDetails() + "/" + id, HttpMethod.GET, request, String.class);
+        JSONObject jsonObject = new JSONObject(response.getBody().toString());
+        ProjectDetails projectDetails = getProjectDetails(jsonObject);
+        model.addAttribute(KEY_PROJECT, projectDetails);
+        return "user_monthly_usage";
     }
 
     @RequestMapping(value = "/usage/reservation", method = RequestMethod.GET)
