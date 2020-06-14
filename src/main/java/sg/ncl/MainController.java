@@ -60,6 +60,7 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.security.SecureRandom;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
@@ -184,6 +185,7 @@ public class MainController {
     private static final String REDIRECT_APPROVE_NEW_USER = "redirect:/approve_new_user";
     private static final String REDIRECT_ADMIN = "redirect:/admin";
     private static final String REDIRECT_ADD_MEMBER = "redirect:/add_member";
+    private static final String REDIRECT_UNAUTHOURIZED_ACCESS = "redirect:/unauthorized_access";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -356,11 +358,11 @@ public class MainController {
     }
 
 
+    @RequestMapping("/unauthorized_access")
+    public String unauthorizedAccess() {
+        return "unauthorized_access";
+    }
 
-    /* @RequestMapping("/contact_us")
-     public String contact_us() {
-         return "contactus";
-     }*/
     @RequestMapping("/people")
     public String people() {
         return "people";
@@ -678,6 +680,16 @@ public class MainController {
         }
     }
 
+    private String generateCSRFToken() {
+        SecureRandom entropy = new SecureRandom();
+
+        byte secureBytes[] = new byte[20];
+        entropy.nextBytes(secureBytes);
+        String token=Base64.encodeBase64String(secureBytes);
+        token=token.replaceAll("\\/","@");
+        return token;
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model) {
         model.addAttribute("loginForm", new LoginForm());
@@ -722,7 +734,6 @@ public class MainController {
             loginForm.setErrorMsg(ERR_INVALID_CREDENTIALS);
             return LOGIN_PAGE;
         }
-
         String inputEmail = loginForm.getLoginEmail();
         String inputPwd = loginForm.getLoginPassword();
         if (inputEmail.trim().isEmpty() || inputPwd.trim().isEmpty()) {
@@ -791,7 +802,11 @@ public class MainController {
             return LOGIN_PAGE;
         }
 
-        // now check user status to decide what to show to the user
+        //set the csrf token //
+        String csrfToken=generateCSRFToken();
+        session.setAttribute("csrfToken", csrfToken);
+        loginForm.setErrorMsg("csrfToken");
+         // now check user status to decide what to show to the user
         return checkUserStatus(loginForm, session, redirectAttributes, token, id, role);
     }
 
@@ -2433,9 +2448,7 @@ public class MainController {
 
     @RequestMapping(value = "/experiments", method = RequestMethod.GET)
     public String experiments(Model model, HttpSession session) throws WebServiceRuntimeException {
-
         List<StatefulExperiment> statefulExperimentList = new ArrayList<>();
-
         HttpEntity<String> request = getDeterUid(model, session);
 
         // get list of teamIds
@@ -2461,6 +2474,10 @@ public class MainController {
 
         model.addAttribute("experimentList", statefulExperimentList);
         model.addAttribute("internetRequestForm", new InternetRequestForm());
+        //ExperimentForm experimentForm= new ExperimentForm();
+        model.addAttribute("csrfToken", session.getAttribute("csrfToken").toString());
+       // experimentForm.setCsrfToken(session.getAttribute("csrfToken").toString());
+        model.addAttribute("experimentForm", new ExperimentForm());
 
         return EXPERIMENTS;
     }
@@ -2630,9 +2647,6 @@ public class MainController {
             }
 
         }
-        System.out.println(" service to create experiment");
-
-
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
         JSONObject experimentObject = new JSONObject();
@@ -2860,12 +2874,23 @@ public class MainController {
 //    	return "experiment_scenario_contents";
 //    }
 
-    @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}")
+    /*@RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}")
     public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId,
                                    @PathVariable String expId, final RedirectAttributes redirectAttributes,
-                                   HttpSession session) throws WebServiceRuntimeException {
+                                   HttpSession session) throws WebServiceRuntimeException {*/
+        @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}/{csrfToken}")
+        public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId,
+                @PathVariable String expId, @PathVariable String csrfToken,final RedirectAttributes redirectAttributes,
+        HttpSession session) throws WebServiceRuntimeException {
         // ensure experiment is stopped first
-        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+             // fix for Cross site request forgery //
+            if(!(csrfToken.equals(session.getAttribute("csrfToken").toString())))
+            {
+                log.warn("Permission denied to remove experiment: {} for team: {} Invalid Token detected");
+                redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
+                return REDIRECT_UNAUTHOURIZED_ACCESS;
+            }
+            Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
         Team2 team = invokeAndExtractTeamInfo(teamId);
 
@@ -2929,12 +2954,20 @@ public class MainController {
         }
     }
 
-    @RequestMapping("/start_experiment/{teamName}/{expId}")
+    @RequestMapping("/start_experiment/{teamName}/{expId}/{csrfToken}")
     public String startExperiment(
             @PathVariable String teamName,
             @PathVariable String expId,
+            @PathVariable String csrfToken,
             final RedirectAttributes redirectAttributes, Model model, HttpSession session) throws WebServiceRuntimeException {
 
+        // fix for Cross site request forgery //
+        if(!(csrfToken.equals(session.getAttribute("csrfToken").toString())))
+        {
+            log.warn("Permission denied to start experiment: {} for team: {} Invalid Token detected");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
+            return REDIRECT_UNAUTHOURIZED_ACCESS;
+        }
         // ensure experiment is stopped first before starting
         Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
@@ -3055,8 +3088,19 @@ public class MainController {
      * @param redirectAttributes redirect error messages
      * @return experiment modify page
      */
-    @RequestMapping("/update_experiment/{teamId}/{expId}")
-    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+
+
+    @RequestMapping("/update_experiment/{teamId}/{expId}/{csrfToken}")
+    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, @PathVariable String csrfToken,Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+
+         // fix for Cross site request forgery //
+        if(!(csrfToken.equals(session.getAttribute("csrfToken").toString())))
+        {
+            log.warn("Permission denied to modify experiment: {} for team: {} Invalid Token detected");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
+            return REDIRECT_UNAUTHOURIZED_ACCESS;
+        }
+
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
         Experiment2 editExperiment = extractExperiment(response.getBody().toString());
@@ -5347,10 +5391,8 @@ public class MainController {
         log.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        System.out.println("-----------------------10101010101010 Before approve team-----------------------");
         ResponseEntity response = restTemplate.exchange(
-                properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
-        System.out.println("-----------------------1211212121212121212121 after approve team-----------------------");
+        properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
         String responseBody = response.getBody().toString();
         if (RestUtil.isError(response.getStatusCode())) {
             MyErrorResource error;
@@ -6074,7 +6116,6 @@ public class MainController {
     }
 
     private Team2 extractTeamInfo(String json) {
-        //System.out.println("json------------>"+json);
         Team2 team2 = new Team2();
         JSONObject object = new JSONObject(json);
         JSONArray membersArray = object.getJSONArray(MEMBERS);

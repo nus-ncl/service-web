@@ -11,6 +11,11 @@ public class LoginForm {
     @Size(min=1, message="Invalid email/password.")
     private String loginPassword;
     private String errorMsg = null;
+
+
+
+    // for csrf implementation//
+    private String csrfToken=null;
     
     public LoginForm() {
     }
@@ -37,5 +42,13 @@ public class LoginForm {
 
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
+    }
+
+    public String getCsrfToken() {
+        return csrfToken;
+    }
+
+    public void setCsrfToken(String csrfToken) {
+        this.csrfToken = csrfToken;
     }
 }
