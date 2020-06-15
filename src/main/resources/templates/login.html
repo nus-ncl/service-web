@@ -45,6 +45,7 @@
                 <p>&nbsp;</p>
                 <div class="panel-body loginform">
                     <form method="post" action="#" th:action="@{/login}" th:object="${loginForm}" role="form">
+                        <input type="hidden" id="hidcsrfToken" th:field="*{csrfToken}"/>
                         <fieldset>
                             <div class="form-group account-change-fail"
                                  th:if="${loginForm != null and loginForm.errorMsg != null}">
