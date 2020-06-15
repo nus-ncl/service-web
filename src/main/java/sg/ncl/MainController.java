@@ -679,7 +679,7 @@ public class MainController {
             return REDIRECT_INDEX_PAGE;
         }
     }
-
+    //added to fix the cross site request forgery issue 
     private String generateCSRFToken() {
         SecureRandom entropy = new SecureRandom();
 
