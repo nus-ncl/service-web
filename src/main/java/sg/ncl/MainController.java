@@ -337,15 +337,20 @@ public class MainController {
         return "research";
     }
 
-    /*@RequestMapping("/acknowledgements")
-    public String acknowledgements() {
-        return "acknowledgements";
+   /* @RequestMapping("/otherPublication")
+    public String otherPublication() {
+        return "other_publication";
     }*/
 
-    /*@RequestMapping("/publications")
-    public String publications() {
-        return "publications";
-    }*/
+    @RequestMapping("/nclpublications")
+    public String publications(){
+        return "ncl_publications";
+    }
+
+    @RequestMapping("/otherNewsLinks")
+    public String otherNewsLinks() {
+        return "other_newslinks";
+    }
 
     /*@RequestMapping("/news_updates")
     public String news_updates() {

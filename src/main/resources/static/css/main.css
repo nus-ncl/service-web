@@ -820,6 +820,14 @@ Waypoints
 
 }
 
+.news-header1 {
+    text-align: justify;
+    color : #000;
+    font-size: 16px;
+   /* font-weight: bold;*/
+
+}
+
 .news-header::after { content: " "; width: 35px; margin: 25px auto; }
 
 .upcoming-event-box {
