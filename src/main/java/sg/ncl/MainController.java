@@ -1005,14 +1005,19 @@ public class MainController {
     @RequestMapping(value = "/signup2", method = RequestMethod.GET)
     public String signup2(Model model, HttpServletRequest request) {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
-        if (inputFlashMap != null) {
+        //Dev 1216 - disabling the create account functionality temporarily and redirecting to a diff page//
+        return "page_unavailable";
+
+        /*if (inputFlashMap != null) {
             log.debug((String) inputFlashMap.get(MESSAGE));
             model.addAttribute(SIGNUP_MERGED_FORM, (SignUpMergedForm) inputFlashMap.get(SIGNUP_MERGED_FORM));
         } else {
             log.debug("InputFlashMap is null");
             model.addAttribute(SIGNUP_MERGED_FORM, new SignUpMergedForm());
         }
+
         return SIGNUP_PAGE;
+        */
     }
 
     @RequestMapping(value = "/signup2", method = RequestMethod.POST)
@@ -1021,7 +1026,12 @@ public class MainController {
             @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
             final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
-        if (bindingResult.hasErrors() || !signUpMergedForm.getIsValid()) {
+
+        // Dev 1216 - disabling the create account functionality temporarily and redirecting to a diff page//
+         return "page_unavailable";
+
+
+       /* if (bindingResult.hasErrors() || !signUpMergedForm.getIsValid()) {
             log.warn("Register form has errors {}", signUpMergedForm.toString());
             return SIGNUP_PAGE;
         }
@@ -1087,7 +1097,7 @@ public class MainController {
             redirectAttributes.addFlashAttribute("signupError", "There is a problem when submitting your form. Please re-enter and submit the details again.");
             redirectAttributes.addFlashAttribute(SIGNUP_MERGED_FORM, signUpMergedForm);
             return REDIRECT_SIGNUP;
-        }
+        }*/
     }
 
     private String checkJoinTeamForm(@Valid @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm, RedirectAttributes redirectAttributes, JSONObject mainObject, JSONObject teamFields, String joinNewTeamName) throws WebServiceRuntimeException {
