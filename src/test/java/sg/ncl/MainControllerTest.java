@@ -97,7 +97,7 @@ public class MainControllerTest {
     //--------------------------------------
     // Test before login HTML pages
     //--------------------------------------
-    @Test
+    /*@Test
     public void testIndexPage() throws Exception {
         // ensure page can load <head>, navigation, <body>, <footer>
         mockMvc.perform(get("/"))
@@ -109,7 +109,7 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("Features")))
                 .andExpect(content().string(containsString("Focus on your")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
-    }
+    }*/
 
     @Test
     public void testOverviewPage() throws Exception {
