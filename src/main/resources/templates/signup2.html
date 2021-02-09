@@ -3,6 +3,7 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>National Cybersecurity Laboratories - Signup</title>
+		<script src="https://www.google.com/recaptcha/api.js"></script>
 		<object th:include="fragments/header :: header" th:remove="tag" />
 		<object th:include="fragments/javascript :: javascript" th:remove="tag" />
 	</head>
@@ -153,7 +154,8 @@
 						</fieldset>
 						<p>&nbsp;</p>
 						<div class="form-group">
-							<button type="submit" class="btn btn-special">Submit</button>
+							<div class="g-recaptcha" data-sitekey="6Lcs804aAAAAAFf6XUXnL_hPaiLaLLAeVinurIJQ"></div>
+							<button type="submit" onclick="checkRecaptcha();" class="btn btn-special">Submit</button>
 						</div>
 					</form>
 				</div> <!-- panel-body -->
@@ -322,7 +324,25 @@
 
 	}
 
+	function checkRecaptcha() {
+  		var response = grecaptcha.getResponse();
+  		if(response.length == 0) { 
+    		//reCaptcha not verified
+    		alert("Please verify the Captcha!"); 
+  		} 
+	}
 
+	// implement on the backend
+	function backend_API_challenge() {
+    	var response = grecaptcha.getResponse();
+    	$.ajax({
+        	type: "POST",
+        	url: 'https://www.google.com/recaptcha/api/siteverify',
+        	data: {"secret" : "6Lcs804aAAAAADWrphC4Goj1mqjF_PsFp4j7he1c", "response" : response},
+        	contentType: 'application/x-www-form-urlencoded',
+        	success: function(data) { console.log(data); }
+    	});
+	}
 </script>
 </body>
 </html>
