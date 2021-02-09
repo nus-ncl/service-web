@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Homepage</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/animate.min.css" />
+    <link rel="stylesheet"  type="text/css" href="../static/css/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/lightbox.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/responsive.css"/>
+    <link rel="stylesheet" type="text/css" id="static/css-preset" href="../static/css/presets/preset1.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/flexslider.css"/>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- preloader -->
+    <div class="preloader"> <i class="fa fa-circle-o-notch fa-spin"></i></div>
+    <header id="home">
+        <div id="home-slider" class="carousel slide carousel-fade" data-ride="carousel">
+            <div class="carousel-inner banner">
+
+                <div class="item active" style="background-image: url(images/slider/bannersdn.png); 	background-repeat: no-repeat; background-size:100% 80%">
+                    <div class="caption">
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+
+                        <a class="btn btn-start1 animated fadeInUpBig col-sm-offset-2" href="tutorials.html">Find Out More </a>
+                    </div>
+                    <a class="left-control" href="#home-slider" data-slide="prev"><i class="fa fa-angle-left"></i></a>
+                    <a class="right-control" href="#home-slider" data-slide="next"><i class="fa fa-angle-right"></i></a>
+                    <a id="tohash" href="#services" class="tohash"><i class="fa fa-angle-down"></i></a>
+                </div>
+
+                <div class="item" style="background-image: url(images/slider/new1.png); 	background-repeat: no-repeat; background-size:100% 80%">
+                    <div class="caption">
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <h1 class="animated fadeInLeftBig">NATIONAL CYBERSECURITY R&amp;D LAB</h1>
+                        <div class="text-center col-sm-6 col-sm-offset-3" >
+                            <div class="col-sm-12 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="450ms">
+                                <p>&nbsp;</p>
+                                <p>&nbsp;</p>
+                                <p align="center" style="text-transform:none; ">
+                                    <span class="text-nowrap">Infrastructure As A Service</span> |
+                                    <span class="text-nowrap">Ready-to-use Experimental Setups</span> |
+                                    <span class="text-nowrap">Realistic Cybersecurity Data</span> |
+                                    <span class="text-nowrap">All-in-one Management</span> |
+                                    <span class="text-nowrap">Private, Isolated Environments</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="left-control" href="#home-slider" data-slide="prev"><i class="fa fa-angle-left"></i></a>
+                    <a class="right-control" href="#home-slider" data-slide="next"><i class="fa fa-angle-right"></i></a>
+                    <a id="tohash" href="#services" class="tohash"><i class="fa fa-angle-down"></i></a>
+                </div>
+
+                <div class="item" style="background-image: url(images/slider/7.png); 	background-repeat: no-repeat; background-size:100% 80%">
+                    <div class="caption">
+                        <h1 class="animated fadeInLeftBig"><p>&nbsp;</p>Features</h1>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <div class="col-sm-1 col-sm-offset-3 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="300ms">
+                            <i class="fa fa-book" style="font-size:60px;"></i>
+                            <div><p>&nbsp;</p>
+                                <div class="service-info">
+                                    <h26 style="text-transform:none;">Infrastructure As A Service</h26>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="400ms">
+                            <i class="fa fa-flask" style="font-size:60px;"></i>
+                            <div><p>&nbsp;</p>
+                                <div class="service-info">
+                                    <h26 style="text-transform:none;">1-click Experiment Setups</h26>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="500ms">
+                            <i class="fa fa-database" style="font-size:60px;"></i>
+                            <div><p>&nbsp;</p>
+                                <div class="service-info">
+                                    <h26 style="text-transform:none;">Data Repository</h26>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="600ms">
+                            <i class="fa fa-gavel" style="font-size:60px;"></i>
+                            <div><p>&nbsp;</p>
+                                <div class="service-info">
+                                    <h26 style="text-transform:none;">Services &amp; Tools</h26>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="700ms">
+                            <i class="fa fa-user-secret" style="font-size:60px;"></i>
+                            <div><p>&nbsp;</p>
+                                <div class="service-info">
+                                    <h26 style="text-transform:none;">Isolated Environments</h26>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="800ms">
+                            <i class="fa fa-sign-in" style="font-size:60px;"></i>
+                            <div><p>&nbsp;</p>
+                                <div class="service-info">
+                                    <h26 style="text-transform:none;">Federation</h26>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="left-control" href="#home-slider" data-slide="prev"><i class="fa fa-angle-left"></i></a>
+                    <a class="right-control" href="#home-slider" data-slide="next"><i class="fa fa-angle-right"></i></a>
+                    <a id="tohash" href="#services" class="tohash"><i class="fa fa-angle-down"></i></a>
+                </div>
+
+                <div class="item active" style="background-image: url(images/slider/new2.png); 	background-repeat: no-repeat; background-size:100% 80%">
+                    <div class="caption">
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p class="animated fadeInLeftBig h14">Focus on your </p>
+                        <p>&nbsp;</p>
+                        <p class="animated fadeInLeftBig h14">research priorities</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p class="animated fadeInLeftBig"><h23>Cut down on tedious environment set-up time.</h23></p>
+                        <a class="btn btn-start animated fadeInUpBig" href="plan.html">Find Out More </a>
+                    </div>
+                </div>
+
+                <a class="left-control" href="#home-slider" data-slide="prev"><i class="fa fa-angle-left"></i></a>
+                <a class="right-control" href="#home-slider" data-slide="next"><i class="fa fa-angle-right"></i></a>
+                <a id="tohash" href="#services" class="tohash"><i class="fa fa-angle-down"></i></a>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="container ">
+        <div class="row">
+            <div class="our-services">
+                <div class="col-sm-3 text-center" style=" margin:20px; width:240px;height:280px;padding:10px">
+                    <img src="images/1.png" width="157" height="132" class="img" />
+                    <div><p>&nbsp;</p>
+                        <div class="service-info ">
+                            <h21><a href="overview.html" th:href="@{~/overview}">Overview</a></h21>
+                            <p> Learn more about NCL</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 text-center" style=" margin:20px; width:240px;height:280px;padding:10px">
+                    <img src="images/tutorial1.png" width="206" height="136" class="img" />
+                    <div><p>&nbsp;</p>
+                        <div class="service-info ">
+                            <h21><a href="/tutorials">Tutorial</a></h21>
+                            <p>Learn how to start using NCL in minutes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 text-center" style=" margin:20px; width:240px;height:280px;padding:10px">
+                    <img src="images/Openflow.png" width="136" height="136" class="img" />
+                    <div><p>&nbsp;</p>
+                        <div class="service-info ">
+                            <h21><a href="/bnvirtusage.pdf">SDN</a></h21>
+                            <p>Provisioning SDN in NCL testbed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 text-center" style=" margin:20px; width:240px;height:280px;padding:10px">
+                    <img src="images/dataset.png" width="136" height="136" class="img" />
+                    <div><p>&nbsp;</p>
+                        <div class="service-info ">
+                            <h21><a th:href="@{/data/public}">Public Datasets</a></h21>
+                            <p>Accessing NCL Public Datasets</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="joinUs" class="background4" >
+        <div class="container ">
+            <div class="row ">
+                <div class="heading text-center col-sm-12">
+                    <div>
+                        <p class="h15">What We Do</p>
+                        <p>&nbsp;</p>
+                    </div>
+                </div>
+                <div class="heading col-sm-10 col-sm-offset-1 ">
+                    <div class="col-sm-1" style="padding-top: 20px"><img src="images/check.png" width="45" height="41"/></div>
+                    <div class="col-sm-9 col-sm-offset-1">
+                        <h4>
+                            Maintain a shared national infrastructure that provides computing and networking resources
+                            for cybersecurity research and development community
+                        </h4>
+                    </div>
+                </div>
+                <div class="heading col-sm-10 col-sm-offset-1 ">
+                    <div class="col-sm-1" style="padding-top: 20px"><img src="images/check.png" width="45" height="41"/></div>
+                    <div class="col-sm-9 col-sm-offset-1">
+                        <h4>
+                            Provide ready-to-use, repeatable, customisable and high fidelity experimentation environments
+                        </h4>
+                    </div>
+                </div>
+                <div class="heading col-sm-10 col-sm-offset-1 ">
+                    <div class="col-sm-1" style="padding-top: 20px"><img src="images/check.png" width="45" height="41"/></div>
+                    <div class="col-sm-9 col-sm-offset-1">
+                        <h4>
+                            Run a data repository which hosts realistic and up-to-date cybersecurity data for the R&amp;D community
+                        </h4>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </section> <!-- join us -->
+
+    <section>
+
+        <div class="container">
+            <div class="row ">
+                <div class="heading text-center col-sm-10 col-sm-offset-1">
+                    <div class="h15">Who We Target
+                    </div>
+                    <p>&nbsp;</p><p>&nbsp;</p>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="col-sm-5" align="center">
+                    <img src="images/solback.png" width="170" height="160"/>
+                    <h2>For Researchers</h2>
+                    <p>
+                        With necessary resources and ready-to-use environments, you can spend less time and effort on
+                        tedious experiment setup, conduct comprehensive experimental studies and focus more on
+                        research innovation.
+                    </p>
+                </div>
+                <div class="col-sm-5 col-sm-offset-2" align="center">
+                    <img src="images/solback2.png" width="170" height="160"/>
+                    <h2>For Teaching Professional</h2>
+                    <p>
+                        A large collection of teaching materials is available for you to demonstrate realistic
+                        environments in teaching. Our collection of security environments is customisable to suit your
+                        teaching needs.
+                    </p>
+                </div>
+            </div>
+            <p>&nbsp;</p><p>&nbsp;</p>
+            <div class="col-sm-12">
+                <div class="col-sm-5" align="center">
+                    <img src="images/solback3.png" width="170" height="160"/>
+                    <h2>For Agencies</h2>
+                    <p>
+                        Our infrastructure is capable of supporting your experimentation validation and exercise,
+                        from small to large scale processes.
+                    </p>
+                </div>
+
+                <div class="col-sm-5 col-sm-offset-2" align="center">
+                    <img src="images/solback4.png" width="170" height="160"/>
+                    <h2>For Industry</h2>
+                    <p>Reduce your cost and turn-around time by utilizing our cost-effective infrastructure and ready-to-use environments.</p>
+                </div>
+            </div>
+        </div>
+        <div class="heading col-sm-6 col-sm-offset-3 ">
+            <div class="col-sm-9 col-sm-offset-5">
+                <div style="text-align: right;">
+                    <a id="tohash1" href="#home-slider" class="tohash1">Back to Top</a>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+
+
+<!--[if lt IE 9]>
+<script type="text/javascript" src="../static/js/html5shiv.js"></script>
+<script type="text/javascript" src="../static/js/respond.min.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="../static/js/jquery.min.js"></script>
+<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../static/js/jquery.inview.min.js"></script>
+<script type="text/javascript" src="../static/js/wow.min.js"></script>
+<script type="text/javascript" src="../static/js/mousescroll.js"></script>
+<script type="text/javascript" src="../static/js/jquery.countTo.js"></script>
+<script type="text/javascript" src="../static/js/lightbox.min.js"></script>
+<script type="text/javascript" src="../static/js/main.js"></script>
+<script type="text/javascript" src="../static/js/waypoints.min.js"></script>
+<script type="text/javascript" src="../static/js/minimal.lightbox.js"></script>
+<script type="text/javascript" src="../static/js/jquery.flexslider.js"></script>
+</body>
+</html>
+
+
+
