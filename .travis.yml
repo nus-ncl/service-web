@@ -4,7 +4,7 @@ dist: trusty
 
 language: java
 jdk:
-  - oraclejdk11 # test against version 1.8 >> updated to version 1.11 to fix sonarqube issue in build on 02/Feb/2021
+  - oraclejdk8 # test against version 1.8
 
 notifications:
   slack:
