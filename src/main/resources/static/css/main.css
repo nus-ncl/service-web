@@ -2178,12 +2178,13 @@ html {
 }
 
 .background8 {
-    background-image: url(../images/tool1.png);
+    background-image: url(../images/tools2.jpg);
     background-size: cover;
     background-position: center;
 
 
 }
+
 /**
  * Remove background if window width is 6OOpx or less
  */
