@@ -29,8 +29,8 @@ group = 'sg.ncl'
 
 version "1-${hash}"
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     jcenter()
@@ -133,7 +133,7 @@ task bamboo(type: org._10ne.gradle.rest.RestTask) {
     }
 }
 
-task triggerBamboo << {
+task triggerBamboo {
     if (System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
     println 'Triggering Bamboo Build:'
         tasks.bamboo.execute()
@@ -142,7 +142,7 @@ task triggerBamboo << {
     }
 }
 
-task printInfo << {
+task printInfo {
     println "  - project: ${project.name}"
     println "  - archive artifacts: ${project.configurations.archives.allArtifacts.size()}"
     project.configurations.archives.artifacts.files.each {
@@ -162,7 +162,7 @@ task printInfo << {
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion '3.0'
+wrapper{
+    gradleVersion '6.8.3'
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
