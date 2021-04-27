@@ -34,6 +34,7 @@ targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 dependencyManagement {
@@ -63,6 +64,15 @@ dependencies {
 
     testCompile 'org.apache.commons:commons-lang3'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
 }
 
 compileJava {
@@ -88,8 +98,8 @@ sonarqube {
                 property 'sonar.github.repository', System.getenv('TRAVIS_REPO_SLUG')
                 property 'sonar.github.oauth', System.getenv('GITHUB_TOKEN')
             }
-        } 
-    
+        }
+
     }
 }
 
@@ -135,7 +145,7 @@ task bamboo(type: org._10ne.gradle.rest.RestTask) {
 
 task triggerBamboo {
     if (System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
-    println 'Triggering Bamboo Build:'
+        println 'Triggering Bamboo Build:'
         tasks.bamboo.execute()
     } else {
         println 'Is not on master branch or is a pull request: branch = ' + System.getenv('TRAVIS_BRANCH') + ', pull request = ' + System.getenv('TRAVIS_PULL_REQUEST')
@@ -165,4 +175,8 @@ task printInfo {
 wrapper{
     gradleVersion '6.8.3'
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+}
+
+springBoot {
+    mainClass = 'sg.ncl.WebApplication'
 }
