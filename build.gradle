@@ -172,6 +172,7 @@ task printInfo {
     }
 }
 
+// change gradle version at root/gradle/wrapper
 wrapper{
     gradleVersion '6.8.3'
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
