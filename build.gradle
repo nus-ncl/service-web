@@ -29,6 +29,7 @@ group = 'sg.ncl'
 
 version "1-${hash}"
 
+// Java Version
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
