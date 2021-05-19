@@ -29,6 +29,7 @@ group = 'sg.ncl'
 
 version "1-${hash}"
 
+// Java Version
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
@@ -207,6 +208,7 @@ task printInfo {
 //    }
 //}
 
+// change gradle version at root/gradle/wrapper
 wrapper{
     gradleVersion '6.8.3'
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
