@@ -148,7 +148,8 @@ task triggerBamboo {
     doLast {
         if (System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
             println 'Triggering Bamboo Build:'
-            tasks.bamboo.execute()
+//            tasks.bamboo.execute()
+            tasks.bamboo.finalizedBy()
         } else {
             println 'Is not on master branch or is a pull request: branch = ' + System.getenv('TRAVIS_BRANCH') + ', pull request = ' + System.getenv('TRAVIS_PULL_REQUEST')
         }
