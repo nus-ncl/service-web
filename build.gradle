@@ -145,33 +145,69 @@ task bamboo(type: org._10ne.gradle.rest.RestTask) {
 }
 
 task triggerBamboo {
-    if (System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
-        println 'Triggering Bamboo Build:'
-        tasks.bamboo.execute()
-    } else {
-        println 'Is not on master branch or is a pull request: branch = ' + System.getenv('TRAVIS_BRANCH') + ', pull request = ' + System.getenv('TRAVIS_PULL_REQUEST')
+    doLast {
+        if (System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
+            println 'Triggering Bamboo Build:'
+//            tasks.bamboo.execute()
+            tasks.bamboo.finalizedBy()
+        } else {
+            println 'Is not on master branch or is a pull request: branch = ' + System.getenv('TRAVIS_BRANCH') + ', pull request = ' + System.getenv('TRAVIS_PULL_REQUEST')
+        }
     }
 }
 
+//task triggerBamboo {
+//    if (System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
+//        println 'Triggering Bamboo Build:'
+//        tasks.bamboo.execute()
+////        def buildTask=tasks.getByName('triggerBamboo')
+////        buildTask.finalizedBy ""
+//    } else {
+//        println 'Is not on master branch or is a pull request: branch = ' + System.getenv('TRAVIS_BRANCH') + ', pull request = ' + System.getenv('TRAVIS_PULL_REQUEST')
+//    }
+//}
+
 task printInfo {
-    println "  - project: ${project.name}"
-    println "  - archive artifacts: ${project.configurations.archives.allArtifacts.size()}"
-    project.configurations.archives.artifacts.files.each {
-        println "    - ${it.name}"
-    }
-    println "  - group: ${project.group}"
-    println "  - version: ${project.version}"
-    println "  - ${subprojects.size()} subprojects:"
-    subprojects.each {
-        println "    - ${it.name}:"
-        println "      - archive artifacts: ${it.configurations.archives.allArtifacts.size()}"
-        it.configurations.archives.artifacts.files.each {
-            println "        - ${it.name}"
+    doLast{
+        println "  - project: ${project.name}"
+        println "  - archive artifacts: ${project.configurations.archives.allArtifacts.size()}"
+        project.configurations.archives.artifacts.files.each {
+            println "    - ${it.name}"
         }
-        println "      - group: ${it.group}"
-        println "      - version: ${it.version}"
+        println "  - group: ${project.group}"
+        println "  - version: ${project.version}"
+        println "  - ${subprojects.size()} subprojects:"
+        subprojects.each {
+            println "    - ${it.name}:"
+            println "      - archive artifacts: ${it.configurations.archives.allArtifacts.size()}"
+            it.configurations.archives.artifacts.files.each {
+                println "        - ${it.name}"
+            }
+            println "      - group: ${it.group}"
+            println "      - version: ${it.version}"
+        }
     }
 }
+
+//task printInfo {
+//    println "  - project: ${project.name}"
+//    println "  - archive artifacts: ${project.configurations.archives.allArtifacts.size()}"
+//    project.configurations.archives.artifacts.files.each {
+//        println "    - ${it.name}"
+//    }
+//    println "  - group: ${project.group}"
+//    println "  - version: ${project.version}"
+//    println "  - ${subprojects.size()} subprojects:"
+//    subprojects.each {
+//        println "    - ${it.name}:"
+//        println "      - archive artifacts: ${it.configurations.archives.allArtifacts.size()}"
+//        it.configurations.archives.artifacts.files.each {
+//            println "        - ${it.name}"
+//        }
+//        println "      - group: ${it.group}"
+//        println "      - version: ${it.version}"
+//    }
+//}
 
 // change gradle version at root/gradle/wrapper
 wrapper{
