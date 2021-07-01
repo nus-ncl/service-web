@@ -86,23 +86,23 @@ tasks.jacocoTestReport {
     }
 }
 
-//sonarqube {
-//    properties {
-//        property 'sonar.host.url', 'https://sonarcloud.io'
-//        property 'sonar.organization', 'zhangchunwang-github'
-//        property 'sonar.login', System.getenv('SONAR_TOKEN')
-//        property 'sonar.scanner.force-deprecated-java-version-grace-period', 'true'
-//        if (System.getenv('TRAVIS_BRANCH') == 'master') {
-//            if (System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
-//            } else {
-//                property 'sonar.github.pullRequest', System.getenv('TRAVIS_PULL_REQUEST')
-//                property 'sonar.github.repository', System.getenv('TRAVIS_REPO_SLUG')
-//                property 'sonar.github.oauth', System.getenv('GITHUB_TOKEN')
-//            }
-//        }
+sonarqube {
+    properties {
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.organization', 'ariscahyadi-github'
+        property 'sonar.login', System.getenv('SONAR_TOKEN')
+        property 'sonar.scanner.force-deprecated-java-version-grace-period', 'true'
+        if (System.getenv('TRAVIS_BRANCH') == 'DEV-1235') {
+            if (System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
+            } else {
+                property 'sonar.github.pullRequest', System.getenv('TRAVIS_PULL_REQUEST')
+                property 'sonar.github.repository', System.getenv('TRAVIS_REPO_SLUG')
+                property 'sonar.github.oauth', System.getenv('GITHUB_TOKEN')
+            }
+        }
 
-//    }
-//}
+    }
+}
 
 bintray {
     user = System.getenv('BINTRAY_USER')
