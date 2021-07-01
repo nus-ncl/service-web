@@ -21,13 +21,13 @@ plugins {
 }
 apply plugin: 'spring-boot'
 
-ext {
-    hash = System.getenv('TRAVIS_COMMIT') == null ? 'SNAPSHOT' : "git rev-parse --short ${System.getenv('TRAVIS_COMMIT')}".execute().text.trim()
-}
+//ext {
+//    hash = System.getenv('TRAVIS_COMMIT') == null ? 'SNAPSHOT' : "git rev-parse --short ${System.getenv('TRAVIS_COMMIT')}".execute().text.trim()
+//}
 
 group = 'sg.ncl'
 
-version "1-${hash}"
+//version "1-${hash}"
 
 // Java Version
 sourceCompatibility = JavaVersion.VERSION_11
@@ -90,45 +90,46 @@ sonarqube {
     properties {
         property 'sonar.host.url', 'https://sonarcloud.io'
         property 'sonar.organization', 'ariscahyadi-github'
+        property "sonar.projectKey", "ariscahyadi_ncl-service-web"
         property 'sonar.login', System.getenv('SONAR_TOKEN')
-        property 'sonar.scanner.force-deprecated-java-version-grace-period', 'true'
-        if (System.getenv('TRAVIS_BRANCH') == 'DEV-1235') {
-            if (System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
-            } else {
-                property 'sonar.github.pullRequest', System.getenv('TRAVIS_PULL_REQUEST')
-                property 'sonar.github.repository', System.getenv('TRAVIS_REPO_SLUG')
+//        property 'sonar.scanner.force-deprecated-java-version-grace-period', 'true'
+//        if (System.getenv('TRAVIS_BRANCH') == 'DEV-1235') {
+//            if (System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
+//            } else {
+//                property 'sonar.github.pullRequest', System.getenv('TRAVIS_PULL_REQUEST')
+//                property 'sonar.github.repository', System.getenv('TRAVIS_REPO_SLUG')
                 property 'sonar.github.oauth', System.getenv('GITHUB_TOKEN')
-            }
-        }
+//            }
+//        }
 
     }
 }
 
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    configurations = ['archives']
-    dryRun = System.getenv('TRAVIS_BRANCH') != 'master' || System.getenv('TRAVIS_PULL_REQUEST') != 'false'
-    publish = System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false'
-    pkg {
-        repo = 'generic'
-        name = 'service-web'
-        userOrg = 'ncl'
-        desc = 'NCL web service'
-        websiteUrl = 'https://github.com/nus-ncl/service-web'
-        issueTrackerUrl = 'https://github.com/nus-ncl/service-web/issues'
-        vcsUrl = 'https://github.com/nus-ncl/service-web.git'
-        licenses = ['Apache-2.0']
+//bintray {
+//    user = System.getenv('BINTRAY_USER')
+//    key = System.getenv('BINTRAY_KEY')
+//    configurations = ['archives']
+//    dryRun = System.getenv('TRAVIS_BRANCH') != 'master' || System.getenv('TRAVIS_PULL_REQUEST') != 'false'
+//    publish = System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false'
+//    pkg {
+//        repo = 'generic'
+//        name = 'service-web'
+//        userOrg = 'ncl'
+//        desc = 'NCL web service'
+//        websiteUrl = 'https://github.com/nus-ncl/service-web'
+//        issueTrackerUrl = 'https://github.com/nus-ncl/service-web/issues'
+//        vcsUrl = 'https://github.com/nus-ncl/service-web.git'
+//        licenses = ['Apache-2.0']
 
-        githubRepo = 'nus-ncl/service-web'
+//        githubRepo = 'nus-ncl/service-web'
 
-        version {
-            name = "${project.version}"
-            desc = "Web Service ${project.version} release"
-            released = new Date()
-        }
-    }
-}
+//        version {
+//            name = "${project.version}"
+//            desc = "Web Service ${project.version} release"
+//            released = new Date()
+//        }
+//    }
+//}
 
 task bamboo(type: org._10ne.gradle.rest.RestTask) {
     httpMethod = 'post'
