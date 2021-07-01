@@ -5,9 +5,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ master ]
+    branches: [ DEV-1235 ]
   pull_request:
-    branches: [ master ]
+    branches: [ DEV-1235 ]
 
 jobs:
   build:
@@ -21,7 +21,13 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
+    - name: Remove existing build cache
+      run: rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock ; rm -fr $HOME/.gradle/caches/*/plugin-resoluti
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    - name: Install with Gradle
+      run: ./gradlew --stacktrace printInfo
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew --continue --stacktrace --profile build
+    - name: Run some code test
+      run: ./gradlew --stacktrace -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" sonarqube jacocoTestReport coveralls
