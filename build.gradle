@@ -84,7 +84,7 @@ sonarqube {
     properties {
         property 'sonar.host.url', 'https://sonarcloud.io'
         property 'sonar.organization', 'nus-ncl-github'
-        property "sonar.projectKey", "nus-ncl-github_service-web"
+        property "sonar.projectKey", "nus-ncl_service-web"
         property 'sonar.login', System.getenv('SONAR_TOKEN')
         property 'sonar.github.oauth', System.getenv('GITHUB_TOKEN')
     }
