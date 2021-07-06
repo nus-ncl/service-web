@@ -25,7 +25,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Remove existing build cache
-      run: rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock ; rm -fr $HOME/.gradle/caches/*/plugin-resoluti
+      run: rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock ; rm -fr $HOME/.gradle/caches/*/plugin-resolution/
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Install with Gradle
