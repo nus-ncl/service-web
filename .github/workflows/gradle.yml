@@ -38,6 +38,6 @@ jobs:
 #        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 #      run: ./gradlew --stacktrace -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" sonarqube jacocoTestReport coveralls
     - name: Publish package
-      run: gradle publish
+      run: ./gradlew publish
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
