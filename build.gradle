@@ -33,15 +33,11 @@ group = 'sg.ncl'
 version = '1.0-SNAPSHOT'
 
 publishing {
-//    publications {
-////        maven(MavenPublication) {
-////            groupId = 'org.gradle.sample'
-////            artifactId = 'library'
-////            version = '1.1'
-////
-////            from components.java
-////        }
-//    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
     repositories {
         maven {
             name = "GitHubPackages"
