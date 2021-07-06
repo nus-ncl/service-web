@@ -28,16 +28,20 @@ plugins {
 //apply plugin: 'io.spring.dependency-management'
 //apply plugin: 'maven-publish'
 
+ext {
+    commit_id =  "git rev-parse --short HEAD".execute().text.substring(0,7)
+//    commit_id =  "git rev-parse --short HEAD".execute().text.trim()
+}
 
 group = 'sg.ncl'
-version = '1.0-SNAPSHOT'
+version = "${commit_id}"
 
 publishing {
-    publications {
-        gpr(MavenPublication) {
-            from(components.java)
-        }
-    }
+//    publications {
+//        gpr(MavenPublication) {
+//            from(components.java)
+//        }
+//    }
     repositories {
         maven {
             name = "GitHubPackages"
