@@ -37,11 +37,11 @@ group = 'sg.ncl'
 version = "${commit_id}"
 
 publishing {
-//    publications {
-//        gpr(MavenPublication) {
-//            from(components.java)
-//        }
-//    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
     repositories {
         maven {
             name = "GitHubPackages"
