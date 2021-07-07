@@ -183,3 +183,8 @@ springBoot {
 jar {
     enabled = false
 }
+
+bootJar {
+    mainClass = 'sg.ncl.WebApplication'
+}
+
