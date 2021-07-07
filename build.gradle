@@ -180,4 +180,6 @@ springBoot {
     mainClass = 'sg.ncl.WebApplication'
 }
 
-
+jar {
+    enabled = false
+}
