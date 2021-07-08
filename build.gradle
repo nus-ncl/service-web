@@ -35,7 +35,7 @@ group = 'sg.ncl'
 
 publishing {
     publications {
-        myLibrary(MavenPublication) {
+        gpr(MavenPublication) {
             from components.java
         }
     }
