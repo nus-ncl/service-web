@@ -46,6 +46,8 @@ publishing {
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
+//                username = project.findProperty("gpr.user") ?:System.getenv("GITHUB_ACTOR")
+//                password = project.findProperty("gpr.key") ?:System.getenv("GITHUB_TOKEN")
             }
         }
     }
@@ -176,9 +178,9 @@ wrapper{
 //bootRepackage {
 //    mainClass = 'sg.ncl.WebApplication'
 //}
-springBoot {
-    mainClass = 'sg.ncl.WebApplication'
-}
+//springBoot {
+//    mainClass = 'sg.ncl.WebApplication'
+//}
 
 jar {
     enabled = false
