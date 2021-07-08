@@ -32,7 +32,7 @@ ext {
 }
 
 group = 'sg.ncl'
-//version = "${commit_id}"
+version = "${commit_id}"
 
 
 
