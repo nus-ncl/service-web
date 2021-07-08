@@ -28,18 +28,20 @@ plugins {
 
 ext {
     commit_id =  "git rev-parse --short HEAD".execute().text.substring(0,7)
-    artifactId = "web-service-${version}"
+//    artifactId = "web-service-${version}"
 }
 
 group = 'sg.ncl'
-version = "${commit_id}"
+//version = "${commit_id}"
 
 
 
 publishing {
     publications {
         gpr(MavenPublication) {
-            artifactId = ${artifactId}
+            groupId = 'sg.ncl'
+            artifactId = 'web-service'
+            version = commit_id
 
             from components.java
         }
