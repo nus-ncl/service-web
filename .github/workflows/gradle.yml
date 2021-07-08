@@ -31,7 +31,8 @@ jobs:
     - name: Install with Gradle
       run: ./gradlew --stacktrace printInfo
     - name: Build with Gradle
-      run: ./gradlew --continue --stacktrace --profile build
+#      run: ./gradlew --continue --stacktrace --profile build
+      run: ./gradlew --continue --stacktrace --profile bootJar
 #    - name: Run some code test
 #      env:
 #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
