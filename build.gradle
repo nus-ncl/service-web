@@ -26,19 +26,20 @@ plugins {
 //apply plugin: 'io.spring.dependency-management'
 //apply plugin: 'maven-publish'
 
-
-group = 'sg.ncl'
-version = "${commit_id}"
-
 ext {
     commit_id =  "git rev-parse --short HEAD".execute().text.substring(0,7)
     artifactId = "web-service-${version}"
 }
 
+group = 'sg.ncl'
+version = "${commit_id}"
+
+
+
 publishing {
     publications {
         gpr(MavenPublication) {
-            artifactId = artifactId
+            artifactId = ${artifactId}
 
             from components.java
         }
