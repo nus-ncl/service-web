@@ -39,14 +39,14 @@ configurations {
     [apiElements, runtimeElements].each {
         it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
         it.outgoing.artifact(bootJar)
-    } 
+    }
 }
 
 publishing {
     publications {
         gpr(MavenPublication) {
             groupId = 'sg.ncl'
-            artifactId = 'web-service'
+            artifactId = 'service-web'
             version = "${commit_id}"
 
             from components.java
