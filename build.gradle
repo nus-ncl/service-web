@@ -33,7 +33,7 @@ ext {
 
 group = 'sg.ncl'
 //
-version = "${commit_id}"
+//version = "${commit_id}"
 
 
 
@@ -42,7 +42,7 @@ publishing {
         gpr(MavenPublication) {
             groupId = 'sg.ncl'
             artifactId = 'web-service'
-            version = commit_id
+            version = "${commit_id}"
 
             from components.java
         }
