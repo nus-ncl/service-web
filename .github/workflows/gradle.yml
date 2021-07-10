@@ -47,15 +47,16 @@ jobs:
 #      with:
 #        name: jar
 #        path: build/libs
-
+    - name: Add COMMIT_ID env property
+      run: echo "COMMIT_ID=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${GITHUB_SHA}
-        release_name: Release-${GITHUB_SHA}
+        tag_name: ${COMMIT_ID}
+        release_name: Release-${COMMIT_ID}
         draft: false
         prerelease: false
     - name: print
@@ -67,6 +68,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/libs/web-service-${GITHUB_SHA}.jar
-        asset_name: web-service-${GITHUB_SHA}.jar
+        asset_path: build/libs/web-service-${COMMIT_ID}.jar
+        asset_name: web-service-${COMMIT_ID}.jar
         asset_content_type: application/jar
