@@ -48,7 +48,23 @@ jobs:
 #        name: jar
 #        path: build/libs
     - name: Add COMMIT_ID env property
-      run: echo "COMMIT_ID=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+      run: |
+      echo "COMMIT_ID=`echo ${GITHUB_SHA} | cut -c1-8`"
+      echo '1'
+      echo $GITHUB_ENV
+      echo '2'
+      env
+      echo '3'
+      echo GITHUB_SHA
+      echo '4'
+      echo $GITHUB_SHA
+      echo '5'
+      echo ${GITHUB_SHA}
+      echo '6'
+      echo ${{ GITHUB_SHA }}
+      echo '7'
+      echo ${{ github.sha }}
+      echo '8'
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
