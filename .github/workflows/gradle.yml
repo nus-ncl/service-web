@@ -48,13 +48,13 @@ jobs:
 #        name: jar
 #        path: build/libs
     - name: Add COMMIT_ID env property
-      run: |
+      run: env
 #        echo "COMMIT_ID=`echo ${GITHUB_SHA} | cut -c1-8`"
 #        echo '1'
 #        echo $GITHUB_ENV
-        echo '2'
-        env
-        echo '3'
+#        echo '2'
+#        env
+#        echo '3'
 #        echo GITHUB_SHA
 #        echo '4'
 #        echo $GITHUB_SHA
