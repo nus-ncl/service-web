@@ -18,8 +18,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      COMMIT_ID: $(git rev-parse --short=7 ${{ github.sha }})
 
     steps:
     - uses: actions/checkout@v2
@@ -49,32 +47,21 @@ jobs:
 #      with:
 #        name: jar
 #        path: build/libs
-    - name: Add COMMIT_ID env property
+    - name: Set COMMIT_ID env
+      id: vars
+      run: echo "::set-output name=COMMIT_ID::$(git rev-parse --short=7 HEAD)"
+    - name: Check COMMIT_ID env
+      run: echo ${{ steps.vars.outputs.COMMIT_ID }}
+    - name: check COMMIT_ID env property
       run: env
-#        echo "COMMIT_ID=`echo ${GITHUB_SHA} | cut -c1-8`"
-#        echo '1'
-#        echo $GITHUB_ENV
-#        echo '2'
-#        env
-#        echo '3'
-#        echo GITHUB_SHA
-#        echo '4'
-#        echo $GITHUB_SHA
-#        echo '5'
-#        echo ${GITHUB_SHA}
-#        echo '6'
-#        echo ${{ GITHUB_SHA }}
-#        echo '7'
-#        echo ${{ github.sha }}
-#        echo '8'
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: $COMMIT_ID
-        release_name: Release-$COMMIT_ID
+        tag_name: ${{ steps.vars.outputs.COMMIT_ID }}
+        release_name: Release-${{ steps.vars.outputs.COMMIT_ID }}
         draft: false
         prerelease: false
     - name: print
