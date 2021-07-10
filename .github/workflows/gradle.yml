@@ -9,8 +9,7 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ DEV-1233 ]
-    tags:
-      - 'v*'
+
   pull_request:
     branches: [ DEV-1233 ]
 
@@ -34,26 +33,18 @@ jobs:
       run: ./gradlew --stacktrace printInfo
     - name: Build with Gradle
       run: ./gradlew --continue --stacktrace --profile build
-#    - name: Run some code test
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#      run: ./gradlew --stacktrace -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" sonarqube jacocoTestReport coveralls
-#    - name: Publish package
-#      run: ./gradlew publish
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: jar
-#        path: build/libs
-    - name: Set COMMIT_ID env
+    - name: Run some code test
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: ./gradlew --stacktrace -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" sonarqube jacocoTestReport coveralls
+    - name: Publish package
+      run: ./gradlew publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Set COMMIT_ID env var
       id: vars
       run: echo "::set-output name=COMMIT_ID::$(git rev-parse --short=7 HEAD)"
-    - name: Check COMMIT_ID env
-      run: echo ${{ steps.vars.outputs.COMMIT_ID }}
-    - name: check COMMIT_ID env property
-      run: env
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -64,8 +55,6 @@ jobs:
         release_name: Release-${{ steps.vars.outputs.COMMIT_ID }}
         draft: false
         prerelease: false
-    - name: print
-      run: ls -al build/libs/
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
