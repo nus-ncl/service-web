@@ -19,7 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      COMMIT_ID: ${{ github.sha }}
+      COMMIT_ID: $(git rev-parse --short=7 ${{ github.sha }})
 
     steps:
     - uses: actions/checkout@v2
@@ -41,10 +41,10 @@ jobs:
 #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 #      run: ./gradlew --stacktrace -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" sonarqube jacocoTestReport coveralls
-    - name: Publish package
-      run: ./gradlew publish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#    - name: Publish package
+#      run: ./gradlew publish
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #    - uses: actions/upload-artifact@v2
 #      with:
 #        name: jar
@@ -73,8 +73,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.sha }}
-        release_name: Release-${{ github.sha }}
+        tag_name: $COMMIT_ID
+        release_name: Release-$COMMIT_ID
         draft: false
         prerelease: false
     - name: print
