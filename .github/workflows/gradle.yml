@@ -54,8 +54,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: $(echo ${GITHUB_SHA} | cut -c1-8)
-        release_name: Release-$(echo ${GITHUB_SHA} | cut -c1-8)
+        tag_name: $GITHUB_SHA
+        release_name: Release-$GITHUB_SHA
         draft: false
         prerelease: false
     - name: print
@@ -67,6 +67,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/libs/web-service-$(echo ${GITHUB_SHA} | cut -c1-8).jar
-        asset_name: web-service-${GITHUB_SHA}.jar
+        asset_path: build/libs/web-service-$GITHUB_SHA.jar
+        asset_name: web-service-$GITHUB_SHA.jar
         asset_content_type: application/jar
