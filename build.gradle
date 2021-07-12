@@ -22,19 +22,14 @@ plugins {
     id 'org.springframework.boot' version '2.5.2'
 }
 
-//apply plugin: 'spring-boot'
-//apply plugin: 'io.spring.dependency-management'
-//apply plugin: 'maven-publish'
-
+// get commit id for version
 ext {
     commit_id =  "git rev-parse --short HEAD".execute().text.substring(0,7)
-//    artifactId = "web-service-${version}"
 }
 
-// group = 'sg.ncl'
-//
 version = "${commit_id}"
 
+// build configuration
 configurations {
     [apiElements, runtimeElements].each {
         it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
@@ -42,13 +37,13 @@ configurations {
     }
 }
 
+// publish to Github package repository
 publishing {
     publications {
         gpr(MavenPublication) {
             groupId = 'sg.ncl'
             artifactId = 'service-web'
             version = "${commit_id}"
-
             from components.java
         }
     }
@@ -59,8 +54,6 @@ publishing {
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
-//                username = project.findProperty("gpr.user") ?:System.getenv("GITHUB_ACTOR")
-//                password = project.findProperty("gpr.key") ?:System.getenv("GITHUB_TOKEN")
             }
         }
     }
@@ -71,7 +64,6 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
@@ -125,6 +117,7 @@ tasks.jacocoTestReport {
     }
 }
 
+// Code security testing with SonarCloud
 sonarqube {
     properties {
         property 'sonar.host.url', 'https://sonarcloud.io'
@@ -149,14 +142,11 @@ task bamboo(type: org._10ne.gradle.rest.RestTask) {
     }
 }
 
+// Trigger Bamboo Action
 task triggerBamboo {
     doLast {
-        if (System.getenv('TRAVIS_BRANCH') == 'master' && System.getenv('TRAVIS_PULL_REQUEST') == 'false') {
-            println 'Triggering Bamboo Build:'
-            tasks.bamboo.execute()
-        } else {
-            println 'Is not on master branch or is a pull request: branch = ' + System.getenv('TRAVIS_BRANCH') + ', pull request = ' + System.getenv('TRAVIS_PULL_REQUEST')
-        }
+        println 'Triggering Bamboo Build:'
+        tasks.bamboo.execute()
     }
 }
 
@@ -182,18 +172,11 @@ task printInfo {
     }
 }
 
-// change gradle version at root/gradle/wrapper
+// Change gradle version at root/gradle/wrapper
 wrapper{
     gradleVersion '6.8.3'
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
-
-//bootRepackage {
-//    mainClass = 'sg.ncl.WebApplication'
-//}
-//springBoot {
-//    mainClass = 'sg.ncl.WebApplication'
-//}
 
 jar {
     enabled = false
