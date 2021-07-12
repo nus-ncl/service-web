@@ -150,8 +150,7 @@ task triggerBamboo {
             println 'Triggering Bamboo Build:'
             tasks.bamboo.execute()
         } else {
-            println 'Not Triggering Bamboo Build: Not master branch or Running in github actions'
-            tasks.bamboo.doLast()
+            println 'Failed Triggering Bamboo Build: Not master branch or Not running in github actions'
             tasks.bamboo.finalizedBy()
         }
     }
