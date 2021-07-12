@@ -145,8 +145,12 @@ task bamboo(type: org._10ne.gradle.rest.RestTask) {
 // Trigger Bamboo Action
 task triggerBamboo {
     doLast {
+        Map<String, String> env = System.getenv();
+        for (Map.Entry<String, String> entry : env.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
         println 'Triggering Bamboo Build:'
-        tasks.bamboo.execute()
+//        tasks.bamboo.execute()
     }
 }
 

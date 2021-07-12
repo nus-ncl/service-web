@@ -33,6 +33,8 @@ jobs:
       run: ./gradlew --stacktrace printInfo
     - name: print env
       run: env
+    - name: trigger bamboo
+      run: ./gradlew --stacktrace triggerBamboo
 #    - name: Build with Gradle
 #      run: ./gradlew --continue --stacktrace --profile build
 #    - name: Run some code test
