@@ -130,6 +130,7 @@ sonarqube {
 
 task bamboo(type: org._10ne.gradle.rest.RestTask) {
     println 'bamboo task is running'
+    println System.getenv('BAMBOO_CREDENTIALS')
     httpMethod = 'post'
     uri = 'https://bamboo.ncl.sg/rest/api/latest/queue/NCL-WS'
     contentType = groovyx.net.http.ContentType.JSON
@@ -141,6 +142,7 @@ task bamboo(type: org._10ne.gradle.rest.RestTask) {
         assert it.buildNumber != null
         println '- Response: ' + it
     }
+    print it
     println 'bamboo task is done'
 }
 
@@ -152,6 +154,7 @@ task triggerBamboo {
             tasks.bamboo.finalizedBy()
         } else {
             println 'Failed Triggering Bamboo Build: Not master branch or Not running in github actions'
+            tasks.bamboo.finalizedBy()
         }
     }
 }
