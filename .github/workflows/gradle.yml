@@ -66,4 +66,6 @@ jobs:
         asset_name: web-service-${{ steps.vars.outputs.COMMIT_ID }}.jar
         asset_content_type: application/jar
     - name: trigger bamboo
+      env:
+        BAMBOO_CREDENTIALS: ${{ secrets.BAMBOO_CREDENTIALS }}
       run: ./gradlew --stacktrace triggerBamboo
