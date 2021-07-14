@@ -18,7 +18,7 @@ Development of official NCL UI
 1. Set spring.thymeleaf.cache=false to allow thymeleaf template to be refresh via browser without rebooting entire web app
     - use gradle tasks - bootRun
 
-[gp-img]: https://github.githubassets.com/images/modules/site/packages/packages.svgg
+[gp-img]: https://github.githubassets.com/images/modules/site/packages/packages.svg
 [gp-lnk]: https://github.com/nus-ncl/service-web/releases
 [bs-img]: https://travis-ci.org/nus-ncl/service-web.svg?branch=master
 [bs-lnk]: https://travis-ci.org/nus-ncl/service-web
