@@ -22,12 +22,14 @@
 }
 
 .maintenance-navbar {
-    background-color: #fde073;
+    /* background-color: #fde073;*/
+    background-color: #fdd573;
     font-size: 14px;
     font-weight: bold;
     line-height: 2.5;
     text-align: center;
 }
+
 
 /* login page */
 #login-dp {
@@ -357,6 +359,11 @@ h1, h2, h3, h4, h5, h6 {
     color: #333;
 }
 
+h7 {
+    font-size: 30px;
+    margin-bottom: 20px;
+    color: #0d6dba;
+}
 
 h2 {
     font-size: 30px;
@@ -418,12 +425,12 @@ h19{
 
 
 /*.btn {*/
-  /*border: 0;*/
-  /*border-radius: 0;*/
+/*border: 0;*/
+/*border-radius: 0;*/
 /*}*/
 
 /*.btn.btn-primary:hover {*/
-  /*background-color: #1eafbb;*/
+/*background-color: #1eafbb;*/
 /*}*/
 
 .navbar-header {
@@ -824,8 +831,14 @@ Waypoints
     text-align: justify;
     color : #000;
     font-size: 16px;
-   /* font-weight: bold;*/
+    /* font-weight: bold;*/
+}
 
+.news-header2 {
+    text-align: justify;
+    color: #313030;
+    font-size: 17px;
+    /*font-weight: bold;*/
 }
 
 .news-header::after { content: " "; width: 35px; margin: 25px auto; }
@@ -982,9 +995,11 @@ Waypoints
     margin-right:10px;
     margin-top: 20px;
     margin-bottom: 20px;
-    background-color: #21b3b7;
+    /* background-color: #21b3b7;*/
+    background-color: #229954;
     border-radius: 2px;
-    border: 1px solid #21b3b7;!important
+    /*border: 1px solid #21b3b7;!important*/
+    border: 1px solid #229954;!important
 }
 
 .login-navbar-right li a:hover {
@@ -1610,15 +1625,15 @@ ul.address {
 }
 
 .h16{
-     font-size: 18px;
-     alignment : center;
-     color : #333;
- }
+    font-size: 18px;
+    alignment : center;
+    color : #333;
+}
 .h21{
     font-size: 4em;
     color : #1eafbb;
     font-weight: bold;
-    line-height: 150px;
+    line-height: 90px;
     alignment : center;
     /*
     font-size: 80px;
@@ -1647,8 +1662,8 @@ table {
 }
 
 /*th, td {*/
-    /*padding: 12px;*/
-    /*text-align: center;*/
+/*padding: 12px;*/
+/*text-align: center;*/
 /*}*/
 
 
@@ -1699,7 +1714,7 @@ table {
     width: 100%;
     border-radius: 10px;
     /*background-color:rgba(255,255,255, 0.7) !important;*/
- }
+}
 
 
 
@@ -1836,11 +1851,11 @@ table {
 
 .team-owner-info-header h4,
 .team-owner-info-header .close {
-     color: #333;
+    color: #333;
 }
 
 .team-owner-info-body ul {
-     list-style: none;
+    list-style: none;
 }
 
 /* for admin node status page*/
@@ -1986,8 +2001,8 @@ html {
 }
 
 .welcome {
-  font-size: 25px;
- margin-top: 20px;
+    font-size: 25px;
+    margin-top: 20px;
     padding-top: 20px;
 
 }
@@ -2309,22 +2324,22 @@ ul.topnav span{
 }
 
 /*.SUE_Table > th, td{*/
-    /*border: 1px solid black;*/
-    /*border-collapse: collapse;*/
-    /*font-family: "Times New Roman", serif;*/
-    /*text-align: center;*/
-    /*padding: 5px;*/
-    /*width:100%;*/
-    /*white-space:nowrap;*/
+/*border: 1px solid black;*/
+/*border-collapse: collapse;*/
+/*font-family: "Times New Roman", serif;*/
+/*text-align: center;*/
+/*padding: 5px;*/
+/*width:100%;*/
+/*white-space:nowrap;*/
 /*}*/
 /*.SUE_Table > th {*/
-    /*color: #00C7BA;*/
+/*color: #00C7BA;*/
 /*}*/
 
 #vul h3 {
-   color: #21b3b7;
-   font-size: 25px;
-   font-weight: bold;
+    color: #21b3b7;
+    font-size: 25px;
+    font-weight: bold;
     padding-left: 10px;
     padding-bottom: 30px;
 }
@@ -2372,10 +2387,10 @@ ul.topnav span{
 }
 
 
-    /*.container-1 input#search:hover, .container-1 input#search:focus, .container-1 input#search:active{
-        outline:none;
-        background: #ffffff;
-    }*/
+/*.container-1 input#search:hover, .container-1 input#search:focus, .container-1 input#search:active{
+    outline:none;
+    background: #ffffff;
+}*/
 
 h6 {
     color: #21b3b7;
@@ -2427,7 +2442,7 @@ img {
 }
 
 h16 {
-font-weight: bold;
+    font-weight: bold;
     color:#ac2925;
     padding-top: 0px;
 }
@@ -2468,7 +2483,7 @@ hr {
 }
 
 #about img {
-margin-top: 30px;
+    margin-top: 30px;
     width: 100%;
     height: auto;
 }
@@ -2609,7 +2624,7 @@ h35{
     width: 700px;
     padding-top: 5px;
     border-bottom: 1px #ccc solid;
-    }
+}
 
 h36{
     padding: 15px;
@@ -2830,6 +2845,14 @@ h26 {
     height: 40px;
     font-size: 15px;
 }
+.h27{
+    font-size: 4em;
+    color : #1eafbb;
+    font-weight: bold;
+    line-height: 10px;
+    alignment : center;
+
+}
 
 .hide
 {
@@ -2891,3 +2914,28 @@ h26 {
     font-weight: bold;
     padding-bottom: 5px;
 }
+
+/*.slide-container{
+    width: 300px;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+}*/
+
+/*
+.image-container{
+    width: 900px;
+    height: 600px;
+    position: relative;
+    transition: left 2s;
+    -webkit-transition: left 2s;
+    -moz-transition: left 2s;
+
+}
+
+.slider-image{
+    float: left;
+    margin: 0px;
+    padding: 0px;
+}*/
