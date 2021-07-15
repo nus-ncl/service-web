@@ -312,11 +312,14 @@ public class MainController {
         return "event";
     }
 
-    @RequestMapping("/plan")
+/*    @RequestMapping("/plan")
     public String plan() {
         return "plan1";
+    }*/
+    @RequestMapping("/plan")
+    public String plan() {
+        return "plan";
     }
-
     @RequestMapping("/features")
     public String features() {
         return "features";
