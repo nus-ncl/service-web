@@ -314,7 +314,21 @@ public class MainController {
 
     @RequestMapping("/plan")
     public String plan() {
-        return "plan";
+        return "plan1";
+    }
+
+    @RequestMapping("/features")
+    public String features() {
+        return "features";
+    }
+    @RequestMapping("/services_tools")
+    public String services_tools() {
+        return "services_and_tools";
+    }
+
+    @RequestMapping("/data_resources")
+    public String data_resources() {
+        return "data_resources";
     }
 
     @RequestMapping("/career")
@@ -337,10 +351,10 @@ public class MainController {
         return "research";
     }
 
-   /* @RequestMapping("/otherPublication")
+    @RequestMapping("/otherPublication")
     public String otherPublication() {
         return "other_publication";
-    }*/
+    }
 
     @RequestMapping("/nclpublications")
     public String publications(){
@@ -356,6 +370,46 @@ public class MainController {
     public String news_updates() {
         return "news_updates";
     }*/
+
+    @RequestMapping("/smartGridOT_environment")
+    public String show_smartGridOT_Environment() {
+        return "/smartGridOT_Environment";
+    }
+
+    @RequestMapping("/redTeam_environment")
+    public String show_redTeam_environment() {
+        return "/redTeam_environment";
+    }
+
+    @RequestMapping("/finTech_environment")
+    public String show_finTech_environment() {
+        return "/finTech_environment";
+    }
+
+    @RequestMapping("/healthcare_environment")
+    public String show_healthcare_environment() {
+        return "/healthcare_environment";
+    }
+
+    @RequestMapping("/IT_IoT_environment")
+    public String show_IT_IoT_environment() {
+        return "/IT_IoT_environment";
+    }
+
+    @RequestMapping("/redTeam_environment_details")
+    public String redTeam_environment_details() {
+        return "/redTeam_environment_details";
+    }
+
+    @RequestMapping("/activityTrafficGen_details")
+    public String activityTrafficGen_details() {
+        return "/activityTrafficGen_details";
+    }
+
+    @RequestMapping(value = "/grantCall")
+    public String grantCall() {
+        return "grantCall";
+    }
 
     @RequestMapping("/collaborators")
     public String news_updates() {
@@ -7218,5 +7272,58 @@ public class MainController {
 
         log.info("Password key was reset for {}", uid);
         return "student_reset_key_success";
+    }
+
+    // for grant call documents download //
+    @RequestMapping(value = "/grantCall/proposalTemplate/download", method = RequestMethod.GET)
+    public void grantCall_proposalTemplate(HttpServletResponse response) throws OrderFormDownloadException, IOException {
+        FileInputStream inStream = null;
+        OutputStream outStream = null;
+        response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");//MIME Type
+        try {
+            response.setContentType("APPLICATION/OCTET-STREAM");
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=NCL Grant Call 2021 Proposal Template.docx");
+            outStream = response.getOutputStream();
+            String filePath = "src/main/resources/static/NCL Grant Call 2021 Proposal Template.docx";
+            File downloadFile = new File(filePath);
+            inStream = new FileInputStream(downloadFile);
+            byte[] buffer = new byte[4096];
+            int bytesRead = -1;
+            while ((bytesRead = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+            response.flushBuffer();
+        } catch (IOException ex) {
+            log.info("Error in downloading project proposal template");
+            throw new OrderFormDownloadException("Error in downloading project proposal template");
+        } finally {
+            if (outStream != null) {
+                outStream.close();
+            }
+            if (inStream != null) {
+                inStream.close();
+            }
+        }
+    }
+
+    @RequestMapping(value = "/grantCall/proposed_budget/download", method = RequestMethod.GET)
+    public void grantCall_budgetTemplate(HttpServletResponse response) throws OrderFormDownloadException, IOException {
+        try {
+            response.setHeader(CONTENT_DISPOSITION, "attachment; filename=NCL Grant Call 2021 Proposed Budget KPI Schedule (Template).xlsx");
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            File xfile = new File("src/main/resources/static/NCL_Grant_Call_2021_Template.xlsx");
+            try (BufferedOutputStream bfos = new BufferedOutputStream(response.getOutputStream());
+                 FileInputStream fs = new FileInputStream(xfile)) {
+                byte[] buffer = new byte[fs.available()];
+                fs.read(buffer);
+
+                bfos.write(buffer, 0, buffer.length);
+                bfos.flush();
+            }
+
+        } catch (IOException ex) {
+            log.info("Error in downloading Proposed Budget Template.");
+            throw new OrderFormDownloadException("Error in downloading Proposed Budget Template.");
+        }
     }
 }
