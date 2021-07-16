@@ -17,74 +17,42 @@
 <body>
 <div layout:fragment="content">
     <section>
-    <div class="container" >
-        <div class="row">
+        <div class="container" >
+            <div class="row">
 
-            <div class="h21" align="center">
-                <div>
-                    Our Team<img src="images/team_img.png" alt="" width="600"  height="300" border="0" align="center"/>
-               </div>
+                <p align="Center"><b><font size="30px" color="#0d6dba">Our Team</font></b></p>
+                <!--<img src="images/teamwork8.jpeg" alt="" width="386"  height="200" border="0" align="left"/><img src="images/teamwork1.jpg" alt="" width="400"  height="200" border="0" align="left"/><img src="images/teamwork12.jpg" alt="" width="370"  height="200" border="0" align="left"/>-->
+                <img src="images/teamwork12.jpg" style="width:1180px; height:200px; object-fit: cover; object-position: 50% 50%;"/><!--<img src="images/teamwork1.jpg" style="width:590px; height:200px; object-fit: cover; object-position: 50% 50%;"/>-->
+
             </div>
-        </div>
 
+            <div class="row">
+                <ul class="nav nav-tabs nav-justified team-nav">
+                    <li class="active"><a href="#asoprof" data-toggle="pill"><h3><font color="#2980B9"><b>Principal Investigators</b></font></h3></a></li>
+                    <!--<li><a href="#Co-Inv" data-toggle="pill">Development&amp;Operations </a></li>-->
+                    <li><a href="#Co-Inv" data-toggle="pill"><h3><font color="#2980B9"><b>Development &amp; Operations</b></font></h3></a></li>
+                    <li><a href="#Research" data-toggle="pill"><h3><font color="#2980B9"><b>Visitors</b></font></h3></a></li>
+                    <li><a href="#Students" data-toggle="pill"><h3><font color="#2980B9"><b>ResearchTeam</b></font></h3></a></li>
 
-        <div class="row">
-            <ul class="nav nav-tabs nav-justified team-nav">
-                <li class="active"><a href="#asoprof" data-toggle="pill"><b>Principal Investigators</b></a></li>
-                <!--<li><a href="#Co-Inv" data-toggle="pill">Development&amp;Operations </a></li>-->
-                <li><a href="#Co-Inv" data-toggle="pill"><b>Development &amp; Operations</b></a></li>
-                <li><a href="#Research" data-toggle="pill"><b>Visitors</b></a></li>
-                <li><a href="#Students" data-toggle="pill"><b>ResearchTeam</b></a></li>
-             <!-- &lt;!&ndash;  <li><a href="#ResearchTeam" data-toggle="pill">Research Team</a></li>&ndash;&gt;
-                <li><a href="#Students" data-toggle="pill">Research Team</a></li>-->
-               <!-- <p>&nbsp;</p>-->
-            </ul> <!-- teams navigation -->
-            <div class="tab-content text-center " style="background-image: url('images/team_background.jpg');">
-            <!--<div class="tab-content text-center ">-->
-                <div id="asoprof" class="tab-pane fade in active">
-                    <div class="container ">
+                </ul> <!-- teams navigation -->
 
-                        <div class="row team-members">
-                            <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                <div class="tab-content text-center " style="background-image: url('images/team_background.jpg');">
+                    <!--<div class="tab-content text-center ">-->
+                    <div id="asoprof" class="tab-pane fade in active">
+                        <div class="container ">
 
-                                <!--	<img src="images/team/1.png" class="img-circle" />-->
-                                <div class="member-info">
-                                    <h3 align="center">Chang Ee-Chien</h3>
-                                    <p align="center"><font color="#2980B9">Associate Professor, Lead PI</font></p>
-                                    <div align="center">
-                                        <ul>
-                                            <li>Network Security</li>
-                                            <li>Applied Cryptography</li>
-                                            <li>Multimedia/Biometric Security</li>
-                                        </ul>
-                                    </div>
-                                </div> <!-- member info -->
-                                <div class="row">
-                                    <div class="team-member wow flipInY">
-                                        <div class="social-icons">
-                                            <ul>
-                                                <li><a class="linkedin"
-                                                       href="https://sg.linkedin.com/in/ee-chien-chang-2321b535"><i
-                                                        class="fa fa-linkedin"></i></a></li>
-                                                <li><a class="dribbble" href="http://www.comp.nus.edu.sg/~changec/"><i
-                                                        class="fa fa-link"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div><!-- social icons -->
-                                </div> <!-- team member -->
-                            </div> <!-- col-sm-3 -->
-                            <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                                <div class="member-image">
+                            <div class="row team-members">
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+
                                     <div class="member-info">
-                                        <h3 align="center">Liang Zhenkai</h3>
-                                        <p align="center"><font color="#2980B9">Associate Professor, Lead PI</font></p>
+                                        <h3 align="center"><b>Chang Ee-Chien</b></h3>
+                                        <p align="center"><font color="#2980B9"><b>Associate Professor, Lead PI</b></font></p>
                                         <div align="center">
                                             <ul>
-                                                <li>System and Software Security</li>
-                                                <li>Web Security</li>
-                                                <li>Mobile Security</li>
+                                                <li>Network Security</li>
+                                                <li>Applied Cryptography</li>
+                                                <li>Multimedia/Biometric Security</li>
                                             </ul>
                                         </div>
                                     </div> <!-- member info -->
@@ -92,439 +60,401 @@
                                         <div class="team-member wow flipInY">
                                             <div class="social-icons">
                                                 <ul>
-                                                    <li><a class="linkedin" href="https://sg.linkedin.com/in/liangzk"><i
+                                                    <li><a class="linkedin"
+                                                           href="https://sg.linkedin.com/in/ee-chien-chang-2321b535"><i
                                                             class="fa fa-linkedin"></i></a></li>
-                                                    <li><a class="dribbble"
-                                                           href="http://www.comp.nus.edu.sg/%7Eliangzk"><i
+                                                    <li><a class="dribbble" href="http://www.comp.nus.edu.sg/~changec/"><i
                                                             class="fa fa-link"></i></a></li>
                                                 </ul>
-                                            </div><!-- social icons -->
+                                            </div>
+                                        </div><!-- social icons -->
+                                    </div> <!-- team member -->
+                                </div> <!-- col-sm-3 -->
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                                    <div class="member-image">
+                                        <div class="member-info">
+                                            <h3 align="center"><b>Liang Zhenkai</b></h3>
+                                            <p align="center"><font color="#2980B9"><b>Associate Professor, Lead PI</b></font></p>
+                                            <div align="center">
+                                                <ul>
+                                                    <li>System and Software Security</li>
+                                                    <li>Web Security</li>
+                                                    <li>Mobile Security</li>
+                                                </ul>
+                                            </div>
+                                        </div> <!-- member info -->
+                                        <div class="row">
+                                            <div class="team-member wow flipInY">
+                                                <div class="social-icons">
+                                                    <ul>
+                                                        <li><a class="linkedin" href="https://sg.linkedin.com/in/liangzk"><i
+                                                                class="fa fa-linkedin"></i></a></li>
+                                                        <li><a class="dribbble"
+                                                               href="http://www.comp.nus.edu.sg/%7Eliangzk"><i
+                                                                class="fa fa-link"></i></a></li>
+                                                    </ul>
+                                                </div><!-- social icons -->
+                                            </div>
                                         </div>
-                                    </div>
-                                </div> <!-- member image -->
-                            </div><!-- col-sm-3 -->
+                                    </div> <!-- member image -->
+                                </div><!-- col-sm-3 -->
 
-                        </div>
-                    </div>
-                </div>
-                <div id="Co-Inv" class="tab-pane fade">
-                    <div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        <!--	<img src="images/team/8.png" class="img-circle" />-->
-                        <div class="member-info">
-                            <h3>Dr. Guo Charng Rang</h3>
-                            <p align="center"><font color="#2980B9">Associate Professor,Program Director</font></p>
-                            <ul>
-                                <li>Trusted System Vetting</li>
-                                <li>Cryptography</li>
-                                <li></li>
-                            </ul>
-                        </div> <!-- member info -->
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                    <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
-                                </ul>
-                            </div> <!-- social icons -->
-                        </div> <!-- team member -->
-                    </div> <!-- col-sm-3 -->
-                    <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
-                         align="left"><h2>Infrastructure</h2></div>
-                    <div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        <div class="member-info">
-                            <h3>Clarence Ng</h3>
-                            <p align="center"><font color="#2980B9">Principal Software Engineer</font></p>
-                            <ul>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                            </ul>
-                        </div> <!-- member info -->
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                    <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                   <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
-                                </ul>
-                            </div> <!-- social icons -->
-                        </div> <!-- team member -->
-                    </div> <!-- col-sm-3 -->
-                    <div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        <div class="member-info">
-                            <h3>Nidhi Kushwah</h3>
-                            <p align="center"><font color="#2980B9">Senior Software Engineer</font></p>
-                            <ul>
-                                 <li>Web Application Security</li>
-                                 <li>Cloud Computing</li>
-
-                            </ul>
-                        </div> <!-- member info -->
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                  <!--  <li><a class="linkedin"
-                                           href="https://www.linkedin.com/in/nidhi-kushwah-72947333/"><i
-                                            class="fa fa-linkedin"></i></a></li>-->
-                                </ul>
-                            </div> <!-- social icons -->
-                        </div> <!-- team member -->
-                    </div> <!-- col-sm-3 -->
-
-                    <div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        <!--<img src="images/team/15.png" class="img-circle" />-->
-                        <div class="member-info">
-                            <h3>Nway Aung</h3>
-                            <p align="center"><font color="#2980B9">Software Engineer</font></p>
-                            <ul>
-                                <li>Cloud Computing</li>
-                                <li>Artificial Intelligence</li>
-                                <li>Cyber Security</li>
-                            </ul>
-                        </div> <!-- member info -->
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                    <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
-                                </ul>
-                            </div> <!-- social icons -->
-                        </div> <!-- team member -->
-                    </div> <!-- col-sm-3 -->
-
-                    <!--<div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        &lt;!&ndash;<img src="images/team/15.png" class="img-circle" />&ndash;&gt;
-                        <div class="member-info">
-                            <h3>James Lee</h3>
-                            <p align="center"><font color="#2980B9">Software Engineer</font></p>
-                            <ul>
-                               &lt;!&ndash; <li>Cyber Security</li>&ndash;&gt;
-                            </ul>
-                        </div> &lt;!&ndash; member info &ndash;&gt;
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                    &lt;!&ndash;<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a class="dribbble"><i class="fa fa-link"></i></a></li>&ndash;&gt;
-                                </ul>
-                            </div> &lt;!&ndash; social icons &ndash;&gt;
-                        </div> &lt;!&ndash; team member &ndash;&gt;
-                    </div> &lt;!&ndash; col-sm-3 &ndash;&gt;
--->
-
-                    <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
-                         align="left"><h2>Services</h2></div>
-
-<!--                    <div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        &lt;!&ndash;<img src="images/team/15.png" class="img-circle" />&ndash;&gt;
-                        <div class="member-info">
-                            <h3>Logesh Madhavan</h3>
-                            <p align="center"><font color="#2980B9">Senior Software Engineer</font></p>
-                            <ul>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                            </ul>
-                        </div> &lt;!&ndash; member info &ndash;&gt;
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                    &lt;!&ndash;<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                   <li><a class="dribbble"><i class="fa fa-link"></i></a></li>&ndash;&gt;
-                                </ul>
-                            </div> &lt;!&ndash; social icons &ndash;&gt;
-                        </div> &lt;!&ndash; team member &ndash;&gt;
-                    </div> &lt;!&ndash; col-sm-3 &ndash;&gt;-->
-
-                    <div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        <!--<img src="images/team/15.png" class="img-circle" />-->
-                        <div class="member-info">
-                            <h3>Sristi Lakshmi Sravana Kumar</h3>
-                            <p align="center"><font color="#2980B9">Principal Software Engineer</font></p>
-                            <ul>
-                                <li>Web Appliation Security</li>
-                                <li>Red Team Operations</li>
-                            </ul>
-                        </div> <!-- member info -->
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                    <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                   <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
-                                </ul>
-                            </div> <!-- social icons -->
-                        </div> <!-- team member -->
-                    </div> <!-- col-sm-3 -->
-
-
-                    <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
-                         align="left"><h2>Operation</h2></div>
-
-                    <div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        <!--<img src="images/team/15.png" class="img-circle" />-->
-                        <div class="member-info">
-                            <h3>Hannah Oei</h3>
-                            <p align="center"><font color="#2980B9">Project Engineer</font></p>
-                            <ul>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                            </ul>
-                        </div> <!-- member info -->
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                    <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                   <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
-                                </ul>
-                            </div> <!-- social icons -->
-                        </div> <!-- team member -->
-                    </div> <!-- col-sm-3 -->
-
-                    <div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        <!--<img src="images/team/15.png" class="img-circle" />-->
-                        <div class="member-info">
-                            <h3>Armanadurni Binte Abdul Rahman</h3>
-                            <p align="center"><font color="#2980B9">Senior Exceutive</font></p>
-                            <ul>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                            </ul>
-                        </div> <!-- member info -->
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                    <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                   <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
-                                </ul>
-                            </div> <!-- social icons -->
-                        </div> <!-- team member -->
-                    </div> <!-- col-sm-3 -->
-
-
-
-                    <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
-                         align="left"><h2></h2></div>
-                    <div class="col-sm-3"
-                         style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                        <div class="member-info" >
-                            <h3></h3>
-                            <p align="center"><font color="#2980B9"></font></p>
-                            <ul>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                                <li>&nbsp;</li>
-                            </ul>
-                        </div> <!-- member info -->
-                        <div class="team-member wow flipInY">
-                            <div class="social-icons">
-                                <ul>
-                                    <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                                   <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
-                                </ul>
-                            </div> <!-- social icons -->
-                        </div> <!-- team member -->
-                    </div> <!-- col-sm-3 -->
-                </div>
-                <div id="Research" class="tab-pane fade">
-                    <div class="container">
-                        <div class="row team-members">
-                            <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                                <div class="member-info">
-                                    <h3>Prof. Hui Tian</h3>
-                                    <p align="center"><font color="#2980B9">Ph. D, Associate Professor</font></p>
-                                    <p>Chair of Department of Network and Information Security, College of Computer
-                                        Science and Technology, National Huaqiao University, Xiamen 361021, China</p>
-                                    <ul>
-                                        <li>TEL.: (86)592-6162552</li>
-                                        <li>FAX.: (86)592-6162556</li>
-                                        <li>Email: cshtian@gmail.com, htian@hqu.edu.cn</li>
-                                    </ul>
-                                </div> <!-- member info -->
-                            </div>
-                            <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                                <div class="member-info">
-                                    <h3>Prof. Satoru Tezuka</h3>
-                                    <!--<p>Professor</p>-->
-                                    <p><font color="#2980B9">Professor</font></p>
-                                    <p>Faculty of Environement and Information Studies</p>
-                                    <p>Graduate School of Media and Governance</p>
-                                    <p>Keio University</p>
-                                     <ul>
-                                        <li>Endo Fujisawa, Kanagawa 252-0882 Japan</li>
-                                        <li>Keio University Shonan Fujisawa Campus</li>
-                                    </ul>
-                                </div> <!-- member info -->
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="Students" class="tab-pane fade">
-                    <div class="container">
-                        <div class="row team-members">
-                           <!-- <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
-                                 align="left"><h2>Current Researchers and Phd Students</h2></div>-->
-                            <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                                <!--<img src="images/team/18.png" class="img-circle" />-->
-                                <div class="member-info">
-                                    <h3>Aris Cahyadi Risdianto</h3>
-                                    <!--<p>Research Fellow</p>-->
-                                    <p><font color="#2980B9">Research Fellow</font></p>
+                    <div id="Co-Inv" class="tab-pane fade">
+                        <div class="col-sm-3"
+                             style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                            <!--	<img src="images/team/8.png" class="img-circle" />-->
+                            <div class="member-info">
+                                <h3><b>Dr. Guo Charng Rang</b></h3>
+                                <p align="center"><font color="#2980B9"><b>Associate Professor,Program Director</b></font></p>
+                                <ul>
+                                    <li>Trusted System Vetting</li>
+                                    <li>Cryptography</li>
+                                    <li></li>
+                                </ul>
+                            </div> <!-- member info -->
+                            <div class="team-member wow flipInY">
+                                <div class="social-icons">
                                     <ul>
-                                        <li>Software Defined Networking</li>
-                                      <!--  <li>Open Source Software Development</li>-->
-                                        <li>Internet Security</li>
+                                        <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
+                                        <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
                                     </ul>
-                                </div> <!-- member info -->
-                                <div class="team-member wow flipInY">
-                                    <div class="social-icons">
-                                        <ul>
-                                           <li><a class="linkedin" href="https://https://www.linkedin.com/in/ariscahyadirisdianto/"><i
-                                            class="fa fa-linkedin"></i></a></li>
-                                           <!-- <li><a class="dribbble" href="https://www.comp.nus.edu.sg/~chuazl/"><i
-                                                    class="fa fa-link"></i></a></li>-->
-                                        </ul>
-                                    </div> <!-- social icons -->
-                                </div> <!-- team member -->
-                            </div> <!-- col-sm-3 -->
-                            <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                                <!--<img src="images/team/18.png" class="img-circle" />-->
-                                <div class="member-info">
-                                    <h3>Huang Kang</h3>
-                                   <!-- <p>Research Assistant</p>-->
-                                    <p><font color="#2980B9">Research Assistant</font></p>
+                                </div> <!-- social icons -->
+                            </div> <!-- team member -->
+                        </div> <!-- col-sm-3 -->
+                        <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
+                             align="left"><h2>Infrastructure</h2></div>
+
+                        <div class="col-sm-3"
+                             style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                            <div class="member-info">
+                                <h3><b>Nidhi Kushwah</b></h3>
+                                <p align="center"><font color="#2980B9"><b>Senior Software Engineer</b></font></p>
+                                <ul>
+                                    <li>Web Application Security</li>
+                                    <li>Cloud Computing</li>
+
+                                </ul>
+                            </div> <!-- member info -->
+                            <div class="team-member wow flipInY">
+                                <div class="social-icons">
                                     <ul>
-                                        <li></li>
-                                        <li></li>
-                                        <li></li>
+                                        <!--  <li><a class="linkedin"
+                                                 href="https://www.linkedin.com/in/nidhi-kushwah-72947333/"><i
+                                                  class="fa fa-linkedin"></i></a></li>-->
                                     </ul>
-                                </div> <!-- member info -->
-                                <div class="team-member wow flipInY">
-                                    <div class="social-icons">
-                                        <ul>
-                                            <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
-                                            <!-- <li><a class="dribbble" href="https://www.comp.nus.edu.sg/~chuazl/"><i
-                                                     class="fa fa-link"></i></a></li>-->
-                                        </ul>
-                                    </div> <!-- social icons -->
-                                </div> <!-- team member -->
-                            </div> <!-- col-sm-3 -->
+                                </div> <!-- social icons -->
+                            </div> <!-- team member -->
+                        </div> <!-- col-sm-3 -->
+
+                        <div class="col-sm-3"
+                             style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                            <!--<img src="images/team/15.png" class="img-circle" />-->
+                            <div class="member-info">
+                                <h3><b>Nway Aung</b></h3>
+                                <p align="center"><font color="#2980B9"><b>Software Engineer</b></font></p>
+                                <ul>
+                                    <li>Cloud Computing</li>
+                                    <li>Artificial Intelligence</li>
+                                    <li>Cyber Security</li>
+                                </ul>
+                            </div> <!-- member info -->
+                            <div class="team-member wow flipInY">
+                                <div class="social-icons">
+                                    <ul>
+                                        <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
+                                        <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
+                                    </ul>
+                                </div> <!-- social icons -->
+                            </div> <!-- team member -->
+                        </div> <!-- col-sm-3 -->
 
 
-                         <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 500px"
-                           align="left"><h2>Past Researchers and Phd Students</h2></div>
 
-                           <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                              <!--  &lt;!&ndash;<img src="images/team/18.png" class="img-circle" />&ndash;&gt;-->
-                                <div class="member-info">
-                                    <h3>Chua Zheng Leong</h3>
-                                   <!-- <p>PhD Student</p>-->
-                                    <p><font color="#2980B9">PhD Student</font></p>
+                        <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
+                             align="left"><h2>Services</h2></div>
+
+                        <div class="col-sm-3"
+                             style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                            <div class="member-info">
+                                <h3><b>Sristi Lakshmi Sravana Kumar</b></h3>
+                                <p align="center"><font color="#2980B9"><b>Principal Software Engineer</b></font></p>
+                                <ul>
+                                    <li>Web Appliation Security</li>
+                                    <li>Red Team Operations</li>
+                                </ul>
+                            </div> <!-- member info -->
+                            <div class="team-member wow flipInY">
+                                <div class="social-icons">
                                     <ul>
-                                        <li>Systems Security</li>
-                                        <li>Software Testing</li>
-                                        <li>Binary Analysis</li>
+                                        <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
+                                       <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
                                     </ul>
-                                </div> <!--&lt;!&ndash; member info &ndash;&gt;-->
-                                <div class="team-member wow flipInY">
-                                    <div class="social-icons">
-                                        <ul>
-                                            <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
-                                            <li><a class="dribbble" href="https://www.comp.nus.edu.sg/~chuazl/"><i
-                                                    class="fa fa-link"></i></a></li>
-                                        </ul>
-                                    </div> <!--&lt;!&ndash; social icons &ndash;&gt;-->
-                                </div><!-- &lt;!&ndash; team member &ndash;&gt;-->
-                            </div>
-                            <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                                <!--<img src="images/team/18.png" class="img-circle" />-->
-                                <div class="member-info">
-                                    <h3>Pravein Govindan Kannan</h3>
-                                   <!-- <p>PhD Student</p>-->
-                                    <p><font color="#2980B9">PhD Student</font></p>
-                                   <!-- <ul>
-                                        <li>&nbsp;</li>
-                                        <li>&nbsp;</li>
-                                        <li>&nbsp;</li>
-                                    </ul>-->
-                                </div> <!-- member info -->
-                                <div class="team-member wow flipInY">
-                                    <div class="social-icons">
-                                        <ul>
-                                            <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
-                                            <li><a class="dribbble" href="http://www.comp.nus.edu.sg/~pravein/"><i
-                                                    class="fa fa-link"></i></a></li>
-                                        </ul>
-                                    </div> <!-- social icons -->
-                                </div> <!-- team member -->
-                            </div>
-                            <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                                <!--<img src="images/team/18.png" class="img-circle" />-->
-                                <div class="member-info">
-                                    <h3>Zhang Jiyi</h3>
-                                    <p><font color="#2980B9">PhD Student</font></p>
+                                </div> <!-- social icons -->
+                            </div> <!-- team member -->
+                        </div> <!-- col-sm-3 -->
+
+
+                        <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
+                             align="left"><h2>Operation</h2></div>
+
+                        <div class="col-sm-3"
+                             style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                            <!--<img src="images/team/15.png" class="img-circle" />-->
+                            <div class="member-info">
+                                <h3><b>Hannah Oei</b></h3>
+                                <p align="center"><font color="#2980B9"><b>Project Engineer</b></font></p>
+                                <ul>
+                                    <li>&nbsp;</li>
+                                    <li>&nbsp;</li>
+                                    <li>&nbsp;</li>
+                                </ul>
+                            </div> <!-- member info -->
+                            <div class="team-member wow flipInY">
+                                <div class="social-icons">
                                     <ul>
-                                        <li>&nbsp;</li>
-                                        <li>&nbsp;</li>
-                                        <li>&nbsp;</li>
+                                        <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
+                                       <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
                                     </ul>
-                                </div> <!-- member info -->
-                                <div class="team-member wow flipInY">
-                                    <div class="social-icons">
-                                        <ul>
-                                            <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
-                                            <!-- <li><a class="dribbble" href=""><i
-                                                     class="fa fa-link"></i></a></li>-->
-                                        </ul>
-                                    </div> <!-- social icons -->
-                                </div> <!-- team member -->
-                            </div>
-                            <div class="col-sm-3"
-                                 style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
-                                <!--<img src="images/team/18.png" class="img-circle" />-->
-                                <div class="member-info">
-                                    <h3>Suravi Chatterjee</h3>
-                                    <p><font color="#2980B9">PhD Student</font></p>
+                                </div> <!-- social icons -->
+                            </div> <!-- team member -->
+                        </div> <!-- col-sm-3 -->
+
+                        <div class="col-sm-3"
+                             style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                            <!--<img src="images/team/15.png" class="img-circle" />-->
+                            <div class="member-info">
+                                <h3><b>Armanadurni Binte Abdul Rahman</b></h3>
+                                <p align="center"><font color="#2980B9"><b>Senior Exceutive</b></font></p>
+                                <ul>
+                                    <li>&nbsp;</li>
+                                    <li>&nbsp;</li>
+                                    <li>&nbsp;</li>
+                                </ul>
+                            </div> <!-- member info -->
+                            <div class="team-member wow flipInY">
+                                <div class="social-icons">
                                     <ul>
-                                        <li>&nbsp;</li>
-                                        <li>&nbsp;</li>
-                                        <li>&nbsp;</li>
+                                        <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
+                                       <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
                                     </ul>
-                                </div> <!-- member info -->
-                                <div class="team-member wow flipInY">
-                                    <div class="social-icons">
+                                </div> <!-- social icons -->
+                            </div> <!-- team member -->
+                        </div> <!-- col-sm-3 -->
+
+
+
+                        <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
+                             align="left"><h2></h2></div>
+                        <div class="col-sm-3"
+                             style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                            <div class="member-info" >
+                                <h3></h3>
+                                <p align="center"><font color="#2980B9"></font></p>
+                                <ul>
+                                    <li>&nbsp;</li>
+                                    <li>&nbsp;</li>
+                                    <li>&nbsp;</li>
+                                </ul>
+                            </div> <!-- member info -->
+                            <div class="team-member wow flipInY">
+                                <div class="social-icons">
+                                    <ul>
+                                        <!--<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>
+                                       <li><a class="dribbble"><i class="fa fa-link"></i></a></li>-->
+                                    </ul>
+                                </div> <!-- social icons -->
+                            </div> <!-- team member -->
+                        </div> <!-- col-sm-3 -->
+                    </div>
+                    <div id="Research" class="tab-pane fade">
+                        <div class="container">
+                            <div class="row team-members">
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                                    <div class="member-info">
+                                        <h3><b>Prof. Hui Tian</b></h3>
+                                        <p align="center"><font color="#2980B9"><b>Ph. D, Associate Professor</b></font></p>
+                                        <p>Chair of Department of Network and Information Security, College of Computer
+                                            Science and Technology, National Huaqiao University,China</p>
                                         <ul>
-                                            <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
-                                            <!-- <li><a class="dribbble" href=""><i
-                                                     class="fa fa-link"></i></a></li>-->
                                         </ul>
-                                    </div> <!-- social icons -->
-                                </div> <!-- team member -->
+                                    </div> <!-- member info -->
+                                </div>
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                                    <div class="member-info">
+                                        <h3><b>Prof. Satoru Tezuka</b></h3>
+                                        <!--<p>Professor</p>-->
+                                        <p><font color="#2980B9"><b>Professor</b></font></p>
+                                        <p>Faculty of Environement and Information Studies</p>
+                                        <p>Graduate School of Media and Governance</p>
+                                        <p>Keio University</p>
+                                        <ul>
+                                        </ul>
+                                    </div> <!-- member info -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Students" class="tab-pane fade">
+                        <div class="container">
+                            <div class="row team-members">
+                                <!-- <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 250px"
+                                      align="left"><h2>Current Researchers and Phd Students</h2></div>-->
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                                    <!--<img src="images/team/18.png" class="img-circle" />-->
+                                    <div class="member-info">
+                                        <h3><b>Aris Cahyadi Risdianto</b></h3>
+                                        <!--<p>Research Fellow</p>-->
+                                        <p><font color="#2980B9"><b>Research Fellow</b></font></p>
+                                        <ul>
+                                            <li>Software Defined Networking</li>
+                                            <!--  <li>Open Source Software Development</li>-->
+                                            <li>Internet Security</li>
+                                        </ul>
+                                    </div> <!-- member info -->
+                                    <div class="team-member wow flipInY">
+                                        <div class="social-icons">
+                                            <ul>
+                                                <li><a class="linkedin" href="https://https://www.linkedin.com/in/ariscahyadirisdianto/"><i
+                                                        class="fa fa-linkedin"></i></a></li>
+                                                <!-- <li><a class="dribbble" href="https://www.comp.nus.edu.sg/~chuazl/"><i
+                                                         class="fa fa-link"></i></a></li>-->
+                                            </ul>
+                                        </div> <!-- social icons -->
+                                    </div> <!-- team member -->
+                                </div> <!-- col-sm-3 -->
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                                    <!--<img src="images/team/18.png" class="img-circle" />-->
+                                    <div class="member-info">
+                                        <h3><b>Huang Kang</b></h3>
+                                        <!-- <p>Research Assistant</p>-->
+                                        <p><font color="#2980B9"><b>Research Assistant</b></font></p>
+                                        <ul>
+                                            <li></li>
+                                            <li></li>
+                                            <li></li>
+                                        </ul>
+                                    </div> <!-- member info -->
+                                    <div class="team-member wow flipInY">
+                                        <div class="social-icons">
+                                            <ul>
+                                                <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
+                                                <!-- <li><a class="dribbble" href="https://www.comp.nus.edu.sg/~chuazl/"><i
+                                                         class="fa fa-link"></i></a></li>-->
+                                            </ul>
+                                        </div> <!-- social icons -->
+                                    </div> <!-- team member -->
+                                </div> <!-- col-sm-3 -->
+
+
+                                <div style="margin:20px;padding-top:300px;border-bottom:2px dotted grey; width: 500px"
+                                     align="left"><h2>Past Researchers and Phd Students</h2></div>
+
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                                    <!--  &lt;!&ndash;<img src="images/team/18.png" class="img-circle" />&ndash;&gt;-->
+                                    <div class="member-info">
+                                        <h3><b>Chua Zheng Leong</b></h3>
+                                        <!-- <p>PhD Student</p>-->
+                                        <p><font color="#2980B9"><b>PhD Student</b></font></p>
+                                        <ul>
+                                            <li>Systems Security</li>
+                                            <li>Software Testing</li>
+                                            <li>Binary Analysis</li>
+                                        </ul>
+                                    </div> <!--&lt;!&ndash; member info &ndash;&gt;-->
+                                    <div class="team-member wow flipInY">
+                                        <div class="social-icons">
+                                            <ul>
+                                                <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
+                                                <li><a class="dribbble" href="https://www.comp.nus.edu.sg/~chuazl/"><i
+                                                        class="fa fa-link"></i></a></li>
+                                            </ul>
+                                        </div> <!--&lt;!&ndash; social icons &ndash;&gt;-->
+                                    </div><!-- &lt;!&ndash; team member &ndash;&gt;-->
+                                </div>
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                                    <!--<img src="images/team/18.png" class="img-circle" />-->
+                                    <div class="member-info">
+                                        <h3><b>Pravein Govindan Kannan</b></h3>
+                                        <!-- <p>PhD Student</p>-->
+                                        <p><font color="#2980B9"><b>PhD Student</b></font></p>
+                                        <!-- <ul>
+                                             <li>&nbsp;</li>
+                                             <li>&nbsp;</li>
+                                             <li>&nbsp;</li>
+                                         </ul>-->
+                                    </div> <!-- member info -->
+                                    <div class="team-member wow flipInY">
+                                        <div class="social-icons">
+                                            <ul>
+                                                <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
+                                                <li><a class="dribbble" href="http://www.comp.nus.edu.sg/~pravein/"><i
+                                                        class="fa fa-link"></i></a></li>
+                                            </ul>
+                                        </div> <!-- social icons -->
+                                    </div> <!-- team member -->
+                                </div>
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                                    <!--<img src="images/team/18.png" class="img-circle" />-->
+                                    <div class="member-info">
+                                        <h3><b>Zhang Jiyi</b></h3>
+                                        <p><font color="#2980B9"><b>PhD Student</b></font></p>
+                                        <ul>
+                                            <li>&nbsp;</li>
+                                            <li>&nbsp;</li>
+                                            <li>&nbsp;</li>
+                                        </ul>
+                                    </div> <!-- member info -->
+                                    <div class="team-member wow flipInY">
+                                        <div class="social-icons">
+                                            <ul>
+                                                <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
+                                                <!-- <li><a class="dribbble" href=""><i
+                                                         class="fa fa-link"></i></a></li>-->
+                                            </ul>
+                                        </div> <!-- social icons -->
+                                    </div> <!-- team member -->
+                                </div>
+                                <div class="col-sm-3"
+                                     style="margin:20px;width:250px;height:280px;padding:5px;border: 2px wave #00A4E1">
+                                    <!--<img src="images/team/18.png" class="img-circle" />-->
+                                    <div class="member-info">
+                                        <h3><b>Suravi Chatterjee</b></h3>
+                                        <p><font color="#2980B9"><b>PhD Student</b></font></p>
+                                        <ul>
+                                            <li>&nbsp;</li>
+                                            <li>&nbsp;</li>
+                                            <li>&nbsp;</li>
+                                        </ul>
+                                    </div> <!-- member info -->
+                                    <div class="team-member wow flipInY">
+                                        <div class="social-icons">
+                                            <ul>
+                                                <!--	<li><a class="linkedin"><i class="fa fa-linkedin"></i></a></li>-->
+                                                <!-- <li><a class="dribbble" href=""><i
+                                                         class="fa fa-link"></i></a></li>-->
+                                            </ul>
+                                        </div> <!-- social icons -->
+                                    </div> <!-- team member -->
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-     </section>
+    </section>
 </div>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="../static/js/html5shiv.js"></script>
