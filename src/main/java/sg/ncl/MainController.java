@@ -376,37 +376,37 @@ public class MainController {
 
     @RequestMapping("/smartGridOT_environment")
     public String show_smartGridOT_Environment() {
-        return "/smartGridOT_Environment";
+        return "smartGridOT_Environment";
     }
 
     @RequestMapping("/redTeam_environment")
     public String show_redTeam_environment() {
-        return "/redTeam_environment";
+        return "redTeam_environment";
     }
 
     @RequestMapping("/finTech_environment")
     public String show_finTech_environment() {
-        return "/finTech_environment";
+        return "finTech_environment";
     }
 
     @RequestMapping("/healthcare_environment")
     public String show_healthcare_environment() {
-        return "/healthcare_environment";
+        return "healthcare_environment";
     }
 
     @RequestMapping("/IT_IoT_environment")
     public String show_IT_IoT_environment() {
-        return "/IT_IoT_environment";
+        return "IT_IoT_environment";
     }
 
     @RequestMapping("/redTeam_environment_details")
     public String redTeam_environment_details() {
-        return "/redTeam_environment_details";
+        return "redTeam_environment_details";
     }
 
     @RequestMapping("/activityTrafficGen_details")
     public String activityTrafficGen_details() {
-        return "/activityTrafficGen_details";
+        return "activityTrafficGen_details";
     }
 
     @RequestMapping(value = "/grantCall")
