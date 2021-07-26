@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.22.RELEASE'
     }
 }
 
@@ -70,7 +70,7 @@ repositories {
 dependencyManagement {
     imports {
         mavenBom 'io.spring.platform:platform-bom:2.0.6.RELEASE'
-        mavenBom 'org.springframework.boot:spring-boot-dependencies:1.4.0.RELEASE'
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:1.5.22.RELEASE'
     }
     dependencies {
         dependency 'org.apache.commons:commons-lang3:3.4'
