@@ -10,8 +10,9 @@
     <div class="container">
 
         <div class="navbar-header">
-
-            <a href="index.html" th:href="@{/}"><img src="/images/ncl_logo_image9.jpg" alt="logo" width="180" height="90"
+<!--            <a href="index.html" th:href="@{/}"><img src="/images/ncl_logo_image9.jpg" alt="logo" width="180" height="90"
+                                                     class="logo1"/></a>-->
+            <a href="index.html" th:href="@{/}"><img src="/images/ncl_logo_image9.jpg" alt="logo" width="170" height="90"
                                                      class="logo1"/></a>
             <!-- <a href="index.html" th:href="@{/}"><img src="/images/ncl_logo1.jpg" alt="logo" width="180" height="90"
                                                       class="logo1"/></a>
@@ -46,7 +47,7 @@
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Research
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu ">
-                        <li><a href="../research.html" th:href="@{~/research}">Research Areas</a></li>
+                        <!--<li><a href="../research.html" th:href="@{~/research}">Research Areas</a></li>-->
                         <li><a href="../ncl_publications.html" th:href="@{~/nclpublications}">Paper,Talks and News Articles</a></li>
                         <li><a href="../other_publication.html" th:href="@{~/otherPublication}">Publications from projects that used NCL testbed</a></li>
                     </ul>
@@ -59,7 +60,7 @@
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Testbed
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu ">
-                        <li><a href="updates.html" th:href="@{~/updates}">Updates</a></li>
+                        <!--<li><a href="updates.html" th:href="@{~/updates}">Updates</a></li>-->
                         <li><a href="TestbedInformation.html" th:href="@{~/testbedInformation}">General Info</a></li>
                         <li><a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}">Node Status</a></li>
                         <li><a href="/NCL_Testbed_Documentation.pdf">Documentation</a></li>
@@ -81,8 +82,16 @@
                     </ul>
                 </li>-->
 
+               <!-- <li class="scroll"><a href="../event.html" th:href="@{~/event}">Events</a></li>-->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Events<span class="caret"></span></a>
+                    <ul class="dropdown-menu ">
+                        <li><a href="recent_events.html" th:href="@{~/recent_events}">Recent Events</a></li>
+                        <li><a href="event.html" th:href="@{~/event}">Past Events</a></li>
 
-                <li class="scroll"><a href="../event.html" th:href="@{~/event}">Events</a></li>
+                    </ul>
+                </li>
+
                 <li class="scroll"><a href="contactus.html" th:href="@{~/contactus}">Contact Us</a></li>
 
 
