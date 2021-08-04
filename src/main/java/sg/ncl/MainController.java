@@ -312,6 +312,11 @@ public class MainController {
         return "event";
     }
 
+    @RequestMapping("/recent_events")
+    public String recent_events() {
+        return "recent_events";
+    }
+
 /*    @RequestMapping("/plan")
     public String plan() {
         return "plan1";
