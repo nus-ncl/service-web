@@ -33,6 +33,21 @@
     </div>
 
     <div class="row">
+        <div class="panel panel-primary dashpanel">
+            <h2 class="team-heading team-heading-current-team" th:text="#{GPU.Nodes.Specification}">text heading from .properties</h2>
+            <p> Each GPU node has the following specifications:</p>
+            <p><i class="fa fa-check"></i> CPU: (2) Intel Xeon E5-2620v4 ** 8 cores / 2.10 GHz / 20MB L3 / 85W / 2133Mhz</p>
+            <p><i class="fa fa-check"></i> Memory: (256) GB DDR4-2400 ECC RDIMM - 32GB x 8pcs</p>
+            <p><i class="fa fa-check"></i> 1GbE NIC: (1) Dual port 1GBASE-T Network Adapter (4 ports, together with 2 LOM)</p>
+            <p><i class="fa fa-check"></i> 10GbE NIC: (1) Dual port 10GBASE-T Network Adapter</p>
+            <p><i class="fa fa-check"></i> SSD: (1) 480GB Enterprise SATA SSD (Samsung PM863a), high endurance, 2M MTBF</p>
+            <p><i class="fa fa-check"></i> HDD: (1) 8TB Enterprise SATA HDD, 7.2k RPM 256MB cache, 2.5M MTBF</p>
+            <p><i class="fa fa-check"></i> OS: (1) Ubuntu 16.04 LTS, CUDA toolkit, cuDNN installation</p>
+            <p><i class="fa fa-check"></i> GPU: (2) NVIDIA Tesla V100 16GB HBM2 / Tesla P100 12GB HBM2</p>
+        </div> <!-- panel -->
+    </div>
+
+    <div class="row">
         <p>&nbsp;</p>
         <div class="panel panel-primary dashpanel">
             <h2 class="team-heading team-heading-current-team" th:text="#{image.heading.global}">text heading from .properties</h2>

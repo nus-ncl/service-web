@@ -173,6 +173,19 @@
     font-size: 22px;
 }
 
+.team-heading-current-team1 {
+    color: #FFF;
+    background-color : #C9D1D6;
+    padding: 15px;
+    font-size: 25px;
+}
+.team-heading-current-team2 {
+    color: #FFF;
+    background-color : #B6B6B4;
+    padding: 7px;
+    font-size: 20px;
+}
+
 .team-panel-current-team {
     border-color: #1eafbb;
 }
@@ -363,6 +376,11 @@ h7 {
     font-size: 30px;
     margin-bottom: 20px;
     color: #0d6dba;
+}
+h8 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #313030;
 }
 
 h2 {
@@ -882,6 +900,12 @@ Waypoints
     padding-bottom: 30px;
 }
 
+.social-icons {
+    margin-top:30px;
+    text-align: center;
+    padding-bottom: 30px;
+}
+
 /*.social-icons {
     margin-top:30px;
     margin-left: 25px;
@@ -895,14 +919,17 @@ Waypoints
     display: inline-block;
 }
 
+
 .social-icons ul li {
     float: left;
     margin-right: 8px;
 }
 
+
 .social-icons ul li:last-child {
     margin-right: 0;
 }
+
 
 .social-icons ul li a {
     color:#fff;
@@ -914,6 +941,7 @@ Waypoints
     font-size: 16px;
     opacity: 0.8;
 }
+
 
 .social-icons ul li a:hover {
     opacity: 1;
@@ -930,18 +958,23 @@ Waypoints
 .team-member:hover .social-icons ul li a.facebook {
     background-color: #3b5999;
 }
+
 .team-member:hover .social-icons ul li a.twitter {
     background-color: #2ac6f7;
 }
+
 .team-member:hover .social-icons ul li a.dribbble {
     background-color: #ff5b92;
 }
+
 .team-member:hover .social-icons ul li a.linkedin {
     background-color: #036dc0;
 }
+
 .team-member:hover .social-icons ul li a.github {
     background-color: #0e2f44;
 }
+
 .team-member:hover .social-icons ul li a.rss {
     background-color: #ff6b00;
 }
