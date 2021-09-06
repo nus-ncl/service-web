@@ -179,10 +179,18 @@
     padding: 15px;
     font-size: 25px;
 }
+
 .team-heading-current-team2 {
     color: #FFF;
     background-color : #B6B6B4;
     padding: 7px;
+    font-size: 20px;
+}
+
+.team-heading-current-team3 {
+    color: #0d6dba;
+    /*background-color : #dce8f3;*/
+   /* padding: 15px;*/
     font-size: 20px;
 }
 
