@@ -430,8 +430,12 @@ public class MainController {
         return "unauthorized_access";
     }
 
-    @RequestMapping("/people")
+/*    @RequestMapping("/people")
     public String people() {
+        return "people";
+    }*/
+    @RequestMapping("/people")
+    public String people1() {
         return "people";
     }
 
