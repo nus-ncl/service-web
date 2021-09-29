@@ -3330,13 +3330,23 @@ public class MainController {
         return REDIRECT_EXPERIMENTS;
     }
 
-    @RequestMapping("/web_ssh/access_node/{qualifiedName:.+}")
+    @RequestMapping("/web_ssh/access_node/{qualifiedName:&+}")
+    @ResponseBody
     public String sshAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
-        getDeterUid(model, session);
-        model.addAttribute("qualified", qualifiedName);
-        model.addAttribute("cols", ptyProperties.getCols());
-        model.addAttribute("rows", ptyProperties.getRows());
-        return "webssh";
+
+        try {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            log.info("Qualified Name is parsed successfully!");
+            getDeterUid(model, session);
+            qualifiedName.replaceAll("&", ".");
+            model.addAttribute("qualified", qualifiedName);
+            model.addAttribute("cols", ptyProperties.getCols());
+            model.addAttribute("rows", ptyProperties.getRows());
+            return "webssh";
+        } catch (Exception e) {
+            log.error("Error parsing the qualifiedName URL", e.getMessage());
+            return "maintenance";
+        }
     }
 
     @RequestMapping(value = "/web_vnc/access_node/{teamName}/{expId}/{nodeId}", params = {"portNum"})
