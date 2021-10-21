@@ -325,13 +325,20 @@ public class MainController {
     public String plan() {
         return "plan";
     }
+
     @RequestMapping("/features")
     public String features() {
         return "features";
     }
-    @RequestMapping("/services_tools")
+
+    /*@RequestMapping("/services_tools")
     public String services_tools() {
         return "services_and_tools";
+    }*/
+
+    @RequestMapping("/services_tools")
+    public String services_tools() {
+        return "services_and_tools1";
     }
 
     @RequestMapping("/data_resources")
