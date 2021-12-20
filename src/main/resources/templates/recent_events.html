@@ -15,7 +15,7 @@
   <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
 
 </head>
-<body>
+<body onload="loadStaticPage('RecentEventBody','Events/RecentEventContent.txt')">
 <div layout:fragment="content">
   <p>&nbsp;</p>
   <p>&nbsp;</p>
@@ -31,6 +31,7 @@
       <ul class="slides">
         <!-- Added section for 2020 and 2021 events -->
         <li>
+         <div id="RecentEventBody">
           <div class="col-md-4 wp4">
             <div class="overlay-effect effects clearfix">
               <div class="img">
@@ -62,6 +63,7 @@
           <h3 class="news-header">NCL Grant Call Workshop</h3>
          <p align="justify">National Cybersecurity R&amp;D Laboratories (NCL) conducted a cybersecurity workshop in Dec 2020</p>
 </div>
+         </div>
         </li>
         <!-- 2020 and 2021 events section closed-->
       </ul>
