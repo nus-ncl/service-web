@@ -1327,28 +1327,5 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
-    @Test
-    public void testMaintainancePage() throws Exception {
-
-        mockMvc.perform(get("/maintainance"))
-                .andExpect(status().isOk())
-                .andExpect(redirectedUrl("/maintainance"));
-    }
-
-
-    @Test
-    public void testWebSSHLogin() throws Exception {
-
-        final String nodeID = "n" + RandomUtils.nextInt(0,9);
-        final String expName = RandomStringUtils.randomAlphabetic(10);
-        final String teamName = RandomStringUtils.randomAlphabetic(10);
-        final StringJoiner qualifiedName = new StringJoiner("&");
-        qualifiedName.add(nodeID).add(expName).add(teamName).add("ncl&sg");
-
-        mockMvc.perform(get("/web_ssh/access_node/{qualifiedName:&+}", qualifiedName))
-                .andExpect(status().isNotFound())
-                .andExpect(redirectedUrl("/maintainance"));
-    }
-
 }
 
