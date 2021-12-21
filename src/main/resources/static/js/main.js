@@ -1078,6 +1078,26 @@ function setAutoShutdownCheckbox() {
     }
 }
 
+//Rendering static content changes from github
+function loadStaticPage(id, page) {
+    $.ajax({
+         dataType: "JSON",
+         async: true,
+         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+         type: 'GET',
+         success: function(result) {
+             document.getElementById(id).innerHTML = atob(result.content);
+         }
+    });
+}
 
-
-
+function loadImage(imgName, imgId, imgType) {
+    $.ajax({
+         dataType: "JSON",
+         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/images/"+imgName,
+         type: 'GET',
+         success: function(result) {
+            document.getElementById(imgId).src = "data:image/"+imgType+";base64,"+result.content;
+         }
+    });
+}

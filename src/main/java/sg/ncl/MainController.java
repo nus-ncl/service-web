@@ -3337,9 +3337,10 @@ public class MainController {
         return REDIRECT_EXPERIMENTS;
     }
 
-    @RequestMapping("/web_ssh/access_node/{qualifiedName:.+}")
+    @RequestMapping("/web_ssh/access_node/{qualifiedName:&+}")
     public String sshAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
         getDeterUid(model, session);
+        qualifiedName.replaceAll("&", ".");
         model.addAttribute("qualified", qualifiedName);
         model.addAttribute("cols", ptyProperties.getCols());
         model.addAttribute("rows", ptyProperties.getRows());
