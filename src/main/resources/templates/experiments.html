@@ -37,10 +37,10 @@
                                 <tr>
                                     <th th:text="#{experiment.table.header.experiment}">Experiment</th>
                                     <th th:text="#{experiment.table.header.team}">Team</th>
-                                    <th th:text="#{experiment.table.header.nodes.number}">Nodes</th>
+                                    <th th:text="#{experiment.table.header.nodes.number}">Instance</th>
                                     <th th:text="#{experiment.table.header.status}">Status</th>
-                                    <th th:text="#{experiment.table.header.visualization}">Visualization</th>
-                                    <th th:text="#{experiment.table.header.realization}">Realization</th>
+                                    <th th:text="#{experiment.table.header.platform}">Platform</th>
+                                    <th th:text="#{experiment.table.header.client}">Client</th>
                                     <th th:text="#{experiment.table.header.actions}">Actions</th>
                                 </tr>
                             </thead>
@@ -69,9 +69,12 @@
                                             <td th:text="'Error'"></td>
                                         </span>
                                         <td>
-                                            <a href="#topoModal" data-toggle="modal"
-                                               th:attr="data-title=${expEntry.name},
-                                                        data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">View</a>
+                                            <span th:if="${expEntry.platform == 0}">
+                                                <p th:text="DeterLab"></p>
+                                            </span>
+                                            <span th:if="${expEntry.platform == 1}">
+                                                <p th:text="OpenStack"></p>
+                                            </span>
                                         </td>
                                         <td>
                                             <th:block th:if="${!expEntry.nodesInfoMap.isEmpty()}">

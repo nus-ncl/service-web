@@ -216,6 +216,7 @@ public class MainController {
     private static final String TEAMS = "teams";
     private static final String MEMBERS = "members";
     private static final String ORIGINAL_TEAM = "originalTeam";
+    private static final String PLATFORM = "platform";
 
     private static final String LOG_IOEXCEPTION = "IOException {}";
 
@@ -2737,6 +2738,7 @@ public class MainController {
         experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
         experimentObject.put(MAX_DURATION, experimentForm.getMaxDuration());
+        experimentObject.put(PLATFORM, experimentForm.getPlatform());
 
         log.info("Calling service to create experiment");
         HttpEntity<String> request = createHttpEntityWithBody(experimentObject.toString());
@@ -6092,6 +6094,7 @@ public class MainController {
         scenarioFileNameList.add("Scenario 4 - Experiment with 2 nodes and customized link property");
         scenarioFileNameList.add("Scenario 5 - Single SDN switch connected to two nodes");
         scenarioFileNameList.add("Scenario 6 - Tree Topology with configurable SDN switches");
+        scenarioFileNameList.add("Scenario 7 - Scenario for OpenStack");
         log.info("Scenario file list: {}", scenarioFileNameList);
         return scenarioFileNameList;
     }
@@ -6111,6 +6114,8 @@ public class MainController {
             actualScenarioFileName = "basic5.ns";
         } else if (scenarioFileName.contains("Scenario 6")) {
             actualScenarioFileName = "basic6.ns";
+        } else if (scenarioFileName.contains("Scenario 7")) {
+            actualScenarioFileName = "basicHeat";
         } else {
             // defaults to basic single node
             actualScenarioFileName = "basic1.ns";
@@ -6458,6 +6463,7 @@ public class MainController {
         experiment2.setNsFileContent(object.getString("nsFileContent"));
         experiment2.setIdleSwap(object.getInt("idleSwap"));
         experiment2.setMaxDuration(object.getInt(MAX_DURATION));
+        experiment2.setPlatform(object.getInt(PLATFORM));
 
         try {
             experiment2.setCreatedDate(object.get(CREATED_DATE).toString());
@@ -6824,6 +6830,7 @@ public class MainController {
         stateExp.setMaxDuration(expJsonObj.getInt(MAX_DURATION));
         stateExp.setMinNodes(expJsonObj.getInt("minNodes"));
         stateExp.setIdleHours(expJsonObj.getLong("idleHours"));
+        stateExp.setPlatform(expJsonObj.getInt(PLATFORM));
 
         String expDetailsString = expJsonObj.getString("details");
         if (null == expDetailsString || expDetailsString.isEmpty()) {

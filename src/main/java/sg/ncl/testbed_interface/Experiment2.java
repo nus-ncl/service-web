@@ -24,6 +24,7 @@ public class Experiment2 {
     private Integer maxDuration;
     private ZonedDateTime createdDate;
     private ZonedDateTime lastModifiedDate;
+    private Integer platform;
 
     public Experiment2() {
         maxDuration = 0;
@@ -38,7 +39,8 @@ public class Experiment2 {
                        final String nsFile,
                        final String nsFileContent,
                        final Integer idleSwap,
-                       final Integer maxDuration) {
+                       final Integer maxDuration,
+                       final Integer platform) {
 
         this.id = id;
         this.userId = userId;
@@ -50,6 +52,7 @@ public class Experiment2 {
         this.nsFileContent = nsFileContent;
         this.idleSwap = idleSwap;
         this.maxDuration = maxDuration;
+        this.platform = platform;
     }
 
     public Long getId() {
@@ -130,6 +133,14 @@ public class Experiment2 {
 
     public void setMaxDuration(Integer maxDuration) {
         this.maxDuration = maxDuration;
+    }
+
+    public Integer getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Integer platform) {
+        this.platform = platform;
     }
 
     public ZonedDateTime getCreatedDate() {

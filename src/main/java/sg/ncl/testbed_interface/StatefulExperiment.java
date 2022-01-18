@@ -29,6 +29,7 @@ public class StatefulExperiment {
     private int maxDuration;
     private Long idleHours;
     private Map<String, Map<String, String>> nodesInfoMap;
+    private int platform;
 
     public StatefulExperiment() {
         nodes = 0;
@@ -36,6 +37,7 @@ public class StatefulExperiment {
         minNodes = 0;
         idleHours = 0L;
         nodesInfoMap = new HashMap<>();
+        platform = 0;
     }
 
     public void addNodeInfo(String nodeName, Map<String, String> nodeInfo) {
