@@ -3268,7 +3268,7 @@ public class MainController {
         experiment.setHeat_template_version("2018-08-31");
         experiment.setResources_name("hello_world");
         experiment.setType("OS::Nova::Server");
-        experiment.setFlavour("m1.tiny");
+        experiment.setFlavour("m1.small");
         experiment.setImage("cirros-0.4.0-x86_64-disk");
 
         objectMapper.registerModule(new JavaTimeModule());
