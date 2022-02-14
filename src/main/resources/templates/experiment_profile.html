@@ -18,7 +18,9 @@
         <ul class="nav nav-pills nav-stacked col-sm-2 text-center">
             <li class="active"><a data-toggle="pill" href="#profile"><span th:text="#{experimentProfile.profile}">Profile</span></a></li>
             <li><a data-toggle="pill" href="#networkConfig"><span th:text="#{experimentProfile.networkConfig}">Network Configuration</span></a></li>
-            <li><a data-toggle="pill" href="#realization"><span th:text="#{experimentProfile.realization}">Realization</span></a></li>
+            <th:block th:if="${experiment.platform == 0}">
+                <li><a data-toggle="pill" href="#realization"><span th:text="#{experimentProfile.realization}">Realization</span></a></li>
+            </th:block>
             <li><a data-toggle="pill" href="#activityLog"><span th:text="#{experimentProfile.activityLog}">Activity Log</span></a></li>
         </ul>
 
@@ -45,6 +47,8 @@
                         <span th:if="${experiment.state == 'RUNNING'}"><td th:text="'Running'"></td></span>
                         <span th:if="${experiment.state == 'STOPPING'}"><td th:text="'Stopping'"></td></span>
                         <span th:if="${experiment.state == 'WARNING'}"><td th:text="'Warning'"></td></span>
+                        <span th:if="${experiment.state == 'CREATE_IN_PROGRESS'}"><td th:text="'Create_In_Progress'"></td></span>
+                        <span th:if="${experiment.state == 'UPDATE_IN_PROGRESS'}"><td th:text="'Update_In_Progress'"></td></span>
                         <span th:if="${experiment.state == 'ERROR'}"><td th:text="'Error'"></td></span>
                     </tr>
                     <tr>
@@ -81,10 +85,15 @@
 
             <div id="networkConfig" class="tab-pane fade">
                 <h3 th:text="#{experimentProfile.networkConfig}">Network Configuration</h3>
-                <th:block th:switch="${experimentDetails.has('ns_file')} ? ${experimentDetails.get('ns_file').has('ns_file')} : ${false}">
-                    <pre th:case="${false}">No ns file found.</pre>
-                    <pre th:case="${true}" th:text="${experimentDetails.get('ns_file').get('ns_file')}"></pre>
-                    <pre th:case="*">No ns file found.</pre>
+                <th:block th:if="${experiment.platform == 0}">
+                    <th:block th:switch="${experimentDetails.has('ns_file')} ? ${experimentDetails.get('ns_file').has('ns_file')} : ${false}">
+                        <pre th:case="${false}">No ns file found.</pre>
+                        <pre th:case="${true}" th:text="${experimentDetails.get('ns_file').get('ns_file')}"></pre>
+                        <pre th:case="*">No ns file found.</pre>
+                    </th:block>
+                </th:block>
+                <th:block th:if="${experiment.platform == 1}">
+                    <pre th:text="${experiment.heat_file}"></pre>
                 </th:block>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
@@ -94,27 +103,38 @@
                 <p>&nbsp;</p>
             </div>
 
-            <div id="realization" class="tab-pane fade">
-                <h3 th:text="#{experimentProfile.realization}">Realization</h3>
-                <th:block th:switch="${experimentDetails.has('realization_details')} ? ${experimentDetails.get('realization_details').has('realization_details')} : ${false}">
-                    <pre th:case="${false}">No experiment details found.</pre>
-                    <pre th:case="${true}" th:text="${experimentDetails.get('realization_details').get('realization_details')}"></pre>
-                    <pre th:case="*">No experiment details found.</pre>
-                </th:block>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-            </div>
+            <th:block th:if="${experiment.platform == 0}">
+                <div id="realization" class="tab-pane fade">
+                    <h3 th:text="#{experimentProfile.realization}">Realization</h3>
+                    <th:block th:switch="${experimentDetails.has('realization_details')} ? ${experimentDetails.get('realization_details').has('realization_details')} : ${false}">
+                        <pre th:case="${false}">No experiment details found.</pre>
+                        <pre th:case="${true}" th:text="${experimentDetails.get('realization_details').get('realization_details')}"></pre>
+                        <pre th:case="*">No experiment details found.</pre>
+                    </th:block>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                </div>
+            </th:block>
 
             <div id="activityLog" class="tab-pane fade">
                 <h3 th:text="#{experimentProfile.activityLog}">Activity Log</h3>
+                <th:block th:if="${experiment.platform == 0}">
                 <th:block th:switch="${experimentDetails.has('activity_log')} ? ${experimentDetails.get('activity_log').has('activity_log')} : ${false}">
                     <pre th:case="${false}">No activity log found.</pre>
                     <pre th:case="${true}" th:text="${experimentDetails.get('activity_log').get('activity_log')}"></pre>
                     <pre th:case="*">No activity log found.</pre>
+                </th:block>
+                </th:block>
+                <th:block th:if="${experiment.platform == 1}">
+                    <th:block th:switch="${openstackEvents.has('events')} ? ${openstackEvents.get('events').has('events')} : ${false}">
+                        <pre th:case="${false}">No events found.</pre>
+                        <pre th:case="${true}" th:text="${openstackEvents.get('events').get('events')}"></pre>
+                        <pre th:case="*">No events found.</pre>
+                    </th:block>
                 </th:block>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>

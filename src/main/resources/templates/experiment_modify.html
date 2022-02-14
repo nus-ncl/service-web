@@ -20,8 +20,13 @@
         </div>
         <blockquote th:if="${exp_output}"><pre th:text="${exp_output}" style="height:190px;"></pre></blockquote>
         <h2><span th:text="#{experimentProfile.header}">Experiment</span>: <span th:text="${edit_experiment.name}" style="color:#00C7BA;"></span></h2>
-        <p>For more information about the NS language, refer to <a href="http://docs.deterlab.net/core/core-guide/">Deterlab Core Guide</a> for more information.</p>
-        <form  method="post" action="#" th:action="@{/update_experiment/{teamId}/{expId}(teamId = ${edit_experiment.teamId}, expId = ${edit_experiment.id})}" th:object="${edit_experiment}" role="form">
+        <th:block th:if="${edit_experiment.platform == 0}">
+            <p>For more information about the NS language, refer to <a href="http://docs.deterlab.net/core/core-guide/">Deterlab Core Guide</a> for more information.</p>
+        </th:block>
+        <th:block th:if="${edit_experiment.platform == 1}">
+            <p>For more information about the NS language, refer to <a href="https://docs.openstack.org/heat/latest/template_guide/hot_guide.html/">Openstack Heat Template Guide</a> for more information.</p>
+        </th:block>
+        <form  method="post" action="#" th:action="@{/update_experiment/{teamId}/{expId}/{stack_id}(teamId = ${edit_experiment.teamId}, expId = ${edit_experiment.id}, stack_id = ${edit_experiment.stack_id})}" th:object="${edit_experiment}" role="form">
             <fieldset>
                 <div class="form-group">
                     <label for="networkConfig" th:text="#{exp.networkConfig}">Network Configuration</label>

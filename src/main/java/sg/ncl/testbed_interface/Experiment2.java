@@ -24,6 +24,12 @@ public class Experiment2 {
     private Integer maxDuration;
     private ZonedDateTime createdDate;
     private ZonedDateTime lastModifiedDate;
+    private String stack_id;
+    private String heat_template_version;
+    private String resources_name;
+    private String type;
+    private String flavour;
+    private String image;
     private Integer platform;
 
     public Experiment2() {
@@ -40,6 +46,12 @@ public class Experiment2 {
                        final String nsFileContent,
                        final Integer idleSwap,
                        final Integer maxDuration,
+                       final String stack_id,
+                       final String heat_template_version,
+                       final String resources_name,
+                       final String type,
+                       final String flavour,
+                       final String image,
                        final Integer platform) {
 
         this.id = id;
@@ -52,6 +64,12 @@ public class Experiment2 {
         this.nsFileContent = nsFileContent;
         this.idleSwap = idleSwap;
         this.maxDuration = maxDuration;
+        this.stack_id = stack_id;
+        this.heat_template_version = heat_template_version;
+        this.resources_name = resources_name;
+        this.type = type;
+        this.flavour = flavour;
+        this.image = image;
         this.platform = platform;
     }
 
@@ -133,6 +151,52 @@ public class Experiment2 {
 
     public void setMaxDuration(Integer maxDuration) {
         this.maxDuration = maxDuration;
+    }
+
+    public String getStack_id() {
+        return stack_id;
+    }
+
+    public void setStack_id(String stack_id) {
+        this.stack_id = stack_id;
+    }
+
+    public String getHeat_template_version() {
+        return heat_template_version;
+    }
+
+    public void setHeat_template_version(String heat_template_version) { this.heat_template_version = heat_template_version; }
+
+    public String getResources_name() {
+        return resources_name;
+    }
+
+    public void setResources_name(String resources_name) {
+        this.resources_name = resources_name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getFlavour() {
+        return flavour;
+    }
+
+    public void setFlavour(String flavour) {
+        this.flavour = flavour;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Integer getPlatform() {
