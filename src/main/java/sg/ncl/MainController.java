@@ -2727,7 +2727,7 @@ public class MainController {
         }
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
-        if(experimentForm.getScenarioFileName().equals("Scenario 7 - Scenario for OpenStack") && (session.getAttribute(webProperties.getSessionOsToken()).equals("") || session.getAttribute(webProperties.getSessionOsToken()) == null))
+        if(experimentForm.getScenarioFileName().equals("Scenario 7 - Experiment with a single virtual machine") && (session.getAttribute(webProperties.getSessionOsToken()).equals("") || session.getAttribute(webProperties.getSessionOsToken()) == null))
         {
             log.warn("OpenStack access error");
             redirectAttributes.addFlashAttribute(MESSAGE, "You are not eligible to create Openstack experiments. Please contact support@ncl.sg");
@@ -6142,13 +6142,13 @@ public class MainController {
         log.info("Retrieving scenario file names");
         // FIXME: hardcode list of filenames for now
         List<String> scenarioFileNameList = new ArrayList<>();
-        scenarioFileNameList.add("Scenario 1 - Experiment with a single node");
-        scenarioFileNameList.add("Scenario 2 - Experiment with 2 nodes and 10Gb link");
-        scenarioFileNameList.add("Scenario 3 - Experiment with 3 nodes in a LAN");
-        scenarioFileNameList.add("Scenario 4 - Experiment with 2 nodes and customized link property");
-        scenarioFileNameList.add("Scenario 5 - Single SDN switch connected to two nodes");
-        scenarioFileNameList.add("Scenario 6 - Tree Topology with configurable SDN switches");
-        scenarioFileNameList.add("Scenario 7 - Scenario for OpenStack");
+        scenarioFileNameList.add("Deterlab Scenario 1 - Experiment with a single node");
+        scenarioFileNameList.add("Deterlab Scenario 2 - Experiment with 2 nodes and 10Gb link");
+        scenarioFileNameList.add("Deterlab Scenario 3 - Experiment with 3 nodes in a LAN");
+        scenarioFileNameList.add("Deterlab Scenario 4 - Experiment with 2 nodes and customized link property");
+        scenarioFileNameList.add("Deterlab Scenario 5 - Single SDN switch connected to two nodes");
+        scenarioFileNameList.add("Deterlab Scenario 6 - Tree Topology with configurable SDN switches");
+        scenarioFileNameList.add("Openstack Scenario 7 - Experiment with a single virtual machine");
         log.info("Scenario file list: {}", scenarioFileNameList);
         return scenarioFileNameList;
     }

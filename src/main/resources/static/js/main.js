@@ -364,25 +364,25 @@ function displayNsContent() {
     var x = document.getElementById("selectExpScenario").value;
 	var file = "";
 	switch(x) {
-		case "Scenario 1 - Experiment with a single node":
+		case "Deterlab Scenario 1 - Experiment with a single node":
 			file = basic1;
 			break;
-		case "Scenario 2 - Experiment with 2 nodes and 10Gb link":
+		case "Deterlab Scenario 2 - Experiment with 2 nodes and 10Gb link":
 			file = basic2;
 			break;
-		case "Scenario 3 - Experiment with 3 nodes in a LAN":
+		case "Deterlab Scenario 3 - Experiment with 3 nodes in a LAN":
 			file = basic3;
 			break;
-		case "Scenario 4 - Experiment with 2 nodes and customized link property":
+		case "Deterlab Scenario 4 - Experiment with 2 nodes and customized link property":
 			file = basic4;
 			break;
-		case "Scenario 5 - Single SDN switch connected to two nodes":
+		case "Deterlab Scenario 5 - Single SDN switch connected to two nodes":
 			file = basic5;
 			break;
-		case "Scenario 6 - Tree Topology with configurable SDN switches":
+		case "Deterlab Scenario 6 - Tree Topology with configurable SDN switches":
 			file = basic6;
 			break;
-		case "Scenario 7 - Scenario for OpenStack":
+		case "Openstack Scenario 7 - Experiment with a single virtual machine":
         		file = basicHeat;
         		document.getElementById("platform").value = 1;
         		break;
@@ -1035,25 +1035,25 @@ function displayNsContent() {
 	var x = document.getElementById("selectExpScenario").value;
 	var file = "";
 	switch(x) {
-		case "Scenario 1 - Experiment with a single node":
+		case "Deterlab Scenario 1 - Experiment with a single node":
 			file = basic1;
 			break;
-		case "Scenario 2 - Experiment with 2 nodes and 10Gb link":
+		case "Deterlab Scenario 2 - Experiment with 2 nodes and 10Gb link":
 			file = basic2;
 			break;
-		case "Scenario 3 - Experiment with 3 nodes in a LAN":
+		case "Deterlab Scenario 3 - Experiment with 3 nodes in a LAN":
 			file = basic3;
 			break;
-		case "Scenario 4 - Experiment with 2 nodes and customized link property":
+		case "Deterlab Scenario 4 - Experiment with 2 nodes and customized link property":
 			file = basic4;
 			break;
-		case "Scenario 5 - Single SDN switch connected to two nodes":
+		case "Deterlab Scenario 5 - Single SDN switch connected to two nodes":
 			file = basic5;
 			break;
-		case "Scenario 6 - Tree Topology with configurable SDN switches":
+		case "Deterlab Scenario 6 - Tree Topology with configurable SDN switches":
 			file = basic6;
 			break;
-		case "Scenario 7 - Scenario for OpenStack":
+		case "Openstack Scenario 7 - Experiment with a single virtual machine":
         		file = basicHeat;
         		document.getElementById("platform").value = 1;
         		break;
