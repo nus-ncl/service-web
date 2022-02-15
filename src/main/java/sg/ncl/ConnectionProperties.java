@@ -214,7 +214,7 @@ public class ConnectionProperties {
     }
 
     public String getStopOpenstackExperiment(String teamId, String expId, String stack_id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + "suspend" + "/" + teamId + "/" + EXPERIMENT + expId +"/" + stack_id;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + "suspend" + "/" + teamId + EXPERIMENT + expId +"/" + stack_id;
     }
 
     public String requestInternetExperiment(String teamId, String expId) {
