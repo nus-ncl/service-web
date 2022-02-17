@@ -138,11 +138,16 @@
                                                     </tr>
                                                 </table>
                                             </th:block>
-                                            <a href="#expModal" data-toggle="modal"
-                                               th:attr="data-expEntryName=${expEntry.name},
-                                                        data-deterUid=${deterUid},
-                                                        data-domainName=${!expEntry.nodesInfoMap.isEmpty()} ? ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg',
-                                                        data-expEntryId=${expEntry.id}">View</a>
+                                            <th:block th:if="${expEntry.platform == 0}">
+                                                <a href="#expModal" data-toggle="modal"
+                                                   th:attr="data-expEntryName=${expEntry.name},
+                                                            data-deterUid=${deterUid},
+                                                            data-domainName=${!expEntry.nodesInfoMap.isEmpty()} ? ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg',
+                                                            data-expEntryId=${expEntry.id}">View</a>
+                                            </th:block>
+                                            <th:block th:if="${expEntry.platform == 1}">
+                                                <a href="/tutorials.html" th:href="@{/tutorials}">View</a>
+                                            </th:block>
                                        </td>
                                         <td>
                                             <span th:if="${expEntry.state == 'STARTING'}">

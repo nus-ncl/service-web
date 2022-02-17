@@ -2727,7 +2727,7 @@ public class MainController {
         }
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
-        if(experimentForm.getScenarioFileName().equals("Scenario 7 - Experiment with a single virtual machine") && (session.getAttribute(webProperties.getSessionOsToken()).equals("") || session.getAttribute(webProperties.getSessionOsToken()) == null))
+        if(experimentForm.getScenarioFileName().equals("Openstack Scenario 7 - Experiment with a single virtual machine") && (session.getAttribute(webProperties.getSessionOsToken()).equals("") || session.getAttribute(webProperties.getSessionOsToken()) == null))
         {
             log.warn("OpenStack access error");
             redirectAttributes.addFlashAttribute(MESSAGE, "You are not eligible to create Openstack experiments. Please contact support@ncl.sg");
