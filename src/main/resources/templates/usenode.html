@@ -17,34 +17,84 @@
         <p>&nbsp;</p>
         <div class="row ">
             <div class="heading col-sm-12 tutorialbackground ">
-                <div class="col-sm-6">
-                    <h2>How to Access your Experiment Node</h2>
-                    <p>Using SSH...</p>
-                    <a th:href="@{/tutorials/usessh}"> <h18>Learn More >>> </h18></a>
-                </div>
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="../images/sshnode.png" src="../images/sshnode.png" width="500" alt="screenshot"/>
+                <div class="col-sm-8">
+                    <h2>The Guide to Access Instances via NCLient </h2>
+                    <h2>Step 1</h2>
+                    <p>Go to <a href="https://github.com/nus-ncl/Client">https://github.com/nus-ncl/Client</a> to git or download the tool NCLient.</p>
+                    <p>Refer to README <a href="https://github.com/nus-ncl/Client#getting-started">https://github.com/nus-ncl/Client#getting-started</a> to learn how to get started.</p>
                 </div>
             </div>
+
             <div class="heading col-sm-12 tutorialbackground ">
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="../images/scpfile.png" src="../images/scpfile.png" width="500" alt="screenshot"/>
-                    <img class="img-responsive" preload="true" minimal-lightbox="../images/scpremote.png" src="../images/scpremote.png" width="500" alt="screenshot"/>
+                <div class="col-sm-12">
+                    <h2>Step 2</h2>
+                    <p>Go to client_files folder at root directory,
+                        to compose your client file according to your metadata of the instance,
+                        based on our provided templates. (Deter or OpenStack)</p>
                 </div>
-                <div class="col-sm-6">
-                    <h2>How to Copy Data to your Node</h2>
-                    <p>Using SCP...</p>
-                    <a th:href="@{/tutorials/usescp}"> <h18>Learn More >>> </h18></a>
-                </div>
-            </div>
-            <div class="heading col-sm-12 tutorialbackground ">
-                <div class="col-sm-6">
-                    <h2>How to Access Your Node with GUI</h2>
-                    <p>Using port forwarding...</p>
-                    <a th:href="@{/tutorials/usegui}"> <h18>Learn More >>> </h18></a>
-                </div>
-                <div class="col-sm-6">
-                    <img class="img-responsive" preload="true" minimal-lightbox="../images/vncviewer.png" src="../images/vncviewer.png" width="500" alt="screenshot"/>
+                <div class="col-sm-12">
+                    <h3>&emsp;&emsp;&emsp;a. Deter</h3>
+                    <div>
+                        <div class="col-sm-2" ></div>
+                        <div class="col-sm-10">
+                            <img class="img-responsive" preload="true" minimal-lightbox="../images/deterguide.png" src="../images/deterguide.png" width="500" alt="screenshot"/>
+                        </div>
+                    </div>
+                    <br/> <br/>
+                    <div>
+                        <div class="col-sm-1" ></div>
+                        <div class="col-sm-10">
+                            <br/>
+                            <ol>
+                                <li>Refer to Client-deter.xml template. </li>
+                                <li><p>For every single node, create a &lt;Node&gt;&lt;/Node&gt; tab under the &lt;NODES&gt;&lt;/NODES&gt; tab and then replace 'name',
+                                'ExperimentName','TeamName' and 'vncport'.<br/><br/>
+                                    E.g.&emsp; for the example of Fig1.<br/>
+                                    &emsp;&emsp;&emsp;name = n1<br/>
+                                    &emsp;&emsp;&emsp;ExperimentName = malware <br/>
+                                    &emsp;&emsp;&emsp;TeamName = TechDemo <br/>
+                                    &emsp;&emsp;&emsp;vncport = 5901<br/>
+                                    &emsp;&emsp;&emsp;for n1 access.<br/><br/>
+                                   It works the same except for ‘name’ = n2 for node n2.<br/>
+
+                                </p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <br/><br/><br/><br/>
+                    <div class="col-sm-12">
+                    <h3>&emsp;&emsp;&emsp;b. OpenStack</h3>
+                    <div>
+                        <div class="col-sm-2" ></div>
+                        <div class="col-sm-10">
+                            <img class="img-responsive" preload="true" minimal-lightbox="../images/openstackguide.png" src="../images/openstackguide.png" width="500" alt="screenshot"/>
+                        </div>
+                    </div>
+                    <br/> <br/>
+                    <div>
+                        <div class="col-sm-1" ></div>
+                        <div class="col-sm-10">
+                            <br/>
+                            <ol>
+                                <li>Refer to Client-openstack.xml template. </li>
+                                <li><p>For every single instance, create a &lt;Machine&gt; &lt;/Machine&gt; tab under
+                                    the &lt;VM&gt;&lt;/VM&gt; tab and then replace ‘name’, ‘Project’,
+                                    ‘TeamName’ , ‘Domain’, ‘username’, ‘password’, ‘vncport’ and ‘IP’ of provider adapter.<br/><br/>
+                                    E.g.&emsp; for the example of Fig2.<br/>
+                                    &emsp;&emsp;&emsp;name = log4jshell<br/>
+                                    &emsp;&emsp;&emsp;Project = ARPDemo <br/>
+                                    &emsp;&emsp;&emsp;Domain = Default <br/>
+                                    &emsp;&emsp;&emsp;username = &lt;ssh account of the instance&gt;<br/>
+                                    &emsp;&emsp;&emsp;password = &lt;ssh password of the instance&gt;<br/>
+                                    &emsp;&emsp;&emsp;vncport = 5901<br/>
+                                    &emsp;&emsp;&emsp;for log4jshell access.<br/><br/>
+                                </p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>
