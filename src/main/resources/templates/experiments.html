@@ -40,7 +40,7 @@
                                     <th th:text="#{experiment.table.header.nodes.number}">Instance</th>
                                     <th th:text="#{experiment.table.header.status}">Status</th>
                                     <th th:text="#{experiment.table.header.platform}">Platform</th>
-                                    <th th:text="#{experiment.table.header.client}">Client</th>
+                                    <th th:text="#{experiment.table.header.client}">Instance Access</th>
                                     <th th:text="#{experiment.table.header.actions}">Actions</th>
                                 </tr>
                             </thead>
@@ -139,14 +139,24 @@
                                                 </table>
                                             </th:block>
                                             <th:block th:if="${expEntry.platform == 0}">
-                                                <a href="#expModal" data-toggle="modal"
+                                                <a href="#expOSModal" data-toggle="modal"
                                                    th:attr="data-expEntryName=${expEntry.name},
                                                             data-deterUid=${deterUid},
-                                                            data-domainName=${!expEntry.nodesInfoMap.isEmpty()} ? ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg',
-                                                            data-expEntryId=${expEntry.id}">View</a>
+                                                            data-domainName=${!expEntry.nodesInfoMap.isEmpty()} ?
+                                                            ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} :
+                                                            'node.expname.teamname.ncl.sg',
+                                                            data-expEntryId=${expEntry.id}">How to Access</a>
                                             </th:block>
                                             <th:block th:if="${expEntry.platform == 1}">
-                                                <a href="/tutorials.html" th:href="@{/tutorials}">View</a>
+
+                                                <a href="#expOSModal" data-toggle="modal"
+                                                   th:attr="data-expEntryName=${expEntry.name},
+                                                            data-deterUid=${deterUid},
+                                                            data-domainName=${!expEntry.nodesInfoMap.isEmpty()} ?
+                                                            ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} :
+                                                            'node.expname.teamname.ncl.sg',
+                                                            data-expEntryId=${expEntry.id}">How to Access</a>
+
                                             </th:block>
                                        </td>
                                         <td>
@@ -354,6 +364,31 @@
                         <table></table>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- experiment view openstack modal -->
+        <div class="modal fade exp-modal" id="expOSModal" tabindex="-1" role="dialog" aria-labelledby="expModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header team-owner-info-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="btn-fa-red">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="expId"><span id="expEntryName">Instance Access</span></h4>
+                    </div>
+                    <div class="modal-body team-owner-info-body">
+                        <h4>Instructions to Access Node/Stack</h4>
+                        <div class="exp-details">
+                            <p><strong>Step 1</strong>: </p>
+                                <pre>Goto <a href ="https://github.com/nus-ncl/Client">https://github.com/nus-ncl/Client </a> to git or download the tool NCLient.
+                                <br/>Refer to README <a href ="https://github.com/nus-ncl/Client#getting-started">https://github.com/nus-ncl/Client#getting-started</a> to learn how to get started.</pre>
+                            <br/>
+                            <a href="/tutorials/usenode.html" th:href="@{/tutorials/usenode}"> <h18><u>For more details >>> </u></h18></a>
+                            <p>&nbsp;</p>
+                        </div>
+                        <table></table>
+                    </div>
+                </div>
+
             </div>
         </div>
 

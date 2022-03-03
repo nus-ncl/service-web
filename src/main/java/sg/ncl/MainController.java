@@ -2592,13 +2592,18 @@ public class MainController {
 
         ResponseEntity openstackEventResponse = restTemplate.exchange(properties.getOpenStackEvents(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
         ResponseEntity openstackDetailResponse = restTemplate.exchange(properties.getOpenStackDetail(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
+        ResponseEntity openstackServerResponse = restTemplate.exchange(properties.getOpenStackServer(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
 
+        ResponseEntity openstackServerDetail = restTemplate.exchange(properties.getOpenStackServerDetail(expId), HttpMethod.GET, openStackRequest, String.class);
+
+        log.info("openStack Server Detail: {}" , openstackServerDetail.getBody().toString());
         OpenstackExperiment OpenStackExp = extractOpenstackExperiment(openstackDetailResponse.getBody().toString());
         User2 experimentOwner = invokeAndExtractUserInfo(OpenStackExp.getUserId());
 
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
         model.addAttribute("experiment", OpenStackExp);
         model.addAttribute("openstackEvents", new JSONObject(openstackEventResponse.getBody().toString()));
+        model.addAttribute("openstackServerDetail", new JSONObject(openstackServerDetail.getBody().toString()));
 
         return "experiment_profile";
     }

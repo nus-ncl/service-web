@@ -185,6 +185,14 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/openstackDetail" + "/" + stack_id;
     }
 
+    public String getOpenStackServer(String id, String stack_id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/" + stack_id+ "/servers" ;
+    }
+
+    public String getOpenStackServerDetail(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/servers/" + id ;
+    }
+
     public String getExpListByTeamId(String teamId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId;
     }
