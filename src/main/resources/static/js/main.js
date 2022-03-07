@@ -359,28 +359,33 @@ function displayNsContent() {
 	var basic4 = "# This is a simple experiment with 2 nodes and customized link specification\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset n0 [$ns node]\r\nset n1 [$ns node]\r\n\r\n# Add link and specify link properties\r\nset link0 [$ns duplex-link $n0 $n1 100Mb 200ms DropTail]\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
     var basic5 = "#Start of the script\r\n\r\n# Create a new experiment\r\nset ns [new Simulator]\r\n# Enable tb commands (an extension to TCL)\r\nsource tb_compat.tcl\r\n\r\n# Define a node (a server node)\r\nset node1 [$ns node]\r\n# Same as the above\r\nset node2 [$ns node]\r\n\r\n# Define a switch\r\nset switch0 [$ns node]\r\n# Declare that the switch0 is an OpenFlow Enabled switch\r\ntb-set-hardware $switch0 ofswitch\r\n\r\n# Connect node1 to switch0\r\nset link1 [$ns duplex-link $switch0 $node1 1Gb 0ms DropTail]\r\n# Connect node2 to switch0\r\nset link2 [$ns duplex-link $switch0 $node2 1Gb 0ms DropTail]\r\n\r\n# [Optional] Define a node named \"controller\"\r\n# If you define a controller you can set a custom image\r\n# otherwise the default image for the controller will be loaded\r\nset controller [$ns node]\r\n# If you have defined a controller you have to declare it as below\r\n# Declare that \"controller\" is an SDN Controller \r\ntb-set-hardware $controller ofcontrol\r\n\r\n# Boiler plates\r\n$ns rtproto Static \r\n$ns run \r\n### End of the script";
     var basic6 = "#Start of the script\r\n\r\n# Starting a simulator\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Defining nodes\r\nset node1 [$ns node]\r\nset node2 [$ns node]\r\nset node3 [$ns node]\r\nset node4 [$ns node]\r\n\r\n# Defining Switches\r\nset switch1 [$ns node]\r\ntb-set-hardware $switch1 ofswitch\r\nset switch2 [$ns node]\r\ntb-set-hardware $switch2 ofswitch\r\nset switch3 [$ns node]\r\ntb-set-hardware $switch3 ofswitch\r\nset switch4 [$ns node]\r\ntb-set-hardware $switch4 ofswitch\r\nset switch5 [$ns node]\r\ntb-set-hardware $switch5 ofswitch\r\nset switch6 [$ns node]\r\ntb-set-hardware $switch6 ofswitch\r\nset switch7 [$ns node]\r\ntb-set-hardware $switch7 ofswitch\r\n\r\n# Connecting Links between leaf switches and server nodes 1-4\r\nset link1 [$ns duplex-link $switch1 $node1 1Gb 0ms DropTail]\r\nset link2 [$ns duplex-link $switch2 $node2 1Gb 0ms DropTail]\r\nset link3 [$ns duplex-link $switch3 $node3 1Gb 0ms DropTail]\r\nset link4 [$ns duplex-link $switch4 $node4 1Gb 0ms DropTail]\r\n\r\n# Connecting switches together\r\nset link5 [$ns duplex-link $switch1 $switch5 1Gb 0ms DropTail]\r\nset link6 [$ns duplex-link $switch2 $switch5 1Gb 0ms DropTail]\r\nset link7 [$ns duplex-link $switch3 $switch6 1Gb 0ms DropTail]\r\nset link8 [$ns duplex-link $switch4 $switch6 1Gb 0ms DropTail]\r\nset link9 [$ns duplex-link $switch5 $switch7 1Gb 0ms DropTail]\r\nset link10 [$ns duplex-link $switch6 $switch7 1Gb 0ms DropTail]\r\n\r\n# [Optional] Define a node named \"controller\" \r\n# and declare it as an SDN Controller\r\nset controller [$ns node]\r\ntb-set-hardware $controller ofcontrol\r\n\r\n$ns rtproto Static\r\n$ns run\r\n\r\n### End of the script";
+    var basicHeat = "heat_template_version: 2018-08-31 \r\n\r\ndescription: Simple template to deploy a single compute instance \r\n\r\nresources: \r\n  hello_world: \r\n    type: OS::Nova::Server \r\n    properties: \r\n      image: cirros-0.4.0-x86_64-disk \r\n      flavour: m1.small \r\n      networks: - network : public";
 
     var x = document.getElementById("selectExpScenario").value;
 	var file = "";
 	switch(x) {
-		case "Scenario 1 - Experiment with a single node":
+		case "Deterlab Scenario 1 - Experiment with a single node":
 			file = basic1;
 			break;
-		case "Scenario 2 - Experiment with 2 nodes and 10Gb link":
+		case "Deterlab Scenario 2 - Experiment with 2 nodes and 10Gb link":
 			file = basic2;
 			break;
-		case "Scenario 3 - Experiment with 3 nodes in a LAN":
+		case "Deterlab Scenario 3 - Experiment with 3 nodes in a LAN":
 			file = basic3;
 			break;
-		case "Scenario 4 - Experiment with 2 nodes and customized link property":
+		case "Deterlab Scenario 4 - Experiment with 2 nodes and customized link property":
 			file = basic4;
 			break;
-		case "Scenario 5 - Single SDN switch connected to two nodes":
+		case "Deterlab Scenario 5 - Single SDN switch connected to two nodes":
 			file = basic5;
 			break;
-		case "Scenario 6 - Tree Topology with configurable SDN switches":
+		case "Deterlab Scenario 6 - Tree Topology with configurable SDN switches":
 			file = basic6;
 			break;
+		case "Openstack Scenario 7 - Experiment with a single virtual machine":
+        		file = basicHeat;
+        		document.getElementById("platform").value = 1;
+        		break;
 		default:
 			file = basic1;
 			break;
@@ -393,6 +398,7 @@ function displayNsContent() {
 function displayDefaultNsContent() {
 	var basic = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	document.getElementById("networkConfig").innerHTML = basic;
+	document.getElementById("platform").value = 0;
 }
 
 
@@ -1024,28 +1030,33 @@ function displayNsContent() {
 	var basic4 = "# This is a simple experiment with 2 nodes and customized link specification\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset n0 [$ns node]\r\nset n1 [$ns node]\r\n\r\n# Add link and specify link properties\r\nset link0 [$ns duplex-link $n0 $n1 100Mb 200ms DropTail]\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	var basic5 = "# Start of the script\r\n\r\n# Create a new experiment\r\nset ns [new Simulator]\r\n# Enable tb commands (an extension to TCL)\r\nsource tb_compat.tcl\r\n\r\n# Define a node (a server node)\r\nset node1 [$ns node]\r\n# Same as the above\r\nset node2 [$ns node]\r\n\r\n# Define a switch\r\nset switch0 [$ns node]\r\n# Declare that the switch0 is an OpenFlow Enabled switch\r\ntb-set-hardware $switch0 ofswitch\r\n\r\n# Connect node1 to switch0\r\nset link1 [$ns duplex-link $switch0 $node1 1Gb 0ms DropTail]\r\n# Connect node2 to switch0\r\nset link2 [$ns duplex-link $switch0 $node2 1Gb 0ms DropTail]\r\n\r\n# [Optional] Define a node named \"controller\"\r\n# If you define a controller you can set a custom image\r\n# otherwise the default image for the controller will be loaded\r\nset controller [$ns node]\r\n# If you have defined a controller you have to declare it as below\r\n# Declare that \"controller\" is an SDN Controller \r\ntb-set-hardware $controller ofcontrol\r\n\r\n# Boiler plates\r\n$ns rtproto Static \r\n$ns run \r\n### End of the script";
 	var basic6 = "# Start of the script\r\n\r\n# Starting a simulator\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Defining nodes\r\nset node1 [$ns node]\r\nset node2 [$ns node]\r\nset node3 [$ns node]\r\nset node4 [$ns node]\r\n\r\n# Defining Switches\r\nset switch1 [$ns node]\r\ntb-set-hardware $switch1 ofswitch\r\nset switch2 [$ns node]\r\ntb-set-hardware $switch2 ofswitch\r\nset switch3 [$ns node]\r\ntb-set-hardware $switch3 ofswitch\r\nset switch4 [$ns node]\r\ntb-set-hardware $switch4 ofswitch\r\nset switch5 [$ns node]\r\ntb-set-hardware $switch5 ofswitch\r\nset switch6 [$ns node]\r\ntb-set-hardware $switch6 ofswitch\r\nset switch7 [$ns node]\r\ntb-set-hardware $switch7 ofswitch\r\n\r\n# Connecting Links between leaf switches and server nodes 1-4\r\nset link1 [$ns duplex-link $switch1 $node1 1Gb 0ms DropTail]\r\nset link2 [$ns duplex-link $switch2 $node2 1Gb 0ms DropTail]\r\nset link3 [$ns duplex-link $switch3 $node3 1Gb 0ms DropTail]\r\nset link4 [$ns duplex-link $switch4 $node4 1Gb 0ms DropTail]\r\n\r\n# Connecting switches together\r\nset link5 [$ns duplex-link $switch1 $switch5 1Gb 0ms DropTail]\r\nset link6 [$ns duplex-link $switch2 $switch5 1Gb 0ms DropTail]\r\nset link7 [$ns duplex-link $switch3 $switch6 1Gb 0ms DropTail]\r\nset link8 [$ns duplex-link $switch4 $switch6 1Gb 0ms DropTail]\r\nset link9 [$ns duplex-link $switch5 $switch7 1Gb 0ms DropTail]\r\nset link10 [$ns duplex-link $switch6 $switch7 1Gb 0ms DropTail]\r\n\r\n# [Optional] Define a node named \"controller\" \r\n# and declare it as an SDN Controller\r\nset controller [$ns node]\r\ntb-set-hardware $controller ofcontrol\r\n\r\n$ns rtproto Static\r\n$ns run\r\n\r\n### End of the script";
+    var basicHeat = "heat_template_version: 2018-08-31 \r\n\r\ndescription: Simple template to deploy a single compute instance \r\n\r\nresources: \r\n  hello_world: \r\n    type: OS::Nova::Server \r\n    properties: \r\n      image: cirros-0.4.0-x86_64-disk \r\n      flavour: m1.small \r\n      networks: - network : public";
 
 	var x = document.getElementById("selectExpScenario").value;
 	var file = "";
 	switch(x) {
-		case "Scenario 1 - Experiment with a single node":
+		case "Deterlab Scenario 1 - Experiment with a single node":
 			file = basic1;
 			break;
-		case "Scenario 2 - Experiment with 2 nodes and 10Gb link":
+		case "Deterlab Scenario 2 - Experiment with 2 nodes and 10Gb link":
 			file = basic2;
 			break;
-		case "Scenario 3 - Experiment with 3 nodes in a LAN":
+		case "Deterlab Scenario 3 - Experiment with 3 nodes in a LAN":
 			file = basic3;
 			break;
-		case "Scenario 4 - Experiment with 2 nodes and customized link property":
+		case "Deterlab Scenario 4 - Experiment with 2 nodes and customized link property":
 			file = basic4;
 			break;
-		case "Scenario 5 - Single SDN switch connected to two nodes":
+		case "Deterlab Scenario 5 - Single SDN switch connected to two nodes":
 			file = basic5;
 			break;
-		case "Scenario 6 - Tree Topology with configurable SDN switches":
+		case "Deterlab Scenario 6 - Tree Topology with configurable SDN switches":
 			file = basic6;
 			break;
+		case "Openstack Scenario 7 - Experiment with a single virtual machine":
+        		file = basicHeat;
+        		document.getElementById("platform").value = 1;
+        		break;
 		default:
 			file = basic1;
 			break;
@@ -1058,6 +1069,7 @@ function displayNsContent() {
 function displayDefaultNsContent() {
 	var basic = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	document.getElementById("networkConfig").innerHTML = basic;
+	document.getElementById("platform").value = 0;
 }
 
 // when the auto-shutdown checkbox is checked

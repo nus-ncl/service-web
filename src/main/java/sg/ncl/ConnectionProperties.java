@@ -177,6 +177,22 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId + "/" + expEndpoint + "/" + expId + "/experimentDetails";
     }
 
+    public String getOpenStackEvents(String id, String stack_id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/openstack" + "/" + stack_id + "/events";
+    }
+
+    public String getOpenStackDetail(String id, String stack_id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/openstackDetail" + "/" + stack_id;
+    }
+
+    public String getOpenStackServer(String id, String stack_id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/" + stack_id+ "/servers" ;
+    }
+
+    public String getOpenStackServerDetail(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/servers/" + id ;
+    }
+
     public String getExpListByTeamId(String teamId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId;
     }
@@ -189,16 +205,24 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + EXPERIMENT + expId;
     }
 
-    public String getDeleteExperiment(String teamId, String expId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId + EXPERIMENTS + expId;
+    public String getDeleteExperiment(String teamId, String expId, String stack_id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId + EXPERIMENTS + expId + "/" + stack_id;
     }
 
     public String getStartExperiment(String teamName, String expId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/start/team/" + teamName + EXPERIMENT + expId;
     }
 
+    public String getStartOpenstackExperiment(String teamId, String expId, String stack_id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + "resume" + "/" +  teamId  + EXPERIMENT + expId + "/" + stack_id;
+    }
+
     public String getStopExperiment(String teamName, String expId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + EXPERIMENT + expId;
+    }
+
+    public String getStopOpenstackExperiment(String teamId, String expId, String stack_id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + "suspend" + "/" + teamId + EXPERIMENT + expId +"/" + stack_id;
     }
 
     public String requestInternetExperiment(String teamId, String expId) {

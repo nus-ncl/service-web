@@ -33,6 +33,7 @@ public class ExperimentForm {
 
     private String scenarioFileName;
     private String scenarioContents;
+    private Integer platform;
 
     public ExperimentForm() {
         maxDuration = 0;
@@ -129,6 +130,14 @@ public class ExperimentForm {
 
     public void setScenarioContents(String scenarioContents) {
         this.scenarioContents = scenarioContents;
+    }
+
+    public Integer getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Integer platform) {
+        this.platform = platform;
     }
 
 }
