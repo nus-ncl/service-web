@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by dcszwang on 11/14/2017.
+ * Created by deepsi on 01/28/2022.
  */
 @Getter
 @Setter
-public class StatefulExperiment {
+public class OpenstackExperiment {
     private String teamId;
     private String teamName;
     private Long id;
@@ -24,25 +24,16 @@ public class StatefulExperiment {
     private ZonedDateTime createdDate;
     private ZonedDateTime lastModifiedDate;
     private String state;
-    private int nodes;
-    private int minNodes;
+    private String stack_status_reason;
+    private String stack_project_id;
+    private String heat_file;
     private int maxDuration;
-    private Long idleHours;
-    private Map<String, Map<String, String>> nodesInfoMap;
     private int platform;
     private String stack_id;
 
-    public StatefulExperiment() {
-        nodes = 0;
+    public OpenstackExperiment() {
         maxDuration = 0;
-        minNodes = 0;
-        idleHours = 0L;
-        nodesInfoMap = new HashMap<>();
-        platform = 0;
-    }
-
-    public void addNodeInfo(String nodeName, Map<String, String> nodeInfo) {
-        nodesInfoMap.put(nodeName, nodeInfo);
+        platform = 1;
     }
 
     public void setCreatedDate(Long epoch) {

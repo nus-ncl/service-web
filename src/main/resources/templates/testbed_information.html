@@ -103,61 +103,26 @@
     <div class="row">
         <p>&nbsp;</p>
         <div class="panel panel-primary dashpanel">
-            <h2 class="team-heading team-heading-current-team" th:text="#{image.heading.global}">text heading from .properties</h2>
-            <p>&nbsp;</p>
-            <div class="table-responsive">
-                <table class="table1">
-                    <thead BGCOLOR="#E0E0E0">
-                    <th width="30%"><p><h4><strong th:text="#{image.name}">Name</strong></h4></p></th>
-                    <th width="20%"><p><h4><strong th:text="#{image.OS}">OS</strong></h4></p></th>
-                    <th width="50%"><p><h4><strong th:text="#{image.description}">Description</strong></h4></p></th>
-                    </thead>
-                    <tr BGCOLOR="#fff">
-                        <td><div align="center">Ubuntu1404-64-STD</div></td>
-                        <td><div align="center">Linux</div></td>
-                        <td><div align="center">Ubuntu 14.04 LTS 64 bit Standard Image</div></td>
-                    </tr>
-                    <tr BGCOLOR="#fff">
-                        <td><div align="center">Ubuntu1604-64-STD</div></td>
-                        <td><div align="center">Linux</div></td>
-                        <td><div align="center">Ubuntu 16.04 LTS 64 bit Standard Image</div></td>
-                    </tr>
-                    <tr BGCOLOR="#fff">
-                        <td><div align="center">Ubuntu1604-64-GUI</div></td>
-                        <td><div align="center">Linux</div></td>
-                        <td><div align="center">Ubuntu 16.04 LTS 64 bit Image with Desktop GUI and VNC. NOTE: after the experiment is running, please first login to the nodes (using SSH client or web-ssh) and start vnc server by running 'vncserver'.</div></td>
-                    </tr>
-                </table>
-            </div>
-            <p>&nbsp;</p>
-            <p>To load a particular OS image onto your nodes, simply use the <code>tb-set-node-os</code> directive in your network configuration, e.g.:</p>
-            <pre><p># Set OS for node 'n0'</p><p>tb-set-node-os $n0 Ubuntu1604-64-STD</p></pre>
+            <h2 class="team-heading team-heading-current-team" th:text="#{image.openstack.system}">text heading from .properties</h2>
+            <p>OpenStack is a cloud operating system that controls large pools of compute, storage, and networking resources </p>
+            <p>throughout a datacenter, all managed and provisioned through APIs with common authentication mechanisms</p>
+            <p>NCL uses openstack APIs and provide interface to launch server instances, create experiments and perform available actions.</p>
+            <a href="https://www.openstack.org/software/" ><h18>Learn More >>> </h18></a>
         </div> <!-- panel -->
     </div>
 
 
     <div class="row">
-        <p>&nbsp;</p>
-
+        <p></p>
         <div class="panel panel-primary dashpanel">
-            <h2 class="team-heading team-heading-current-team" th:text="#{image.heading.cve}">text heading from .properties</h2>
+            <h2 class="team-heading team-heading-current-team" th:text="#{image.deterlab.system}">text heading from .properties</h2>
             <p></p>
-
-            <div class="table-responsive">
-                <table class="table1" th:if="not ${globalImagesMap.isEmpty()}">
-                    <tr BGCOLOR="#E0E0E0">
-                        <th width="30%"><p><h4><strong th:text="#{image.name}">Name</strong></h4></p></th>
-                        <th width="20%"><p><h4><strong th:text="#{image.OS}">OS</strong></h4></p></th>
-                        <th width="50%"><p><h4><strong th:text="#{image.description}">Description</strong></h4></p></th>
-                    </tr>
-                    <tr BGCOLOR="#fff" th:each="imageMap : ${globalImagesMap}">
-                        <td><div align="center" th:text="${imageMap.key}">Name</div></td>
-                        <td><div align="center" th:text="${imageMap.value.osname}">OS</div></td>
-                        <td><div align="center" th:text="${imageMap.value.description}">Description</div></td>
-                    </tr>
-                </table>
-                <p th:if="${globalImagesMap.isEmpty()}" th:text="#{image.noCveImages}">There is no pre-compiled host vulnerability environment at the moment.</p>
-            </div>
+            <p>DeterLab is a state-of-the-art scientific computing facility for cyber-security researchers engaged in research, development, </p>
+            <p>discovery, experimentation, and testing of innovative cyber-security technology. To date, DeterLab-based projects have included </p>
+            <p>behavior analysis and defensive technologies including DDoS attacks, worm and botnet attacks, encryption, pattern detection, </p>
+            <p>and intrusion-tolerant storage protocols. The NCL web application is a customized, enhanced version of DeterLab, </p>
+            <p>with additional features like a ready-to-use vulnerability environment, data repository, accounting, etc. </p>
+            <a href="https://deter-project.org/about_deterlab" ><h18>Learn More >>> </h18></a>
         </div> <!-- panel -->
     </div>
 

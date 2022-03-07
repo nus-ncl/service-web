@@ -80,6 +80,7 @@ public class MainController {
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
     public static final String APPLICATION_FORCE_DOWNLOAD = "application/force-download";
     private static final String AUTHORIZATION = "Authorization";
+    private static final String OS_TOKEN = "OS_Token";
     private static final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
 
     private TeamManager teamManager = TeamManager.getInstance();
@@ -216,6 +217,7 @@ public class MainController {
     private static final String TEAMS = "teams";
     private static final String MEMBERS = "members";
     private static final String ORIGINAL_TEAM = "originalTeam";
+    private static final String PLATFORM = "platform";
 
     private static final String LOG_IOEXCEPTION = "IOException {}";
 
@@ -869,6 +871,7 @@ public class MainController {
         JSONObject tokenObject = new JSONObject(jwtTokenString);
         String token = tokenObject.getString("token");
         String id = tokenObject.getString("id");
+        String os_token = tokenObject.getString("os_token");
         String role = "";
         if (tokenObject.getJSONArray("roles") != null) {
             role = tokenObject.getJSONArray("roles").get(0).toString();
@@ -884,13 +887,13 @@ public class MainController {
         String csrfToken=generateCSRFToken();
         session.setAttribute("csrfToken", csrfToken);
         loginForm.setErrorMsg("csrfToken");
-         // now check user status to decide what to show to the user
-        return checkUserStatus(loginForm, session, redirectAttributes, token, id, role);
+        // now check user status to decide what to show to the user
+        return checkUserStatus(loginForm, session, redirectAttributes, token, os_token, id, role);
     }
 
     private String checkUserStatus(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
                                    HttpSession session, RedirectAttributes redirectAttributes,
-                                   String token, String id, String role) {
+                                   String token, String  os_token, String id, String role) {
         User2 user = invokeAndExtractUserInfo(id);
 
         try {
@@ -911,7 +914,7 @@ public class MainController {
                 return "redirect:/email_checklist";
             } else if ((UserStatus.APPROVED.toString()).equals(userStatus)) {
                 // set session variables
-                setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), role, token);
+                setSessionVariables(session, loginForm.getLoginEmail(), id, user.getFirstName(), role, token, os_token);
                 log.info("login success for {}, id: {}", loginForm.getLoginEmail(), id);
                 return "redirect:/dashboard";
             } else {
@@ -2581,6 +2584,30 @@ public class MainController {
         return request;
     }
 
+    //Experiment profile for openstack experiments.
+    @GetMapping(value = "/experiment_profile/{expId}/{stack_id}")
+    public String experimentProfile(@PathVariable String expId, @PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+
+        HttpEntity<String> openStackRequest = createHttpEntityWithOS_Token();
+
+        ResponseEntity openstackEventResponse = restTemplate.exchange(properties.getOpenStackEvents(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
+        ResponseEntity openstackDetailResponse = restTemplate.exchange(properties.getOpenStackDetail(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
+        ResponseEntity openstackServerResponse = restTemplate.exchange(properties.getOpenStackServer(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
+
+        ResponseEntity openstackServerDetail = restTemplate.exchange(properties.getOpenStackServerDetail(expId), HttpMethod.GET, openStackRequest, String.class);
+
+        log.info("openStack Server Detail: {}" , openstackServerDetail.getBody().toString());
+        OpenstackExperiment OpenStackExp = extractOpenstackExperiment(openstackDetailResponse.getBody().toString());
+        User2 experimentOwner = invokeAndExtractUserInfo(OpenStackExp.getUserId());
+
+        model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
+        model.addAttribute("experiment", OpenStackExp);
+        model.addAttribute("openstackEvents", new JSONObject(openstackEventResponse.getBody().toString()));
+        model.addAttribute("openstackServerDetail", new JSONObject(openstackServerDetail.getBody().toString()));
+
+        return "experiment_profile";
+    }
+
     @GetMapping(value = "/experiment_profile/{expId}")
     public String experimentProfile(@PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -2590,28 +2617,6 @@ public class MainController {
 
         User2 experimentOwner = invokeAndExtractUserInfo(stateExp.getUserId());
 
-        /*
-         * get experiment details
-         * returns a json string in the format:
-         * {
-         *   'ns_file' :
-         *              {
-         *              'msg' : 'success/fail',
-         *              'ns_file' : 'ns_file_contents'
-         *              },
-         *              'realization_details' :
-         *              {
-         *              'msg' : 'success/fail',
-         *              'realization_details' : 'realization_details_contents'
-         *              },
-         *              'activity_log'	:
-         *              {
-         *              'msg' : 'success/fail',
-         *              activity_log' : 'activity_log_contents'
-         *              }
-         *  }
-         *  returns a '{}' otherwise if fail
-         */
         ResponseEntity expDetailsResponse = restTemplate.exchange(properties.getExperimentDetails(stateExp.getTeamId(), expId), HttpMethod.GET, request, String.class);
         log.debug("experiment profile - experiment details: {}", expDetailsResponse.getBody().toString());
 
@@ -2727,6 +2732,13 @@ public class MainController {
         }
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
+        if(experimentForm.getScenarioFileName().equals("Openstack Scenario 7 - Experiment with a single virtual machine") && (session.getAttribute(webProperties.getSessionOsToken()).equals("") || session.getAttribute(webProperties.getSessionOsToken()) == null))
+        {
+            log.warn("OpenStack access error");
+            redirectAttributes.addFlashAttribute(MESSAGE, "You are not eligible to create Openstack experiments. Please contact support@ncl.sg");
+            return REDIRECT_CREATE_EXPERIMENT;
+        }
+
         JSONObject experimentObject = new JSONObject();
         experimentObject.put(USER_ID, session.getAttribute("id").toString());
         experimentObject.put(TEAM_ID, experimentForm.getTeamId());
@@ -2737,9 +2749,19 @@ public class MainController {
         experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
         experimentObject.put(MAX_DURATION, experimentForm.getMaxDuration());
+        experimentObject.put(PLATFORM, experimentForm.getPlatform());
+
+        if(experimentForm.getPlatform() == 1)
+        {
+            experimentObject.put("heat_template_version", "2018-08-31");
+            experimentObject.put("resources_name", "hello_world");
+            experimentObject.put("type", "OS::Nova::Server");
+            experimentObject.put("flavour", "m1.small");
+            experimentObject.put("image", "cirros-0.4.0-x86_64-disk");
+        }
 
         log.info("Calling service to create experiment");
-        HttpEntity<String> request = createHttpEntityWithBody(experimentObject.toString());
+        HttpEntity<String> request = createHttpEntityWithOS_TokenBody(experimentObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
 
@@ -2956,19 +2978,20 @@ public class MainController {
     public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId,
                                    @PathVariable String expId, final RedirectAttributes redirectAttributes,
                                    HttpSession session) throws WebServiceRuntimeException {*/
-        @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}/{csrfToken}")
-        public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId,
-                @PathVariable String expId, @PathVariable String csrfToken,final RedirectAttributes redirectAttributes,
-        HttpSession session) throws WebServiceRuntimeException {
+    @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}/{csrfToken}/{stack_id}")
+    public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId,
+                                   @PathVariable String expId, @PathVariable String csrfToken, @PathVariable String stack_id,
+                                   final RedirectAttributes redirectAttributes,
+                                   HttpSession session) throws WebServiceRuntimeException {
         // ensure experiment is stopped first
-             // fix for Cross site request forgery //
-            if(!(csrfToken.equals(session.getAttribute("csrfToken").toString())))
-            {
-                log.warn("Permission denied to remove experiment: {} for team: {} Invalid Token detected");
-                redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
-                return REDIRECT_UNAUTHOURIZED_ACCESS;
-            }
-            Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+        // fix for Cross site request forgery //
+        if(!(csrfToken.equals(session.getAttribute("csrfToken").toString())))
+        {
+            log.warn("Permission denied to remove experiment: {} for team: {} Invalid Token detected");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
+            return REDIRECT_UNAUTHOURIZED_ACCESS;
+        }
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
 
         Team2 team = invokeAndExtractTeamInfo(teamId);
 
@@ -2986,13 +3009,13 @@ public class MainController {
             return REDIRECT_EXPERIMENTS;
         }
 
-        log.info("Removing experiment: at " + properties.getDeleteExperiment(teamId, expId));
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        log.info("Removing experiment: at " + properties.getDeleteExperiment(teamId, expId, stack_id));
+        HttpEntity<String> request = createHttpEntityWithOS_Token();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
 
         try {
-            response = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId), HttpMethod.DELETE, request, String.class);
+            response = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId, stack_id), HttpMethod.DELETE, request, String.class);
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to remove experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -3032,11 +3055,12 @@ public class MainController {
         }
     }
 
-    @RequestMapping("/start_experiment/{teamName}/{expId}/{csrfToken}")
+    @RequestMapping("/start_experiment/{teamName}/{expId}/{csrfToken}/{stack_id}")
     public String startExperiment(
             @PathVariable String teamName,
             @PathVariable String expId,
             @PathVariable String csrfToken,
+            @PathVariable String stack_id,
             final RedirectAttributes redirectAttributes, Model model, HttpSession session) throws WebServiceRuntimeException {
 
         // fix for Cross site request forgery //
@@ -3071,18 +3095,38 @@ public class MainController {
         }
 
         //start experiment
-        log.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
+        log.info("Starting experiment: at " + properties.getStartExperiment(teamName, expId));
+        if(stack_id.equals("0"))
+        {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
-        try {
-            response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
-        } catch (Exception e) {
-            log.warn("Error connecting to experiment service to start experiment", e.getMessage());
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_EXPERIMENTS;
+            try {
+                response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+            }
+            catch (Exception e) {
+                log.warn("Error connecting to experiment service to start experiment", e.getMessage());
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                return REDIRECT_EXPERIMENTS;
+            }
         }
+        else
+        {
+            JSONObject jsonExperiment = new JSONObject("{\"resume\":null}");
+            HttpEntity<String> request = createHttpEntityWithOS_TokenBody(jsonExperiment.toString());
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+
+            try {
+                response = restTemplate.exchange(properties.getStartOpenstackExperiment(teamId, expId, stack_id), HttpMethod.POST, request, String.class);
+            }
+            catch (Exception e) {
+                log.warn("Error connecting to experiment service to start experiment", e.getMessage());
+                redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                return REDIRECT_EXPERIMENTS;
+            }
+        }
+
 
         String responseBody = response.getBody().toString();
 
@@ -3129,9 +3173,9 @@ public class MainController {
         }
     }
 
-    @RequestMapping("/stop_experiment/{teamName}/{expId}")
+    @RequestMapping("/stop_experiment/{teamName}/{expId}/{stack_id}")
     public String stopExperiment(@PathVariable String teamName, @PathVariable String expId,
-                                 Model model, final RedirectAttributes redirectAttributes,
+                                 @PathVariable String stack_id, Model model, final RedirectAttributes redirectAttributes,
                                  HttpSession session) throws WebServiceRuntimeException {
 
         // ensure experiment is active first before stopping
@@ -3143,18 +3187,22 @@ public class MainController {
             return REDIRECT_EXPERIMENTS;
         }
 
-        if (!realization.getState().equals(RealizationState.RUNNING.toString())) {
+        if ((!realization.getState().equals(RealizationState.RUNNING.toString())) && (stack_id.equals("0"))) {
             log.warn("Trying to stop Team: {}, Experiment: {} with State: {} that is still in progress?", teamName, expId, realization.getState());
             redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to stop Exp: " + realization.getExperimentName() + REFRESH + CONTACT_EMAIL);
             return REDIRECT_EXPERIMENTS;
         }
 
+        String teamId = realization.getTeamId();
+
         log.info("Stopping experiment: at " + properties.getStopExperiment(teamName, expId));
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        HttpEntity<String> deterRequest = createHttpEntityHeaderOnly();
+        JSONObject jsonExperiment = new JSONObject("{\"suspend\":null}");
+        HttpEntity<String> openstackRequest = createHttpEntityWithOS_TokenBody(jsonExperiment.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response;
 
-        return abc(teamName, expId, redirectAttributes, realization, request);
+        return abc(teamName, expId, teamId,  stack_id, redirectAttributes, realization, deterRequest, openstackRequest);
     }
 
     /**
@@ -3168,8 +3216,8 @@ public class MainController {
      */
 
 
-    @RequestMapping("/update_experiment/{teamId}/{expId}/{csrfToken}")
-    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, @PathVariable String csrfToken,Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    @RequestMapping("/update_experiment/{teamId}/{expId}/{csrfToken}/{stack_id}")
+    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, @PathVariable String csrfToken,@PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
 
          // fix for Cross site request forgery //
         if(!(csrfToken.equals(session.getAttribute("csrfToken").toString())))
@@ -3182,7 +3230,7 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
         Experiment2 editExperiment = extractExperiment(response.getBody().toString());
-
+        editExperiment.setStack_id(stack_id);
         Realization realization = invokeAndExtractRealization(editExperiment.getTeamName(), Long.parseLong(expId));
 
         if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
@@ -3205,8 +3253,8 @@ public class MainController {
         return "experiment_modify";
     }
 
-    @PostMapping("/update_experiment/{teamId}/{expId}")
-    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, BindingResult bindingResult, @PathVariable String teamId, @PathVariable String expId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    @PostMapping("/update_experiment/{teamId}/{expId}/{stack_id}")
+    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, BindingResult bindingResult, @PathVariable String teamId, @PathVariable String expId, @PathVariable String stack_id, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         // check max duration for errors
         if (bindingResult.hasErrors() || !editExperiment.getMaxDuration().toString().matches("\\d+")) {
@@ -3221,6 +3269,12 @@ public class MainController {
 
         experiment.setNsFileContent(editExperiment.getNsFileContent());
         experiment.setMaxDuration(editExperiment.getMaxDuration());
+        experiment.setStack_id(stack_id);
+        experiment.setHeat_template_version("2018-08-31");
+        experiment.setResources_name("hello_world");
+        experiment.setType("OS::Nova::Server");
+        experiment.setFlavour("m1.small");
+        experiment.setImage("cirros-0.4.0-x86_64-disk");
 
         objectMapper.registerModule(new JavaTimeModule());
         String jsonExperiment;
@@ -3234,10 +3288,10 @@ public class MainController {
 
         // identical endpoint as delete experiment but different HTTP method
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        request = createHttpEntityWithBody(jsonExperiment);
+        request = createHttpEntityWithOS_TokenBody(jsonExperiment);
         ResponseEntity updateExperimentResponse;
         try {
-            updateExperimentResponse = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId), HttpMethod.PUT, request, String.class);
+            updateExperimentResponse = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId, stack_id), HttpMethod.PUT, request, String.class);
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to update experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -3408,11 +3462,18 @@ public class MainController {
     }
 
     private String abc(@PathVariable String teamName, @PathVariable String expId,
+                       @PathVariable String teamId, @PathVariable String stack_id,
                        RedirectAttributes redirectAttributes, Realization realization,
-                       HttpEntity<String> request) throws WebServiceRuntimeException {
+                       HttpEntity<String> deterRequest, HttpEntity<String> openstackRequest) throws WebServiceRuntimeException {
         ResponseEntity response;
         try {
-            response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+            if(stack_id.equals("0")) {
+                response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, deterRequest, String.class);
+            }
+            else
+            {
+                response = restTemplate.exchange(properties.getStopOpenstackExperiment(teamId, expId, stack_id), HttpMethod.POST, openstackRequest, String.class);
+            }
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to stop experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -6086,12 +6147,13 @@ public class MainController {
         log.info("Retrieving scenario file names");
         // FIXME: hardcode list of filenames for now
         List<String> scenarioFileNameList = new ArrayList<>();
-        scenarioFileNameList.add("Scenario 1 - Experiment with a single node");
-        scenarioFileNameList.add("Scenario 2 - Experiment with 2 nodes and 10Gb link");
-        scenarioFileNameList.add("Scenario 3 - Experiment with 3 nodes in a LAN");
-        scenarioFileNameList.add("Scenario 4 - Experiment with 2 nodes and customized link property");
-        scenarioFileNameList.add("Scenario 5 - Single SDN switch connected to two nodes");
-        scenarioFileNameList.add("Scenario 6 - Tree Topology with configurable SDN switches");
+        scenarioFileNameList.add("Deterlab Scenario 1 - Experiment with a single node");
+        scenarioFileNameList.add("Deterlab Scenario 2 - Experiment with 2 nodes and 10Gb link");
+        scenarioFileNameList.add("Deterlab Scenario 3 - Experiment with 3 nodes in a LAN");
+        scenarioFileNameList.add("Deterlab Scenario 4 - Experiment with 2 nodes and customized link property");
+        scenarioFileNameList.add("Deterlab Scenario 5 - Single SDN switch connected to two nodes");
+        scenarioFileNameList.add("Deterlab Scenario 6 - Tree Topology with configurable SDN switches");
+        scenarioFileNameList.add("Openstack Scenario 7 - Experiment with a single virtual machine");
         log.info("Scenario file list: {}", scenarioFileNameList);
         return scenarioFileNameList;
     }
@@ -6111,6 +6173,8 @@ public class MainController {
             actualScenarioFileName = "basic5.ns";
         } else if (scenarioFileName.contains("Scenario 6")) {
             actualScenarioFileName = "basic6.ns";
+        } else if (scenarioFileName.contains("Scenario 7")) {
+            actualScenarioFileName = "basicHeat.ns";
         } else {
             // defaults to basic single node
             actualScenarioFileName = "basic1.ns";
@@ -6458,6 +6522,7 @@ public class MainController {
         experiment2.setNsFileContent(object.getString("nsFileContent"));
         experiment2.setIdleSwap(object.getInt("idleSwap"));
         experiment2.setMaxDuration(object.getInt(MAX_DURATION));
+        experiment2.setPlatform(object.getInt(PLATFORM));
 
         try {
             experiment2.setCreatedDate(object.get(CREATED_DATE).toString());
@@ -6622,6 +6687,37 @@ public class MainController {
     }
 
     /**
+     * Creates a HttpEntity with a request body and header with openstack token
+     *
+     * @param jsonString The JSON request converted to string
+     * @return A HttpEntity request
+     * @implNote Authorization header must be set to the JwTToken in the format [Bearer: TOKEN_ID]
+     * @see HttpEntity createHttpEntityHeaderOnly() for request with only header
+     */
+    protected HttpEntity<String> createHttpEntityWithOS_TokenBody(String jsonString) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set(AUTHORIZATION, httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
+        headers.set(OS_TOKEN, httpScopedSession.getAttribute(webProperties.getSessionOsToken()).toString());
+        return new HttpEntity<>(jsonString, headers);
+    }
+
+    /**
+     * Creates a HttpEntity that contains only a header with openstack token and empty body.
+     *
+     * @return A HttpEntity request
+     * @implNote Authorization header must be set to the JwTToken in the format [Bearer: TOKEN_ID]
+     * @see HttpEntity createHttpEntityWithBody() for request with both body and header
+     */
+    protected HttpEntity<String> createHttpEntityWithOS_Token() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set(AUTHORIZATION, httpScopedSession.getAttribute(webProperties.getSessionJwtToken()).toString());
+        headers.set(OS_TOKEN, httpScopedSession.getAttribute(webProperties.getSessionOsToken()).toString());
+        return new HttpEntity<>(headers);
+    }
+
+    /**
      * Creates a HttpEntity that contains only a header and empty body
      *
      * @return A HttpEntity request
@@ -6635,14 +6731,15 @@ public class MainController {
         return new HttpEntity<>(headers);
     }
 
-    private void setSessionVariables(HttpSession session, String loginEmail, String id, String firstName, String userRoles, String token) {
+    private void setSessionVariables(HttpSession session, String loginEmail, String id, String firstName, String userRoles, String token, String os_token) {
         User2 user = invokeAndExtractUserInfo(id);
         session.setAttribute(webProperties.getSessionEmail(), loginEmail);
         session.setAttribute(webProperties.getSessionUserId(), id);
         session.setAttribute(webProperties.getSessionUserFirstName(), firstName);
         session.setAttribute(webProperties.getSessionRoles(), userRoles);
         session.setAttribute(webProperties.getSessionJwtToken(), "Bearer " + token);
-        log.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}, token: {}", loginEmail, id, user.getFirstName(), userRoles, "########");
+        session.setAttribute(webProperties.getSessionOsToken(), os_token);
+        log.info("Session variables - sessionLoggedEmail: {}, id: {}, name: {}, roles: {}, token: {}, os_token: {}", loginEmail, id, user.getFirstName(), userRoles, "########", "______");
     }
 
     private void removeSessionVariables(HttpSession session) {
@@ -6652,6 +6749,7 @@ public class MainController {
         session.removeAttribute(webProperties.getSessionUserFirstName());
         session.removeAttribute(webProperties.getSessionRoles());
         session.removeAttribute(webProperties.getSessionJwtToken());
+        session.removeAttribute(webProperties.getSessionOsToken());
         session.invalidate();
     }
 
@@ -6749,7 +6847,7 @@ public class MainController {
 
     private List<StatefulExperiment> getStatefulExperiments(String teamId) {
         log.info("Getting stateful experiments for team {}", teamId);
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        HttpEntity<String> request = createHttpEntityWithOS_Token();
         ResponseEntity respEntity;
         try {
             respEntity = restTemplate.exchange(properties.getStatefulExperimentsByTeam(teamId), HttpMethod.GET, request, String.class);
@@ -6824,6 +6922,8 @@ public class MainController {
         stateExp.setMaxDuration(expJsonObj.getInt(MAX_DURATION));
         stateExp.setMinNodes(expJsonObj.getInt("minNodes"));
         stateExp.setIdleHours(expJsonObj.getLong("idleHours"));
+        stateExp.setPlatform(expJsonObj.getInt(PLATFORM));
+        stateExp.setStack_id(expJsonObj.getString("stack_id"));
 
         String expDetailsString = expJsonObj.getString("details");
         if (null == expDetailsString || expDetailsString.isEmpty()) {
@@ -6847,6 +6947,29 @@ public class MainController {
         }
 
         return stateExp;
+    }
+
+    private OpenstackExperiment extractOpenstackExperiment(String jsonString) {
+
+        JSONObject expJsonObj = new JSONObject(jsonString);
+        OpenstackExperiment OpenStackExp = new OpenstackExperiment();
+
+        OpenStackExp.setTeamId(expJsonObj.getString(TEAM_ID));
+        OpenStackExp.setTeamName(expJsonObj.getString(TEAM_NAME));
+        OpenStackExp.setId(expJsonObj.getLong(ID));
+        OpenStackExp.setName(expJsonObj.getString(NAME));
+        OpenStackExp.setUserId(expJsonObj.getString(USER_ID));
+        OpenStackExp.setDescription(expJsonObj.getString(DESCRIPTION));
+        OpenStackExp.setCreatedDate(expJsonObj.getLong(CREATED_DATE));
+        OpenStackExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
+        OpenStackExp.setState(expJsonObj.getString("state"));
+        OpenStackExp.setStack_status_reason(expJsonObj.getString("stack_status_reason"));
+        OpenStackExp.setStack_project_id(expJsonObj.getString("stack_project_id"));
+        OpenStackExp.setHeat_file(expJsonObj.getString("heat_file"));
+        OpenStackExp.setMaxDuration(expJsonObj.getInt(MAX_DURATION));
+        OpenStackExp.setStack_id(expJsonObj.getString("stack_id"));
+
+        return OpenStackExp;
     }
 
     private SortedMap<String, Map<String, String>> getGlobalImages() throws IOException {

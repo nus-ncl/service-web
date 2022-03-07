@@ -37,16 +37,21 @@
                                 <tr>
                                     <th th:text="#{experiment.table.header.experiment}">Experiment</th>
                                     <th th:text="#{experiment.table.header.team}">Team</th>
-                                    <th th:text="#{experiment.table.header.nodes.number}">Nodes</th>
+                                    <th th:text="#{experiment.table.header.nodes.number}">Instance</th>
                                     <th th:text="#{experiment.table.header.status}">Status</th>
-                                    <th th:text="#{experiment.table.header.visualization}">Visualization</th>
-                                    <th th:text="#{experiment.table.header.realization}">Realization</th>
+                                    <th th:text="#{experiment.table.header.platform}">Platform</th>
+                                    <th th:text="#{experiment.table.header.client}">Instance Access</th>
                                     <th th:text="#{experiment.table.header.actions}">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr th:each="expEntry : ${experimentList}">
-                                    <td><a th:href="@{/experiment_profile/{expId}(expId=${expEntry.id})}"><span th:text="${expEntry.name}">Name</span></a></td>
+                                    <th:block th:if="${expEntry.platform == 1}">
+                                    <td><a th:href="@{/experiment_profile/{expId}/{stack_id}(expId=${expEntry.id}, stack_id=${expEntry.stack_id})}"><span th:text="${expEntry.name}">Name</span></a></td>
+                                    </th:block>
+                                    <th:block th:if="${expEntry.platform == 0}">
+                                        <td><a th:href="@{/experiment_profile/{expId}(expId=${expEntry.id})}"><span th:text="${expEntry.name}">Name</span></a></td>
+                                    </th:block>
                                     <td th:text="${expEntry.teamName}">Team</td>
                                     <td th:text="${expEntry.nodes}" style="text-align: center">Nodes</td>
                                     <th:block>
@@ -65,13 +70,22 @@
                                         <span th:if="${expEntry.state == 'UNKNOWN'}">
                                             <td th:text="'Unknown'"></td>
                                         </span>
+                                        <span th:if="${expEntry.state == 'CREATE_IN_PROGRESS'}">
+                                            <td th:text="'Create_In_Progress'"></td>
+                                        </span>
+                                        <span th:if="${expEntry.state == 'UPDATE_IN_PROGRESS'}">
+                                            <td th:text="'Update_In_Progress'"></td>
+                                        </span>
                                         <span th:if="${expEntry.state == 'ERROR'}">
                                             <td th:text="'Error'"></td>
                                         </span>
                                         <td>
-                                            <a href="#topoModal" data-toggle="modal"
-                                               th:attr="data-title=${expEntry.name},
-                                                        data-imgsrc=@{/get_topology/{teamName}/{expId}(teamName=${expEntry.teamName}, expId=${expEntry.id})}">View</a>
+                                            <span th:if="${expEntry.platform == 0}">
+                                                <p th:text="DeterLab"></p>
+                                            </span>
+                                            <span th:if="${expEntry.platform == 1}">
+                                                <p th:text="OpenStack"></p>
+                                            </span>
                                         </td>
                                         <td>
                                             <th:block th:if="${!expEntry.nodesInfoMap.isEmpty()}">
@@ -124,11 +138,26 @@
                                                     </tr>
                                                 </table>
                                             </th:block>
-                                            <a href="#expModal" data-toggle="modal"
-                                               th:attr="data-expEntryName=${expEntry.name},
-                                                        data-deterUid=${deterUid},
-                                                        data-domainName=${!expEntry.nodesInfoMap.isEmpty()} ? ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} : 'node.expname.teamname.ncl.sg',
-                                                        data-expEntryId=${expEntry.id}">View</a>
+                                            <th:block th:if="${expEntry.platform == 0}">
+                                                <a href="#expOSModal" data-toggle="modal"
+                                                   th:attr="data-expEntryName=${expEntry.name},
+                                                            data-deterUid=${deterUid},
+                                                            data-domainName=${!expEntry.nodesInfoMap.isEmpty()} ?
+                                                            ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} :
+                                                            'node.expname.teamname.ncl.sg',
+                                                            data-expEntryId=${expEntry.id}">How to Access</a>
+                                            </th:block>
+                                            <th:block th:if="${expEntry.platform == 1}">
+
+                                                <a href="#expOSModal" data-toggle="modal"
+                                                   th:attr="data-expEntryName=${expEntry.name},
+                                                            data-deterUid=${deterUid},
+                                                            data-domainName=${!expEntry.nodesInfoMap.isEmpty()} ?
+                                                            ${expEntry.nodesInfoMap.entrySet().stream().findFirst().get().getValue().qualifiedName} :
+                                                            'node.expname.teamname.ncl.sg',
+                                                            data-expEntryId=${expEntry.id}">How to Access</a>
+
+                                            </th:block>
                                        </td>
                                         <td>
                                             <span th:if="${expEntry.state == 'STARTING'}">
@@ -137,20 +166,37 @@
                                             <span th:if="${expEntry.state == 'STOPPING'}">
                                                 <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
                                             </span>
-                                            <span th:if="${expEntry.state == 'RUNNING'}">
-                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
-                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard internet-btn" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud  btn-fa-yellow"></i></button>
+                                            <span th:if="${expEntry.state == 'CREATE_IN_PROGRESS'}">
+                                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
                                             </span>
-                                            <span th:if="${expEntry.state == 'STOPPED'}">
-                                               <!-- <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>-->
-                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id} + '/' + ${csrfToken}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
-
-                                                <a th:href="@{/update_experiment/{teamId}/{expId}/{csrfToken}(teamId = ${expEntry.teamId}, expId = ${expEntry.id}, csrfToken = ${csrfToken})}"><button type="button" data-tooltip="tooltip" class="btn btn-standard" data-placement="bottom" title="Modify this experiment"><i class="fa fa-pencil"></i></button></a>
-                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id} + '/' + ${csrfToken}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                            <span th:if="${expEntry.state == 'UPDATE_IN_PROGRESS'}">
+                                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
                                             </span>
                                             <span th:if="${expEntry.state == 'ERROR'}">
-                                                <p th:text="#{nav.error}"></p>
+                                                <a th:href="@{/update_experiment/{teamId}/{expId}/{csrfToken}/{stack_id}(teamId = ${expEntry.teamId}, expId = ${expEntry.id}, csrfToken = ${csrfToken}, stack_id = ${expEntry.stack_id})}"><button type="button" data-tooltip="tooltip" class="btn btn-standard" data-placement="bottom" title="Modify this experiment"><i class="fa fa-pencil"></i></button></a>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id} + '/' + ${csrfToken} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
                                             </span>
+                                            <th:block th:if="${expEntry.platform == 0}">
+                                                <span th:if="${expEntry.state == 'RUNNING'}">
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard internet-btn" data-toggle="modal" data-target="#internetRequest" th:attr="data-request='/request_internet/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id}" data-placement="bottom" title="Internet access request"><i class="fa fa-cloud  btn-fa-yellow"></i></button>
+                                            </span>
+                                                <span th:if="${expEntry.state == 'STOPPED'}">
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id} + '/' + ${csrfToken}+ '/' + ${expEntry.stack_id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
+                                                <a th:href="@{/update_experiment/{teamId}/{expId}/{csrfToken}/{stack_id}(teamId = ${expEntry.teamId}, expId = ${expEntry.id}, csrfToken = ${csrfToken}, stack_id = ${expEntry.stack_id})}"><button type="button" data-tooltip="tooltip" class="btn btn-standard" data-placement="bottom" title="Modify this experiment"><i class="fa fa-pencil"></i></button></a>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id} + '/' + ${csrfToken} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                            </span>
+                                            </th:block>
+                                            <th:block th:if="${expEntry.platform == 1}">
+                                                <span th:if="${expEntry.state == 'RUNNING'}">
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
+                                                <a th:href="@{/update_experiment/{teamId}/{expId}/{csrfToken}/{stack_id}(teamId = ${expEntry.teamId}, expId = ${expEntry.id}, csrfToken = ${csrfToken}, stack_id = ${expEntry.stack_id})}"><button type="button" data-tooltip="tooltip" class="btn btn-standard" data-placement="bottom" title="Modify this experiment"><i class="fa fa-pencil"></i></button></a>
+                                            </span>
+                                                <span th:if="${expEntry.state == 'STOPPED'}">
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#startExperiment" th:attr="data-name=${expEntry.name},data-start='/start_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id} + '/' + ${csrfToken}+ '/' + ${expEntry.stack_id}" data-placement="bottom" title="Start this experiment"><i class="fa fa-play btn-fa-green"></i></button>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id} + '/' + ${csrfToken} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                            </span>
+                                            </th:block>
                                         </td>
                                     </th:block>
                                 </tr>
@@ -318,6 +364,31 @@
                         <table></table>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- experiment view openstack modal -->
+        <div class="modal fade exp-modal" id="expOSModal" tabindex="-1" role="dialog" aria-labelledby="expModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header team-owner-info-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="btn-fa-red">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="expId"><span id="expEntryName">Instance Access</span></h4>
+                    </div>
+                    <div class="modal-body team-owner-info-body">
+                        <h4>Instructions to Access Node/Stack</h4>
+                        <div class="exp-details">
+                            <p><strong>Step 1</strong>: </p>
+                                <pre>Goto <a href ="https://github.com/nus-ncl/Client">https://github.com/nus-ncl/Client </a> to git or download the tool NCLient.
+                                <br/>Refer to README <a href ="https://github.com/nus-ncl/Client#getting-started">https://github.com/nus-ncl/Client#getting-started</a> to learn how to get started.</pre>
+                            <br/>
+                            <a href="/tutorials/usenode.html" th:href="@{/tutorials/usenode}"> <h18><u>For more details >>> </u></h18></a>
+                            <p>&nbsp;</p>
+                        </div>
+                        <table></table>
+                    </div>
+                </div>
+
             </div>
         </div>
 

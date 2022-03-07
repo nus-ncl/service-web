@@ -37,6 +37,7 @@
                         </div>
                         <h3 th:text="#{exp.scenario}">Experiment Scenario</h3>
                         <div class="form-group">
+                            <input type="hidden" id="platform" class="form-control" th:field="*{platform}"/>
                         	<label for="scenarioName" th:text="#{exp.selectScenario}">Select a scenario:</label>
                         	<select id="selectExpScenario" class="form-control" th:field="*{scenarioFileName}" onchange="displayNsContent()">
                         		<option th:each="scenarioName: ${scenarioFileNameList}" th:value="${scenarioName}" th:text="${scenarioName}"></option>
