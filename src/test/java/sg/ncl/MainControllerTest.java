@@ -308,7 +308,7 @@ public class MainControllerTest {
         mockMvc.perform(get("/tutorials/usenode"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("usenode"))
-                .andExpect(content().string(containsString("How to Access your Experiment Node")))
+                .andExpect(content().string(containsString("The Guide to Access Instances via NCLient ")))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("/plan")))
