@@ -319,10 +319,10 @@ public class MainController {
         return "recent_events";
     }
 
-/*    @RequestMapping("/plan")
-    public String plan() {
-        return "plan1";
-    }*/
+    /*    @RequestMapping("/plan")
+        public String plan() {
+            return "plan1";
+        }*/
     @RequestMapping("/plan")
     public String plan() {
         return "plan";
@@ -439,10 +439,10 @@ public class MainController {
         return "unauthorized_access";
     }
 
-/*    @RequestMapping("/people")
-    public String people() {
-        return "people";
-    }*/
+    /*    @RequestMapping("/people")
+        public String people() {
+            return "people";
+        }*/
     @RequestMapping("/people")
     public String people1() {
         return "people";
@@ -739,7 +739,6 @@ public class MainController {
                 stream.close();
             }
         }
-
     }
 
     @RequestMapping("/contactus")
@@ -759,7 +758,7 @@ public class MainController {
             return REDIRECT_INDEX_PAGE;
         }
     }
-    //added to fix the cross site request forgery issue 
+    //added to fix the cross site request forgery issue
     private String generateCSRFToken() {
         SecureRandom entropy = new SecureRandom();
 
@@ -2047,7 +2046,7 @@ public class MainController {
         boolean ismember = false;
         List<User2> membersList = team.getMembersStatusMap().get(MemberStatus.APPROVED);
         for (int i = 0; i < membersList.size(); i++) {
-           if (membersList.get(i).getId().equals(userId)) {
+            if (membersList.get(i).getId().equals(userId)) {
                 ismember = true;
             }
         }
@@ -2087,10 +2086,10 @@ public class MainController {
         model.addAttribute("teamQuota", teamQuota);
         session.setAttribute(ORIGINAL_BUDGET, teamQuota.getBudget()); // this is to check if budget changed later
         if (team.getVisibility().equalsIgnoreCase("PRIVATE") && (ismember == true || validateIfAdmin(session))){
-           return "team_profile";
+            return "team_profile";
         }
         else if (team.getVisibility().equalsIgnoreCase("PUBLIC")) {
-           return "team_profile";
+            return "team_profile";
         }
         else{
             log.warn("Cannot display team profile:Only team members can see private team's profile");
@@ -2557,8 +2556,9 @@ public class MainController {
         model.addAttribute("internetRequestForm", new InternetRequestForm());
         //ExperimentForm experimentForm= new ExperimentForm();
         model.addAttribute("csrfToken", session.getAttribute("csrfToken").toString());
-       // experimentForm.setCsrfToken(session.getAttribute("csrfToken").toString());
+        // experimentForm.setCsrfToken(session.getAttribute("csrfToken").toString());
         model.addAttribute("experimentForm", new ExperimentForm());
+        model.addAttribute("openstackCreateForm", new OpenStackCreateForm());
 
         return EXPERIMENTS;
     }
@@ -2679,14 +2679,10 @@ public class MainController {
             return REDIRECT_CREATE_EXPERIMENT;
         }
 
-
-
         if (!experimentForm.getMaxDuration().toString().matches("\\d+")) {
             redirectAttributes.addFlashAttribute(MESSAGE, MAX_DURATION_ERROR);
             return REDIRECT_CREATE_EXPERIMENT;
         }
-
-
 
         if (experimentForm.getName() == null || experimentForm.getName().isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Experiment Name cannot be empty");
@@ -2712,7 +2708,6 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE, "Description cannot be empty");
             return REDIRECT_CREATE_EXPERIMENT;
         }
-
 
         if(experimentForm.getDescription()!= null && (!experimentForm.getDescription().isEmpty()))
         {
@@ -3219,7 +3214,7 @@ public class MainController {
     @RequestMapping("/update_experiment/{teamId}/{expId}/{csrfToken}/{stack_id}")
     public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, @PathVariable String csrfToken,@PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
 
-         // fix for Cross site request forgery //
+        // fix for Cross site request forgery //
         if(!(csrfToken.equals(session.getAttribute("csrfToken").toString())))
         {
             log.warn("Permission denied to modify experiment: {} for team: {} Invalid Token detected");
@@ -4690,8 +4685,8 @@ public class MainController {
                                                BindingResult bindingResult, RedirectAttributes redirectAttributes,
                                                HttpSession session, Model model) throws WebServiceRuntimeException {
 
-       final String LOG_PREFIX = "findNodeUsageReservationInfo: {}";
-       String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
+        final String LOG_PREFIX = "findNodeUsageReservationInfo: {}";
+        String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
 
         JSONObject reqObj = new JSONObject();
         HttpEntity<String> request = createHttpEntityWithBody(reqObj.toString());
@@ -5532,7 +5527,7 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity response = restTemplate.exchange(
-        properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
+                properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
         String responseBody = response.getBody().toString();
         if (RestUtil.isError(response.getStatusCode())) {
             MyErrorResource error;
@@ -7469,4 +7464,27 @@ public class MainController {
             throw new OrderFormDownloadException("Error in downloading Proposed Budget Template.");
         }
     }
+
+    @RequestMapping(value = "/openstack/create", method = RequestMethod.POST)
+    public String openStackAccountCreate(String loginPassword ,final RedirectAttributes redirectAttributes)
+            throws WebServiceRuntimeException {
+
+        String userId = webProperties.getSessionUserId();
+        String password ="";
+
+        log.info("openstack create account userId : {}, password : {}" , userId,loginPassword  );
+
+//        JSONObject OSObject = new JSONObject();
+//        OSObject.put("userId", userId);
+//        OSObject.put("password", "");
+//
+//
+//        HttpEntity<String> request = createHttpEntityWithOS_TokenBody(OSObject.toString());
+//        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+//        ResponseEntity response = restTemplate.exchange(properties.getOpenStackCreate(), HttpMethod.POST, request, String.class);
+//
+//        String responseBody = response.getBody().toString();
+        return "done";
+    }
+
 }
