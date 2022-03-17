@@ -7465,26 +7465,61 @@ public class MainController {
         }
     }
 
-    @RequestMapping(value = "/openstack/create", method = RequestMethod.POST)
-    public String openStackAccountCreate(String loginPassword ,final RedirectAttributes redirectAttributes)
-            throws WebServiceRuntimeException {
 
-        String userId = webProperties.getSessionUserId();
-        String password ="";
 
-        log.info("openstack create account userId : {}, password : {}" , userId,loginPassword  );
 
-//        JSONObject OSObject = new JSONObject();
-//        OSObject.put("userId", userId);
-//        OSObject.put("password", "");
-//
-//
-//        HttpEntity<String> request = createHttpEntityWithOS_TokenBody(OSObject.toString());
-//        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-//        ResponseEntity response = restTemplate.exchange(properties.getOpenStackCreate(), HttpMethod.POST, request, String.class);
-//
-//        String responseBody = response.getBody().toString();
-        return "done";
+    // **************  OpenStack Account Activate **********************************
+    @RequestMapping(value = "/openstack_activate", method = RequestMethod.POST)
+    public String openStackActivateRequest(@ModelAttribute("openStackCreateForm")  OpenStackCreateForm openStackCreateForm,
+                                            BindingResult bindingResult, Model model, HttpSession session,
+                                           final RedirectAttributes redirectAttributes
+    ) throws WebServiceRuntimeException {
+        String loginPwd = openStackCreateForm.getLoginPassword();
+        String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
+        log.info("Password for os account activate {} , userId : {} ", loginPwd , userId);
+        OpenStackCreateForm newObj  = new OpenStackCreateForm();
+
+        JSONObject request_obj = new JSONObject();
+        request_obj.put("userId", userId);
+        request_obj.put("password", loginPwd);
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> request = createHttpEntityWithBody(request_obj.toString());
+        ResponseEntity response = null;
+
+        response = restTemplate.exchange(properties.getOpenStackActivate(), HttpMethod.POST, request, String.class);
+        String responseBody = response.getBody().toString();
+        log.info("activate responsebody : {}", responseBody);
+
+        JSONObject responseJSON = new JSONObject(responseBody);
+        String activate = responseJSON.getString("password");
+
+        log.info("activate valute : {}",activate);
+
+        if(activate.equals("1")){
+            newObj.setIsActivate(1);
+            newObj.setErrMsg(null);
+            log.info("Enter 1 openstack account activated ");
+        }else{
+            log.info("Enter 0 ");
+            newObj.setIsActivate(0);
+            if(activate.equals("Invalid Password")){
+                newObj.setErrMsg("Invalid Password. Please provide the correct Password!");
+            }else
+            {
+                newObj.setErrMsg(activate);
+            }
+
+            log.info(activate);
+        }
+
+        model.addAttribute("openStackCreateForm", newObj);
+        return "openstack_activate";
     }
 
+    @RequestMapping("/openstackactivate")
+    public String openStackActivate(Model model) throws IOException {
+        model.addAttribute("openStackCreateForm", new OpenStackCreateForm());
+        return "openstack_activate";
+    }
 }

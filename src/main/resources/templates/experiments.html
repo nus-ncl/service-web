@@ -208,7 +208,7 @@
             </div>
         </div> <!-- panel primary -->
         <p>In order to access the new features of OpenStack may need to activate the account.<br/>
-            <a href="#openStackCreate" data-toggle="modal"><navsmall>Please click here to activate OpenStack account.</navsmall></a>
+            <a href="openstack_activate.html" th:href="@{~/openstackactivate}"><navsmall>Please click here to activate OpenStack account.</navsmall></a>
 
         </p>
         <a href="testbednodesstatus.html" th:href="@{~/testbedNodesStatus}"><navsmall>Please click here for node status</navsmall></a>
@@ -395,32 +395,6 @@
     </div>
 </div>
 
-<!-- activate openstack account modal -->
-<div class="modal fade exp-modal" id="openStackCreate" tabindex="1" role="dialog" aria-labelledby="openStackCreateModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header team-owner-info-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="btn-fa-red">&times;</span>
-                    <span class="sr-only">Close</span></button>
-                <h4 class="modal-title" ><span>OpenStack Account Creation</span></h4>
-            </div>
-            <div class="modal-body team-owner-info-body">
-                <form  method="post" action="#" id="openStackCreateForm" th:object="${openStackCreateForm}" role="form">
-                    <fieldset>
-                        <div class="form-group">
-                            <label for="password" >Please fill in your login password:</label>
-                            <input type="password" class="form-control" id="loginPassword" th:fields="*{loginPassword}" placeholder="Password" />
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" id="activateButton">Activate OpenStack Account</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div th:replace="fragments/footer:: footer"></div>
 </body>

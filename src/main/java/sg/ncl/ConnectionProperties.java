@@ -540,4 +540,10 @@ public class ConnectionProperties {
     }
 
 
+    //-------------------------------------
+    // OpenStack Account Activate
+    //-------------------------------------
+    public String getOpenStackActivate() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/openstack/account/create";
+    }
 }
