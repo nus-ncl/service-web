@@ -2744,7 +2744,7 @@ public class MainController {
         experimentObject.put(TEAM_ID, experimentForm.getTeamId());
         experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
         experimentObject.put(DESCRIPTION, experimentForm.getDescription());
-        experimentObject.put("nsFile", "file");
+        experimentObject.put("nsFile", experimentForm.getNsFile());
         experimentObject.put("idleSwap", "240");
         experimentObject.put(USER_ID, session.getAttribute("id").toString());
         experimentObject.put(MAX_DURATION, experimentForm.getMaxDuration());
@@ -2837,18 +2837,13 @@ public class MainController {
 
     private String regenerateHeatTemplate(String nsContent, String expName)
     {
-        String str = nsContent;
-        String[] splitStr = str.split("_my_instance");
+        String[] splitStr = nsContent.split("_my_instance");
 
         String nsContentPart1 = "{\"stack_name\":\"" + expName + "\",\"template\":{" + splitStr[0];
-        //String nsContentPart2 = "name:" + expName;
         String nsContentPart2 = "_my_instance" + splitStr[1];
         String nsContentFinal = nsContentPart1 + expName + nsContentPart2 + "}}";
-        log.info("Hello string final is = {}", nsContentFinal);
         nsContentFinal = nsContentFinal.replaceAll("\r", "");
         nsContentFinal = nsContentFinal.replaceAll("\n", "");
-        log.info("Hello string again final is = {}", nsContentFinal);
-
         return nsContentFinal;
     }
 
@@ -3266,7 +3261,7 @@ public class MainController {
     }
 
     @PostMapping("/update_experiment/{teamId}/{expId}/{stack_id}")
-    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, BindingResult bindingResult, @PathVariable String teamId, @PathVariable String expId, @PathVariable String stack_id, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    public String updateExperimentFormSubmit(@ModelAttribute("edit_experiment") Experiment2 editExperiment, HttpSession session, BindingResult bindingResult, @PathVariable String teamId, @PathVariable String expId, @PathVariable String stack_id, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
         // check max duration for errors
         if (bindingResult.hasErrors() || !editExperiment.getMaxDuration().toString().matches("\\d+")) {
@@ -3280,10 +3275,6 @@ public class MainController {
         Experiment2 experiment = extractExperiment(response.getBody().toString());
 
         experiment.setNsFileContent(editExperiment.getNsFileContent());
-        if(editExperiment.getPlatform() == 1)
-            experiment.setNsFileContent(regenerateHeatTemplate(editExperiment.getNsFileContent(), editExperiment.getName().replaceAll("\\s+", "")));
-        else
-            experiment.setNsFileContent(editExperiment.getNsFileContent());
         experiment.setMaxDuration(editExperiment.getMaxDuration());
         experiment.setStack_id(stack_id);
 
@@ -3297,9 +3288,28 @@ public class MainController {
             return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
         }
 
+        //=========================================================================================
+        JSONObject experimentObject = new JSONObject();
+        experimentObject.put(USER_ID, session.getAttribute("id").toString());
+        experimentObject.put(TEAM_ID, experiment.getTeamId());
+        experimentObject.put(TEAM_NAME, experiment.getTeamName());
+        experimentObject.put(TEAM_ID, experiment.getTeamId());
+        experimentObject.put("name", experiment.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
+        experimentObject.put(DESCRIPTION, experiment.getDescription());
+        experimentObject.put("nsFile", experiment.getNsFile());
+        experimentObject.put("idleSwap", "240");
+        experimentObject.put(USER_ID, session.getAttribute("id").toString());
+        experimentObject.put(MAX_DURATION, experiment.getMaxDuration());
+        experimentObject.put("nsFileContent", experiment.getNsFileContent());
+        experimentObject.put(PLATFORM, experiment.getPlatform());
+
+        log.info("Calling service to update experiment");
+
+        //=========================================================================================
+
         // identical endpoint as delete experiment but different HTTP method
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        request = createHttpEntityWithOS_TokenBody(jsonExperiment);
+        request = createHttpEntityWithOS_TokenBody(experimentObject.toString());
         ResponseEntity updateExperimentResponse;
         try {
             updateExperimentResponse = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId, stack_id), HttpMethod.PUT, request, String.class);
