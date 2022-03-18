@@ -2727,7 +2727,10 @@ public class MainController {
         }
         experimentForm.setScenarioContents(getScenarioContentsFromFile(experimentForm.getScenarioFileName()));
 
-        if(experimentForm.getScenarioFileName().equals("Openstack Scenario 7 - Experiment with a single virtual machine") && (session.getAttribute(webProperties.getSessionOsToken()).equals("") || session.getAttribute(webProperties.getSessionOsToken()) == null))
+        if((experimentForm.getScenarioFileName().equals("Openstack Scenario 1 - Experiment with a single virtual machine") ||
+                experimentForm.getScenarioFileName().equals("Openstack Scenario 2 - Experiment with 2 nodes virtual machine") ||
+                experimentForm.getScenarioFileName().equals("Openstack Scenario 3 - Experiment with custom virtual machine"))
+                && (session.getAttribute(webProperties.getSessionOsToken()).equals("") || session.getAttribute(webProperties.getSessionOsToken()) == null))
         {
             log.warn("OpenStack access error");
             redirectAttributes.addFlashAttribute(MESSAGE, "You are not eligible to create Openstack experiments. Please contact support@ncl.sg");
@@ -2738,22 +2741,19 @@ public class MainController {
         experimentObject.put(USER_ID, session.getAttribute("id").toString());
         experimentObject.put(TEAM_ID, experimentForm.getTeamId());
         experimentObject.put(TEAM_NAME, experimentForm.getTeamName());
+        experimentObject.put(TEAM_ID, experimentForm.getTeamId());
         experimentObject.put("name", experimentForm.getName().replaceAll("\\s+", "")); // truncate whitespaces and non-visible characters like \n
         experimentObject.put(DESCRIPTION, experimentForm.getDescription());
         experimentObject.put("nsFile", "file");
-        experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
         experimentObject.put("idleSwap", "240");
+        experimentObject.put(USER_ID, session.getAttribute("id").toString());
         experimentObject.put(MAX_DURATION, experimentForm.getMaxDuration());
-        experimentObject.put(PLATFORM, experimentForm.getPlatform());
-
         if(experimentForm.getPlatform() == 1)
-        {
-            experimentObject.put("heat_template_version", "2018-08-31");
-            experimentObject.put("resources_name", "hello_world");
-            experimentObject.put("type", "OS::Nova::Server");
-            experimentObject.put("flavour", "m1.small");
-            experimentObject.put("image", "cirros-0.4.0-x86_64-disk");
-        }
+            experimentObject.put("nsFileContent", regenerateHeatTemplate(experimentForm.getNsFileContent(), experimentForm.getName().replaceAll("\\s+", "")));
+        else
+            experimentObject.put("nsFileContent", experimentForm.getNsFileContent());
+
+        experimentObject.put(PLATFORM, experimentForm.getPlatform());
 
         log.info("Calling service to create experiment");
         HttpEntity<String> request = createHttpEntityWithOS_TokenBody(experimentObject.toString());
@@ -2833,6 +2833,23 @@ public class MainController {
 //        teamManager.incrementExperimentCount(experiment.getTeamId());
 
         return REDIRECT_EXPERIMENTS;
+    }
+
+    private String regenerateHeatTemplate(String nsContent, String expName)
+    {
+        String str = nsContent;
+        String[] splitStr = str.split("_my_instance");
+
+        String nsContentPart1 = "{\"stack_name\":\"" + expName + "\",\"template\":{" + splitStr[0];
+        //String nsContentPart2 = "name:" + expName;
+        String nsContentPart2 = "_my_instance" + splitStr[1];
+        String nsContentFinal = nsContentPart1 + expName + nsContentPart2 + "}}";
+        log.info("Hello string final is = {}", nsContentFinal);
+        nsContentFinal = nsContentFinal.replaceAll("\r", "");
+        nsContentFinal = nsContentFinal.replaceAll("\n", "");
+        log.info("Hello string again final is = {}", nsContentFinal);
+
+        return nsContentFinal;
     }
 
     @RequestMapping(value = "/experiments/save_image/{teamId}/{expId}/{nodeId}", method = RequestMethod.GET)
@@ -3263,13 +3280,12 @@ public class MainController {
         Experiment2 experiment = extractExperiment(response.getBody().toString());
 
         experiment.setNsFileContent(editExperiment.getNsFileContent());
+        if(editExperiment.getPlatform() == 1)
+            experiment.setNsFileContent(regenerateHeatTemplate(editExperiment.getNsFileContent(), editExperiment.getName().replaceAll("\\s+", "")));
+        else
+            experiment.setNsFileContent(editExperiment.getNsFileContent());
         experiment.setMaxDuration(editExperiment.getMaxDuration());
         experiment.setStack_id(stack_id);
-        experiment.setHeat_template_version("2018-08-31");
-        experiment.setResources_name("hello_world");
-        experiment.setType("OS::Nova::Server");
-        experiment.setFlavour("m1.small");
-        experiment.setImage("cirros-0.4.0-x86_64-disk");
 
         objectMapper.registerModule(new JavaTimeModule());
         String jsonExperiment;
@@ -6142,13 +6158,11 @@ public class MainController {
         log.info("Retrieving scenario file names");
         // FIXME: hardcode list of filenames for now
         List<String> scenarioFileNameList = new ArrayList<>();
+        scenarioFileNameList.add("Openstack Scenario 1 - Experiment with a single virtual machine");
+        scenarioFileNameList.add("Openstack Scenario 2 - Experiment with 2 nodes virtual machine");
+        scenarioFileNameList.add("Openstack Scenario 3 - Experiment with custom virtual machine");
         scenarioFileNameList.add("Deterlab Scenario 1 - Experiment with a single node");
-        scenarioFileNameList.add("Deterlab Scenario 2 - Experiment with 2 nodes and 10Gb link");
-        scenarioFileNameList.add("Deterlab Scenario 3 - Experiment with 3 nodes in a LAN");
-        scenarioFileNameList.add("Deterlab Scenario 4 - Experiment with 2 nodes and customized link property");
-        scenarioFileNameList.add("Deterlab Scenario 5 - Single SDN switch connected to two nodes");
-        scenarioFileNameList.add("Deterlab Scenario 6 - Tree Topology with configurable SDN switches");
-        scenarioFileNameList.add("Openstack Scenario 7 - Experiment with a single virtual machine");
+        scenarioFileNameList.add("Deterlab Scenario 2 - Experiment with 2 nodes and customized link property");
         log.info("Scenario file list: {}", scenarioFileNameList);
         return scenarioFileNameList;
     }
@@ -6156,19 +6170,15 @@ public class MainController {
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
         // FIXME: switch to better way of referencing scenario descriptions to actual filenames
         String actualScenarioFileName;
-        if (scenarioFileName.contains("Scenario 1")) {
+        if (scenarioFileName.contains("Deterlab Scenario 1")) {
             actualScenarioFileName = "basic1.ns";
-        } else if (scenarioFileName.contains("Scenario 2")) {
-            actualScenarioFileName = "basic2.ns";
-        } else if (scenarioFileName.contains("Scenario 3")) {
-            actualScenarioFileName = "basic3.ns";
-        } else if (scenarioFileName.contains("Scenario 4")) {
+        } else if (scenarioFileName.contains("Deterlab Scenario 2")) {
             actualScenarioFileName = "basic4.ns";
-        } else if (scenarioFileName.contains("Scenario 5")) {
-            actualScenarioFileName = "basic5.ns";
-        } else if (scenarioFileName.contains("Scenario 6")) {
-            actualScenarioFileName = "basic6.ns";
-        } else if (scenarioFileName.contains("Scenario 7")) {
+        } else if (scenarioFileName.contains("Openstack Scenario 1")) {
+            actualScenarioFileName = "basicHeat.ns";
+        } else if (scenarioFileName.contains("Openstack Scenario 2")) {
+            actualScenarioFileName = "heat2.ns";
+        } else if (scenarioFileName.contains("Openstack Scenario 3")) {
             actualScenarioFileName = "basicHeat.ns";
         } else {
             // defaults to basic single node

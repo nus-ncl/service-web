@@ -107,6 +107,67 @@
             <p>OpenStack is a cloud operating system that controls large pools of compute, storage, and networking resources </p>
             <p>throughout a datacenter, all managed and provisioned through APIs with common authentication mechanisms</p>
             <p>NCL uses openstack APIs and provide interface to launch server instances, create experiments and perform available actions.</p>
+            <p>List of Flavours supported by NCL</p>
+            <div class="table-responsive">
+                <table class="table1">
+                    <thead BGCOLOR="#E0E0E0">
+                    <th width="35%"><p><h4><strong th:text="#{image.flavour}">Name</strong></h4></p></th>
+                    <th width="25%"><p><h4><strong th:text="#{image.ram}">RAM</strong></h4></p></th>
+                    <th width="20%"><p><h4><strong th:text="#{image.disk}">Disk</strong></h4></p></th>
+                    <th width="20%"><p><h4><strong th:text="#{image.vcpu}">VCPUs</strong></h4></p></th>
+                    </thead>
+                    <tr BGCOLOR="#fff">
+                        <td><div align="center">m1.small</div></td>
+                        <td><div align="center">2048</div></td>
+                        <td><div align="center">20</div></td>
+                        <td><div align="center">1</div></td>
+                      <!--  <td><div align="center">Ubuntu-18.04...Ubuntu-20.04...Kali-Linux-2020...Fedora-35</div></td>-->
+                    </tr>
+                    <tr BGCOLOR="#fff">
+                        <td><div align="center">m1.medium</div></td>
+                        <td><div align="center">4096</div></td>
+                        <td><div align="center">40</div></td>
+                        <td><div align="center">2</div></td>
+                    </tr>
+                    <tr BGCOLOR="#fff">
+                        <td><div align="center">m1.large</div></td>
+                        <td><div align="center">8192</div></td>
+                        <td><div align="center">80</div></td>
+                        <td><div align="center">4</div></td>
+                    </tr>
+                    <tr BGCOLOR="#fff">
+                        <td><div align="center">m1.xlarge</div></td>
+                        <td><div align="center">16384</div></td>
+                        <td><div align="center">160</div></td>
+                        <td><div align="center">8</div></td>
+                    </tr>
+                </table>
+                <p> </p>
+                <p>List of Operating Systems supported by NCL</p>
+
+                <table class="table1">
+                    <thead BGCOLOR="#E0E0E0">
+                    <th width="30%"><p><h4><strong th:text="#{image.OS}">OS</strong></h4></p></th>
+                    <th width="70%"><p><h4><strong th:text="#{image.description}">Description</strong></h4></p></th>
+                    </thead>
+                    <tr BGCOLOR="#fff">
+                        <td><div align="center">Ubuntu-18.04</div></td>
+                        <td><div align="center">Ubuntu Server 18.04 LTS (Bionic Beaver) released builds</div></td>
+                    </tr>
+                    <tr BGCOLOR="#fff">
+                        <td><div align="center">Ubuntu-20.04</div></td>
+                        <td><div align="center">Ubuntu Server 20.04 LTS (Focal Fossa) released builds</div></td>
+                    </tr>
+                    <tr BGCOLOR="#fff">
+                        <td><div align="center">Kali-Linux-2020</div></td>
+                        <td><div align="center">The latest open-source, Debian-based Linux distribution aimed at advanced Penetration Testing and Security Auditing.</div></td>
+                    </tr>
+                    <tr BGCOLOR="#fff">
+                        <td><div align="center">Fedora-35</div></td>
+                        <td><div align="center">Fedora 35 Cloud Base Images</div></td>
+                    </tr>
+                </table>
+            </div>
             <a href="https://www.openstack.org/software/" ><h18>Learn More >>> </h18></a>
         </div> <!-- panel -->
     </div>

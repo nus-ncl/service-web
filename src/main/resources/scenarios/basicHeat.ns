@@ -1,11 +1,1 @@
-heat_template_version: 2018-08-31
-
-description: Simple template to deploy a single compute instance
-
-resources:
-  hello_world:
-    type: OS::Nova::Server
-    properties:
-      image: cirros-0.4.0-x86_64-disk
-      flavour: m1.small
-      networks: - network : public
+{\"stack_name\":\"exp_name\",\"template\":{\"heat_template_version\": \"2015-04-30\",\"description\": \"Simple template to deploy a single compute instance\",\"resources\": { \"Group_of_VMs\":{ \"type\": \"OS::Heat::ResourceGroup\",\"properties\":{\"count\":1,\"resource_def\":{\"type\": \"OS::Nova::Server\",\"properties\":{\"name\":\"exp_name_my_instance%index%\",\"image\": \"cirros-0.4.0-x86_64-disk\",\"flavor\": \"m1.tiny\",\"networks\":[{\"network\":\"public\"}]}}}}}}}
