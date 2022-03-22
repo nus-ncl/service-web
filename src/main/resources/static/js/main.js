@@ -362,28 +362,31 @@ function displayNsContent() {
     var x = document.getElementById("selectExpScenario").value;
 	var file = "";
 	switch(x) {
-	    case "Openstack Scenario 1 - Experiment with a single virtual machine":
-            file = basicHeat;
-            document.getElementById("platform").value = 1;
-            break;
-        case "Openstack Scenario 2 - Experiment with 2 nodes virtual machine":
-            file = heat2;
-            document.getElementById("platform").value = 1;
-            break;
-        case "Openstack Scenario 3 - Experiment with custom virtual machine":
-            file = heat3;
-            document.getElementById("platform").value = 1;
-            break;
-		case "Deterlab Scenario 1 - Experiment with a single node":
-			file = basic1;
-			break;
-		case "Deterlab Scenario 2 - Experiment with 2 nodes and customized link property":
-			file = basic2;
-			break;
-		default:
-			file = basic1;
-			break;
-	}
+    	    case "Openstack Scenario 1 - Experiment with a single virtual machine":
+                file = basicHeat;
+                document.getElementById("platform").value = 1;
+                break;
+            case "Openstack Scenario 2 - Experiment with 2 nodes virtual machine":
+                file = heat2;
+                document.getElementById("platform").value = 1;
+                break;
+            case "Openstack Scenario 3 - Experiment with custom virtual machine":
+                file = heat3;
+                document.getElementById("platform").value = 1;
+                break;
+    		case "Deterlab Scenario 1 - Experiment with a single node":
+            	file = basic1;
+            	document.getElementById("platform").value = 0;
+            	break;
+            case "Deterlab Scenario 2 - Experiment with 2 nodes and customized link property":
+            	file = basic2;
+            	document.getElementById("platform").value = 0;
+            	break;
+    		default:
+    			file = basicHeat;
+    			document.getElementById("platform").value = 1;
+    			break;
+    	}
 
 	document.getElementById("networkConfig").innerHTML = file;
 }
@@ -1042,12 +1045,15 @@ function displayNsContent() {
             break;
 		case "Deterlab Scenario 1 - Experiment with a single node":
         	file = basic1;
+        	document.getElementById("platform").value = 0;
         	break;
         case "Deterlab Scenario 2 - Experiment with 2 nodes and customized link property":
         	file = basic2;
+        	document.getElementById("platform").value = 0;
         	break;
 		default:
-			file = basic1;
+			file = basicHeat;
+			document.getElementById("platform").value = 1;
 			break;
 	}
 
