@@ -98,7 +98,7 @@
                     </th:block>
                 </th:block>
                 <th:block th:if="${experiment.platform == 1}">
-                    <pre th:text="${experiment.heat_file}"></pre>
+                    <pre th:text="${heat_Files}"></pre>
                 </th:block>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
@@ -193,6 +193,7 @@
     <div th:replace="fragments/footer:: footer"></div>
     <object th:include="fragments/javascript :: javascript" th:remove="tag"/>
 </body>
+
     <script type="text/javascript">
         // auto-refresh activity log
         if ($('#activityLog').length > 0) {

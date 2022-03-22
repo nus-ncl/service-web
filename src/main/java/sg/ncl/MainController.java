@@ -2600,10 +2600,16 @@ public class MainController {
         OpenstackExperiment OpenStackExp = extractOpenstackExperiment(openstackDetailResponse.getBody().toString());
         User2 experimentOwner = invokeAndExtractUserInfo(OpenStackExp.getUserId());
 
+        String heatFile = OpenStackExp.getHeat_file();
+        String replace_heatFile = heatFile.replace(",\"",",\n\"");
+        String secreplace_heatFile = replace_heatFile.replace("{\"stack_name\"","{\n\"stack_name\"");
+        String thirdreplace_heatFile = secreplace_heatFile.replace("]}}}}}}}","]}}}}}}\n}");
+
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
         model.addAttribute("experiment", OpenStackExp);
         model.addAttribute("openstackEvents", new JSONObject(openstackEventResponse.getBody().toString()));
         model.addAttribute("openstackServerDetail", new JSONObject(openstackServerDetail.getBody().toString()));
+        model.addAttribute("heat_Files", thirdreplace_heatFile);
 
         return "experiment_profile";
     }
@@ -2623,6 +2629,8 @@ public class MainController {
         model.addAttribute("experiment", stateExp);
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
         model.addAttribute("experimentDetails", new JSONObject(expDetailsResponse.getBody().toString()));
+        model.addAttribute("heat_Files", "");
+
         return "experiment_profile";
     }
 
@@ -2758,8 +2766,9 @@ public class MainController {
         log.info("Calling service to create experiment");
         HttpEntity<String> request = createHttpEntityWithOS_TokenBody(experimentObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
 
+        ResponseEntity response = restTemplate.exchange(properties.getSioExpUrl(), HttpMethod.POST, request, String.class);
+        log.info("create request : {}" , experimentObject.toString());
         String responseBody = response.getBody().toString();
 
         try {
@@ -3255,7 +3264,13 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to update experiment;" + permissionDeniedMessage);
             return REDIRECT_EXPERIMENTS;
         }
-
+        if(editExperiment.getPlatform() == 1){
+            String heatFile = editExperiment.getNsFileContent();
+            String replace_heatFile = heatFile.replace(",\"",",\n\"");
+            String secreplace_heatFile = replace_heatFile.replace("{\"stack_name\"","{\n\"stack_name\"");
+            String thirdreplace_heatFile = secreplace_heatFile.replace("]}}}}}}}","]}}}}}}\n}");
+            editExperiment.setNsFileContent(thirdreplace_heatFile);
+        }
         model.addAttribute("edit_experiment", editExperiment);
         return "experiment_modify";
     }
