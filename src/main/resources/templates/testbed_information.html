@@ -5,7 +5,7 @@
     <title>National Cybersecurity Laboratories - Testbed Information</title>
     <object th:include="fragments/header :: header" th:remove="tag" />
 </head>
-<body class="mybg loginbackground">
+<body class="mybg loginbackground" onload="loadStaticPage('TestBedInformation','Testbed/testbedInformation.txt')">
 <th:block th:if="${session.id == null}">
     <div th:replace="fragments/login_navigation :: loginnav"></div>
 </th:block>
@@ -15,7 +15,7 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-
+<div id="TestBedInformation">
 <!--<div class="container" style="background-image: url('images/publication_back7.jpg'); object-fit: fill;object-position: 50% 50%;">-->
     <div class="container">
     <!--<p class="heading h15 text-center">Testbed Info</p>-->
@@ -34,7 +34,7 @@
     <div class="col-sm-8">
      <div class="row">
         <div class="panel panel-primary dashpanel">
-            <h2 class="team-heading team-heading-current-team" th:text="#{Nodes.Specification}">text heading from .properties</h2>
+            <h2 class="team-heading team-heading-current-team" th:text="#{Nodes.Specification}">Node Specification</h2>
             <p> Each node has the following specifications:</p>
             <p><i class="fa fa-check"></i> Two (2) Intel Xeon Processor E5-2620 V3 (2.40GHz/6-core) or V4 (2.1Ghz/8-core)</p>
             <p><i class="fa fa-check"></i> One (1) 64GB 2133MHz DDR4 ECC memory</p>
@@ -47,7 +47,7 @@
 
     <div class="row">
         <div class="panel panel-primary dashpanel">
-            <h2 class="team-heading team-heading-current-team" th:text="#{GPU.Nodes.Specification}">text heading from .properties</h2>
+            <h2 class="team-heading team-heading-current-team" th:text="#{GPU.Nodes.Specification}">GPU Node Specification</h2>
             <p> Each GPU node has the following specifications:</p>
             <p><i class="fa fa-check"></i> CPU: (2) Intel Xeon E5-2620v4 ** 8 cores / 2.10 GHz / 20MB L3 / 85W / 2133Mhz</p>
             <p><i class="fa fa-check"></i> Memory: (256) GB DDR4-2400 ECC RDIMM - 32GB x 8pcs</p>
@@ -59,41 +59,6 @@
             <p><i class="fa fa-check"></i> GPU: (2) NVIDIA Tesla V100 16GB HBM2 / Tesla P100 12GB HBM2</p>
         </div> <!-- panel -->
     </div>
-<!--
-    <div class="row">
-        <p>&nbsp;</p>
-        <div class="panel panel-primary dashpanel">
-            <h2 class="team-heading team-heading-current-team" th:text="#{image.heading.global}">text heading from .properties</h2>
-            <p>&nbsp;</p>
-            <div class="table-responsive">
-                <table class="table1">
-                    <thead BGCOLOR="#E0E0E0">
-                    <th width="30%"><p><h4><strong th:text="#{image.name}">Name</strong></h4></p></th>
-                    <th width="20%"><p><h4><strong th:text="#{image.OS}">OS</strong></h4></p></th>
-                    <th width="50%"><p><h4><strong th:text="#{image.description}">Description</strong></h4></p></th>
-                    </thead>
-                    <tr BGCOLOR="#fff">
-                        <td><div align="center">Ubuntu1404-64-STD</div></td>
-                        <td><div align="center">Linux</div></td>
-                        <td><div align="center">Ubuntu 14.04 LTS 64 bit Standard Image</div></td>
-                    </tr>
-                    <tr BGCOLOR="#fff">
-                        <td><div align="center">Ubuntu1604-64-STD</div></td>
-                        <td><div align="center">Linux</div></td>
-                        <td><div align="center">Ubuntu 16.04 LTS 64 bit Standard Image</div></td>
-                    </tr>
-                    <tr BGCOLOR="#fff">
-                        <td><div align="center">Ubuntu1604-64-GUI</div></td>
-                        <td><div align="center">Linux</div></td>
-                        <td><div align="center">Ubuntu 16.04 LTS 64 bit Image with Desktop GUI and VNC. NOTE: after the experiment is running, please first login to the nodes (using SSH client or web-ssh) and start vnc server by running 'vncserver'.</div></td>
-                    </tr>
-                </table>
-            </div>
-            <p>&nbsp;</p>
-            <p>To load a particular OS image onto your nodes, simply use the <code>tb-set-node-os</code> directive in your network configuration, e.g.:</p>
-            <pre><p># Set OS for node 'n0'</p><p>tb-set-node-os $n0 Ubuntu1604-64-STD</p></pre>
-        </div> &lt;!&ndash; panel &ndash;&gt;
-    </div>-->
 </div>
 
 </div> <!-- container -->
@@ -103,7 +68,7 @@
     <div class="row">
         <p>&nbsp;</p>
         <div class="panel panel-primary dashpanel">
-            <h2 class="team-heading team-heading-current-team" th:text="#{image.openstack.system}">text heading from .properties</h2>
+            <h2 class="team-heading team-heading-current-team" th:text="#{image.openstack.system}">Openstack Provisioning System</h2>
             <p>OpenStack is a cloud operating system that controls large pools of compute, storage, and networking resources </p>
             <p>throughout a datacenter, all managed and provisioned through APIs with common authentication mechanisms</p>
             <p>NCL uses openstack APIs and provide interface to launch server instances, create experiments and perform available actions.</p>
@@ -176,7 +141,7 @@
     <div class="row">
         <p></p>
         <div class="panel panel-primary dashpanel">
-            <h2 class="team-heading team-heading-current-team" th:text="#{image.deterlab.system}">text heading from .properties</h2>
+            <h2 class="team-heading team-heading-current-team" th:text="#{image.deterlab.system}">DeterLab Provisioning System</h2>
             <p></p>
             <p>DeterLab is a state-of-the-art scientific computing facility for cyber-security researchers engaged in research, development, </p>
             <p>discovery, experimentation, and testing of innovative cyber-security technology. To date, DeterLab-based projects have included </p>
@@ -187,25 +152,27 @@
         </div> <!-- panel -->
     </div>
 
-    <div class="cc-wraper">
-        <div class="cc-contactpop fixed">
-            <h1>Do you need Help? Get in touch. </h1>
-            <div class="renseignement">
-                <i class="fa fa-times"></i>
-                <p>We will get back to you as soon as possible. </p>
-            </div>
-            <form>
-                <ul>
-                    <li><h4><span> Phone : </span>+65 6601 1056</h4></li>
-                    <li><h4><span> Address: </span><a href="https://www.google.com.sg/maps/place/Innovation+4.0/@1.2947287,103.7407406,13z/data=!4m5!3m4!1s0x31da1b3be9c6fabd:0xa50c38c2456942de!8m2!3d1.2946431!4d103.7757601?hl=en" >Innovation 4.0,3 Research Link,NUS,Singapore-117602</a></h4></li>
-                    <li><h4><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></h4></li>
-                    <p>&nbsp;</p>
-                </ul>
-                <p>&nbsp;</p>
-            </form>
-        </div>
-    </div>
 </div> <!--Container 2 closes-->
+</div>
+
+<div class="cc-wraper">
+    <div class="cc-contactpop fixed">
+        <h1>Do you need Help? Get in touch. </h1>
+        <div class="renseignement">
+            <i class="fa fa-times"></i>
+            <p>We will get back to you as soon as possible. </p>
+        </div>
+        <form>
+            <ul>
+                <li><h4><span> Phone : </span>+65 6601 1056</h4></li>
+                <li><h4><span> Address: </span><a href="https://www.google.com.sg/maps/place/Innovation+4.0/@1.2947287,103.7407406,13z/data=!4m5!3m4!1s0x31da1b3be9c6fabd:0xa50c38c2456942de!8m2!3d1.2946431!4d103.7757601?hl=en" >Innovation 4.0,3 Research Link,NUS,Singapore-117602</a></h4></li>
+                <li><h4><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></h4></li>
+                <p>&nbsp;</p>
+            </ul>
+            <p>&nbsp;</p>
+        </form>
+    </div>
+</div>
 
 <div th:replace="fragments/footer :: footer"></div>
 <object th:include="fragments/javascript :: javascript" th:remove="tag" />
