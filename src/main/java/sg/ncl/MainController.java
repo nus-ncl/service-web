@@ -2853,6 +2853,7 @@ public class MainController {
         String nsContentFinal = nsContentPart1 + expName + nsContentPart2 + "}}";
         nsContentFinal = nsContentFinal.replaceAll("\r", "");
         nsContentFinal = nsContentFinal.replaceAll("\n", "");
+        nsContentFinal = nsContentFinal.replaceAll("  ", "");
         return nsContentFinal;
     }
 
