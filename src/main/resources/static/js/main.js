@@ -351,11 +351,11 @@ $(document).ready(function() {
 	});
 });
 
-// display the ns file content when users select the predefined scenarios
+/*// display the ns file content when users select the predefined scenarios
 function displayNsContent() {
 	var basic1 = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	var basic2 = "# This is a simple experiment with 2 nodes and customized link specification\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset n0 [$ns node]\r\nset n1 [$ns node]\r\n\r\n# Add link and specify link properties\r\nset link0 [$ns duplex-link $n0 $n1 100Mb 200ms DropTail]\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
-    var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":1,\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
+    var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{  \n\"Group_of_VMs\":{    \n\"type\":\"OS::Heat::ResourceGroup\",    \n\"properties\":{      \n\"count\":1,      \n\"resource_def\":{        \n\"type\":\"OS::Nova::Server\",        \n\"properties\":{          \n\"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",          \n\"networks\":[{\"network\":\"public\"}]}      \n}    \n}  \n}\n}";
     var heat2 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":2,\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
     var heat3 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":{...},\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"{...}\",\"flavor\":\"{...}\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
 
@@ -393,11 +393,11 @@ function displayNsContent() {
 
 // display the default ns file content
 function displayDefaultNsContent() {
-    var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":1,\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
+    var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{  \n\"Group_of_VMs\":{    \n\"type\":\"OS::Heat::ResourceGroup\",    \n\"properties\":{      \n\"count\":1,      \n\"resource_def\":{        \n\"type\":\"OS::Nova::Server\",        \n\"properties\":{          \n\"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",          \n\"networks\":[{\"network\":\"public\"}]}";
 	alert(basicHeat);
 	document.getElementById("networkConfig").innerHTML = basicHeat;
 	document.getElementById("platform").value = 1;
-}
+}*/
 
 
 jQuery(function($) {
@@ -1024,9 +1024,9 @@ for ( i in settings.buttons ) {
 function displayNsContent() {
 	var basic1 = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
 	var basic2 = "# This is a simple experiment with 2 nodes and customized link specification\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset n0 [$ns node]\r\nset n1 [$ns node]\r\n\r\n# Add link and specify link properties\r\nset link0 [$ns duplex-link $n0 $n1 100Mb 200ms DropTail]\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
-    var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":1,\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
-    var heat2 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":2,\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
-    var heat3 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":{...},\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"{...}\",\"flavor\":\"{...}\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
+    var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n  \"Group_of_VMs\":{\n    \"type\":\"OS::Heat::ResourceGroup\",\n    \"properties\":{\n      \"count\":1,\n      \"resource_def\":{\n        \"type\":\"OS::Nova::Server\",\n        \"properties\":{\n          \"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",\n          \"networks\":[{\"network\":\"public\"}]}\n      }\n    }\n  }\n}";
+    var heat2 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n  \"Group_of_VMs\":{\n    \"type\":\"OS::Heat::ResourceGroup\",\n    \"properties\":{\n      \"count\":2,\n      \"resource_def\":{\n        \"type\":\"OS::Nova::Server\",\n        \"properties\":{\n          \"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",\n          \"networks\":[{\"network\":\"public\"}]}\n      }\n    }\n  }\n}";
+    var heat3 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n  \"Group_of_VMs\":{\n    \"type\":\"OS::Heat::ResourceGroup\",\n    \"properties\":{\n      \"count\":{...},\n      \"resource_def\":{\n        \"type\":\"OS::Nova::Server\",\n        \"properties\":{\n          \"name\":\"_my_instance%index%\",\"image\":\"{...}\",\"flavor\":\"{...}\",\n          \"networks\":[{\"network\":\"public\"}]}\n      }\n    }\n  }\n}";
 
 	var x = document.getElementById("selectExpScenario").value;
 	var file = "";
@@ -1062,7 +1062,7 @@ function displayNsContent() {
 
 // display the default ns file content
 function displayDefaultNsContent() {
-	var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":1,\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
+	var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n  \"Group_of_VMs\":{\n    \"type\":\"OS::Heat::ResourceGroup\",\n    \"properties\":{\n      \"count\":1,\n      \"resource_def\":{\n        \"type\":\"OS::Nova::Server\",\n        \"properties\":{\n          \"name\":\"_my_instance%index%\",\"image\":\"cirros-0.4.0-x86_64-disk\",\"flavor\":\"m1.tiny\",\n          \"networks\":[{\"network\":\"public\"}]}\n      }\n    }\n  }\n}";
 	document.getElementById("networkConfig").innerHTML = basicHeat;
 	document.getElementById("platform").value = 1;
 }
@@ -1091,6 +1091,8 @@ function loadStaticPage(id, page) {
          dataType: "JSON",
          async: true,
          url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+         //This url is for Test branch used for testing
+        // url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=Test",
          type: 'GET',
          success: function(result) {
              document.getElementById(id).innerHTML = decodeURIComponent(escape(window.atob(result.content)));
