@@ -2597,6 +2597,9 @@ public class MainController {
         ResponseEntity openstackServerDetail = restTemplate.exchange(properties.getOpenStackServerDetail(expId), HttpMethod.GET, openStackRequest, String.class);
 
         log.info("openStack Server Detail: {}" , openstackServerDetail.getBody().toString());
+        OpenStackServerStateful OSServerObj = extractOSServerObj(openstackServerDetail.getBody().toString());
+
+        log.info("openStack Server Detail: {}" , openstackServerDetail.getBody().toString());
         OpenstackExperiment OpenStackExp = extractOpenstackExperiment(openstackDetailResponse.getBody().toString());
         User2 experimentOwner = invokeAndExtractUserInfo(OpenStackExp.getUserId());
 
@@ -2608,10 +2611,37 @@ public class MainController {
         model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
         model.addAttribute("experiment", OpenStackExp);
         model.addAttribute("openstackEvents", new JSONObject(openstackEventResponse.getBody().toString()));
-        model.addAttribute("openstackServerDetail", new JSONObject(openstackServerDetail.getBody().toString()));
+        model.addAttribute("openstackServerDetail",OSServerObj);
         model.addAttribute("heat_Files", thirdreplace_heatFile);
 
         return "experiment_profile";
+    }
+
+    public OpenStackServerStateful extractOSServerObj(String serverDetailJson){
+        JSONObject expJsonObj = new JSONObject(serverDetailJson);
+        OpenStackServerStateful OpenStackExp = new OpenStackServerStateful();
+
+        OpenStackExp.setTeamName(expJsonObj.getString("teamName"));
+        OpenStackExp.setExpName(expJsonObj.getString("expName"));
+        OpenStackExp.setStatus(expJsonObj.getString("status"));
+
+        List<InstanceInfo> lstInfo = new ArrayList<InstanceInfo>();
+        JSONArray jsonArr = expJsonObj.getJSONArray("instanceInfo");
+
+        for(int j =0 ; j<jsonArr.length(); j++){
+            JSONObject inJson = jsonArr.getJSONObject(j);
+            InstanceInfo in_obj = new InstanceInfo();
+            in_obj.setInstance_name(inJson.getString("instance_name"));
+            in_obj.setStatus(inJson.getString("status"));
+            in_obj.setNetwork(inJson.getString("network"));
+            in_obj.setImage(inJson.getString("image"));
+            in_obj.setFlavor(inJson.getString("flavor"));
+            lstInfo.add(in_obj);
+        }
+        OpenStackExp.setInstanceInfo(lstInfo);
+
+        return OpenStackExp;
+
     }
 
     @GetMapping(value = "/experiment_profile/{expId}")

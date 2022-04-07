@@ -128,11 +128,42 @@
             <th:block th:if="${experiment.platform == 1}">
                 <div id="openstackServer" class="tab-pane fade">
                     <h3 th:text="#{experimentProfile.realization}">Realization</h3>
-                    <th:block th:switch="${openstackServerDetail.has('server_detail')} ? ${openstackServerDetail.get('server_detail')} : ${false}">
-                        <pre th:case="${false}">No server info found.</pre>
-                        <pre th:case="${true}" th:text="${openstackServerDetail.get('server_detail')}"></pre>
-                        <pre th:case="*" th:text="${openstackServerDetail.get('server_detail')}"></pre>
+
+                    <th:block th:if="not ${#lists.isEmpty(openstackServerDetail.instanceInfo) } ">
+
+                        <pre style="text-align: left; white-space: pre-line;">
+                            <span >Experiment:</span> <span th:text = "${openstackServerDetail.teamName}" align="left"></span>/<span th:text = "${openstackServerDetail.expName}" align="left"></span>
+                            State: <span th:text = "${openstackServerDetail.status}"></span><br/>
+                            Stack Server Info:<br/>
+                            <table id="osServerTable" class="table table-responsive" >
+                            <thead>
+                            <tr >
+                                <th style="border-bottom: 2px dashed;">Name</th>
+                                <th style="border-bottom: 2px dashed;"> Status</th>
+                                <th style="border-bottom: 2px dashed;">Networks</th>
+                                <th style="border-bottom: 2px dashed;">Image</th>
+                                <th style="border-bottom: 2px dashed;">Flavor</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="serverEntry : ${openstackServerDetail.instanceInfo}">
+                                <td th:text="${serverEntry.instance_name}" ></td>
+                                <td th:text="${serverEntry.status}" ></td>
+                                <td th:text="${serverEntry.network}" ></td>
+                                <td th:text="${serverEntry.image}" ></td>
+                                <td th:text="${serverEntry.flavor}" ></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </pre>
+
                     </th:block>
+
+                    <th:block th:if="${openstackServerDetail.status == '' } ">
+                        <pre>No server info found.</pre>
+                    </th:block>
+
+
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
