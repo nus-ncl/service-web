@@ -42,7 +42,10 @@
                         	<select id="selectExpScenario" class="form-control" th:field="*{scenarioFileName}" onchange="displayNsContent()">
                         		<option th:each="scenarioName: ${scenarioFileNameList}" th:value="${scenarioName}" th:text="${scenarioName}"></option>
                         	</select>
-                            <a href="TestbedInformation.html" th:href="@{~/testbedInformation}"><h18>Learn More about Openstack and Deterlab >>> </h18></a>
+                            <p>
+                                <a href="openstack_activate.html" th:href="@{~/openstackactivate}"><h18>Please click here to activate the Openstack account >>></h18></a>
+                            </p>
+                                <a href="TestbedInformation.html" th:href="@{~/testbedInformation}"><h18>Learn More about Openstack and Deterlab >>> </h18></a>
                         </div>
                         <div id="custom">
 	                        <div class="form-group">
