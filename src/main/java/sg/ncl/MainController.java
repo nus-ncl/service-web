@@ -2771,7 +2771,7 @@ public class MainController {
                 && (session.getAttribute(webProperties.getSessionOsToken()).equals("") || session.getAttribute(webProperties.getSessionOsToken()) == null))
         {
             log.warn("OpenStack access error");
-            redirectAttributes.addFlashAttribute(MESSAGE, "Your Openstack account is not activated yet. Please activate once to create openstack experiments");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Your Openstack account is not activated yet.");
             return REDIRECT_CREATE_EXPERIMENT;
         }
 
