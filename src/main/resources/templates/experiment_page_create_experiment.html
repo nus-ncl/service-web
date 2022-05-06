@@ -16,7 +16,9 @@
                 <div class="spinner" style="display: none"><h1>creating experiment...</h1> <i class="fa fa-spinner fa-pulse fa-fw"></i></div>
                 <h2 class="team-heading team-heading-current-team" th:text="#{exp.createExp}">Create Experiment</h2>
 				<div th:if="${message}">
-					<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+					<p><i class="fa fa-exclamation-circle btn-fa-red"></i>
+                        <span class="account-change-fail" th:text="${message}"></span> <a href="openstack_activate.html" th:href="@{~/openstackactivate}" class="account-change-fail"><u>Please click here to activate the openstack account.</u></a>
+                    </p>
 				</div>
                 <h3 th:text="#{exp.info}">Experiment Info</h3>
                 <form method="post" action="#" th:action="@{/experiments/create}" th:object="${experimentForm}" role="form">
@@ -42,7 +44,7 @@
                         	<select id="selectExpScenario" class="form-control" th:field="*{scenarioFileName}" onchange="displayNsContent()">
                         		<option th:each="scenarioName: ${scenarioFileNameList}" th:value="${scenarioName}" th:text="${scenarioName}"></option>
                         	</select>
-                            <a href="TestbedInformation.html" th:href="@{~/testbedInformation}"><h18>Learn More about Openstack and Deterlab >>> </h18></a>
+                                <a href="TestbedInformation.html" th:href="@{~/testbedInformation}"><h18>Learn More about Openstack and Deterlab >>> </h18></a>
                         </div>
                         <div id="custom">
 	                        <div class="form-group">
