@@ -14,35 +14,33 @@ import sg.ncl.testbed_interface.Experiment;
 public class ExperimentManager {
     
     // experimentId, experiment
-    private final int JOHN_DOE;
-    private static ExperimentManager EXPERIMENT_MANAGER_SINGLETON = null;
+    private final int johnDoe;
+    private static ExperimentManager experimentManagerSingleton = null;
     
-    private String EXPERIMENT_STATUS_READY;
-    private String EXPERIMENT_STATUS_ALLOCATING;
-    private String EXPERIMENT_STATUS_ERROR;
-    private String EXPERIMENT_STATUS_STOP;
+    private String experimentStatusReady;
+    private String experimentStatusStop;
     
-    private String SCENARIOS_DIR_PATH = "src/main/resources/scenarios/";
+    private String ScenariosDirPath = "src/main/resources/scenarios/";
     private HashMap<Integer, List<Experiment>> experimentMap2; /* userId, arraylist of experiments */
+
+    private static final String BASIC_1 = "basic1.ns";
     
     private ExperimentManager() {
-    	JOHN_DOE = 200;
-        EXPERIMENT_STATUS_READY = "READY";
-        EXPERIMENT_STATUS_ALLOCATING = "ALLOCATING";
-        EXPERIMENT_STATUS_ERROR = "ERROR";
-        EXPERIMENT_STATUS_STOP = "STOPPED";
+        johnDoe = 200;
+        experimentStatusReady = "READY";
+        experimentStatusStop = "STOPPED";
         
         Experiment exp01 = new Experiment();
         exp01.setExperimentId(50);
         exp01.setName("clientserver");
         exp01.setDescription("A DDOS scenario");
-        exp01.setExperimentOwnerId(JOHN_DOE);
-        exp01.setStatus(EXPERIMENT_STATUS_STOP);
+        exp01.setExperimentOwnerId(johnDoe);
+        exp01.setStatus(experimentStatusStop);
         exp01.setTeamId(110);
         exp01.setNodesCount(7);
         exp01.setHoursIdle(2);
-        exp01.setExperimentOwnerId(JOHN_DOE);
-        exp01.setScenarioFileName("basic1.ns");
+        exp01.setExperimentOwnerId(johnDoe);
+        exp01.setScenarioFileName(BASIC_1);
     	String exp01Config = getScenarioContents(exp01.getScenarioFileName());
     	exp01.setScenarioContents(exp01Config);
         
@@ -50,13 +48,13 @@ public class ExperimentManager {
         exp02.setExperimentId(51);
         exp02.setName("myexperiment");
         exp02.setDescription("A test experiment");
-        exp02.setExperimentOwnerId(JOHN_DOE);
-        exp02.setStatus(EXPERIMENT_STATUS_STOP);
+        exp02.setExperimentOwnerId(johnDoe);
+        exp02.setStatus(experimentStatusStop);
         exp02.setTeamId(111);
         exp02.setNodesCount(7);
         exp02.setHoursIdle(2);
-        exp02.setExperimentOwnerId(JOHN_DOE);
-        exp02.setScenarioFileName("basic1.ns");
+        exp02.setExperimentOwnerId(johnDoe);
+        exp02.setScenarioFileName(BASIC_1);
     	String exp02Config = getScenarioContents(exp01.getScenarioFileName());
     	exp02.setScenarioContents(exp02Config);
         
@@ -64,13 +62,13 @@ public class ExperimentManager {
         exp03.setExperimentId(52);
         exp03.setName("myexperiment02");
         exp03.setDescription("A test experiment");
-        exp03.setExperimentOwnerId(JOHN_DOE);
-        exp03.setStatus(EXPERIMENT_STATUS_READY);
+        exp03.setExperimentOwnerId(johnDoe);
+        exp03.setStatus(experimentStatusReady);
         exp03.setTeamId(112);
         exp03.setNodesCount(7);
         exp03.setHoursIdle(2);
-        exp03.setExperimentOwnerId(JOHN_DOE);
-        exp03.setScenarioFileName("basic1.ns");
+        exp03.setExperimentOwnerId(johnDoe);
+        exp03.setScenarioFileName(BASIC_1);
     	String exp03Config = getScenarioContents(exp01.getScenarioFileName());
     	exp03.setScenarioContents(exp03Config);
         
@@ -79,14 +77,14 @@ public class ExperimentManager {
         experimentList.add(exp01);
         experimentList.add(exp02);
         experimentList.add(exp03);
-        experimentMap2.put(JOHN_DOE, experimentList);
+        experimentMap2.put(johnDoe, experimentList);
     }
     
     public static ExperimentManager getInstance() {
-        if (EXPERIMENT_MANAGER_SINGLETON == null) {
-            EXPERIMENT_MANAGER_SINGLETON = new ExperimentManager();
+        if (experimentManagerSingleton == null) {
+            experimentManagerSingleton = new ExperimentManager();
         }
-        return EXPERIMENT_MANAGER_SINGLETON;
+        return experimentManagerSingleton;
     }
     
     public HashMap<Integer, List<Experiment>> getExperimentMap2() {
@@ -160,8 +158,8 @@ public class ExperimentManager {
                 List<Experiment> currExpList = entry.getValue();
                 for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
                     Experiment currExp = iter.next();
-                    if (currExp.getExperimentId() == expId && currExp.getStatus().equals(EXPERIMENT_STATUS_STOP)) {
-                    	currExp.setStatus(EXPERIMENT_STATUS_READY);
+                    if (currExp.getExperimentId() == expId && currExp.getStatus().equals(experimentStatusStop)) {
+                    	currExp.setStatus(experimentStatusReady);
                     }
                 }
             }
@@ -177,8 +175,8 @@ public class ExperimentManager {
                 List<Experiment> currExpList = entry.getValue();
                 for (ListIterator<Experiment> iter = currExpList.listIterator(); iter.hasNext();) {
                     Experiment currExp = iter.next();
-                    if (currExp.getExperimentId() == expId && currExp.getStatus().equals(EXPERIMENT_STATUS_READY)) {
-                        currExp.setStatus(EXPERIMENT_STATUS_STOP);
+                    if (currExp.getExperimentId() == expId && currExp.getStatus().equals(experimentStatusReady)) {
+                        currExp.setStatus(experimentStatusStop);
                     }
                 }
             }
@@ -192,7 +190,7 @@ public class ExperimentManager {
     	int expId = generateRandomExpId();
     	toBeAddedExp.setExperimentId(expId);
     	toBeAddedExp.setExperimentOwnerId(userId);
-    	toBeAddedExp.setStatus(EXPERIMENT_STATUS_STOP);
+    	toBeAddedExp.setStatus(experimentStatusStop);
     	String scenarioFileName = toBeAddedExp.getScenarioFileName();
     	
     	if (!scenarioFileName.equals("custom")) {
@@ -222,7 +220,7 @@ public class ExperimentManager {
     
     private String getScenarioContents(String scenarioFileName) {
     	StringBuilder sb = new StringBuilder();
-    	try(BufferedReader br = new BufferedReader(new FileReader(SCENARIOS_DIR_PATH + scenarioFileName))) {
+    	try(BufferedReader br = new BufferedReader(new FileReader(ScenariosDirPath + scenarioFileName))) {
     		String line = br.readLine();
     		
     		while (line != null) {

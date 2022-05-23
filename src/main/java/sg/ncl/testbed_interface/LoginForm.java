@@ -18,6 +18,7 @@ public class LoginForm {
     private String csrfToken=null;
     
     public LoginForm() {
+        //Not using this method for now.
     }
     
     public String getLoginEmail() {
