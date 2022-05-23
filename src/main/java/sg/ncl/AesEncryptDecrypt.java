@@ -6,15 +6,18 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 
 public class AesEncryptDecrypt{
 
     private static final String KEY = "aesEncryptionKey";
     private static final String INIT_VECTOR = "encryptionIntVec";
+    private static SecureRandom random = new SecureRandom();
 
     public static String encrypt(String value) {
         try {
-            byte[] bytesIV = "7cVgr5cbdCZVw5WY".getBytes("UTF-8");
+            byte[] bytesIV = new byte[16];
+            random.nextBytes(bytesIV);
 
             IvParameterSpec iv = new IvParameterSpec(bytesIV);
             SecretKeySpec skeySpec = new SecretKeySpec(KEY.getBytes(StandardCharsets.UTF_8), "AES");
