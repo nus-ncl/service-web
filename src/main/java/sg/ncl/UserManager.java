@@ -7,7 +7,7 @@ import sg.ncl.testbed_interface.User;
 
 public class UserManager {
 
-    private static final int ErrorNoSuchUserID = 0;
+    private static final int ERROR_NO_SUCH_USER_ID = 0;
     private static UserManager userManagerSingleton = null;
     /* userid, User */
     private HashMap<Integer, User> usersMap = new HashMap<>();
@@ -196,7 +196,7 @@ public class UserManager {
                 return currUser.getUserId();
             }
         }
-        return ErrorNoSuchUserID;
+        return ERROR_NO_SUCH_USER_ID;
     }
     
     public User getUserById(int userId) {

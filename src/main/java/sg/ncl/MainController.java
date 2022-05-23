@@ -718,7 +718,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/orderform/download")
-    public void OrderFormV1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
+    public void orderFormV1Download(HttpServletResponse response) throws OrderFormDownloadException, IOException {
         InputStream stream = null;
         response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         try {
@@ -3560,7 +3560,7 @@ public class MainController {
         if (message.contains("Failed")) {
             redirectAttributes.addFlashAttribute(MESSAGE, message + " '" + userid + "'");
         } else {
-            redirectAttributes.addFlashAttribute("messageSuccess", message + " '" + userid + "'");
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, message + " '" + userid + "'");
         }
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
@@ -5007,9 +5007,9 @@ public class MainController {
                                        YearMonth monthStart, YearMonth monthEnd,
                                        ProjectDetails project) {
         YearMonth created = YearMonth.from(project.getZonedDateCreated());
-        YearMonth m_e_m1 = monthEnd.minusMonths(1);
-        YearMonth m_e_m2 = monthEnd.minusMonths(2);
-        YearMonth m_active = m_e_m2.isBefore(monthStart) ? m_e_m2 : monthStart;
+        YearMonth monthEndM1 = monthEnd.minusMonths(1);
+        YearMonth monthEndM2 = monthEnd.minusMonths(2);
+        YearMonth monthActive = monthEndM2.isBefore(monthStart) ? monthEndM2 : monthStart;
 
         // projects created within the period
         if (!(created.isBefore(monthStart) || created.isAfter(monthEnd))) {
@@ -5017,18 +5017,18 @@ public class MainController {
         }
 
         // active projects = projects with resources within the period + projects created
-        boolean hasUsage = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(m_active, monthEnd));
-        if (hasUsage || !(created.isBefore(m_e_m2) || created.isAfter(monthEnd))) {
+        boolean hasUsage = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(monthActive, monthEnd));
+        if (hasUsage || !(created.isBefore(monthEndM2) || created.isAfter(monthEnd))) {
             activeProjects.add(project);
         }
 
         // inactive projects
-        if (!hasUsage && created.isBefore(m_e_m2)) {
+        if (!hasUsage && created.isBefore(monthEndM2)) {
             inactiveProjects.add(project);
         }
 
         // stopped projects
-        boolean hasUsagePreviousMonth = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(m_e_m1, m_e_m1));
+        boolean hasUsagePreviousMonth = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(monthEndM1, monthEndM1));
         boolean hasUsageCurrentMonth = project.getProjectUsages().stream().anyMatch(p -> p.hasUsageWithinPeriod(monthEnd, monthEnd));
         if (hasUsagePreviousMonth && !hasUsageCurrentMonth) {
             stoppedProjects.add(project);
@@ -7299,7 +7299,7 @@ public class MainController {
         log.info("activate responsebody : {}", responseBody);
 
         JSONObject responseJSON = new JSONObject(responseBody);
-        String activate = responseJSON.getString("password");
+        String activate = responseJSON.getString(PSWD);
 
         log.info("activate valute : {}",activate);
 

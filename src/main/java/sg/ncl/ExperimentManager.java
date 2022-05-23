@@ -20,7 +20,7 @@ public class ExperimentManager {
     private String experimentStatusReady;
     private String experimentStatusStop;
     
-    private String ScenariosDirPath = "src/main/resources/scenarios/";
+    private String scenariosDirPath = "src/main/resources/scenarios/";
     private HashMap<Integer, List<Experiment>> experimentMap2; /* userId, arraylist of experiments */
 
     private static final String BASIC_1 = "basic1.ns";
@@ -220,7 +220,7 @@ public class ExperimentManager {
     
     private String getScenarioContents(String scenarioFileName) {
     	StringBuilder sb = new StringBuilder();
-    	try(BufferedReader br = new BufferedReader(new FileReader(ScenariosDirPath + scenarioFileName))) {
+    	try(BufferedReader br = new BufferedReader(new FileReader(scenariosDirPath + scenarioFileName))) {
     		String line = br.readLine();
     		
     		while (line != null) {
