@@ -1,129 +1,131 @@
 package sg.ncl;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
-
-import sg.ncl.testbed_interface.Experiment;
-import sg.ncl.testbed_interface.Team;
 import sg.ncl.testbed_interface.User;
 
 public class UserManager {
-    
-    private final int ERROR_NO_SUCH_USER_ID = 0;
-    private static UserManager USER_MANAGER_SINGLETON = null;
+
+    private static final int ErrorNoSuchUserID = 0;
+    private static UserManager userManagerSingleton = null;
     /* userid, User */
-    private HashMap<Integer, User> usersMap = new HashMap<Integer, User>();
-    
+    private HashMap<Integer, User> usersMap = new HashMap<>();
+    private static final String NORMAL = "normal";
+    private static final String PASSWORD = "password";
+    private static final String NUS = "National University of Singapore";
+    private static final String WEBSITE = "http://www.nus.edu.sg";
+    private static final String ADDRESS = "Boon Lay Drive 222";
+    private static final String CITY_COUNTRY = "Singapore";
+    private static final String POSTALCODE = "600123";
+
     private UserManager() {
         User johnDoe = new User();
         johnDoe.setUserId(200);
-        johnDoe.setRole("normal");
+        johnDoe.setRole(NORMAL);
         johnDoe.setName("John Doe");
         johnDoe.setEmail("johndoe@nus.edu.sg");
-        johnDoe.setPassword("password");
-        johnDoe.setConfirmPassword("password");
+        johnDoe.setPassword(PASSWORD);
+        johnDoe.setConfirmPassword(PASSWORD);
         johnDoe.setJobTitle("Research Assistant");
-        johnDoe.setInstitution("National University of Singapore");
+        johnDoe.setInstitution(NUS);
         johnDoe.setInstitutionAbbreviation("NUS");
-        johnDoe.setWebsite("http://www.nus.edu.sg");
-        johnDoe.setAddress1("Boon Lay Drive 222");
-        johnDoe.setCountry("Singapore");
-        johnDoe.setCity("Singapore");
+        johnDoe.setWebsite(WEBSITE);
+        johnDoe.setAddress1(ADDRESS);
+        johnDoe.setCountry(CITY_COUNTRY);
+        johnDoe.setCity(CITY_COUNTRY);
         johnDoe.setProvince("SG");
-        johnDoe.setPostalCode("600123");
+        johnDoe.setPostalCode(POSTALCODE);
         johnDoe.setEmailVerified(true);
         
         User bob = new User();
         bob.setUserId(201);
-        bob.setRole("normal");
+        bob.setRole(NORMAL);
         bob.setName("Bob");
         bob.setEmail("bob@nus.edu.sg");
-        bob.setPassword("password");
-        bob.setConfirmPassword("password");
+        bob.setPassword(PASSWORD);
+        bob.setConfirmPassword(PASSWORD);
         bob.setJobTitle("Research Bob");
-        bob.setInstitution("National University of Singapore");
+        bob.setInstitution(NUS);
         bob.setInstitutionAbbreviation("NUS");
-        bob.setWebsite("http://www.nus.edu.sg");
-        bob.setAddress1("Boon Lay Drive 222");
-        bob.setCountry("Singapore");
-        bob.setCity("Singapore");
+        bob.setWebsite(WEBSITE);
+        bob.setAddress1(ADDRESS);
+        bob.setCountry(CITY_COUNTRY);
+        bob.setCity(CITY_COUNTRY);
         bob.setProvince("SG");
-        bob.setPostalCode("600123");
+        bob.setPostalCode(POSTALCODE);
         bob.setEmailVerified(true);
         
         User charlie = new User();
         charlie.setUserId(202);
-        charlie.setRole("normal");
+        charlie.setRole(NORMAL);
         charlie.setName("Charlie");
         charlie.setEmail("charlie@nus.edu.sg");
-        charlie.setPassword("password");
-        charlie.setConfirmPassword("password");
+        charlie.setPassword(PASSWORD);
+        charlie.setConfirmPassword(PASSWORD);
         charlie.setJobTitle("Research Charlie");
-        charlie.setInstitution("National University of Singapore");
+        charlie.setInstitution(NUS);
         charlie.setInstitutionAbbreviation("NUS");
-        charlie.setWebsite("http://www.nus.edu.sg");
-        charlie.setAddress1("Boon Lay Drive 222");
-        charlie.setCountry("Singapore");
-        charlie.setCity("Singapore");
+        charlie.setWebsite(WEBSITE);
+        charlie.setAddress1(ADDRESS);
+        charlie.setCountry(CITY_COUNTRY);
+        charlie.setCity(CITY_COUNTRY);
         charlie.setProvince("SG");
-        charlie.setPostalCode("600123");
+        charlie.setPostalCode(POSTALCODE);
         charlie.setEmailVerified(true);
         
         User dave = new User();
         dave.setUserId(203);
-        dave.setRole("normal");
+        dave.setRole(NORMAL);
         dave.setName("Dave");
         dave.setEmail("dave@nus.edu.sg");
-        dave.setPassword("password");
-        dave.setConfirmPassword("password");
+        dave.setPassword(PASSWORD);
+        dave.setConfirmPassword(PASSWORD);
         dave.setJobTitle("Research Dave");
-        dave.setInstitution("National University of Singapore");
+        dave.setInstitution(NUS);
         dave.setInstitutionAbbreviation("NUS");
-        dave.setWebsite("http://www.nus.edu.sg");
-        dave.setAddress1("Boon Lay Drive 222");
-        dave.setCountry("Singapore");
-        dave.setCity("Singapore");
+        dave.setWebsite(WEBSITE);
+        dave.setAddress1(ADDRESS);
+        dave.setCountry(CITY_COUNTRY);
+        dave.setCity(CITY_COUNTRY);
         dave.setProvince("SG");
-        dave.setPostalCode("600123");
+        dave.setPostalCode(POSTALCODE);
         dave.setEmailVerified(true);
         
         User eve = new User();
         eve.setUserId(204);
-        eve.setRole("normal");
+        eve.setRole(NORMAL);
         eve.setName("Eve");
         eve.setEmail("eve@nus.edu.sg");
-        eve.setPassword("password");
-        eve.setConfirmPassword("password");
+        eve.setPassword(PASSWORD);
+        eve.setConfirmPassword(PASSWORD);
         eve.setJobTitle("Research Eve");
-        eve.setInstitution("National University of Singapore");
+        eve.setInstitution(NUS);
         eve.setInstitutionAbbreviation("NUS");
-        eve.setWebsite("http://www.nus.edu.sg");
-        eve.setAddress1("Boon Lay Drive 222");
-        eve.setCountry("Singapore");
-        eve.setCity("Singapore");
+        eve.setWebsite(WEBSITE);
+        eve.setAddress1(ADDRESS);
+        eve.setCountry(CITY_COUNTRY);
+        eve.setCity(CITY_COUNTRY);
         eve.setProvince("SG");
-        eve.setPostalCode("600123");
+        eve.setPostalCode(POSTALCODE);
         eve.setEmailVerified(false);
         
         User noProject = new User();
         noProject.setUserId(205);
-        noProject.setRole("normal");
+        noProject.setRole(NORMAL);
         noProject.setName("No Project");
         noProject.setEmail("noproject@nus.edu.sg");
-        noProject.setPassword("password");
-        noProject.setConfirmPassword("password");
+        noProject.setPassword(PASSWORD);
+        noProject.setConfirmPassword(PASSWORD);
         noProject.setJobTitle("Research No Project");
-        noProject.setInstitution("National University of Singapore");
+        noProject.setInstitution(NUS);
         noProject.setInstitutionAbbreviation("NUS");
-        noProject.setWebsite("http://www.nus.edu.sg");
-        noProject.setAddress1("Boon Lay Drive 222");
-        noProject.setCountry("Singapore");
-        noProject.setCity("Singapore");
+        noProject.setWebsite(WEBSITE);
+        noProject.setAddress1(ADDRESS);
+        noProject.setCountry(CITY_COUNTRY);
+        noProject.setCity(CITY_COUNTRY);
         noProject.setProvince("SG");
-        noProject.setPostalCode("600123");
+        noProject.setPostalCode(POSTALCODE);
         noProject.setEmailVerified(true);
         
         User ncl = new User();
@@ -131,17 +133,17 @@ public class UserManager {
         ncl.setRole("admin");
         ncl.setName("NCL Admin");
         ncl.setEmail("ncladmin@ncl.sg");
-        ncl.setPassword("password");
-        ncl.setConfirmPassword("password");
+        ncl.setPassword(PASSWORD);
+        ncl.setConfirmPassword(PASSWORD);
         ncl.setJobTitle("NCL Admin");
-        ncl.setInstitution("National University of Singapore");
+        ncl.setInstitution(NUS);
         ncl.setInstitutionAbbreviation("NUS");
-        ncl.setWebsite("http://www.nus.edu.sg");
-        ncl.setAddress1("Boon Lay Drive 222");
-        ncl.setCountry("Singapore");
-        ncl.setCity("Singapore");
+        ncl.setWebsite(WEBSITE);
+        ncl.setAddress1(ADDRESS);
+        ncl.setCountry(CITY_COUNTRY);
+        ncl.setCity(CITY_COUNTRY);
         ncl.setProvince("SG");
-        ncl.setPostalCode("600123");
+        ncl.setPostalCode(POSTALCODE);
         ncl.setEmailVerified(true);
         
         usersMap.put(johnDoe.getUserId(), johnDoe); 	// 200
@@ -154,10 +156,10 @@ public class UserManager {
     }
     
     public static UserManager getInstance() {
-        if (USER_MANAGER_SINGLETON == null) {
-            USER_MANAGER_SINGLETON = new UserManager();
+        if (userManagerSingleton == null) {
+            userManagerSingleton = new UserManager();
         }
-        return USER_MANAGER_SINGLETON;
+        return userManagerSingleton;
     }
     
     public HashMap<Integer, User> getUserMap() {
@@ -194,7 +196,7 @@ public class UserManager {
                 return currUser.getUserId();
             }
         }
-        return ERROR_NO_SUCH_USER_ID;
+        return ErrorNoSuchUserID;
     }
     
     public User getUserById(int userId) {
@@ -247,10 +249,6 @@ public class UserManager {
     
     public boolean isUserAdmin(int userId) {
     	User currUser = usersMap.get(userId);
-    	if (currUser.getRole().equals("admin")) {
-    		return true;
-    	} else {
-    		return false;
-    	}
+    	return currUser.getRole().equals("admin");
     }
 }
