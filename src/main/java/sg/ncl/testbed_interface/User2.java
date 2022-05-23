@@ -213,14 +213,7 @@ public class User2 implements Serializable {
         this.confirmPassword = confirmPassword;
     }
 
-    public boolean isPasswordMatch() {
-        if (password.isEmpty() || confirmPassword.isEmpty()) {
-            return false;
-        } else if (!password.equals(confirmPassword)) {
-            return false;
-        }
-        return true;
-    }
+    public boolean isPasswordMatch() { return ((!password.isEmpty() || !confirmPassword.isEmpty()) && password.equals(confirmPassword));}
 
     public boolean isPasswordValid() {
         // more than 8 characters
