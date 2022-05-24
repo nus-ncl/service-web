@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  service-web:
+    image: service-web
+    container_name: service-web-container
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8999:8999"
