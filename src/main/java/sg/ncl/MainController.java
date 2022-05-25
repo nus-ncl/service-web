@@ -784,8 +784,8 @@ public class MainController {
         HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
-        final String link = properties.getSioRegUrl() + USERS + id + "/emails/" + emailBase64;
-        ResponseEntity <String> response = restTemplate.exchange(link, HttpMethod.PUT, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + id + "/emails/" + emailBase64);
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
 
         if (RestUtil.isError(response.getStatusCode())) {
             log.error("Activation of user {} failed.", id);
@@ -3590,9 +3590,9 @@ public class MainController {
         }
 
         GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
-        String url = HTTP + domain.getHost() + ":" + domain.getPort() + USERS + userid;
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(HTTP + domain.getHost() + ":" + domain.getPort() + USERS + userid);
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity <String> response = restTemplate.exchange(url, HttpMethod.DELETE, request, String.class);
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         String responseBody = response.getBody();
 
         JSONObject jsonObject = new JSONObject(responseBody);
@@ -4304,7 +4304,8 @@ public class MainController {
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(properties.getMonthly() + "/" + id, HttpMethod.DELETE, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getMonthly() + "/" + id);
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         String responseBody = response.getBody();
 
         try {
@@ -4342,7 +4343,8 @@ public class MainController {
         }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getMonthly() + "/" + id, HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getMonthly() + "/" + id);
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         JSONObject jsonObject = new JSONObject(response.getBody());
         ProjectDetails projectDetails = getProjectDetails(jsonObject);
         model.addAttribute(KEY_PROJECT, projectDetails);
@@ -4353,7 +4355,8 @@ public class MainController {
     @GetMapping("/user/monthly/{id}/usage")
     public String userMonthlyUsage(@PathVariable String id, HttpSession session, Model model) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getProjectDetails() + "/" + id, HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getProjectDetails() + "/" + id);
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         JSONObject jsonObject = new JSONObject(response.getBody());
         ProjectDetails projectDetails = getProjectDetails(jsonObject);
         model.addAttribute(KEY_PROJECT, projectDetails);
@@ -4746,7 +4749,8 @@ public class MainController {
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(properties.editNodesReserve(id), HttpMethod.DELETE, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.editNodesReserve(id));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         String responseBody = response.getBody();
 
         try {
@@ -4786,7 +4790,8 @@ public class MainController {
 
         if (month.isPresent()) {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
-            ResponseEntity <String> response = restTemplate.exchange(properties.getMonthlyUsage(id) + "/" + month.get(), HttpMethod.GET, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getMonthlyUsage(id) + "/" + month.get());
+            ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
             JSONObject usage = new JSONObject(response.getBody());
             JSONObject usageId = usage.getJSONObject("id");
             ProjectUsage projectUsage = new ProjectUsage();
