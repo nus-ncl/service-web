@@ -3534,9 +3534,9 @@ public class MainController {
         }
 
         GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
-        String url = HTTP + domain.getHost() + ":" + domain.getPort() + USERS + userid + "?action=" + action;
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(HTTP + domain.getHost() + ":" + domain.getPort() + USERS + userid + "?action=" + action);
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity <String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody();
 
         JSONObject jsonObject = new JSONObject(responseBody);
@@ -3558,13 +3558,13 @@ public class MainController {
         }
 
         GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
-        String url = HTTP + domain.getHost() + ":" + domain.getPort() + USERS + userid;
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(HTTP + domain.getHost() + ":" + domain.getPort() + USERS + userid);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(PSWD, newpasswd);
 
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(jsonObject.toString());
-        ResponseEntity <String> response = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         String responseBody = response.getBody();
 
         jsonObject = new JSONObject(responseBody);
@@ -4885,7 +4885,8 @@ public class MainController {
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(properties.getMonthlyUsage(id) + "/" + month, HttpMethod.DELETE, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getMonthlyUsage(id) + "/" + month);
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         String responseBody = response.getBody();
 
         try {
@@ -5411,8 +5412,8 @@ public class MainController {
         log.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(
-                properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED), HttpMethod.POST, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.APPROVED));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
         String responseBody = response.getBody();
         if (RestUtil.isError(response.getStatusCode())) {
             MyErrorResource error;
@@ -5487,8 +5488,8 @@ public class MainController {
         log.info("Rejecting new team {}, team owner {}, reason {}", teamId, teamOwnerId, reason);
         HttpEntity<String> request = createHttpEntityWithBody(reason);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(
-                properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED), HttpMethod.POST, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getApproveTeam(teamId, teamOwnerId, TeamStatus.REJECTED));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
 
         String responseBody = response.getBody();
         if (RestUtil.isError(response.getStatusCode())) {
@@ -5980,9 +5981,8 @@ public class MainController {
     public String deletePublicKey(HttpSession session, @PathVariable String keyId) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(
-                properties.getPublicKeys(session.getAttribute("id").toString()) + "/" + keyId,
-                HttpMethod.DELETE, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getPublicKeys(session.getAttribute("id").toString()) + "/" + keyId);
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         String responseBody = response.getBody();
 
         try {
@@ -6335,7 +6335,8 @@ public class MainController {
 
     private Team2 invokeAndExtractTeamInfo(String teamId) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> responseEntity = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getTeamById(teamId));
+        ResponseEntity <String> responseEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
 
         return extractTeamInfo(responseEntity.getBody());
     }
