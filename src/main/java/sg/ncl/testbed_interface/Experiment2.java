@@ -157,22 +157,22 @@ public class Experiment2 {
         return stack_id;
     }
 
-    public void setStack_id(String stack_id) {
-        this.stack_id = stack_id;
+    public void setStack_id(String stackId) {
+        this.stack_id = stackId;
     }
 
     public String getHeat_template_version() {
         return heat_template_version;
     }
 
-    public void setHeat_template_version(String heat_template_version) { this.heat_template_version = heat_template_version; }
+    public void setHeat_template_version(String heatTemplateVersion) { this.heat_template_version = heatTemplateVersion; }
 
-    public String getResources_name() {
+    public String getResourcesName() {
         return resources_name;
     }
 
-    public void setResources_name(String resources_name) {
-        this.resources_name = resources_name;
+    public void setResourcesName(String resourcesName) {
+        this.resources_name = resourcesName;
     }
 
     public String getType() {
