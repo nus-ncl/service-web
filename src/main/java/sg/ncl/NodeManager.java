@@ -9,9 +9,7 @@ public class NodeManager {
 	
 	private static NodeManager NODE_MANAGER_SINGLETON = null;
 	private HashMap<Integer, Node> nodeMap = new HashMap<Integer, Node>(); /* nodeId - Node */
-	private final String DISK_HEALTH_MODERATE = "Moderate";
 	private final String DISK_HEALTH_GOOD = "Good";
-	private final String DISK_HEALTH_WARNING = "Warning";
 	
 	private NodeManager() {
 		Node node1 = new Node();
