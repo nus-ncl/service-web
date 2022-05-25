@@ -2555,13 +2555,16 @@ public class MainController {
     @GetMapping(value = "/experiment_profile/{expId}")
     public String experimentProfile(@PathVariable String expId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getStatefulExperiment(expId), HttpMethod.GET, request, String.class);
+
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStatefulExperiment(expId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
 
         StatefulExperiment stateExp = extractStatefulExperiment(response.getBody());
 
         User2 experimentOwner = invokeAndExtractUserInfo(stateExp.getUserId());
 
-        ResponseEntity <String> expDetailsResponse = restTemplate.exchange(properties.getExperimentDetails(stateExp.getTeamId(), expId), HttpMethod.GET, request, String.class);
+        uriComponents = UriComponentsBuilder.fromUriString(properties.getExperimentDetails(stateExp.getTeamId(), expId));
+        ResponseEntity <String> expDetailsResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         log.debug("experiment profile - experiment details: {}", expDetailsResponse.getBody());
 
         model.addAttribute("experiment", stateExp);
