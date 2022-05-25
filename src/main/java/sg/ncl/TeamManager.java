@@ -24,14 +24,18 @@ public class TeamManager {
     private final String OWNER_POSITION = "owner";
     private final String MEMBER_POSITION = "member";
     private final String PENDING_ACCEPT_INVITATION_POSITION = "pending for acceptance";
-    
-    
+
+    private static final String DESCRIPTION = "this is a simple desc";
+    private static final String NUS_WEBSITE = "http://www.nus.edu.sg";
+    private static final String ORGANIZATION_TYPE = "academia";
+    private static final String NTU_WEBSITE = "http://www.ntu.edu.sg";
+
     private TeamManager() {
         Team team1 = new Team();
         team1.setId(110);
         team1.setName("hybridcloud");
-        team1.setDescription("this is a simple desc");
-        team1.setWebsite("http://www.nus.edu.sg");
+        team1.setDescription(DESCRIPTION);
+        team1.setWebsite(NUS_WEBSITE);
         team1.setOrganizationType("academia");
         team1.setInstitution("NUS");
         team1.setIsApproved(true);
@@ -45,9 +49,9 @@ public class TeamManager {
         Team team2 = new Team();
         team2.setId(111);
         team2.setName("hybridcloud");
-        team2.setDescription("this is a simple desc");
-        team2.setWebsite("http://www.nus.edu.sg");
-        team2.setOrganizationType("academia");
+        team2.setDescription(DESCRIPTION);
+        team2.setWebsite(NUS_WEBSITE);
+        team2.setOrganizationType(ORGANIZATION_TYPE);
         team2.setInstitution("NUS");
         team2.setIsApproved(true);
         team2.setIsPublic(true);
@@ -61,8 +65,8 @@ public class TeamManager {
         team3.setId(112);
         team3.setName("myPrivateProject");
         team3.setDescription("this project is not supposed to show up on public");
-        team3.setWebsite("http://www.nus.edu.sg");
-        team3.setOrganizationType("academia");
+        team3.setWebsite(NUS_WEBSITE);
+        team3.setOrganizationType(ORGANIZATION_TYPE);
         team3.setInstitution("NUS");
         team3.setIsApproved(true);
         team3.setIsPublic(false);
@@ -76,8 +80,8 @@ public class TeamManager {
         team4.setId(113);
         team4.setName("Incident Response");
         team4.setDescription("simulate large scale network attack on critical infrastructure to test incident response team");
-        team4.setWebsite("http://www.ntu.edu.sg");
-        team4.setOrganizationType("academia");
+        team4.setWebsite(NTU_WEBSITE);
+        team4.setOrganizationType(ORGANIZATION_TYPE);
         team4.setInstitution("NTU");
         team4.setIsApproved(true);
         team4.setIsPublic(false);
@@ -89,9 +93,9 @@ public class TeamManager {
         Team team5 = new Team();
         team5.setId(114);
         team5.setName("Nessus");
-        team5.setDescription("this is a simple desc");
-        team5.setWebsite("http://www.ntu.edu.sg");
-        team5.setOrganizationType("academia");
+        team5.setDescription(DESCRIPTION);
+        team5.setWebsite(NTU_WEBSITE);
+        team5.setOrganizationType(ORGANIZATION_TYPE);
         team5.setInstitution("NTU");
         team5.setIsApproved(true);
         team5.setIsPublic(true);
@@ -103,9 +107,9 @@ public class TeamManager {
         Team team6 = new Team();
         team6.setId(115);
         team6.setName("Dave Private Project");
-        team6.setDescription("this is a simple desc");
-        team6.setWebsite("http://www.ntu.edu.sg");
-        team6.setOrganizationType("academia");
+        team6.setDescription(DESCRIPTION);
+        team6.setWebsite(NTU_WEBSITE);
+        team6.setOrganizationType(ORGANIZATION_TYPE);
         team6.setInstitution("NTU");
         team6.setIsApproved(false);
         team6.setIsPublic(false);
@@ -123,18 +127,9 @@ public class TeamManager {
         teamMap.put(115, team6);
         
         joinRequestMap2 = new HashMap<Integer, List<Team>>();
-        /*
-        List<Team> joinRequestTeamList = new ArrayList<Team>();
-        joinRequestTeamList.add(team5);
-        joinRequestMap2.put(200, joinRequestTeamList);
-        */
-        
+
         invitedToParticipateMap2 = new HashMap<Integer, List<Team>>();
-        /*
-        List<Team> invitedTeamList = new ArrayList<Team>();
-        invitedTeamList.add(team4);
-        invitedToParticipateMap2.put(200, invitedTeamList);
-        */
+
     }
     
     public static TeamManager getInstance() {
@@ -376,14 +371,6 @@ public class TeamManager {
             }
         }
     }
-    
-    /*
-     * Obsolete by list implementation
-    public void ignoreParticipationRequest(int userId, int teamId) {
-        // TODO check if userId indeed have a participation request
-        invitedToParticipateMap.remove(teamId);
-    }
-    */
     
     public void setInfoMsg(String msg) {
         infoMsg = msg;
