@@ -1899,7 +1899,8 @@ public class MainController {
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
-            ResponseEntity <String> response = restTemplate.exchange(properties.deleteImage(teamId, imageName),
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.deleteImage(teamId, imageName));
+            ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(),
                     HttpMethod.DELETE, request, String.class);
             String responseBody = response.getBody();
 
@@ -1982,7 +1983,8 @@ public class MainController {
     @GetMapping(value = "/team_profile/{teamId}")
     public String teamProfile(@PathVariable String teamId, Model model, final RedirectAttributes redirectAttributes, HttpSession session) throws IOException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getTeamById(teamId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody();
 
         Team2 team = extractTeamInfo(responseBody);
@@ -3099,7 +3101,8 @@ public class MainController {
         }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getExperiment(expId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         Experiment2 editExperiment = extractExperiment(response.getBody());
         editExperiment.setStack_id(stack_id);
         Realization realization = invokeAndExtractRealization(editExperiment.getTeamName(), Long.parseLong(expId));
@@ -3141,7 +3144,8 @@ public class MainController {
 
         // get original experiment
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getExperiment(expId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getExperiment(expId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         Experiment2 experiment = extractExperiment(response.getBody());
 
         experiment.setNsFileContent(editExperiment.getNsFileContent());
@@ -3228,7 +3232,8 @@ public class MainController {
     public String getTopology(@PathVariable String teamName, @PathVariable String expId) {
         try {
             HttpEntity<String> request = createHttpEntityHeaderOnly();
-            ResponseEntity <String> response = restTemplate.exchange(properties.getTopology(teamName, expId), HttpMethod.GET, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getTopology(teamName, expId));
+            ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
             log.info("Retrieve experiment topo success");
             return "data:image/png;base64," + response.getBody();
         } catch (Exception e) {
@@ -3260,7 +3265,8 @@ public class MainController {
         try {
             HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
-            ResponseEntity <String> response = restTemplate.exchange(properties.requestInternetExperiment(teamId, expId),
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.requestInternetExperiment(teamId, expId));
+            ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(),
                     HttpMethod.POST, request, String.class);
             String responseBody = response.getBody();
 
