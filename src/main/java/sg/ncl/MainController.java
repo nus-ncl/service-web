@@ -2492,40 +2492,36 @@ public class MainController {
 
     //Experiment profile for openstack experiments.
     @GetMapping(value = "/experiment_profile/{expId}/{stack_id}")
-    public String experimentProfile(@PathVariable String expId, @PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+    public String experimentProfile(@PathVariable String expId, @PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
 
-        try {
-            if(expId.isEmpty() || stack_id.isEmpty())
-                log.error("Invalid experiment Id : {} or stack_id : {}",expId, stack_id);
-            else {
+        HttpEntity<String> openStackRequest = createHttpEntityWithOsToken();
 
-                HttpEntity<String> openStackRequest = createHttpEntityWithOsToken();
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getOpenStackEvents(expId, stack_id));
+        ResponseEntity <String> openstackEventResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, openStackRequest, String.class);
 
-                ResponseEntity<String> openstackEventResponse = restTemplate.exchange(properties.getOpenStackEvents(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
-                ResponseEntity<String> openstackDetailResponse = restTemplate.exchange(properties.getOpenStackDetail(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
+        uriComponents = UriComponentsBuilder.fromUriString(properties.getOpenStackDetail(expId, stack_id));
+        ResponseEntity <String> openstackDetailResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, openStackRequest, String.class);
 
-                ResponseEntity<String> openstackServerDetail = restTemplate.exchange(properties.getOpenStackServerDetail(expId), HttpMethod.GET, openStackRequest, String.class);
+        uriComponents = UriComponentsBuilder.fromUriString(properties.getOpenStackServerDetail(expId));
+        ResponseEntity <String> openstackServerDetail = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, openStackRequest, String.class);
 
-                log.info("openStack Server Detail: {}", openstackServerDetail.getBody());
-                OpenStackServerStateful openStackServerObj = extractOSServerObj(openstackServerDetail.getBody());
-                OpenstackExperiment openStackExp = extractOpenstackExperiment(openstackDetailResponse.getBody());
-                User2 experimentOwner = invokeAndExtractUserInfo(openStackExp.getUserId());
+        OpenStackServerStateful openStackServerObj = extractOSServerObj(openstackServerDetail.getBody());
 
-                String heatFile = openStackExp.getHeatFile();
-                String replaceHeatFile = heatFile.replace(",\"", ",\n\"");
-                String secReplaceHeatFile = replaceHeatFile.replace("{\"stack_name\"", "{\n\"stack_name\"");
-                String thirdReplaceHeatFile = secReplaceHeatFile.replace("]}}}}}}}", "]}}}}}}\n}");
+        log.info("openStack Server Detail: {}" , openstackServerDetail.getBody());
+        OpenstackExperiment openStackExp = extractOpenstackExperiment(openstackDetailResponse.getBody());
+        User2 experimentOwner = invokeAndExtractUserInfo(openStackExp.getUserId());
 
-                model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
-                model.addAttribute("experiment", openStackExp);
-                model.addAttribute("openstackEvents", new JSONObject(openstackEventResponse.getBody()));
-                model.addAttribute("openstackServerDetail", openStackServerObj);
-                model.addAttribute("heat_Files", thirdReplaceHeatFile);
-            }
+        String heatFile = openStackExp.getHeatFile();
+        String replaceHeatFile = heatFile.replace(",\"",",\n\"");
+        String secReplaceHeatFile = replaceHeatFile.replace("{\"stack_name\"","{\n\"stack_name\"");
+        String thirdReplaceHeatFile = secReplaceHeatFile.replace("]}}}}}}}","]}}}}}}\n}");
 
-        } catch (Exception e) {
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
+        model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
+        model.addAttribute("experiment", openStackExp);
+        model.addAttribute("openstackEvents", new JSONObject(openstackEventResponse.getBody()));
+        model.addAttribute("openstackServerDetail",openStackServerObj);
+        model.addAttribute("heat_Files", thirdReplaceHeatFile);
+
         return "experiment_profile";
     }
 
@@ -3595,7 +3591,7 @@ public class MainController {
         if (message.contains("Failed")) {
             redirectAttributes.addFlashAttribute(MESSAGE, message + " '" + userid + "'");
         } else {
-            redirectAttributes.addFlashAttribute("messageSuccess", message + " '" + userid + "'");
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, message + " '" + userid + "'");
         }
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
