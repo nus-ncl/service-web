@@ -10,6 +10,7 @@ public class TeamPageJoinTeamForm {
     private String teamName;
     
     public TeamPageJoinTeamForm() {
+        //Not using this method for now
     }
     
     public String getTeamName() {

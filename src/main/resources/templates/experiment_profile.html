@@ -147,7 +147,7 @@
                             </thead>
                             <tbody>
                             <tr th:each="serverEntry : ${openstackServerDetail.instanceInfo}">
-                                <td th:text="${serverEntry.instance_name}" ></td>
+                                <td th:text="${serverEntry.instanceName}" ></td>
                                 <td th:text="${serverEntry.status}" ></td>
                                 <td th:text="${serverEntry.network}" ></td>
                                 <td th:text="${serverEntry.image}" ></td>

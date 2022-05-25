@@ -3,7 +3,6 @@ package sg.ncl.testbed_interface;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Getter
 public class UsageAnalysis implements Serializable {
