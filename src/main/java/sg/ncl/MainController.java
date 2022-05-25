@@ -2752,7 +2752,7 @@ public class MainController {
         String nsContentFinal = nsContentPart1 + expName + nsContentPart2 + "}}";
         nsContentFinal = nsContentFinal.replaceAll("\r", "");
         nsContentFinal = nsContentFinal.replaceAll("\n", "");
-        nsContentFinal = nsContentFinal.replaceAll("  ", "");
+        nsContentFinal = nsContentFinal.replaceAll(" {2}", "");
         return nsContentFinal;
     }
 
@@ -4205,7 +4205,7 @@ public class MainController {
             jsonObject.put("education", project.isEducation());
             jsonObject.put("serviceTool", project.isServiceTool());
             jsonObject.put("supportedBy", project.getSupportedBy());
-            jsonObject.put(PROJECT_USAGE, new ArrayList());
+            jsonObject.put(PROJECT_USAGE, new ArrayList<String>());
             log.debug("JsonObject: {}", jsonObject);
 
             restTemplate.setErrorHandler(new MyResponseErrorHandler());

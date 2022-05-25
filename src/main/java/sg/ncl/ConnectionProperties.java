@@ -457,7 +457,7 @@ public class ConnectionProperties {
         {
             tempList = identifier.split("-");
 
-            if (!tempList[0].matches("[0-9]+") )
+            if (!tempList[0].matches("\\d+") )
             {
                 validResumableIdentifierFlag = false;
             }

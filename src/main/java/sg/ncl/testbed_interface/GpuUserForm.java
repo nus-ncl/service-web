@@ -19,7 +19,7 @@ public class GpuUserForm {
 
     @Size(min=8, message="Password must have at least 8 characters")
     @Pattern.List({
-            @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit"),
+            @Pattern(regexp = "(?=.*\\d).+", message = "Password must contain one digit"),
             @Pattern(regexp = "(?=.*[a-zA-Z]).+", message = "Password must contain one alphabet"),
             @Pattern(regexp = "[^\\s]+", message = "Password cannot contain whitespace"),
             @Pattern(regexp = "[^&<>|/`'\"\\\\]+", message = "Password cannot contain '&' '<' '>' '|' '/' '\\' '`' '\'' '\"'")
