@@ -68,8 +68,8 @@ public class DataController extends MainController {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getData(), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody();
 
         log.info("data: {}", dataResponseBody);
 
@@ -86,7 +86,7 @@ public class DataController extends MainController {
         return "data";
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @GetMapping(value = "/search")
     public String searchData(Model model, @RequestParam("keywords") String keywords) {
         if (keywords.trim().length() == 0) {
             return REDIRECT_DATA;
@@ -95,8 +95,8 @@ public class DataController extends MainController {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.searchDatasets(keywords), HttpMethod.GET, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.searchDatasets(keywords), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody();
 
         JSONArray dataJsonArray = new JSONArray(dataResponseBody);
         for (int i = 0; i < dataJsonArray.length(); i++) {
@@ -113,7 +113,7 @@ public class DataController extends MainController {
         return "data";
     }
 
-    @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.GET)
+    @GetMapping(value={"/contribute", "/contribute/{id}"})
     public String contributeData(Model model, @PathVariable Optional<String> id, HttpSession session) {
         if (id.isPresent()) {
             Dataset dataset = getDataset(id.get());
@@ -136,8 +136,8 @@ public class DataController extends MainController {
 
     private Dataset getDataset(String id) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getDataset(id), HttpMethod.GET, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getDataset(id), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         return extractDataInfo(dataInfoObject.toString());
     }
@@ -150,8 +150,8 @@ public class DataController extends MainController {
 
     private List<DataCategory> getDataCategories() {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getCategories(), HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getCategories(), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody();
         JSONArray jsonArray = new JSONArray(responseBody);
         List<DataCategory> dataCategories = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -164,8 +164,8 @@ public class DataController extends MainController {
 
     private List<DataLicense> getDataLicenses() {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getLicenses(), HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getLicenses(), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody();
         JSONArray jsonArray = new JSONArray(responseBody);
         List<DataLicense> dataLicenses = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -176,7 +176,7 @@ public class DataController extends MainController {
         return dataLicenses;
     }
 
-    @RequestMapping(value={"/contribute", "/contribute/{id}"}, method=RequestMethod.POST)
+    @PostMapping(value={"/contribute", "/contribute/{id}"})
     public String validateContributeData(@Valid @ModelAttribute("dataset") Dataset dataset,
                                          BindingResult bindingResult,
                                          Model model, @PathVariable Optional<String> id,
@@ -222,7 +222,7 @@ public class DataController extends MainController {
         dataObject.put("contributorId", dataset.getContributorId());
         dataObject.put("visibility", dataset.getVisibility());
         dataObject.put("accessibility", dataset.getAccessibility());
-        dataObject.put("resources", new ArrayList());
+        dataObject.put(RESOURCES, new ArrayList());
         dataObject.put("approvedUsers", new ArrayList());
         dataObject.put("releasedDate", dataset.getReleasedDate());
         dataObject.put("categoryId", dataset.getCategoryId());
@@ -233,8 +233,8 @@ public class DataController extends MainController {
         HttpEntity<String> request = createHttpEntityWithBody(dataObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
-        ResponseEntity response = getResponseEntity(id, request);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = getResponseEntity(id, request);
+        String dataResponseBody = response.getBody();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
@@ -277,8 +277,8 @@ public class DataController extends MainController {
     public String removeDataset(@PathVariable String id, @PathVariable Optional<String> admin, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getDataset(id), HttpMethod.DELETE, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getDataset(id), HttpMethod.DELETE, request, String.class);
+        String dataResponseBody = response.getBody();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
@@ -308,7 +308,7 @@ public class DataController extends MainController {
         return REDIRECT_DATA;
     }
 
-    @RequestMapping(value = "/{id}/request", method = RequestMethod.POST)
+    @PostMapping(value = "/{id}/request")
     public String requestDataset(@PathVariable String id,
                                  @ModelAttribute DataRequestForm requestForm,
                                  RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
@@ -317,8 +317,8 @@ public class DataController extends MainController {
 
         HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.requestDataset(id), HttpMethod.POST, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.requestDataset(id), HttpMethod.POST, request, String.class);
+        String dataResponseBody = response.getBody();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
@@ -346,12 +346,12 @@ public class DataController extends MainController {
         return REDIRECT_CONTRIBUTE + id;
     }
 
-    @RequestMapping(value = "{did}/requests/{rid}", method = RequestMethod.GET)
+    @GetMapping(value = "{did}/requests/{rid}")
     public String getRequest(Model model, @PathVariable String did, @PathVariable String rid) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getRequest(did, rid), HttpMethod.GET, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getRequest(did, rid), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
@@ -392,8 +392,8 @@ public class DataController extends MainController {
                                  RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getRequest(did, rid), HttpMethod.PUT, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getRequest(did, rid), HttpMethod.PUT, request, String.class);
+        String dataResponseBody = response.getBody();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
@@ -427,13 +427,13 @@ public class DataController extends MainController {
         return "redirect:/data/" + did + "/requests/" + rid;
     }
 
-    @RequestMapping(value = "/public", method = RequestMethod.GET)
+    @GetMapping(value = "/public")
     public String getPublicDatasets(Model model) {
         DatasetManager datasetManager = new DatasetManager();
 
         HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicData(), HttpMethod.GET, dataRequest, String.class);
-        String dataResponseBody = dataResponse.getBody().toString();
+        ResponseEntity <String> dataResponse = restTemplate.exchange(properties.getPublicData(), HttpMethod.GET, dataRequest, String.class);
+        String dataResponseBody = dataResponse.getBody();
 
         JSONArray dataPublicJsonArray = new JSONArray(dataResponseBody);
         for (int i = 0; i < dataPublicJsonArray.length(); i++) {
@@ -446,14 +446,14 @@ public class DataController extends MainController {
         return "data_public";
     }
 
-    @RequestMapping(value = "/public/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/public/{id}")
     public String getPublicDataset(HttpSession session, Model model, @PathVariable String id) {
         if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
             return REDIRECT_CONTRIBUTE + id;
         }
         HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
-        String dataResponseBody = dataResponse.getBody().toString();
+        ResponseEntity <String> dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+        String dataResponseBody = dataResponse.getBody();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
         model.addAttribute(DATASET, dataset);
@@ -461,7 +461,7 @@ public class DataController extends MainController {
         return "data_public_id";
     }
 
-    @RequestMapping(value = "/public/{id}", method = RequestMethod.POST)
+    @PostMapping(value = "/public/{id}")
     public String checkPublicDataset(HttpSession session, Model model, @PathVariable String id,
                                      @Valid @ModelAttribute("puser") PublicUser puser, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -500,8 +500,8 @@ public class DataController extends MainController {
             message.append(UL_END_TAG);
             model.addAttribute(MESSAGE_ATTRIBUTE, message);
             HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
-            ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
-            String dataResponseBody = dataResponse.getBody().toString();
+            ResponseEntity <String> dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+            String dataResponseBody = dataResponse.getBody();
             JSONObject dataInfoObject = new JSONObject(dataResponseBody);
             Dataset dataset = extractDataInfo(dataInfoObject.toString());
             model.addAttribute(DATASET, dataset);
@@ -518,8 +518,8 @@ public class DataController extends MainController {
 
         HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(puserObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getPublicDataUsers(), HttpMethod.POST, request, String.class);
-        String responseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getPublicDataUsers(), HttpMethod.POST, request, String.class);
+        String responseBody = response.getBody();
         log.info("Public user saved: {}", responseBody);
         JSONObject object = new JSONObject(responseBody);
         session.setAttribute(PUBLIC_USER_ID, object.getLong("id"));
@@ -527,7 +527,7 @@ public class DataController extends MainController {
         return REDIRECT_DATA + "/public/" + id + "/" + RESOURCES;
     }
 
-    @RequestMapping(value = "/public/{id}/resources", method = RequestMethod.GET)
+    @GetMapping(value = "/public/{id}/resources")
     public String getPublicResources(HttpSession session, Model model, @PathVariable String id, RedirectAttributes redirectAttributes) {
         if (session.getAttribute("id") != null && !session.getAttribute("id").toString().isEmpty()) {
             return REDIRECT_DATA + "/" + id + "/" + RESOURCES;
@@ -537,8 +537,8 @@ public class DataController extends MainController {
         }
 
         HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
-        String dataResponseBody = dataResponse.getBody().toString();
+        ResponseEntity <String> dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+        String dataResponseBody = dataResponse.getBody();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
         model.addAttribute(DATASET, dataset);
@@ -546,7 +546,7 @@ public class DataController extends MainController {
         return "data_public_resources";
     }
 
-    @RequestMapping(value = "/public/{did}/resources/{rid}", method = RequestMethod.GET)
+    @GetMapping(value = "/public/{did}/resources/{rid}")
     public void getPublicOpenResource(HttpSession session, @PathVariable String did, @PathVariable String rid,
                                       final HttpServletResponse httpResponse) throws UnsupportedEncodingException, WebServiceRuntimeException {
         if (session.getAttribute(PUBLIC_USER_ID) == null || session.getAttribute(PUBLIC_USER_ID).toString().isEmpty()) {
@@ -597,8 +597,8 @@ public class DataController extends MainController {
             return REDIRECT_CONTRIBUTE + datasetId;
         }
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
         if (dataset.getContributorId().equals(session.getAttribute("id").toString())) {
@@ -625,8 +625,8 @@ public class DataController extends MainController {
         }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        String dataResponseBody = response.getBody();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
 
@@ -639,7 +639,7 @@ public class DataController extends MainController {
         } else {
             response = restTemplate.exchange(properties.getDownloadStat("id=" + datasetId, START_DATE + start, END_DATE + end), HttpMethod.GET, request, String.class);
         }
-        String responseBody = response.getBody().toString();
+        String responseBody = response.getBody();
 
         Map<Integer, Long> downloadStats = new HashMap<>();
         JSONArray statJsonArray = new JSONArray(responseBody);
@@ -657,7 +657,7 @@ public class DataController extends MainController {
         } else {
             response = restTemplate.exchange(properties.getPublicDownloadStat("id=" + datasetId, START_DATE + start, END_DATE + end), HttpMethod.GET, request, String.class);
         }
-        responseBody = response.getBody().toString();
+        responseBody = response.getBody();
         Map<Integer, Long> publicDownloadStats = new HashMap<>();
         statJsonArray = new JSONArray(responseBody);
         for (int i = 0; i < statJsonArray.length(); i++) {
@@ -677,15 +677,15 @@ public class DataController extends MainController {
      * References:
      * [1] https://github.com/23/resumable.js/blob/master/samples/java/src/main/java/resumable/js/upload/UploadServlet.java
      */
-    @RequestMapping(value="{datasetId}/resources/upload", method=RequestMethod.GET)
+    @GetMapping(value="{datasetId}/resources/upload")
     public ResponseEntity<String> checkChunk(@PathVariable String datasetId, HttpServletRequest request) {
         int resumableChunkNumber = getResumableChunkNumber(request);
         ResumableInfo info = getResumableInfo(request);
         String url = properties.checkUploadChunk(datasetId, resumableChunkNumber, info.resumableIdentifier);
         log.debug("URL: {}", url);
         HttpEntity<String> httpEntity = createHttpEntityHeaderOnly();
-        ResponseEntity responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
-        String body = responseEntity.getBody().toString();
+        ResponseEntity <String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+        String body = responseEntity.getBody();
         log.debug(body);
         if (body.equals("Not found")) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
@@ -693,7 +693,7 @@ public class DataController extends MainController {
         return ResponseEntity.ok(body);
     }
 
-    @RequestMapping(value="{datasetId}/resources/upload", method=RequestMethod.POST)
+    @PostMapping(value="{datasetId}/resources/upload")
     public ResponseEntity<String> uploadChunk(@PathVariable String datasetId, HttpServletRequest request) {
         int resumableChunkNumber = getResumableChunkNumber(request);
         ResumableInfo info = getResumableInfo(request);
@@ -702,9 +702,9 @@ public class DataController extends MainController {
             InputStream is = request.getInputStream();
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             long readed = 0;
-            long content_length = request.getContentLength();
+            long contentLength = request.getContentLength();
             byte[] bytes = new byte[1024 * 100];
-            while (readed < content_length) {
+            while (readed < contentLength) {
                 int r = is.read(bytes);
                 if (r < 0)  {
                     break;
@@ -728,8 +728,8 @@ public class DataController extends MainController {
             log.debug("URL: {}", url);
             HttpEntity<String> httpEntity = createHttpEntityWithBody(resumableObject.toString());
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
-            ResponseEntity responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
-            String body = responseEntity.getBody().toString();
+            ResponseEntity <String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+            String body = responseEntity.getBody();
 
             if (RestUtil.isError(responseEntity.getStatusCode())) {
                 MyErrorResource error = objectMapper.readValue(body, MyErrorResource.class);
@@ -772,7 +772,7 @@ public class DataController extends MainController {
      * [2] http://stackoverflow.com/questions/29712554/how-to-download-a-file-using-a-java-rest-service-and-a-data-stream
      * [3] http://stackoverflow.com/questions/32988370/download-large-file-from-server-using-rest-template-java-spring-mvc
      */
-    @RequestMapping(value="{datasetId}/resources/{resourceId}", method=RequestMethod.GET)
+    @GetMapping(value="{datasetId}/resources/{resourceId}")
     public void getResource(@PathVariable String datasetId, @PathVariable String resourceId, HttpSession session,
                             final HttpServletResponse httpResponse) throws UnsupportedEncodingException, WebServiceRuntimeException {
         Dataset dataset = invokeAndExtractDataInfo(Long.valueOf(datasetId));
@@ -796,12 +796,12 @@ public class DataController extends MainController {
         }
     }
 
-    @RequestMapping(value = "{datasetId}/resources/{resourceId}/delete", method = RequestMethod.GET)
+    @GetMapping(value = "{datasetId}/resources/{resourceId}/delete")
     public String removeResource(@PathVariable String datasetId, @PathVariable String resourceId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity response = restTemplate.exchange(properties.getResource(datasetId, resourceId), HttpMethod.DELETE, request, String.class);
-        String dataResponseBody = response.getBody().toString();
+        ResponseEntity <String> response = restTemplate.exchange(properties.getResource(datasetId, resourceId), HttpMethod.DELETE, request, String.class);
+        String dataResponseBody = response.getBody();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
@@ -842,7 +842,7 @@ public class DataController extends MainController {
     }
 
     private ResponseEntity getResponseEntity(@PathVariable Optional<String> id, HttpEntity<String> request) {
-        ResponseEntity response;
+        ResponseEntity <String> response;
         if (!id.isPresent()) {
             response = restTemplate.exchange(properties.getSioDataUrl(), HttpMethod.POST, request, String.class);
         } else {

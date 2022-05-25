@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InstanceInfo {
-    String instance_name ="";
+    String instanceName ="";
     String status ="";
     String network="";
     String image="";
@@ -14,8 +14,8 @@ public class InstanceInfo {
 
     public InstanceInfo(){}
 
-    public InstanceInfo(String instance_name,String status,String network,String image,String flavor){
-        this.instance_name=instance_name;
+    public InstanceInfo(String instanceName,String status,String network,String image,String flavor){
+        this.instanceName=instanceName;
         this.status=status;
         this.network=network;
         this.image=image;

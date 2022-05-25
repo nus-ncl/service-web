@@ -26,7 +26,8 @@ public class TeamPageApplyTeamForm {
 
     private Boolean isClass;
     
-    public TeamPageApplyTeamForm() {   
+    public TeamPageApplyTeamForm() {
+        //Not using this method for now
     }
     
     public String getTeamName() {
