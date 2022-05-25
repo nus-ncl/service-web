@@ -359,7 +359,7 @@ public class ConnectionPropertiesTest {
         Integer chunkNumber = Integer.parseInt(RandomStringUtils.randomNumeric(8));
         String dataId = RandomStringUtils.randomAlphanumeric(20);
         String identifier = RandomStringUtils.randomAlphanumeric(20);
-        assertThat(properties.checkUploadChunk(dataId, chunkNumber, identifier)).isEqualTo("");
+        assertThat(properties.checkUploadChunk(dataId, chunkNumber, identifier)).isEmpty();
     }
 
     @Test

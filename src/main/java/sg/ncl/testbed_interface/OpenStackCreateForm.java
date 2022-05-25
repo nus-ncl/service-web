@@ -11,7 +11,7 @@ public class OpenStackCreateForm {
     private int isActivate = 0;
 
     public OpenStackCreateForm() {
-
+    //Not using this method for now.
     }
 
     public void setLoginPassword(String password) {

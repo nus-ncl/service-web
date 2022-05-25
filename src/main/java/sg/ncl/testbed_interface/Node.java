@@ -20,6 +20,7 @@ public class Node {
 	private String diskHealth;
 
 	public Node() {
+		//Not using this method for now
 	}
 
 	public String getNodeType() {

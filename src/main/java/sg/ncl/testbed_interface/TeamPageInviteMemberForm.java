@@ -5,6 +5,7 @@ public class TeamPageInviteMemberForm {
     private String inviteUserEmail;
     
     public TeamPageInviteMemberForm() {
+        //Not using this method for now
     }
 
     public String getInviteUserEmail() {
