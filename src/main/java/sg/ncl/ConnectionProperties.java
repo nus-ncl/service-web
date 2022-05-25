@@ -22,6 +22,7 @@ public class ConnectionProperties {
     private static final String RESOURCES = "resources";
     private static final String RESERVATIONS = "reservations";
     private static final String NODESRESERVATIONS = "nodesreservations";
+    private static final String USAGE_PROJECTS = "/usage/projects/";
     private String sioAddress;
     private String sioPort;
     private String authEndpoint;
@@ -177,16 +178,16 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId + "/" + expEndpoint + "/" + expId + "/experimentDetails";
     }
 
-    public String getOpenStackEvents(String id, String stack_id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/openstack" + "/" + stack_id + "/events";
+    public String getOpenStackEvents(String id, String stackId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/openstack" + "/" + stackId + "/events";
     }
 
-    public String getOpenStackDetail(String id, String stack_id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/openstackDetail" + "/" + stack_id;
+    public String getOpenStackDetail(String id, String stackId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/openstackDetail" + "/" + stackId;
     }
 
-    public String getOpenStackServer(String id, String stack_id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/" + stack_id+ "/servers" ;
+    public String getOpenStackServer(String id, String stackId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/" + stackId+ "/servers" ;
     }
 
     public String getOpenStackServerDetail(String id) {
@@ -205,24 +206,24 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + EXPERIMENT + expId;
     }
 
-    public String getDeleteExperiment(String teamId, String expId, String stack_id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId + EXPERIMENTS + expId + "/" + stack_id;
+    public String getDeleteExperiment(String teamId, String expId, String stackId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + TEAMS + teamId + EXPERIMENTS + expId + "/" + stackId;
     }
 
     public String getStartExperiment(String teamName, String expId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/start/team/" + teamName + EXPERIMENT + expId;
     }
 
-    public String getStartOpenstackExperiment(String teamId, String expId, String stack_id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + "resume" + "/" +  teamId  + EXPERIMENT + expId + "/" + stack_id;
+    public String getStartOpenstackExperiment(String teamId, String expId, String stackId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + "resume" + "/" +  teamId  + EXPERIMENT + expId + "/" + stackId;
     }
 
     public String getStopExperiment(String teamName, String expId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/stop/team/" + teamName + EXPERIMENT + expId;
     }
 
-    public String getStopOpenstackExperiment(String teamId, String expId, String stack_id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + "suspend" + "/" + teamId + EXPERIMENT + expId +"/" + stack_id;
+    public String getStopOpenstackExperiment(String teamId, String expId, String stackId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + "suspend" + "/" + teamId + EXPERIMENT + expId +"/" + stackId;
     }
 
     public String requestInternetExperiment(String teamId, String expId) {
@@ -356,11 +357,11 @@ public class ConnectionProperties {
     }
 
     public String getProjectDetails() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/usage/projects";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + USAGE_PROJECTS;
     }
 
     public String applyNodesReserve(String projectId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + USAGE_PROJECTS + projectId + "/" + NODESRESERVATIONS;
     }
 
     public String editNodesReserve(String reservationid) {
@@ -368,7 +369,7 @@ public class ConnectionProperties {
     }
 
     public String getNodesReserveByProject(String projectId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/usage/projects/" + projectId + "/" + NODESRESERVATIONS;
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + USAGE_PROJECTS + projectId + "/" + NODESRESERVATIONS;
     }
 
     //-------------------------------------
@@ -456,7 +457,7 @@ public class ConnectionProperties {
         {
             tempList = identifier.split("-");
 
-            if (!tempList[0].matches("[0-9]+") )
+            if (!tempList[0].matches("\\d+") )
             {
                 validResumableIdentifierFlag = false;
             }
@@ -465,7 +466,7 @@ public class ConnectionProperties {
                 validResumableIdentifierFlag = false;
             }
 
-            if(validResumableIdentifierFlag == true)
+            if(validResumableIdentifierFlag)
             {
                 parsedUrl = HTTP_MODE + sioAddress + ":" + sioPort + "/" + dataEndpoint + "/" + dataId + "/chunks/" + chunkNumber + "/files/" + tempList[0] + "-" + tempList[1];
             }
@@ -506,11 +507,11 @@ public class ConnectionProperties {
     }
 
     public String getMonthly() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + USAGE_PROJECTS;
     }
 
     public String getMonthlyUsage(String id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + "/usage/projects/" + id + "/months";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + analyticsEndpoint + USAGE_PROJECTS + id + "/months";
     }
 
     //-------------------------------------
