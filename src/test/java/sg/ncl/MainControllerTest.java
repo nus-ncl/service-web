@@ -168,7 +168,7 @@ public class MainControllerTest {
     }
 
     // page is taken out as of 22/9/2016
-    @Ignore
+    @Ignore("For now")
     public void testFuturePlanPage() throws Exception {
         mockMvc.perform(get("/futureplan"))
                 .andExpect(status().isOk())
@@ -536,7 +536,7 @@ public class MainControllerTest {
     // Test after login HTML pages
     //--------------------------------------
     // FIXME: ignore for now as dashboard page invoke two other rest calls
-    @Ignore
+    @Ignore("For now")
     @Test
     public void testGetDashboardPage() throws Exception {
 
@@ -563,7 +563,7 @@ public class MainControllerTest {
     }
 
     // FIXME: ignore for now as dashboard page invoke two other rest calls
-    @Ignore
+    @Ignore("For now")
     @Test
     public void testGetDashboardPageWithAdmin() throws Exception {
         final String id = RandomStringUtils.randomAlphabetic(10);
@@ -697,7 +697,7 @@ public class MainControllerTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("For now")
     public void signUpNewUserJoinExistingTeam() throws Exception {
         // TODO TBD need a way to mock two rest operations
         String stubUid = "AAAAAA";

@@ -6,8 +6,6 @@ import lombok.Setter;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by deepsi on 01/28/2022.
@@ -24,9 +22,9 @@ public class OpenstackExperiment {
     private ZonedDateTime createdDate;
     private ZonedDateTime lastModifiedDate;
     private String state;
-    private String stack_status_reason;
-    private String stack_project_id;
-    private String heat_file;
+    private String stackStatusReason;
+    private String stackProjectId;
+    private String heatFile;
     private int maxDuration;
     private int platform;
     private String stack_id;
