@@ -191,7 +191,7 @@ public class TeamTest {
     @Test
     public void testGetMembersList() {
         final Team2 one = new Team2();
-        assertThat(one.getMembersList().size()).isZero();
+        assertThat(one.getMembersList().isEmpty());
     }
 
     @Test
@@ -210,7 +210,7 @@ public class TeamTest {
     @Test
     public void testGetPendingMembersList() {
         final Team2 one = new Team2();
-        assertThat(one.getPendingMembersList().size()).isZero();
+        assertThat(one.getPendingMembersList().isEmpty());
     }
 
     @Test
