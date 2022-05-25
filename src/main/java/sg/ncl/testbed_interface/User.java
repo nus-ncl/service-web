@@ -27,6 +27,7 @@ public class User {
     private boolean isEmailVerified;
     
     public User() {
+        //This is not used for now
     }
     
     public int getUserId() {
@@ -291,9 +292,6 @@ public class User {
     }
     
     public boolean isPasswordMatch() {
-        if (!password.equals(confirmPassword)) {
-            return false;
-        }
-        return true;
+        return password.equals(confirmPassword);
     }
 }

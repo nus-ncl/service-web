@@ -10,9 +10,33 @@ import lombok.Setter;
 @Setter
 public class TeamUsageInfo {
 
-    public String id;
+    private String id;
 
-    public String name;
+    private String name;
 
-    public String usage; // in unit of node x hour, or "?" for unknown
+    private String usage; // in unit of node x hour, or "?" for unknown
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUsage() {
+        return usage;
+    }
+
+    public void setUsage(String usage) {
+        this.usage = usage;
+    }
 }
