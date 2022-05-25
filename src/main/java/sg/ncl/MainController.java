@@ -2492,33 +2492,40 @@ public class MainController {
 
     //Experiment profile for openstack experiments.
     @GetMapping(value = "/experiment_profile/{expId}/{stack_id}")
-    public String experimentProfile(@PathVariable String expId, @PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String experimentProfile(@PathVariable String expId, @PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
 
-        HttpEntity<String> openStackRequest = createHttpEntityWithOsToken();
+        try {
+            if(expId.isEmpty() || stack_id.isEmpty())
+                log.error("Invalid experiment Id : {} or stack_id : {}",expId, stack_id);
+            else {
 
-        ResponseEntity <String> openstackEventResponse = restTemplate.exchange(properties.getOpenStackEvents(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
-        ResponseEntity <String> openstackDetailResponse = restTemplate.exchange(properties.getOpenStackDetail(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
+                HttpEntity<String> openStackRequest = createHttpEntityWithOsToken();
 
-        ResponseEntity <String> openstackServerDetail = restTemplate.exchange(properties.getOpenStackServerDetail(expId), HttpMethod.GET, openStackRequest, String.class);
+                ResponseEntity<String> openstackEventResponse = restTemplate.exchange(properties.getOpenStackEvents(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
+                ResponseEntity<String> openstackDetailResponse = restTemplate.exchange(properties.getOpenStackDetail(expId, stack_id), HttpMethod.GET, openStackRequest, String.class);
 
-        log.info("openStack Server Detail: {}" , openstackServerDetail.getBody());
-        OpenStackServerStateful openStackServerObj = extractOSServerObj(openstackServerDetail.getBody());
+                ResponseEntity<String> openstackServerDetail = restTemplate.exchange(properties.getOpenStackServerDetail(expId), HttpMethod.GET, openStackRequest, String.class);
 
-        log.info("openStack Server Detail: {}" , openstackServerDetail.getBody());
-        OpenstackExperiment openStackExp = extractOpenstackExperiment(openstackDetailResponse.getBody());
-        User2 experimentOwner = invokeAndExtractUserInfo(openStackExp.getUserId());
+                log.info("openStack Server Detail: {}", openstackServerDetail.getBody());
+                OpenStackServerStateful openStackServerObj = extractOSServerObj(openstackServerDetail.getBody());
+                OpenstackExperiment openStackExp = extractOpenstackExperiment(openstackDetailResponse.getBody());
+                User2 experimentOwner = invokeAndExtractUserInfo(openStackExp.getUserId());
 
-        String heatFile = openStackExp.getHeatFile();
-        String replaceHeatFile = heatFile.replace(",\"",",\n\"");
-        String secReplaceHeatFile = replaceHeatFile.replace("{\"stack_name\"","{\n\"stack_name\"");
-        String thirdReplaceHeatFile = secReplaceHeatFile.replace("]}}}}}}}","]}}}}}}\n}");
+                String heatFile = openStackExp.getHeatFile();
+                String replaceHeatFile = heatFile.replace(",\"", ",\n\"");
+                String secReplaceHeatFile = replaceHeatFile.replace("{\"stack_name\"", "{\n\"stack_name\"");
+                String thirdReplaceHeatFile = secReplaceHeatFile.replace("]}}}}}}}", "]}}}}}}\n}");
 
-        model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
-        model.addAttribute("experiment", openStackExp);
-        model.addAttribute("openstackEvents", new JSONObject(openstackEventResponse.getBody()));
-        model.addAttribute("openstackServerDetail",openStackServerObj);
-        model.addAttribute("heat_Files", thirdReplaceHeatFile);
+                model.addAttribute("experimentOwner", experimentOwner.getFirstName() + ' ' + experimentOwner.getLastName());
+                model.addAttribute("experiment", openStackExp);
+                model.addAttribute("openstackEvents", new JSONObject(openstackEventResponse.getBody()));
+                model.addAttribute("openstackServerDetail", openStackServerObj);
+                model.addAttribute("heat_Files", thirdReplaceHeatFile);
+            }
 
+        } catch (Exception e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
         return "experiment_profile";
     }
 
