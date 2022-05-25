@@ -2,7 +2,6 @@ package sg.ncl.testbed_interface;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Pattern;
