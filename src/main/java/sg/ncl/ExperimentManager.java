@@ -24,6 +24,8 @@ public class ExperimentManager {
     private HashMap<Integer, List<Experiment>> experimentMap2; /* userId, arraylist of experiments */
 
     private static final String BASIC_1 = "basic1.ns";
+
+    private static final Random RANDOM = new Random();
     
     private ExperimentManager() {
         johnDoe = 200;
@@ -89,14 +91,6 @@ public class ExperimentManager {
     
     public HashMap<Integer, List<Experiment>> getExperimentMap2() {
         return experimentMap2;
-    }
-    
-    public List<Experiment> getExperimentListByExperimentOwner(int userId) {
-        if (experimentMap2.containsKey(userId)) {
-            return experimentMap2.get(userId);
-        } else {
-            return null;
-        }
     }
     
     public HashMap<Integer, Experiment> getTeamExperimentsMap(int teamId) {
@@ -235,10 +229,9 @@ public class ExperimentManager {
 	}
 
 	public int generateRandomExpId() {
-    	Random rn = new Random();
-    	int expId = rn.nextInt(Integer.MAX_VALUE) + 1;
+    	int expId = RANDOM.nextInt(Integer.MAX_VALUE) + 1;
     	while (isExpIdExists(expId)) {
-    		expId = rn.nextInt();
+    		expId = RANDOM.nextInt();
     	}
     	return expId;
     }

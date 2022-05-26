@@ -1030,13 +1030,12 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 log.error("No user exists : {}", session.getAttribute(webProperties.getSessionUserId()));
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 model.addAttribute(DETER_UID, CONNECTION_ERROR);
             } else {
                 log.info("Show the deter user id: {}", responseBody);
                 model.addAttribute(DETER_UID, responseBody);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
@@ -1334,8 +1333,7 @@ public class MainController {
      * @return the team id from sio
      */
     private Team2 getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
-        // FIXME check if team name exists
-        // FIXME check for general exception?
+
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity <String> response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
@@ -1528,11 +1526,6 @@ public class MainController {
 
     @RequestMapping("/approve_new_user")
     public String approveNewUser(Model model, HttpSession session) throws Exception {
-//    	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
-//    	rv = teamManager.getTeamMapByTeamOwner(getSessionIdOfLoggedInUser(session));
-//    	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
-//    	model.addAttribute("teamMapOwnedByUser", rv);
-//    	model.addAttribute("userHasAnyJoinRequest", userHasAnyJoinRequest);
 
         List<JoinRequestApproval> rv = new ArrayList<>();
         List<JoinRequestApproval> temp;
@@ -1616,7 +1609,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity <String> response;
         try {
-            response = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getApproveJoinRequest(teamId, userId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -1672,7 +1666,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity <String> response;
         try {
-            response = restTemplate.exchange(properties.getRejectJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getRejectJoinRequest(teamId, userId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -1731,13 +1726,6 @@ public class MainController {
 
     @RequestMapping("/teams")
     public String teams(Model model, HttpSession session) {
-//        int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
-//        model.addAttribute("infoMsg", teamManager.getInfoMsg());
-//        model.addAttribute("currentLoggedInUserId", currentLoggedInUserId);
-//        model.addAttribute("teamMap", teamManager.getTeamMap(currentLoggedInUserId));
-//        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-//        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
-//        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
         TeamManager2 teamManager2 = new TeamManager2();
 
@@ -1748,7 +1736,8 @@ public class MainController {
         // get list of teamids
         String userId = session.getAttribute("id").toString();
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getUser(userId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody();
 
         JSONObject object = new JSONObject(responseBody);
@@ -2010,7 +1999,8 @@ public class MainController {
 
         //Starting to get quota
         try {
-            response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.GET, request, String.class);
+            uriComponents = UriComponentsBuilder.fromUriString(properties.getQuotaByTeamId(teamId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for display team quota: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2087,7 +2077,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(teamfields.toString());
         ResponseEntity <String> response;
         try {
-            response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getTeamById(teamId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for edit team profile: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2151,7 +2142,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(teamQuotaJSONObject.toString());
         ResponseEntity <String> response;
         try {
-            response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.PUT, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getQuotaByTeamId(teamId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for display team quota: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2209,7 +2201,8 @@ public class MainController {
         ResponseEntity <String> response;
 
         try {
-            response = restTemplate.exchange(properties.removeUserFromTeam(teamId), HttpMethod.DELETE, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.removeUserFromTeam(teamId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for remove user: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2269,13 +2262,7 @@ public class MainController {
         model.addAttribute("teamPageApplyTeamForm", new TeamPageApplyTeamForm());
         if (!model.containsAttribute(KEY_QUERY)) {
             model.addAttribute(KEY_QUERY, new ProjectUsageQuery());
-           /* model.addAttribute("newProjects", new ArrayList<ProjectDetails>());
-            model.addAttribute("activeProjects", new ArrayList<ProjectDetails>());
-            model.addAttribute("inactiveProjects", new ArrayList<ProjectDetails>());
-            model.addAttribute("stoppedProjects", new ArrayList<ProjectDetails>());
-            model.addAttribute("utilization", new HashMap<String, MonthlyUtilization>());
-            model.addAttribute("statsCategory", new HashMap<String, Integer>());
-            model.addAttribute("statsAcademic", new HashMap<String, Integer>());*/
+
         }
         return "team_page_apply_team";
     }
@@ -2890,7 +2877,8 @@ public class MainController {
         ResponseEntity <String> response;
 
         try {
-            response = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId, stack_id), HttpMethod.DELETE, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getDeleteExperiment(teamId, expId, stack_id));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to remove experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2978,7 +2966,8 @@ public class MainController {
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
             try {
-                response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStartExperiment(teamName, expId));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
             }
             catch (Exception e) {
                 log.warn("Error connecting to experiment service to start experiment", e.getMessage());
@@ -2993,7 +2982,8 @@ public class MainController {
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
             try {
-                response = restTemplate.exchange(properties.getStartOpenstackExperiment(teamId, expId, stack_id), HttpMethod.POST, request, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStartOpenstackExperiment(teamId, expId, stack_id));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
             }
             catch (Exception e) {
                 log.warn("Error connecting to experiment service to start experiment", e.getMessage());
@@ -3153,14 +3143,6 @@ public class MainController {
         experiment.setStack_id(stack_id);
 
         objectMapper.registerModule(new JavaTimeModule());
-        String jsonExperiment;
-        try {
-            jsonExperiment = objectMapper.writeValueAsString(experiment);
-        } catch (JsonProcessingException e) {
-            log.debug("update experiment convert to json error: {}", experiment);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
-        }
 
         //=========================================================================================
         JSONObject experimentObject = new JSONObject();
@@ -3186,7 +3168,8 @@ public class MainController {
         request = createHttpEntityWithOsTokenBody(experimentObject.toString());
         ResponseEntity <String> updateExperimentResponse;
         try {
-            updateExperimentResponse = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId, stack_id), HttpMethod.PUT, request, String.class);
+            uriComponents = UriComponentsBuilder.fromUriString(properties.getDeleteExperiment(teamId, expId, stack_id));
+            updateExperimentResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to update experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -3365,11 +3348,13 @@ public class MainController {
         ResponseEntity <String> response;
         try {
             if(stack_id.equals("0")) {
-                response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, deterRequest, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStopExperiment(teamName, expId));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, deterRequest, String.class);
             }
             else
             {
-                response = restTemplate.exchange(properties.getStopOpenstackExperiment(teamId, expId, stack_id), HttpMethod.POST, openstackRequest, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStopOpenstackExperiment(teamId, expId, stack_id));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, openstackRequest, String.class);
             }
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to stop experiment", e.getMessage());
@@ -4425,7 +4410,8 @@ public class MainController {
         TeamManager2 teamManager2 = new TeamManager2();
         List<Team2> lstofTeams= new ArrayList();
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getUser(userId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody();
         JSONObject object = new JSONObject(responseBody);
         JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
@@ -4835,9 +4821,11 @@ public class MainController {
             HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
             ResponseEntity <String> response;
             if (usage.getId() == null || usage.getId() == 0) {
-                response = restTemplate.exchange(properties.getMonthlyUsage(pid), HttpMethod.POST, request, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getMonthlyUsage(pid));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
             } else {
-                response = restTemplate.exchange(properties.getMonthlyUsage(pid), HttpMethod.PUT, request, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getMonthlyUsage(pid));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
             }
             String responseBody = response.getBody();
 
@@ -5413,7 +5401,6 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-        //FIXME require approver info
         log.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -5489,7 +5476,6 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-        //FIXME require approver info
         log.info("Rejecting new team {}, team owner {}, reason {}", teamId, teamOwnerId, reason);
         HttpEntity<String> request = createHttpEntityWithBody(reason);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -6006,7 +5992,7 @@ public class MainController {
     //--------------------------Get List of scenarios filenames--------------------------
     private List<String> getScenarioFileNameList() {
         log.info("Retrieving scenario file names");
-        // FIXME: hardcode list of filenames for now
+
         List<String> scenarioFileNameList = new ArrayList<>();
         scenarioFileNameList.add("Openstack Scenario 1 - Experiment with a single virtual machine");
         scenarioFileNameList.add("Openstack Scenario 2 - Experiment with 2 nodes virtual machine");
@@ -6018,7 +6004,7 @@ public class MainController {
     }
 
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
-        // FIXME: switch to better way of referencing scenario descriptions to actual filenames
+
         String actualScenarioFileName;
         if (scenarioFileName.contains("Deterlab Scenario 1")) {
             actualScenarioFileName = "basic1.ns";
@@ -6398,7 +6384,6 @@ public class MainController {
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 log.warn("error in retrieving realization for team: {}, realization: {}", teamName, id);
                 return getCleanRealization();
             } else {
@@ -6406,7 +6391,7 @@ public class MainController {
                 // will occur if the realization details are still in the old format
                 return extractRealization(responseBody);
             }
-        } catch (IOException | JSONException e) {
+        } catch (Exception e) {
             return getCleanRealization();
         }
     }
@@ -6687,7 +6672,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithOsToken();
         ResponseEntity <String> respEntity;
         try {
-            respEntity = restTemplate.exchange(properties.getStatefulExperimentsByTeam(teamId), HttpMethod.GET, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStatefulExperimentsByTeam(teamId));
+            respEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         } catch (RestClientException e) {
             log.warn("Connection to sio failed: {}", e);
             return new ArrayList<>();
@@ -7047,7 +7033,8 @@ public class MainController {
         ResponseEntity <String> responseEntity;
 
         try {
-            responseEntity = restTemplate.exchange(properties.addStudentsByEmail(teamId), HttpMethod.POST, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.addStudentsByEmail(teamId));
+            responseEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for adding members: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -7222,7 +7209,8 @@ public class MainController {
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity <String> responseEntity;
         try {
-            responseEntity = restTemplate.exchange(properties.resetKeyStudent(uid), HttpMethod.PUT, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.resetKeyStudent(uid));
+            responseEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             // CredentialsNotFoundException and PasswordResetRequestNotFoundException is not caught here
             log.warn("Error in password key reset: {}", e);

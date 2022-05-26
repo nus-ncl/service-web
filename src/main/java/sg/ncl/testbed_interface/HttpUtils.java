@@ -8,6 +8,10 @@ package sg.ncl.testbed_interface;
  */
 public class HttpUtils {
 
+    private HttpUtils() {
+        throw new IllegalStateException("HttpUtils class");
+    }
+
     public static boolean isEmpty(String value) {
         return value == null || "".equals(value);
     }

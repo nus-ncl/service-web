@@ -29,6 +29,7 @@ public class TeamManager {
     private static final String NUS_WEBSITE = "http://www.nus.edu.sg";
     private static final String ORGANIZATION_TYPE = "academia";
     private static final String NTU_WEBSITE = "http://www.ntu.edu.sg";
+    private static final Random RANDOM = new Random();
 
     private TeamManager() {
         Team team1 = new Team();
@@ -36,7 +37,7 @@ public class TeamManager {
         team1.setName("hybridcloud");
         team1.setDescription(DESCRIPTION);
         team1.setWebsite(NUS_WEBSITE);
-        team1.setOrganizationType("academia");
+        team1.setOrganizationType(ORGANIZATION_TYPE);
         team1.setInstitution("NUS");
         team1.setIsApproved(true);
         team1.setIsPublic(true);
@@ -550,10 +551,9 @@ public class TeamManager {
     }
     
     public int generateRandomTeamId() {
-    	Random rn = new Random();
-    	int teamId = rn.nextInt(Integer.MAX_VALUE) + 1;
+    	int teamId = RANDOM.nextInt(Integer.MAX_VALUE) + 1;
     	while (teamMap.containsKey(teamId)) {
-    		teamId = rn.nextInt();
+    		teamId = RANDOM.nextInt();
     	}
     	return teamId;
     }
