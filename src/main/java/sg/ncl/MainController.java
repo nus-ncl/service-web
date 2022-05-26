@@ -3143,13 +3143,6 @@ public class MainController {
         experiment.setStack_id(stack_id);
 
         objectMapper.registerModule(new JavaTimeModule());
-        String jsonExperiment;
-        try {
-        } catch (Exception e) {
-            log.debug("update experiment convert to json error: {}", experiment);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
-        }
 
         //=========================================================================================
         JSONObject experimentObject = new JSONObject();
@@ -7216,7 +7209,8 @@ public class MainController {
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity <String> responseEntity;
         try {
-            responseEntity = restTemplate.exchange(properties.resetKeyStudent(uid), HttpMethod.PUT, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.resetKeyStudent(uid));
+            responseEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             // CredentialsNotFoundException and PasswordResetRequestNotFoundException is not caught here
             log.warn("Error in password key reset: {}", e);

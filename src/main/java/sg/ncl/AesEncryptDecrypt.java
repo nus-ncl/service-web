@@ -14,6 +14,10 @@ public class AesEncryptDecrypt{
     private static final String INIT_VECTOR = "encryptionIntVec";
     private static SecureRandom random = new SecureRandom();
 
+    private AesEncryptDecrypt() {
+        throw new IllegalStateException("AesEncryptDecrypt class");
+    }
+
     public static String encrypt(String value) {
         try {
             byte[] bytesIV = new byte[16];

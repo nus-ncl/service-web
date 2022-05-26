@@ -93,14 +93,6 @@ public class ExperimentManager {
         return experimentMap2;
     }
     
-    public List<Experiment> getExperimentListByExperimentOwner(int userId) {
-        if (experimentMap2.containsKey(userId)) {
-            return experimentMap2.get(userId);
-        } else {
-            return null;
-        }
-    }
-    
     public HashMap<Integer, Experiment> getTeamExperimentsMap(int teamId) {
         // for list implementation of experiment manager
         // expid, exp

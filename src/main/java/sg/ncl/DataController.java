@@ -60,6 +60,7 @@ public class DataController extends MainController {
     private static final String UL_END_TAG = "</ul>";
 
     @ModelAttribute
+    @Override
     public void setXFrameResponseHeader(HttpServletResponse response) {
         response.setHeader("X-Frame-Options", "DENY");
     }
@@ -223,8 +224,8 @@ public class DataController extends MainController {
         dataObject.put("contributorId", dataset.getContributorId());
         dataObject.put("visibility", dataset.getVisibility());
         dataObject.put("accessibility", dataset.getAccessibility());
-        dataObject.put(RESOURCES, new ArrayList());
-        dataObject.put("approvedUsers", new ArrayList());
+        dataObject.put(RESOURCES, new ArrayList<String>());
+        dataObject.put("approvedUsers", new ArrayList<String>());
         dataObject.put("releasedDate", dataset.getReleasedDate());
         dataObject.put("categoryId", dataset.getCategoryId());
         dataObject.put("licenseId", dataset.getLicenseId());
@@ -854,7 +855,7 @@ public class DataController extends MainController {
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
     }
 
-    private ResponseEntity getResponseEntity(@PathVariable Optional<String> id, HttpEntity<String> request) {
+    private ResponseEntity<String> getResponseEntity(@PathVariable Optional<String> id, HttpEntity<String> request) {
         ResponseEntity <String> response;
         if (!id.isPresent()) {
             response = restTemplate.exchange(properties.getSioDataUrl(), HttpMethod.POST, request, String.class);

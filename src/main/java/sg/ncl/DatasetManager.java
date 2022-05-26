@@ -33,19 +33,4 @@ public class DatasetManager {
 	public Map getDatasetMap() {
 	    return datasetMap;
     }
-
-    public List getDatasetMapOfContributor(String userId) {
-        return datasetMap.entrySet().stream()
-                .filter(map -> map.getValue().getContributorId().equals(userId))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-    }
-
-    public List getDatasetMapOfNotContributor(String userId) {
-        return datasetMap.entrySet().stream()
-                .filter(map -> !(map.getValue().getContributorId()).equals(userId))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-    }
-	
 }
