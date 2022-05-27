@@ -181,6 +181,7 @@ public class MainController {
     private static final String REDIRECT_ADMIN = "redirect:/admin";
     private static final String REDIRECT_ADD_MEMBER = "redirect:/add_member";
     private static final String REDIRECT_UNAUTHOURIZED_ACCESS = "redirect:/unauthorized_access";
+    private static final String REDIRECT_ADMIN_GPU = "redirect:/admin/gpus";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -219,6 +220,9 @@ public class MainController {
     private static final String GPU_USER_FORM = "gpuUserForm";
     private static final String GPU_USER_MAP = "gpuUsersMap";
     private static final String USERS = "/users/";
+    private static final String STATE = "state";
+    private static final String SUBMITTED = " submitted";
+
 
     private static final String START_DATE = "startDate";
     private static final String START_DATE_EQUALS = "startDate=";
@@ -257,6 +261,7 @@ public class MainController {
     private static final String KEY_QUERY = "query";
     private static final String KEY_DATE_CREATED = "dateCreated";
     private static final String KEY_OWNER = "owner";
+    private static final String PROJECTS_LIST = "projectsList";
 
     private static final String ADMIN_MONTHLY_USAGE_CONTRIBUTE = "admin_monthly_usage_contribute";
     private static final String ADMIN_MONTHLY_CONTRIBUTE = "admin_monthly_contribute";
@@ -761,7 +766,7 @@ public class MainController {
         byte secureBytes[] = new byte[20];
         entropy.nextBytes(secureBytes);
         String token=Base64.encodeBase64String(secureBytes);
-        token=token.replaceAll("\\/","@");
+        token=token.replace("\\/","@");
         return token;
     }
 
@@ -2325,7 +2330,7 @@ public class MainController {
 
             } else {
                 // no errors, everything ok
-                log.info(LOG_PREFIX, "Application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
+                log.info(LOG_PREFIX, "Application for team " + teamPageApplyTeamForm.getTeamName() + SUBMITTED);
                 return "redirect:/teams/team_application_submitted";
             }
 
@@ -2412,7 +2417,7 @@ public class MainController {
                 return "redirect:/teams/join_team";
 
             } else {
-                log.info(LOG_PREFIX, "Application for join team " + teamPageJoinForm.getTeamName() + " submitted");
+                log.info(LOG_PREFIX, "Application for join team " + teamPageJoinForm.getTeamName() + SUBMITTED);
                 return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
             }
 
@@ -2737,9 +2742,9 @@ public class MainController {
         String nsContentPart1 = "{\"stack_name\":\"" + expName + "\",\"template\":{" + splitStr[0];
         String nsContentPart2 = "_my_instance" + splitStr[1];
         String nsContentFinal = nsContentPart1 + expName + nsContentPart2 + "}}";
-        nsContentFinal = nsContentFinal.replaceAll("\r", "");
-        nsContentFinal = nsContentFinal.replaceAll("\n", "");
-        nsContentFinal = nsContentFinal.replaceAll(" {2}", "");
+        nsContentFinal = nsContentFinal.replace("\r", "");
+        nsContentFinal = nsContentFinal.replace("\n", "");
+        nsContentFinal = nsContentFinal.replace(" {2}", "");
         return nsContentFinal;
     }
 
@@ -3274,7 +3279,7 @@ public class MainController {
     @RequestMapping("/web_ssh/access_node/{qualifiedName:&+}")
     public String sshAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
         getDeterUid(model, session);
-        qualifiedName.replaceAll("&", ".");
+        qualifiedName = qualifiedName.replace("&", ".");
         model.addAttribute("qualified", qualifiedName);
         model.addAttribute("cols", ptyProperties.getCols());
         model.addAttribute("rows", ptyProperties.getRows());
@@ -3448,7 +3453,7 @@ public class MainController {
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     @PostMapping(value = "/admin/gpus/{gpu}/users/add")
@@ -3490,7 +3495,7 @@ public class MainController {
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     private Map<String, String> getGpuUsers(@RequestParam("gpu") Integer gpu) throws WebServiceRuntimeException {
@@ -3529,7 +3534,7 @@ public class MainController {
         redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User '" + userid + "' " + status);
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     @PostMapping(value = "/admin/gpus/{gpu}/passwd/{userid}")
@@ -3562,7 +3567,7 @@ public class MainController {
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     @GetMapping(value = "/admin/gpus/{gpu}/remove/{userid}")
@@ -3590,7 +3595,7 @@ public class MainController {
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     @RequestMapping("/admin/data")
@@ -4136,7 +4141,7 @@ public class MainController {
         }
 
         List<ProjectDetails> projectsList = getProjects();
-        model.addAttribute("projectsList", projectsList);
+        model.addAttribute(PROJECTS_LIST, projectsList);
 
         return "admin_monthly";
     }
@@ -4145,7 +4150,7 @@ public class MainController {
     public String userMonthly(HttpSession session, Model model) {
         String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
         List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
-        model.addAttribute("projectsList", userProjectsOwnerList);
+        model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
         return "user_monthly";
     }
 
@@ -4358,11 +4363,11 @@ public class MainController {
         if (validateIfAdmin(session))
         {
             List<ProjectDetails> projectsList = getProjects();
-            model.addAttribute("projectsList", projectsList);
+            model.addAttribute(PROJECTS_LIST, projectsList);
         }
         else  // non admin users can only see their own projects
         {
-            model.addAttribute("projectsList", userProjectsOwnerList);
+            model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
         }
 
         return "admin_node_usage_reservation";
@@ -4500,11 +4505,11 @@ public class MainController {
             if (validateIfAdmin(session))
             {
                 List<ProjectDetails> projectsList = getProjects();
-                model.addAttribute("projectsList", projectsList);
+                model.addAttribute(PROJECTS_LIST, projectsList);
             }
             else  // non admin users can only see their own projects
             {
-                model.addAttribute("projectsList", userProjectsOwnerList);
+                model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
             }
             return "admin_node_usage_reservation";
         }
@@ -4541,7 +4546,7 @@ public class MainController {
                 }
             } else {
                 // no errors, everything ok
-                log.info(LOG_PREFIX, "Application for"+ nodeUsageReservationForm.getNoOfNodes()+" node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
+                log.info(LOG_PREFIX, "Application for"+ nodeUsageReservationForm.getNoOfNodes()+" node reservation from " + nodeUsageReservationForm.getStartDate() + SUBMITTED);
                 redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking done.");
             }
         } catch (Exception e) {
@@ -4561,11 +4566,11 @@ public class MainController {
         if (validateIfAdmin(session))
         {
             List<ProjectDetails> projectsList = getProjects();
-            model.addAttribute("projectsList", projectsList);
+            model.addAttribute(PROJECTS_LIST, projectsList);
         }
         else  // non admin users can only see their own projects
         {
-            model.addAttribute("projectsList", userProjectsOwnerList);
+            model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
         }
         return "edit_page_node_usage_reservation";
     }
@@ -4615,11 +4620,11 @@ public class MainController {
                 if (validateIfAdmin(session))
                 {
                     List<ProjectDetails> projectsList = getProjects();
-                    model.addAttribute("projectsList", projectsList);
+                    model.addAttribute(PROJECTS_LIST, projectsList);
                 }
                 else  // non admin users can only see their own projects
                 {
-                    model.addAttribute("projectsList", userProjectsOwnerList);
+                    model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
                 }
                 model.addAttribute("mapNodeReservationInfo", tmplist);
             }
@@ -4677,11 +4682,11 @@ public class MainController {
             if (validateIfAdmin(session))
             {
                 List<ProjectDetails> projectsList = getProjects();
-                model.addAttribute("projectsList", projectsList);
+                model.addAttribute(PROJECTS_LIST, projectsList);
             }
             else  // non admin users can only see their own projects
             {
-                model.addAttribute("projectsList", userProjectsOwnerList);
+                model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
             }
             return "edit_page_node_usage_reservation";
         }
@@ -4719,7 +4724,7 @@ public class MainController {
                 }
             } else {
                 // no errors, everything ok
-                log.info(LOG_PREFIX, "Application for" + nodeUsageReservationForm.getNoOfNodes() + " node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
+                log.info(LOG_PREFIX, "Application for" + nodeUsageReservationForm.getNoOfNodes() + " node reservation from " + nodeUsageReservationForm.getStartDate() + SUBMITTED);
                 redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking done.");
             }
         } catch (Exception e) {
@@ -6405,7 +6410,7 @@ public class MainController {
         realization.setExperimentName(object.getString("experimentName"));
         realization.setUserId(object.getString(USER_ID));
         realization.setTeamId(object.getString(TEAM_ID));
-        realization.setState(object.getString("state"));
+        realization.setState(object.getString(STATE));
 
         String exp_report = "";
         Object expDetailsObject = object.get("details");
@@ -6739,7 +6744,7 @@ public class MainController {
         stateExp.setDescription(expJsonObj.getString(DESCRIPTION));
         stateExp.setCreatedDate(expJsonObj.getLong(CREATED_DATE));
         stateExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
-        stateExp.setState(expJsonObj.getString("state"));
+        stateExp.setState(expJsonObj.getString(STATE));
         stateExp.setNodes(expJsonObj.getInt("nodes"));
         stateExp.setMaxDuration(expJsonObj.getInt(MAX_DURATION));
         stateExp.setMinNodes(expJsonObj.getInt("minNodes"));
@@ -6784,7 +6789,7 @@ public class MainController {
         OpenStackExp.setDescription(expJsonObj.getString(DESCRIPTION));
         OpenStackExp.setCreatedDate(expJsonObj.getLong(CREATED_DATE));
         OpenStackExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
-        OpenStackExp.setState(expJsonObj.getString("state"));
+        OpenStackExp.setState(expJsonObj.getString(STATE));
         OpenStackExp.setStackStatusReason(expJsonObj.getString("stack_status_reason"));
         OpenStackExp.setStackProjectId(expJsonObj.getString("stack_project_id"));
         OpenStackExp.setHeatFile(expJsonObj.getString("heat_file"));
@@ -6896,7 +6901,7 @@ public class MainController {
         // amountUsed from SIO will never be null => not checking for null value
         String usage = object.getString(KEY_USAGE);                 // getting usage in String
         BigDecimal amountUsed = new BigDecimal(usage);                //  using BigDecimal to handle currency
-        amountUsed = amountUsed.multiply(new BigDecimal(charges));   // usage X charges
+        amountUsed = amountUsed.multiply(BigDecimal.valueOf(charges));   // usage X charges
 
         //quota passed from SIO can be null , so we have to check for null value
         if (object.has(QUOTA)) {
@@ -6910,7 +6915,7 @@ public class MainController {
 
                 // calculate resoucesLeft
                 BigDecimal resourceLeftInBD = budgetInBD.subtract(amountUsed);
-                resourceLeftInBD = resourceLeftInBD.divide(new BigDecimal(charges), 0, BigDecimal.ROUND_DOWN);
+                resourceLeftInBD = resourceLeftInBD.divide(BigDecimal.valueOf(charges), 0, BigDecimal.ROUND_DOWN);
                 budgetInBD = budgetInBD.setScale(2, BigDecimal.ROUND_HALF_UP);
 
                 // set budget
@@ -7229,16 +7234,15 @@ public class MainController {
     // for grant call documents download //
     @GetMapping(value = "/grantCall/proposalTemplate/download")
     public void grantCall_proposalTemplate(HttpServletResponse response) throws OrderFormDownloadException, IOException {
-        FileInputStream inStream = null;
         OutputStream outStream = null;
+        String filePath = "src/main/resources/static/NCL Grant Call 2021 Proposal Template.docx";
+        File downloadFile = new File(filePath);
         response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");//MIME Type
-        try {
+        try (FileInputStream inStream = new FileInputStream(downloadFile);)
+        {
             response.setContentType("APPLICATION/OCTET-STREAM");
             response.setHeader(CONTENT_DISPOSITION, "attachment; filename=NCL Grant Call 2021 Proposal Template.docx");
             outStream = response.getOutputStream();
-            String filePath = "src/main/resources/static/NCL Grant Call 2021 Proposal Template.docx";
-            File downloadFile = new File(filePath);
-            inStream = new FileInputStream(downloadFile);
             byte[] buffer = new byte[4096];
             int bytesRead = -1;
             while ((bytesRead = inStream.read(buffer)) != -1) {
@@ -7252,9 +7256,6 @@ public class MainController {
             if (outStream != null) {
                 outStream.close();
             }
-            if (inStream != null) {
-                inStream.close();
-            }
         }
     }
 
@@ -7267,10 +7268,11 @@ public class MainController {
             try (BufferedOutputStream bfos = new BufferedOutputStream(response.getOutputStream());
                  FileInputStream fs = new FileInputStream(xfile)) {
                 byte[] buffer = new byte[fs.available()];
-                fs.read(buffer);
-
-                bfos.write(buffer, 0, buffer.length);
-                bfos.flush();
+                int count = 0;
+                while ((count = fs.read(buffer)) > 0) {
+                    bfos.write(buffer, 0, buffer.length);
+                    bfos.flush();
+                }
             }
 
         } catch (IOException ex) {

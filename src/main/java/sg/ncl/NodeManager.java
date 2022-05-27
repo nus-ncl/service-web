@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -10,7 +11,7 @@ public class NodeManager {
 	private static NodeManager NODE_MANAGER_SINGLETON = null;
 	private HashMap<Integer, Node> nodeMap = new HashMap<Integer, Node>(); /* nodeId - Node */
 	private final String DISK_HEALTH_GOOD = "Good";
-	private static final Random RANDOM = new Random();
+	private static final Random RANDOM = new SecureRandom();
 	
 	private NodeManager() {
 		Node node1 = new Node();

@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ public class TeamManager {
     private static final String NUS_WEBSITE = "http://www.nus.edu.sg";
     private static final String ORGANIZATION_TYPE = "academia";
     private static final String NTU_WEBSITE = "http://www.ntu.edu.sg";
-    private static final Random RANDOM = new Random();
+    private static final Random RANDOM = new SecureRandom();
 
     private TeamManager() {
         Team team1 = new Team();

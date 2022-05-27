@@ -2,6 +2,7 @@ package sg.ncl;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ public class ExperimentManager {
 
     private static final String BASIC_1 = "basic1.ns";
 
-    private static final Random RANDOM = new Random();
+    private static final Random RANDOM = new SecureRandom();
     
     private ExperimentManager() {
         johnDoe = 200;

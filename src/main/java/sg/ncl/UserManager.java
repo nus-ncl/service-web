@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -18,7 +19,7 @@ public class UserManager {
     private static final String ADDRESS = "Boon Lay Drive 222";
     private static final String CITY_COUNTRY = "Singapore";
     private static final String POSTALCODE = "600123";
-    private static final Random RANDOM = new Random();
+    private static final Random RANDOM = new SecureRandom();
 
 
     private UserManager() {
