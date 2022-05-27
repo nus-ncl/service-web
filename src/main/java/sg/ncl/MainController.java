@@ -181,6 +181,7 @@ public class MainController {
     private static final String REDIRECT_ADMIN = "redirect:/admin";
     private static final String REDIRECT_ADD_MEMBER = "redirect:/add_member";
     private static final String REDIRECT_UNAUTHOURIZED_ACCESS = "redirect:/unauthorized_access";
+    private static final String REDIRECT_ADMIN_GPU = "redirect:/admin/gpus";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -219,6 +220,9 @@ public class MainController {
     private static final String GPU_USER_FORM = "gpuUserForm";
     private static final String GPU_USER_MAP = "gpuUsersMap";
     private static final String USERS = "/users/";
+    private static final String STATE = "state";
+    private static final String SUBMITTED = " submitted";
+
 
     private static final String START_DATE = "startDate";
     private static final String START_DATE_EQUALS = "startDate=";
@@ -257,6 +261,7 @@ public class MainController {
     private static final String KEY_QUERY = "query";
     private static final String KEY_DATE_CREATED = "dateCreated";
     private static final String KEY_OWNER = "owner";
+    private static final String PROJECTS_LIST = "projectsList";
 
     private static final String ADMIN_MONTHLY_USAGE_CONTRIBUTE = "admin_monthly_usage_contribute";
     private static final String ADMIN_MONTHLY_CONTRIBUTE = "admin_monthly_contribute";
@@ -761,7 +766,7 @@ public class MainController {
         byte secureBytes[] = new byte[20];
         entropy.nextBytes(secureBytes);
         String token=Base64.encodeBase64String(secureBytes);
-        token=token.replaceAll("\\/","@");
+        token=token.replace("\\/","@");
         return token;
     }
 
@@ -1030,13 +1035,12 @@ public class MainController {
         try {
             if (RestUtil.isError(response.getStatusCode())) {
                 log.error("No user exists : {}", session.getAttribute(webProperties.getSessionUserId()));
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 model.addAttribute(DETER_UID, CONNECTION_ERROR);
             } else {
                 log.info("Show the deter user id: {}", responseBody);
                 model.addAttribute(DETER_UID, responseBody);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
 
@@ -1334,8 +1338,7 @@ public class MainController {
      * @return the team id from sio
      */
     private Team2 getTeamIdByName(String teamName) throws WebServiceRuntimeException, TeamNotFoundException, AdapterConnectionException {
-        // FIXME check if team name exists
-        // FIXME check for general exception?
+
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity <String> response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
@@ -1528,11 +1531,6 @@ public class MainController {
 
     @RequestMapping("/approve_new_user")
     public String approveNewUser(Model model, HttpSession session) throws Exception {
-//    	HashMap<Integer, Team> rv = new HashMap<Integer, Team>();
-//    	rv = teamManager.getTeamMapByTeamOwner(getSessionIdOfLoggedInUser(session));
-//    	boolean userHasAnyJoinRequest = hasAnyJoinRequest(rv);
-//    	model.addAttribute("teamMapOwnedByUser", rv);
-//    	model.addAttribute("userHasAnyJoinRequest", userHasAnyJoinRequest);
 
         List<JoinRequestApproval> rv = new ArrayList<>();
         List<JoinRequestApproval> temp;
@@ -1616,7 +1614,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity <String> response;
         try {
-            response = restTemplate.exchange(properties.getApproveJoinRequest(teamId, userId), HttpMethod.POST, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getApproveJoinRequest(teamId, userId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -1672,7 +1671,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity <String> response;
         try {
-            response = restTemplate.exchange(properties.getRejectJoinRequest(teamId, userId), HttpMethod.DELETE, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getRejectJoinRequest(teamId, userId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -1731,13 +1731,6 @@ public class MainController {
 
     @RequestMapping("/teams")
     public String teams(Model model, HttpSession session) {
-//        int currentLoggedInUserId = getSessionIdOfLoggedInUser(session);
-//        model.addAttribute("infoMsg", teamManager.getInfoMsg());
-//        model.addAttribute("currentLoggedInUserId", currentLoggedInUserId);
-//        model.addAttribute("teamMap", teamManager.getTeamMap(currentLoggedInUserId));
-//        model.addAttribute("publicTeamMap", teamManager.getPublicTeamMap());
-//        model.addAttribute("invitedToParticipateMap2", teamManager.getInvitedToParticipateMap2(currentLoggedInUserId));
-//        model.addAttribute("joinRequestMap2", teamManager.getJoinRequestTeamMap2(currentLoggedInUserId));
 
         TeamManager2 teamManager2 = new TeamManager2();
 
@@ -1748,7 +1741,8 @@ public class MainController {
         // get list of teamids
         String userId = session.getAttribute("id").toString();
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getUser(userId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody();
 
         JSONObject object = new JSONObject(responseBody);
@@ -2010,7 +2004,8 @@ public class MainController {
 
         //Starting to get quota
         try {
-            response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.GET, request, String.class);
+            uriComponents = UriComponentsBuilder.fromUriString(properties.getQuotaByTeamId(teamId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for display team quota: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2087,7 +2082,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(teamfields.toString());
         ResponseEntity <String> response;
         try {
-            response = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.PUT, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getTeamById(teamId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for edit team profile: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2151,7 +2147,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithBody(teamQuotaJSONObject.toString());
         ResponseEntity <String> response;
         try {
-            response = restTemplate.exchange(properties.getQuotaByTeamId(teamId), HttpMethod.PUT, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getQuotaByTeamId(teamId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for display team quota: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2209,7 +2206,8 @@ public class MainController {
         ResponseEntity <String> response;
 
         try {
-            response = restTemplate.exchange(properties.removeUserFromTeam(teamId), HttpMethod.DELETE, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.removeUserFromTeam(teamId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for remove user: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2269,13 +2267,7 @@ public class MainController {
         model.addAttribute("teamPageApplyTeamForm", new TeamPageApplyTeamForm());
         if (!model.containsAttribute(KEY_QUERY)) {
             model.addAttribute(KEY_QUERY, new ProjectUsageQuery());
-           /* model.addAttribute("newProjects", new ArrayList<ProjectDetails>());
-            model.addAttribute("activeProjects", new ArrayList<ProjectDetails>());
-            model.addAttribute("inactiveProjects", new ArrayList<ProjectDetails>());
-            model.addAttribute("stoppedProjects", new ArrayList<ProjectDetails>());
-            model.addAttribute("utilization", new HashMap<String, MonthlyUtilization>());
-            model.addAttribute("statsCategory", new HashMap<String, Integer>());
-            model.addAttribute("statsAcademic", new HashMap<String, Integer>());*/
+
         }
         return "team_page_apply_team";
     }
@@ -2338,7 +2330,7 @@ public class MainController {
 
             } else {
                 // no errors, everything ok
-                log.info(LOG_PREFIX, "Application for team " + teamPageApplyTeamForm.getTeamName() + " submitted");
+                log.info(LOG_PREFIX, "Application for team " + teamPageApplyTeamForm.getTeamName() + SUBMITTED);
                 return "redirect:/teams/team_application_submitted";
             }
 
@@ -2425,7 +2417,7 @@ public class MainController {
                 return "redirect:/teams/join_team";
 
             } else {
-                log.info(LOG_PREFIX, "Application for join team " + teamPageJoinForm.getTeamName() + " submitted");
+                log.info(LOG_PREFIX, "Application for join team " + teamPageJoinForm.getTeamName() + SUBMITTED);
                 return "redirect:/teams/join_application_submitted/" + teamPageJoinForm.getTeamName();
             }
 
@@ -2750,9 +2742,9 @@ public class MainController {
         String nsContentPart1 = "{\"stack_name\":\"" + expName + "\",\"template\":{" + splitStr[0];
         String nsContentPart2 = "_my_instance" + splitStr[1];
         String nsContentFinal = nsContentPart1 + expName + nsContentPart2 + "}}";
-        nsContentFinal = nsContentFinal.replaceAll("\r", "");
-        nsContentFinal = nsContentFinal.replaceAll("\n", "");
-        nsContentFinal = nsContentFinal.replaceAll(" {2}", "");
+        nsContentFinal = nsContentFinal.replace("\r", "");
+        nsContentFinal = nsContentFinal.replace("\n", "");
+        nsContentFinal = nsContentFinal.replace(" {2}", "");
         return nsContentFinal;
     }
 
@@ -2890,7 +2882,8 @@ public class MainController {
         ResponseEntity <String> response;
 
         try {
-            response = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId, stack_id), HttpMethod.DELETE, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getDeleteExperiment(teamId, expId, stack_id));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to remove experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -2978,7 +2971,8 @@ public class MainController {
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
             try {
-                response = restTemplate.exchange(properties.getStartExperiment(teamName, expId), HttpMethod.POST, request, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStartExperiment(teamName, expId));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
             }
             catch (Exception e) {
                 log.warn("Error connecting to experiment service to start experiment", e.getMessage());
@@ -2993,7 +2987,8 @@ public class MainController {
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
 
             try {
-                response = restTemplate.exchange(properties.getStartOpenstackExperiment(teamId, expId, stack_id), HttpMethod.POST, request, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStartOpenstackExperiment(teamId, expId, stack_id));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
             }
             catch (Exception e) {
                 log.warn("Error connecting to experiment service to start experiment", e.getMessage());
@@ -3153,14 +3148,6 @@ public class MainController {
         experiment.setStack_id(stack_id);
 
         objectMapper.registerModule(new JavaTimeModule());
-        String jsonExperiment;
-        try {
-            jsonExperiment = objectMapper.writeValueAsString(experiment);
-        } catch (JsonProcessingException e) {
-            log.debug("update experiment convert to json error: {}", experiment);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_UPDATE_EXPERIMENT + teamId + "/" + expId;
-        }
 
         //=========================================================================================
         JSONObject experimentObject = new JSONObject();
@@ -3186,7 +3173,8 @@ public class MainController {
         request = createHttpEntityWithOsTokenBody(experimentObject.toString());
         ResponseEntity <String> updateExperimentResponse;
         try {
-            updateExperimentResponse = restTemplate.exchange(properties.getDeleteExperiment(teamId, expId, stack_id), HttpMethod.PUT, request, String.class);
+            uriComponents = UriComponentsBuilder.fromUriString(properties.getDeleteExperiment(teamId, expId, stack_id));
+            updateExperimentResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to update experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -3291,7 +3279,7 @@ public class MainController {
     @RequestMapping("/web_ssh/access_node/{qualifiedName:&+}")
     public String sshAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
         getDeterUid(model, session);
-        qualifiedName.replaceAll("&", ".");
+        qualifiedName = qualifiedName.replace("&", ".");
         model.addAttribute("qualified", qualifiedName);
         model.addAttribute("cols", ptyProperties.getCols());
         model.addAttribute("rows", ptyProperties.getRows());
@@ -3365,11 +3353,13 @@ public class MainController {
         ResponseEntity <String> response;
         try {
             if(stack_id.equals("0")) {
-                response = restTemplate.exchange(properties.getStopExperiment(teamName, expId), HttpMethod.POST, deterRequest, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStopExperiment(teamName, expId));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, deterRequest, String.class);
             }
             else
             {
-                response = restTemplate.exchange(properties.getStopOpenstackExperiment(teamId, expId, stack_id), HttpMethod.POST, openstackRequest, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStopOpenstackExperiment(teamId, expId, stack_id));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, openstackRequest, String.class);
             }
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to stop experiment", e.getMessage());
@@ -3463,7 +3453,7 @@ public class MainController {
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     @PostMapping(value = "/admin/gpus/{gpu}/users/add")
@@ -3505,7 +3495,7 @@ public class MainController {
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     private Map<String, String> getGpuUsers(@RequestParam("gpu") Integer gpu) throws WebServiceRuntimeException {
@@ -3544,7 +3534,7 @@ public class MainController {
         redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User '" + userid + "' " + status);
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     @PostMapping(value = "/admin/gpus/{gpu}/passwd/{userid}")
@@ -3577,7 +3567,7 @@ public class MainController {
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     @GetMapping(value = "/admin/gpus/{gpu}/remove/{userid}")
@@ -3605,7 +3595,7 @@ public class MainController {
 
         redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
         redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return "redirect:/admin/gpus";
+        return REDIRECT_ADMIN_GPU;
     }
 
     @RequestMapping("/admin/data")
@@ -4151,7 +4141,7 @@ public class MainController {
         }
 
         List<ProjectDetails> projectsList = getProjects();
-        model.addAttribute("projectsList", projectsList);
+        model.addAttribute(PROJECTS_LIST, projectsList);
 
         return "admin_monthly";
     }
@@ -4160,7 +4150,7 @@ public class MainController {
     public String userMonthly(HttpSession session, Model model) {
         String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
         List<ProjectDetails> userProjectsOwnerList = loggedInuserOwnedProjects(userId);
-        model.addAttribute("projectsList", userProjectsOwnerList);
+        model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
         return "user_monthly";
     }
 
@@ -4373,11 +4363,11 @@ public class MainController {
         if (validateIfAdmin(session))
         {
             List<ProjectDetails> projectsList = getProjects();
-            model.addAttribute("projectsList", projectsList);
+            model.addAttribute(PROJECTS_LIST, projectsList);
         }
         else  // non admin users can only see their own projects
         {
-            model.addAttribute("projectsList", userProjectsOwnerList);
+            model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
         }
 
         return "admin_node_usage_reservation";
@@ -4425,7 +4415,8 @@ public class MainController {
         TeamManager2 teamManager2 = new TeamManager2();
         List<Team2> lstofTeams= new ArrayList();
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getUser(userId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody();
         JSONObject object = new JSONObject(responseBody);
         JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
@@ -4514,11 +4505,11 @@ public class MainController {
             if (validateIfAdmin(session))
             {
                 List<ProjectDetails> projectsList = getProjects();
-                model.addAttribute("projectsList", projectsList);
+                model.addAttribute(PROJECTS_LIST, projectsList);
             }
             else  // non admin users can only see their own projects
             {
-                model.addAttribute("projectsList", userProjectsOwnerList);
+                model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
             }
             return "admin_node_usage_reservation";
         }
@@ -4555,7 +4546,7 @@ public class MainController {
                 }
             } else {
                 // no errors, everything ok
-                log.info(LOG_PREFIX, "Application for"+ nodeUsageReservationForm.getNoOfNodes()+" node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
+                log.info(LOG_PREFIX, "Application for"+ nodeUsageReservationForm.getNoOfNodes()+" node reservation from " + nodeUsageReservationForm.getStartDate() + SUBMITTED);
                 redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking done.");
             }
         } catch (Exception e) {
@@ -4575,11 +4566,11 @@ public class MainController {
         if (validateIfAdmin(session))
         {
             List<ProjectDetails> projectsList = getProjects();
-            model.addAttribute("projectsList", projectsList);
+            model.addAttribute(PROJECTS_LIST, projectsList);
         }
         else  // non admin users can only see their own projects
         {
-            model.addAttribute("projectsList", userProjectsOwnerList);
+            model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
         }
         return "edit_page_node_usage_reservation";
     }
@@ -4629,11 +4620,11 @@ public class MainController {
                 if (validateIfAdmin(session))
                 {
                     List<ProjectDetails> projectsList = getProjects();
-                    model.addAttribute("projectsList", projectsList);
+                    model.addAttribute(PROJECTS_LIST, projectsList);
                 }
                 else  // non admin users can only see their own projects
                 {
-                    model.addAttribute("projectsList", userProjectsOwnerList);
+                    model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
                 }
                 model.addAttribute("mapNodeReservationInfo", tmplist);
             }
@@ -4691,11 +4682,11 @@ public class MainController {
             if (validateIfAdmin(session))
             {
                 List<ProjectDetails> projectsList = getProjects();
-                model.addAttribute("projectsList", projectsList);
+                model.addAttribute(PROJECTS_LIST, projectsList);
             }
             else  // non admin users can only see their own projects
             {
-                model.addAttribute("projectsList", userProjectsOwnerList);
+                model.addAttribute(PROJECTS_LIST, userProjectsOwnerList);
             }
             return "edit_page_node_usage_reservation";
         }
@@ -4733,7 +4724,7 @@ public class MainController {
                 }
             } else {
                 // no errors, everything ok
-                log.info(LOG_PREFIX, "Application for" + nodeUsageReservationForm.getNoOfNodes() + " node reservation from " + nodeUsageReservationForm.getStartDate() + " submitted");
+                log.info(LOG_PREFIX, "Application for" + nodeUsageReservationForm.getNoOfNodes() + " node reservation from " + nodeUsageReservationForm.getStartDate() + SUBMITTED);
                 redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "Node Usage Booking done.");
             }
         } catch (Exception e) {
@@ -4835,9 +4826,11 @@ public class MainController {
             HttpEntity<String> request = createHttpEntityWithBody(jsonObject.toString());
             ResponseEntity <String> response;
             if (usage.getId() == null || usage.getId() == 0) {
-                response = restTemplate.exchange(properties.getMonthlyUsage(pid), HttpMethod.POST, request, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getMonthlyUsage(pid));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
             } else {
-                response = restTemplate.exchange(properties.getMonthlyUsage(pid), HttpMethod.PUT, request, String.class);
+                UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getMonthlyUsage(pid));
+                response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
             }
             String responseBody = response.getBody();
 
@@ -5413,7 +5406,6 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-        //FIXME require approver info
         log.info("Approving new team {}, team owner {}", teamId, teamOwnerId);
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -5489,7 +5481,6 @@ public class MainController {
             return NO_PERMISSION_PAGE;
         }
 
-        //FIXME require approver info
         log.info("Rejecting new team {}, team owner {}, reason {}", teamId, teamOwnerId, reason);
         HttpEntity<String> request = createHttpEntityWithBody(reason);
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
@@ -6006,7 +5997,7 @@ public class MainController {
     //--------------------------Get List of scenarios filenames--------------------------
     private List<String> getScenarioFileNameList() {
         log.info("Retrieving scenario file names");
-        // FIXME: hardcode list of filenames for now
+
         List<String> scenarioFileNameList = new ArrayList<>();
         scenarioFileNameList.add("Openstack Scenario 1 - Experiment with a single virtual machine");
         scenarioFileNameList.add("Openstack Scenario 2 - Experiment with 2 nodes virtual machine");
@@ -6018,7 +6009,7 @@ public class MainController {
     }
 
     private String getScenarioContentsFromFile(String scenarioFileName) throws WebServiceRuntimeException {
-        // FIXME: switch to better way of referencing scenario descriptions to actual filenames
+
         String actualScenarioFileName;
         if (scenarioFileName.contains("Deterlab Scenario 1")) {
             actualScenarioFileName = "basic1.ns";
@@ -6398,7 +6389,6 @@ public class MainController {
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 log.warn("error in retrieving realization for team: {}, realization: {}", teamName, id);
                 return getCleanRealization();
             } else {
@@ -6406,7 +6396,7 @@ public class MainController {
                 // will occur if the realization details are still in the old format
                 return extractRealization(responseBody);
             }
-        } catch (IOException | JSONException e) {
+        } catch (Exception e) {
             return getCleanRealization();
         }
     }
@@ -6420,7 +6410,7 @@ public class MainController {
         realization.setExperimentName(object.getString("experimentName"));
         realization.setUserId(object.getString(USER_ID));
         realization.setTeamId(object.getString(TEAM_ID));
-        realization.setState(object.getString("state"));
+        realization.setState(object.getString(STATE));
 
         String exp_report = "";
         Object expDetailsObject = object.get("details");
@@ -6687,7 +6677,8 @@ public class MainController {
         HttpEntity<String> request = createHttpEntityWithOsToken();
         ResponseEntity <String> respEntity;
         try {
-            respEntity = restTemplate.exchange(properties.getStatefulExperimentsByTeam(teamId), HttpMethod.GET, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getStatefulExperimentsByTeam(teamId));
+            respEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         } catch (RestClientException e) {
             log.warn("Connection to sio failed: {}", e);
             return new ArrayList<>();
@@ -6753,7 +6744,7 @@ public class MainController {
         stateExp.setDescription(expJsonObj.getString(DESCRIPTION));
         stateExp.setCreatedDate(expJsonObj.getLong(CREATED_DATE));
         stateExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
-        stateExp.setState(expJsonObj.getString("state"));
+        stateExp.setState(expJsonObj.getString(STATE));
         stateExp.setNodes(expJsonObj.getInt("nodes"));
         stateExp.setMaxDuration(expJsonObj.getInt(MAX_DURATION));
         stateExp.setMinNodes(expJsonObj.getInt("minNodes"));
@@ -6798,7 +6789,7 @@ public class MainController {
         OpenStackExp.setDescription(expJsonObj.getString(DESCRIPTION));
         OpenStackExp.setCreatedDate(expJsonObj.getLong(CREATED_DATE));
         OpenStackExp.setLastModifiedDate(expJsonObj.getLong(LAST_MODIFIED_DATE));
-        OpenStackExp.setState(expJsonObj.getString("state"));
+        OpenStackExp.setState(expJsonObj.getString(STATE));
         OpenStackExp.setStackStatusReason(expJsonObj.getString("stack_status_reason"));
         OpenStackExp.setStackProjectId(expJsonObj.getString("stack_project_id"));
         OpenStackExp.setHeatFile(expJsonObj.getString("heat_file"));
@@ -6910,7 +6901,7 @@ public class MainController {
         // amountUsed from SIO will never be null => not checking for null value
         String usage = object.getString(KEY_USAGE);                 // getting usage in String
         BigDecimal amountUsed = new BigDecimal(usage);                //  using BigDecimal to handle currency
-        amountUsed = amountUsed.multiply(new BigDecimal(charges));   // usage X charges
+        amountUsed = amountUsed.multiply(BigDecimal.valueOf(charges));   // usage X charges
 
         //quota passed from SIO can be null , so we have to check for null value
         if (object.has(QUOTA)) {
@@ -6924,7 +6915,7 @@ public class MainController {
 
                 // calculate resoucesLeft
                 BigDecimal resourceLeftInBD = budgetInBD.subtract(amountUsed);
-                resourceLeftInBD = resourceLeftInBD.divide(new BigDecimal(charges), 0, BigDecimal.ROUND_DOWN);
+                resourceLeftInBD = resourceLeftInBD.divide(BigDecimal.valueOf(charges), 0, BigDecimal.ROUND_DOWN);
                 budgetInBD = budgetInBD.setScale(2, BigDecimal.ROUND_HALF_UP);
 
                 // set budget
@@ -7047,7 +7038,8 @@ public class MainController {
         ResponseEntity <String> responseEntity;
 
         try {
-            responseEntity = restTemplate.exchange(properties.addStudentsByEmail(teamId), HttpMethod.POST, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.addStudentsByEmail(teamId));
+            responseEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio team service for adding members: {}", e);
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -7222,7 +7214,8 @@ public class MainController {
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity <String> responseEntity;
         try {
-            responseEntity = restTemplate.exchange(properties.resetKeyStudent(uid), HttpMethod.PUT, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.resetKeyStudent(uid));
+            responseEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         } catch (RestClientException e) {
             // CredentialsNotFoundException and PasswordResetRequestNotFoundException is not caught here
             log.warn("Error in password key reset: {}", e);
@@ -7241,16 +7234,15 @@ public class MainController {
     // for grant call documents download //
     @GetMapping(value = "/grantCall/proposalTemplate/download")
     public void grantCall_proposalTemplate(HttpServletResponse response) throws OrderFormDownloadException, IOException {
-        FileInputStream inStream = null;
         OutputStream outStream = null;
+        String filePath = "src/main/resources/static/NCL Grant Call 2021 Proposal Template.docx";
+        File downloadFile = new File(filePath);
         response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");//MIME Type
-        try {
+        try (FileInputStream inStream = new FileInputStream(downloadFile);)
+        {
             response.setContentType("APPLICATION/OCTET-STREAM");
             response.setHeader(CONTENT_DISPOSITION, "attachment; filename=NCL Grant Call 2021 Proposal Template.docx");
             outStream = response.getOutputStream();
-            String filePath = "src/main/resources/static/NCL Grant Call 2021 Proposal Template.docx";
-            File downloadFile = new File(filePath);
-            inStream = new FileInputStream(downloadFile);
             byte[] buffer = new byte[4096];
             int bytesRead = -1;
             while ((bytesRead = inStream.read(buffer)) != -1) {
@@ -7264,9 +7256,6 @@ public class MainController {
             if (outStream != null) {
                 outStream.close();
             }
-            if (inStream != null) {
-                inStream.close();
-            }
         }
     }
 
@@ -7279,10 +7268,11 @@ public class MainController {
             try (BufferedOutputStream bfos = new BufferedOutputStream(response.getOutputStream());
                  FileInputStream fs = new FileInputStream(xfile)) {
                 byte[] buffer = new byte[fs.available()];
-                fs.read(buffer);
-
-                bfos.write(buffer, 0, buffer.length);
-                bfos.flush();
+                int count = 0;
+                while ((count = fs.read(buffer)) > 0) {
+                    bfos.write(buffer, 0, buffer.length);
+                    bfos.flush();
+                }
             }
 
         } catch (IOException ex) {

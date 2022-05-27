@@ -90,6 +90,7 @@ public class AppErrorController implements ErrorController {
                 return HttpStatus.valueOf(statusCode);
             }
             catch (Exception ex) {
+                log.info("Status codee leads to exception");
             }
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;
