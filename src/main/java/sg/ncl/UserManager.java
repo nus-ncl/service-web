@@ -1,5 +1,6 @@
 package sg.ncl;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -18,6 +19,8 @@ public class UserManager {
     private static final String ADDRESS = "Boon Lay Drive 222";
     private static final String CITY_COUNTRY = "Singapore";
     private static final String POSTALCODE = "600123";
+    private static final Random RANDOM = new SecureRandom();
+
 
     private UserManager() {
         User johnDoe = new User();
@@ -154,7 +157,6 @@ public class UserManager {
         usersMap.put(noProject.getUserId(), noProject); // 205
         usersMap.put(ncl.getUserId(), ncl); 			// 206
     }
-    
     public static UserManager getInstance() {
         if (userManagerSingleton == null) {
             userManagerSingleton = new UserManager();
@@ -239,10 +241,9 @@ public class UserManager {
     }
     
     public int generateRandomUserId() {
-    	Random rn = new Random();
-    	int userId = rn.nextInt(Integer.MAX_VALUE) + 1;
+    	int userId = RANDOM.nextInt(Integer.MAX_VALUE) + 1;
     	while (usersMap.containsKey(userId)) {
-    		userId = rn.nextInt();
+    		userId = RANDOM.nextInt();
     	}
     	return userId;
     }

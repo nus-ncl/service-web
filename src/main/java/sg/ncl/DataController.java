@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponentsBuilder;
 import sg.ncl.domain.ExceptionState;
 import sg.ncl.exceptions.WebServiceRuntimeException;
 import sg.ncl.testbed_interface.*;
@@ -59,6 +60,7 @@ public class DataController extends MainController {
     private static final String UL_END_TAG = "</ul>";
 
     @ModelAttribute
+    @Override
     public void setXFrameResponseHeader(HttpServletResponse response) {
         response.setHeader("X-Frame-Options", "DENY");
     }
@@ -222,8 +224,8 @@ public class DataController extends MainController {
         dataObject.put("contributorId", dataset.getContributorId());
         dataObject.put("visibility", dataset.getVisibility());
         dataObject.put("accessibility", dataset.getAccessibility());
-        dataObject.put(RESOURCES, new ArrayList());
-        dataObject.put("approvedUsers", new ArrayList());
+        dataObject.put(RESOURCES, new ArrayList<String>());
+        dataObject.put("approvedUsers", new ArrayList<String>());
         dataObject.put("releasedDate", dataset.getReleasedDate());
         dataObject.put("categoryId", dataset.getCategoryId());
         dataObject.put("licenseId", dataset.getLicenseId());
@@ -277,7 +279,8 @@ public class DataController extends MainController {
     public String removeDataset(@PathVariable String id, @PathVariable Optional<String> admin, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(properties.getDataset(id), HttpMethod.DELETE, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getDataset(id));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         String dataResponseBody = response.getBody();
 
         try {
@@ -317,7 +320,8 @@ public class DataController extends MainController {
 
         HttpEntity<String> request = createHttpEntityWithBody(requestObject.toString());
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(properties.requestDataset(id), HttpMethod.POST, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.requestDataset(id));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, request, String.class);
         String dataResponseBody = response.getBody();
 
         try {
@@ -350,7 +354,8 @@ public class DataController extends MainController {
     public String getRequest(Model model, @PathVariable String did, @PathVariable String rid) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(properties.getRequest(did, rid), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getRequest(did, rid));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         String dataResponseBody = response.getBody();
 
         try {
@@ -392,7 +397,8 @@ public class DataController extends MainController {
                                  RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(properties.getRequest(did, rid), HttpMethod.PUT, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getRequest(did, rid));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
         String dataResponseBody = response.getBody();
 
         try {
@@ -452,7 +458,8 @@ public class DataController extends MainController {
             return REDIRECT_CONTRIBUTE + id;
         }
         HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity <String> dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getPublicDataset(id));
+        ResponseEntity <String> dataResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, dataRequest, String.class);
         String dataResponseBody = dataResponse.getBody();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
@@ -500,7 +507,8 @@ public class DataController extends MainController {
             message.append(UL_END_TAG);
             model.addAttribute(MESSAGE_ATTRIBUTE, message);
             HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
-            ResponseEntity <String> dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getPublicDataset(id));
+            ResponseEntity <String> dataResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, dataRequest, String.class);
             String dataResponseBody = dataResponse.getBody();
             JSONObject dataInfoObject = new JSONObject(dataResponseBody);
             Dataset dataset = extractDataInfo(dataInfoObject.toString());
@@ -537,7 +545,8 @@ public class DataController extends MainController {
         }
 
         HttpEntity<String> dataRequest = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity <String> dataResponse = restTemplate.exchange(properties.getPublicDataset(id), HttpMethod.GET, dataRequest, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getPublicDataset(id));
+        ResponseEntity <String> dataResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, dataRequest, String.class);
         String dataResponseBody = dataResponse.getBody();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
@@ -563,7 +572,8 @@ public class DataController extends MainController {
             // Streams the response instead of loading it all in memory
             ResponseExtractor<Void> responseExtractor = getResponseExtractor(httpResponse);
 
-            restTemplate.execute(properties.downloadPublicOpenResource(did, rid), HttpMethod.GET, requestCallback, responseExtractor);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.downloadPublicOpenResource(did, rid));
+            restTemplate.execute(uriComponents.toUriString(), HttpMethod.GET, requestCallback, responseExtractor);
         } catch (Exception e) {
             log.error("Error transferring download: {}", e.getMessage());
         }
@@ -597,7 +607,8 @@ public class DataController extends MainController {
             return REDIRECT_CONTRIBUTE + datasetId;
         }
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getDataset(datasetId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         String dataResponseBody = response.getBody();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
@@ -625,7 +636,8 @@ public class DataController extends MainController {
         }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity <String> response = restTemplate.exchange(properties.getDataset(datasetId), HttpMethod.GET, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getDataset(datasetId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         String dataResponseBody = response.getBody();
         JSONObject dataInfoObject = new JSONObject(dataResponseBody);
         Dataset dataset = extractDataInfo(dataInfoObject.toString());
@@ -681,10 +693,10 @@ public class DataController extends MainController {
     public ResponseEntity<String> checkChunk(@PathVariable String datasetId, HttpServletRequest request) {
         int resumableChunkNumber = getResumableChunkNumber(request);
         ResumableInfo info = getResumableInfo(request);
-        String url = properties.checkUploadChunk(datasetId, resumableChunkNumber, info.resumableIdentifier);
-        log.debug("URL: {}", url);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.checkUploadChunk(datasetId, resumableChunkNumber, info.resumableIdentifier));
+        log.debug("URL: {}", uriComponents.toUriString());
         HttpEntity<String> httpEntity = createHttpEntityHeaderOnly();
-        ResponseEntity <String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+        ResponseEntity <String> responseEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, httpEntity, String.class);
         String body = responseEntity.getBody();
         log.debug(body);
         if (body.equals("Not found")) {
@@ -724,11 +736,11 @@ public class DataController extends MainController {
             log.debug(resumableChunk);
             resumableObject.put("resumableChunk", resumableChunk);
 
-            String url = properties.sendUploadChunk(datasetId, resumableChunkNumber);
-            log.debug("URL: {}", url);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.sendUploadChunk(datasetId, resumableChunkNumber));
+            log.debug("URL: {}", uriComponents.toUriString());
             HttpEntity<String> httpEntity = createHttpEntityWithBody(resumableObject.toString());
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
-            ResponseEntity <String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+            ResponseEntity <String> responseEntity = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.POST, httpEntity, String.class);
             String body = responseEntity.getBody();
 
             if (RestUtil.isError(responseEntity.getStatusCode())) {
@@ -790,7 +802,8 @@ public class DataController extends MainController {
             // Streams the response instead of loading it all in memory
             ResponseExtractor<Void> responseExtractor = getResponseExtractor(httpResponse);
 
-            restTemplate.execute(properties.downloadResource(datasetId, resourceId), HttpMethod.GET, requestCallback, responseExtractor);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.downloadResource(datasetId, resourceId));
+            restTemplate.execute(uriComponents.toUriString(), HttpMethod.GET, requestCallback, responseExtractor);
         } catch (Exception e) {
             log.error("Error transferring download: {}", e.getMessage());
         }
@@ -800,7 +813,8 @@ public class DataController extends MainController {
     public String removeResource(@PathVariable String datasetId, @PathVariable String resourceId, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(properties.getResource(datasetId, resourceId), HttpMethod.DELETE, request, String.class);
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getResource(datasetId, resourceId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         String dataResponseBody = response.getBody();
 
         try {
@@ -841,7 +855,7 @@ public class DataController extends MainController {
         dataset.setContributor(invokeAndExtractUserInfo(dataset.getContributorId()));
     }
 
-    private ResponseEntity getResponseEntity(@PathVariable Optional<String> id, HttpEntity<String> request) {
+    private ResponseEntity<String> getResponseEntity(@PathVariable Optional<String> id, HttpEntity<String> request) {
         ResponseEntity <String> response;
         if (!id.isPresent()) {
             response = restTemplate.exchange(properties.getSioDataUrl(), HttpMethod.POST, request, String.class);
