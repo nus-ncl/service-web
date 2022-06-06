@@ -2744,7 +2744,7 @@ public class MainController {
         String nsContentFinal = nsContentPart1 + expName + nsContentPart2 + "}}";
         nsContentFinal = nsContentFinal.replace("\r", "");
         nsContentFinal = nsContentFinal.replace("\n", "");
-        nsContentFinal = nsContentFinal.replace(" {2}", "");
+        nsContentFinal = nsContentFinal.replace("  ", "");
         return nsContentFinal;
     }
 
