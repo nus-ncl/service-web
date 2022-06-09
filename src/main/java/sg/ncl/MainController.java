@@ -2744,7 +2744,8 @@ public class MainController {
         String nsContentFinal = nsContentPart1 + expName + nsContentPart2 + "}}";
         nsContentFinal = nsContentFinal.replace("\r", "");
         nsContentFinal = nsContentFinal.replace("\n", "");
-        nsContentFinal = nsContentFinal.replace(" {2}", "");
+        nsContentFinal = nsContentFinal.replace("  ", "");
+      
         return nsContentFinal;
     }
 
@@ -6320,7 +6321,8 @@ public class MainController {
         ResponseEntity <String> response;
 
         try {
-            response = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getUser(userId));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         } catch (Exception e) {
             log.warn("User service not available to retrieve User: {}", userId);
             return new User2();
@@ -6375,7 +6377,8 @@ public class MainController {
 
         try {
             log.info("retrieving the latest exp status: {}", properties.getRealizationByTeam(teamName, id.toString()));
-            response = restTemplate.exchange(properties.getRealizationByTeam(teamName, id.toString()), HttpMethod.GET, request, String.class);
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getRealizationByTeam(teamName, id.toString()));
+            response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         } catch (Exception e) {
             return getCleanRealization();
         }
