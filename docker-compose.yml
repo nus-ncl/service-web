@@ -6,4 +6,4 @@ services:
     ports:
       - "8999:8999"
     volumes:
-      - /Users/thazinhlaing/Desktop/application.properties:/application.properties
+      - ~/application.properties:/application.properties
