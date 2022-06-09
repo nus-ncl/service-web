@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  service-web:
+    image: nusncl1/service-web
+    container_name: service-web
+    ports:
+      - "8999:8999"
+    volumes:
+      - /Users/thazinhlaing/Desktop/application.properties:/application.properties
