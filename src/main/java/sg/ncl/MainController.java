@@ -2745,6 +2745,7 @@ public class MainController {
         nsContentFinal = nsContentFinal.replace("\r", "");
         nsContentFinal = nsContentFinal.replace("\n", "");
         nsContentFinal = nsContentFinal.replace("  ", "");
+      
         return nsContentFinal;
     }
 
