@@ -1,7 +1,9 @@
 version: '3.8'
 services:
   service-web:
-    build: .
+    build:
+      context: .
+      dockerfile: /Dockerfile
     image: nusncl1/service-web
     container_name: service-web
     ports:
