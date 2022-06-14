@@ -175,13 +175,11 @@ public class MainController {
     private static final String REDIRECT_TEAM_PROFILE = "redirect:/team_profile/";
     private static final String REDIRECT_INDEX_PAGE = "redirect:/";
     private static final String REDIRECT_TEAM_USAGE = "redirect:/admin/usage";
-    private static final String REDIRECT_ENERGY_USAGE = "redirect:/admin/energy";
     private static final String REDIRECT_TEAMS="redirect:/teams";
     private static final String REDIRECT_APPROVE_NEW_USER = "redirect:/approve_new_user";
     private static final String REDIRECT_ADMIN = "redirect:/admin";
     private static final String REDIRECT_ADD_MEMBER = "redirect:/add_member";
     private static final String REDIRECT_UNAUTHOURIZED_ACCESS = "redirect:/unauthorized_access";
-    private static final String REDIRECT_ADMIN_GPU = "redirect:/admin/gpus";
 
     // remove members from team profile; to display the list of experiments created by user
     private static final String REMOVE_MEMBER_UID = "removeMemberUid";
@@ -217,8 +215,6 @@ public class MainController {
     private static final String IDLESWAP = "idleSwap";
     private static final String NSFILECONTENT = "nsFileContent";
     private static final String PROJECT_ID = "projectId";
-    private static final String GPU_USER_FORM = "gpuUserForm";
-    private static final String GPU_USER_MAP = "gpuUsersMap";
     private static final String USERS = "/users/";
     private static final String STATE = "state";
     private static final String SUBMITTED = " submitted";
@@ -303,9 +299,6 @@ public class MainController {
     protected VncProperties vncProperties;
 
     @Inject
-    protected GpuProperties gpuProperties;
-
-    @Inject
     protected NetworkToolProperties networkToolProperties;
 
     @RequestMapping("/")
@@ -336,11 +329,6 @@ public class MainController {
     @RequestMapping("/recent_events")
     public String recentEvents() {
         return "recent_events";
-    }
-
-    @RequestMapping("/plan")
-    public String plan() {
-        return "plan";
     }
 
     @RequestMapping("/features")
@@ -388,19 +376,9 @@ public class MainController {
         return "ncl_publications";
     }
 
-    @RequestMapping("/otherNewsLinks")
-    public String otherNewsLinks() {
-        return "other_newslinks";
-    }
-
     @RequestMapping("/smartGridOT_environment")
     public String showSmartGridOTEnvironment() {
         return "smartGridOT_Environment";
-    }
-
-    @RequestMapping("/redTeam_environment")
-    public String showRedTeamEnvironment() {
-        return "redTeam_environment";
     }
 
     @RequestMapping("/finTech_environment")
@@ -421,16 +399,6 @@ public class MainController {
     @RequestMapping("/redTeam_environment_details")
     public String redTeamEnvironmentDetails() {
         return "redTeam_environment_details";
-    }
-
-    @RequestMapping("/activityTrafficGen_details")
-    public String activityTrafficGenDetails() {
-        return "activityTrafficGen_details";
-    }
-
-    @RequestMapping(value = "/grantCall")
-    public String grantCall() {
-        return "grantCall";
     }
 
     @RequestMapping("/collaborators")
@@ -573,11 +541,6 @@ public class MainController {
     @RequestMapping("/tutorials/createcustom")
     public String createcustom() {
         return "createcustom";
-    }
-
-    @RequestMapping("/error_openstack")
-    public String errorOpenstack() {
-        return "error_openstack";
     }
 
     @RequestMapping("/accessexperiment")
@@ -2496,6 +2459,9 @@ public class MainController {
         uriComponents = UriComponentsBuilder.fromUriString(properties.getOpenStackDetail(expId, stack_id));
         ResponseEntity <String> openstackDetailResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, openStackRequest, String.class);
 
+        uriComponents = UriComponentsBuilder.fromUriString(properties.getOpenStackServer(expId, stack_id));
+        restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, openStackRequest, String.class);
+
         uriComponents = UriComponentsBuilder.fromUriString(properties.getOpenStackServerDetail(expId));
         ResponseEntity <String> openstackServerDetail = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, openStackRequest, String.class);
 
@@ -2742,9 +2708,9 @@ public class MainController {
         String nsContentPart1 = "{\"stack_name\":\"" + expName + "\",\"template\":{" + splitStr[0];
         String nsContentPart2 = "_my_instance" + splitStr[1];
         String nsContentFinal = nsContentPart1 + expName + nsContentPart2 + "}}";
-        nsContentFinal = nsContentFinal.replace("\r", "");
-        nsContentFinal = nsContentFinal.replace("\n", "");
-        nsContentFinal = nsContentFinal.replace("  ", "");
+        nsContentFinal = nsContentFinal.replaceAll("\r", "");
+        nsContentFinal = nsContentFinal.replaceAll("\n", "");
+        nsContentFinal = nsContentFinal.replaceAll("  ", "");
       
         return nsContentFinal;
     }
@@ -3277,16 +3243,6 @@ public class MainController {
         return REDIRECT_EXPERIMENTS;
     }
 
-    @RequestMapping("/web_ssh/access_node/{qualifiedName:&+}")
-    public String sshAccessNode(Model model, HttpSession session, @PathVariable String qualifiedName) throws WebServiceRuntimeException {
-        getDeterUid(model, session);
-        qualifiedName = qualifiedName.replace("&", ".");
-        model.addAttribute("qualified", qualifiedName);
-        model.addAttribute("cols", ptyProperties.getCols());
-        model.addAttribute("rows", ptyProperties.getRows());
-        return "webssh";
-    }
-
     @RequestMapping(value = "/web_vnc/access_node/{teamName}/{expId}/{nodeId}", params = {"portNum"})
     public String vncAccessNode(Model model, HttpSession session, RedirectAttributes redirectAttributes,
                                 @PathVariable String teamName, @PathVariable Long expId, @PathVariable String nodeId,
@@ -3427,176 +3383,7 @@ public class MainController {
 
         model.addAttribute("pendingApprovalTeamsList", pendingApprovalTeamsList);
 
-        return "admin3";
-    }
-
-    @GetMapping(value = "/admin/gpus")
-    public String adminGpuManagement(Model model, HttpSession session) {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
-
-        if (!model.containsAttribute(GPU_USER_FORM)) {
-            model.addAttribute(GPU_USER_FORM, new GpuUserForm());
-            model.addAttribute("toggleModal", "hide");
-        }
-        model.addAttribute("domains", gpuProperties.getDomains());
-        return "gpu_dashboard";
-    }
-
-    @PostMapping(value = "/admin/gpus")
-    public String adminGetGpuUsers(@RequestParam("gpu") Integer gpu,
-                                   RedirectAttributes redirectAttributes,
-                                   HttpSession session) throws WebServiceRuntimeException {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
-
-        redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
-        redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return REDIRECT_ADMIN_GPU;
-    }
-
-    @PostMapping(value = "/admin/gpus/{gpu}/users/add")
-    public String adminAddGpuUsers(@PathVariable("gpu") Integer gpu,
-                                   @Valid @ModelAttribute(GPU_USER_FORM) GpuUserForm gpuUserForm,
-                                   BindingResult bindingResult,
-                                   RedirectAttributes redirectAttributes,
-                                   HttpSession session) throws WebServiceRuntimeException {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
-
-        if (bindingResult.hasErrors() || !gpuUserForm.isValid()) {
-            log.warn("Gpu user form has errors {}", gpuUserForm.toString());
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.gpuUserForm", bindingResult);
-            redirectAttributes.addFlashAttribute(GPU_USER_FORM, gpuUserForm);
-            redirectAttributes.addFlashAttribute("toggleModal", "show");
-        } else {
-            GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
-            String url = HTTP + domain.getHost() + ":" + domain.getPort() + "/users";
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("username", gpuUserForm.getUsername());
-            jsonObject.put("fullname", gpuUserForm.getFullname());
-            jsonObject.put(PSWD, gpuUserForm.getPassword());
-
-            HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(jsonObject.toString());
-            ResponseEntity <String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-            String responseBody = response.getBody();
-
-            jsonObject = new JSONObject(responseBody);
-            String message = jsonObject.getString(gpuUserForm.getUsername());
-            if (message.contains("Failed")) {
-                redirectAttributes.addFlashAttribute(MESSAGE, message);
-            } else {
-                redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, message);
-            }
-        }
-
-        redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
-        redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return REDIRECT_ADMIN_GPU;
-    }
-
-    private Map<String, String> getGpuUsers(@RequestParam("gpu") Integer gpu) throws WebServiceRuntimeException {
-        GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
-        String url = HTTP + domain.getHost() + ":" + domain.getPort() + "/users";
-        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity <String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody();
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(responseBody, new TypeReference<Map<String, Map<String, String>>>(){});
-        } catch (IOException e) {
-            throw new WebServiceRuntimeException(e.getMessage());
-        }
-    }
-
-    @GetMapping(value = "/admin/gpus/{gpu}/{action}/{userid}")
-    public String adminChangeGpuUserStatus(@PathVariable("gpu") Integer gpu,
-                                           @PathVariable("action") String action,
-                                           @PathVariable("userid") String userid,
-                                           RedirectAttributes redirectAttributes,
-                                           HttpSession session) throws WebServiceRuntimeException {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
-
-        GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
-        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(HTTP + domain.getHost() + ":" + domain.getPort() + USERS + userid + "?action=" + action);
-        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody();
-
-        JSONObject jsonObject = new JSONObject(responseBody);
-        String status = jsonObject.getString(userid);
-        redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, "User '" + userid + "' " + status);
-        redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
-        redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return REDIRECT_ADMIN_GPU;
-    }
-
-    @PostMapping(value = "/admin/gpus/{gpu}/passwd/{userid}")
-    public String adminChangeGpuUserPassword(@PathVariable("gpu") Integer gpu,
-                                             @PathVariable("userid") String userid,
-                                             @RequestParam("newpasswd") String newpasswd,
-                                             RedirectAttributes redirectAttributes,
-                                             HttpSession session) throws WebServiceRuntimeException {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
-
-        GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
-        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(HTTP + domain.getHost() + ":" + domain.getPort() + USERS + userid);
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(PSWD, newpasswd);
-
-        HttpEntity<String> request = createHttpEntityWithBodyNoAuthHeader(jsonObject.toString());
-        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
-        String responseBody = response.getBody();
-
-        jsonObject = new JSONObject(responseBody);
-        String message = jsonObject.getString(userid);
-        if (message.contains("Failed")) {
-            redirectAttributes.addFlashAttribute(MESSAGE, message + " '" + userid + "'");
-        } else {
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, message + " '" + userid + "'");
-        }
-
-        redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
-        redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return REDIRECT_ADMIN_GPU;
-    }
-
-    @GetMapping(value = "/admin/gpus/{gpu}/remove/{userid}")
-    public String adminRemoveGpuUser(@PathVariable("gpu") Integer gpu,
-                                     @PathVariable("userid") String userid,
-                                     RedirectAttributes redirectAttributes,
-                                     HttpSession session) throws WebServiceRuntimeException {
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
-
-        GpuProperties.Domain domain = gpuProperties.getDomains().get(gpu);
-        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(HTTP + domain.getHost() + ":" + domain.getPort() + USERS + userid);
-        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
-        String responseBody = response.getBody();
-
-        JSONObject jsonObject = new JSONObject(responseBody);
-        String message = jsonObject.getString(userid);
-        if (message.contains("Failed")) {
-            redirectAttributes.addFlashAttribute(MESSAGE, message + " '" + userid + "'");
-        } else {
-            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, message + " '" + userid + "'");
-        }
-
-        redirectAttributes.addFlashAttribute(GPU_USER_MAP, getGpuUsers(gpu));
-        redirectAttributes.addFlashAttribute("selectedGpu", gpu);
-        return REDIRECT_ADMIN_GPU;
+        return "admin";
     }
 
     @RequestMapping("/admin/data")
@@ -3930,91 +3717,6 @@ public class MainController {
                 searchTeams.add(one);
             }
         }
-    }
-
-    @GetMapping(value = "/admin/energy")
-    public String adminEnergy(Model model,
-                              @RequestParam(value = START, required = false) String start,
-                              @RequestParam(value = "end", required = false) String end,
-                              final RedirectAttributes redirectAttributes,
-                              HttpSession session) throws IOException {
-
-        if (!validateIfAdmin(session)) {
-            return NO_PERMISSION_PAGE;
-        }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        ZonedDateTime now = ZonedDateTime.now();
-        if (start == null) {
-            ZonedDateTime startDate = now.with(firstDayOfMonth());
-            start = startDate.format(formatter);
-        }
-        if (end == null) {
-            ZonedDateTime endDate = now.with(lastDayOfMonth());
-            end = endDate.format(formatter);
-        }
-
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-
-        ResponseEntity <String> responseEntity;
-        try {
-            responseEntity = restTemplate.exchange(properties.getEnergyStatistics(START_DATE_EQUALS + start, END_DATE_EQUALS + end), HttpMethod.GET, request, String.class);
-        } catch (RestClientException e) {
-            log.warn("Error connecting to sio analytics service for energy usage: {}", e);
-            redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-            return REDIRECT_ENERGY_USAGE;
-        }
-
-        String responseBody = responseEntity.getBody();
-        JSONArray jsonArray = new JSONArray(responseBody);
-
-        // handling exceptions from SIO
-        if (RestUtil.isError(responseEntity.getStatusCode())) {
-            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
-            switch (exceptionState) {
-                case START_DATE_AFTER_END_DATE_EXCEPTION:
-                    log.warn("Get energy usage : Start date after end date error");
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_START_DATE_AFTER_END_DATE);
-                    return REDIRECT_ENERGY_USAGE;
-
-                default:
-                    log.warn("Get energy usage : sio or deterlab adapter connection error");
-                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
-                    return REDIRECT_ENERGY_USAGE;
-            }
-        } else {
-            log.info("Get energy usage info : {}", responseBody);
-        }
-
-        DecimalFormat df2 = new DecimalFormat(".##");
-
-        double sumEnergy = 0.00;
-        List<String> listOfDate = new ArrayList<>();
-        List<Double> listOfEnergy = new ArrayList<>();
-        ZonedDateTime currentZonedDateTime = convertToZonedDateTime(start);
-        String currentDate = null;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            sumEnergy  += jsonArray.getDouble(i);
-
-            // add into listOfDate to display graph
-            currentDate = currentZonedDateTime.format(formatter);
-            listOfDate.add(currentDate);
-
-            // add into listOfEnergy to display graph
-            double energy = Double.valueOf(df2.format(jsonArray.getDouble(i)));
-            listOfEnergy.add(energy);
-
-            currentZonedDateTime = convertToZonedDateTime(currentDate).plusDays(1);
-        }
-
-        sumEnergy = Double.valueOf(df2.format(sumEnergy));
-        model.addAttribute("listOfDate", listOfDate);
-        model.addAttribute("listOfEnergy", listOfEnergy);
-        model.addAttribute(START, start);
-        model.addAttribute("end", end);
-        model.addAttribute("energy", sumEnergy);
-        return "energy_usage";
     }
 
     @GetMapping(value = "/admin/diskspace")
