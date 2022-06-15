@@ -1,9 +1,11 @@
-version: '3.8'
+version: '3.3'
 services:
   service-web:
-    image: nusncl1/service-web
+    image: nusncl1/service-web:latest
     container_name: service-web
+    command: java -jar web-service.jar
     ports:
-      - "8999:8999"
+      - "80:8999"
     volumes:
       - ~/application.properties:/application.properties
+      
