@@ -8,3 +8,4 @@ services:
       - "80:8999"
     volumes:
       - ~/application.properties:/application.properties
+      
