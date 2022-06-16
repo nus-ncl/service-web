@@ -158,28 +158,6 @@ public class MainControllerTest {
     }
 
     @Test
-    public void testPlanPage() throws Exception {
-        mockMvc.perform(get("/plan"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("main.css")))
-                .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("navbar-header")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")));
-    }
-
-    // page is taken out as of 22/9/2016
-    @Ignore("For now")
-    public void testFuturePlanPage() throws Exception {
-        mockMvc.perform(get("/futureplan"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("main.css")))
-                .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("navbar-header")))
-                .andExpect(content().string(containsString("a href=\"/futureplan/download\"")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")));
-    }
-
-    @Test
     public void testPricingPage() throws Exception {
         mockMvc.perform(get("/pricing"))
                 .andExpect(status().isOk())
@@ -288,7 +266,6 @@ public class MainControllerTest {
                 .andExpect(view().name("career"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -311,7 +288,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("The Guide to Access Instances via NCLient ")))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -333,7 +309,6 @@ public class MainControllerTest {
                 .andExpect(view().name("usessh"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -356,7 +331,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("Open the SSH terminal on your system go to the directory where the file to be uploaded is located.")))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -379,7 +353,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("Install deskstop and VNC server using the following commands")))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -402,7 +375,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("To set the quota for resources, enter a monetary value for \"Budget\"")))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -425,7 +397,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("View Testbed Info")))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -448,7 +419,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("How to Save an Image for an Experiment Node")))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -464,29 +434,6 @@ public class MainControllerTest {
     }
 
     @Test
-    public void testErrorOpenStack() throws Exception {
-        mockMvc.perform(get("/error_openstack"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("error_openstack"))
-                .andExpect(content().string(containsString("Currently, we are in the process of integrating OpenStack with our systems")))
-                .andExpect(content().string(containsString("main.css")))
-                .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/teams")))
-                .andExpect(content().string(containsString("/experiments")))
-                .andExpect(content().string(containsString("/data")))
-                .andExpect(content().string(containsString("/admin")))
-                .andExpect(content().string(containsString("/admin/experiments")))
-                .andExpect(content().string(containsString("/tutorials")))
-                .andExpect(content().string(containsString("/resources")))
-                .andExpect(content().string(containsString("/testbedInformation")))
-                .andExpect(content().string(containsString("/calendar")))
-                .andExpect(content().string(containsString("/approve_new_user")))
-                .andExpect(content().string(containsString("/account_settings")))
-                .andExpect(content().string(containsString("/logout")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")));
-    }
-
-    @Test
     public void testAccessExperiment() throws Exception {
         mockMvc.perform(get("/accessexperiment"))
                 .andExpect(status().isOk())
@@ -494,7 +441,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("Go to dashboard page and take note of the username under Info!: Use your username: XXX to access the experiments' nodes.")))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -902,7 +848,6 @@ public class MainControllerTest {
                 .andExpect(view().name("createaccount"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -948,7 +893,6 @@ public class MainControllerTest {
                 .andExpect(view().name("createexperiment"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -994,7 +938,6 @@ public class MainControllerTest {
                 .andExpect(view().name("loadimage"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -1040,7 +983,6 @@ public class MainControllerTest {
                 .andExpect(view().name("saveimage"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -1086,7 +1028,6 @@ public class MainControllerTest {
                 .andExpect(view().name("applyteam"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -1132,7 +1073,6 @@ public class MainControllerTest {
                 .andExpect(view().name("jointeam"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -1178,7 +1118,6 @@ public class MainControllerTest {
                 .andExpect(view().name("tutorials"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))
@@ -1265,7 +1204,6 @@ public class MainControllerTest {
                 .andExpect(view().name("testbed_information"))
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/plan")))
                 .andExpect(content().string(containsString("/research")))
                 .andExpect(content().string(containsString("/pricing")))
                 .andExpect(content().string(containsString("/tutorials")))

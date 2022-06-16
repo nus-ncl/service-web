@@ -109,12 +109,6 @@
                                                        title="Save this node's image">
                                                         <i class="fa fa-floppy-o btn-fa-green"></i>
                                                     </a>
-                                                    <a th:href="@{/web_ssh/access_node/{qualifiedName}(qualifiedName=${nodesDetailsMap.value.qualifiedName})}"
-                                                       data-toggle="tooltip" data-placement="bottom"
-                                                       role="button" class="btn btn-standard"
-                                                       title="SSH into this node" target="_blank">
-                                                        <i class="fa fa-terminal btn-fa-green"></i>
-                                                    </a>
                                                     <a th:href="@{/web_vnc/access_node/{teamId}/{expId}/{nodeId}(teamId=${expEntry.teamId}, expId=${expEntry.id}, nodeId=${nodesDetailsMap.value.nodeId}, portNum=5901)}"
                                                        data-toggle="tooltip" data-placement="bottom"
                                                        role="button" class="btn btn-standard"

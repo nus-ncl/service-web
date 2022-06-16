@@ -2,414 +2,190 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<title>National Cybersecurity Laboratories - Resource</title>
+	<title>National Cybersecurity Laboratories - Admin</title>
 	<object th:include="fragments/header :: header" th:remove="tag" />
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
 </head>
 <body class="mybg loginbackground">
-
-     <!--jQuery (necessary for Bootstrap's JavaScript plugin) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-
-
-    <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
 <div class="container">
 	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<!--here make changes-->
-	<!--<div class="tab-content col-sm-10 dashpanel_admin">-->
-	<div class="row col-sm-12">
-		<!--<div class="tab-content col-sm-10">-->
-		<h2 class="team-heading team-heading-current-team" th:text="#{admin.heading.current}">text heading from .properties</h2>
-		<ul class="topnav col-sm-8 backadmin">
-			<li>
-				<a href="#">Overview</a>
-				<ul>
-					<li class="active"><a data-toggle="tab" href="#">Summary</a></li>
-				</ul>
-			</li>
-			<li>
-				<a data-toggle="tab" href="#dataset">System Status </a>
-				<ul>
-					<li class="active"><a data-toggle="tab" href="#dataset">Datasets Analytics</a></li>
-					<li><a data-toggle="tab" href="#exp">Experiments Analytics</a></li>
-					<li><a data-toggle="tab" href="#teamnabagement">Teams Analytics</a></li>
-					<li><a data-toggle="tab" href="#usermanagament">Users Analytics</a></li>
-					<li><a data-toggle="tab" href="#utilities">Utilities  Analytics</a></li>
-					<li><a data-toggle="tab" href="#utilization">Utilization Analytics</a></li>
-				</ul>
-			</li>
-			<li>
-				<a href="#">Management</a>
-				<ul>
-					<li class="active"><a data-toggle="tab" href="#dataset">Domain Management</a></li>
-					<li><a data-toggle="tab" href="#exp">Resources Management</a>
+	<div class="row dashpanel">
+		<div th:if="${message}">
+			<p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+		</div>
+		<div th:if="${messageSuccess}">
+			<p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+		</div>
+		<div id="newTeamsApproval" class="tab-pane fade in active">
+			<h2 class="team-heading team-heading-current-team padding" th:text="#{admin.teams.header.pending}">Pending Request to Join Your Team</h2>
+            <p>&nbsp;</p>
+			<th:block th:if="not ${#lists.isEmpty(pendingApprovalTeamsList)}">
+			<table id="myTable" class="table table-responsive">
+				<thead>
+                <tr>
+					<th th:text="#{admin.dashboard.registeredDate}">Date</th>
+					<th th:text="#{admin.teams.header.name}">Team</th>
+					<th th:text="#{admin.teams.header.owner}">Owner</th>
+					<th><!-- Actions --></th>
+                </tr>
+				</thead>
+                <tbody>
+				<tr th:each="team : ${pendingApprovalTeamsList}">
+					<!-- request dataTables plugin to sort using value and not display text -->
+					<!-- use thymeleaf to format zoneddatetime to display in readable format -->
+					<td th:attr="data-order=${team.applicationDate}">
+						<span th:text="${ team.applicationDate != null ? #temporals.format(team.applicationDate, 'MMM-dd-yyyy') : '?'}"></span>
+					</td>
+					<td>
+						<a href="#pendingTeamDetailsModal" data-toggle="modal"
+    						   th:attr="data-name=${team.name},
+							   			data-description=${team.description},
+							   			data-organisation=${team.organisationType},
+							   			data-visibility=${team.visibility}"
+							   th:text="${team.name}">Name</a>
+					</td>
+					<td>
+						<a th:href="'#'+${team.owner.id}" data-toggle="modal"><span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></a>
+						<span th:if="${team.owner.status == 'PENDING' or team.owner.status == 'APPROVED'}"><a href="#" data-toggle="tooltip" title="Email verified"><i class="fa fa-check-circle blue-tick"></i></a></span>
+						<!-- Modal -->
+						<div class="modal fade admin-modal" th:id="${team.owner.id}" aria-labelledby="ownerId" tabindex="-1" role="dialog" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header team-owner-info-header">
+										<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+										<h4 class="modal-title" id="ownerId"><span th:text="#{admin.teams.header.modal}">Team Owner Info</span></h4>
+									</div>
+									<div class="modal-body team-owner-info-body">
+										<ul>
+											<li><strong th:text="#{acc.info.fullName}"></strong>: <span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></li>
+											<li><strong th:text="#{acc.info.email}"></strong>: <span th:text="${team.owner.email}"></span></li>
+											<li><strong th:text="#{acc.info.phone}"></strong>: <span th:text="${team.owner.phone}"></span></li>
+											<li><strong th:text="#{acc.info.jobTitle}"></strong>: <span th:text="${team.owner.jobTitle}"></span></li>
+											<li><strong th:text="#{acc.info.institution}"></strong>: <span th:text="${team.owner.institution}"></span></li>
+											<li><strong th:text="#{acc.info.country}"></strong>: <span th:text="${team.owner.country}"></span></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</td>
+					<td>
+                        <button type="button" class="btn btn-standard btn-fa-green" data-toggle="modal" data-target="#pendingTeamAcceptModal"
+                                th:attr="data-name=${team.name},data-href=@{/admin/teams/accept/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}">Accept</button>
+						<button type="button" class="btn btn-standard btn-fa-red" data-toggle="modal" data-target="#pendingTeamRejectModal"
+                                th:attr="data-name=${team.name},data-href=@{/admin/teams/reject/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}">Reject</button>
+					</td>
+				</tr>
+                </tbody>
+			</table>
+			</th:block>
+		</div>
+
+		<!-- Pending Team Approval - Team Details Modal -->
+		<div class="modal fade admin-modal" id="pendingTeamDetailsModal" tabindex="-1" role="dialog" aria-labelledby="pendingTeamDetailsModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header team-owner-info-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="pendingTeamDetailsLabel">Modal title</h4>
+					</div>
+					<div class="modal-body team-owner-info-body">
 						<ul>
-							<li class="active"><a href="#">Node Statistics</a></li>
-							<li><a href="#">Datasets</a></li>
-							<li><a href="#">Experiments</a></li>
+							<li><strong th:text="#{team.profile.description}"></strong>: <span id="pendingTeamDescription"></span></li>
+							<li><strong th:text="#{team.profile.organizationType}"></strong>: <span id="pendingTeamOrganisationType"></span></li>
+							<li><strong th:text="#{team.profile.visibility}"></strong>: <span id="pendingTeamVisibility"></span></li>
 						</ul>
-					</li>
-					<li><a data-toggle="tab" href="#newteam">Teams Analytics</a></li>
-					<li><a data-toggle="tab" href="#utilization">Users Management</a></li>
-				</ul>
-			</li>
-
-		</ul>
-		<div class="tab-content col-sm-9">
-			<div id="dataset" class="tab-pane fade in active">
-			</div>
-			<div id="exp" class="tab-pane fade">
-			</div>
-			<div id="teamnabagement" class="tab-pane fade">
-				<h6>Teams Management</h6>
-				<p>&nbsp;</p>
-
-				<!--Here is the start of the date range picker-->
-
-				<div class="container">
-					<!-- This line of code creates a text box with the value set to today's date, making use of the script below-->
-					<div class="col-md-3">
-						<!--<div class="form-group">-->
-						    <div class="form-group has-feedback">
-								<!--add id-->
-							<div class="input-group date" id="datetimepicker8">
-                            <span class="input-group-addon">
-                            From :
-                            </span>
-								<input type="text" name="fromdate" id="currentdate" class="form-control"/>
-								<span class="input-group">
-									<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
-								</span>
-							</div>
-						</div>
 					</div>
-
-
-					<!--This line of code creates the second text box to allow user to select to Date.-->
-					<div class="col-md-3">
-						    <div class="form-group has-feedback">
-							<div class="input-group date">
-                            <span class="input-group-addon">
-                            To :
-                            </span>
-								<input type="text" name="todate" id="newdate" class="form-control"/>
-								<span class="input-group">
-        							<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
-    							</span>
-							</div>
-						</div>
-					</div>
-
-				</div> <!--End of Container-->
-
-
-                <!-- This script will populate out the calendar meant for the from date-->
-				<script type="text/javascript">
-					$('input[name="fromdate"]').daterangepicker
-					({
-                        singleDatePicker: true,
-						showDropdowns: true,
-						"opens": "left"
-                    }, function(start, end, label) {
-
-                    });
-                </script>
-
-
-				<!--This script will retrieve and display today's date for the from date-->
-				<script>
-					function myFunction() {
-
-						$(document).ready(function(){
-							$('#currentdate').attr("placeholder", Date());
-						});
-					}
-				</script>
-
-
-				<!-- This script will populate out the calendar meant for the to date-->
-				<script type="text/javascript">
-					$('input[name="todate"]').daterangepicker({
-
-						singleDatePicker: true,
-						showDropdowns: true,
-						"opens": "left"
-					}, function(start, end, label) {
-
-					});
-				</script>
-
-
-				<!--This script will retrieve and display today's date for the to date-->
-				<script>
-					function myFunction() {
-
-						$(document).ready(function(){
-							$('#newdate').attr("placeholder", Date());
-						});
-					}
-				</script>
-
-
-                <th:block th:if="${teamsMap.isEmpty()}">
-					<p>There is no teams in the system</p>
-				</th:block>
-				<table id="teammanagement" class="table table-responsive" th:if="not ${teamsMap.isEmpty()}">
-					<thead>
-					<!--<th th:text="#{admin.teams.header.name}">Team Name</th>-->
-					<!--<th th:text="#{admin.teams.header.owner}">Leader</th>-->
-					<!--<th th:text="#{admin.teams.header.member}">No.of member</th>-->
-					<!--<th th:text="#{admin.teams.header.institutition}">Institution</th>-->
-                    <th></th>
-					<th>Team Name</th>
-					<th>Leader</th>
-					<th>No. of Member</th>
-					<th>No. of Experiment</th>
-					<!--<th th:text="#{admin.teams.header.experiment}">No.of Experiment</th>-->
-					<th th:text="#{admin.teams.header.hours}">Hours Used</th>
-					<th th:text="#{admin.teams.header.charges}">Current Charges $</th>
-					</thead>
-					<tr>
-                        <th>1</th>
-						<td>Team 1</td>
-						<td>A</td>
-						<td>12</td>
-						<td>6</td>
-						<td>6</td>
-						<td>100</td>
-					</tr>
-
-					<tr>
-                        <th>2</th>
-                        <td>Team 2</td>
-						<td>B</td>
-						<td>30</td>
-						<td>3</td>
-						<td>4</td>
-						<td>50</td>
-					</tr>
-
-					<tr>
-                        <th>3</th>
-                        <td>Team 3</td>
-						<td>C</td>
-						<td>33</td>
-						<td>1</td>
-						<td>1</td>
-						<td>30</td>
-					</tr>
-
-					<tr>
-                        <th>4</th>
-                        <td>Team 4</td>
-						<td>D</td>
-						<td>5</td>
-						<td>2</td>
-						<td>8</td>
-						<td>100</td>
-					</tr>
-
-					<tr>
-                        <th>5</th>
-                        <td>Team 5</td>
-						<td>J</td>
-						<td>2</td>
-						<td>4</td>
-						<td>4</td>
-						<td>90</td>
-					</tr>
-
-					<!--<tr th:each="team : ${teamsMap}">-->
-						<!---->
-						<!--<td th:text="${team.value.name}"></td>-->
-						<!--<td th:text="${team.value.description}"></td>-->
-						<!--<td>-->
-							<!--<a th:href="'#'+${team.value.id}" data-toggle="modal"><span th:text="${team.value.owner.firstName + ' ' + team.value.owner.lastName}"></span></a>-->
-							<!--&lt;!&ndash; Modal &ndash;&gt;-->
-							<!--<div class="modal fade admin-modal" th:id="${team.value.id}" aria-labelledby="ownerId2" tabindex="-1" role="dialog" aria-hidden="true">-->
-								<!--<div class="modal-dialog">-->
-									<!--<div class="modal-content">-->
-										<!--<div class="modal-header team-owner-info-header">-->
-											<!--<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>-->
-											<!--<h4 class="modal-title" id="ownerId2"><span th:text="#{admin.teams.header.modal}">Team Owner Info</span></h4>-->
-										<!--</div>-->
-										<!--<div class="modal-body team-owner-info-body">-->
-											<!--<ul>-->
-												<!--<li><strong th:text="#{acc.info.fullName}"></strong>: <span th:text="${team.value.owner.firstName + ' ' + team.value.owner.lastName}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.email}"></strong>: <span th:text="${team.value.owner.email}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.phone}"></strong>: <span th:text="${team.value.owner.phone}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.jobTitle}"></strong>: <span th:text="${team.value.owner.jobTitle}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.institution}"></strong>: <span th:text="${team.value.owner.institution}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.website}"></strong>: <span th:text="${team.value.owner.institutionWeb}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.addr1}"></strong>: <span th:text="${team.value.owner.address1}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.addr2}"></strong>: <span th:text="${team.value.owner.address2}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.country}"></strong>: <span th:text="${team.value.owner.country}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.city}"></strong>: <span th:text="${team.value.owner.city}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.region}"></strong>: <span th:text="${team.value.owner.region}"></span></li>-->
-												<!--<li><strong th:text="#{acc.info.postalCode}"></strong>: <span th:text="${team.value.owner.postalCode}"></span></li>-->
-											<!--</ul>-->
-										<!--</div>-->
-									<!--</div>-->
-								<!--</div>-->
-							<!--</div>-->
-						<!--</td>-->
-						<!--&lt;!&ndash;<td th:text="${team.value.organisationType}"></td>-->
-						<!--<td th:text="${team.value.visibility}">Visibility</td>&ndash;&gt;-->
-					<!--</tr>-->
-				</table>
-			</div>
-			<div id="usermanagament" class="tab-pane fade">
-				<h6>Users Management</h6>
-				<p>&nbsp;</p>
-				<p th:if="${#lists.isEmpty(usersList)}">There are no users in the system</p>
-				<table class="table table-responsive" th:if="${not #lists.isEmpty(usersList)}">
-					<thead>
-					<th th:text="#{admin.users.header.name}">Full Name</th>
-					<th th:text="#{admin.users.header.email}">Email</th>
-					<th th:text="#{admin.users.header.team}">Team</th>
-					</thead>
-					<tr th:each="user : ${usersList}">
-						<td>
-							<a th:href="'#'+${user.id}" data-toggle="modal"><span th:text="${user.firstName + ' ' + user.lastName}"></span></a>
-							<!-- Modal -->
-							<div class="modal fade admin-modal" th:id="${user.id}" aria-labelledby="userId" tabindex="-1" role="dialog" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header team-owner-info-header">
-											<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-											<h4 class="modal-title" id="userId"><span th:text="#{admin.users.header.modal}">User Info</span></h4>
-										</div>
-										<div class="modal-body team-owner-info-body">
-											<ul>
-												<li><strong th:text="#{acc.info.phone}"></strong>: <span th:text="${user.phone}"></span></li>
-												<li><strong th:text="#{acc.info.jobTitle}"></strong>: <span th:text="${user.jobTitle}"></span></li>
-												<li><strong th:text="#{acc.info.institution}"></strong>: <span th:text="${user.institution}"></span></li>
-												<li><strong th:text="#{acc.info.website}"></strong>: <span th:text="${user.institutionWeb}"></span></li>
-												<li><strong th:text="#{acc.info.addr1}"></strong>: <span th:text="${user.address1}"></span></li>
-												<li><strong th:text="#{acc.info.addr2}"></strong>: <span th:text="${user.address2}"></span></li>
-												<li><strong th:text="#{acc.info.country}"></strong>: <span th:text="${user.country}"></span></li>
-												<li><strong th:text="#{acc.info.city}"></strong>: <span th:text="${user.city}"></span></li>
-												<li><strong th:text="#{acc.info.region}"></strong>: <span th:text="${user.region}"></span></li>
-												<li><strong th:text="#{acc.info.postalCode}"></strong>: <span th:text="${user.postalCode}"></span></li>
-											</ul>
-										</div>
-									</div>
-								</div>
-							</div>
-						</td>
-						<td th:text="${user.email}"></td>
-						<td>
-							<th:block th:if="${not #lists.isEmpty(userToTeamMap.get(user.id))}">
-								<div th:each="team : ${userToTeamMap.get(user.id)}">
-									<p th:text="${team}"></p>
-								</div>
-							</th:block>
-							<p th:if="${#lists.isEmpty(userToTeamMap.get(user.id))}">Not in any teams yet.</p>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div id="utilities" class="tab-pane fade">
-			</div>
-			<div id="utilization" class="tab-pane fade">
-			</div>
-			<div id="newteam" class="tab-pane fade">
-				<h6>Teams Pending for Approval</h6>
-				<th:block th:if="not ${#lists.isEmpty(pendingApprovalTeamsList)}">
-					<p>&nbsp;</p>
-					<table class="table table-responsive">
-						<thead>
-						<th th:text="#{admin.teams.header.name}">Team</th>
-						<th th:text="#{admin.teams.header.description}">Description</th>
-						<th th:text="#{admin.teams.header.owner}">Owner</th>
-						<!--<th th:text="#{admin.teams.header.institutition}">Institution</th>-->
-						<th th:text="#{admin.teams.header.type}">Type</th>
-						<th th:text="#{admin.teams.header.public}">Publicly Listed</th>
-						<th><!-- Actions --></th>
-						</thead>
-						<tr th:each="team : ${pendingApprovalTeamsList}">
-							<td th:text="${team.name}"></td>
-							<td th:text="${team.description}"></td>
-							<td>
-								<a th:href="'#'+${team.owner.id}" data-toggle="modal"><span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></a>
-								<!-- Modal -->
-								<div class="modal fade admin-modal" th:id="${team.owner.id}" aria-labelledby="ownerId" tabindex="-1" role="dialog" aria-hidden="true">
-									<div class="modal-dialog">
-										<div class="modal-content">
-											<div class="modal-header team-owner-info-header">
-												<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-												<h4 class="modal-title" id="ownerId"><span th:text="#{admin.teams.header.modal}">Team Owner Info</span></h4>
-											</div>
-											<div class="modal-body team-owner-info-body">
-												<ul>
-													<li><strong th:text="#{acc.info.fullName}"></strong>: <span th:text="${team.owner.firstName + ' ' + team.owner.lastName}"></span></li>
-													<li><strong th:text="#{acc.info.email}"></strong>: <span th:text="${team.owner.email}"></span></li>
-													<li><strong th:text="#{acc.info.phone}"></strong>: <span th:text="${team.owner.phone}"></span></li>
-													<li><strong th:text="#{acc.info.jobTitle}"></strong>: <span th:text="${team.owner.jobTitle}"></span></li>
-													<li><strong th:text="#{acc.info.institution}"></strong>: <span th:text="${team.owner.institution}"></span></li>
-													<li><strong th:text="#{acc.info.website}"></strong>: <span th:text="${team.owner.institutionWeb}"></span></li>
-													<li><strong th:text="#{acc.info.addr1}"></strong>: <span th:text="${team.owner.address1}"></span></li>
-													<li><strong th:text="#{acc.info.addr2}"></strong>: <span th:text="${team.owner.address2}"></span></li>
-													<li><strong th:text="#{acc.info.country}"></strong>: <span th:text="${team.owner.country}"></span></li>
-													<li><strong th:text="#{acc.info.city}"></strong>: <span th:text="${team.owner.city}"></span></li>
-													<li><strong th:text="#{acc.info.region}"></strong>: <span th:text="${team.owner.region}"></span></li>
-													<li><strong th:text="#{acc.info.postalCode}"></strong>: <span th:text="${team.owner.postalCode}"></span></li>
-												</ul>
-											</div>
-										</div>
-									</div>
-								</div>
-							</td>
-							<td th:text="${team.organisationType}"></td>
-							<td th:text="${team.visibility}">Listed Visibility</td>
-							<td>
-								<a href="#" title="Accept" th:href="@{/admin/teams/accept/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard admin-click-once-button"><i class="fa fa-check-circle-o fa-lg btn-fa-green"></i> Accept</button></a>
-								<a href="#" title="Reject" th:href="@{/admin/teams/reject/{teamId}/{teamOwnerId}(teamId = ${team.id}, teamOwnerId = ${team.owner.id})}"><button type="button" class="btn btn-standard admin-click-once-button"><i class="fa fa-times-circle-o fa-lg btn-fa-red"></i> Reject</button></a>
-							</td>
-						</tr>
-					</table>
-				</th:block>
+				</div>
 			</div>
 		</div>
 
+		<!-- Pending Team Approval - Accept Team Modal -->
+        <div class="modal fade admin-modal" id="pendingTeamAcceptModal" tabindex="-1" role="dialog" aria-labelledby="pendingTeamAcceptModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header team-owner-info-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="pendingTeamAcceptLabel">Accept Team?</h4>
+                    </div>
+                    <div class="modal-body team-owner-info-body">
+                        <p>Are you sure you want to accept the new team "<span id="pendingTeamAcceptName"></span>"?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <a href="#" class="btn btn-primary" id="acceptButton">Accept</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-	</div> <!--here-->
+        <!-- Pending Team Approval - Reject Team Modal -->
+        <div class="modal fade admin-modal" id="pendingTeamRejectModal" tabindex="-1" role="dialog" aria-labelledby="pendingTeamRejectModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" action="#" role="form" id="rejectForm">
+                    <div class="modal-header team-owner-info-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="pendingTeamRejectLabel">Reject Team?</h4>
+                    </div>
+                    <div class="modal-body team-owner-info-body">
+                        <div class="form-group">
+                            <label for="reason" class="control-label">
+                                Are you sure you want to reject the new team "<span id="pendingTeamRejectName"></span>"? Please give the reason.
+                            </label>
+                            <textarea class="form-control" rows="5" placeholder="Reject Reason" id="reason" name="reason"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="rejectButton">Reject</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+	</div> <!-- row -->
 </div>
-
-<div class="cc-wraper">
-	<div class="cc-contactpop fixed">
-		<h1>Do you need Help? <span>Get in touch.</span></h1>
-		<div class="renseignement">
-			<i class="fa fa-times"></i>
-			<p>We will get back to you as soon as possible. </p>
-		</div>
-		<form>
-			<ul>
-				<li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
-				<li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
-				<li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
-			</ul>
-			<p>&nbsp;</p>
-		</form>
-	</div>
-	<!--</div>-->
-</div> <!-- container -->
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
 <div th:replace="fragments/footer:: footer"></div>
-<object th:include="fragments/javascript :: javascript" th:remove="tag" />
 </body>
+
+<script type="text/javascript" src="static/js/jquery.min.js" th:src="@{~/js/jquery.min.js}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js" th:src="@{~/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="static/js/jquery.inview.min.js" th:src="@{~/js/jquery.inview.min.js}"></script>
+<script type="text/javascript" src="static/js/wow.min.js" th:src="@{~/js/wow.min.js}"></script>
+<script type="text/javascript" src="static/js/mousescroll.js" th:src="@{~/js/mousescroll.js}"></script>
+<script type="text/javascript" src="static/js/jquery.countTo.js" th:src="@{~/js/jquery.countTo.js}"></script>
+<script type="text/javascript" src="static/js/lightbox.min.js" th:src="@{~/js/lightbox.min.js}"></script>
+<script type="text/javascript" src="static/js/main.js" th:src="@{~/js/main.js}"></script>
+<script type="text/javascript" src="static/js/waypoints.min.js" th:src="@{~/js/waypoints.min.js}"></script>
+<script type="text/javascript" src="static/js/minimal.lightbox.js" th:src="@{~/js/minimal.lightbox.js}"></script>
+<script type="text/javascript" src="static/js/jquery.flexslider.js" th:src="@{~/js/jquery.flexslider.js}"></script>
+<script>
+$(document).ready(function () {
+	//-----------------admin sort table -------------
+	// sort the first column - date from largest zoneddatetime (most recent) to smallest
+	$('#myTable').DataTable({
+	   "order": [[ 0, "desc" ]]
+	});
+	$('#pendingTeamAcceptModal').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var name = anchor.data('name');
+        var href = anchor.data('href');
+        var modal = $(this);
+        modal.find('#pendingTeamAcceptName').text(name);
+        modal.find('#acceptButton').attr('href', href);
+    });
+    $('#pendingTeamRejectModal').on('show.bs.modal', function (event) {
+        var anchor = $(event.relatedTarget);
+        var name = anchor.data('name');
+        var href = anchor.data('href');
+        var modal = $(this);
+        modal.find('#pendingTeamRejectName').text(name);
+        modal.find('#rejectForm').attr('action', href);
+    });
+})
+</script>
 </html>
