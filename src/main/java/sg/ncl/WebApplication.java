@@ -54,11 +54,6 @@ public class WebApplication {
     }
 
     @Bean
-    GpuProperties gpuProperties() {
-        return new GpuProperties();
-    }
-
-    @Bean
     NetworkToolProperties networkToolProperties() {
         return new NetworkToolProperties();
     }
