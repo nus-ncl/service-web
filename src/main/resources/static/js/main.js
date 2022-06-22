@@ -404,7 +404,7 @@ jQuery(function($) {
 
 	//Preloader
 	var preloader = $('.preloader');
-	$(window).load(function(){
+	$(window).on('load', function(){
 		preloader.remove();
 	});
 
@@ -416,7 +416,7 @@ jQuery(function($) {
 	var slideHeight = $(window).height();
 	$('#home-slider .item').css('height',slideHeight);
 
-	$(window).resize(function(){'use strict',
+	$(window).on('resize', function(){'use strict',
 		$('#home-slider .item').css('height',slideHeight);
 	});
 	
@@ -431,7 +431,7 @@ jQuery(function($) {
 	*/
 	
 	// Navigation Scroll
-	$(window).scroll(function(event) {
+	$(window).on('scroll', function(event) {
 		Scroll();
 	});
 
@@ -543,7 +543,7 @@ jQuery(function($) {
 });
 
 /***************** Flexsliders ******************/
-$(window).load(function() {
+$(window).on('load', function() {
 
 	$('#portfolioSlider').flexslider({
 		animation: "slide",
