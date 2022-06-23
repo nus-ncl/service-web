@@ -302,7 +302,11 @@ public class MainController {
     protected NetworkToolProperties networkToolProperties;
 
     @RequestMapping("/")
-    public String index() {
+    public String index(HttpServletResponse response)
+    {
+        response.addHeader("X-Content-Type-Options", "nosniff");
+        response.addHeader("Content-Security-Policy", "script-src 'self'");
+        response.addHeader("Strict-Transport-Security", "max-age=16070400; includeSubDomains");
         return "index";
     }
 
