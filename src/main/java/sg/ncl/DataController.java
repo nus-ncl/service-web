@@ -61,7 +61,7 @@ public class DataController extends MainController {
 
     @ModelAttribute
     @Override
-    public void setXFrameResponseHeader(HttpServletResponse response) {
+    public void setResponseHeader(HttpServletResponse response) {
         response.setHeader("X-Frame-Options", "DENY");
     }
 
