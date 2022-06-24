@@ -271,8 +271,11 @@ public class MainController {
 
 
     @ModelAttribute
-    public void setXFrameResponseHeader(HttpServletResponse response) {
+    public void setResponseHeader(HttpServletResponse response) {
         response.setHeader("X-Frame-Options", "DENY");
+        response.setHeader("X-Content-Type-Options", "nosniff");
+        response.setHeader("Content-Security-Policy", "script-src 'self'");
+        response.setHeader("Strict-Transport-Security", "max-age=16070400; includeSubDomains");
     }
 
     @Autowired
@@ -302,7 +305,8 @@ public class MainController {
     protected NetworkToolProperties networkToolProperties;
 
     @RequestMapping("/")
-    public String index() {
+    public String index(HttpServletResponse response)
+    {
         return "index";
     }
 
