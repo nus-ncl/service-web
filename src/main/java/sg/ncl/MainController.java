@@ -274,7 +274,7 @@ public class MainController {
     public void setResponseHeader(HttpServletResponse response) {
         response.setHeader("X-Frame-Options", "DENY");
         response.setHeader("X-Content-Type-Options", "nosniff");
-        response.setHeader("Content-Security-Policy", "script-src 'self' www.google-analytics.com/ 'unsafe-inline' 'unsafe-eval'");
+        response.setHeader("Content-Security-Policy", "script-src 'self' www.google-analytics.com/ cdn.datatables.net/1.10.12/js/ 'unsafe-inline' 'unsafe-eval'");
         response.setHeader("Strict-Transport-Security", "max-age=16070400; includeSubDomains");
     }
 
