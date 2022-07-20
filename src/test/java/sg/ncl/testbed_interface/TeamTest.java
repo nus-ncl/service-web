@@ -112,19 +112,19 @@ public class TeamTest {
         assertThat(one.getApplicationDate()).isNull();
     }
 
-    @Test
-    public void testSetCreatedDate() throws IOException {
-        final Team2 one = new Team2();
-        ZonedDateTime zonedDateTime = ZonedDateTime.now();
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        one.setApplicationDate(mapper.writeValueAsString(zonedDateTime));
-
-        assertThat(one.getApplicationDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
-        assertThat(one.getApplicationDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
-        assertThat(one.getApplicationDate().getYear()).isEqualTo(zonedDateTime.getYear());
-    }
+//    @Test
+//    public void testSetCreatedDate() throws IOException {
+//        final Team2 one = new Team2();
+//        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(new JavaTimeModule());
+//        one.setApplicationDate(mapper.writeValueAsString(zonedDateTime));
+//
+//        assertThat(one.getApplicationDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
+//        assertThat(one.getApplicationDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
+//        assertThat(one.getApplicationDate().getYear()).isEqualTo(zonedDateTime.getYear());
+//    }
 
     @Test
     public void testGetProcessedDate() {
@@ -132,19 +132,19 @@ public class TeamTest {
         assertThat(one.getProcessedDate()).isNull();
     }
 
-    @Test
-    public void testSetProcessedDate() throws IOException {
-        final Team2 one = new Team2();
-        ZonedDateTime zonedDateTime = ZonedDateTime.now();
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        one.setProcessedDate(mapper.writeValueAsString(zonedDateTime));
-
-        assertThat(one.getProcessedDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
-        assertThat(one.getProcessedDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
-        assertThat(one.getProcessedDate().getYear()).isEqualTo(zonedDateTime.getYear());
-    }
+//    @Test
+//    public void testSetProcessedDate() throws IOException {
+//        final Team2 one = new Team2();
+//        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(new JavaTimeModule());
+//        one.setProcessedDate(mapper.writeValueAsString(zonedDateTime));
+//
+//        assertThat(one.getProcessedDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
+//        assertThat(one.getProcessedDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
+//        assertThat(one.getProcessedDate().getYear()).isEqualTo(zonedDateTime.getYear());
+//    }
 
     @Test
     public void testGetVisibility() {

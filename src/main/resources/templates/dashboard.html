@@ -34,31 +34,31 @@
                         <a th:href="@{/experiments}">
                             <div class="col-sm-5 dashpanel_experiments pull-right">
                                 <p class="dashboard_stats" th:text="${userDashboardMap.get('numberOfRunningExperiments')}">ConnectionError</p>
-                                <h2>Running Experiments</h2>
+                                <h2>Experiments</h2>
                             </div>
                         </a>
                     </div> <!-- panel body -->
                 </div> <!-- panel -->
 
-                <!--  team resource usage -->
-                <div class="panel panel-primary dashpanel">
-                    <h2 class="team-heading team-heading-current-team">Resource Usage (Current Month)</h2>
-                    <div class="panel-body">
-                        <div th:if="${#lists.isEmpty(usageInfoList)}">
-                            <p> You are not an owner of any teams. </p>
-                        </div>
-                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(usageInfoList)}">
-                            <thead>
-                            <th th:text="#{team.table.header.team}">Team</th>
-                            <th th:text="#{team.table.header.usage}">Usage (Node x Hour)</th>
-                            </thead>
-                            <tr th:each="usageInfo : ${usageInfoList}">
-                                <td th:text="${usageInfo.name}">Team</td>
-                                <td th:text="${usageInfo.usage}">Usage</td>
-                            </tr>
-                        </table>
-                    </div> <!-- panel body -->
-                </div> <!-- panel -->
+<!--                &lt;!&ndash;  team resource usage &ndash;&gt;-->
+<!--                <div class="panel panel-primary dashpanel">-->
+<!--                    <h2 class="team-heading team-heading-current-team">Resource Usage (Current Month)</h2>-->
+<!--                    <div class="panel-body">-->
+<!--                        <div th:if="${#lists.isEmpty(usageInfoList)}">-->
+<!--                            <p> You are not an owner of any teams. </p>-->
+<!--                        </div>-->
+<!--                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(usageInfoList)}">-->
+<!--                            <thead>-->
+<!--                            <th th:text="#{team.table.header.team}">Team</th>-->
+<!--                            <th th:text="#{team.table.header.usage}">Usage (Node x Hour)</th>-->
+<!--                            </thead>-->
+<!--                            <tr th:each="usageInfo : ${usageInfoList}">-->
+<!--                                <td th:text="${usageInfo.name}">Team</td>-->
+<!--                                <td th:text="${usageInfo.usage}">Usage</td>-->
+<!--                            </tr>-->
+<!--                        </table>-->
+<!--                    </div> &lt;!&ndash; panel body &ndash;&gt;-->
+<!--                </div> &lt;!&ndash; panel &ndash;&gt;-->
             </div>
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">

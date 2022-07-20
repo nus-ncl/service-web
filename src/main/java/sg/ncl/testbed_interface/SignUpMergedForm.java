@@ -70,6 +70,9 @@ public class SignUpMergedForm {
     @Pattern(regexp = "[^<>|/`'\"\\\\]*", message = "Country cannot contain '<' '>' '|' '/' '\\' '`' '\'' '\"'")
     private String country;
 
+    @NotEmpty(message = "UserName cannot be empty")
+    private String userName;
+
     @NotEmpty(message = "City cannot be empty")
     @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "City cannot have special characters")
     private String city = DEFAULT;
@@ -111,6 +114,7 @@ public class SignUpMergedForm {
     private String errorTeamDescription;
     private String errorTeamWebsite;
     private String errorTeamOwnerPolicy;
+    private String errorUserName;
 
     private boolean isValid;
 
@@ -118,24 +122,25 @@ public class SignUpMergedForm {
 		
 	}
 
-    public SignUpMergedForm(String country, String institution, String jobTitle, String confirmPassword, String password, String postalCode) {
+    public SignUpMergedForm(String country, String userName, String institution, String jobTitle, String confirmPassword, String password, String postalCode) {
         this.country = country;
         this.institution = institution;
         this.jobTitle = jobTitle;
         this.confirmPassword = confirmPassword;
         this.password = password;
         this.postalCode = postalCode;
+        this.userName = userName;
     }
 	
 	//--------------------------------------- Account Details ---------------------------------------
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() { return email; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getUserName() { return userName; }
+
+    public void setUserName(String userName) { this.userName = userName; }
 
     public String getPassword() {
         return password;
@@ -350,6 +355,14 @@ public class SignUpMergedForm {
 
     public void setErrorTeamOwnerPolicy(String errorTeamOwnerPolicy) {
         this.errorTeamOwnerPolicy = errorTeamOwnerPolicy;
+    }
+
+    public String getErrorUserName() {
+        return errorUserName;
+    }
+
+    public void setErrorUserName(String errorUserName) {
+        this.errorUserName = errorUserName;
     }
 
     public String getErrorTeamName() {

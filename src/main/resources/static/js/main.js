@@ -351,55 +351,6 @@ $(document).ready(function() {
 	});
 });
 
-/*// display the ns file content when users select the predefined scenarios
-function displayNsContent() {
-	var basic1 = "# This is a simple experiment, containing only one node\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add a new node\r\nset n0 [$ns node]\r\n\r\n# Set node OS\r\ntb-set-node-os $n0 Ubuntu1404-64-STD\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
-	var basic2 = "# This is a simple experiment with 2 nodes and customized link specification\r\n\r\nset ns [new Simulator]\r\nsource tb_compat.tcl\r\n\r\n# Add nodes\r\nset n0 [$ns node]\r\nset n1 [$ns node]\r\n\r\n# Add link and specify link properties\r\nset link0 [$ns duplex-link $n0 $n1 100Mb 200ms DropTail]\r\n\r\n$ns rtproto Static\r\n\r\n# Go!\r\n$ns run";
-    var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{  \n\"Group_of_VMs\":{    \n\"type\":\"OS::Heat::ResourceGroup\",    \n\"properties\":{      \n\"count\":1,      \n\"resource_def\":{        \n\"type\":\"OS::Nova::Server\",        \n\"properties\":{          \n\"name\":\"_my_instance%index%\",\"image\":\"ubuntu-1804-vmdk\",\"flavor\":\"m1.small\",          \n\"networks\":[{\"network\":\"public\"}]}      \n}    \n}  \n}\n}";
-    var heat2 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":2,\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"ubuntu-1804-vmdk\",\"flavor\":\"m1.small\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
-    var heat3 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n\"Group_of_VMs\":{\n\"type\":\"OS::Heat::ResourceGroup\",\n\"properties\":{\"count\":{...},\n\"resource_def\":{\"type\":\"OS::Nova::Server\",\n\"properties\":{\n\"name\":\"_my_instance%index%\",\"image\":\"{...}\",\"flavor\":\"{...}\",\n\"networks\":[{\"network\":\"public\"}]\n}\n}\n}\n}\n}";
-
-    var x = document.getElementById("selectExpScenario").value;
-	var file = "";
-	switch(x) {
-    	    case "Openstack Scenario 1 - Experiment with a single virtual machine":
-                file = basicHeat;
-                document.getElementById("platform").value = 1;
-                break;
-            case "Openstack Scenario 2 - Experiment with 2 nodes virtual machine":
-                file = heat2;
-                document.getElementById("platform").value = 1;
-                break;
-            case "Openstack Scenario 3 - Experiment with custom virtual machine":
-                file = heat3;
-                document.getElementById("platform").value = 1;
-                break;
-    		case "Deterlab Scenario 1 - Experiment with a single node":
-            	file = basic1;
-            	document.getElementById("platform").value = 0;
-            	break;
-            case "Deterlab Scenario 2 - Experiment with 2 nodes and customized link property":
-            	file = basic2;
-            	document.getElementById("platform").value = 0;
-            	break;
-    		default:
-    			file = basicHeat;
-    			document.getElementById("platform").value = 1;
-    			break;
-    	}
-
-	document.getElementById("networkConfig").innerHTML = file;
-}
-
-// display the default ns file content
-function displayDefaultNsContent() {
-    var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{  \n\"Group_of_VMs\":{    \n\"type\":\"OS::Heat::ResourceGroup\",    \n\"properties\":{      \n\"count\":1,      \n\"resource_def\":{        \n\"type\":\"OS::Nova::Server\",        \n\"properties\":{          \n\"name\":\"_my_instance%index%\",\"image\":\"ubuntu-1804-vmdk\",\"flavor\":\"m1.small\",          \n\"networks\":[{\"network\":\"public\"}]}";
-	alert(basicHeat);
-	document.getElementById("networkConfig").innerHTML = basicHeat;
-	document.getElementById("platform").value = 1;
-}*/
-
-
 jQuery(function($) {
 
 	//Preloader
@@ -1027,7 +978,7 @@ function displayNsContent() {
     var basicHeat = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n  \"Group_of_VMs\":{\n    \"type\":\"OS::Heat::ResourceGroup\",\n    \"properties\":{\n      \"count\":1,\n      \"resource_def\":{\n        \"type\":\"OS::Nova::Server\",\n        \"properties\":{\n          \"name\":\"_my_instance%index%\",\"image\":\"ubuntu-1804-vmdk\",\"flavor\":\"m1.small\",\n          \"networks\":[{\"network\":\"public\"}]}\n      }\n    }\n  }\n}";
     var heat2 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n  \"Group_of_VMs\":{\n    \"type\":\"OS::Heat::ResourceGroup\",\n    \"properties\":{\n      \"count\":2,\n      \"resource_def\":{\n        \"type\":\"OS::Nova::Server\",\n        \"properties\":{\n          \"name\":\"_my_instance%index%\",\"image\":\"ubuntu-1804-vmdk\",\"flavor\":\"m1.small\",\n          \"networks\":[{\"network\":\"public\"}]}\n      }\n    }\n  }\n}";
     var heat3 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single compute instance\",\n\"resources\":{\n  \"Group_of_VMs\":{\n    \"type\":\"OS::Heat::ResourceGroup\",\n    \"properties\":{\n      \"count\":{...},\n      \"resource_def\":{\n        \"type\":\"OS::Nova::Server\",\n        \"properties\":{\n          \"name\":\"_my_instance%index%\",\"image\":\"{...}\",\"flavor\":\"{...}\",\n          \"networks\":[{\"network\":\"public\"}]}\n      }\n    }\n  }\n}";
-
+    var heat4 = "\"heat_template_version\":\"2015-04-30\",\n\"description\":\"Simple template to deploy a single baremetal node\",\n\"resources\":{\n  \"Group_of_VMs\":{\n    \"type\":\"OS::Heat::ResourceGroup\",\n    \"properties\":{\n      \"count\":1,\n      \"resource_def\":{\n        \"type\":\"OS::Nova::Server\",\n        \"properties\":{\n          \"name\":\"_my_instance%index%\",\"image\":\"ubuntu-1804-vmdk\",\"flavor\":\"baremetal-flavor\",\n          \"networks\":[{\"network\":\"ironic-provisioning\"}]}\n      }\n    }\n  }\n}";
 	var x = document.getElementById("selectExpScenario").value;
 	var file = "";
 	switch(x) {
@@ -1041,6 +992,10 @@ function displayNsContent() {
             break;
         case "Openstack Scenario 3 - Experiment with custom virtual machine":
             file = heat3;
+            document.getElementById("platform").value = 1;
+            break;
+        case "Openstack Scenario 4 - Experiment with Single baremetal node":
+            file = heat4;
             document.getElementById("platform").value = 1;
             break;
 		case "Deterlab Scenario 1 - Experiment with a single node":
