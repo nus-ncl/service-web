@@ -37,6 +37,7 @@
 									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamOwnerPolicy != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamOwnerPolicy}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('firstName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{firstName}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('lastName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{lastName}"></span></p>
+									<p class="account-change-fail" th:if="${#fields.hasErrors('userName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{userName}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('phone')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{phone}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('jobTitle')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{jobTitle}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('institution')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{institution}"></span></p>
@@ -47,49 +48,107 @@
 									<p class="account-change-fail" th:if="${signUpMergedForm.errorTeamWebsite != null}"><i class="fa fa-exclamation-circle"></i> <span th:text="${signUpMergedForm.errorTeamWebsite}"></span></p>
 									<p class="account-change-fail" th:if="${#fields.hasErrors('joinTeamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{joinTeamName}"></span></p>
 
-							<h3 th:text="#{signup.createAcc.header}">Create Your Account</h3>
 							<div class="form-group row">
-								<div class="col-xs-6">
-									<input type="text" class="form-control" placeholder="First Name" th:field="*{firstName}" onblur="validateName(name)"/>
+								<div class="col-xs-2">
+									<label>User Name<span class="required-field-red">*</span></label>
+								</div>
+								<div class="col-xs-7">
+									<input type="text" id="Username_text" class="form-control" placeholder="Please enter a user name" th:field="*{userName}"/>
+									<span id="userNameError" style="display: none;"><h34>This user name is already taken. Please choose other user name</h34></span>
+								</div>
+								<div class="col-xs-3">
+									<button type="button" id="verify_btn" class="btn btn-special">Verify Username</button>
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-xs-2">
+									<label>First Name<span class="required-field-red">*</span></label>
+								</div>
+								<div class="col-xs-10">
+									<input type="text" class="form-control" placeholder="Only alphabetic characters, hyphens and apostrophes are allowed" th:field="*{firstName}" onblur="validateName(name)"/>
 									<span id="firstNameError" style="display: none;"><h34>You can only use alphabetic characters, hyphens and apostrophes</h34></span>
 								</div>
-								<div class="col-xs-6">
-									<input type="text" class="form-control" placeholder="Last Name" th:field="*{lastName}" onblur="validateName(name)"/>
+							</div>
+
+							<div class="form-group row">
+								<div class="col-xs-2">
+									<label>Last Name<span class="required-field-red">*</span></label>
+								</div>
+								<div class="col-xs-10">
+									<input type="text" class="form-control" placeholder="Only alphabetic characters, hyphens and apostrophes are allowed" th:field="*{lastName}" onblur="validateName(name)"/>
 									<span id="lastNameError" style="display: none;"><h34>You can only use alphabetic characters, hyphens and apostrophes</h34></span>
 								</div>
 							</div>
-							<div class="form-group">
-								<input type="text" data-toggle="tooltip" data-placement="bottom" title="An organization-affiliated email address is required. Other email addresses (Gmail, Hotmail, email addresses from ISPs) are not accepted." class="form-control" th:field="*{email}" placeholder="Email" onblur="validateEmail(name)"/>
-								<span id="emailError" style="display: none;"><h34>You must enter a valid email address</h34></span>
+
+							<div class="form-group row">
+								<div class="col-xs-2">
+									<label>Email<span class="required-field-red">*</span></label>
+								</div>
+								<div class="col-xs-10">
+									<input type="text" class="form-control" data-toggle="tooltip" data-placement="bottom" title="An organization-affiliated email address is required. Other email addresses (Gmail, Hotmail, email addresses from ISPs) are not accepted." placeholder="Please use an organization-affiliated email address" th:field="*{email}" onblur="validateEmail(name)"/>
+									<span id="emailError" style="display: none;"><h34>You must enter a valid email address</h34></span>
+								</div>
 							</div>
-							<div class="form-group">
-								<div class='pwdwidgetdiv' id='thepwddiv'/>
-								<span id="confirmMessage" class="confirmMessage"></span>
+
+							<div class="form-group row">
+								<div class="col-xs-2">
+									<label>Password<span class="required-field-red">*</span></label>
+								</div>
+								<div class="col-xs-10">
+									<div class='pwdwidgetdiv' id='thepwddiv'/>
+									<span id="confirmMessage" class="confirmMessage"></span>
+								</div>
 							</div>
-									<noscript>
+								<noscript>
 									<div>
-										<input type="password" class="form-control" placeholder="Password"/>
+										<input type="password" class="form-control" placeholder="Password must have atleast 8 characters, must contain 1 digit and 1 alphabet. Password cannot contain whitespace."/>
 									</div>
 								</noscript>
 								<script  type="text/javascript">
 									var pwdwidget = new PasswordWidget('thepwddiv','password');
 									pwdwidget.MakePWDWidget();
 								</script>
-							<div class="form-group">
-								<input type="text" class="form-control"  placeholder="Phone (numbers Only)" th:field="*{phone}" onblur="validatePhone(name)"/>
-								<span id="phoneError" style="display: none;"><h34>The number you entered is not valid.</h34></span>
+
+							<div class="form-group row">
+								<div class="col-xs-2">
+									<label>Phone<span class="required-field-red">*</span></label>
+								</div>
+								<div class="col-xs-10">
+									<input type="text" class="form-control" placeholder="Only numbers are allowed. Phone number should contain atleast 6 digits." th:field="*{phone}" onblur="validatePhone(name)"/>
+									<span id="phoneError" style="display: none;"><h34>The number you entered is not valid.</h34></span>
+								</div>
 							</div>
-							<div class="form-group">
-								<input type="text" class="form-control" name="jobTitle" id="jobTitle" th:field="*{jobTitle}" placeholder="Job Title" onblur="validateJob(name)"/>
-								<span class="validateJob" id="jobTitleError" style="display: none;"><h34>Please fill in the blanks.</h34></span>
+
+							<div class="form-group row">
+								<div class="col-xs-2">
+									<label>Job Title<span class="required-field-red">*</span></label>
+								</div>
+								<div class="col-xs-10">
+									<input type="text" class="form-control" name="jobTitle" id="jobTitle" th:field="*{jobTitle}" placeholder="Job Title" onblur="validateJob(name)"/>
+									<span class="validateJob" id="jobTitleError" style="display: none;"><h34>Please fill in the blanks.</h34></span>
+								</div>
 							</div>
-							<div class="form-group">
-								<input type="text" class="form-control" name="institution" id="institution"  th:field="*{institution}" placeholder="Institution/Employers" onblur="validateinstitution(name)"/>
-								<span class="validateinstitution" id="institutionError" style="display: none;"><h34>Please fill in the blanks.</h34></span>
+
+							<div class="form-group row">
+								<div class="col-xs-2">
+									<label>Institution<span class="required-field-red">*</span></label>
+								</div>
+								<div class="col-xs-10">
+									<input type="text" class="form-control" name="institution" id="institution"  th:field="*{institution}" placeholder="Institution/Employers" onblur="validateinstitution(name)"/>
+									<span class="validateinstitution" id="institutionError" style="display: none;"><h34>Please fill in the blanks.</h34></span>
+								</div>
 							</div>
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Country" th:field="*{country}"/>
+
+							<div class="form-group row">
+								<div class="col-xs-2">
+									<label>Country<span class="required-field-red">*</span></label>
+								</div>
+								<div class="col-xs-10">
+									<input type="text" class="form-control" placeholder="Country" th:field="*{country}"/>
+								</div>
 							</div>
+
 							<p>&nbsp;</p>
 
 							<div class="form-group">
@@ -97,78 +156,44 @@
 									<label><input type="checkbox" th:field="*{hasAcceptTeamOwnerPolicy}"/> I accept the <a href="/acceptable_usage_policy.pdf" th:text="#{signup.acceptableUsagePolicy}">Acceptable Usage Policy</a> and <a href="terms_and_conditions" th:text="#{signup.termsAndCondition}">Terms and Conditions</a></label>
 								</div>
 							</div>
+
 							<hr/>
-							<!-- select to apply new team or join team -->
-							<p>&nbsp;</p>
-							<h3 th:text="#{signup.noTeam}">text from message.properties</h3>
-							<ul class="tab-group">
-								<li data-toggle="tooltip" data-placement="bottom" title="Applicable to faculty members, or the equivalent R&amp;D, teaching and management staff of an admissible organization" id="registerApplyNewTeamTab" class="active"><a id="registerApplyNewTeamBtn" data-toggle="tab" href="#registerNewTeamDiv">Apply to create a new team</a></li>
-								<li data-toggle="tooltip" data-placement="bottom" title="Applicable to research associates/assistants, research engineers, students and etc." id="registerApplyJoinTeamTab"><a id="registerApplyJoinTeamBtn" data-toggle="tab" href="#registerJoinTeamDiv">Apply to join an existing team</a></li>
-							</ul>
-
-							<div class="tab-content">
-								<p>&nbsp;</p>
-								<div id="registerNewTeamDiv" class="tab-pane fade in active">
-									<div class="form-group">
-										<input type="text" class="form-control" th:placeholder="#{form.teamName}"  th:field="*{teamName}" onblur="validateteamName(name)"/>
-										<span id="teamNameError" style="display: none;"><h34>You can only use alphabetic character and numbers only</h34></span>
-									</div>
-									<div class="form-group">
-										<textarea data-toggle="tooltip" data-placement="bottom" title="For faster approval, please be more specific with the description" class="form-control" th:placeholder="#{form.teamDesc}" th:field="*{teamDescription}">
-										</textarea>
-									</div>
-									<div class="form-group">
-										<label for="organizationType" th:text="#{signup.organizationType}">Organization Type:</label>
-										<select id="organizationType" class="form-control" th:field="*{teamOrganizationType}">
-											<option value="Academic" th:text="#{signup.academia}">Academic</option>
-											<option value="Government" th:text="#{signup.government}">Government</option>
-											<option value="Industry" th:text="#{signup.industry}">Industry</option>
-											<option value="Internal" th:text="#{signup.internal}">Internal</option>
-										</select>
-									</div>
-
-									<div class="form-group">
-										<div class="checkbox">
-											<label><input type="checkbox" th:field="*{isClass}"/><strong><span th:text="#{signup.class}">Class</span></strong><em><span>This is a Class project</span></em></label>
-										</div>
-									</div>
-
-									<div class="form-group">
-										<div class="radio">
-											<label><input type="radio" th:field="*{isPublic}" th:value="PUBLIC"/><strong><span th:text="#{signup.publicTeam}">Public</span></strong> <em><span>Include your team info in the <a th:href="@{/public_teams}">Public List</a> of NCL teams.</span></em></label>
-										</div>
-										<div class="radio">
-											<label><input type="radio" th:field="*{isPublic}" th:value="PRIVATE"/><strong><span th:text="#{signup.privateTeam}">Private</span></strong> <em><span th:text="#{signup.privateTeam.desc}">Only members in the team can view team info.</span></em></label>
-										</div>
-									</div>
-								</div>
-								<div id="registerJoinTeamDiv" class="tab-pane fade">
-									<div class="form-group">
-										<input type="text" class="form-control" th:placeholder="#{form.teamName}"  th:field="*{joinTeamName}" onblur="validatejoinTeamName(name)"/>
-										<span id="joinTeamNameError" style="display: none;"><h34>You can only use alphabetic character and numbers only</h34></span>
-									</div>
-
-								</div>
-							</div>
-
 						</fieldset>
 						<p>&nbsp;</p>
 						<div class="form-group">
 							<div class="g-recaptcha" data-sitekey="6Lcs804aAAAAAFf6XUXnL_hPaiLaLLAeVinurIJQ"></div>
-							<button type="submit" onclick="checkRecaptcha();" class="btn btn-special">Submit</button>
+							<button type="submit" onclick="checkRecaptcha();" class="btn btn-special" >Submit</button>
 						</div>
 					</form>
 				</div> <!-- panel-body -->
 
 			</div> <!-- panel -->
 		</div> <!-- col -->
-		<div class="col-md-1"></div>
 	</div> <!-- row -->
 </div> <!-- container -->
 
 <div th:replace="fragments/footer :: footer"></div>
 
 <script>
+
+
+$('#verify_btn').on("click", function() {
+    $.ajax({
+    url: '/checkUsername',
+    data: { 'username' : $('#Username_text').val() },
+    type: "post",
+    cache: false,
+    success: function (result) {
+        alert(result);
+    }
+    });
+});
+
+    function getUserName(UserId)
+    {
+    	return document.getElementById(UserId);
+    }
+
 	// Validate name
 	function validateName(x){
 		// Validation rule

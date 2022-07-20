@@ -26,15 +26,11 @@
                         <p th:if="${statuschecklist=='PENDING'}"> <h35><span class="fa fa-check-square-o check" data-toggle="tooltip"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User email has been verified</h35></p>
                         <p th:unless="${statuschecklist}"><h35><span class="fa fa-check  check" data-toggle="tooltip"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User email not verified</h35></p>
                     </div>
-                    <div class="col-sm-8 h35">
-                        <h35> <span class="fa fa-minus-square times" data-toggle="tooltip"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Team creation/join application is pending for approval</h35>
-                    </div>
-
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
-                        <h37>* Required statuses must pass before log in to the system</h37>
+                        <h37>* Required status must pass before log in to the system</h37>
                         <p th:if="${statuschecklist=='CREATED'}" class="footnote">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please kindly check your mail box for the verification email</p>
                         <p th:if="${statuschecklist=='PENDING'}" class="footnote">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If your application is still pending after 5 business days, please contact us at <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
                 </div>
