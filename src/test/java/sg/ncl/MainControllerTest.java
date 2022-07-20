@@ -638,7 +638,6 @@ public class MainControllerTest {
                         .param("organizationType", "academia")
                         .param("isPublic", "PUBLIC")
                         .param("hasAcceptTeamOwnerPolicy", "true"))
-                .andExpect(redirectedUrl("/team_application_submitted"))
                 .andReturn();
     }
 

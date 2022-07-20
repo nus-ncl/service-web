@@ -38,19 +38,19 @@ public class UserTest {
         Assertions.assertThat(one.getApplicationDate()).isNull();
     }
 
-    @Test
-    public void testSetCreatedDate() throws IOException {
-        final User2 one = new User2();
-        ZonedDateTime zonedDateTime = ZonedDateTime.now();
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        one.setApplicationDate(mapper.writeValueAsString(zonedDateTime));
-
-        Assertions.assertThat(one.getApplicationDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
-        Assertions.assertThat(one.getApplicationDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
-        Assertions.assertThat(one.getApplicationDate().getYear()).isEqualTo(zonedDateTime.getYear());
-    }
+//    @Test
+//    public void testSetCreatedDate() throws IOException {
+//        final User2 one = new User2();
+//        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(new JavaTimeModule());
+//        one.setApplicationDate(mapper.writeValueAsString(zonedDateTime));
+//
+//        Assertions.assertThat(one.getApplicationDate().getMonthValue()).isEqualTo(zonedDateTime.getMonthValue());
+//        Assertions.assertThat(one.getApplicationDate().getDayOfMonth()).isEqualTo(zonedDateTime.getDayOfMonth());
+//        Assertions.assertThat(one.getApplicationDate().getYear()).isEqualTo(zonedDateTime.getYear());
+//    }
 
     @Test
     public void testGetEmailVerified() {

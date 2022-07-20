@@ -71,7 +71,7 @@ public class SignUpMergedFormTest {
     @Test
     public void testPasswordMinimumCharacters() {
         // craft from constructor to ensure only the password field will give errors
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "123456a", "123456a", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User123", "institution", "job", "123456a", "123456a", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password must have at least 8 characters")));
@@ -79,7 +79,7 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testPasswordAtLeastOneDigit() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "abcdefgh", "abcdefgh", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User123", "institution", "job", "abcdefgh", "abcdefgh", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password must contain one digit")));
@@ -87,7 +87,7 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testPasswordAtLeastOneAlphabet() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "12345678", "12345678", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User123", "institution", "job", "12345678", "12345678", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password must contain one alphabet")));
@@ -95,7 +95,7 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testPasswordWithWhitespace() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a ", "1234567a ", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "user123", "institution", "job", "1234567a ", "1234567a ", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain whitespace")));
@@ -103,35 +103,35 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testPasswordUpperCaseGood() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567A", "1234567A", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User", "institution", "job", "1234567A", "1234567A", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations, is(empty()));
     }
 
     @Test
     public void testPasswordLowerCaseGood() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a", "1234567a", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User123", "institution", "job", "1234567a", "1234567a", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations, is(empty()));
     }
 
     @Test
     public void testPasswordWithSpecialCharacters() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a!", "1234567a!", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User", "institution", "job", "1234567a!", "1234567a!", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations, is(empty()));
     }
 
     @Test
     public void testPasswordWithPlus() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a+", "1234567a+", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User123", "institution", "job", "1234567a+", "1234567a+", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations, is(empty()));
     }
 
     @Test
     public void testPasswordWithAmpersands() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a&", "1234567a&", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User123", "institution", "job", "1234567a&", "1234567a&", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain '&' '<' '>' '|' '/' '\\' '`' '\'' '\"'")));
@@ -139,7 +139,7 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testPasswordWithLessThanSign() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a<", "1234567a<", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "user123","institution", "job", "1234567a<", "1234567a<", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain '&' '<' '>' '|' '/' '\\' '`' '\'' '\"'")));
@@ -147,7 +147,7 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testPasswordWithGreaterThanSign() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a>", "1234567a>", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User123", "institution", "job", "1234567a>", "1234567a>", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain '&' '<' '>' '|' '/' '\\' '`' '\'' '\"'")));
@@ -155,7 +155,7 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testPasswordWithDoubleQuote() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "job", "1234567a\"", "1234567a\"", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country",  "User123", "institution", "job", "1234567a\"", "1234567a\"", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Password cannot contain '&' '<' '>' '|' '/' '\\' '`' '\'' '\"'")));
@@ -233,7 +233,7 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testJobValidate() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "institution", "", "1234567a", "1234567a", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country",  "User123", "institution", "", "1234567a", "1234567a", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Job title cannot be empty")));
@@ -269,7 +269,7 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testInstitutionValidate() {
-        final SignUpMergedForm one = new SignUpMergedForm("country", "", "job", "1234567a", "1234567a", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("country", "User123",  "", "job", "1234567a", "1234567a", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Institution cannot be empty")));
@@ -333,7 +333,7 @@ public class SignUpMergedFormTest {
 
     @Test
     public void testCountryValidate() {
-        final SignUpMergedForm one = new SignUpMergedForm("", "institution", "job", "1234567a", "1234567a", "123456");
+        final SignUpMergedForm one = new SignUpMergedForm("",  "User123", "institution", "job", "1234567a", "1234567a", "123456");
         Set<ConstraintViolation<SignUpMergedForm>> constraintViolations = validator.validate(one);
         assertThat(constraintViolations.size(), is(1));
         constraintViolations.forEach(violation -> assertThat(violation.getMessageTemplate(), is("Country cannot be empty")));

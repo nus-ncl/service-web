@@ -2956,6 +2956,10 @@ h26 {
     padding-bottom: 5px;
 }
 
+.required-field-red {
+    color: #FF0000;
+}
+
 /*.slide-container{
     width: 300px;
     height: 600px;

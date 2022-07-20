@@ -76,6 +76,14 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint;
     }
 
+    public String getRegUidAvailaibleUrl(String Username) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "?name=" + Username;
+    }
+
+    public String getRegUid(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/users/" + id;
+    }
+
     public String getSioExpUrl() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
