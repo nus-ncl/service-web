@@ -21,10 +21,15 @@
 
                 <form  method="post" action="#" th:action="@{/teams/apply_team}" th:object="${teamPageApplyTeamForm}" role="form">
                     <fieldset>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <div class="form-group" th:classappend="${#fields.hasErrors('teamName')}? 'has-error'">
-                                <input type="text" class="form-control" id="inputTeam" th:placeholder="#{form.teamName}" th:field="*{teamName}" th:maxlength="12"/>
-                                <span class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></span>
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" id="inputTeam" th:placeholder="#{form.teamName}" th:field="*{teamName}" th:maxlength="12"/>
+                                    <span class="account-change-fail" th:if="${#fields.hasErrors('teamName')}"><i class="fa fa-exclamation-circle"></i> <span th:errors="*{teamName}"></span></span>
+                                </div>
+                                <div class = "col-xs-2">
+                                    <button type="button" id="verify_teamName_btn" class="btn btn-standard">Verify</button>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group" th:classappend="${#fields.hasErrors('teamDescription')}? 'has-error'">
@@ -80,5 +85,21 @@
         </div> <!-- container -->
                 <div th:replace="fragments/footer :: footer"></div>
                 <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+
+<script>
+
+$('#verify_teamName_btn').on("click", function() {
+    $.ajax({
+    url: '/verifyTeamname',
+    data: { 'teamName' : $('#inputTeam').val() },
+    type: "post",
+    cache: false,
+    success: function (result) {
+        alert(result);
+    }
+    });
+});
+</script>
+
     </body>
 </html>

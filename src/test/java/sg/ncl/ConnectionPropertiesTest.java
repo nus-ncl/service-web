@@ -117,32 +117,32 @@ public class ConnectionPropertiesTest {
     public void testGetRejectJoinRequest() throws Exception {
         String teamId = RandomStringUtils.randomAlphanumeric(20);
         String userId = RandomStringUtils.randomAlphanumeric(20);
-        assertThat(properties.getRejectJoinRequest(teamId, userId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/teams/" + teamId + "/members/" + userId);
+        assertThat(properties.getRejectJoinRequest(teamId, userId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/teams/" + teamId + "/members/" + userId);
     }
 
     @Test
-    public void testGetRegisterRequestToApplyTeam() throws Exception {
+    public void testGetTeamsRequestToApplyTeam() throws Exception {
         String userId = RandomStringUtils.randomAlphanumeric(20);
-        assertThat(properties.getRegisterRequestToApplyTeam(userId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/newTeam/" + userId);
+        assertThat(properties.getTeamsRequestToApplyTeam(userId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + "teams" + "/newTeam/" + userId);
     }
 
     @Test
-    public void testGetJoinRequestExistingUser() throws Exception {
-        assertThat(properties.getJoinRequestExistingUser()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/joinApplications");
+    public void testGetJoinTeam() throws Exception {
+        assertThat(properties.getJoinTeam()).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + "teams" + "/joinApplications");
     }
 
     @Test
     public void testGetApproveTeam() throws Exception {
         String teamId = RandomStringUtils.randomAlphanumeric(20);
         String ownerId = RandomStringUtils.randomAlphanumeric(20);
-        assertThat(properties.getApproveTeam(teamId, ownerId, TeamStatus.APPROVED)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/teams/" + teamId + "/owner/" + ownerId + "?status=APPROVED");
+        assertThat(properties.getApproveTeam(teamId, ownerId, TeamStatus.APPROVED)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/teams/" + teamId + "/owner/" + ownerId + "?status=APPROVED");
     }
 
     @Test
     public void testGetApproveJoinRequest() throws Exception {
         String teamId = RandomStringUtils.randomAlphanumeric(20);
         String userId = RandomStringUtils.randomAlphanumeric(20);
-        assertThat(properties.getApproveJoinRequest(teamId, userId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/teams/" + teamId + "/members/" + userId);
+        assertThat(properties.getApproveJoinRequest(teamId, userId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/teams/" + teamId + "/members/" + userId);
     }
 
     @Test
