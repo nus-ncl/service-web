@@ -1007,7 +1007,7 @@ public class MainController {
                 model.addAttribute(DETER_UID, uid);
             } else if(uidMessage.equals("UID Not Found")){
                 log.info("Show the sio user id: {}", responseBody);
-                model.addAttribute(DETER_UID, CONNECTION_ERROR);
+                model.addAttribute(DETER_UID, "UID Not Found");
             }
             else
             {
@@ -1499,9 +1499,7 @@ public class MainController {
                 userId, teamId, session.getAttribute("id").toString());
 
         JSONObject mainObject = new JSONObject();
-        JSONObject userFields = new JSONObject();
-        userFields.put("id", session.getAttribute("id").toString());
-        mainObject.put("user", userFields);
+        mainObject.put("userId", session.getAttribute("id").toString());
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity <String> response;
@@ -1556,9 +1554,7 @@ public class MainController {
                 userId, teamId, session.getAttribute("id").toString());
 
         JSONObject mainObject = new JSONObject();
-        JSONObject userFields = new JSONObject();
-        userFields.put("id", session.getAttribute("id").toString());
-        mainObject.put("user", userFields);
+        mainObject.put("userId", session.getAttribute("id").toString());
 
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity <String> response;
@@ -1645,6 +1641,7 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
             HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            log.info("Get team by id url {}", properties.getTeamById(teamId));
             ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
             String teamResponseBody = teamResponse.getBody();
 
@@ -2179,24 +2176,22 @@ public class MainController {
         }
 
         // log data to ensure data has been parsed
-        log.debug(LOG_PREFIX, properties.getRegisterRequestToApplyTeam(session.getAttribute("id").toString()));
+        log.debug(LOG_PREFIX, properties.getTeamsRequestToApplyTeam(session.getAttribute("id").toString()));
         log.info(LOG_PREFIX, teamPageApplyTeamForm.toString());
         JSONObject mainObject = new JSONObject();
-        JSONObject teamFields = new JSONObject();
-        mainObject.put("team", teamFields);
-        teamFields.put("name", teamPageApplyTeamForm.getTeamName());
-        teamFields.put(DESCRIPTION, teamPageApplyTeamForm.getTeamDescription());
-        teamFields.put(WEBSITE, teamPageApplyTeamForm.getTeamWebsite());
-        teamFields.put(ORGANISATION_TYPE, teamPageApplyTeamForm.getTeamOrganizationType());
-        teamFields.put(VISIBILITY, teamPageApplyTeamForm.getIsPublic());
-        teamFields.put(IS_CLASS, teamPageApplyTeamForm.getIsClass());
+        mainObject.put("name", teamPageApplyTeamForm.getTeamName());
+        mainObject.put(DESCRIPTION, teamPageApplyTeamForm.getTeamDescription());
+        mainObject.put(WEBSITE, teamPageApplyTeamForm.getTeamWebsite());
+        mainObject.put(ORGANISATION_TYPE, teamPageApplyTeamForm.getTeamOrganizationType());
+        mainObject.put(VISIBILITY, teamPageApplyTeamForm.getIsPublic());
+        mainObject.put(IS_CLASS, teamPageApplyTeamForm.getIsClass());
 
         String nclUserId = session.getAttribute("id").toString();
         HttpEntity<String> request = createHttpEntityWithBody(mainObject.toString());
         ResponseEntity <String> response;
 
         try {
-            response = restTemplate.exchange(properties.getRegisterRequestToApplyTeam(nclUserId), HttpMethod.POST, request, String.class);
+            response = restTemplate.exchange(properties.getTeamsRequestToApplyTeam(nclUserId), HttpMethod.POST, request, String.class);
             String responseBody = response.getBody();
             if (RestUtil.isError(response.getStatusCode())) {
 
@@ -2266,15 +2261,9 @@ public class MainController {
         }
 
         JSONObject mainObject = new JSONObject();
-        JSONObject teamFields = new JSONObject();
-        JSONObject userFields = new JSONObject();
 
-        mainObject.put("team", teamFields);
-        mainObject.put("user", userFields);
-
-        userFields.put("id", session.getAttribute("id")); // ncl-id
-
-        teamFields.put("name", teamPageJoinForm.getTeamName());
+        mainObject.put("team", teamPageJoinForm.getTeamName());
+        mainObject.put("userId", session.getAttribute("id")); // ncl-id
 
         log.info(LOG_PREFIX, USER_PREFIX + session.getAttribute("id") + ", team " + teamPageJoinForm.getTeamName());
 
@@ -2283,7 +2272,7 @@ public class MainController {
 
         try {
             restTemplate.setErrorHandler(new MyResponseErrorHandler());
-            response = restTemplate.exchange(properties.getJoinRequestExistingUser(), HttpMethod.POST, request, String.class);
+            response = restTemplate.exchange(properties.getJoinTeam(), HttpMethod.POST, request, String.class);
             String responseBody = response.getBody();
 
             if (RestUtil.isError(response.getStatusCode())) {
@@ -5092,7 +5081,7 @@ public class MainController {
 
         // http status code is OK, then need to check the response message
         String msg = new JSONObject(responseBody).getString("msg");
-        if ("approve project OK".equals(msg)) {
+        if ("Approve team OK".equals(msg)) {
             log.info("Approve team {} OK", teamId);
         } else {
             log.warn("Approve team {} FAIL", teamId);
@@ -5165,7 +5154,7 @@ public class MainController {
 
         // http status code is OK, then need to check the response message
         String msg = new JSONObject(responseBody).getString("msg");
-        if ("reject project OK".equals(msg)) {
+        if ("Reject team OK".equals(msg)) {
             log.info("Reject team {} OK", teamId);
         } else {
             log.warn("Reject team {} FAIL", teamId);
@@ -5436,6 +5425,35 @@ public class MainController {
     @RequestMapping("/teams/team_application_submitted")
     public String teamAppSubmitFromTeamsPage() {
         return "team_page_application_submitted";
+    }
+
+    @RequestMapping(path = "/verifyTeamname", params = {"teamName"})
+    @ResponseBody
+    public String verifyTeamName(
+            @NotNull @RequestParam("teamName") final String teamName) throws WebServiceRuntimeException {
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        ResponseEntity<String> response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody();
+
+        try {
+            if (RestUtil.isError(response.getStatusCode())) {
+                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                switch (exceptionState) {
+                    case TEAM_NOT_FOUND_EXCEPTION:
+                        log.warn("verify team name : team name taken");
+                        return "Team name is successfully assigned";
+                    default:
+                        log.warn("verify team name : some other failure");
+                        return "There is some problem. Please contact support@ncl.sg";
+                }
+            }
+        } catch (IOException e) {
+            throw new WebServiceRuntimeException(e.getMessage());
+        }
+
+        return "Team name is already taken. Please select other Team name";
     }
 
     @RequestMapping("/teams/join_application_submitted/{teamName}")

@@ -109,25 +109,25 @@ public class ConnectionProperties {
 
     public String getRejectJoinRequest(String teamId, String userId) {
         // same but REST API is DELETE
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + TEAMS + teamId + "/members/" + userId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + teamId + "/members/" + userId;
     }
 
     // for existing users
-    public String getRegisterRequestToApplyTeam(String nclUserId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/newTeam/" + nclUserId;
+    public String getTeamsRequestToApplyTeam(String nclUserId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + "newTeam/" + nclUserId;
     }
 
     // for existing users
-    public String getJoinRequestExistingUser() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/joinApplications";
+    public String getJoinTeam() {
+        return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + "joinApplications";
     }
 
     public String getApproveTeam(String teamId, String ownerId, TeamStatus teamStatus) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + TEAMS + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
+        return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
     }
 
     public String getApproveJoinRequest(String teamId, String userId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + TEAMS + teamId + "/members/" + userId;
+        return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + teamId + "/members/" + userId;
     }
 
     public String addStudentsByEmail(String teamId){
