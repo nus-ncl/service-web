@@ -178,6 +178,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id;
     }
 
+    public String getExperimentCount(String teamId) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + teamId + "/counts";
+    }
+
     public String getStatefulExperiment(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint + "/" + id + "/status";
     }

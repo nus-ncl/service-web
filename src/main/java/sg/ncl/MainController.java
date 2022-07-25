@@ -112,6 +112,7 @@ public class MainController {
     // for user dashboard hashmap key values
     private static final String USER_DASHBOARD_APPROVED_TEAMS = "numberOfApprovedTeam";
     private static final String USER_DASHBOARD_RUNNING_EXPERIMENTS = "numberOfRunningExperiments";
+    private static final String USER_DASHBOARD_TOTAL_EXPERIMENTS_COUNTS = "totalNumberOfExperiments";
     private static final String USER_DASHBOARD_FREE_NODES = "freeNodes";
     private static final String USER_DASHBOARD_TOTAL_NODES = "totalNodes";
     private static final String USER_DASHBOARD_GLOBAL_IMAGES = "globalImagesMap";
@@ -366,6 +367,11 @@ public class MainController {
     @RequestMapping("/research")
     public String research() {
         return "research";
+    }
+
+    @RequestMapping("/acceptable_usage_policy")
+    public String acceptableUsagePolicy() {
+        return "acceptable_usage_policy";
     }
 
     @RequestMapping("/otherPublication")
@@ -1074,7 +1080,7 @@ public class MainController {
         String uidResponse = jsonObject.getString("message");
         String responseMsg;
         if (uidResponse.equals("username not found")) {
-            responseMsg = "Your username "+username+" is sucessfully assigned";
+            responseMsg = "Username "+username+" is available";
         }
         else if (uidResponse.equals("username occupied")) {
             responseMsg = "This username "+username+" is taken. Please select other username";
@@ -5443,7 +5449,7 @@ public class MainController {
                 switch (exceptionState) {
                     case TEAM_NOT_FOUND_EXCEPTION:
                         log.warn("verify team name : team name taken");
-                        return "Team name is successfully assigned";
+                        return "Team name is available";
                     default:
                         log.warn("verify team name : some other failure");
                         return "There is some problem. Please contact support@ncl.sg";
@@ -6283,14 +6289,18 @@ public class MainController {
         int numberOfRunningExperiments = 0;
         Map<String, Integer> userDashboardStats = new HashMap<>();
 
+        log.info("Hello1");
+
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity <String> userRespEntity = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
 
         JSONObject object = new JSONObject(userRespEntity.getBody());
         JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
+        int totalNumberOfExperiments = 0;
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            log.info("Hello = {}",i);
             String teamId = teamIdsJsonArray.get(i).toString();
 
             HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
@@ -6307,11 +6317,17 @@ public class MainController {
                 }
 
                 numberOfApprovedTeam ++;
+
+                HttpEntity<String> countrequest = createHttpEntityHeaderOnly();
+                ResponseEntity <String> countResponse = restTemplate.exchange(properties.getExperimentCount(teamId), HttpMethod.GET, countrequest, String.class);
+                String countResponseBody = countResponse.getBody();
+                totalNumberOfExperiments = totalNumberOfExperiments + Integer.parseInt(countResponseBody);
             }
         }
 
         userDashboardStats.put(USER_DASHBOARD_APPROVED_TEAMS, numberOfApprovedTeam);
         userDashboardStats.put(USER_DASHBOARD_RUNNING_EXPERIMENTS, numberOfRunningExperiments);
+        userDashboardStats.put(USER_DASHBOARD_TOTAL_EXPERIMENTS_COUNTS, totalNumberOfExperiments);
 
         return userDashboardStats;
     }
