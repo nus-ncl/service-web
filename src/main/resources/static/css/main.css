@@ -2960,6 +2960,46 @@ h26 {
     color: #FF0000;
 }
 
+.collab_container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.card {
+    background: #e6e6ef;
+    width: 270px;
+    margin: 10px;
+    border-radius: 15px;
+}
+.card-image {
+    /*background-color: #e6e6ef;*/
+    height:  170px;
+    margin-bottom: 15px;
+    /*background-size: auto auto;*/
+    border-radius: 15px 15px 0 0;
+}
+.card h2 {
+    padding:10px;
+}
+.card p {
+    padding: 10px;
+}
+.card a {
+    background-color: black;
+    color: white;
+    display: block;
+    padding: 10px 15px;
+    text-align: center;
+    margin: 30px 50px;
+}
+.card:hover{
+    background-color: rgb(62,62,62);
+    color: white;
+    cursor: pointer;
+    transform: scale(1.03);
+    transition: all 1s ease;
+}
+
 /*.slide-container{
     width: 300px;
     height: 600px;
