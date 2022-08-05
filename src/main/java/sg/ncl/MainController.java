@@ -274,7 +274,7 @@ public class MainController {
     public void setResponseHeader(HttpServletResponse response) {
         response.setHeader("X-Frame-Options", "DENY");
         response.setHeader("X-Content-Type-Options", "nosniff");
-        response.setHeader("Content-Security-Policy", "script-src 'self' google-analytics.com/ cdn.datatables.net/1.10.12/js/ 'unsafe-inline' 'unsafe-eval'");
+        //response.setHeader("Content-Security-Policy", "script-src 'self' google-analytics.com/ cdn.datatables.net/1.10.12/js/ 'unsafe-inline' 'unsafe-eval'");
         response.setHeader("Strict-Transport-Security", "max-age=16070400; includeSubDomains");
     }
 
@@ -1073,22 +1073,30 @@ public class MainController {
     public String checkUsername(
             @NotNull @RequestParam("username") final String username) throws WebServiceRuntimeException {
 
-        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity<String> response = restTemplate.exchange(properties.getRegUidAvailaibleUrl(username), HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody();
-        JSONObject jsonObject = new JSONObject(responseBody);
-        String uidResponse = jsonObject.getString("message");
         String responseMsg;
-        if (uidResponse.equals("username not found")) {
-            responseMsg = "Username "+username+" is available";
-        }
-        else if (uidResponse.equals("username occupied")) {
-            responseMsg = "This username "+username+" is taken. Please select other username";
-        }
+        Pattern spclCharacter = Pattern.compile("^[a-zA-Z0-9-]*$");
+        Matcher hasSpclCharacter = spclCharacter.matcher(username);
+        log.info("username = {}", username);
+
+        if(username.isEmpty())
+            responseMsg = "Please enter a user name";
+        else if(!hasSpclCharacter.find())
+            responseMsg = "User name cannot have special characters";
         else {
-            responseMsg = "problem connection";
-            log.warn("Registration connection fail");
-            throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
+            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+            ResponseEntity<String> response = restTemplate.exchange(properties.getRegUidAvailaibleUrl(username), HttpMethod.GET, request, String.class);
+            String responseBody = response.getBody();
+            JSONObject jsonObject = new JSONObject(responseBody);
+            String uidResponse = jsonObject.getString("message");
+            if (uidResponse.equals("username not found")) {
+                responseMsg = "Username " + username + " is available";
+            } else if (uidResponse.equals("username occupied")) {
+                responseMsg = "This username " + username + " is taken. Please select other username";
+            } else {
+                responseMsg = "problem connection";
+                log.warn("Registration connection fail");
+                throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
+            }
         }
         return responseMsg;
     }
@@ -1647,6 +1655,7 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
             HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            log.info("Get team by id url {}", properties.getTeamById(teamId));
             ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
             String teamResponseBody = teamResponse.getBody();
 
@@ -2977,15 +2986,15 @@ public class MainController {
      */
 
 
-    @RequestMapping("/update_experiment/{teamId}/{expId}/{csrfToken}/{stack_id}")
-    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, @PathVariable String csrfToken,@PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    @RequestMapping("/update_experiment/{teamId}/{expId}/{stack_id}")
+    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId,@PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         // fix for Cross site request forgery //
-        if(!(csrfToken.equals(session.getAttribute(CSRF_TOKEN).toString())))
-        {
-            log.warn("Permission denied to modify experiment: {} for team: {} Invalid Token detected");
-            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
-            return REDIRECT_UNAUTHOURIZED_ACCESS;
-        }
+//        if(!(csrfToken.equals(session.getAttribute(CSRF_TOKEN).toString())))
+//        {
+//            log.warn("Permission denied to modify experiment: {} for team: {} Invalid Token detected");
+//            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
+//            return REDIRECT_UNAUTHOURIZED_ACCESS;
+//        }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getExperiment(expId));
@@ -3069,6 +3078,7 @@ public class MainController {
         try {
             uriComponents = UriComponentsBuilder.fromUriString(properties.getDeleteExperiment(teamId, expId, stack_id));
             updateExperimentResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
+            log.info("update = {}", updateExperimentResponse);
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to update experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
