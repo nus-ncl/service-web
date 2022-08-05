@@ -29,6 +29,9 @@
                             <div class="col-sm-5 dashpanel_teams pull-left">
                                 <p class="dashboard_stats" th:text="${userDashboardMap.get('numberOfApprovedTeam')}">ConnectionError</p>
                                 <h2>Teams</h2>
+                                <th:block th:if="${userDashboardMap.get('numberOfApprovedTeam') == 0}">
+                                    <h3>Click here to create team >></h3>
+                                </th:block>
                             </div>
                         </a>
                         <a th:href="@{/experiments}">
