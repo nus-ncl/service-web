@@ -1073,22 +1073,30 @@ public class MainController {
     public String checkUsername(
             @NotNull @RequestParam("username") final String username) throws WebServiceRuntimeException {
 
-        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
-        ResponseEntity<String> response = restTemplate.exchange(properties.getRegUidAvailaibleUrl(username), HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody();
-        JSONObject jsonObject = new JSONObject(responseBody);
-        String uidResponse = jsonObject.getString("message");
         String responseMsg;
-        if (uidResponse.equals("username not found")) {
-            responseMsg = "Username "+username+" is available";
-        }
-        else if (uidResponse.equals("username occupied")) {
-            responseMsg = "This username "+username+" is taken. Please select other username";
-        }
+        Pattern spclCharacter = Pattern.compile("^[a-zA-Z0-9-]*$");
+        Matcher hasSpclCharacter = spclCharacter.matcher(username);
+        log.info("username = {}", username);
+
+        if(username.isEmpty())
+            responseMsg = "Please enter a user name";
+        else if(!hasSpclCharacter.find())
+            responseMsg = "User name cannot have special characters";
         else {
-            responseMsg = "problem connection";
-            log.warn("Registration connection fail");
-            throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
+            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+            ResponseEntity<String> response = restTemplate.exchange(properties.getRegUidAvailaibleUrl(username), HttpMethod.GET, request, String.class);
+            String responseBody = response.getBody();
+            JSONObject jsonObject = new JSONObject(responseBody);
+            String uidResponse = jsonObject.getString("message");
+            if (uidResponse.equals("username not found")) {
+                responseMsg = "Username " + username + " is available";
+            } else if (uidResponse.equals("username occupied")) {
+                responseMsg = "This username " + username + " is taken. Please select other username";
+            } else {
+                responseMsg = "problem connection";
+                log.warn("Registration connection fail");
+                throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
+            }
         }
         return responseMsg;
     }
@@ -2481,7 +2489,9 @@ public class MainController {
             ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
             String teamResponseBody = teamResponse.getBody();
             Team2 team2 = extractTeamInfo(teamResponseBody);
-            userTeamsList.add(team2);
+            if(team2.getStatus().equals(TeamStatus.APPROVED.name())) {
+                userTeamsList.add(team2);
+            }
         }
 
         model.addAttribute("scenarioFileNameList", scenarioFileNameList);
@@ -2976,38 +2986,39 @@ public class MainController {
      */
 
 
-    @RequestMapping("/update_experiment/{teamId}/{expId}/{csrfToken}/{stack_id}")
-    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId, @PathVariable String csrfToken,@PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-
+    @RequestMapping("/update_experiment/{teamId}/{expId}/{stack_id}")
+    public String updateExperiment(@PathVariable String teamId, @PathVariable String expId,@PathVariable String stack_id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         // fix for Cross site request forgery //
-        if(!(csrfToken.equals(session.getAttribute(CSRF_TOKEN).toString())))
-        {
-            log.warn("Permission denied to modify experiment: {} for team: {} Invalid Token detected");
-            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
-            return REDIRECT_UNAUTHOURIZED_ACCESS;
-        }
+//        if(!(csrfToken.equals(session.getAttribute(CSRF_TOKEN).toString())))
+//        {
+//            log.warn("Permission denied to modify experiment: {} for team: {} Invalid Token detected");
+//            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
+//            return REDIRECT_UNAUTHOURIZED_ACCESS;
+//        }
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getExperiment(expId));
         ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         Experiment2 editExperiment = extractExperiment(response.getBody());
         editExperiment.setStack_id(stack_id);
-        Realization realization = invokeAndExtractRealization(editExperiment.getTeamName(), Long.parseLong(expId));
+        if(editExperiment.getPlatform() == 0) {
+            Realization realization = invokeAndExtractRealization(editExperiment.getTeamName(), Long.parseLong(expId));
 
-        if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
-            log.warn("Trying to modify Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while attempting to modify Exp: " + realization.getExperimentName() + REFRESH + CONTACT_EMAIL);
-            return REDIRECT_EXPERIMENTS;
-        }
+            if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
+                log.warn("Trying to modify Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
+                redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while attempting to modify Exp: " + realization.getExperimentName() + REFRESH + CONTACT_EMAIL);
+                return REDIRECT_EXPERIMENTS;
+            }
 
-        Team2 team = invokeAndExtractTeamInfo(teamId);
+            Team2 team = invokeAndExtractTeamInfo(teamId);
 
-        // check valid authentication to remove experiments
-        // either admin, experiment creator or experiment owner
-        if (!validateIfAdmin(session) && !editExperiment.getUserId().equals(session.getAttribute("id").toString()) && !team.getOwner().getId().equals(session.getAttribute(webProperties.getSessionUserId()))) {
-            log.warn("Permission denied when updating Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
-            redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to update experiment;" + permissionDeniedMessage);
-            return REDIRECT_EXPERIMENTS;
+            // check valid authentication to remove experiments
+            // either admin, experiment creator or experiment owner
+            if (!validateIfAdmin(session) && !editExperiment.getUserId().equals(session.getAttribute("id").toString()) && !team.getOwner().getId().equals(session.getAttribute(webProperties.getSessionUserId()))) {
+                log.warn("Permission denied when updating Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
+                redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to update experiment;" + permissionDeniedMessage);
+                return REDIRECT_EXPERIMENTS;
+            }
         }
         if(editExperiment.getPlatform() == 1){
             String heatFile = editExperiment.getNsFileContent();
@@ -3067,6 +3078,7 @@ public class MainController {
         try {
             uriComponents = UriComponentsBuilder.fromUriString(properties.getDeleteExperiment(teamId, expId, stack_id));
             updateExperimentResponse = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
+            log.info("update = {}", updateExperimentResponse);
         } catch (Exception e) {
             log.warn("Error connecting to experiment service to update experiment", e.getMessage());
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
@@ -5437,29 +5449,40 @@ public class MainController {
     @ResponseBody
     public String verifyTeamName(
             @NotNull @RequestParam("teamName") final String teamName) throws WebServiceRuntimeException {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        ResponseEntity<String> response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody();
 
-        try {
-            if (RestUtil.isError(response.getStatusCode())) {
-                MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+        Pattern spclCharacter = Pattern.compile("^[a-zA-Z0-9-]*$");
+        Matcher hasSpclCharacter = spclCharacter.matcher(teamName);
 
-                switch (exceptionState) {
-                    case TEAM_NOT_FOUND_EXCEPTION:
-                        log.warn("verify team name : team name taken");
-                        return "Team name is available";
-                    default:
-                        log.warn("verify team name : some other failure");
-                        return "There is some problem. Please contact support@ncl.sg";
+        if(teamName.isEmpty())
+            return "Please enter a team name";
+        else if(!hasSpclCharacter.find())
+            return "Team name cannot have special characters";
+        else if(teamName.length()<2 || teamName.length()>12)
+            return "Team name must be within 2 to 12 characters";
+        else {
+            HttpEntity<String> request = createHttpEntityHeaderOnly();
+            ResponseEntity<String> response = restTemplate.exchange(properties.getTeamByName(teamName), HttpMethod.GET, request, String.class);
+            String responseBody = response.getBody();
+
+            try {
+                if (RestUtil.isError(response.getStatusCode())) {
+                    MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+                    ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+                    switch (exceptionState) {
+                        case TEAM_NOT_FOUND_EXCEPTION:
+                            log.warn("verify team name : team name taken");
+                            return "Team name is available";
+                        default:
+                            log.warn("verify team name : some other failure");
+                            return "There is some problem. Please contact support@ncl.sg";
+                    }
                 }
+            } catch (IOException e) {
+                throw new WebServiceRuntimeException(e.getMessage());
             }
-        } catch (IOException e) {
-            throw new WebServiceRuntimeException(e.getMessage());
+            return "Team name is already taken. Please select other Team name";
         }
-
-        return "Team name is already taken. Please select other Team name";
     }
 
     @RequestMapping("/teams/join_application_submitted/{teamName}")
@@ -6289,8 +6312,6 @@ public class MainController {
         int numberOfRunningExperiments = 0;
         Map<String, Integer> userDashboardStats = new HashMap<>();
 
-        log.info("Hello1");
-
         // get list of teamids
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         ResponseEntity <String> userRespEntity = restTemplate.exchange(properties.getUser(userId), HttpMethod.GET, request, String.class);
@@ -6300,7 +6321,6 @@ public class MainController {
         int totalNumberOfExperiments = 0;
 
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
-            log.info("Hello = {}",i);
             String teamId = teamIdsJsonArray.get(i).toString();
 
             HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();

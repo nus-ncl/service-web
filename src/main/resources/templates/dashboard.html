@@ -14,9 +14,9 @@
                 <p>&nbsp;</p>
                 <!--<h1 class="dashhead">Dashboard</h1>-->
                 <h1 align="center"><b><font color="#0d6dba">Dashboard</font></b></h1>
-                <div class="alert alert-danger">
-                    <strong>News: </strong>We hold regular scheduled maintenance on <strong>every first Sunday of the month, 0700 to 1900 (Singapore Time, UTC/GMT+8)</strong> for updating new features. We thank you for the understanding.
-                </div>
+                <!--<div class="alert alert-danger">-->
+                <!--    <strong>News: </strong>We hold regular scheduled maintenance on <strong>every first Sunday of the month, 0700 to 1900 (Singapore Time, UTC/GMT+8)</strong> for updating new features. We thank you for the understanding.-->
+                <!--</div>-->
                 <div class="panel panel-primary dashpanel">
                     <div class="alert alert-warning">
                         <strong>Info!</strong> Use your username <strong><span th:text="${deterUid}"></span></strong> to access the experimental nodes.
@@ -29,6 +29,9 @@
                             <div class="col-sm-5 dashpanel_teams pull-left">
                                 <p class="dashboard_stats" th:text="${userDashboardMap.get('numberOfApprovedTeam')}">ConnectionError</p>
                                 <h2>Teams</h2>
+                                <th:block th:if="${userDashboardMap.get('numberOfApprovedTeam') == 0}">
+                                    <h3>Click here to create team >></h3>
+                                </th:block>
                             </div>
                         </a>
                         <a th:href="@{/experiments}">
