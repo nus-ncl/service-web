@@ -71,6 +71,7 @@ public class SignUpMergedForm {
     private String country;
 
     @NotEmpty(message = "UserName cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "User name cannot have special characters")
     private String userName;
 
     @NotEmpty(message = "City cannot be empty")

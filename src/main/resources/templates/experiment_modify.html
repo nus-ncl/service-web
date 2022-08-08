@@ -33,22 +33,22 @@
                     <textarea id="networkConfig" rows="20" cols="50" style="resize: none" th:field="*{nsFileContent}" class="form-control network-config-editor"></textarea>
                 </div>
                 <p>&nbsp;</p>
-                <div class="form-group">
-                    <div class="checkbox col-sm-4">
-                        <label><input type="checkbox" id="max-duration-checkbox" onchange="toggleAutoShutdown(this)" /><strong>Auto-shutdown experiment after:</strong></label>
-                    </div>
-                    <div class="input-group col-sm-8">
-                        <input type="text" class="form-control" id="max-duration" th:field="*{maxDuration}" aria-describedby="max-duration-addon" th:disabled="true" />
-                        <span class="input-group-addon" id="max-duration-addon">hour(s)&nbsp;
-                            <a href="#" class="data-name-tooltip">
-                                <i class="fa fa-question-circle"></i>
-                                <span class="tooltiptext exp-max-duration-tooltip" style="text-align: justify; padding: 10px 10px;">
-                                    <p>The experiment will be automatically/forcefully shutdown after the specified hours, regardless of whether it's being used or not.<br/><strong>DO NOT</strong> select this option if you wish to manually stop the experiment.</p>
-                                </span>
-                            </a>
-                        </span>
-                    </div>
-                </div>
+<!--                <div class="form-group">-->
+<!--                    <div class="checkbox col-sm-4">-->
+<!--                        <label><input type="checkbox" id="max-duration-checkbox" onchange="toggleAutoShutdown(this)" /><strong>Auto-shutdown experiment after:</strong></label>-->
+<!--                    </div>-->
+<!--                    <div class="input-group col-sm-8">-->
+<!--                        <input type="text" class="form-control" id="max-duration" th:field="*{maxDuration}" aria-describedby="max-duration-addon" th:disabled="true" />-->
+<!--                        <span class="input-group-addon" id="max-duration-addon">hour(s)&nbsp;-->
+<!--                            <a href="#" class="data-name-tooltip">-->
+<!--                                <i class="fa fa-question-circle"></i>-->
+<!--                                <span class="tooltiptext exp-max-duration-tooltip" style="text-align: justify; padding: 10px 10px;">-->
+<!--                                    <p>The experiment will be automatically/forcefully shutdown after the specified hours, regardless of whether it's being used or not.<br/><strong>DO NOT</strong> select this option if you wish to manually stop the experiment.</p>-->
+<!--                                </span>-->
+<!--                            </a>-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
 
                 <div class="form-group">
                     <button id="submit-loader-button" type="submit" class="btn btn-standard">Modify</button>
