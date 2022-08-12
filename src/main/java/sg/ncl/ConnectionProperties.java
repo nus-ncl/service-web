@@ -532,6 +532,9 @@ public class ConnectionProperties {
     public String getPublicKeys(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/publicKeys";
     }
+    public String deletePublicKeys(String id, String sshId, String keyName) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/publicKeys/" + sshId + "/" + keyName;
+    }
 
     //-------------------------------------
     // RESERVATION
