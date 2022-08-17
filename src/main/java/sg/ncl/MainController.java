@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -749,30 +750,79 @@ public class MainController {
         return LOGIN_PAGE;
     }
 
+//    @RequestMapping(value = "/emailVerification", params = {ID, EMAIL, "key"})
+//    public String verifyEmail(@NotNull @RequestParam(ID) final String id,
+//                              @NotNull @RequestParam(EMAIL) final String emailBase64,
+//                              @NotNull @RequestParam("key") final String key) {
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//        ObjectNode keyObject = objectMapper.createObjectNode();
+//        keyObject.put("key", key);
+//
+//        HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
+//        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+//
+//        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + id + "/emails/" + emailBase64);
+//        ResponseEntity<String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
+//
+//        if (RestUtil.isError(response.getStatusCode())) {
+//            log.error("Activation of user {} failed.", id);
+//            return "email_validation_failed";
+//        } else {
+//            log.info("Activation of user {} completed.", id);
+//            return "email_validation_ok";
+//        }
+//    }
+
+
     @RequestMapping(value = "/emailVerification", params = {ID, EMAIL, "key"})
     public String verifyEmail(@NotNull @RequestParam(ID) final String id,
                               @NotNull @RequestParam(EMAIL) final String emailBase64,
-                              @NotNull @RequestParam("key") final String key) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+                              @NotNull @RequestParam("key") final String key , Model model) {
+        VerifyEmailInfo form = new VerifyEmailInfo();
+        form.setType("create");
+        form.setKey(key);
+        form.setUuid(id);
+        form.setEmail(emailBase64);
 
-        ObjectNode keyObject = objectMapper.createObjectNode();
-        keyObject.put("key", key);
+        model.addAttribute("verifyEmailInfo", form);
+        return "email_ssh_verify";
+    }
 
-        HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
-        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+    @PostMapping("/ssh_email_verify")
+    public String sshEmailVerify(@ModelAttribute("verifyEmailInfo") VerifyEmailInfo vEmailInfo
+    ) throws WebServiceRuntimeException {
+        // 1. call verifyEmail
+        // 2. check return boolean
+        log.info("entering to ssh_email_verify");
+         HttpHeaders headers = new HttpHeaders();
+         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + id + "/emails/" + emailBase64);
-        ResponseEntity<String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
+         ObjectNode keyObject = objectMapper.createObjectNode();
+         keyObject.put("key", vEmailInfo.getKey());
+         keyObject.put("password", vEmailInfo.getPassword());
+         keyObject.put("type", vEmailInfo.getType());
 
-        if (RestUtil.isError(response.getStatusCode())) {
-            log.error("Activation of user {} failed.", id);
-            return "email_validation_failed";
-        } else {
-            log.info("Activation of user {} completed.", id);
-            return "email_validation_ok";
+         log.info("entering to ssh_email_verify key Obj : {}",keyObject.toString());
+
+          HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
+          restTemplate.setErrorHandler(new MyResponseErrorHandler());
+          log.info("entering to ssh_email_verify URL : {}",properties.getSioRegUrl() + USERS + vEmailInfo.getUuid() + "/emails/" + vEmailInfo.getEmail());
+           UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + vEmailInfo.getUuid() + "/emails/" + vEmailInfo.getEmail());
+           ResponseEntity<String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
+            log.info("verfiy response value : {}",response.getBody());
+
+            if (response.getBody().equals("false")) {
+                log.error("Activation of user {} failed.", vEmailInfo.getUuid());
+               return "email_validation_failed";
+            } else {
+                log.info("Activation of user {} completed.", vEmailInfo.getUuid());
+                return "email_validation_ok";
         }
     }
+
 
     @PostMapping(value = "/login")
     public String loginSubmit(
@@ -1655,7 +1705,6 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
             HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
-            log.info("Get team by id url {}", properties.getTeamById(teamId));
             ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
             String teamResponseBody = teamResponse.getBody();
 
@@ -5558,15 +5607,20 @@ public class MainController {
     //--------------------------SSH Public Keys------------------------------------------
     @GetMapping(path = "/show_pub_keys")
     public String showPublicKeys(Model model, HttpSession session) throws WebServiceRuntimeException {
-        getDeterUid(model, session);
+        String userId = session.getAttribute(webProperties.getSessionUserId()).toString();
         SortedMap<String, Map<String, String>> keysMap;
 
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        ResponseEntity <String> response = restTemplate.exchange(
-                properties.getPublicKeys(session.getAttribute("id").toString()),
-                HttpMethod.GET, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(properties.getRegUid(session.getAttribute(webProperties.getSessionUserId()).toString()), HttpMethod.GET, request, String.class);
+        JSONObject jsonObject = new JSONObject(response.getBody());
+        String uid = jsonObject.getString("uid");
+
+        request = createHttpEntityHeaderOnly();
+        restTemplate.setErrorHandler(new MyResponseErrorHandler());
+        response = restTemplate.exchange(properties.getPublicKeys(userId), HttpMethod.GET, request, String.class);
         String responseBody = response.getBody();
+        List<SshInfo> sshList = new ArrayList<>();
 
         try {
             if (RestUtil.isError(response.getStatusCode())) {
@@ -5574,61 +5628,55 @@ public class MainController {
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                 throw new RestClientException("[" + error.getError() + "] ");
             } else {
-                ObjectMapper mapper = new ObjectMapper();
-                keysMap = mapper.readValue(responseBody, new TypeReference<SortedMap<String, Map<String, String>>>() {});
+                JSONArray jsonSshArray = new JSONArray(responseBody);
+
+                for (int i = 0; i < jsonSshArray.length(); i++) {
+                    JSONObject sshInfoObject = jsonSshArray.getJSONObject(i);
+                    SshInfo ssh = extractSshInfo(sshInfoObject.toString());
+                    sshList.add(ssh);
+                }
             }
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
-
-        model.addAttribute("keys", keysMap);
+        model.addAttribute("uid", uid);
+        model.addAttribute("keys", sshList);
         return "showpubkeys";
     }
 
     @RequestMapping(path = "/show_pub_keys", method = RequestMethod.POST)
     public String addPublicKey(@RequestParam("keyFile") MultipartFile keyFile,
-                               @RequestParam("keyPass") String keyPass,
+                               @RequestParam("keyName") String keyName,
                                RedirectAttributes redirectAttributes,
                                HttpSession session) throws WebServiceRuntimeException {
+
         if (keyFile.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Please select a keyfile to upload");
-            redirectAttributes.addFlashAttribute("hasKeyFileError", true);
-        } else if (keyPass.isEmpty()) {
-            redirectAttributes.addFlashAttribute(MESSAGE, "Please enter your password");
-            redirectAttributes.addFlashAttribute("hasKeyPassError", true);
-        } else {
+        } else if (keyName.isEmpty()) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Please enter your key name");
+        } else if (httpScopedSession.getAttribute(webProperties.getSessionOsToken()).toString().isEmpty()) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Your Openstack account is not activated yet.");
+        }
+        else {
             try {
                 JSONObject keyInfo = new JSONObject();
+                keyInfo.put("keyName", keyName);
                 keyInfo.put("publicKey", new String(keyFile.getBytes()));
-                keyInfo.put(PSWD, keyPass);
-                HttpEntity<String> request = createHttpEntityWithBody(keyInfo.toString());
+                HttpEntity<String> request = createHttpEntityWithOsTokenBody(keyInfo.toString());
                 restTemplate.setErrorHandler(new MyResponseErrorHandler());
-                ResponseEntity <String> response = restTemplate.exchange(
-                        properties.getPublicKeys(session.getAttribute("id").toString()),
-                        HttpMethod.POST, request, String.class
-                );
+                ResponseEntity <String> response = restTemplate.exchange(properties.getPublicKeys(session.getAttribute("id").toString()), HttpMethod.POST, request, String.class);
                 String responseBody = response.getBody();
-
                 if (RestUtil.isError(response.getStatusCode())) {
                     MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
                     ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
                     switch (exceptionState) {
-                        case VERIFICATION_PASSWORD_NOT_MATCH_EXCEPTION:
+                        case SSH_CONFLICT_EXCEPTION:
                             log.error(error.getMessage());
-                            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid password");
-                            redirectAttributes.addFlashAttribute("hasKeyPassError", true);
+                            redirectAttributes.addFlashAttribute(MESSAGE, "Duplicate entry Key Name!");
                             break;
-                        case INVALID_PUBLIC_KEY_FILE_EXCEPTION:
+                        case SSH_BAD_REQUEST_EXCEPTION:
                             log.error(error.getMessage());
-                            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid key file");
-                            break;
-                        case INVALID_PUBLIC_KEY_FORMAT_EXCEPTION:
-                            log.error(error.getMessage());
-                            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid key format");
-                            break;
-                        case FORBIDDEN_EXCEPTION:
-                            log.error(error.getMessage());
-                            redirectAttributes.addFlashAttribute(MESSAGE, "Adding of public key is forbidden");
+                            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Public Key & Key Name");
                             break;
                         default:
                             log.error("Unknown error when adding public key");
@@ -5643,15 +5691,21 @@ public class MainController {
         return "redirect:/show_pub_keys";
     }
 
-    @GetMapping(path = "/delete_pub_key/{keyId}")
-    public String deletePublicKey(HttpSession session, @PathVariable String keyId) throws WebServiceRuntimeException {
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
+    @GetMapping(path = "/delete_pub_key/{keyId}/{keyName}")
+    public String deletePublicKey(HttpSession session, @PathVariable String keyId, @PathVariable String keyName,
+    RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        HttpEntity<String> request = createHttpEntityWithOsToken();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
-        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getPublicKeys(session.getAttribute("id").toString()) + "/" + keyId);
+
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.deletePublicKeys(session.getAttribute("id").toString(), keyId.toString(), keyName.toString()));
         ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.DELETE, request, String.class);
         String responseBody = response.getBody();
 
         try {
+            if(responseBody.equals("SSH Delete Fail.")) {
+                log.error("Unable to delete public key {} for user {}", keyId, session.getAttribute("id"));
+                redirectAttributes.addFlashAttribute(MESSAGE, "SSH Delete Fail.");
+            }
             if (RestUtil.isError(response.getStatusCode())) {
                 log.error("Unable to delete public key {} for user {}", keyId, session.getAttribute("id"));
                 MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
@@ -5660,7 +5714,6 @@ public class MainController {
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
-
         return "redirect:/show_pub_keys";
     }
 
@@ -6039,6 +6092,33 @@ public class MainController {
 
         return experiment2;
     }
+
+        private SshInfo extractSshInfo(String sshJson) {
+            SshInfo sshinfo = new SshInfo();
+            JSONObject object = new JSONObject(sshJson);
+
+            sshinfo.setKeyName(object.getString("keyName"));
+            sshinfo.setVersion(object.getLong("version"));
+            sshinfo.setId(object.getLong(ID));
+            sshinfo.setPublicKey(object.getString("publicKey"));
+            sshinfo.setFingerPrint(object.getString("fingerPrint"));
+            sshinfo.setType(object.getString("type"));
+            sshinfo.setNclUserId(object.getString("nclUserId"));
+            sshinfo.setOpenStackUserId(object.getString("openStackUserId"));
+
+            try {
+                sshinfo.setCreatedDate(object.get(CREATED_DATE).toString());
+            } catch (Exception e) {
+                sshinfo.setCreatedDate("");
+            }
+
+            try {
+                sshinfo.setLastModifiedDate(object.get(LAST_MODIFIED_DATE).toString());
+            } catch (Exception e) {
+                sshinfo.setLastModifiedDate("");
+            }
+            return sshinfo;
+        }
 
     private Realization invokeAndExtractRealization(String teamName, Long id) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
@@ -6725,9 +6805,9 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             return REDIRECT_ADD_MEMBER + "/" + teamId;
         }
+        String responseBody = responseEntity.getBody();
 
         if (RestUtil.isError(responseEntity.getStatusCode())) {
-            String responseBody = responseEntity.getBody();
             String logPrefix = "Error in adding members to team " + teamId + ": {}";
             MyErrorResource error;
             String reason;
@@ -6815,6 +6895,7 @@ public class MainController {
         obj.put(PHONE, studentPasswordResetForm.getPhone());
         obj.put(KEY, studentPasswordResetForm.getKey());
         obj.put(PSWD, studentPasswordResetForm.getPassword1());
+        obj.put("userName", studentPasswordResetForm.getUserName());
 
         String uid = studentPasswordResetForm.getUid();
 

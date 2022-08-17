@@ -110,6 +110,8 @@
                             <p th:if="${session.name == null}" style="margin-left: 10px">Signed in as <strong><span
                                     th:text="#{nav.error}" class="h13"></span></strong></p>
                         </li>
+                        <li><a href="/dashboard" th:href="@{/dashboard}"><span
+                                th:text="#{nav.dashboard}">Dashboard</span></a></li>
                         <li><a href="/approve_new_user" th:href="@{/approve_new_user}"><span
                                 th:text="#{nav.approveNewUser}">Pending Requests</span></a></li>
                         <li><a href="/account_settings" th:href="@{/account_settings}"><span
