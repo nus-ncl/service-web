@@ -66,7 +66,9 @@ public enum ExceptionState {
     PROJECT_USAGE_NOT_FOUND_EXCEPTION("ProjectUsageNotFoundException"),
     PROJECT_USAGE_ALREADY_EXISTS_EXCEPTION("ProjectUsageAlreadyExistsException"),
     NODES_RESERVATION_ALREADY_EXISTS_EXCEPTION("NodesReservationAlreadyExistsException"),
-    NODES_RESERVATION_NOT_FOUND_EXCEPTION("NodesReservationNotFoundException");
+    NODES_RESERVATION_NOT_FOUND_EXCEPTION("NodesReservationNotFoundException"),
+    SSH_CONFLICT_EXCEPTION("SSHConflictException"),
+    SSH_BAD_REQUEST_EXCEPTION("SSHBadRequestException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 

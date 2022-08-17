@@ -1705,7 +1705,6 @@ public class MainController {
         for (int i = 0; i < teamIdsJsonArray.length(); i++) {
             String teamId = teamIdsJsonArray.get(i).toString();
             HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
-            log.info("Get team by id url {}", properties.getTeamById(teamId));
             ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
             String teamResponseBody = teamResponse.getBody();
 
@@ -5650,13 +5649,15 @@ public class MainController {
                                @RequestParam("keyName") String keyName,
                                RedirectAttributes redirectAttributes,
                                HttpSession session) throws WebServiceRuntimeException {
+
         if (keyFile.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Please select a keyfile to upload");
-            redirectAttributes.addFlashAttribute("hasKeyFileError", true);
         } else if (keyName.isEmpty()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "Please enter your key name");
-            redirectAttributes.addFlashAttribute("haskeyNameError", true);
-        } else {
+        } else if (httpScopedSession.getAttribute(webProperties.getSessionOsToken()).toString().isEmpty()) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "Your Openstack account is not activated yet.");
+        }
+        else {
             try {
                 JSONObject keyInfo = new JSONObject();
                 keyInfo.put("keyName", keyName);
@@ -5667,12 +5668,13 @@ public class MainController {
                 String responseBody = response.getBody();
                 if (RestUtil.isError(response.getStatusCode())) {
                     MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
-                    switch (error.getMessage()) {
-                        case "Duplicate entry Key Name!":
+                    ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+                    switch (exceptionState) {
+                        case SSH_CONFLICT_EXCEPTION:
                             log.error(error.getMessage());
                             redirectAttributes.addFlashAttribute(MESSAGE, "Duplicate entry Key Name!");
                             break;
-                        case "Invalid Public Key & Key Name":
+                        case SSH_BAD_REQUEST_EXCEPTION:
                             log.error(error.getMessage());
                             redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Public Key & Key Name");
                             break;
@@ -6803,9 +6805,9 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
             return REDIRECT_ADD_MEMBER + "/" + teamId;
         }
+        String responseBody = responseEntity.getBody();
 
         if (RestUtil.isError(responseEntity.getStatusCode())) {
-            String responseBody = responseEntity.getBody();
             String logPrefix = "Error in adding members to team " + teamId + ": {}";
             MyErrorResource error;
             String reason;
@@ -6893,6 +6895,7 @@ public class MainController {
         obj.put(PHONE, studentPasswordResetForm.getPhone());
         obj.put(KEY, studentPasswordResetForm.getKey());
         obj.put(PSWD, studentPasswordResetForm.getPassword1());
+        obj.put("userName", studentPasswordResetForm.getUserName());
 
         String uid = studentPasswordResetForm.getUid();
 

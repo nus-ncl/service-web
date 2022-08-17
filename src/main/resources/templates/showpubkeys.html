@@ -22,7 +22,12 @@
 <div class="container">
     <p>&nbsp;</p>
     <div th:if="${message}">
-        <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+        <p><i class="fa fa-exclamation-circle btn-fa-red"></i>
+            <span class="account-change-fail" th:text="${message}"></span>
+            <div th:if="${message == 'Your Openstack account is not activated yet.'}">
+                <a href="openstack_activate.html" th:href="@{~/openstackactivate}" class="account-change-fail"><u>Please click here to activate the openstack account.</u></a>
+            </div>
+        </p>
     </div>
     <div class="row dashpanel">
         <h2 class="team-heading team-heading-current-team">SSH Public Keys</h2>
