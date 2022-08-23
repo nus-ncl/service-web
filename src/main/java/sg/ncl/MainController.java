@@ -6873,7 +6873,7 @@ public class MainController {
             @ModelAttribute("studentPasswordResetForm") StudentPasswordResetForm studentPasswordResetForm
     ) throws WebServiceRuntimeException {
 
-        if (studentPasswordResetForm.getUserName().isEmpty() || studentPasswordResetForm.getUserName().matches("(.*)[a-zA-Z](.*)")) {
+        if (studentPasswordResetForm.getUserName().isEmpty() || studentPasswordResetForm.getUserName().matches("^[a-zA-Z0-9 .&-]*$")) {
             studentPasswordResetForm.setErrMsg("UserName cannot be empty and special characters are not allowed");
             return STUDENT_RESET_PSWD;
         }
