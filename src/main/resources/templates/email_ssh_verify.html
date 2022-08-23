@@ -20,7 +20,8 @@
     <p>&nbsp;</p>
     <div class="row dashpanel">
         <h2 class="team-heading team-heading-current-team" >Email Verification</h2>
-        <p>Please enter your login password.</p>
+        <p style="color:green;"><strong>Congratulations! Your email address has been successfully verified.</strong></p>
+        <p>Please enter your login password for added security.</p>
         <form method="post" action="" th:action="@{/ssh_email_verify}" th:object="${verifyEmailInfo}" role="form">
             <fieldset>
                 <div class="form-group account-change-fail"
