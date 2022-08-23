@@ -61,14 +61,14 @@ public enum ExceptionState {
     USER_IS_NOT_DELETABLE_EXCEPTION("UserIsNotDeletableException"),
     USER_NOT_FOUND_EXCEPTION("UserNotFoundException"),
     VERIFICATION_PASSWORD_NOT_MATCH_EXCEPTION("VerificationPasswordNotMatchException"),
-    INVALID_PUBLIC_KEY_FILE_EXCEPTION("InvalidPublicKeyFileException"),
-    INVALID_PUBLIC_KEY_FORMAT_EXCEPTION("InvalidPublicKeyFormatException"),
     PROJECT_DETAILS_NOT_FOUND_EXCEPTION("ProjectDetailsNotFoundException"),
     PROJECT_NAME_ALREADY_EXISTS_EXCEPTION("ProjectNameAlreadyExistsException"),
     PROJECT_USAGE_NOT_FOUND_EXCEPTION("ProjectUsageNotFoundException"),
     PROJECT_USAGE_ALREADY_EXISTS_EXCEPTION("ProjectUsageAlreadyExistsException"),
     NODES_RESERVATION_ALREADY_EXISTS_EXCEPTION("NodesReservationAlreadyExistsException"),
-    NODES_RESERVATION_NOT_FOUND_EXCEPTION("NodesReservationNotFoundException");
+    NODES_RESERVATION_NOT_FOUND_EXCEPTION("NodesReservationNotFoundException"),
+    SSH_CONFLICT_EXCEPTION("SSHConflictException"),
+    SSH_BAD_REQUEST_EXCEPTION("SSHBadRequestException");
 
     private static final Map<String, ExceptionState> map = new HashMap<>();
 

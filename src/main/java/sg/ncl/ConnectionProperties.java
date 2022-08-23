@@ -131,7 +131,7 @@ public class ConnectionProperties {
     }
 
     public String addStudentsByEmail(String teamId){
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + TEAMS + teamId + "/students";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + TEAMS + teamId + "/students";
     }
 
 
@@ -168,7 +168,7 @@ public class ConnectionProperties {
     }
 
     public String changePasswordStudent(String uid){
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + uid + "/studentInfo";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/" + uid + "/studentInfo";
     }
 
     //-------------------------------------
@@ -531,6 +531,9 @@ public class ConnectionProperties {
     //-------------------------------------
     public String getPublicKeys(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/publicKeys";
+    }
+    public String deletePublicKeys(String id, String sshId, String keyName) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/publicKeys/" + sshId + "/" + keyName;
     }
 
     //-------------------------------------
