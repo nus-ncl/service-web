@@ -24,6 +24,10 @@ StudentPasswordResetForm {
     @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "First name cannot have special characters")
     private String firstName;
 
+    @Size(min=1, message = "User name cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "User name cannot have special characters")
+    private String userName;
+
 
     @Size(min=1, message ="Last name cannot be empty")
     @Pattern(regexp = "^[a-zA-Z0-9 .&-]*$", message = "Last name cannot have special characters")
