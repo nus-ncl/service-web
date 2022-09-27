@@ -22,7 +22,7 @@
                         <p><h35><span class="fa fa-check-square-o check" data-toggle="tooltip"> </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Online application has been submitted</h35></p>
                     </div>
                     <div class="col-sm-8 h35">
-                        <p th:if="${statuschecklist=='CREATED'}"><h35><span class="fa fa-minus-square  times" data-toggle="tooltip"> </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User email not verified</h35></p>
+                        <p th:if="${statuschecklist=='CREATED'}"><h35><span class="fa fa-minus-square  times" data-toggle="tooltip"> </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User email not verified </h35><button type="button" id="resend_email" class="btn btn-special">Resend Email</button></p>
                         <p th:if="${statuschecklist=='PENDING'}"> <h35><span class="fa fa-check-square-o check" data-toggle="tooltip"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User email has been verified</h35></p>
                         <p th:unless="${statuschecklist}"><h35><span class="fa fa-check  check" data-toggle="tooltip"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User email not verified</h35></p>
                     </div>
@@ -59,4 +59,17 @@
         <div th:replace="fragments/footer :: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
+
+    <script>
+    $('#resend_email').on("click", function() {
+        $.ajax({
+        url: '/resendEmail',
+        type: "post",
+        cache: false,
+        success: function (result) {
+        }
+        });
+    });
+    </script>
+
 </html>

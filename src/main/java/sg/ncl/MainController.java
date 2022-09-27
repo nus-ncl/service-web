@@ -750,79 +750,19 @@ public class MainController {
         return LOGIN_PAGE;
     }
 
-//    @RequestMapping(value = "/emailVerification", params = {ID, EMAIL, "key"})
-//    public String verifyEmail(@NotNull @RequestParam(ID) final String id,
-//                              @NotNull @RequestParam(EMAIL) final String emailBase64,
-//                              @NotNull @RequestParam("key") final String key) {
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//        ObjectNode keyObject = objectMapper.createObjectNode();
-//        keyObject.put("key", key);
-//
-//        HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
-//        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-//
-//        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + id + "/emails/" + emailBase64);
-//        ResponseEntity<String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
-//
-//        if (RestUtil.isError(response.getStatusCode())) {
-//            log.error("Activation of user {} failed.", id);
-//            return "email_validation_failed";
-//        } else {
-//            log.info("Activation of user {} completed.", id);
-//            return "email_validation_ok";
-//        }
-//    }
-
-
     @RequestMapping(value = "/emailVerification", params = {ID, EMAIL, "key"})
     public String verifyEmail(@NotNull @RequestParam(ID) final String id,
                               @NotNull @RequestParam(EMAIL) final String emailBase64,
                               @NotNull @RequestParam("key") final String key , Model model) {
-        VerifyEmailInfo form = new VerifyEmailInfo();
+        LoginForm form = new LoginForm();
         form.setType("create");
         form.setKey(key);
         form.setUuid(id);
         form.setEmail(emailBase64);
 
-        model.addAttribute("verifyEmailInfo", form);
-        return "email_ssh_verify";
+        model.addAttribute("loginForm", form);
+        return LOGIN_PAGE;
     }
-
-    @PostMapping("/ssh_email_verify")
-    public String sshEmailVerify(@ModelAttribute("verifyEmailInfo") VerifyEmailInfo vEmailInfo
-    ) throws WebServiceRuntimeException {
-        // 1. call verifyEmail
-        // 2. check return boolean
-        log.info("entering to ssh_email_verify");
-         HttpHeaders headers = new HttpHeaders();
-         headers.setContentType(MediaType.APPLICATION_JSON);
-
-         ObjectNode keyObject = objectMapper.createObjectNode();
-         keyObject.put("key", vEmailInfo.getKey());
-         keyObject.put("password", vEmailInfo.getPassword());
-         keyObject.put("type", vEmailInfo.getType());
-
-         log.info("entering to ssh_email_verify key Obj : {}",keyObject.toString());
-
-          HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
-          restTemplate.setErrorHandler(new MyResponseErrorHandler());
-          log.info("entering to ssh_email_verify URL : {}",properties.getSioRegUrl() + USERS + vEmailInfo.getUuid() + "/emails/" + vEmailInfo.getEmail());
-           UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + vEmailInfo.getUuid() + "/emails/" + vEmailInfo.getEmail());
-           ResponseEntity<String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
-            log.info("verfiy response value : {}",response.getBody());
-
-            if (response.getBody().equals("false")) {
-                log.error("Activation of user {} failed.", vEmailInfo.getUuid());
-               return "email_validation_failed";
-            } else {
-                log.info("Activation of user {} completed.", vEmailInfo.getUuid());
-                return "email_validation_ok";
-        }
-    }
-
 
     @PostMapping(value = "/login")
     public String loginSubmit(
@@ -831,6 +771,56 @@ public class MainController {
             BindingResult bindingResult,
             Model model,
             HttpSession session, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+
+        if(!loginForm.getKey().isEmpty() && !loginForm.getLoginPassword().isEmpty() && !loginForm.getType().isEmpty())
+        {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            ObjectNode keyObject = objectMapper.createObjectNode();
+            keyObject.put("key", loginForm.getKey());
+            keyObject.put("password", loginForm.getLoginPassword());
+            keyObject.put("type", loginForm.getType());
+
+            HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + loginForm.getUuid() + "/emails/" + loginForm.getEmail());
+            ResponseEntity<String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
+            log.info("verfiy response value : {}",response.getBody());
+
+            String responseBody = response.getBody();
+            JSONObject jsonObject = new JSONObject(responseBody);
+
+            if (RestUtil.isError(response.getStatusCode())) {
+                log.error("Activation of user {} failed.", loginForm.getUuid());
+                loginForm.setKey(null);
+                loginForm.setType(null);
+                if(jsonObject.getString("message").equals("Invalid Password"))
+                    model.addAttribute("errorMsg", jsonObject.getString("message") + ". Please enter correct password");
+                else if(jsonObject.getString("message").contains("has already been verified"))
+                    model.addAttribute("errorMsg", jsonObject.getString("message") + " Please proceed to Login.");
+                else
+                    model.addAttribute("errorMsg", jsonObject.getString("message"));
+                return "email_validation_failed";
+            } else {
+
+                if(jsonObject.getBoolean("status") == false) {
+                    log.error("Activation of user {} failed.", loginForm.getUuid());
+                    loginForm.setKey(null);
+                    loginForm.setType(null);
+                    model.addAttribute("errorMsg", jsonObject.getString("message"));
+                    return "email_validation_failed";
+                }
+                else if(jsonObject.getBoolean("status") == true)
+                {
+                    log.info("Activation of user {} completed.", loginForm.getUuid());
+                    loginForm.setKey(null);
+                    loginForm.setType(null);
+                   // return "email_validation_ok";
+                }
+            }
+        }
 
         if (bindingResult.hasErrors()) {
             loginForm.setErrorMsg(ERR_INVALID_CREDENTIALS);
