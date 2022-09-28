@@ -1,271 +1,52 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>National Cybersecurity Laboratories - Resource</title>
-		<object th:include="fragments/header :: header" th:remove="tag" />
-	</head>
-	<body class="mybg loginbackground">
-	<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
-	<div class="container">
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<!--here make changes-->
-		<!--<div class="tab-content col-sm-10 dashpanel_admin">-->
-		<div class="row col-sm-12">
-		<!--<div class="tab-content col-sm-10">-->
-		<h2 class="team-heading team-heading-current-team" th:text="#{resource.heading.current}">text heading from .properties</h2>
+<html>
+<head>
+	<title>Scholarship</title>
+</head>
+<body>
+<div>
+	<section id="team">
+		<div class="container" style="background-image: url('images/publication_back7.jpg'); object-fit: fill;object-position: 50% 50%;">
+			<div class="post-content">
 
-		<ul class="topnav col-sm-2">
-			<li>
-				<a href="#">Resource Type</a>
-				<ul>
-					<li class="active"><a data-toggle="tab" href="#vul">Vulnerability Environments</a></li>
-					<li><a data-toggle="tab" href="#bigdata">Big-data Platforms</a></li>
-					<li><a data-toggle="tab" href="#blockchain">Blockchain Platforms</a></li>
-					<li><a data-toggle="tab" href="#mobile">Mobile Emulators</a></li>
-				</ul>
-			</li>
-			<li><a href="#">Network Type</a>
-				<ul>
-					<li><a href="#">Single Host</a></li>
-					<li><a href="#">Client-Server</a></li>
-					<li><a href="#">P2P network</a></li>
-					<li><a href="#">Distributed Computing</a></li>
-					<li><a href="#">Mobile</a></li>
-				</ul>
-			</li>
-			<li><a href="#">Year Created</a>
-				<ul>
-					<li><a href="#">2016</a></li>
-					<li><a href="#">2015</a></li>
-					<li><a href="#">2014</a></li>
-
-				</ul>
-			</li>
-
-		</ul>
-
-		<div class="col-sm-9">
-			<div id="vul" class="tab-panel fade in active">
-				<h3>System Vulnerability Environments</h3>
-				<div>
-					<table id="SUETable" class="table">
-					<tr>
-						<th width="1%"></th>
-						<th width="14%">Public ID</th>
-						<th width="20%">Name</th>
-						<th width="35%">Description</th>
-						<th width="30%">Action</th>
-					</tr>
-					<tr>
-						<td>1</td>
-						<td><a href="#" data-toggle="modal" data-target="#myModal">CVE-2011-2523</a></td>
-						<div class="container">
-							<div id="myModal" class="modal fade admin-modal" role="dialog">
-								<div class="modal-dialog">
-									<!--Modal Content-->
-									<div class="modal-content">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal">&times;</button>
-											<h4 class="modal-title">CVE-2011-2523</h4>
-										</div>
-										<div class="modal-body">
-											<p><b>Vulnerability</b>
-											<ul>
-												<li>CVE: 2011-2523</li>
-												<li>OSVDB: 73573</li>
-												<li>EDB: 17491</li>
-											</ul>
-											</p>
-
-											<p><b>Environment</b>
-											<ul>
-												<li>Operating system with version: Ubuntu 12.04.5 LTS</li>
-												<li> Other environment information: NIL</li>
-											</ul>
-											</p>
-
-											<p><b>Resources</b>
-											<ul>
-												<li>Link to vulnerable source: <a href="https://github.com/bb111189/BinariesForCTF" target="_blank">Click Here</a></li>
-												<li>Link to exploit: NIL</li>
-											</ul>
-											</p>
-
-
-											<p><b>Description of Vulnerability</b>
-												<br/><br/>
-												A malicious backdoor that was added to the VSFTPD download archive. This backdoor was introduced into the vsftpd-2.3.4.tar.gz archive between June 30th 2011 and July 1st 2011 according to the most recent information available. This backdoor was removed on July 3rd 2011.
-
-											</p>
-											<p>
-												<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-												<button type="button" class="btn btn-standard">Save</button>
-											</p>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<td>vsftpd</td>
-						<td>Backdoor Trojan</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-
-						</td>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td><a href="#" data-toggle="modal" data-target="#myModal1">CVE-2014-6271</a></td>
-						<div class="container">
-							<div id="myModal1" class="modal fade admin-modal" role="dialog">
-								<div class="modal-dialog modal-lg">
-									<!--Modal Content-->
-									<div class="modal-content">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal">&times;</button>
-											<h4 class="modal-title">CVE-2014-6271</h4>
-										</div>
-										<div class="modal-body">
-											<p><b>Vulnerability</b>
-											<ul>
-												<li>CVE (if any): 2014-6271</li>
-												<li>OSVDB (if any): -</li>
-												<li>EDB ID (if any): 34860</li>
-												<li>Other ID (if any):  -</li>
-											</ul>
-											</p>
-											<p><b>Environment</b>
-											<ul>
-												<li>Operating system with version: Any Linux OS using GNU Bash 4.3 and below </li>
-												<li> Other environment information: NIL</li>
-											</ul>
-											</p>
-											<p><b>Resources</b>
-											<ul>
-												<li>Link to vulnerable source: <a href="http://ftp.gnu.org/gnu/bash/bash-4.3.tar.gz" target="_blank">Click Here</a></li>
-												<li>Link to exploit:  <a href="https://www.exploit-db.com/exploits/34860/" target="_blank">Click Here</a></li>
-											</ul>
-											</p>
-											<p><b>Description of Vulnerability</b>
-												<br/><br/>
-												GNU Bash through 4.3 processes trailing strings after function definitions in the values of environment variables, which allows remote attackers to execute arbitrary code via a crafted environment, as demonstrated by vectors involving the ForceCommand feature in OpenSSH sshd, the mod_cgi and mod_cgid modules in the Apache HTTP Server, scripts executed by unspecified DHCP clients, and other situations in which setting the environment occurs across a privilege boundary from Bash execution, aka "ShellShock."
-											</p>
-											<p>
-												<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-												<button type="button" class="btn btn-standard">Save</button>
-											</p>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<td>Bash Code Injection</td>
-						<td>ShellShock</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-					<tr>
-						<td>3</td>
-						<td>CVE-2014-0160</td>
-						<td>OpenSSL 'Heartbleed'</td>
-						<td>Heartbleed</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-					<tr>
-						<td>4</td>
-						<td>CVE-2003-0352</td>
-						<td>Buffer Overrun in RPC</td>
-						<td>Microsoft RPC DCOM Interface Overflow</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-					<tr>
-						<td>5</td>
-						<td>OSVDB-16373</td>
-						<td>gIFTPD dupescan buffer overflow</td>
-						<td>SSH CRC-32 Compensation Attack Detector</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-					<tr>
-						<td>6</td>
-						<td>OSVDB-60979</td>
-						<td>HTTPd Remote Heap Overflow</td>
-						<td>Null HTTPd Remote Heap Overflow Vulnerability</td>
-						<td>
-							<button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-						</td>
-					</tr>
-					<tr>
-						<td>7</td>
-						<td>EDB-816</td>
-						<td>Anything to PostScript</td>
-						<td>GNU a2ps Local Exploit </td>
-						<td><button type="button" class="btn btn-standard"><span class="btn-special">Realize</span></button>
-							<button type="button" class="btn btn-standard">Save</button>
-
-						</td>
-					</tr>
-
-						</table>
+				<div class="col-sm-6">
+					<img src="images/NUS-NCL collab.jpg" alt="" width="550"  height="150" border="0" align="center" />
 				</div>
-			</div>
-			<div id="bigdata" class="tab-pane fade">
-			</div>
-			<div id="blockchain" class="tab-pane fade">
-			</div>
-			<div id="mobile" class="tab-pane fade">
+
+				<p>&nbsp;</p>
+				<p><strong>OVERVIEW</strong></p>
+				<p>The CSA-National CyberSecurity RD Labs Scholarship (NCLS) aims to grow and develop a pool of cybersecurity professionals in Singapore. This programme is funded by the Cyber Security Agency of Singapore (CSA) due to the increasing demand for job roles requiring deep specialization in enterprise IT and cyber-physical systems.</p>
+				<p>&nbsp;</p>
+
+				<p><strong>ELIGIBILITY</strong></p>
+				<p>This scholarship is open to students who:</p>
+				<ul>
+					<li>Are Singaporeans or Singapore Permanent Residents</li>
+					<li>Are enrolled in NUS Masters programme focus on cyber security (full- or part-time).</li>
+				</ul>
+				<p>&nbsp;</p>
+
+				<p><strong>BENEFITS OF NCLS Scholarship PROGRAMME</strong></p>
+				<ul>
+					<li>Tuition fees (after MOE Tuition Grant) of the NUS Master of Computing or Related Course programme</li>
+					<li>University’s Compulsory Miscellaneous Fees</li>
+					<li>Monthly stipend of _______ (full-time students only)</li>
+				</ul>
+				<p>&nbsp;</p>
+
+				<p><strong>TIMELINE</strong></p>
+				<p>If any _____________________</p>
+
+				<p>&nbsp;</p>
+				<p><strong>APPLICATION&nbsp;</strong></p>
+				<p>____________________________</p>
+
+				<p>&nbsp;</p>
+				<p>For enquiries or assistance, contact us at <a href="mailto:CiMS@sutd.edu.sg">CiMS@sutd.edu.sg</a></p>
+
 			</div>
 		</div>
-		</div> <!--here-->
-	</div>
-
-
-		<div class="cc-wraper">
-			<div class="cc-contactpop fixed">
-				<h1>Do you need Help? <span>Get in touch.</span></h1>
-				<div class="renseignement">
-					<i class="fa fa-times"></i>
-					<p>We will get back to you as soon as possible. </p>
-				</div>
-				<form>
-					<ul>
-						<li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
-						<li><i class=""></i><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></li>
-						<li><i class=""></i> <span> Address: </span><a href="https://www.google.com.sg/maps/dir//NUS+Computing,+13+Computing+Drive,+117417/@1.3437459,103.8240449,11z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31da1af8c0faba33:0x9f0d02392be4dfbe!2m2!1d103.773846!2d1.295053?hl=en" >13 COMPUTING DRIVE, COM1 #01-16 Singapore 117417</a></li>
-					</ul>
-					<p>&nbsp;</p>
-				</form>
-			</div>
-		<!--</div>-->
-	</div> <!-- container -->
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<div th:replace="fragments/footer:: footer"></div>
-	<object th:include="fragments/javascript :: javascript" th:remove="tag" />
-	</body>
+	</section>
+</div>
+</body>
 </html>
