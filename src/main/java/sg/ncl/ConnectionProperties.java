@@ -76,6 +76,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint;
     }
 
+    public String getResendEmailUrl(String Username) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/users/" + Username + "/resend";
+    }
+
     public String getRegUidAvailaibleUrl(String Username) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "?name=" + Username;
     }

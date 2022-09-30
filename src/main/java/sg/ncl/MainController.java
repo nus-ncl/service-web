@@ -793,6 +793,7 @@ public class MainController {
             JSONObject jsonObject = new JSONObject(responseBody);
 
             if (RestUtil.isError(response.getStatusCode())) {
+
                 log.error("Activation of user {} failed.", loginForm.getUuid());
                 loginForm.setKey(null);
                 loginForm.setType(null);
@@ -848,12 +849,12 @@ public class MainController {
 
         try {
             response = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
+            log.info("Login Api response = {}", response);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio authentication service: {}", e);
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return LOGIN_PAGE;
         }
-
         String jwtTokenString = response.getBody();
         if (jwtTokenString == null || jwtTokenString.isEmpty()) {
             log.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
@@ -1108,6 +1109,26 @@ public class MainController {
         return SIGNUP_PAGE;
     }
 
+    @RequestMapping(path = "/resendEmail")
+    @ResponseBody
+    public String resendEmailVerify(HttpSession session, Model model) throws WebServiceRuntimeException {
+
+        String userUid = session.getAttribute(webProperties.getSessionUserUid()).toString();
+        log.info("Hello userUid = {}", userUid);
+        String responseMsg = null;
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+        ResponseEntity<String> response = restTemplate.exchange(properties.getResendEmailUrl(userUid), HttpMethod.PUT, request, String.class);
+        String responseBody = response.getBody();
+        log.info("resend Email Api response : {}", responseBody);
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            log.info("Resend email verification has error {}", response.getStatusCode());
+        } else {
+                responseMsg = "Email sent successfully";
+            }
+        return responseMsg;
+    }
+
     @RequestMapping(path = "/checkUsername", params = {"username"})
     @ResponseBody
     public String checkUsername(
@@ -1148,7 +1169,7 @@ public class MainController {
             @Valid
             @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
-            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+            final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || !signUpMergedForm.getIsValid()) {
            // log.warn("Register form has errors {}", signUpMergedForm.toString());
@@ -1215,9 +1236,9 @@ public class MainController {
         mainObject.put("user", userFields);
         mainObject.put("uid", signUpMergedForm.getUserName());
 
-
         try {
             registerUser(mainObject);
+            session.setAttribute(webProperties.getSessionUserUid(), signUpMergedForm.getUserName());
             return "redirect:/register_to_ncl_application_submitted";
         } catch ( UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidPasswordException | WebServiceRuntimeException e) {
             redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
@@ -5569,7 +5590,10 @@ public class MainController {
      * @return A success page otherwise an error page if the user tries to access this page directly
      */
     @RequestMapping("/register_to_ncl_application_submitted")
-    public String registerationAppSubmit() { return "register_to_ncl_application_submitted"; }
+    public String registerationAppSubmit()
+    {
+        return "register_to_ncl_application_submitted";
+    }
 
     @RequestMapping("/email_not_validated")
     public String emailNotValidated() {
@@ -6314,13 +6338,14 @@ public class MainController {
     }
 
     private void removeSessionVariables(HttpSession session) {
-        log.info("removing session variables: email: {}, userid: {}, user first name: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionUserId()), session.getAttribute(webProperties.getSessionUserFirstName()));
+        log.info("removing session variables: email: {}, userid: {}, user first name: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionUserId()), session.getAttribute(webProperties.getSessionUserFirstName()), session.getAttribute(webProperties.getSessionUserUid()));
         session.removeAttribute(webProperties.getSessionEmail());
         session.removeAttribute(webProperties.getSessionUserId());
         session.removeAttribute(webProperties.getSessionUserFirstName());
         session.removeAttribute(webProperties.getSessionRoles());
         session.removeAttribute(webProperties.getSessionJwtToken());
         session.removeAttribute(webProperties.getSessionOsToken());
+        session.removeAttribute(webProperties.getSessionUserUid());
         session.invalidate();
     }
 
