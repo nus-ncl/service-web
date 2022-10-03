@@ -562,6 +562,11 @@ public class MainController {
         return "resource2";
     }
 
+    @RequestMapping("/scholarship")
+    public String scholarship() {
+        return "scholarship";
+    }
+
     @RequestMapping("/tutorials")
     public String tutorials() {
         return "tutorials";
