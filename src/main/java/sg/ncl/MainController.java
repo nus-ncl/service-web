@@ -567,6 +567,11 @@ public class MainController {
         return "scholarship";
     }
 
+    @RequestMapping("/123412315125")
+    public String scholarship123412315125() {
+        return "123412315125";
+    }
+
     @RequestMapping("/tutorials")
     public String tutorials() {
         return "tutorials";
