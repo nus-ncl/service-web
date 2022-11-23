@@ -291,7 +291,7 @@ public class ConnectionPropertiesTest {
 
     @Test
     public void testGetPasswordResetURI() {
-        assertThat(properties.getPasswordResetURI()).isEqualTo("http://"  + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getCredEndpoint() + "/password");
+        assertThat(properties.getPasswordResetURI()).isEqualTo("http://"  + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRegEndpoint() + "/password");
     }
 
     @Test

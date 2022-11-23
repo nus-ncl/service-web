@@ -557,9 +557,9 @@ public class MainController {
         return "accessexperiment";
     }
 
-    @RequestMapping("/resource2")
-    public String resource2() {
-        return "resource2";
+    @RequestMapping("/scholarship")
+    public String scholarship() {
+        return "scholarship";
     }
 
     @RequestMapping("/tutorials")
@@ -1015,6 +1015,7 @@ public class MainController {
         ResponseEntity<String> response = null;
         try {
             response = restTemplate.exchange(properties.getPasswordResetURI(), HttpMethod.PUT, request, String.class);
+            log.info("Password reset response : {}", response);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for password reset! {}", e);
             passwordResetForm.setErrMsg("Cannot connect to server! Please try again later.");

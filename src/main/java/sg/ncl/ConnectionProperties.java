@@ -458,7 +458,7 @@ public class ConnectionProperties {
     }
 
     public String getPasswordResetURI() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/password";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/password";
     }
 
     //-------------------------------------

@@ -455,29 +455,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
-    @Test
-    public void testResource2() throws Exception {
-        mockMvc.perform(get("/resource2"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("resource2"))
-                .andExpect(content().string(containsString("Vulnerability Environments")))
-                .andExpect(content().string(containsString("main.css")))
-                .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("/teams")))
-                .andExpect(content().string(containsString("/experiments")))
-                .andExpect(content().string(containsString("/data")))
-                .andExpect(content().string(containsString("/admin")))
-                .andExpect(content().string(containsString("/admin/experiments")))
-                .andExpect(content().string(containsString("/tutorials")))
-                .andExpect(content().string(containsString("/resources")))
-                .andExpect(content().string(containsString("/testbedInformation")))
-                .andExpect(content().string(containsString("/calendar")))
-                .andExpect(content().string(containsString("/approve_new_user")))
-                .andExpect(content().string(containsString("/account_settings")))
-                .andExpect(content().string(containsString("/logout")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")));
-    }
-
     //--------------------------------------
     // Test after login HTML pages
     //--------------------------------------
