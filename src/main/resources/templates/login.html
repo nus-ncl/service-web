@@ -53,6 +53,19 @@
                                     th:text="${loginForm.errorMsg}"></span>
                             </div>
                             <div class="form-group">
+                                <input type="hidden" class="form-control" th:field="*{key}"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" th:field="*{uuid}"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" th:field="*{type}"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" th:field="*{email}"/>
+                            </div>
+
+                            <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Email"
                                        th:field="*{loginEmail}"/>
                             </div>

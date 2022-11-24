@@ -20,7 +20,8 @@
                     <h3> However, as a new user, you are required to verify your email address first. </h3>
                     <p> A verification email has been sent to your registered email account. Please kindly check your mail box.</p>
                     <p> We will only review your application after your email address has been verified. </p>
-                    <p> If you do not receive a verification email after 5 business days, please contact us at <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
+                    <p> If you do not receive a verification email please click on  <button type="button" id="resend_email" class="btn btn-special">Resend Email</button> </p>
+                    <p>If the problem persists please send an email to <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
                 </div> <!-- col -->
                 <div class="col-md-1"></div>
             </div> <!-- row -->
@@ -45,4 +46,16 @@
         <div th:replace="fragments/footer:: footer"></div>
         <object th:include="fragments/javascript :: javascript" th:remove="tag" />
     </body>
+
+    <script>
+    $('#resend_email').on("click", function() {
+        $.ajax({
+        url: '/resendEmail',
+        type: "post",
+        cache: false,
+        success: function (result) {
+        }
+        });
+    });
+    </script>
 </html>
