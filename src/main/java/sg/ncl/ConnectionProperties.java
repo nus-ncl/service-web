@@ -88,6 +88,14 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
 
+    //------------------------------------
+    // DELETE ACCOUNTS DETAILS
+    //-------------------------------------
+
+    public String deleteUserAccount(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + "delete/" + "account/" + id;
+    }
+
     //-------------------------------------
     // CREDENTIALS
     //-------------------------------------

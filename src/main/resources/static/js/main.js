@@ -1065,3 +1065,8 @@ function loadImage(imgName, imgId, imgType) {
          }
     });
 }
+
+function deleteAccount() {
+    alert("Hello this is delete javascript");
+    location.href = "delete_account.html";
+}

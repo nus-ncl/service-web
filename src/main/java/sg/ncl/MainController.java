@@ -1322,6 +1322,102 @@ public class MainController {
             throw new WebServiceRuntimeException(e.getMessage());
         }
     }
+    //-------------------------Delete User Page--------------------------------
+
+    @GetMapping(value = "/delete_user")
+    public String deleteUser(Model model, HttpSession session) throws WebServiceRuntimeException {
+        log.info("Hello inside delete");
+//========================================= Show teams details =======================================
+        TeamManager2 teamManager2 = new TeamManager2();
+
+        String userId = session.getAttribute("id").toString();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getUser(userId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody();
+
+        JSONObject object = new JSONObject(responseBody);
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
+
+        String userEmail = object.getJSONObject(USER_DETAILS).getString(EMAIL);
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody();
+
+            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(userId, teamResponseBody);
+            if (joinRequestTeam != null) {
+                teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
+            } else {
+                Team2 team2 = extractTeamInfo(teamResponseBody);
+                teamManager2.addTeamToTeamMap(team2);
+            }
+        }
+
+        model.addAttribute("userEmail", userEmail);
+        model.addAttribute("teamMap2", teamManager2.getTeamMap());
+
+//================================== Show experiment details ==========================================================
+        List<StatefulExperiment> statefulExperimentList = new ArrayList<>();
+        HttpEntity<String> requestUid = getDeterUid(model, session);
+
+        // get list of teamIds
+        ResponseEntity <String> userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, requestUid, String.class);
+
+        object = new JSONObject(userRespEntity.getBody());
+        teamIdsJsonArray = object.getJSONArray(TEAMS);
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody();
+
+            if (!isMemberJoinRequestPending(session.getAttribute("id").toString(), teamResponseBody)) {
+                List<StatefulExperiment> myExpList = getStatefulExperiments(teamId);
+                if (!myExpList.isEmpty()) {
+                    statefulExperimentList.addAll(myExpList);
+                }
+            }
+        }
+
+        model.addAttribute("experimentList", statefulExperimentList);
+        model.addAttribute("experimentForm", new ExperimentForm());
+
+        return "delete_user";
+    }
+
+    @GetMapping(value = "/delete_account")
+    public String delete_account() {
+        return "delete_account";
+    }
+
+    @PostMapping(value = "/deleteAccountByUser")
+    public String deleteAccountByUser(HttpSession session, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        String responseMsg;
+        HttpEntity<String> request = createHttpEntityWithOsToken();
+        log.info("Hello Delete url : {}",properties.deleteUserAccount(session.getAttribute("id").toString()));
+        log.info("Hello Delete request : {}", request);
+        ResponseEntity<String> response = restTemplate.exchange(properties.deleteUserAccount(session.getAttribute("id").toString()), HttpMethod.DELETE, request, String.class);
+        String responseBody = response.getBody();
+        log.info("Hello Delete response : {}", responseBody);
+//            JSONObject jsonObject = new JSONObject(responseBody);
+//            String uidResponse = jsonObject.getString("message");
+//            if (uidResponse.equals("username not found")) {
+//                responseMsg = "Username " + username + " is available";
+//            } else if (uidResponse.equals("username occupied")) {
+//                responseMsg = "This username " + username + " is taken. Please select other username";
+//            } else {
+//                responseMsg = "problem connection";
+//                log.warn("Registration connection fail");
+//                throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
+//            }
+//        }
+        return "Hello";
+    }
 
     //--------------------------Account Settings Page--------------------------
     @GetMapping(value = "/account_settings")
