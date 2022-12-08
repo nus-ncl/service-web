@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Delete User</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p> </p>
+<div class="container">
+    <p>&nbsp;</p>
+    <div class="row">
+        <div id="collapse1" class="panel panel-primary panel-collapse team-panel team-panel-current-team dashpanel">
+            <h2 class="team-heading team-heading-current-team" th:text="#{team.heading.current}">text heading from .properties</h2>
+            <div class="panel-body">
+                <table class="table table-responsive" th:if="not ${teamMap2.isEmpty()}">
+                    <thead>
+                    <th></th>
+                    <th th:text="#{team.table.header.team}">Team</th>
+                    <th th:text="#{team.table.header.description}">Description</th>
+                    <th th:text="#{team.table.header.members}">Members</th>
+                    </thead>
+                    <tr th:each="teamEntry : ${teamMap2}">
+                        <td th:if="${teamEntry.value.isUserTeamOwner(userEmail)} == true"><span class="glyphicon glyphicon-king" data-toggle="tooltip" data-placement="bottom" title="You are the owner of this team"></span></td>
+                        <td th:unless="${teamEntry.value.isUserTeamOwner(userEmail)}"><span class="glyphicon glyphicon-pawn" data-toggle="tooltip" data-placement="bottom" title="You are a member of this team"></span></td>
+                        <td><a href="#" th:href="@{/team_profile/{teamId}(teamId=${teamEntry.key})}"><span th:text="${teamEntry.value.name}">Name-Id</span></a></td>
+                        <td th:text="${teamEntry.value.description}">Description</td>
+                        <td>
+                            <span th:text="${teamEntry.value.membersCount}">Members</span>
+                            <a href="#" th:href="@{/approve_new_user}"><span class="label label-warning" th:if="${not #lists.isEmpty(teamEntry.value.pendingMembersList)}" th:text="${teamEntry.value.pendingMembersList.size()}" data-toggle="tooltip" data-placement="bottom" title="Members pending for your approval">Members Awaiting Approval</span></a>
+                        </td>
+                    </tr>
+                </table>
+            </div> <!-- panel body -->
+            <div class="checkbox">
+                <label><input type="checkbox" onchange="document.getElementById('ExperimentCheckBox').disabled = !this.checked;" /> <strong><span>Delete user from all teams.</span></strong></label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="collapse2" class="panel panel-primary panel-collapse team-panel team-panel-current-team dashpanel">
+            <h2 class="team-heading team-heading-current-team padding" th:text="#{delete.experiment}">You have following experiments</h2>
+            <p>&nbsp;</p>
+            <table id="experimentTable" class="table table-responsive">
+                <thead>
+                <tr>
+                    <th th:text="#{experiment.table.header.experiment}">Experiment</th>
+                    <th th:text="#{experiment.table.header.team}">Team</th>
+                    <th th:text="#{experiment.table.header.status}">Status</th>
+                    <th th:text="#{experiment.table.header.platform}">Platform</th>
+                    <th th:text="#{experiment.table.header.actions}">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="expEntry : ${experimentList}">
+                    <th:block th:if="${expEntry.platform == 1}">
+                        <td><a th:href="@{/experiment_profile/{expId}/{stack_id}(expId=${expEntry.id}, stack_id=${expEntry.stack_id})}"><span th:text="${expEntry.name}">Name</span></a></td>
+                    </th:block>
+                    <th:block th:if="${expEntry.platform == 0}">
+                        <td><a th:href="@{/experiment_profile/{expId}(expId=${expEntry.id})}"><span th:text="${expEntry.name}">Name</span></a></td>
+                    </th:block>
+                    <td th:text="${expEntry.teamName}">Team</td>
+                    <th:block>
+                       <span th:if="${expEntry.state == 'STARTING'}">
+                                           <td th:text="'Starting'"></td>
+                                        </span>
+                        <span th:if="${expEntry.state == 'STOPPED'}">
+                                            <td th:text="'Stopped'"></td>
+                                        </span>
+                        <span th:if="${expEntry.state == 'RUNNING'}">
+                                            <td th:text="'Running'"></td>
+                                        </span>
+                        <span th:if="${expEntry.state == 'STOPPING'}">
+                                            <td th:text="'Stopping'"></td>
+                                        </span>
+                        <span th:if="${expEntry.state == 'UNKNOWN'}">
+                                            <td th:text="'Unknown'"></td>
+                                        </span>
+                        <span th:if="${expEntry.state == 'CREATE_IN_PROGRESS'}">
+                                            <td th:text="'Create_In_Progress'"></td>
+                                        </span>
+                        <span th:if="${expEntry.state == 'UPDATE_IN_PROGRESS'}">
+                                            <td th:text="'Update_In_Progress'"></td>
+                                        </span>
+                        <span th:if="${expEntry.state == 'ERROR'}">
+                                            <td th:text="'Error'"></td>
+                                        </span>
+                        <td>
+                                            <span th:if="${expEntry.platform == 0}">
+                                                <p th:text="DeterLab"></p>
+                                            </span>
+                            <span th:if="${expEntry.platform == 1}">
+                                                <p th:text="OpenStack"></p>
+                                            </span>
+                        </td>
+                        <td>
+                            <span th:if="${expEntry.state == 'STARTING'}">
+                                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
+                                            </span>
+                            <span th:if="${expEntry.state == 'STOPPING'}">
+                                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="stopping..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-red" aria-hidden="true"></i></a>
+                                            </span>
+                            <span th:if="${expEntry.state == 'CREATE_IN_PROGRESS'}">
+                                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
+                                            </span>
+                            <span th:if="${expEntry.state == 'UPDATE_IN_PROGRESS'}">
+                                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="resources allocation in progress..."><i class="fa fa-circle-o-notch fa-spin fa-fw btn-fa-loading" aria-hidden="true"></i></a>
+                                            </span>
+                            <span th:if="${expEntry.state == 'ERROR'}">
+                                                <a th:href="@{/update_experiment/{teamId}/{expId}/{stack_id}(teamId = ${expEntry.teamId}, expId = ${expEntry.id}, stack_id = ${expEntry.stack_id})}"><button type="button" data-tooltip="tooltip" class="btn btn-standard" data-placement="bottom" title="Modify this experiment"><i class="fa fa-pencil"></i></button></a>
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id} + '/' + ${csrfToken} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                            </span>
+                            <th:block th:if="${expEntry.platform == 0}">
+                                                <span th:if="${expEntry.state == 'RUNNING'}">
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
+                                            </span>
+                                <span th:if="${expEntry.state == 'STOPPED'}">
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id} + '/' + ${csrfToken} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                            </span>
+                            </th:block>
+                            <th:block th:if="${expEntry.platform == 1}">
+                                            <span th:if="${expEntry.state == 'RUNNING'}">
+                                                <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#stopExperiment" th:attr="data-name=${expEntry.name},data-stop='/stop_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.id} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Stop this experiment"><i class="fa fa-stop btn-fa-green"></i></button>
+                                            </span>
+                                <span th:if="${expEntry.state == 'STOPPED'}">
+                                            <button type="button" data-tooltip="tooltip" class="btn btn-standard" data-toggle="modal" data-target="#removeExperiment" th:attr="data-name=${expEntry.name},data-remove='/remove_experiment/' + ${expEntry.teamName} + '/' + ${expEntry.teamId} + '/' + ${expEntry.id} + '/' + ${csrfToken} + '/' + ${expEntry.stack_id}" data-placement="bottom" title="Are you sure you want to remove the experiment from this team?"><i class="fa fa-trash btn-fa-red"></i></button>
+                                            </span>
+                            </th:block>
+                        </td>
+                    </th:block>
+                </tr>
+                </tbody>
+            </table>
+            <div class="checkbox">
+                <label><input type="checkbox" disabled="disabled" id="ExperimentCheckBox" onchange="document.getElementById('DeleteButton').disabled = !this.checked;" /> <strong><span>Delete all experiments.</span></strong></label>
+            </div>
+        </div>
+    </div> <!-- panel primary -->
+    <div class="form-group">
+        <button type="button" class="btn btn-danger" disabled="disabled" id="DeleteButton" onclick="deleteAccount()">Delete</button>
+    </div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+</body>
+</html>
