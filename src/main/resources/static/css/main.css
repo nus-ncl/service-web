@@ -3000,6 +3000,8 @@ h26 {
     transition: all 1s ease;
 }
 
+.space { margin-top: 180px; }
+
 /*.slide-container{
     width: 300px;
     height: 600px;

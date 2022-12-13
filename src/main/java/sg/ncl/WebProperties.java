@@ -22,4 +22,5 @@ public class WebProperties {
     private String sessionJwtToken;
     private String sessionOsToken;
     private String sessionUserAccount;
+    private String sessionUserUid;
 }

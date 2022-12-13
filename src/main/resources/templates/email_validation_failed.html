@@ -8,17 +8,18 @@
 <body class="mybg loginbackground">
 <div th:replace="fragments/login_navigation :: loginnav"></div>
 <div class="container">
-    <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-10">
-            <h3 th:text="#{email.notVlaidated.header}">We Are Sorry!</h3>
-            <p>Verification of your email <strong><span th:text="*{emailAddress}">abc@example.com</span></strong> failed.</p>
-            <p>Please try again later or send an email to <a th:href="#{support.email.link}" th:text="#{support.email}"></a>.</p>
-            <p>We are sorry for the inconvenience.</p>
-        </div> <!-- col -->
-        <div class="col-md-1"></div>
-    </div> <!-- row -->
+        <div class="row">
+            <div class="col-md-10">
+                <div class="space">
+                    <h3 th:text="#{email.notVlaidated.header}">We Are Sorry!</h3>
+                    <p><strong th:text="${errorMsg}"></strong></p>
+                    <p>We are sorry for the inconvenience.</p>
+                    <p>If problem persists, please send an email to <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
+                </div>
+            </div> <!-- col -->
+        </div> <!-- row -->
 </div> <!-- container -->
 <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
+

@@ -76,6 +76,10 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint;
     }
 
+    public String getResendEmailUrl(String Username) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/users/" + Username + "/resend";
+    }
+
     public String getRegUidAvailaibleUrl(String Username) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "?name=" + Username;
     }
@@ -86,14 +90,6 @@ public class ConnectionProperties {
 
     public String getSioExpUrl() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
-    }
-
-    //------------------------------------
-    // DELETE ACCOUNTS DETAILS
-    //-------------------------------------
-
-    public String deleteUserAccount(String id) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + "delete/" + "account/" + id;
     }
 
     //-------------------------------------
@@ -462,7 +458,7 @@ public class ConnectionProperties {
     }
 
     public String getPasswordResetURI() {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + credEndpoint + "/password";
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/password";
     }
 
     //-------------------------------------

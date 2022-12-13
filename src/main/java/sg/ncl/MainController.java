@@ -557,9 +557,9 @@ public class MainController {
         return "accessexperiment";
     }
 
-    @RequestMapping("/resource2")
-    public String resource2() {
-        return "resource2";
+    @RequestMapping("/scholarship")
+    public String scholarship() {
+        return "scholarship";
     }
 
     @RequestMapping("/tutorials")
@@ -750,79 +750,19 @@ public class MainController {
         return LOGIN_PAGE;
     }
 
-//    @RequestMapping(value = "/emailVerification", params = {ID, EMAIL, "key"})
-//    public String verifyEmail(@NotNull @RequestParam(ID) final String id,
-//                              @NotNull @RequestParam(EMAIL) final String emailBase64,
-//                              @NotNull @RequestParam("key") final String key) {
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//        ObjectNode keyObject = objectMapper.createObjectNode();
-//        keyObject.put("key", key);
-//
-//        HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
-//        restTemplate.setErrorHandler(new MyResponseErrorHandler());
-//
-//        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + id + "/emails/" + emailBase64);
-//        ResponseEntity<String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
-//
-//        if (RestUtil.isError(response.getStatusCode())) {
-//            log.error("Activation of user {} failed.", id);
-//            return "email_validation_failed";
-//        } else {
-//            log.info("Activation of user {} completed.", id);
-//            return "email_validation_ok";
-//        }
-//    }
-
-
     @RequestMapping(value = "/emailVerification", params = {ID, EMAIL, "key"})
     public String verifyEmail(@NotNull @RequestParam(ID) final String id,
                               @NotNull @RequestParam(EMAIL) final String emailBase64,
                               @NotNull @RequestParam("key") final String key , Model model) {
-        VerifyEmailInfo form = new VerifyEmailInfo();
+        LoginForm form = new LoginForm();
         form.setType("create");
         form.setKey(key);
         form.setUuid(id);
         form.setEmail(emailBase64);
 
-        model.addAttribute("verifyEmailInfo", form);
-        return "email_ssh_verify";
+        model.addAttribute("loginForm", form);
+        return LOGIN_PAGE;
     }
-
-    @PostMapping("/ssh_email_verify")
-    public String sshEmailVerify(@ModelAttribute("verifyEmailInfo") VerifyEmailInfo vEmailInfo
-    ) throws WebServiceRuntimeException {
-        // 1. call verifyEmail
-        // 2. check return boolean
-        log.info("entering to ssh_email_verify");
-         HttpHeaders headers = new HttpHeaders();
-         headers.setContentType(MediaType.APPLICATION_JSON);
-
-         ObjectNode keyObject = objectMapper.createObjectNode();
-         keyObject.put("key", vEmailInfo.getKey());
-         keyObject.put("password", vEmailInfo.getPassword());
-         keyObject.put("type", vEmailInfo.getType());
-
-         log.info("entering to ssh_email_verify key Obj : {}",keyObject.toString());
-
-          HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
-          restTemplate.setErrorHandler(new MyResponseErrorHandler());
-          log.info("entering to ssh_email_verify URL : {}",properties.getSioRegUrl() + USERS + vEmailInfo.getUuid() + "/emails/" + vEmailInfo.getEmail());
-           UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + vEmailInfo.getUuid() + "/emails/" + vEmailInfo.getEmail());
-           ResponseEntity<String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
-            log.info("verfiy response value : {}",response.getBody());
-
-            if (response.getBody().equals("false")) {
-                log.error("Activation of user {} failed.", vEmailInfo.getUuid());
-               return "email_validation_failed";
-            } else {
-                log.info("Activation of user {} completed.", vEmailInfo.getUuid());
-                return "email_validation_ok";
-        }
-    }
-
 
     @PostMapping(value = "/login")
     public String loginSubmit(
@@ -831,6 +771,57 @@ public class MainController {
             BindingResult bindingResult,
             Model model,
             HttpSession session, final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+
+        if(!loginForm.getKey().isEmpty() && !loginForm.getLoginPassword().isEmpty() && !loginForm.getType().isEmpty())
+        {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            ObjectNode keyObject = objectMapper.createObjectNode();
+            keyObject.put("key", loginForm.getKey());
+            keyObject.put("password", loginForm.getLoginPassword());
+            keyObject.put("type", loginForm.getType());
+
+            HttpEntity<String> request = new HttpEntity<>(keyObject.toString(), headers);
+            restTemplate.setErrorHandler(new MyResponseErrorHandler());
+
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getSioRegUrl() + USERS + loginForm.getUuid() + "/emails/" + loginForm.getEmail());
+            ResponseEntity<String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.PUT, request, String.class);
+            log.info("verfiy response value : {}",response.getBody());
+
+            String responseBody = response.getBody();
+            JSONObject jsonObject = new JSONObject(responseBody);
+
+            if (RestUtil.isError(response.getStatusCode())) {
+
+                log.error("Activation of user {} failed.", loginForm.getUuid());
+                loginForm.setKey(null);
+                loginForm.setType(null);
+                if(jsonObject.getString("message").equals("Invalid Password"))
+                    model.addAttribute("errorMsg", jsonObject.getString("message") + ". Please enter correct password");
+                else if(jsonObject.getString("message").contains("has already been verified"))
+                    model.addAttribute("errorMsg", jsonObject.getString("message") + " Please proceed to Login.");
+                else
+                    model.addAttribute("errorMsg", jsonObject.getString("message"));
+                return "email_validation_failed";
+            } else {
+
+                if(jsonObject.getBoolean("status") == false) {
+                    log.error("Activation of user {} failed.", loginForm.getUuid());
+                    loginForm.setKey(null);
+                    loginForm.setType(null);
+                    model.addAttribute("errorMsg", jsonObject.getString("message"));
+                    return "email_validation_failed";
+                }
+                else if(jsonObject.getBoolean("status") == true)
+                {
+                    log.info("Activation of user {} completed.", loginForm.getUuid());
+                    loginForm.setKey(null);
+                    loginForm.setType(null);
+                   // return "email_validation_ok";
+                }
+            }
+        }
 
         if (bindingResult.hasErrors()) {
             loginForm.setErrorMsg(ERR_INVALID_CREDENTIALS);
@@ -858,12 +849,12 @@ public class MainController {
 
         try {
             response = restTemplate.exchange(properties.getSioAuthUrl(), HttpMethod.POST, request, String.class);
+            log.info("Login Api response = {}", response);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio authentication service: {}", e);
             loginForm.setErrorMsg(ERR_SERVER_OVERLOAD);
             return LOGIN_PAGE;
         }
-
         String jwtTokenString = response.getBody();
         if (jwtTokenString == null || jwtTokenString.isEmpty()) {
             log.warn("login failed for {}: unknown response code", loginForm.getLoginEmail());
@@ -1024,6 +1015,7 @@ public class MainController {
         ResponseEntity<String> response = null;
         try {
             response = restTemplate.exchange(properties.getPasswordResetURI(), HttpMethod.PUT, request, String.class);
+            log.info("Password reset response : {}", response);
         } catch (RestClientException e) {
             log.warn("Error connecting to sio for password reset! {}", e);
             passwordResetForm.setErrMsg("Cannot connect to server! Please try again later.");
@@ -1118,6 +1110,26 @@ public class MainController {
         return SIGNUP_PAGE;
     }
 
+    @RequestMapping(path = "/resendEmail")
+    @ResponseBody
+    public String resendEmailVerify(HttpSession session, Model model) throws WebServiceRuntimeException {
+
+        String userUid = session.getAttribute(webProperties.getSessionUserUid()).toString();
+        log.info("Hello userUid = {}", userUid);
+        String responseMsg = null;
+        HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+        ResponseEntity<String> response = restTemplate.exchange(properties.getResendEmailUrl(userUid), HttpMethod.PUT, request, String.class);
+        String responseBody = response.getBody();
+        log.info("resend Email Api response : {}", responseBody);
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            log.info("Resend email verification has error {}", response.getStatusCode());
+        } else {
+                responseMsg = "Email sent successfully";
+            }
+        return responseMsg;
+    }
+
     @RequestMapping(path = "/checkUsername", params = {"username"})
     @ResponseBody
     public String checkUsername(
@@ -1158,7 +1170,7 @@ public class MainController {
             @Valid
             @ModelAttribute(SIGNUP_MERGED_FORM) SignUpMergedForm signUpMergedForm,
             BindingResult bindingResult,
-            final RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+            final RedirectAttributes redirectAttributes, HttpSession session) throws WebServiceRuntimeException {
 
         if (bindingResult.hasErrors() || !signUpMergedForm.getIsValid()) {
            // log.warn("Register form has errors {}", signUpMergedForm.toString());
@@ -1225,9 +1237,9 @@ public class MainController {
         mainObject.put("user", userFields);
         mainObject.put("uid", signUpMergedForm.getUserName());
 
-
         try {
             registerUser(mainObject);
+            session.setAttribute(webProperties.getSessionUserUid(), signUpMergedForm.getUserName());
             return "redirect:/register_to_ncl_application_submitted";
         } catch ( UsernameAlreadyExistsException | EmailAlreadyExistsException | InvalidPasswordException | WebServiceRuntimeException e) {
             redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
@@ -1321,102 +1333,6 @@ public class MainController {
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
-    }
-    //-------------------------Delete User Page--------------------------------
-
-    @GetMapping(value = "/delete_user")
-    public String deleteUser(Model model, HttpSession session) throws WebServiceRuntimeException {
-        log.info("Hello inside delete");
-//========================================= Show teams details =======================================
-        TeamManager2 teamManager2 = new TeamManager2();
-
-        String userId = session.getAttribute("id").toString();
-        HttpEntity<String> request = createHttpEntityHeaderOnly();
-        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getUser(userId));
-        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
-        String responseBody = response.getBody();
-
-        JSONObject object = new JSONObject(responseBody);
-        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
-
-        String userEmail = object.getJSONObject(USER_DETAILS).getString(EMAIL);
-
-        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
-            String teamId = teamIdsJsonArray.get(i).toString();
-            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
-            ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
-            String teamResponseBody = teamResponse.getBody();
-
-            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(userId, teamResponseBody);
-            if (joinRequestTeam != null) {
-                teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
-            } else {
-                Team2 team2 = extractTeamInfo(teamResponseBody);
-                teamManager2.addTeamToTeamMap(team2);
-            }
-        }
-
-        model.addAttribute("userEmail", userEmail);
-        model.addAttribute("teamMap2", teamManager2.getTeamMap());
-
-//================================== Show experiment details ==========================================================
-        List<StatefulExperiment> statefulExperimentList = new ArrayList<>();
-        HttpEntity<String> requestUid = getDeterUid(model, session);
-
-        // get list of teamIds
-        ResponseEntity <String> userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, requestUid, String.class);
-
-        object = new JSONObject(userRespEntity.getBody());
-        teamIdsJsonArray = object.getJSONArray(TEAMS);
-
-        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
-            String teamId = teamIdsJsonArray.get(i).toString();
-
-            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
-            ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
-            String teamResponseBody = teamResponse.getBody();
-
-            if (!isMemberJoinRequestPending(session.getAttribute("id").toString(), teamResponseBody)) {
-                List<StatefulExperiment> myExpList = getStatefulExperiments(teamId);
-                if (!myExpList.isEmpty()) {
-                    statefulExperimentList.addAll(myExpList);
-                }
-            }
-        }
-
-        model.addAttribute("experimentList", statefulExperimentList);
-        model.addAttribute("experimentForm", new ExperimentForm());
-
-        return "delete_user";
-    }
-
-    @GetMapping(value = "/delete_account")
-    public String delete_account() {
-        return "delete_account";
-    }
-
-    @PostMapping(value = "/deleteAccountByUser")
-    public String deleteAccountByUser(HttpSession session, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
-        String responseMsg;
-        HttpEntity<String> request = createHttpEntityWithOsToken();
-        log.info("Hello Delete url : {}",properties.deleteUserAccount(session.getAttribute("id").toString()));
-        log.info("Hello Delete request : {}", request);
-        ResponseEntity<String> response = restTemplate.exchange(properties.deleteUserAccount(session.getAttribute("id").toString()), HttpMethod.DELETE, request, String.class);
-        String responseBody = response.getBody();
-        log.info("Hello Delete response : {}", responseBody);
-//            JSONObject jsonObject = new JSONObject(responseBody);
-//            String uidResponse = jsonObject.getString("message");
-//            if (uidResponse.equals("username not found")) {
-//                responseMsg = "Username " + username + " is available";
-//            } else if (uidResponse.equals("username occupied")) {
-//                responseMsg = "This username " + username + " is taken. Please select other username";
-//            } else {
-//                responseMsg = "problem connection";
-//                log.warn("Registration connection fail");
-//                throw new WebServiceRuntimeException(ERR_SERVER_OVERLOAD);
-//            }
-//        }
-        return "Hello";
     }
 
     //--------------------------Account Settings Page--------------------------
@@ -5675,7 +5591,10 @@ public class MainController {
      * @return A success page otherwise an error page if the user tries to access this page directly
      */
     @RequestMapping("/register_to_ncl_application_submitted")
-    public String registerationAppSubmit() { return "register_to_ncl_application_submitted"; }
+    public String registerationAppSubmit()
+    {
+        return "register_to_ncl_application_submitted";
+    }
 
     @RequestMapping("/email_not_validated")
     public String emailNotValidated() {
@@ -6420,13 +6339,14 @@ public class MainController {
     }
 
     private void removeSessionVariables(HttpSession session) {
-        log.info("removing session variables: email: {}, userid: {}, user first name: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionUserId()), session.getAttribute(webProperties.getSessionUserFirstName()));
+        log.info("removing session variables: email: {}, userid: {}, user first name: {}", session.getAttribute(webProperties.getSessionEmail()), session.getAttribute(webProperties.getSessionUserId()), session.getAttribute(webProperties.getSessionUserFirstName()), session.getAttribute(webProperties.getSessionUserUid()));
         session.removeAttribute(webProperties.getSessionEmail());
         session.removeAttribute(webProperties.getSessionUserId());
         session.removeAttribute(webProperties.getSessionUserFirstName());
         session.removeAttribute(webProperties.getSessionRoles());
         session.removeAttribute(webProperties.getSessionJwtToken());
         session.removeAttribute(webProperties.getSessionOsToken());
+        session.removeAttribute(webProperties.getSessionUserUid());
         session.invalidate();
     }
 
