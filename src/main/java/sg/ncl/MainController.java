@@ -1115,7 +1115,6 @@ public class MainController {
     public String resendEmailVerify(HttpSession session, Model model) throws WebServiceRuntimeException {
 
         String userUid = session.getAttribute(webProperties.getSessionUserUid()).toString();
-        log.info("Hello userUid = {}", userUid);
         String responseMsg = null;
         HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
         ResponseEntity<String> response = restTemplate.exchange(properties.getResendEmailUrl(userUid), HttpMethod.PUT, request, String.class);
@@ -1333,6 +1332,108 @@ public class MainController {
         } catch (IOException e) {
             throw new WebServiceRuntimeException(e.getMessage());
         }
+    }
+    //-------------------------Delete User Page--------------------------------
+    @RequestMapping("/delete_status")
+    public String delete_status() {
+        return "delete_status";
+    }
+
+
+    @GetMapping(value = "/delete_user")
+    public String deleteUser(Model model, HttpSession session) throws WebServiceRuntimeException {
+
+//========================================= Show teams details =======================================
+        TeamManager2 teamManager2 = new TeamManager2();
+
+        String userId = session.getAttribute("id").toString();
+        HttpEntity<String> request = createHttpEntityHeaderOnly();
+        UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getUser(userId));
+        ResponseEntity <String> response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
+        String responseBody = response.getBody();
+
+        JSONObject object = new JSONObject(responseBody);
+        JSONArray teamIdsJsonArray = object.getJSONArray(TEAMS);
+
+        String userEmail = object.getJSONObject(USER_DETAILS).getString(EMAIL);
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody();
+
+            Team2 joinRequestTeam = extractTeamInfoUserJoinRequest(userId, teamResponseBody);
+            if (joinRequestTeam != null) {
+                teamManager2.addTeamToUserJoinRequestTeamMap(joinRequestTeam);
+            } else {
+                Team2 team2 = extractTeamInfo(teamResponseBody);
+                teamManager2.addTeamToTeamMap(team2);
+            }
+        }
+
+        model.addAttribute("userEmail", userEmail);
+        model.addAttribute("teamMap2", teamManager2.getTeamMap());
+
+//================================== Show experiment details ==========================================================
+        List<StatefulExperiment> statefulExperimentList = new ArrayList<>();
+        HttpEntity<String> requestUid = getDeterUid(model, session);
+
+        // get list of teamIds
+        ResponseEntity <String> userRespEntity = restTemplate.exchange(properties.getUser(session.getAttribute("id").toString()), HttpMethod.GET, requestUid, String.class);
+
+        object = new JSONObject(userRespEntity.getBody());
+        teamIdsJsonArray = object.getJSONArray(TEAMS);
+
+        for (int i = 0; i < teamIdsJsonArray.length(); i++) {
+            String teamId = teamIdsJsonArray.get(i).toString();
+
+            HttpEntity<String> teamRequest = createHttpEntityHeaderOnly();
+            ResponseEntity <String> teamResponse = restTemplate.exchange(properties.getTeamById(teamId), HttpMethod.GET, teamRequest, String.class);
+            String teamResponseBody = teamResponse.getBody();
+
+            if (!isMemberJoinRequestPending(session.getAttribute("id").toString(), teamResponseBody)) {
+                List<StatefulExperiment> myExpList = getStatefulExperiments(teamId);
+                if (!myExpList.isEmpty()) {
+                    statefulExperimentList.addAll(myExpList);
+                }
+            }
+        }
+
+        model.addAttribute("experimentList", statefulExperimentList);
+        model.addAttribute("experimentForm", new ExperimentForm());
+
+        return "delete_user";
+    }
+
+    @GetMapping(value = "/delete_account")
+    public String delete_account() {
+        return "delete_account";
+    }
+
+    @PostMapping(value = "/deleteAccountByUser")
+    public String deleteAccountByUser(Model model, HttpSession session, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
+        String deleteMsg, goodByeMsg;
+        HttpEntity<String> request = createHttpEntityWithOsToken();
+        log.info("Hello Delete url : {}",properties.deleteUserAccount(session.getAttribute("id").toString()));
+        log.info("Hello Delete request : {}", request);
+        ResponseEntity<String> response = restTemplate.exchange(properties.deleteUserAccount(session.getAttribute("id").toString()), HttpMethod.DELETE, request, String.class);
+        String responseBody = response.getBody();
+        log.info("Hello Delete response : {}", responseBody);
+              JSONObject jsonObject = new JSONObject(responseBody);
+              String Response = jsonObject.getString("message");
+
+              if (response.getStatusCode().equals(200)) {
+                  deleteMsg = "Your account was deleted successfully. All your data was removed from our services.Thank you for using NCL";
+                  goodByeMsg = "We are sad with your good bye. But hopefully it's just a while.";
+                  model.addAttribute("errorMsg1", deleteMsg);
+                  model.addAttribute("errorMsg2", goodByeMsg);
+              }
+              else {
+                  deleteMsg = Response;
+                  model.addAttribute("errorMsg1", deleteMsg);
+              }
+        return delete_status();
     }
 
     //--------------------------Account Settings Page--------------------------
@@ -2717,7 +2818,7 @@ public class MainController {
         Image saveImageForm = new Image();
 
         String teamName = invokeAndExtractTeamInfo(teamId).getName();
-        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId), 0);
 
         // experiment may have many nodes
         // extract just the particular node details to display
@@ -2808,25 +2909,30 @@ public class MainController {
         return REDIRECT_EXPERIMENTS;
     }
 
-    @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}/{csrfToken}/{stack_id}")
+    @RequestMapping("/remove_experiment/{teamName}/{teamId}/{expId}/{stack_id}")
     public String removeExperiment(@PathVariable String teamName, @PathVariable String teamId,
-                                   @PathVariable String expId, @PathVariable String csrfToken, @PathVariable String stack_id,
+                                   @PathVariable String expId, @PathVariable String stack_id,
                                    final RedirectAttributes redirectAttributes,
                                    HttpSession session) throws WebServiceRuntimeException {
         // ensure experiment is stopped first
         // fix for Cross site request forgery //
-        if(!(csrfToken.equals(session.getAttribute(CSRF_TOKEN).toString())))
-        {
-            log.warn("Permission denied to remove experiment: {} for team: {} Invalid Token detected");
-            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
-            return REDIRECT_UNAUTHOURIZED_ACCESS;
-        }
-        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+//        if(!(csrfToken.equals(session.getAttribute(CSRF_TOKEN).toString())))
+//        {
+//            log.warn("Permission denied to remove experiment: {} for team: {} Invalid Token detected");
+//            redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
+//            return REDIRECT_UNAUTHOURIZED_ACCESS;
+//        }
+        int platform;
 
+        if(stack_id != null && !stack_id.isEmpty())
+            platform = 1;
+        else
+            platform = 0;
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId), platform);
         Team2 team = invokeAndExtractTeamInfo(teamId);
-
         // check valid authentication to remove experiments
         // either admin, experiment creator or experiment owner
+
         if (!validateIfAdmin(session) && !realization.getUserId().equals(session.getAttribute("id").toString()) && !team.getOwner().getId().equals(session.getAttribute(webProperties.getSessionUserId()))) {
             log.warn("Permission denied when remove Team:{}, Experiment: {} with User: {}, Role:{}", teamId, expId, session.getAttribute("id"), session.getAttribute(webProperties.getSessionRoles()));
             redirectAttributes.addFlashAttribute(MESSAGE, "An error occurred while trying to remove experiment;" + permissionDeniedMessage);
@@ -2901,8 +3007,13 @@ public class MainController {
             redirectAttributes.addFlashAttribute(MESSAGE, "Invalid Token detected");
             return REDIRECT_UNAUTHOURIZED_ACCESS;
         }
+        int platform;
         // ensure experiment is stopped first before starting
-        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+        if(stack_id != null && !stack_id.isEmpty())
+            platform = 1;
+        else
+            platform = 0;
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId), platform);
 
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to start experiment: {} for team: {}", realization.getExperimentName(), teamName);
@@ -3010,8 +3121,13 @@ public class MainController {
                                  @PathVariable String stack_id, Model model, final RedirectAttributes redirectAttributes,
                                  HttpSession session) throws WebServiceRuntimeException {
 
+        int platform;
         // ensure experiment is active first before stopping
-        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+        if(stack_id != null && !stack_id.isEmpty())
+            platform = 1;
+        else
+            platform = 0;
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId), platform);
 
         if (isNotAdminAndNotInTeam(session, realization)) {
             log.warn("Permission denied to stop experiment: {} for team: {}", realization.getExperimentName(), teamName);
@@ -3063,7 +3179,7 @@ public class MainController {
         Experiment2 editExperiment = extractExperiment(response.getBody());
         editExperiment.setStack_id(stack_id);
         if(editExperiment.getPlatform() == 0) {
-            Realization realization = invokeAndExtractRealization(editExperiment.getTeamName(), Long.parseLong(expId));
+            Realization realization = invokeAndExtractRealization(editExperiment.getTeamName(), Long.parseLong(expId), 0);
 
             if (!realization.getState().equals(RealizationState.NOT_RUNNING.toString())) {
                 log.warn("Trying to modify Team: {}, Experiment: {} with State: {} that is still in progress?", teamId, expId, realization.getState());
@@ -3203,7 +3319,7 @@ public class MainController {
                                   final RedirectAttributes redirectAttributes
     ) throws WebServiceRuntimeException {
 
-        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId));
+        Realization realization = invokeAndExtractRealization(teamName, Long.parseLong(expId), 0);
 
         if(!realization.getState().equals(RealizationState.RUNNING.toString())) {
             log.warn("Trying to request internet for the experiment {} from team {} with state {}", expId, teamName,realization.getState());
@@ -3245,7 +3361,7 @@ public class MainController {
     public String vncAccessNode(Model model, HttpSession session, RedirectAttributes redirectAttributes,
                                 @PathVariable String teamName, @PathVariable Long expId, @PathVariable String nodeId,
                                 @NotNull @RequestParam("portNum") Integer portNum) throws WebServiceRuntimeException, NoSuchAlgorithmException {
-        Realization realization = invokeAndExtractRealization(teamName, expId);
+        Realization realization = invokeAndExtractRealization(teamName, expId, 0);
         if (!checkPermissionRealizeExperiment(realization, session)) {
             log.warn("Permission denied to access experiment {} node for team: {}", realization.getExperimentName(), teamName);
             redirectAttributes.addFlashAttribute(MESSAGE, permissionDeniedMessage);
@@ -6135,14 +6251,14 @@ public class MainController {
             return sshinfo;
         }
 
-    private Realization invokeAndExtractRealization(String teamName, Long id) {
+    private Realization invokeAndExtractRealization(String teamName, Long id, int platform) {
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity <String> response = null;
 
         try {
-            log.info("retrieving the latest exp status: {}", properties.getRealizationByTeam(teamName, id.toString()));
-            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getRealizationByTeam(teamName, id.toString()));
+            log.info("retrieving the latest exp status: {}", properties.getRealizationByTeam(teamName, id.toString(), platform));
+            UriComponentsBuilder uriComponents = UriComponentsBuilder.fromUriString(properties.getRealizationByTeam(teamName, id.toString(), platform));
             response = restTemplate.exchange(uriComponents.toUriString(), HttpMethod.GET, request, String.class);
         } catch (Exception e) {
             return getCleanRealization();

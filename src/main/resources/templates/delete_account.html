@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Delete User</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+</head>
+<body class="mybg loginbackground">
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p> </p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="container">
+    <p>&nbsp;</p>
+    <div id="confirmDelete" class="row dashpanel">
+        <h2 class="team-heading team-heading-current-team" >Delete Account</h2>
+        <p>Are you sure you'd like to delete your NCL account? </p>
+        <p>This will permanently delete all your content and personal information and you will no longer will be able to use any of our facilities.</p>
+        <p><FONT COLOR="RED">! You cannot delete your account , if you are owner of the team </FONT></p>
+        <p>
+
+        </p>
+        <form  method="post" action="#" th:action="@{/deleteAccountByUser}" role="form">
+            <fieldset>
+                <button type="submit" class="btn btn-danger" id="DeleteAccButton">Delete</button>
+            </fieldset>
+        </form>
+    </div>
+
+    <div>
+
+    </div>
+
+</div> <!-- container -->
+<div th:replace="fragments/footer:: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag"/>
+
+</body>
+</html>

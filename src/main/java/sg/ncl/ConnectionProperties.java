@@ -92,6 +92,14 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
 
+    //------------------------------------
+    // DELETE ACCOUNTS DETAILS
+    //-------------------------------------
+
+    public String deleteUserAccount(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + "delete/" + "account/" + id;
+    }
+
     //-------------------------------------
     // CREDENTIALS
     //-------------------------------------
@@ -218,8 +226,8 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + teamId + "/" + expEndpoint;
     }
 
-    public String getRealizationByTeam(String teamName, String expId) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + EXPERIMENT + expId;
+    public String getRealizationByTeam(String teamName, String expId, Integer platform) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + realEndpoint + "/team/" + teamName + EXPERIMENT + expId + "/" + platform;
     }
 
     public String getDeleteExperiment(String teamId, String expId, String stackId) {
