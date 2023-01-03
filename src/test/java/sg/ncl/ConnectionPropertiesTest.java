@@ -13,6 +13,8 @@ import sg.ncl.testbed_interface.TeamVisibility;
 
 import javax.inject.Inject;
 
+import java.util.Random;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -184,7 +186,9 @@ public class ConnectionPropertiesTest {
     public void testGetRealizationByTeam() throws Exception {
         String teamName = RandomStringUtils.randomAlphanumeric(20);
         String expId = RandomStringUtils.randomAlphanumeric(20);
-        assertThat(properties.getRealizationByTeam(teamName, expId)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRealEndpoint() + "/team/" + teamName + "/experiment/" + expId);
+        Random rand = new Random();
+        int platform = rand.nextInt() % 2;
+        assertThat(properties.getRealizationByTeam(teamName, expId, platform)).isEqualTo("http://" + properties.getSioAddress() + ":" + properties.getSioPort() + "/" + properties.getRealEndpoint() + "/team/" + teamName + "/experiment/" + expId + "/" + platform);
     }
 
     @Test

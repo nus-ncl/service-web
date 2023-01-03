@@ -1065,3 +1065,7 @@ function loadImage(imgName, imgId, imgType) {
          }
     });
 }
+
+//function deleteAccount() {
+//    location.href = "delete_account.html";
+//}
