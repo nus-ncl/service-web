@@ -30,7 +30,7 @@
                     <th th:text="#{admin.users.header.team}">Team</th>
                     <th th:text="#{admin.users.header.status}">Status</th>
                     <th th:text="#{admin.users.header.applicationDate}">Application Date</th>
-                    <th><!-- Actions --></th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -76,6 +76,9 @@
                         <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = freeze)}" th:if="${user.status} == 'APPROVED'">Ban</a>
                         <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = unfreeze)}" th:if="${user.status} == 'FROZEN'">Unban</a>
                         <a th:href="@{/admin/users/{userId}/remove/(userId=${user.id})}" th:if="${#lists.isEmpty(userToTeamMap.get(user.id))} and (${user.status} == 'CREATED' or ${user.status} == 'PENDING')">Remove</a>
+                    </td>
+                    <td>
+                        <a th:href="@{/admin/users/{userId}/(userId=${user.id}, action = delete)}">Delete</a>
                     </td>
                 </tr>
                 </tbody>
