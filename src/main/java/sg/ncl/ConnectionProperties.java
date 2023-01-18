@@ -100,6 +100,12 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + "delete/" + "account/" + id;
     }
 
+    // Delete account by Admin
+
+    public String deleteUserAccountByAdmin(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/admin/" + "delete/" + "account/" + id;
+    }
+
     //-------------------------------------
     // CREDENTIALS
     //-------------------------------------

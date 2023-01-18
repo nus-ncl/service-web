@@ -1415,11 +1415,8 @@ public class MainController {
     public String deleteAccountByUser(Model model, HttpSession session, RedirectAttributes redirectAttributes) throws WebServiceRuntimeException {
         String deleteMsg, goodByeMsg;
         HttpEntity<String> request = createHttpEntityWithOsToken();
-        log.info("Hello Delete url : {}",properties.deleteUserAccount(session.getAttribute("id").toString()));
-        log.info("Hello Delete request : {}", request);
         ResponseEntity<String> response = restTemplate.exchange(properties.deleteUserAccount(session.getAttribute("id").toString()), HttpMethod.DELETE, request, String.class);
         String responseBody = response.getBody();
-        log.info("Hello Delete response : {}", responseBody);
               JSONObject jsonObject = new JSONObject(responseBody);
               String Response = jsonObject.getString("message");
 
@@ -5476,12 +5473,58 @@ public class MainController {
         // check if user status is frozen before unfreeze
         else if ("unfreeze".equals(action) && user.getStatus().equals(UserStatus.FROZEN.toString())) {
             return unfreezeUser(user, redirectAttributes);
-        } else {
+        }
+        //Delete user
+        else if ("delete".equals(action)) {
+            return deleteUserByAdmin(user, redirectAttributes);
+        }
+        else {
             log.warn("Error in freeze/unfreeze user {}: failed to {} user with status {}", userId, action, user.getStatus());
             redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + "failed to " + action + USER_STR + user.getEmail() + " with status " + user.getStatus());
             return "redirect:/admin/users";
         }
     }
+
+
+    private String deleteUserByAdmin(final User2 user, RedirectAttributes redirectAttributes) throws IOException {
+        log.info("Deleting user {}, email {}", user.getId(), user.getEmail());
+
+        HttpEntity<String> request = createHttpEntityWithOsToken();
+        ResponseEntity <String> response = restTemplate.exchange(properties.deleteUserAccountByAdmin(user.getId()),
+                HttpMethod.DELETE, request, String.class);
+        String responseBody = response.getBody();
+
+        if (RestUtil.isError(response.getStatusCode())) {
+            MyErrorResource error = objectMapper.readValue(responseBody, MyErrorResource.class);
+            ExceptionState exceptionState = ExceptionState.parseExceptionState(error.getError());
+
+            switch (exceptionState) {
+                case USER_NOT_FOUND_EXCEPTION:
+                    log.warn("Failed to delete user {}: user not found", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + USER_STR + user.getEmail() + NOT_FOUND);
+                    break;
+                case USER_IS_NOT_DELETABLE_EXCEPTION:
+                    log.warn("Failed to delete user {}: User account Failed to delete by admin. {}", user.getId(), error.getMessage());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + error.getMessage());
+                    break;
+                case FORBIDDEN_EXCEPTION:
+                    log.warn("Failed to delete user {}: must be an Admin", user.getId());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERROR_PREFIX + " permission denied.");
+                    break;
+                default:
+                    log.warn("Failed to delete user {}: {}", user.getId(), exceptionState.getExceptionName());
+                    redirectAttributes.addFlashAttribute(MESSAGE, ERR_SERVER_OVERLOAD);
+                    break;
+            }
+            return "redirect:/admin/users";
+        } else {
+            // good
+            log.info("User {} has been deleted", user.getId());
+            redirectAttributes.addFlashAttribute(MESSAGE_SUCCESS, USER_PREFIX + user.getEmail() + " has been deleted.");
+            return "redirect:/admin/users";
+        }
+    }
+
 
     private String freezeUser(final User2 user, RedirectAttributes redirectAttributes) throws IOException {
         log.info("Freezing user {}, email {}", user.getId(), user.getEmail());
