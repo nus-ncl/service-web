@@ -70,6 +70,7 @@
                             <span class="account-change-success" th:if="${editCountry eq 'success'}"><i class="fa fa-check"></i> <span th:text="#{acc.info.countrySuccess}">TEXT</span></span>
                             <span class="account-change-fail" th:if="${editCountry eq 'fail'}"><i class="fa fa-times"></i> <span th:text="#{acc.info.countryFail}">TEXT</span></span>
                         </div>
+
                         <!--
                         <span class="password-change-mismatch" th:if="${editPassword eq 'unsuccess'}"><i class="fa fa-exclamation-triangle"></i> <span th:text="#{acc.info.pwdEmpty}">Password cannot be empty.</span></span>
                         <div class="form-group">
@@ -148,10 +149,12 @@
                     </fieldset>
                 </form>
             </div> <!-- row -->
+            <div th:if="${(session.roles != null) and (session.roles != 'ADMIN')}">
             <div class="row dashpanel">
                 <h2 class="team-heading team-heading-current-team">Delete Account</h2>
                 <p>This will permanently delete all your content and personal information and you will no longer will be able to use any of our facilities.</p>
                 <a href="/delete_user" th:href="@{/delete_user}"><span th:text="#{nav.deleteAccount}">Delete Account</span></a>
+            </div>
             </div>
             <div class="cc-wraper">
                 <div class="cc-contactpop fixed">
