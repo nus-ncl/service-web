@@ -118,16 +118,16 @@ tasks.jacocoTestReport {
 }
 
 // Code security testing with SonarCloud
-sonarqube {
-    properties {
-        property 'sonar.host.url', 'https://sonarcloud.io'
-        property 'sonar.organization', 'nus-ncl-github'
-        property "sonar.projectKey", "nus-ncl_service-web"
-        property 'sonar.login', System.getenv('SONAR_TOKEN')
-        property 'sonar.github.oauth', System.getenv('GITHUB_TOKEN')
-        property 'sonar.sources', 'src/main/resources/static/js'
-    }
-}
+//sonarqube {
+//    properties {
+//        property 'sonar.host.url', 'https://sonarcloud.io'
+//        property 'sonar.organization', 'nus-ncl-github'
+//        property "sonar.projectKey", "nus-ncl_service-web"
+//        property 'sonar.login', System.getenv('SONAR_TOKEN')
+//        property 'sonar.github.oauth', System.getenv('GITHUB_TOKEN')
+//        property 'sonar.sources', 'src/main/resources/static/js'
+//    }
+//}
 
 task bamboo(type: org._10ne.gradle.rest.RestTask) {
     println 'bamboo task is running'
