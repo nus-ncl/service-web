@@ -15,39 +15,9 @@
 	<link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
 </head>
 <body>
-<div layout:fragment="content" style="background-image: url('images/publication_back7.jpg'); object-fit: fill;object-position: 50% 50%;">
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
-	<p>&nbsp;</p>
+<body onload="loadStaticPage('ContactUs','ContactUs/contactus.txt')">
+<div layout:fragment="content" id="ContactUs">
 
-
-	<div class="container">
-		<div class="row">
-			<div class="heading text-center col-sm-10 col-sm-offset-1">
-				<div class="h15">
-					<!--<p>Contact Us</p>-->
-				</div>
-				<p>&nbsp;</p>
-				<h4>If you have questions or feedback about NCL, we'd love to hear from you!</h4>
-				<p>&nbsp;</p>
-				<div class="col-sm-1  col-sm-offset-1">
-					<ul class="address">
-						<li><h4><i class="fa fa-phone" ></i></h4></li>
-						<li><h4><i class="fa fa-map-marker"></i></h4></li>
-						<li><h4><i class="fa fa-envelope"></i></h4></li>
-					</ul>
-				</div>
-				<div class="col-sm-9 text-left" >
-					<ul class="address">
-						<li><h4><span> Phone : </span>+65 6601 1056</h4></li>
-						<li><h4><span> Address: </span><a href="nclDirections.pdf" target="_blank">NCL COM3-B1-09 Computing 3, 11 Research Link, Singapore 119391</a></h4></li>
-						<li><h4><span>Email:</span><a th:href="#{support.email.link}" th:text="#{support.email}"></a></h4></li>
-						<p>&nbsp;</p>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
 </div>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="../static/js/html5shiv.js"></script>
