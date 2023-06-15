@@ -1046,6 +1046,7 @@ function loadStaticPage(id, page) {
          dataType: "JSON",
          async: true,
          //production
+
          url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1309",
          type: 'GET',
          success: function(result) {
