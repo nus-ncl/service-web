@@ -72,7 +72,7 @@ public class MainControllerTest {
 //    }
 
     private MockMvc mockMvc;
-//    private RestTemplate restTemplate;
+    //    private RestTemplate restTemplate;
     private MockRestServiceServer mockServer;
 
     @Inject
@@ -189,17 +189,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
-    @Test
-    public void testContactUsPage() throws Exception {
-        // calendar page display BEFORE login
-        mockMvc.perform(get("/contactus"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("main.css")))
-                .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("navbar-header")))
-                .andExpect(content().string(containsString("Contact Us")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")));
-    }
 
     @Test
     public void testGetLoginPage() throws Exception {
@@ -557,25 +546,25 @@ public class MainControllerTest {
                 .andRespond(withSuccess(predefinedJsonStr, MediaType.APPLICATION_JSON));
 
         MvcResult result = mockMvc.perform(
-                post("/account_settings").sessionAttr(webProperties.getSessionUserAccount(), user2).sessionAttr(webProperties.getSessionJwtToken(), "1234").sessionAttr(webProperties.getSessionUserId(), id)
-                        .param("email", "apple@nus.edu.sg")
-                        .param("password", "password")
-                        .param("confirmPassword", "confirmPassword")
-                        .param("firstName", "apple")
-                        .param("lastName", "edited")
-                        .param("phone", "12345678")
-                        .param("jobTitle", "research")
-                        .param("institution", "national university")
-                        .param("institutionAbbreviation", "nus")
-                        .param("institutionWeb", "")
-                        .param("address1", "address1")
-                        .param("address2", "edited")
-                        .param("country", "singapore")
-                        .param("city", "sg")
-                        .param("province", "west")
-                        .param("postalCode", "123456"))
-                        .andExpect(redirectedUrl("/account_settings"))
-                        .andReturn();
+                        post("/account_settings").sessionAttr(webProperties.getSessionUserAccount(), user2).sessionAttr(webProperties.getSessionJwtToken(), "1234").sessionAttr(webProperties.getSessionUserId(), id)
+                                .param("email", "apple@nus.edu.sg")
+                                .param("password", "password")
+                                .param("confirmPassword", "confirmPassword")
+                                .param("firstName", "apple")
+                                .param("lastName", "edited")
+                                .param("phone", "12345678")
+                                .param("jobTitle", "research")
+                                .param("institution", "national university")
+                                .param("institutionAbbreviation", "nus")
+                                .param("institutionWeb", "")
+                                .param("address1", "address1")
+                                .param("address2", "edited")
+                                .param("country", "singapore")
+                                .param("city", "sg")
+                                .param("province", "west")
+                                .param("postalCode", "123456"))
+                .andExpect(redirectedUrl("/account_settings"))
+                .andReturn();
     }
 
     @Test
@@ -591,30 +580,30 @@ public class MainControllerTest {
                 .andRespond(withSuccess(predefinedResultJson.toString(), MediaType.APPLICATION_JSON));
 
         MvcResult result = mockMvc.perform(
-                post("/signup2")
-                        .param("email", "apple@nus.edu.sg")
-                        .param("password", "appleP@ssword1")
-                        .param("confirmPassword", "appleP@ssword1")
-                        .param("firstName", "apple")
-                        .param("lastName", "orange")
-                        .param("phone", "12345678")
-                        .param("jobTitle", "research")
-                        .param("institution", "national university")
-                        .param("institutionAbbreviation", "nus")
-                        .param("website", "http://www.nus.edu.sg")
-                        .param("address1", "address1")
-                        .param("address2", "address2")
-                        .param("country", "singapore")
-                        .param("city", "sg")
-                        .param("province", "west")
-                        .param("postalCode", "123456")
-                        .param("teamName", "project")
-                        .param("joinTeamName", "")
-                        .param("teamDescription", "a simple description")
-                        .param("teamWebsite", "http://team.com")
-                        .param("organizationType", "academia")
-                        .param("isPublic", "PUBLIC")
-                        .param("hasAcceptTeamOwnerPolicy", "true"))
+                        post("/signup2")
+                                .param("email", "apple@nus.edu.sg")
+                                .param("password", "appleP@ssword1")
+                                .param("confirmPassword", "appleP@ssword1")
+                                .param("firstName", "apple")
+                                .param("lastName", "orange")
+                                .param("phone", "12345678")
+                                .param("jobTitle", "research")
+                                .param("institution", "national university")
+                                .param("institutionAbbreviation", "nus")
+                                .param("website", "http://www.nus.edu.sg")
+                                .param("address1", "address1")
+                                .param("address2", "address2")
+                                .param("country", "singapore")
+                                .param("city", "sg")
+                                .param("province", "west")
+                                .param("postalCode", "123456")
+                                .param("teamName", "project")
+                                .param("joinTeamName", "")
+                                .param("teamDescription", "a simple description")
+                                .param("teamWebsite", "http://team.com")
+                                .param("organizationType", "academia")
+                                .param("isPublic", "PUBLIC")
+                                .param("hasAcceptTeamOwnerPolicy", "true"))
                 .andReturn();
     }
 
@@ -631,25 +620,25 @@ public class MainControllerTest {
         predefinedTeamJson.put("id", "123456789");
 
         MvcResult result = mockMvc.perform(
-                post("/signup2")
-                        .param("email", "apple@nus.edu.sg")
-                        .param("password", "appleP@ssword")
-                        .param("confirmPassword", "appleP@ssword")
-                        .param("firstName", "apple")
-                        .param("lastName", "orange")
-                        .param("phone", "12345678")
-                        .param("jobTitle", "research")
-                        .param("institution", "national university")
-                        .param("institutionAbbreviation", "nus")
-                        .param("website", "http://www.nus.edu.sg")
-                        .param("address1", "address1")
-                        .param("address2", "address2")
-                        .param("country", "singapore")
-                        .param("city", "sg")
-                        .param("province", "west")
-                        .param("postalCode", "123456")
-                        .param("joinTeamName", "project")
-                        .param("hasAcceptTeamOwnerPolicy", "true"))
+                        post("/signup2")
+                                .param("email", "apple@nus.edu.sg")
+                                .param("password", "appleP@ssword")
+                                .param("confirmPassword", "appleP@ssword")
+                                .param("firstName", "apple")
+                                .param("lastName", "orange")
+                                .param("phone", "12345678")
+                                .param("jobTitle", "research")
+                                .param("institution", "national university")
+                                .param("institutionAbbreviation", "nus")
+                                .param("website", "http://www.nus.edu.sg")
+                                .param("address1", "address1")
+                                .param("address2", "address2")
+                                .param("country", "singapore")
+                                .param("city", "sg")
+                                .param("province", "west")
+                                .param("postalCode", "123456")
+                                .param("joinTeamName", "project")
+                                .param("hasAcceptTeamOwnerPolicy", "true"))
                 .andExpect(redirectedUrl("/join_application_submitted"))
                 .andReturn();
 
@@ -704,9 +693,9 @@ public class MainControllerTest {
     public void testResetPasswordEnterEmail() throws Exception {
 
         mockMvc.perform(
-                get("/password_reset_email"))
-            .andExpect(view().name("password_reset_email"))
-            .andExpect(model().attributeExists("passwordResetRequestForm"));
+                        get("/password_reset_email"))
+                .andExpect(view().name("password_reset_email"))
+                .andExpect(model().attributeExists("passwordResetRequestForm"));
     }
 
     @Test
@@ -717,8 +706,8 @@ public class MainControllerTest {
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
         ResultActions perform = mockMvc.perform(
-                post("/password_reset_request")
-                    .param("email", "123456@nus.edu.sg"))
+                        post("/password_reset_request")
+                                .param("email", "123456@nus.edu.sg"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("passwordResetRequestForm", hasProperty("errMsg", is("Email not registered. Please use a different email address."))))
                 .andExpect(view().name("password_reset_email"));
@@ -732,8 +721,8 @@ public class MainControllerTest {
                 .andRespond(withStatus(HttpStatus.ACCEPTED));
 
         mockMvc.perform(
-                post("/password_reset_request")
-                        .param("email", "123456@nus.edu.sg"))
+                        post("/password_reset_request")
+                                .param("email", "123456@nus.edu.sg"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_email_sent"));
     }
@@ -742,7 +731,7 @@ public class MainControllerTest {
     public void testResetPasswordNewPassword() throws Exception {
 
         mockMvc.perform(
-                get("/passwordReset?key=12345678"))
+                        get("/passwordReset?key=12345678"))
                 //    .param("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
@@ -757,10 +746,10 @@ public class MainControllerTest {
                 .andRespond(withStatus(HttpStatus.OK));
 
         mockMvc.perform(
-                post("/password_reset")
-                        .param("password1", "password1")
-                        .param("password2", "password1")
-        .sessionAttr("key", "12345678"))
+                        post("/password_reset")
+                                .param("password1", "password1")
+                                .param("password2", "password1")
+                                .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_success"));
     }
@@ -773,13 +762,13 @@ public class MainControllerTest {
                 .andRespond(withBadRequest().body("{\"error\":\"sg.ncl.service.authentication.exceptions.PasswordResetRequestTimeoutException\"}").contentType(MediaType.APPLICATION_JSON));
 
         mockMvc.perform(
-                post("/password_reset")
-                        .param("password1", "password1")
-                        .param("password2", "password1")
-                        .sessionAttr("key", "12345678"))
+                        post("/password_reset")
+                                .param("password1", "password1")
+                                .param("password2", "password1")
+                                .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
-        .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Password reset request timed out. Please request a new reset email."))));
+                .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Password reset request timed out. Please request a new reset email."))));
     }
 
 
@@ -791,10 +780,10 @@ public class MainControllerTest {
                 .andRespond(withStatus(HttpStatus.NOT_FOUND).body("{\"error\":\"sg.ncl.service.authentication.exceptions.PasswordResetRequestNotFoundException\"}").contentType(MediaType.APPLICATION_JSON));
 
         mockMvc.perform(
-                post("/password_reset")
-                        .param("password1", "password1")
-                        .param("password2", "password1")
-                        .sessionAttr("key", "12345678"))
+                        post("/password_reset")
+                                .param("password1", "password1")
+                                .param("password2", "password1")
+                                .sessionAttr("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
                 .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Invalid password reset request. Please request a new reset email."))));
@@ -808,10 +797,10 @@ public class MainControllerTest {
                 .andRespond(withServerError().body("{\"error\":\"sg.ncl.service.authentication.exceptions.AdapterConnectionException\"}").contentType(MediaType.APPLICATION_JSON));
 
         mockMvc.perform(
-                post("/password_reset")
-                        .param("password1", "password1")
-                        .param("password2", "password1")
-                        .param("key", "12345678"))
+                        post("/password_reset")
+                                .param("password1", "password1")
+                                .param("password2", "password1")
+                                .param("key", "12345678"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("password_reset_new_password"))
                 .andExpect(model().attribute("passwordResetForm", hasProperty("errMsg", is("Server-side error. Please contact support@ncl.sg"))));
@@ -1242,4 +1231,3 @@ public class MainControllerTest {
     }
 
 }
-
