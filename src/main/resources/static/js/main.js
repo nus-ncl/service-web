@@ -100,7 +100,8 @@ $(document).ready(function() {
 
 	// make the tab in the tab group active
 	// when join existing team is selected
-	if (document.getElementById('joinTeamName') != null && document.getElementById('joinTeamName').value) {
+	if (document.getElementById('joinTeamName') != null) {
+	    if(document.getElementById('joinTeamName').value) {
 		// change the tab to join team being selected
 		$('#registerApplyJoinTeamTab').addClass('active');
 		$('#registerApplyNewTeamTab').removeClass('active');
@@ -108,6 +109,7 @@ $(document).ready(function() {
 		// change the tab-content to the join team
 		$('#registerNewTeamDiv').removeClass('in active');
 		$('#registerJoinTeamDiv').addClass('in active');
+	}
 	}
     
     //-----------------experiment page---------------------
@@ -1046,9 +1048,9 @@ function loadStaticPage(id, page) {
          dataType: "JSON",
          async: true,
          //production
-         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+        // url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
         //This url is for Test branch used for testing
-         //url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1309",
+         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1309",
          type: 'GET',
          success: function(result) {
              document.getElementById(id).innerHTML = decodeURIComponent(escape(window.atob(result.content)));
