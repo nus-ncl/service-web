@@ -100,7 +100,8 @@ $(document).ready(function() {
 
 	// make the tab in the tab group active
 	// when join existing team is selected
-	if (document.getElementById('joinTeamName') != null && document.getElementById('joinTeamName').value) {
+	if (document.getElementById('joinTeamName') != null) {
+	    if(document.getElementById('joinTeamName').value) {
 		// change the tab to join team being selected
 		$('#registerApplyJoinTeamTab').addClass('active');
 		$('#registerApplyNewTeamTab').removeClass('active');
@@ -108,6 +109,7 @@ $(document).ready(function() {
 		// change the tab-content to the join team
 		$('#registerNewTeamDiv').removeClass('in active');
 		$('#registerJoinTeamDiv').addClass('in active');
+	}
 	}
     
     //-----------------experiment page---------------------
