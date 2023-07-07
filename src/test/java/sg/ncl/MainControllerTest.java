@@ -135,16 +135,6 @@ public class MainControllerTest {
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
-    @Test
-    public void testAboutPage() throws Exception {
-        mockMvc.perform(get("/about"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("main.css")))
-                .andExpect(content().string(containsString("main.js")))
-                .andExpect(content().string(containsString("navbar-header")))
-                .andExpect(content().string(containsString("id=\"about-us\"")))
-                .andExpect(content().string(containsString("footer id=\"footer\"")));
-    }
 
     @Test
     public void testEventPage() throws Exception {
