@@ -14,74 +14,8 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
     <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
 </head>
-<body>
-<div layout:fragment="content">
-    <p></p><br></br>
-    <p></p><br></br>
-
-    <div class="container" style="background-image: url('images/publication_back7.jpg'); object-fit: fill;object-position: 50% 50%;">
-        <div class="row">
-            <h2 class="news-header"><font color="#0d6dba">Overview</font></h2>
-            <!--<p><font color="#313030" size="4px">The National Cybersecurity R&amp;D Lab (NCL) is funded under National Cybersecurity R&amp;D (NCR) Programme since 2015. NCL aims to provide support to the Singapore cybersecurity R&amp;D community in terms of their research experimentation and testing needs.</font></p>-->
-            <h3 class="news-header2">We are a National Cybersecurity R&amp;D Lab(NCL), established in 2015 and funded under the National Cybersecurity R&amp;D (NCR) Programme.</h3>
-            <h3 class="news-header2">Our aim is to provide support to the Singapore cybersecurity R&amp;D community in terms of their research experimentation and testing requirements.</h3>
-        </div>
-
-        <div class="row">
-            <h2 class="news-header"><font color="#0d6dba">Mission</font></h2>
-            <!--<p><font color="#313030" size="4px">Develop NCL into a hub that facilitates the growth of a vibrant Singapore cybersecurity ecosystem.</font></p>-->
-            <h3 class="news-header2">To develop NCL into a R&amp;D hub that facilitates the growth of a vibrant Singapore cybersecurity ecosystem.</h3>
-        </div>
-
-        <div class="row">
-          <h2 class="news-header"><font color="#0d6dba">Key Areas of Support</font></h2>
-            <ul>
-
-                <li><h3 class="news-header2">R&amp;D and it’s translation</h3></li>
-                <li><h3 class="news-header2">Development, Testing and Evaluation of security solutions</h3></li>
-                <li><h3 class="news-header2">Training and Skills Assessment</h3></li>
-            </ul>
-        </div>
-    </div>
-
-    <section id="about-us" class="parallax">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12 justify">
-                    <div class="about-info wow fadeInUp" data-wow-duration="1000ms" data-wow-delay="300ms">
-                        <!-- <br></br>
-                         <p>&nbsp;</p>
-                         <p>&nbsp;</p>-->
-                        <h2>About us</h2>
-                        <p>NCL is a national cybersecurity lab that provides computing resources, repeatable and
-                            controllable experimentation environments, as well as application services. The
-                            infrastructure includes a cluster of 300 nodes that provides a wide range of provisioning
-                            mechanisms, security data and security services. NCL aims to provide a platform that fosters
-                            and encourages collaboration among researchers in academia, government bodies and the
-                            industry.</p>
-                        <p>&nbsp;</p>
-                        <p>The software stack that manages the NCL infrastructure is based on <a
-                                href="https://www.isi.deterlab.net/index.php3">DETERLab</a>, which is a security and
-                            education-enhanced version of <a href="https://www.emulab.net/">Emulab</a>. NCL is also
-                            collaborating with the DETERLab team on <a href="research.html" th:href="@{~/research}">testbed
-                                research</a>.</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                    </div>
-                    <div class="col-sm-12 embed-responsive embed-responsive-16by9">
-                        <iframe src="https://player.vimeo.com/video/206349173?title=0&amp;byline=0&amp;portrait=0"
-                                frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true"
-                                allowfullscreen="true"
-                                sandbox="allow-forms allow-modals allow-popups allow-presentation allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation"></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section><!--/#about-us-->
-    <p>&nbsp;</p>
-
-
-
+<body onload="loadStaticPage('AboutUs','Home/AboutUs.txt')">
+<div layout:fragment="content" id="AboutUs">
 </div>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="../static/js/html5shiv.js"></script>
