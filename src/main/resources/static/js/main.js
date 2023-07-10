@@ -1049,8 +1049,9 @@ function loadStaticPage(id, page) {
          async: true,
          //production
          url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+
         //This url is for Test branch used for testing
-        // url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1309",
+        // url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1310",
          type: 'GET',
          success: function(result) {
              document.getElementById(id).innerHTML = decodeURIComponent(escape(window.atob(result.content)));
