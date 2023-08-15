@@ -59,6 +59,9 @@
 								<div class="col-xs-3">
 									<button type="button" id="verify_btn" class="btn btn-special">Verify Username</button>
 								</div>
+								<div class="col-xs-3">
+									<button type="button" id="ldap_btn" class="btn btn-special">Connection Test To Ldap Server</button>
+								</div>
 							</div>
 
 							<div class="form-group row">
@@ -176,6 +179,18 @@
 
 <script>
 
+
+$('#ldap_btn').on("click", function() {
+    $.ajax({
+    url: '/connectToLDAP',
+    data: { 'username' : 'test' },
+    type: "post",
+    cache: false,
+    success: function (result) {
+        alert(result);
+    }
+    });
+});
 
 $('#verify_btn').on("click", function() {
     $.ajax({
