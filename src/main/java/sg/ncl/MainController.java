@@ -35,6 +35,12 @@ import sg.ncl.webssh.PtyProperties;
 import sg.ncl.webssh.VncProperties;
 
 import javax.inject.Inject;
+import javax.naming.AuthenticationException;
+import javax.naming.AuthenticationNotSupportedException;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -7285,4 +7291,60 @@ public class MainController {
         model.addAttribute("openStackCreateForm", new OpenStackCreateForm());
         return "openstack_activate";
     }
+
+
+    @RequestMapping(path = "/connectToLDAP", params = {"username"})
+    @ResponseBody
+    public String connectToLDAP(
+            @NotNull @RequestParam("username") final String username) throws WebServiceRuntimeException {
+
+        log.info("Call the LDAP connection test function : {}", username);
+
+        String ldapUrl = "ldap://192.168.10.152:389"; // Replace with the actual LDAP server URL and port
+        String ldapUsername = "admin"; // Replace with the LDAP username or DN (Distinguished Name)
+        String ldapPassword = "Ldap-server"; // Replace with the LDAP password associated with the username
+        String baseDN = "dc=nodomain"; // Replace with the base DN of your LDAP server
+
+        DirContext ctx;
+
+        String responseMsg="";
+        // Set up environment properties
+        Properties env = new Properties();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, ldapUrl);
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.SECURITY_PRINCIPAL, ldapUsername);
+        env.put(Context.SECURITY_CREDENTIALS, ldapPassword);
+
+        try {
+            ctx = new InitialDirContext(env);
+            System.out.println("Connected..");
+            System.out.println(ctx.getEnvironment());
+            ctx.close();
+            return "Connected!";
+
+        }catch (AuthenticationNotSupportedException exception)
+        {
+            System.out.println("The authentication is not supported by the server");
+            System.out.println(exception);
+
+            return "The authentication is not supported by the server";
+        }
+
+        catch (AuthenticationException exception)
+        {
+            System.out.println("Incorrect password or username");
+            System.out.println(exception);
+            return "Incorrect password or username";
+        }
+
+        catch (NamingException exception)
+        {
+            System.out.println("Error when trying to create the context " );
+            System.out.println(exception.toString());
+            return "Error when trying to create the context";
+        }
+
+    }
+
 }
