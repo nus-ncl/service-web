@@ -7300,9 +7300,9 @@ public class MainController {
 
         log.info("Call the LDAP connection test function : {}", username);
 
-        String ldapUrl = "ldap://192.168.10.152:389"; // Replace with the actual LDAP server URL and port
+        String ldapUrl = "ldap://172.18.178.29:80"; // Replace with the actual LDAP server URL and port
         String ldapUsername = "admin"; // Replace with the LDAP username or DN (Distinguished Name)
-        String ldapPassword = "Ldap-server"; // Replace with the LDAP password associated with the username
+        String ldapPassword = "LDAP@cr1"; // Replace with the LDAP password associated with the username
         String baseDN = "dc=nodomain"; // Replace with the base DN of your LDAP server
 
         DirContext ctx;
