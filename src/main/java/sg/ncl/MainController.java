@@ -673,6 +673,19 @@ public class MainController {
         return "dataset";
     }
 
+    @RequestMapping("/RailwayMetroSystem")
+    public String RailwayMetroSystem(Model model) throws IOException {
+        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        return "RailwayMetroSystem";
+    }
+
+    @RequestMapping("/ClusterUserEmulatorSystem")
+    public String ClusterUserEmulatorSystem(Model model) throws IOException {
+        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        return "ClusterUserEmulatorSystem";
+    }
+
+
     // get all the nodes' status
     // there are three types of status
     // "free" : node is free
