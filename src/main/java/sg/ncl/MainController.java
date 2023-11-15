@@ -685,6 +685,12 @@ public class MainController {
         return "ClusterUserEmulatorSystem";
     }
 
+    @RequestMapping("/Vindex")
+    public String Vindex(Model model) throws IOException {
+        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        return "Vindex";
+    }
+
 
     // get all the nodes' status
     // there are three types of status
