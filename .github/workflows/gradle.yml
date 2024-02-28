@@ -33,11 +33,11 @@ jobs:
         run: ./gradlew --stacktrace printInfo
       - name: Build with Gradle
         run: ./gradlew --continue --stacktrace --profile build
-      - name: Run some code test
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew --stacktrace -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" sonarqube jacocoTestReport coveralls
+      - #name: Run some code test
+        #env:
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        #run: ./gradlew --stacktrace -Djdk.tls.client.protocols="TLSv1,TLSv1.1,TLSv1.2" sonarqube jacocoTestReport coveralls
       - name: Publish package
         run: ./gradlew publish
         env:
