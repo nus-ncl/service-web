@@ -1,108 +1,108 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories - Dashboard</title>
-        <object th:include="fragments/header :: header" th:remove="tag" />
-    </head>
-    <body class="mybg loginbackground">
-        <!-- for importing the navigation template -->
-        <div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>National Cybersecurity Laboratories - Dashboard</title>
+    <object th:include="fragments/header :: header" th:remove="tag" />
+</head>
+<body class="mybg loginbackground">
+<!-- for importing the navigation template -->
+<div th:replace="fragments/dashboard_navigation :: dashboardnav">&nbsp;</div>
+<p>&nbsp;</p>
+<div class="container" style="background-image: url('images/publication_back7.jpg'); object-fit: fill;object-position: 50% 50%;">
+    <div class="row">
         <p>&nbsp;</p>
-        <div class="container" style="background-image: url('images/publication_back7.jpg'); object-fit: fill;object-position: 50% 50%;">
-            <div class="row">
+        <!--<h1 class="dashhead">Dashboard</h1>-->
+        <h1 align="center"><b><font color="#0d6dba">Dashboard</font></b></h1>
+        <!--<div class="alert alert-danger">-->
+        <!--    <strong>News: </strong>We hold regular scheduled maintenance on <strong>every first Sunday of the month, 0700 to 1900 (Singapore Time, UTC/GMT+8)</strong> for updating new features. We thank you for the understanding.-->
+        <!--</div>-->
+        <div class="panel panel-primary dashpanel">
+            <div class="alert alert-warning">
+                <strong>Info!</strong> Use your username <strong><span th:text="${userUid}"></span></strong> to access the experimental nodes.
+            </div>
+            <div class="alert alert-warning">
+                <strong>Reservation: </strong>To guarantee resource availability, you may make reservation at least one month in advance. Please fill up the <a href="#" th:href="@{/orderform/download}">Reservation Form</a>.
+            </div>
+            <!--                    <div class="alert alert-warning">-->
+            <!--                        <strong>Openstack! </strong>If openstack is not activated on your account. <a href="#" th:href="@{~/openstackactivate}">Please click here to activate the openstack account</a>.-->
+            <!--                    </div>-->
+            <div class="panel-body">
+                <!--                        <a th:href="@{/teams}">-->
+                <!--                            <div class="col-sm-5 dashpanel_teams pull-left">-->
+                <!--                                <p class="dashboard_stats" th:text="${userDashboardMap.get('numberOfApprovedTeam')}">ConnectionError</p>-->
+                <!--                                <h2>Teams</h2>-->
+                <!--                                <th:block th:if="${userDashboardMap.get('numberOfApprovedTeam') == 0}">-->
+                <!--                                    <h3>Click here to create team >></h3>-->
+                <!--                                </th:block>-->
+                <!--                            </div>-->
+                <!--                        </a>-->
+                <!--                        <a th:href="@{/experiments}">-->
+                <!--                            <div class="col-sm-5 dashpanel_experiments pull-right">-->
+                <!--                                <p class="dashboard_stats" th:text="${userDashboardMap.get('totalNumberOfExperiments')}">ConnectionError</p>-->
+                <!--                                <h2>Experiments</h2>-->
+                <!--                            </div>-->
+                <!--                        </a>-->
+            </div> <!-- panel body -->
+        </div> <!-- panel -->
+
+        <!--                &lt;!&ndash;  team resource usage &ndash;&gt;-->
+        <!--                <div class="panel panel-primary dashpanel">-->
+        <!--                    <h2 class="team-heading team-heading-current-team">Resource Usage (Current Month)</h2>-->
+        <!--                    <div class="panel-body">-->
+        <!--                        <div th:if="${#lists.isEmpty(usageInfoList)}">-->
+        <!--                            <p> You are not an owner of any teams. </p>-->
+        <!--                        </div>-->
+        <!--                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(usageInfoList)}">-->
+        <!--                            <thead>-->
+        <!--                            <th th:text="#{team.table.header.team}">Team</th>-->
+        <!--                            <th th:text="#{team.table.header.usage}">Usage (Node x Hour)</th>-->
+        <!--                            </thead>-->
+        <!--                            <tr th:each="usageInfo : ${usageInfoList}">-->
+        <!--                                <td th:text="${usageInfo.name}">Team</td>-->
+        <!--                                <td th:text="${usageInfo.usage}">Usage</td>-->
+        <!--                            </tr>-->
+        <!--                        </table>-->
+        <!--                    </div> &lt;!&ndash; panel body &ndash;&gt;-->
+        <!--                </div> &lt;!&ndash; panel &ndash;&gt;-->
+    </div>
+    <div class="cc-wraper">
+        <div class="cc-contactpop fixed">
+            <h1>Do you need Help? <span>Get in touch.</span></h1>
+            <div class="renseignement">
+                <i class="fa fa-times"></i>
+                <p>We will get back to you as soon as possible. </p>
+            </div>
+            <form>
+                <ul>
+                    <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
+                    <li><i class=""></i><span>Email:</span><a href="mailto:support@ncl.sg"> support@ncl.sg</a></li>
+                    <li><i class=""></i> <span> Address: </span><a href="nclDirections.pdf" target="_blank">NCL COM3-B1-09 Computing 3, 11 Research Link, Singapore 119391</a></li>
+                </ul>
                 <p>&nbsp;</p>
-                <!--<h1 class="dashhead">Dashboard</h1>-->
-                <h1 align="center"><b><font color="#0d6dba">Dashboard</font></b></h1>
-                <!--<div class="alert alert-danger">-->
-                <!--    <strong>News: </strong>We hold regular scheduled maintenance on <strong>every first Sunday of the month, 0700 to 1900 (Singapore Time, UTC/GMT+8)</strong> for updating new features. We thank you for the understanding.-->
-                <!--</div>-->
-                <div class="panel panel-primary dashpanel">
-                    <div class="alert alert-warning">
-                        <strong>Info!</strong> Use your username <strong><span th:text="${deterUid}"></span></strong> to access the experimental nodes.
-                    </div>
-                    <div class="alert alert-warning">
-                        <strong>Reservation: </strong>To guarantee resource availability, you may make reservation at least one month in advance. Please fill up the <a href="#" th:href="@{/orderform/download}">Reservation Form</a>.
-                    </div>
-                    <div class="alert alert-warning">
-                        <strong>Openstack! </strong>If openstack is not activated on your account. <a href="#" th:href="@{~/openstackactivate}">Please click here to activate the openstack account</a>.
-                    </div>
-                    <div class="panel-body">
-                        <a th:href="@{/teams}">
-                            <div class="col-sm-5 dashpanel_teams pull-left">
-                                <p class="dashboard_stats" th:text="${userDashboardMap.get('numberOfApprovedTeam')}">ConnectionError</p>
-                                <h2>Teams</h2>
-                                <th:block th:if="${userDashboardMap.get('numberOfApprovedTeam') == 0}">
-                                    <h3>Click here to create team >></h3>
-                                </th:block>
-                            </div>
-                        </a>
-                        <a th:href="@{/experiments}">
-                            <div class="col-sm-5 dashpanel_experiments pull-right">
-                                <p class="dashboard_stats" th:text="${userDashboardMap.get('totalNumberOfExperiments')}">ConnectionError</p>
-                                <h2>Experiments</h2>
-                            </div>
-                        </a>
-                    </div> <!-- panel body -->
-                </div> <!-- panel -->
-
-<!--                &lt;!&ndash;  team resource usage &ndash;&gt;-->
-<!--                <div class="panel panel-primary dashpanel">-->
-<!--                    <h2 class="team-heading team-heading-current-team">Resource Usage (Current Month)</h2>-->
-<!--                    <div class="panel-body">-->
-<!--                        <div th:if="${#lists.isEmpty(usageInfoList)}">-->
-<!--                            <p> You are not an owner of any teams. </p>-->
-<!--                        </div>-->
-<!--                        <table class="table table-responsive" th:if="not ${#lists.isEmpty(usageInfoList)}">-->
-<!--                            <thead>-->
-<!--                            <th th:text="#{team.table.header.team}">Team</th>-->
-<!--                            <th th:text="#{team.table.header.usage}">Usage (Node x Hour)</th>-->
-<!--                            </thead>-->
-<!--                            <tr th:each="usageInfo : ${usageInfoList}">-->
-<!--                                <td th:text="${usageInfo.name}">Team</td>-->
-<!--                                <td th:text="${usageInfo.usage}">Usage</td>-->
-<!--                            </tr>-->
-<!--                        </table>-->
-<!--                    </div> &lt;!&ndash; panel body &ndash;&gt;-->
-<!--                </div> &lt;!&ndash; panel &ndash;&gt;-->
-            </div>
-            <div class="cc-wraper">
-                <div class="cc-contactpop fixed">
-                    <h1>Do you need Help? <span>Get in touch.</span></h1>
-                    <div class="renseignement">
-                        <i class="fa fa-times"></i>
-                        <p>We will get back to you as soon as possible. </p>
-                    </div>
-                    <form>
-                        <ul>
-                            <li><i class=""></i> <span> Phone: </span>+65 6601 1056</li>
-                            <li><i class=""></i><span>Email:</span><a href="mailto:support@ncl.sg"> support@ncl.sg</a></li>
-                            <li><i class=""></i> <span> Address: </span><a href="nclDirections.pdf" target="_blank">NCL COM3-B1-09 Computing 3, 11 Research Link, Singapore 119391</a></li>
-                        </ul>
-                        <p>&nbsp;</p>
-                    </form>
-                </div>
-            </div>
-        </div> <!-- container -->
-
-        <!-- diskspace alert modal -->
-        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header" th:classappend="${'alert alert-' + alert}">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="alertLabel"><i class="fa fa-exclamation-triangle"></i> Disk Space Alert</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p th:if="${alert} == 'danger'" th:text="#{diskspace.alert.danger(${directory}, ${quota})}" class="text-danger"></p>
-                        <p th:if="${alert} == 'warning'" th:text="#{diskspace.alert.warning(${directory}, ${spaceSize})}" class="text-warning"></p>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
-        <div th:replace="fragments/footer :: footer"></div>
-        <object th:include="fragments/javascript :: javascript" th:remove="tag" />
-        <script th:inline="javascript">
+    </div>
+</div> <!-- container -->
+
+<!-- diskspace alert modal -->
+<!--        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel">-->
+<!--            <div class="modal-dialog" role="document">-->
+<!--                <div class="modal-content">-->
+<!--                    <div class="modal-header" th:classappend="${'alert alert-' + alert}">-->
+<!--                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+<!--                        <h4 class="modal-title" id="alertLabel"><i class="fa fa-exclamation-triangle"></i> Disk Space Alert</h4>-->
+<!--                    </div>-->
+<!--                    <div class="modal-body">-->
+<!--                        <p th:if="${alert} == 'danger'" th:text="#{diskspace.alert.danger(${directory}, ${quota})}" class="text-danger"></p>-->
+<!--                        <p th:if="${alert} == 'warning'" th:text="#{diskspace.alert.warning(${directory}, ${spaceSize})}" class="text-warning"></p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<div th:replace="fragments/footer :: footer"></div>
+<object th:include="fragments/javascript :: javascript" th:remove="tag" />
+<script th:inline="javascript">
             /*<![CDATA[*/
             var alert = /*[[${alert}]]*/ 'info';
             if (alert !== 'info') {
@@ -110,5 +110,5 @@
             }
             /*]]>*/
         </script>
-    </body>
+</body>
 </html>

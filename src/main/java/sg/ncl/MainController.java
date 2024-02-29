@@ -663,31 +663,31 @@ public class MainController {
 
     @RequestMapping("/testbedInformation")
     public String testbedInformation(Model model) throws IOException {
-        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        //model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
         return "testbed_information";
     }
 
     @RequestMapping("/dataset")
     public String dataset(Model model) throws IOException {
-        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        //model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
         return "dataset";
     }
 
     @RequestMapping("/RailwayMetroSystem")
     public String RailwayMetroSystem(Model model) throws IOException {
-        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        //model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
         return "RailwayMetroSystem";
     }
 
     @RequestMapping("/ClusterUserEmulatorSystem")
     public String ClusterUserEmulatorSystem(Model model) throws IOException {
-        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        //model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
         return "ClusterUserEmulatorSystem";
     }
 
     @RequestMapping("/Vindex")
     public String Vindex(Model model) throws IOException {
-        model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        //model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
         return "Vindex";
     }
 
@@ -1067,49 +1067,56 @@ public class MainController {
 
     @RequestMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) throws WebServiceRuntimeException {
+
         HttpEntity<String> request = createHttpEntityHeaderOnly();
         restTemplate.setErrorHandler(new MyResponseErrorHandler());
         ResponseEntity<String> response = restTemplate.exchange(properties.getRegUid(session.getAttribute(webProperties.getSessionUserId()).toString()), HttpMethod.GET, request, String.class);
+
         String responseBody = response.getBody();
         JSONObject jsonObject = new JSONObject(responseBody);
+
         String uidMessage = jsonObject.getString("message");
         String uid = jsonObject.getString("uid");
-        try {
-            if (uidMessage.equals("UID Taken")) {
-                log.info("Show the sio user id: {}", responseBody);
-                model.addAttribute(DETER_UID, uid);
-            } else if(uidMessage.equals("UID Not Found")){
-                log.info("Show the sio user id: {}", responseBody);
-                model.addAttribute(DETER_UID, "UID Not Found");
-            }
-            else
-            {
-                log.error("No user id found : {}", session.getAttribute(webProperties.getSessionUserId()));
-                model.addAttribute(DETER_UID, CONNECTION_ERROR);
-            }
-        } catch (Exception e) {
-            throw new WebServiceRuntimeException(e.getMessage());
+        if(!uid.isEmpty()){
+            model.addAttribute("userUid", uid);
         }
+
+//        try {
+//            if (uidMessage.equals("UID Taken")) {
+//                log.info("Show the sio user id: {}", responseBody);
+//                model.addAttribute(DETER_UID, uid);
+//            } else if(uidMessage.equals("UID Not Found")){
+//                log.info("Show the sio user id: {}", responseBody);
+//                model.addAttribute(DETER_UID, "UID Not Found");
+//            }
+//            else
+//            {
+//                log.error("No user id found : {}", session.getAttribute(webProperties.getSessionUserId()));
+//                model.addAttribute(DETER_UID, CONNECTION_ERROR);
+//            }
+//        } catch (Exception e) {
+//            throw new WebServiceRuntimeException(e.getMessage());
+//        }
 
         // retrieve user dashboard stats
-        Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute(webProperties.getSessionUserId()).toString());
-        List<TeamUsageInfo> usageInfoList = getTeamsUsageStatisticsForUser(session.getAttribute(webProperties.getSessionUserId()).toString());
-        model.addAttribute("userDashboardMap", userDashboardMap);
-        model.addAttribute("usageInfoList", usageInfoList);
+//        Map<String, Integer> userDashboardMap = getUserDashboardStats(session.getAttribute(webProperties.getSessionUserId()).toString());
+//        List<TeamUsageInfo> usageInfoList = getTeamsUsageStatisticsForUser(session.getAttribute(webProperties.getSessionUserId()).toString());
+//        model.addAttribute("userDashboardMap", userDashboardMap);
+//        model.addAttribute("usageInfoList", usageInfoList);
 
-        try {
-            response = restTemplate.exchange(properties.getDiskStatistics() + USERS + session.getAttribute(webProperties.getSessionUserId()).toString(), HttpMethod.GET, request, String.class);
-            responseBody = response.getBody();
-            log.info(responseBody);
-            jsonObject = new JSONObject(responseBody);
-            model.addAttribute("spaceSize", jsonObject.getString("spaceSize"));
-            model.addAttribute("directory", jsonObject.getString("directory"));
-            model.addAttribute("alert", jsonObject.getString("alert"));
-            model.addAttribute(QUOTA, jsonObject.getString(QUOTA));
-        } catch (Exception e) {
-            log.error("Unable to get user disk usage: {}", session.getAttribute(webProperties.getSessionUserId()));
-            model.addAttribute("alert", "info");
-        }
+//        try {
+//            response = restTemplate.exchange(properties.getDiskStatistics() + USERS + session.getAttribute(webProperties.getSessionUserId()).toString(), HttpMethod.GET, request, String.class);
+//            responseBody = response.getBody();
+//            log.info(responseBody);
+//            jsonObject = new JSONObject(responseBody);
+//            model.addAttribute("spaceSize", jsonObject.getString("spaceSize"));
+//            model.addAttribute("directory", jsonObject.getString("directory"));
+//            model.addAttribute("alert", jsonObject.getString("alert"));
+//            model.addAttribute(QUOTA, jsonObject.getString(QUOTA));
+//        } catch (Exception e) {
+//            log.error("Unable to get user disk usage: {}", session.getAttribute(webProperties.getSessionUserId()));
+//            model.addAttribute("alert", "info");
+//        }
 
         return "dashboard";
     }
@@ -1254,7 +1261,7 @@ public class MainController {
         userFields.put(USER_DETAILS, userDetails);
         userFields.put(APPLICATION_DATE, ZonedDateTime.now());
 
-        JSONObject teamFields = new JSONObject();
+        //JSONObject teamFields = new JSONObject();
 
         // add all to main json
         mainObject.put("credentials", credentialsFields);
@@ -6759,22 +6766,22 @@ public class MainController {
         return OpenStackExp;
     }
 
-    private SortedMap<String, Map<String, String>> getGlobalImages() throws IOException {
-        SortedMap<String, Map<String, String>> globalImagesMap = new TreeMap<>();
-
-        log.info("Retrieving list of global images from: {}", properties.getGlobalImages());
-        try {
-            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
-            ResponseEntity <String> response = restTemplate.exchange(properties.getGlobalImages(), HttpMethod.GET, request, String.class);
-            ObjectMapper mapper = new ObjectMapper();
-            String json = new JSONObject(response.getBody()).getString("images");
-            globalImagesMap = mapper.readValue(json, new TypeReference<SortedMap<String, Map<String, String>>>() {
-            });
-        } catch (RestClientException e) {
-            log.warn("Error connecting to service-image: {}", e);
-        }
-        return globalImagesMap;
-    }
+//    private SortedMap<String, Map<String, String>> getGlobalImages() throws IOException {
+//        SortedMap<String, Map<String, String>> globalImagesMap = new TreeMap<>();
+//
+//        log.info("Retrieving list of global images from: {}", properties.getGlobalImages());
+//        try {
+//            HttpEntity<String> request = createHttpEntityHeaderOnlyNoAuthHeader();
+//            ResponseEntity <String> response = restTemplate.exchange(properties.getGlobalImages(), HttpMethod.GET, request, String.class);
+//            ObjectMapper mapper = new ObjectMapper();
+//            String json = new JSONObject(response.getBody()).getString("images");
+//            globalImagesMap = mapper.readValue(json, new TypeReference<SortedMap<String, Map<String, String>>>() {
+//            });
+//        } catch (RestClientException e) {
+//            log.warn("Error connecting to service-image: {}", e);
+//        }
+//        return globalImagesMap;
+//    }
 
     private List<TeamUsageInfo> getTeamsUsageStatisticsForUser(String userId) {
 
@@ -7309,5 +7316,33 @@ public class MainController {
     public String openStackActivate(Model model) throws IOException {
         model.addAttribute("openStackCreateForm", new OpenStackCreateForm());
         return "openstack_activate";
+    }
+
+    @RequestMapping(path="/checkUrl",method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> checkURL(@RequestParam("url") String url) throws IOException {
+        log.info("enter check url {} : " , url);
+        //call api of sio
+        String flag = "false";
+        Map<String, Object> reflag = new HashMap<String, Object>();
+        try{
+            JSONObject urlInfo = new JSONObject();
+            urlInfo.put("url", url);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> request = new HttpEntity<>(urlInfo.toString(),headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(properties.checkUrl(), HttpMethod.POST, request, String.class);
+            String responseBody = response.getBody().toString();
+            log.info("return from api url : {} , request : {}", properties.checkUrl(),request.toString());
+
+            log.info(" response : {}",responseBody);
+            flag = responseBody;
+            reflag.put("flag", flag);
+        }catch(Exception ex){
+            flag="false";
+            reflag.put("flag", flag);
+        }
+        return reflag;
     }
 }
