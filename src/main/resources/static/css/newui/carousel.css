@@ -1,0 +1,156 @@
+/* GLOBAL STYLES
+-------------------------------------------------- */
+/* Padding below the footer and lighter body text */
+
+body {
+  /*padding-top: 3rem;*/
+  /*padding-bottom: 3rem;*/
+  color: #5a5a5a;
+}
+
+.bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+ }
+
+
+/* CUSTOMIZE THE CAROUSEL
+-------------------------------------------------- */
+
+/* Carousel base class */
+.carousel {
+  /*margin-bottom: 4rem;*/
+}
+/* Since positioning the image, we need to help out the caption */
+.carousel-caption {
+  bottom: 3rem;
+  z-index: 10;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel-item {
+  height: 32rem;
+}
+
+.carousel-item > img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  height: 32rem;
+}
+
+.carousel-items-caption{
+  background-color: #fff !important;
+}
+
+.carousel-content{
+    position: relative;
+    width: 48%;
+    box-sizing: border-box;
+    color: #fff;
+    background-color: #fff;
+    border-radius:4px;
+    padding: .4rem;
+}
+
+.carousel-author{
+    font-weight: bold;
+    font-size: 1.7em;
+    color:#003d7c;
+    margin-left:20px;
+}
+
+.carousel-title {
+     font-weight: bold;
+     font-size: 1.5em;
+     color:#3e3b3b;
+     margin-right:1.5rem;
+     margin-left:20px;
+}
+
+.carousel-topic{
+    font-size: 1.7em;
+    font-weight: bold;
+    margin-right:1.5rem;
+    color: #003d7c;
+    margin-left:20px;
+}
+
+.carousel-des{
+    font-weight: bold;
+     font-size: 1.5em;
+     color:#3e3b3b;
+     margin-left:20px;
+}
+
+.carousel-button{
+justify-content: end;
+align-items:right;
+margin-right:50px;
+background-color: #003d7c !important;
+color: #fff !important;
+font-size:14px;
+}
+
+.carousel-button:hover,
+.carousel-button:focus,
+.carousel-button:active {
+    background-color: #0f62b8 !important;
+    color: #fff !important;
+}
+
+/* animation text in first item */
+.carousel-content ,
+.carousel-author,
+.carousel-title,
+.carousel-topic,
+.carousel-des,
+.carousel-buttons
+{
+    transform: translateY(50px);
+    filter: blur(20px);
+    opacity: 0;
+    animation: showContent .5s 1s linear 1 forwards;
+}
+
+@keyframes showContent{
+    to{
+        transform: translateY(0px);
+        filter: blur(0px);
+        opacity: 1;
+    }
+}
+
+.carousel-content {
+    animation-delay: 1.2s!important;
+}
+
+.carousel-title{
+    animation-delay: 1.4s!important;
+}
+
+.carousel-topic{
+    animation-delay: 1.6s!important;
+}
+
+.carousel-des{
+    animation-delay: 1.8s!important;
+}
+
+.carousel-button{
+    animation-delay: 1.10s!important;
+}
+
+/* media size 768 Channel
+-------------------------------------------------- */
+@media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+}
+/* end 768 Channel
+-------------------------------------------------- */

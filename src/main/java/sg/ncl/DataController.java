@@ -65,6 +65,8 @@ public class DataController extends MainController {
         response.setHeader("X-Frame-Options", "DENY");
     }
 
+    /** Start Comment for New UI Design */
+    /**
     @RequestMapping
     public String data(Model model) {
         DatasetManager datasetManager = new DatasetManager();
@@ -684,11 +686,13 @@ public class DataController extends MainController {
         model.addAttribute("end", end);
         return "data_statistics";
     }
-
+    */ /** First Part Comment for New UI Design **/
+    /** Second Part Comment for New UI Design **/
     /**
      * References:
      * [1] https://github.com/23/resumable.js/blob/master/samples/java/src/main/java/resumable/js/upload/UploadServlet.java
      */
+    /*
     @GetMapping(value="{datasetId}/resources/upload")
     public ResponseEntity<String> checkChunk(@PathVariable String datasetId, HttpServletRequest request) {
         int resumableChunkNumber = getResumableChunkNumber(request);
@@ -777,13 +781,16 @@ public class DataController extends MainController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unknown exception while uploading resource.");
         }
     }
-
+    */
+    /** First Part Comment for New UI Design **/
+    /** Second Part Comment for New UI Design **/
     /**
      * References:
      * [1] http://stackoverflow.com/questions/25854077/calling-a-servlet-from-another-servlet-after-the-request-dispatcher-forward-meth
      * [2] http://stackoverflow.com/questions/29712554/how-to-download-a-file-using-a-java-rest-service-and-a-data-stream
      * [3] http://stackoverflow.com/questions/32988370/download-large-file-from-server-using-rest-template-java-spring-mvc
      */
+    /*
     @GetMapping(value="{datasetId}/resources/{resourceId}")
     public void getResource(@PathVariable String datasetId, @PathVariable String resourceId, HttpSession session,
                             final HttpServletResponse httpResponse) throws UnsupportedEncodingException, WebServiceRuntimeException {
@@ -907,5 +914,5 @@ public class DataController extends MainController {
 
         return dataAccessRequest;
     }
-
+    */
 }
