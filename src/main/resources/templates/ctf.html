@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Services and Tools</title>
+    <!--=============== REMIXICONS ===============-->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" type="text/css" href="../../static/bootstrap/css/bootstrap.min.css" th:href="@{~/bootstrap/css/bootstrap.min.css}" media="screen"/>
+    <link rel="shortcut icon" href="images/newui/ncl_favicon.png"  th:href="@{~/images/newui/ncl_favicon.png}"/>
+
+    <link rel="stylesheet" type="text/css" href="../static/css/newui/services.css" />
+</head>
+
+<body  layout:fragment="content">
+<main id="main" >
+    <!-- Section  Breadcrumb  pointer link to back -->
+    <section class="py-1 py-md-1 py-xl-1 bg-light " style="margin-top:5.5rem;" >
+        <div class="container mt-2">
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item breadcrumb-text">Services
+                                <i class="bi bi-chevron-double-right"></i></li>
+                            <li class="breadcrumb-item breadcrumb-text">
+                                <a class="link-primary text-decoration-none" href="../services_tools.html" th:href="@{~/services_tools}">
+                                    Environment, Data , Tools and Services</a>
+                                <i class="bi bi-chevron-double-right"></i></li>
+                            <li class="breadcrumb-item breadcrumb-text" >CTF</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CUE header -->
+    <section class="py-2 py-md-2 py-xl-4 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-9 col-lg-7 ml-10 ">
+                    <h1 class="h4 text-center text-uppercase fw-bold ctf-title">Capture the Flag</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section - CUE Intro -->
+    <section class="py-3 py-md-4 py-xl-5 cue-section-bg-color" >
+        <div class="container " >
+            <div class="row justify-content-center">
+                <div class="col-8">
+                    <p class="display-7 text-center cue-text-white" >
+                        NCL have been actively co-organizing and supporting Capture-the-Flag competitions
+                        throughout the years since 2019 when we first hosted
+                        the competition with ITE College East that marked the start of
+                        a three-year collaboration between both institutions.
+                        Since then, NCL have supported multiple CTF events for
+                        academia and agencies in Singapore and internationally. </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- section CUE Key Features -->
+    <section class="py-3 py-md-4">
+        <div class="container">
+            <div class ="row justify-content-center mt-4">
+                <div class="col-11">
+                    <h2 class="h4 fs-10 mb-3 text-right cue-title"><u>Some examples of CTF events we have supported includes:</u></h2>
+                </div>
+            </div>
+
+            <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center mt-5">
+                <div class="col-12 col-lg-6">
+                    <div class="row justify-content-md-center">
+                        <div class="col-12 col-xl-10">
+                            <h2 class="h4 fs-8 mb-5 text-center fw-bold" >Hackbash (A.YCEP) 2024</h2>
+                            <p class="fs-8 mb-3 mb-xl-5">Over 500 youths participated in
+                                the Advanced Youth Cyber Exploration Programme (A.YCEP) X HackBash 2024 in March,
+                                with 180 youths attending an on-site cybersecurity training bootcamp.
+                                Participants were trained in foundational cybersecurity topics like Steganography,
+                                Cryptography, and OSINT, and were also provided with information on cybersecurity career opportunities.</p>
+
+                            <a href="https://ncl-sg.blogspot.com/2024/03/hackbash-aycep-2024.html" target="_blank" class="btn bsb-btn-xl btn-outline-primary rounded-pill">Read More</a>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <img class="img-fluid rounded" loading="lazy" src="images/newui/ctf01.png" alt="ctf01" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-4 py-md-5">
+        <div class="container">
+            <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center">
+                <div class="col-12 col-lg-6">
+                    <img class="img-fluid rounded" loading="lazy" src="images/newui/ctf02.jpeg" alt="ctf02" />
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <div class="row justify-content-md-center">
+                        <div class="col-12 col-xl-10">
+                            <h2 class="h4 fs-8 mb-5 text-center fw-bold" >International Junior Cybersecurity Olympiad 2023 CTF competition
+                            </h2>
+                            <p class="fs-8 mb-3 mb-xl-5">The National Cybersecurity R&amp;D Lab (NCL) supported
+                                the STEAM AHEAD Global Finals 2023 (7-11 Dec 2023),
+                                organized by the Singapore International Mastery Contests Centre (SIMCC) in Bali,
+                                Indonesia. The event aimed to provide students with international exposure
+                                and education in the fields of Science, Technology, Engineering, Arts,
+                                and Mathematics (STEAM). The STEAM AHEAD Global Finals 2023 featured three categories,
+                                and NCL co-organized the “International Junior Cybersecurity Olympiad 2023 CTF competition”,
+                                collaborating with the NUS Centre for Nurturing Computer Excellence.
+                                Notably, Professor Chang Ee Chien and Liu Yuancheng from NCL were honored to serve as judges for
+                                the International Junior Cybersecurity Olympiad 2023 CTF competition.</p>
+
+                            <a href="https://ncl-sg.blogspot.com/2023/12/international-junior-cybersecurity.html" target="_blank" class="btn bsb-btn-xl btn-outline-primary rounded-pill">Read More</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-3 py-md-4">
+        <div class="container">
+            <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center">
+
+                <div class="col-12 col-lg-6">
+                    <div class="row justify-content-md-center">
+                        <div class="col-12 col-xl-10">
+                            <h2 class="h4 fs-8 mb-5 text-center fw-bold" >YCEP Central CTF 2023
+                            </h2>
+                            <p class="fs-8 mb-3 mb-xl-5">The Youth Cyber Exploration Programme (YCEP)
+                                Central Capture-the-Flag 2023 competition took place on the 25th of July 2023,
+                                in conjunction with WorldSkills ASEASN 2023,
+                                at Suntec Convention Centre witnessed close to 70 finalists from different schools.
+                                The competition was organized by CSA, with the support of National Cybersecurity R&amp;D Lab (NCL)
+                                and Cisco Systems, aimed to ignite the passion for cybersecurity
+                                among young talents and foster a vibrant cyber community.</p>
+
+                            <a href="https://ncl-sg.blogspot.com/2023/07/the-youth-cyber-exploration-programme.html" target="_blank" class="btn bsb-btn-xl btn-outline-primary rounded-pill">Read More</a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <img class="img-fluid rounded" loading="lazy" src="images/newui/ctf03.jpeg" alt="ctf03" />
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <section class="py-3 py-md-4">
+        <div class="container">
+            <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center">
+
+                <div class="col-12 col-lg-6">
+                    <img class="img-fluid rounded" loading="lazy" src="images/newui/ctf04.jpeg" alt="ctf04" />
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <div class="row justify-content-md-center">
+                        <div class="col-12 col-xl-10">
+                            <h2 class="h4 fs-8 mb-5 text-center fw-bold" >NUS-GreyHats CTF 2023
+                            </h2>
+                            <p class="fs-8 mb-3 mb-xl-5">The GreyHats CTF 2023 event, jointly
+                                organized by the National Cybersecurity R&amp;D Lab (NCL) and NUS Greyhats,
+                                took place from July 15th to 16th, 2023, at the School of Computing,
+                                National University of Singapore. The event witnessed the participation of
+                                90 finalists who formed 15 teams, including 5 international teams and 10 local teams.
+                                These 90 finalists had previously competed in the GreyHats qualifier rounds and
+                                successfully qualified for the NUS GreyHats CTF 2023 event. The qualifier rounds attracted participation from more than 1600 individuals
+                                representing 454 teams (314 international teams &amp; 140 local teams).</p>
+
+                            <a href="https://ncl-sg.blogspot.com/2023/07/greyhats-ctf-2023.html" target="_blank" class="btn bsb-btn-xl btn-outline-primary rounded-pill">Read More</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!--[if lt IE 9]> -->
+<script type="text/javascript" src="../static/js/html5shiv.js"></script>
+<!-- <script type="text/javascript" src="../static/js/respond.min.js"></script> -->
+<!-- <![endif]-->
+
+<script type="text/javascript" src="../static/js/jquery.min.js"></script>
+<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+<!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>-->
+<!--<script type="text/javascript" src="../static/js/jquery.inview.min.js"></script>-->
+<!--<script type="text/javascript" src="../static/js/wow.min.js"></script>-->
+<!--<script type="text/javascript" src="../static/js/mousescroll.js"></script>-->
+<!--<script type="text/javascript" src="../static/js/jquery.countTo.js"></script>-->
+<!--<script type="text/javascript" src="../static/js/lightbox.min.js"></script>-->
+<!--<script type="text/javascript" src="../static/js/main.js"></script>-->
+<!--<script type="text/javascript" src="../static/js/waypoints.min.js"></script>-->
+<!--<script type="text/javascript" src="../static/js/minimal.lightbox.js"></script>-->
+<!--<script type="text/javascript" src="../static/js/jquery.flexslider.js"></script>-->
+</body>
+</html>
+

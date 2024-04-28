@@ -2,53 +2,68 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>National Cybersecurity Laboratories</title>
-        <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" th:href="@{~/css/bootstrap.min.css}" media="screen"/>
-        <link rel="stylesheet" type="text/css" href="static/css/animate.min.css" th:href="@{~/css/animate.min.css}"/>
-        <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{~/css/font-awesome/css/font-awesome.min.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/lightbox.css" th:href="@{~/css/lightbox.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/main.css" th:href="@{~/css/main.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/responsive.css" th:href="@{~/css/responsive.css}"/>
-        <link rel="stylesheet" type="text/css" id="static/css-preset" href="css/presets/preset1.css" th:href="@{~/css/presets/preset1.css}"/>
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
-        <link rel="shortcut icon" href="images/ncl_favicon1.png"/>
+		<!--=============== REMIXICONS ===============-->
+		<link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet" />
+		<link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet' />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+		<link rel="shortcut icon" href="images/newui/ncl_favicon.png"/>
 
-    </head>
+		<title >National Cybersecurity R&amp;D Lab</title>
+		<!--=============== CSS ===============-->
+		<link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css" th:href="@{~/bootstrap/css/bootstrap.min.css}" media="screen"/>
+		<link rel="stylesheet" type="text/css" href="static/css/newui/global.css" th:href="@{~/css/newui/global.css}"/>
+	</head>
   <body>
 
-      <!-- give a fragment name so that we can import from other html files -->
-   		<div th:fragment="footer">
-				<footer id="footer">
-					<div class="footer-bgcolor">
-						<div class="container">
-							<p>&nbsp;</p>
-							<div class="row">
-								<div class="col-sm-3 col-sm-offset-1">
-									<ul class="address">
-										<li><i class="fa fa-envelope"></i> <span> Email: </span><a>support@ncl.sg</a></li>
-										<li><i class="fa fa-map-marker"></i> <span> Address: </span><a href="nclDirections.pdf" target="_blank">NCL COM3-B1-09 Computing 3, 11 Research Link, Singapore 119391,</a></li>
-											</ul>
+  <div th:fragment="footer">
+	  	<!--========== FOOTER ==========-->
+	  <footer class="footer footer-bg">
+		  <section class="py-4 py-md-5 py-xl-8  " >
+			  <div class="container overflow-hidden">
+				  <div class="row gy-4 gy-lg-0">
+					  <div class="col-12 col-md-6 col-lg-4 justify-content-end">
+						  <div class="widget">
+							  <h4 class="widget-title footer-get-title mb-4">Get in Touch</h4>
+							  <address class="mb-4 footer-get-addresstitle">
+								  <i class="fa fa-map-marker fa-sm fa-lg" ></i>
+								  NUS School of Computing, COM3 <br/>B1-09 || 11 Research link,<br/>Singapore 119391</address>
+							  <p class="mb-1">
+								 <!-- <a class="link-secondary text-decoration-none" href="tel:+15057922430">(505) 792-2430</a>-->
+							  </p>
+							  <p class="mb-0 ">
+								  <a class="footer-get-addresstitle link-secondary text-decoration-none"
+									 href="support@ncl.sg">
+									  <i class="fa fa-envelope fa-sm fa-lg" ></i> support@ncl.sg</a>
+							  </p>
+						  </div>
+					  </div>
+					  <div class="col-12 col-lg-4">
+						  <div class="widget">
+							  <div class="col-12">
+								  <div class="d-grid mt-3">
+									  <button class="btn btn-primary"  type="submit">Contact Us</button>
+								  </div>
+							  </div>
+						  </div>
+					  </div>
 
+				  </div>
+			  </div>
+		  </section>
+		  <div class="footer-bg py-4 py-md-3 py-xl-8 footer-border-top-custom border-top">
+			  <div class="container overflow-hidden">
+				  <div class="row ">
+					  <div class="col-xs-12 justify-content-center">
+						  <div class="footer-copyright-wrapper text-center ">
+							  <p class="footer-copyright-color"> &#169; 2024 National Cybersecurity R&amp;D Lab. All Rights Reserved.</p>
+						  </div>
+					  </div>
 
-									<div class="social-icons2">
-									</div>
-								</div>
-								<div class="col-sm-4">
-									<a href="terms_and_conditions" th:href="@{/terms_and_conditions}" th:text="#{signup.termsAndCondition}">Terms and Conditions</a> | <a href="#" th:href="@{/orderform/download}">Reservation</a> <!--| <a th:href="@{/public_teams}">Public&nbsp;Teams</a>--> | <a th:href="@{/data/public}">Public Datasets</a>
-								</div>
-								<div class="col-sm-2">
-									<ul>
-										<a class="envelope" th:href="#{support.email.link}"><i class="fa fa-envelope fa-3x"></i></a>
-										<a href="">&nbsp;</a>
-										<!--<a class="github" href="https://github.com/nus-ncl"><i class="fa fa-github fa-3x"></i></a>-->
-									</ul>
-								</div>
+				  </div>
+			  </div>
+		  </div>
 
-							</div> <!-- row -->
-						</div> <!-- container -->
-					</div>
-				</footer>
-   		</div> <!-- main-nav -->
-	  <object th:include="fragments/javascript :: javascript" th:remove="tag" />
+	  </footer>
+		</div>
   </body>
 </html>

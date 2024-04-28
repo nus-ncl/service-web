@@ -1,0 +1,29 @@
+/***  new aboutus css **/
+.about-new-title{
+  font-weight: bold !important;
+  font-size: 1.7rem  !important;
+  color: #003d7c !important;
+}
+
+/***  new collaborators css **/
+.colla-title{
+/*color:#fff;*/
+color: #003d7c !important; /* light */
+font-weight: bold;
+font-size: 1.7rem  !important;
+}
+
+.colla-subtitle{
+/*color:#becbd8;*/
+color:#6c757d;
+margin-top:10px;
+}
+
+.colla-a{
+text-decoration: none;
+color: white;
+}
+
+.colla-img:hover{
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
