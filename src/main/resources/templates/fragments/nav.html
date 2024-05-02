@@ -15,11 +15,6 @@
     <link rel="stylesheet" type="text/css" href="static/css/newui/nav.css" th:href="@{~/css/newui/nav.css}"/>
     <link rel="stylesheet" type="text/css" href="static/css/newui/carousel.css" th:href="@{~/css/newui/carousel.css}"/>
     <link rel="stylesheet" type="text/css" href="static/css/newui/aboutus.css" th:href="@{~/css/newui/aboutus.css}"/>
-   <!-- <link rel="stylesheet" type="text/css" href="static/css/newui/slider.css" th:href="@{~/css/newui/slider.css}"/> -->
-    <!--=============== JS ===============-->
-    <!--<script type="text/javascript" src="static/js/nav.js" th:src="@{~/js/nav.js}"></script>
-    <script type="text/javascript" src="static/js/slider.js" th:src="@{~/js/slider.js}"></script>-->
-
 </head>
 <body>
 <!--=============== HEADER ===============-->
@@ -67,7 +62,7 @@
                         </li>
                         <li >
                             <div>
-                                <a href="#careers" class="dropdown__link" >Careers
+                                <a href="https://www.comp.nus.edu.sg/careers/" class="dropdown__link" target="_blank" >Careers
                                 </a></div>
                         </li>
                     </ul>
@@ -158,7 +153,7 @@
                         </li>
                         <li><div>
                             <a href="../ncl_testbedpublications.html" th:href="@{~/ncltestbedpublications}" class="dropdown__link">
-                                Publications from Projects that use NCL Testbed
+                                Publications from Projects that USED NCL Testbed
                             </a></div>
                         </li>
                         <li>
@@ -221,7 +216,7 @@
                         </li>
 
                         <li><div>
-                            <a href="#" class="dropdown__link">
+                            <a href="../register.html" th:href="@{~/signup}" class="dropdown__link">
                                 Sign up
                             </a></div>
                         </li>
@@ -230,13 +225,10 @@
                 </li>
                 <!--=============== Contact ===============-->
 
-                <li><a href="#" class="nav__link">Contact Us</a></li>
+                <li><a href="../contactus.html" th:href="@{~/contactus}" class="nav__link">Contact Us</a></li>
             </ul>
-
         </div>
-
     </nav>
-
 </header>
 <!--=============== JS ===============-->
 <object th:include="fragments/javascript :: javascript" th:remove="tag"/>

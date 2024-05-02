@@ -4,11 +4,9 @@
      <title>Login</title>
      <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
      <link rel="stylesheet" type="text/css" href="../static/css/newui/loginreg.css" />
-
 </head>
 <body >
 <div layout:fragment="content" id="login">
-        <!-- Login 13 - Bootstrap Brain Component -->
         <section class="bg-light py-3 py-md-5 min-vh-100 d-flex  justify-content-center align-items-center">
             <div class="container">
                 <div class="row justify-content-center">
@@ -21,6 +19,7 @@
                                     </a>
                                 </div>
                                 <h2 class="fs-5 fw-bold member-text text-center mb-4">NCL Member Login</h2>
+
                                 <form action="#!">
                                     <div class="row gy-2 overflow-hidden">
                                         <div class="col-12">
@@ -37,16 +36,16 @@
                                         </div>
                                         <div class="col-12">
                                             <div class="d-flex gap-2 justify-content-between">
-                                                <a href="auth-reset-password.html" class="link-primary f-sup-text text-decoration-none">Forgot password?</a>
+                                                <a href="../password_reset_email.html" th:href="@{~/password_reset_email}" class="link-primary f-sup-text text-decoration-none">Forgot password?</a>
                                             </div>
                                         </div>
                                         <div class="col-12">
                                             <div class="d-grid my-3">
-                                                <button class="btn login-btn btn-lg fs-6" type="submit">Sign in</button>
+                                                <button class="btn login-btn btn-lg fs-6" type="submit">Sign In</button>
                                             </div>
                                         </div>
                                         <div class="col-12">
-                                            <p class="m-0 text-secondary  text-center">Don't have an account? <a href="auth-register.html" class="link-primary f-sup-text text-decoration-none">Sign up</a></p>
+                                            <p class="m-0 text-secondary  text-center">Don't have an account? <a href="../register.html" th:href="@{~/signup}"  class="link-primary f-sup-text text-decoration-none">Sign Up</a></p>
                                         </div>
                                     </div>
                                 </form>
@@ -62,8 +61,6 @@
 <script type="text/javascript" src="../static/js/html5shiv.js"></script>
 <script type="text/javascript" src="../static/js/respond.min.js"></script>
 <![endif]-->
-
 <script type="text/javascript" src="../static/js/jquery.min.js"></script>
 <script type="text/javascript" src="../static/bootstrap/js/bootstrap.min.js"></script>
-
 </html>

@@ -366,5 +366,21 @@ public class MainController {
     public String infraServerInformation(Model model) throws IOException {
         return "infraserver";
     }
+
+
+    @RequestMapping("/password_reset_email")
+    public String passwordRestEmail() {
+        return "password_reset_email";
+    }
+
+    @RequestMapping("/signup")
+    public String registeraccount() {
+        return "register";
+    }
+
+    @RequestMapping("/contactus")
+    public String contactus() {
+        return "contactus";
+    }
 }
 

@@ -130,3 +130,49 @@ sr.reveal(`.home__data, .home__img,
             .footer__content`,  {
     interval: 200
 });
+
+
+//Rendering static content changes from github
+function loadStaticPage(id, page) {
+    $.ajax({
+         dataType: "JSON",
+         async: true,
+         //production
+         //url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+
+        //This url is for Test branch used for testing
+         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1311",
+         type: 'GET',
+         success: function(result) {
+             document.getElementById(id).innerHTML = decodeURIComponent(escape(window.atob(result.content)));
+         }
+    });
+}
+
+//Rendering static content changes from github
+function loadfooterStaticPage(id, page) {
+    $.ajax({
+         dataType: "JSON",
+         async: true,
+         //production
+         //url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+
+        //This url is for Test branch used for testing
+         url: "https://api.github.com/repos/nus-ncl/static-web-content/footer/"+page+"?ref=DEV-1311",
+         type: 'GET',
+         success: function(result) {
+             document.getElementById(id).innerHTML = decodeURIComponent(escape(window.atob(result.content)));
+         }
+    });
+}
+
+function loadImage(imgName, imgId, imgType) {
+    $.ajax({
+         dataType: "JSON",
+         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/images/"+imgName,
+         type: 'GET',
+         success: function(result) {
+            document.getElementById(imgId).src = "data:image/"+imgType+";base64,"+result.content;
+         }
+    });
+}

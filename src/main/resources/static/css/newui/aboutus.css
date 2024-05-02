@@ -27,3 +27,37 @@ color: white;
 .colla-img:hover{
     box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
+
+.contactus-btn {
+background-color: #d82323;
+color: #fff;
+font-size:14px;
+width:150px;
+}
+
+.contactus-btn:hover,
+.contactus-btn:focus,
+.contactus-btn:active {
+background-color: #eb5959;
+color: #fff;
+}
+
+.map-container-section {
+overflow:hidden;
+position:relative;
+height:0;
+justify-content: center; /* Center horizontally */
+align-items: center; /* Center vertically */
+}
+
+.map-container-section iframe {
+left:0;
+top:0;
+height:100%;
+width:100%;
+position:absolute;
+}
+
+.map-marker-icon{
+color: #ac1010;
+}

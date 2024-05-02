@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org" >
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<!--=============== REMIXICONS ===============-->
@@ -13,7 +13,15 @@
 		<link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css" th:href="@{~/bootstrap/css/bootstrap.min.css}" media="screen"/>
 		<link rel="stylesheet" type="text/css" href="static/css/newui/global.css" th:href="@{~/css/newui/global.css}"/>
 	</head>
-  <body>
+
+	<!-- Static Content -->
+<!--	<body onload="loadStaticPage('footersection','footer.txt')">-->
+<!--	<div layout:fragment="footer" id="footersection"></div>-->
+<!--	</body>-->
+
+<!--	<div layout:fragment="footer" id="footersection"></div>-->
+
+	<body>
 
   <div th:fragment="footer">
 	  	<!--========== FOOTER ==========-->
@@ -28,7 +36,6 @@
 								  <i class="fa fa-map-marker fa-sm fa-lg" ></i>
 								  NUS School of Computing, COM3 <br/>B1-09 || 11 Research link,<br/>Singapore 119391</address>
 							  <p class="mb-1">
-								 <!-- <a class="link-secondary text-decoration-none" href="tel:+15057922430">(505) 792-2430</a>-->
 							  </p>
 							  <p class="mb-0 ">
 								  <a class="footer-get-addresstitle link-secondary text-decoration-none"
@@ -41,7 +48,9 @@
 						  <div class="widget">
 							  <div class="col-12">
 								  <div class="d-grid mt-3">
-									  <button class="btn btn-primary"  type="submit">Contact Us</button>
+
+									  <a th:href="@{~/contactus}" class="btn btn-primary">Contact Us</a>
+
 								  </div>
 							  </div>
 						  </div>
@@ -62,7 +71,6 @@
 				  </div>
 			  </div>
 		  </div>
-
 	  </footer>
 		</div>
   </body>
