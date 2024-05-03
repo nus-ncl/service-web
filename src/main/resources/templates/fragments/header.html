@@ -3,44 +3,35 @@
     HTML CSS <head/> css imports
     author: yeoteye
  -->
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head th:fragment="header">
-        <object th:if="${#httpServletRequest.requestURI} eq '/' or
-                        ${#httpServletRequest.requestURI} eq '/about' or
-                        ${#httpServletRequest.requestURI} eq '/calendar' or
-                        ${#httpServletRequest.requestURI} eq '/career' or
-                        ${#httpServletRequest.requestURI} eq '/contactus' or
-                        ${#httpServletRequest.requestURI} eq '/data/public' or
-                        ${#httpServletRequest.requestURI} eq '/event' or
-                        ${#httpServletRequest.requestURI} eq '/overview' or
-                        ${#httpServletRequest.requestURI} eq '/pricing' or
-                        ${#httpServletRequest.requestURI} eq '/public_teams' or
-                        ${#httpServletRequest.requestURI} eq '/research' or
-                        ${#httpServletRequest.requestURI} eq '/resources' or
-                        ${#httpServletRequest.requestURI} eq '/signup2' or
-                        ${#httpServletRequest.requestURI} eq '/testbedInformation' or
-                        ${#httpServletRequest.requestURI} eq '/testbedNodesStatus' or
-                        ${#strings.startsWith(#httpServletRequest.requestURI,'/tutorials')} == true"
-                th:include="fragments/google_analytics :: google_analytics" th:remove="tag"></object>
 
-        <title>National Cybersecurity R&amp;D Laboratories</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.min.css" th:href="@{~/css/bootstrap.min.css}" media="screen"/>
-        <link rel="stylesheet" type="text/css" href="static/css/animate.min.css" th:href="@{~/css/animate.min.css}"/>
-        <link rel="stylesheet"  type="text/css" href="static/css/font-awesome/css/font-awesome.min.css" th:href="@{~/css/font-awesome/css/font-awesome.min.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/lightbox.css" th:href="@{~/css/lightbox.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/main.css" th:href="@{~/css/main.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/responsive.css" th:href="@{~/css/responsive.css}"/>
-        <link rel="stylesheet" type="text/css" id="static/css-preset" href="css/presets/preset1.css" th:href="@{~/css/presets/preset1.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/flexslider.css" th:href="@{~/css/flexslider.css}"/>
-        <link rel="stylesheet" type="text/css" href="static/css/resumable.css" th:href="@{~/css/resumable.css}"/>
+<head th:fragment="header">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--=============== REMIXICONS ===============-->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"/>
 
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
-        <link rel="shortcut icon" href="images/ncl_favicon1.png" th:href="@{~/images/ncl_favicon1.png}"/>
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" type="text/css" href="../../static/bootstrap/css/bootstrap.min.css" th:href="@{~/bootstrap/css/bootstrap.min.css}" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="static/css/newui/nav.css" th:href="@{~/css/newui/nav.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/newui/global.css" th:href="@{~/css/newui/global.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/newui/carousel.css" th:href="@{~/css/newui/carousel.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/newui/aboutus.css" th:href="@{~/css/newui/aboutus.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/newui/wwd.css" th:href="@{~/css/newui/wwd.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/newui/team.css" th:href="@{~/css/newui/team.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/newui/servicetools.css" th:href="@{~/css/newui/servicetools.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/newui/services.css" th:href="@{~/css/newui/services.css}"/>
+    <link rel="stylesheet" type="text/css" href="static/css/newui/pricing.css" th:href="@{~/css/newui/pricing.css}" />
+    <link rel="stylesheet" type="text/css" href="static/css/newui/loginreg.css" th:href="@{~/css/newui/loginreg.css}" />
+    <link rel="stylesheet" type="text/css" href="static/css/newui/loginreg.css" th:href="@{~/css/newui/infra.css}" />
 
-        <meta name="google-site-verification" content="9Rbb0iUDVKBNIkwpyLKnoyTN79LBNFQxLPcRNgYKeHQ" />
-    </head>
-  <body>
-  </body>
+    <link rel="shortcut icon" href="images/newui/ncl_favicon.png" th:href="@{~/images/newui/ncl_favicon.png}"/>
+
+    <title >National Cybersecurity R&amp;D Lab</title>
+    <meta name="google-site-verification" content="9Rbb0iUDVKBNIkwpyLKnoyTN79LBNFQxLPcRNgYKeHQ" />
+</head>
+<body></body>
 </html>

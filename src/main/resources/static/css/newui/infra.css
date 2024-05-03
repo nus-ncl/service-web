@@ -1,0 +1,84 @@
+/**** infra server css ****/
+
+
+.infra-body{
+background: #f9fcff;
+}
+
+.scrollspy {
+position: -webkit-sticky;
+position: relative;
+
+}
+
+.scrollspy ul {
+list-style-type: none;
+padding: 0;
+position: sticky;
+top: 120px;
+}
+
+.nav-infra {
+color : #fff;
+}
+
+.scrollspy ul li {
+margin-top:3px;
+margin-left: 15px;
+margin-right: 15px;
+border: 1px solid #ced4da;
+background-color: #003d7c;
+padding: 10px;
+}
+
+.scrollspy ul li:hover {
+background-color: #0f62b8;
+color: #fff;
+}
+
+.scrollspy ul li a {
+text-decoration: none; /* Remove underline */
+color: inherit; /* Inherit text color */
+font-size : 15px;
+}
+
+
+.infra-item-card-title{
+color:#003d7c;
+font-size:1.5rem;
+}
+
+.infra-item-card-subtitle{
+font-size:16px;
+color:#003d7c;
+}
+
+.infraserver-title{
+color: #003d7c !important;
+font-size: 2rem  !important;
+font-weight: bold !important;
+}
+
+.gup-li{
+list-style: disc;
+font-size:1rem;
+margin-bottom:10px ;
+color:#343333 ;
+line-height: 1.5;
+}
+
+.node-p{
+margin-left: -50px;
+color:#003d7c;
+}
+
+.node-li{
+list-style: disc;
+font-size:1rem;
+color:#343333 ;
+}
+
+.openstack-sub{
+color:#003d7c;
+}
+

@@ -1,0 +1,73 @@
+.f-row-bg{
+    background-color:#003062 !important;
+}
+
+.custom-btn {
+    background-color: #003d7c;
+    color: #fff;
+}
+
+.custom-btn:hover,
+.custom-btn:focus,
+.custom-btn:active {
+    background-color: #0f62b8;
+    color: #fff;
+}
+
+.line{
+    width: 100px;
+    height: 2px;
+    background-color: #ef7c00;
+    margin: auto;
+}
+
+/**** footer ****/
+
+.footer-bg{
+background-color:#1D232F;
+}
+
+.footer-get-title{
+color:#fff;
+}
+
+.footer-get-addresstitle{
+color: #becbd8;
+font-size: 14px;
+}
+
+.footer-copyright-color{
+color:#becbd8;
+font-size: 12px;
+}
+
+.footer-border-top-custom {
+    border-top-color: #727475;
+    border-top-width: 0.5px;
+}
+
+/**** publications ****/
+
+.pub-title {
+text-align: justify !important;
+color : #0a6dd4 !important;
+font-size: 1.1rem !important;
+font-weight: bold;
+}
+
+.pub-subtitle {
+text-align: justify;
+color : #000000;
+font-size: 15px;
+}
+
+.pub-new-title{
+  font-weight: bold !important;
+  font-size: 2rem  !important;
+  color: #003d7c !important;
+}
+
+.pub-img-fluid {
+height: 200px  !important; /* Set the height as per your requirement */
+}
+
