@@ -38,9 +38,7 @@
 								<textarea class="form-control" id="message" name="message" rows="5"  th:required="required"></textarea>
 							</div>
 							<div class="col-12 d-flex justify-content-end">
-
 									<button class="btn contactus-btn btn-lg fs-6" type="submit">Send Message</button>
-
 							</div>
 						</div>
 					</form>
@@ -62,6 +60,7 @@
 								<span class="sr-only">Loading...</span>
 							</div>
 							</div>
+
 							<div id="map-container-placeholder" class="z-depth-1-half map-container-section mb-4 mt-3" style="height: 400px;"></div>
 						</div>
 					</div>
@@ -70,40 +69,39 @@
 	</div>
 </section>
 <script>
-   // Function to load the map
-    function loadMap() {
-        // Show loading spinner
-        document.getElementById("loading-spinner").style.display = "block";
-         document.getElementById("embed-spinner").style.display = "block";
+// Function to load the map
+function loadMap() {
+	// Show loading spinner
+	document.getElementById("loading-spinner").style.display = "block";
+	document.getElementById("embed-spinner").style.display = "block";
+	// Replace the placeholder div with the actual map iframe
+	document.getElementById("map-container-placeholder").innerHTML = `
+	<iframe src="https://maps.google.com/maps?q=11 Research Link, Singapore 117573&amp;z=15&amp;output=embed"
+		frameborder="0"
+		style="border:0"
+		loading="lazy"
+		onload="hideLoadingSpinner()"></iframe>
+	`;
+}
 
-        // Replace the placeholder div with the actual map iframe
-        document.getElementById("map-container-placeholder").innerHTML = `
-            <iframe src="https://maps.google.com/maps?q=11 Research Link, Singapore 117573&amp;z=15&amp;output=embed"
-                    frameborder="0"
-                    style="border:0"
-                    loading="lazy"
-                    onload="hideLoadingSpinner()"></iframe>
-        `;
-    }
+// Function to hide the loading spinner once the map is loaded
+function hideLoadingSpinner() {
+	document.getElementById("loading-spinner").style.display = "none";
+	document.getElementById("embed-spinner").style.display = "none";
+}
 
-    // Function to hide the loading spinner once the map is loaded
-    function hideLoadingSpinner() {
-         document.getElementById("loading-spinner").style.display = "none";
-          document.getElementById("embed-spinner").style.display = "none";
-    }
+// Intersection Observer to watch for the map container
+var observer = new IntersectionObserver(function(entries) {
+	entries.forEach(function(entry) {
+	if (entry.isIntersecting) {
+		loadMap();
+		observer.disconnect(); // Stop observing once the map is loaded
+		}
+	});
+});
 
-    // Intersection Observer to watch for the map container
-    var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-            if (entry.isIntersecting) {
-                loadMap();
-                observer.disconnect(); // Stop observing once the map is loaded
-            }
-        });
-    });
-
-    // Start observing the placeholder div
-    observer.observe(document.getElementById("map-container-placeholder"));
+// Start observing the placeholder div
+observer.observe(document.getElementById("map-container-placeholder"));
 </script>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="../static/js/html5shiv.js"></script>

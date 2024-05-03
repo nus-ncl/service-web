@@ -154,3 +154,80 @@ font-size:14px;
 }
 /* end 768 Channel
 -------------------------------------------------- */
+
+/* media size 1200 Channel
+-------------------------------------------------- */
+@media (max-width: 1200px) {
+ .carousel-content{
+position: relative;
+width: 68%;
+box-sizing: border-box;
+color: #fff;
+background-color: #fff;
+border-radius:4px;
+padding: .4rem;
+}
+}
+/* end 1200 Channel
+-------------------------------------------------- */
+
+/* media size 900 and 800 Channel
+-------------------------------------------------- */
+@media screen and (max-width: 900px) and (min-width: 800px) {
+
+ .carousel-content{
+position: relative;
+width: 75%;
+box-sizing: border-box;
+color: #fff;
+background-color: #fff;
+border-radius:4px;
+padding: .4rem;
+}
+}
+/* end 900 and 800 Channel
+-------------------------------------------------- */
+
+/* media size 810 and 700 Channel
+-------------------------------------------------- */
+@media screen and (max-width: 810px) and (min-width: 700px){
+
+.carousel-content{
+width:80%;}
+
+}
+/* end 755 Channel
+-------------------------------------------------- */
+
+/* media size 700 and 650 Channel
+-------------------------------------------------- */
+@media screen and (max-width: 700px) and (min-width: 650px){
+
+.carousel-content{
+width:95%;}
+
+}
+/* end 700 and 650 Channel
+-------------------------------------------------- */
+
+/* media size 700 and 650 Channel
+-------------------------------------------------- */
+@media screen and (max-width: 650px) and (min-width: 560px){
+
+.carousel-content{
+width:110%;}
+
+}
+/* end 700 and 650 Channel
+-------------------------------------------------- */
+
+/* media size 700 and 650 Channel
+-------------------------------------------------- */
+@media (max-width: 560px) {
+
+.carousel-content{
+width: auto ;}
+
+}
+/* end 700 and 650 Channel
+-------------------------------------------------- */

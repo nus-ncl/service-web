@@ -131,7 +131,7 @@ sr.reveal(`.home__data, .home__img,
     interval: 200
 });
 
-
+/*==================== Load Static Content GitHUB  ====================*/
 //Rendering static content changes from github
 function loadStaticPage(id, page) {
     $.ajax({
@@ -176,3 +176,5 @@ function loadImage(imgName, imgId, imgType) {
          }
     });
 }
+
+/*==================== Load Map  ====================*/
