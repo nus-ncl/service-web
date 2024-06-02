@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>NCL Publications</title>
+</head>
+<body onload="loadStaticPage('ncl_newsarticles','Publication/ncl_newsarticles.txt');loadStaticPageWithDelay('footer', 'Home/footer.txt',1000);">
+<div layout:fragment="content" >
+    <div id="ncl_newsarticles"></div>
+    <div id="footer"></div>
+</div>
+</body>
+</html>
