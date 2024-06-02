@@ -171,7 +171,7 @@ public class MainController {
 
     @RequestMapping("/lockedshields")
     public String lockedshields() {
-        return "lockedshields";
+        return "lockedShields";
     }
 
     @RequestMapping("/ijco")
