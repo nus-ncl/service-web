@@ -1,0 +1,42 @@
+ .member-text{
+/*color:#666 !important;*/
+ color: #003d7c !important;
+}
+
+/*
+.btn-primary
+{
+background-color: #444444 !important;
+border:0;
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:visited {
+background-color: #5b5b5b !important;
+border:0;
+}
+*/
+
+.login-btn {
+    background-color: #003d7c;
+    color: #fff;
+}
+
+.login-btn:hover,
+.login-btn:focus,
+.login-btn:active {
+    background-color: #0f62b8;
+    color: #fff;
+}
+
+.f-sup-text{
+color: #5499c7 !important;;
+}
+
+.f-sup-text:hover
+{
+color: #236692 !important;;
+}
+
+

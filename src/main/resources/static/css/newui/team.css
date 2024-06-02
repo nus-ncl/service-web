@@ -1,0 +1,144 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.row-team {
+    margin-right: 0; /* or margin-right: unset; */
+}
+
+.team-body{
+    background-color: aliceblue;
+}
+
+.team-card-img-top{
+    border-radius: 50%;
+    height: 150px !important;
+    width: 150px !important;
+    position: relative;
+    top: -80px;
+    object-fit: cover;
+    align-content:center;
+     /*left: 80px;*/
+}
+
+.team-card{
+    border-radius: 0;
+    cursor: pointer;
+    margin-top:100px !important;
+    background-color: #fff;
+ }
+
+.team-card:hover{
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.team-card-body{
+    margin-top: -80px;
+ }
+
+
+.team-bi{
+    font-size: 20px;
+    margin-top:-10px;
+}
+
+.team-h2{
+    font-weight: bold !important;
+    font-size: 1.7rem !important;
+    color: #003d7c !important;
+}
+
+.team-title{
+    font-size: 17px;
+    font-weight: bold !important;
+    color:#000 !important;
+ }
+
+
+.team-subtitle{
+    font-size: 16px;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.team-btn {
+    background-color: #003d7c;
+    color: #fff;
+    margin-top:30px;
+    font-size:14px;
+}
+
+.team-btn:hover,
+.team-btn:focus,
+.team-btn:active {
+    background-color: #0f62b8;
+    color: #fff;
+}
+
+.team-leader{
+margin-top:30px;
+}
+
+.team-i{
+  color:#000;
+}
+
+.team-i:hover,
+.team-i:focus,
+.team-i:active {
+   color:#000;
+}
+
+/* for team detail page */
+
+.team-dl-card-img-top{
+    border-radius: 50%;
+    height: 150px !important;
+    width: 150px !important;
+    position: relative;
+    object-fit: cover;
+    align-content:center;
+     /*left: 80px;*/
+}
+/*
+.line{
+    width: 100px;
+    height: 2px;
+    background-color: burlywood;
+    margin: auto;
+}
+*/
+.team-dl-h1{
+    font-weight: bold !important;
+    font-size: 2rem !important;
+    color: #003d7c !important;
+    margin-top:1.5rem !important;
+}
+
+.team-dl-h3{
+    font-weight: bold !important;
+    color: #003d7c !important;
+    font-size: 1.5rem !important;
+    margin-top:20px !important;
+}
+
+.team-dl-row-mg{
+ margin-top:5px !important;
+}
+
+
+/* end team detail page */
+/*@media only screen and (max-width: 600px) {
+    .team-card-img-top{
+        left: 48px !important;
+    }
+}*/
+
+/* media size 700 and 650 Channel
+-------------------------------------------------- */
+@media screen and (max-width: 1120px) and (min-width: 560px){
+
+}
+/* end 700 and 650 Channel
+-------------------------------------------------- */

@@ -1,0 +1,101 @@
+.event-bg-orange
+{
+background-color: #EE7C00 !important;
+}
+
+.event-bg-white
+{
+background-color: #ffffff !important;
+}
+
+.event-text-white
+{
+ color: #ffffff !important;
+}
+
+.event-text-uppercase
+{
+text-transform: uppercase; font-size: 0.9rem; font-weight: 600;
+}
+
+.home-event > div
+{
+padding-top: 10px; margin-bottom: 10px;
+}
+.home-event > div:hover
+.home-event-date
+{ box-shadow: 0 7px 20px 0 rgba(0, 0, 0, .3); }
+
+.home-event-date
+{ transition: .2s ease-in-out; transform: translateY(.6rem); min-width: 100px; }
+
+.home-event-info
+{
+padding: 1.2rem 1.2rem 1.2rem 3.7rem; margin: -3.3rem 0 0 3rem;
+}
+
+.home-event-info a
+{
+color: #003d7c;
+}
+.event-slideRight
+{
+transition: ease-out 0.2s;
+box-shadow: inset 0 0 0 0 #00284C;
+}
+.event-slideRight:hover
+{
+box-shadow: inset 400px 0 0 0 #00284C;
+}
+.event-fs-5
+{
+font-size: 1rem; font-weight: 500;
+}
+.event-fs-4
+{ font-size: 1rem; font-weight: 600;
+}
+
+.event-container
+{
+margin-inline: 1.5rem;
+}
+
+.event-row-mg
+{
+margin-left:20px;
+margin-right:20px;
+}
+
+.event-row-height
+{
+height: 300px;
+}
+
+#eventModalimage img {
+border-radius: 10px; /* Adjust the value as needed */
+width: 350px;
+height: 250px;
+}
+
+@media (max-width: 576px) {
+.event-container
+{
+margin-inline: 1.5rem;
+}
+}
+
+/** Training **/
+.train-sch-text{
+font-size : 24px;
+color : #003d7c;
+font-weight: bold;
+}
+
+.train-sch-li{
+list-style: disc;
+}
+
+
+
+
+

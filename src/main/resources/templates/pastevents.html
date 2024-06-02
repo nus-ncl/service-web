@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Past Events</title>
+
+</head>
+
+
+<body onload="loadStaticPage('footer', 'Home/footer.txt');" >
+<div layout:fragment="content" >
+<main id="main" class="mb-5">
+    <section class="py-4 py-md-5 py-xl-6"   style="background-color:#012169">
+        <div class="container " style="margin-top:5.5rem;">
+            <div class="row ">
+                <div class="col-8">
+                    <p  style="color:#fff; font-size:26px;" >
+                        Past Events </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-3 py-md-4 py-xl-5 bg-light">
+        <div class="container">
+            <div class="row gy-3 gy-md-4">
+                <div class="col-11 col-lg-5 col-xl-6">
+                    <div class="d-block d-sm-flex align-items-center">
+                        <div class="mb-3 mb-sm-0 ">
+                            <h3 style="font-size:16px; color:#003d7c; margin-right:20px">Filter by</h3>
+                        </div>
+                        <div class ="mr-5">
+                            <select id="yearFilter" class="form-select text-secondary border-light-subtle" width="100px">
+                                <option value="2022" selected="selected">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020_19">2020-2019</option>
+                                <option value="2018_17">2018-2017</option>
+                                <option value="2016">2016</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-light event-section" id="2022" style="display: none;">
+        <div class="event-container">
+            <div class="row home-event gx-5 event-row-mg mb-3">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            15-16
+                            <div class="fs-6 ps-2 text-uppercase">NOV</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="https://www.mindef.gov.sg/web/portal/mindef/news-and-events/latest-releases/article-detail/2022/November/16nov22_nr"  target="new">
+                            Critical Infrastructure Defence Exercise (CIDeX)
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            12
+                            <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white ">
+                        <a href="https://ncl-sg.blogspot.com/2022/10/greyctf-2022-event-summary-catching-up.html"  target="new">
+                            GreyCTF<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                    </div>
+
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="https://ncl.sg/scholarship.html" target="new">
+                            CSA-National Cybersecurity R&amp;D Lab Scholarship (NCLS)
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg mb-3">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            21
+                            <div class="fs-6 ps-2 text-uppercase">SEP</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="https://ncl-sg.blogspot.com/2022/09/working-visit-by-bg-edward-chen.html"  target="new">
+                            Working Visit by BG Edward Chen, Commander SAF C4 Command / Cybersecurity Taskforce
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            01
+                            <div class="fs-6 ps-2 text-uppercase">SEP</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('MoU - NCL and CyberXCenter Pte Ltd and Tegasus International Pte Ltd',
+                           'National Cybersecurity R&amp;D Lab (NCL) has signed a Memorandum of Understanding (MoU)
+                           with CyberXCenter and Tegasus INTERNATIONAL
+                            on the 1st of September 2022.&lt;br/&gt;&lt;br/&gt;
+                            The purpose of this MOU is to deepen and strengthen the strategic partnership
+                            between the Parties to provide effective capability-building,
+                            technical assistance, and support to developing the new cyber exercise capabilities,
+                            new tools to support cyber exercise activities and new research areas in
+                            deepening the understanding of OT cyber security.',
+                           'images/newui/mou-ncl-cyx-teg.jpg')" >
+                            MoU - NCL and CyberXCenter Pte Ltd and Tegasus International Pte Ltd
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-light event-section" id="2021" style="display: none;">
+        <div class="event-container">
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">DEC</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a
+                         href="#"
+                         onclick="showModal('ITE CCC',
+                           'NCL jointly organized Cloud computing Competition 2021 (CCC2021)
+                           in collaboration with ITE College East and Amazon Web Services.&lt;br/&gt;&lt;br/&gt;
+                            The objective of the competetion  was to create an opportunity
+                            for students to appreciate the skillstes possessed
+                            by cloud engineers and simulate the day-to-day activities of cloud practitioners.',
+                           'images/newui/itecss2021.jpg')"
+                        >
+                            ITE CCC<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            19
+                            <div class="fs-6 ps-2 text-uppercase">NOV</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white ">
+                        <a href="#"
+                           onclick="showModal('ITE CTF',
+                           'The annual NCL-ITE Capture The Flag (CTF) competition
+                           was held this year on 19 Nov 2021.&lt;br/&gt;&lt;br/&gt;
+                            A total of 23 students participated actively throughout the 3.5 hour session.
+                            &lt;br/&gt;&lt;br/&gt;Participants ranged from various ITE Colleges (
+                            East, Central and West) as well as ITE\'s Global Educational Network (GEN) Partners,
+                            Boxhill Institute (BHI) and Southern Alberta Institute of Technology (SAIT)',
+                           'images/newui/itectf21.jpg')"
+                        >
+                            ITE CTF<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                    </div>
+
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            <div class="fs-6 ps-2 text-uppercase">May</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('MoU Signing - NCL and Universiti Teknologi Brunei (UTB)',
+                           'National Cybersecurity R&amp;D Laboratories (NCL) signed a memorandum of understanding (MoU)
+                           with the Universiti Teknologi Brunei (UTB) in May 2021.&lt;br/&gt;',
+                           'images/newui/mouutb.jpg')"
+                        >
+                            MoU Signing - NCL and Universiti Teknologi Brunei (UTB)
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            <div class="fs-6 ps-2 text-uppercase">FEB</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('DSO CTF',
+                           'National Cybersecurity R&amp;D Laboratories (NCL) supported Capture-the-Flag event for DSO in Feb 2021.',
+                           'images/newui/ncl_ctf2.jpg')"
+                        >
+                            DSO CTF<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                          </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-light event-section" id="2020_19" style="display: none;">
+
+        <div class="event-container">
+
+            <div class="row home-event event-row-mg">
+                <p  style="color:#000; font-size:26px;color:#003d7c;margin-left:20px;" >
+                    2020
+                </p>
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            <div class="fs-6 ps-2 text-uppercase">DEC</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('NCL Grant Call Workshop - 2020',
+                           'National Cybersecurity R&amp;D Laboratories (NCL) conducted a cybersecurity workshop in Dec 2020.',
+                           'images/newui/grantcall.png')"
+                           >
+                            NCL Grant Call Workshop - 2020<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row home-event event-row-mg mt-4">
+                <p  style="color:#000; font-size:26px;color:#003d7c;margin-left:20px;" >
+                    2019
+                </p>
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white ">
+                        <a href="#"
+                           onclick="showModal('MoU Signing - ITE and NCL',
+                           'NCL was proud to jointly host and organise MOU Signing Ceremony
+                           and Capture The Flag with ITE College East,an event that marked the start of
+                           a three-year collaboration between both institutes.&lt;br/&gt;&lt;br/&gt;
+                           The aim of the collaboration is to provide ITE students with a 24*7 environment
+                           to learn and practice to enhance their cybersecurity skills.',
+                           'images/newui/itemou01.jpg')"
+                        >
+                            MoU Signing - ITE and NCL<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                    </div>
+
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('ICE71 Visit',
+                           'NCL is a proud collaborator and partner of Innovation Cybersecurity
+                           Ecosystem at Block71 (ICE71),the region\’s first cybersecurity entrepreneur hub.c
+                           For the second consecutive year, NCL hosted site visit to explain about NCL\'s resources to attendess
+                           from ICE71\'s Accelerate program. &lt;br/&gt;NCL continues to offer support
+                           to the startups from ICE71 and will continue to forge partnerships with them in the future.',
+                           'images/newui/ice71visit.jpeg')"
+                        >
+                            ICE71 Visit<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                       </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            1-3
+                            <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('NCL at Govware 2019',
+                           'NCL at Govware from 1-3 Oct 2019 which was part of SICW 2019 - organised by
+                           the Cyber Security Agency of Singapore and is the region\'s
+                           premier cybersecurity conference and exhibition.',
+                           'images/newui/govware1.jpg')"
+                        >
+
+                            NCL at Govware 2019<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                    </div>
+                </div>
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">SEP</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('UK Delegation Visit',
+                           'Jointly hosted a visit for the UK Delegation.
+                            The agenda of the meeting was discuss the current Singapore and UK cyber security landscapes.',
+                           'images/newui/ukvisit.jpg')"
+                        >
+                            UK Delegation Visit<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">SEP</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('Visit to CSIRT-MU',
+                           '&lt;b&gt;\'I am impressed by what you have achieved here in such a short time.\'&lt;/b&gt;
+                            these are words of &lt;b&gt;Chang Ee-Chien from NCL at NUS Computing &lt;/b&gt;, who was one of the international guests at
+                            Cyberczech last week. We then tried to impress him again — this time with the beauty of the Czech nature.',
+                           'images/newui/csirt_mu_visit.jpg')"
+                        >
+                            Visit to CSIRT-MU<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="bg-light event-section" id="2018_17" style="display: none;">
+
+        <div class="event-container">
+
+            <div class="row home-event event-row-mg">
+                <p  style="color:#000; font-size:26px;color:#003d7c;margin-left:20px;" >
+                    2018
+                </p>
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            <div class="fs-6 ps-2 text-uppercase">DEC</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('GTACS - 2018',
+                           'NCL is a supporting organisation for GTACS 2018.',
+                           'images/newui/gtacs_2018.jpg')"
+                        >
+                            GTACS - 2018<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row home-event event-row-mg mt-4">
+                <p  style="color:#000; font-size:26px;color:#003d7c;margin-left:20px;" >
+                    2017
+                </p>
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            24
+                            <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white ">
+                        <a
+                                href="#"
+                                onclick="showModal('Visit by Deputy Prime Minister Teo Chee Hean',
+                           'Deputy Prime Minister Teo Chee Hean visited the National Cybersecurity R&amp;D Lab (NCL)
+                           and the Singapore Cybersecurity Consortium (SGCSC) on 24 October 2017. &lt;br/&gt;
+                           The aim of the visit is to understand how NCL enables cybersecurity R&amp;D and
+                           technology build-ups and translations in academia,
+                           industry and agencies with their cybersecurity research environments and outreach activities.&lt;br/&gt;
+                            The NCL and SGCSC team had a meaningful presentation and discussion
+                            with Deputy Prime Minister Teo Chee Hean on strategies and
+                            concepts used through research, tools and process management
+                            development, education training and activities.',
+                           'images/newui/dpm_visit.jpg')"
+
+                                           >
+                            Visit by Deputy Prime Minister Teo Chee Hean<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                    </div>
+
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('More new servers arrive',
+                           'NCL is expanding its compute cluster to about 200 physical servers,
+                           with a few high-end servers and GPU servers. &lt;br/&gt;
+                           Users can run larger scale experiments, or experiments with special hardware requirements
+                           like GPU. &lt;br/&gt;
+                         It strengthens NCL\'s support to the local cybersecurity R&amp;D community.
+                         The new servers will be ready by this year end.',
+                           'images/newui/serverphoto.png')">
+                            More new servers arrive<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">02:00 pm<span class="txt-lightgray px-1">•</span>MR2, COM1-04-20</span>-->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            19-21
+                            <div class="fs-6 ps-2 text-uppercase">SEP</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a
+                                href="#"
+                                onclick="showModal(' GovernmentWare(GovWare)',
+                           'GovernmentWare (GovWare) is the region\'s
+                                most established premier conference and showcase for cybersecurity.&lt;br/&gt;
+                                GovWare is the cornerstone event for the Singapore International Cyber Week.
+                                National Research Foundation (NRF) organised a joint booth with National
+                                Cybersecurity Lab (NCL) and Cybersecurity Consortium at Suntec Singapore
+                                Convention &amp; Exhibition Centre.&lt;br/&gt;
+                                Dr Zhang Chun Wang, Research Fellow from
+                                NCL presented on Supporting Malware Analysis using NCL-
+                                WannaCry Case Study. The NCL team has the opportunity to network and share
+                                insights to the cybersecurity community.',
+                           'images/newui/govware.png')"
+                        >
+                            GovernmentWare(GovWare) <br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                    </div>
+                </div>
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            26
+                            <div class="fs-6 ps-2 text-uppercase">AUG</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('NTU Workshop',
+                           'Associate Professor Liang Zhenkai, one of the lead-PI\'s of NCL,
+                           was invited to give a talk at the Workshop on Vulnerability Discovery and CTF Competition,
+                           which was hosted in NTU on 26th August 2017.
+                           This workshop aims to bring together researchers and students working on security
+                           vulnerabilities for discussions and knowledge sharing.
+                           Prof Liang presented his recent research work on binary security,
+                           and demonstrated how NCL testbed and its ready-made security environment
+                           can be used to facilitate his research work. This workshop had attracted quite a number
+                           of researchers and security professionals from NTU, NUS, DSO, etc.',
+                           'images/newui/ntuworkshop.png')">
+                            NTU Workshop<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            25
+                            <div class="fs-6 ps-2 text-uppercase">AUG</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('NCL User Forum II',
+                           'NCL organized the NCL User Forum II,
+                           in conjunction with the Singapore Cybersecurity Consortium Technology Talk III,
+                            on 25th August 2017 at NUS School of Computing.
+                            This joint event aims to bring together representatives from Consortium member companies,
+                            researchers and students in IHLs, RIs, government agencies as well as
+                            NCL users to share and showcase recent cybersecurity research work and projects.
+                            &lt;br/&gt;Associate Professor Liang Zhenkai, one of the lead-PI\'s of NCL,
+                            was invited to give a talk titled &lt;b&gt;\'WannaCry Ransomware Analysis in NCL\'s
+                            Environment &amp; Demo\'&lt;/b&gt;. &lt;br/&gt;Prof Liang gave a comprehensive introduction to NCL and,
+                            using the WannaCry ransomware as an example, demonstrated how NCL testbed could be used to simplify
+                            and facilitate researchers\' experimentation effort.&lt;br/&gt;
+                            Following that, Dr. Zhang Chunwang, Programme Manager of NCL, gave an update on
+                            the new capabilities and features available on the NCL testbed,
+                            including vulnerability environment platform, virtual enterprise networking environment and
+                            SDN provisioning tool.
+                            &lt;br/&gt;This joint event was well received from local cybersecurity R&amp;D
+                            community with around 80 registered participants.',
+                           'images/newui/userforum.png')">
+                            NCL User Forum II<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">JUL</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('NCL Demo at Cyber Security Showcase',
+                           'Invited by our U.S. partner, Information Sciences Institute (ISI)
+                           of the University of Southern California (USC),
+                           NCL presented a demo on the NCL system and capabilities at the DHS 2017 Cyber Security R&amp;D
+                           Showcase and Technical Workshop in Washington, D.C.&lt;br/&gt;
+                           This three-day workshop was organized by U.S. Department of Homeland Security (DHS),
+                            S&amp;T Cyber Security Division (CSD), featuring 115+ technology presentations of
+                            CSD-funded cybersecurity R&amp;D projects.&lt;br/&gt;
+                            The ISI team received an award (CYBER IS A GLOBAL SPORT) for the excellent joint
+                            work with NCL as well as other international partners.',
+                           'images/newui/usvisit.jpg')"
+
+                          >
+                            NCL Demo at Cyber Security Showcase<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            21
+                            <div class="fs-6 ps-2 text-uppercase">FEB</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('NCL officially launched at NUS',
+                           'The National Cybersecurity R&amp;D Laboratory (NCL) was officially
+                           announced at the National University of Singapore (NUS) on 21 February,
+                           which was graced by Guest-of-Honour Mr Gabriel Lim,
+                           Permanent Secretary for Ministry of Communications and Information.&lt;br/&gt;
+                            Professor Mohan Kankanhalli, Dean of the NUS School of Computing mentioned that NCL
+                            would foster greater collaboration between the industry and academia,
+                            and catalyse the development of cutting edge cybersecurity solutions.&lt;br/&gt;
+                            Already, research institutions and industry players have tapped on the lab\'s infrastructure
+                            to work on about 20 research projects.',
+                           'images/newui/nclday.jpg')"
+
+                        >
+                            NCL officially launched at NUS<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="bg-light event-section " id="2016" style="display: none;">
+        <div class="event-container">
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">NOV</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('FinTech Festival Lab Crawl',
+                           'In conjunction with the Singapore FinTech Festival 2016,
+                           NCL invited NUS Dean\’s Chair Assistant Professor in Computer Science,
+                           Prateek Saxena and CloakApps Chief Technology Officer Dr. Li Qiming to give a
+                           talk about blockchains and blockchain-based services.
+                           The event was well-received with over 60 registered participants from various industries.',
+                           'images/newui/fintech.jpg')"
+                        >
+                            FinTech Festival Lab Crawl<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white ">
+                        <a href="#"
+                           onclick="showModal('User Forum for Cybersecurity R&amp;D Testbeds',
+                           'In collaboration with our partner from the United States,
+                           NCL is honored to invite Miss Terry V. Benzel,
+                           Deputy Director for the Computer Networks Division at the Information Sciences Institute (ISI)
+                           of the University of Southern California (USC) as the distinguished guest
+                           speaker for this user forum. At the forum, participants are introduced to
+                           ISI DeterLab and concept of cyber ranges.
+                           They also get to interact with the team over from ISI.',
+                           'images/newui/uforum.jpg')" >
+
+                            User Forum for Cybersecurity R&amp;D Testbeds
+                        </a>
+                        <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                    </div>
+
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            5
+                            <div class="fs-6 ps-2 text-uppercase">MAY</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('Visit by Director DHS (S&amp;T)',
+                           'Dr Douglas Maughan, Director of the Department of Homeland Security
+                           (Science&amp;Technology Division) visited NCL on the 5th of May, 2016.
+                           He was given a brief introduction to NUS School of Computing and NCL,
+                            including our research focuses and capabilities, facilities,
+                             as well as collaborations with government agencies, industries and academia.
+                              In particular, he was very interested in our collaboration with USC ISI team
+                              and commented on the good work we have been doing towards future testbeds.',
+                           'images/newui/dhs.png')"
+                        >
+                            Visit by Director DHS (S&amp;T)<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">02:00 pm<span class="txt-lightgray px-1">•</span>MR2, COM1-04-20</span>-->
+                    </div>
+                </div>
+            </div>
+
+            <div class="row home-event gx-5 event-row-mg">
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            20
+                            <div class="fs-6 ps-2 text-uppercase">APR</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                           onclick="showModal('Arrival of new server',
+                           'Our newly purchased servers have arrived on 20 April 2016. 100 machines will be up and
+                            running by the end of April 2016.',
+                           'images/newui/newserver.png')"
+                        >
+                            Arrival of new server<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                            15
+                            <div class="fs-6 ps-2 text-uppercase">APR</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#" onclick="showModal('NCL opening workshop',
+                           'NCL held it\'s first mini-workshop to allow internal stakeholders and supporting staff from
+                            the Information Technology Unit&amp;Research Office to have a better understanding of NCL
+                            and it\'s activities.',
+                           'images/newui/workshop.png')">
+                            NCL opening workshop<br/><br/>
+                        </a>
+                        <span class="mb-5"></span>
+                        <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 event-slideRight">
+                    <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                        <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                            <div class="fs-6 ps-2 text-uppercase">MAR</div>
+                        </div>
+                    </div>
+                    <div class="home-event-info event-bg-white">
+                        <a href="#"
+                            onclick="showModal('National Cybersecurity R&amp;D Laboratory at NUS School of Computing to be ready by end - 2016',
+                           'The National Cybersecurity R&amp;D Laboratory that will be set up by the security research
+                            group at the NUS School of Computing, will be operational by the end of this year. The new
+                            laboratory will be a shared national research infrastructure which can be used by the local
+                            research community and industry for the validation of research outcomes, for collaborative
+                            work with industry or international partners, and to curate useful datasets for
+                            cybersecurity experiments.',
+                           'images/newui/ncl2016.png')"
+                                >
+                            National Cybersecurity R&amp;D Laboratory at NUS School of Computing to be ready by end - 2016
+                        </a>
+                        <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- start Modal -->
+    <div class="modal fade" id="eventDtlModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel" style="color:#003d7c">New message</h5>
+                </div>
+                <div class="modal-body">
+                    <div  id="eventModalimage" class="text-center" >
+                        <img src="images/newui/ncl_logo.png"  id="eventimage"  />
+                    </div>
+                    <br/>
+                    <div  id="eventModalContent">
+                        <p>New message</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="close" class="btn md-price-btn-close  btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+    <div id="footer"></div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const yearFilter = document.getElementById('yearFilter');
+        const sections = document.querySelectorAll('section.event-section');
+
+        function showSelectedSection() {
+            const selectedYear = yearFilter.value;
+            sections.forEach(section => {
+                if (section.id === selectedYear) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        yearFilter.addEventListener('change', showSelectedSection);
+
+        // Initialize by showing the section corresponding to the default selected option
+        showSelectedSection();
+    });
+</script>
+ <script>
+    function showModal(title, content, image) {
+         var eventModal = document.getElementById('eventDtlModal');
+         var modalTitle = eventModal.querySelector('.modal-title');
+         var modalBodyInput = eventModal.querySelector('.modal-body p');
+         var modalImage = eventModal.querySelector('.modal-body img')
+
+         modalTitle.textContent = title;
+         modalBodyInput.innerHTML = content;
+         modalImage.src = image;
+         $('#eventDtlModal').modal('show');
+    }
+</script>
+</div>
+</body>
+</html>

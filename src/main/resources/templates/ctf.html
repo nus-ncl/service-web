@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Services and Tools</title>
+</head>
+
+<body onload="loadStaticPage('ctf','Services/ctf.txt');loadStaticPageWithDelay('footer', 'Home/footer.txt',1000);">
+<div layout:fragment="content" >
+    <div id="ctf"></div>
+    <div id="footer"></div>
+</div>
+</body>
+</html>
+
