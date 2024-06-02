@@ -70,10 +70,12 @@ text-decoration: none;
 }
 
 /*=============== REUSABLE CSS CLASSES ===============*/
-.container {
+
+/*.container {
 max-width: 1120px;
 margin-inline: 1.5rem;
 }
+*/
 
 .bd-container {
 max-width: 1120px;
@@ -487,78 +489,7 @@ html{
 }
 
 
-/*========== FOOTER ==========*/
 
-.footer-section{
-  background-color: #1D232F;
-  padding:2rem;
-}
-
-.footer__container{
-  /*grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));*/
-  row-gap: 2rem;
-  background-color: #1D232F;
-  align-content:right;
-  grid-template-columns: repeat(3, 1fr);
-  justify-content: right;
-}
-
-.footer__description{
-  display: block;
-  font-size: var(--small-font-size);
-  margin: .25rem 0 var(--mb-3);
-}
-
-.footer__social{
-  font-size: 1.5rem;
-  color: #fff;
-  margin-right: var(--mb-2);
-}
-
-.footer__title{
-  font-size: var(--h2-font-size);
-  color: #fff;
-  margin-bottom: var(--mb-2);
-}
-
-.footer__link{
-  display: inline-block;
-  color: #fff;
-  margin-bottom: var(--mb-1);
-}
-
-.footer__link:hover{
-  color: #fff;
-}
-
-.footer__copy{
-  text-align: center;
-  font-size: .8rem;
-  color: #999999;
-  margin-top: 2.0rem;
-}
-
-.footer__content{
-  text-align: left;
-}
-
-.footer__img{
-   display: inline-block;
-   font-size:24px;
-   color:#fff;
-}
-
-.footer__text{
- margin-left:10px;
-}
-
-.footer__logo {
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size:13px;
-}
 
 /*========== BreakPoint ==========*/
 /* media size max 1117 to min 1000 Channel

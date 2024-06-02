@@ -23,6 +23,11 @@
 
 /**** footer ****/
 
+footer {
+    position: absolute; /* or absolute */
+    width: 100%;
+}
+
 .footer-bg{
 background-color:#1D232F;
 }
@@ -71,3 +76,4 @@ font-size: 15px;
 height: 200px  !important; /* Set the height as per your requirement */
 }
 
+/**** event ****/

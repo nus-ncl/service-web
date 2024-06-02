@@ -2,14 +2,10 @@
 <html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
 <head>
     <title>Pricing</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
-    <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/newui/pricing.css" />
-
 </head>
 
-<body layout:fragment="content" onload="loadStaticPage('pricing','Pricing/pricing.txt')">
-<main id="main" >
+<body onload="loadStaticPage('pricing', 'Pricing/pricing.txt');loadStaticPageWithDelay('footer', 'Home/footer.txt',1000);">
+<main id="main" layout:fragment="content"  >
 <section class="py-5 py-md-5 py-xl-8" style="margin-top:5.5rem;">
     <div id="pricing"></div>
         <!--  start modal  -->
@@ -69,7 +65,11 @@
         </div>
         <!-- end modal -->
     </section>
+
+    <div id="footer" ></div>
 </main>
+
+
 
 <script>
     var brModal = document.getElementById('BRModal')
@@ -94,19 +94,6 @@
      modalBodyInput.value = recipient
 })
 </script>
-
-<script type="text/javascript" src="/js/html5shiv.js"></script>
-<script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-        crossorigin="anonymous"></script>
-
-<!--[if lt IE 9]>
-<script type="text/javascript" src="../static/js/html5shiv.js"></script>
-<script type="text/javascript" src="../static/js/respond.min.js"></script>
-<![endif]-->
 </body>
 </html>
 

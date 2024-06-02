@@ -5,8 +5,9 @@
 	<link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
 </head>
 
-<body layout:fragment="content" id="contactus">
-<section class="pb-3 pb-md-4 pb-xl-5 bg-light" style="margin-top:6rem">
+<body layout:fragment="content" onload="loadStaticPage('footer', 'Home/footer.txt');">
+
+<section class="pb-3 pb-md-4 pb-xl-5 bg-light" style="margin-top:6rem" id="contactus">
 	<div class="container">
 		<div class="row gy-3 gy-md-4 gy-lg-0 align-items-md-center">
 			<div class="col-12 col-lg-6">
@@ -68,6 +69,7 @@
 		</div>
 	</div>
 </section>
+<div id="footer"></div>
 <script>
 // Function to load the map
 function loadMap() {
@@ -103,11 +105,6 @@ var observer = new IntersectionObserver(function(entries) {
 // Start observing the placeholder div
 observer.observe(document.getElementById("map-container-placeholder"));
 </script>
-<!--[if lt IE 9]>
-<script type="text/javascript" src="../static/js/html5shiv.js"></script>
-<script type="text/javascript" src="../static/js/respond.min.js"></script>
-<![endif]-->
-<script type="text/javascript" src="../static/js/jquery.min.js"></script>
-<script type="text/javascript" src="../static/bootstrap/js/bootstrap.min.js"></script>
+
 </body>
 </html>

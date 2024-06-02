@@ -4,17 +4,11 @@
 <head th:replace="fragments/header :: head"/>
 
 <body>
-
 <div id="nav" th:replace="fragments/nav :: nav"></div>
-
 <div layout:fragment="content" >
     <p>Page content goes here</p>
 </div>
-
-<div th:replace="fragments/footer :: footer"></div>
-
 <!--=============== JS ===============-->
 <object th:include="fragments/javascript :: javascript" th:remove="tag"/>
-
 </body>
 </html>

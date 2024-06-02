@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>CIDeX</title>
+</head>
+<body onload="loadStaticPage('footer', 'Home/footer.txt');">
+<div layout:fragment="content" >
+        <main id="main" class="mb-5">
+        <section class="py-4 py-md-5 py-xl-6"  style="background-color:#012169">
+            <div class="container " style="margin-top:5.5rem;">
+                <div class="row ">
+                    <div class="col-8">
+                        <p  style="color:#fff; font-size:26px;" >
+                            Critical Infrastructure Defence Exercise (CIDeX) </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-3 py-md-4 py-xl-5 bg-light">
+            <div class="container">
+                <div class="row gy-3 gy-md-4">
+                    <div class="col-11 col-lg-5 col-xl-6">
+                        <div class="d-block d-sm-flex align-items-center">
+                            <div class="mb-3 mb-sm-0 ">
+                                <h3 style="font-size:16px; color:#003d7c; margin-right:20px">Filter by</h3>
+                            </div>
+                            <div class ="mr-5">
+                                <select id="cidexyearFilter" class="form-select text-secondary border-light-subtle" width="100px">
+                                    <option value="2023" selected="selected">2023</option>
+                                    <option value="2022">2022</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 2023 Cidex -->
+        <section id="2023" class="bg-light event-section event-cidex mb-5" style="display: none;">
+            <div class="container">
+                <div class="col-12 ">
+                    <h2 class="train-sch-text mb-2">Critical Infrastructure Defence Exercise (CIDeX) 2023</h2>
+                    <p>
+                        National Cybersecurity R&amp;D Lab (NCL)
+                        had the opportunity to support <b>Critical Infrastructure
+                        Defence Exercise (CIDeX) 2023</b> from 22nd November to 24th November 2023 held
+                        at the School of Computing,
+                        National University Singapore (NUS).
+                        The event involves over <b><u>200 participants</u></b> coming from DIS,
+                        CSA and 24 other national agencies across six Critical Information Infrastructure (CII) Sectors.
+                    </p>
+
+                    <div  class=" text-center mb-5 mt-5" >
+                        <img src="images/newui/cidex202301.jpeg" class="img-fluid" alt="Responsive image"  />
+                    </div>
+
+                    <p>
+                        <b>Mr. Heng Chee How, the Senior Minister of State for Defence, and Dr. Janil Puthucheary,
+                            the Senior Minister of State for Communications and Information and Health,</b>
+                        attended the Critical Infrastructure Defence Exercise (CIDeX)
+                        2023 on 24th of November 2023.
+                        The event focuses on training and strengthening Whole-Of-Government (WoG)
+                        cyber capabilities to detect and tackle cyber security
+                        threats to Information Technology (IT) and OT networks
+                        that control the operations of critical infrastructure.
+                    </p>
+
+                    <div  class="text-center mb-5 mt-5" >
+                        <img src="images/newui/cidex202302.jpeg" class="img-fluid" alt="Responsive image"  />
+                    </div>
+
+                    <p>
+                        NCL would like to express gratitude to MINDEF and Cybersecurity Agency of Singapore (CSA)
+                        for providing this opportunity. Additionally,
+                        NCL extends its thanks to iTRUST (Centre for Research in Cyber Security)
+                        and other technical partners for their contributions in making the event a success.
+                    </p>
+                    <p class="mb-5">
+                        To Read More: <a href="https://www.mindef.gov.sg/web/portal/mindef/news-and-events/latest-releases/article-detail/2023/November/24nov23_nr" target="new">
+                        https://www.mindef.gov.sg/web/portal/mindef/news-and-events/latest-releases/article-detail/2023/November/24nov23_nr
+                    </a>
+                        <br/>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2022 Cidex -->
+        <section id="2022" class="bg-light event-section event-cidex mb-5" style="display: none;">
+            <div class="container">
+                <div class="col-12 ">
+                    <h2 class="train-sch-text mb-2">Critical Infrastructure Defence Exercise (CIDeX) 2022</h2>
+                    <p>
+                        We were thankful and elevated for the opportunity to support and host the inaugural
+                        <b>Critical Infrastructure Defence Exercise (CIDeX) 2022</b> from 15 to 16 November
+                        at the National University of Singapore (NUS) School of Computing.
+                    </p>
+                    <div  class="text-center mb-5 mt-5" >
+                        <img src="images/newui/cidex2201.jpeg"  class="img-fluid" alt="Responsive image"  />
+                    </div>
+                    <p>
+                        The cyber defence exercise involved over <b><u>100 participants</u></b>
+                        from the Digital and Intelligence Service (DIS) and 16 other national agencies across
+                        the Critical Information Infrastructure (CII) sectors.
+                    </p>
+                    <div class="row">
+                        <div  class="col-6 text-end mb-5 mt-5" >
+                            <img src="images/newui/cidex2202.jpeg"  class="img-fluid" alt="Responsive image"  />
+                        </div>
+                        <div  class="col-6  mb-5 mt-5" >
+                            <img src="images/newui/cidex2203.jpeg"  class="img-fluid" alt="Responsive image"  />
+                        </div>
+                    </div>
+
+                    <p>
+                        CIDeX is the largest Operational Technology (OT) Critical Infrastructure defence exercise
+                        focused on training and strengthening Whole-Of-Government (WoG)
+                        cyber capabilities to detect and tackle cyber security threats to Information Technology (IT)
+                        and OT networks that control the operations of critical infrastructure.
+                    </p>
+                    <p class="mb-5">
+                        Read more at: <a href="https://www.mindef.gov.sg/web/portal/mindef/news-and-events/latest-releases/article-detail/2022/November/16nov22_nr" target="new">
+                        https://www.mindef.gov.sg/web/portal/mindef/news-and-events/latest-releases/article-detail/2022/November/16nov22_nr</a>
+                        <br/>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+        <div id="footer"></div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cidexyearFilter = document.getElementById('cidexyearFilter');
+        const sections = document.querySelectorAll('section.event-cidex');
+
+        function showSelectedSection() {
+            const selectedYear = cidexyearFilter.value;
+            sections.forEach(section => {
+                if (section.id === selectedYear) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        cidexyearFilter.addEventListener('change', showSelectedSection);
+
+        // Initialize by showing the section corresponding to the default selected option
+        showSelectedSection();
+    });
+</script>
+</div>
+</body>
+</html>

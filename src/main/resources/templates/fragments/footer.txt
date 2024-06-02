@@ -1,15 +1,16 @@
+<!--
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org" >
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<!--=============== REMIXICONS ===============-->
+		&lt;!&ndash;=============== REMIXICONS ===============&ndash;&gt;
 		<link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet" />
 		<link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet' />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 		<link rel="shortcut icon" href="images/newui/ncl_favicon.png"/>
 
 		<title >National Cybersecurity R&amp;D Lab</title>
-		<!--=============== CSS ===============-->
+		&lt;!&ndash;=============== CSS ===============&ndash;&gt;
 		<link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css" th:href="@{~/bootstrap/css/bootstrap.min.css}" media="screen"/>
 		<link rel="stylesheet" type="text/css" href="static/css/newui/global.css" th:href="@{~/css/newui/global.css}"/>
 	</head>
@@ -17,7 +18,7 @@
 <body>
 
   <div th:fragment="footer">
-	  	<!--========== FOOTER ==========-->
+	  	&lt;!&ndash;========== FOOTER ==========&ndash;&gt;
 	  <footer class="footer footer-bg">
 		  <section class="py-4 py-md-5 py-xl-8  " >
 			  <div class="container overflow-hidden">
@@ -67,3 +68,4 @@
 		</div>
   </body>
 </html>
+-->

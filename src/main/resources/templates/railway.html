@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Services and Tools</title>
+</head>
+
+<body onload="loadStaticPageWithDelay('footer', 'Home/footer.txt',1000);">
+<div layout:fragment="content" >
+        <main id="main" >
+
+            <!-- Section  Breadcrumb  pointer link to back -->
+            <section class="py-1 py-md-1 py-xl-1 bg-light " style="margin-top:5.5rem;" >
+                <div class="container mt-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item breadcrumb-text">Services
+                                        <i class="bi bi-chevron-double-right"></i></li>
+                                    <li class="breadcrumb-item breadcrumb-text">
+                                        <a class="link-primary text-decoration-none" href="../services_tools.html" th:href="@{~/services_tools}">
+                                            Environment, Data , Tools and Services</a>
+                                        <i class="bi bi-chevron-double-right"></i></li>
+                                    <li class="breadcrumb-item breadcrumb-text" >Railway</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CUE header -->
+            <section class="py-2 py-md-2 py-xl-4 bg-light" >
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-9 col-lg-7 ml-10 ">
+                            <h1 class="h4 text-center text-uppercase fw-bold mt-5 cue-title">Railway [Metro] System</h1>
+<!--                            <p class="display-7 text-center fw-bold">Welcome to the forefront of CyberSecurity innovation with CUE</p>-->
+                        </div>
+<!--                        <div class="col-12 col-lg-2 justify-content-center image-container">-->
+<!--                            <img class="img-fluid rounded"  loading="lazy" src="images/newui/cuehead.png" alt="cuehead" />-->
+<!--                        </div>-->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section - CUE Intro -->
+            <section class="py-3 py-md-4 py-xl-5 cue-section-bg-color" >
+                <div class="container " >
+                    <div class="row justify-content-center">
+                        <div class="col-9">
+                            <p class="display-7 text-center cue-text-white" >
+                                Railway [Metro] System was built in 2023 by NCL for research in Cyber Security.
+                                The purpose is to help ICS Researchers and Instructors to test IT/OT attack
+                                and defense soluctions and provide a platform for ICS security training and education.
+                                Our idea is creating a digital version of the Railway System Emulation Platform,
+                                designed to replicate the operation of multiple trains traversing distinct tracks,
+                                each equipped with unique sensor-signal controls.
+                                This platform is intended to serve as a valuable resource for cybersecurity researchers,
+                                enabling them to demonstrate and assess the impact of various types of IT attackes
+                                on operational technology (OT) systems. </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CUE header -->
+
+            <!-- section CUE Key Features -->
+            <section class="py-4 py-md-4 mb-5">
+                <div class="container">
+                    <div class ="row justify-content-center">
+                        <h2 class="mt-4 mb-5 text-uppercase text-center cue-title">SIX Primary Components</h2>
+                    </div>
+
+                    <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center">
+                        <div class="col-12 col-lg-6">
+                            <div class="row justify-content-md-center">
+                                <div class="col-12 col-xl-10">
+                                    <h2 class="h4 fs-8 mb-5 text-center fw-bold"  >Railway [Metro] System Emulator</h2>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <img class="img-fluid rounded" loading="lazy" src="images/newui/railway01.png" alt="railway01" />
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- section 2 - Key Feature -->
+            <section class="py-4 py-md-4 mb-3">
+                <div class="container">
+                    <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center">
+                        <div class="col-12 col-lg-6">
+                            <img class="img-fluid rounded" loading="lazy" src="images/newui/railway02.png" alt="railway02" />
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <div class="row justify-content-md-center">
+                                <div class="col-12 col-xl-10">
+                                    <h2 class="h4 fs-8 mb-5 text-center fw-bold" >Railway System Train Controller HMI</h2>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- section 3  Key Feature -->
+            <section class="py-4 py-md-5 mb-3">
+                <div class="container">
+                    <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center">
+                        <div class="col-12 col-lg-6">
+                            <div class="row justify-content-md-center">
+                                <div class="col-12 col-xl-10">
+                                    <ul class="mb-5 fw-bold">
+                                        <li style="list-style-type: disc;font-size:20px;">Railway System SCADA HMI</li>
+                                        <li style="list-style-type: disc;font-size:20px;">Railway Junctions Sensor - Signal System Control PLC Simulator</li>
+                                        <li style="list-style-type: disc;font-size:20px;" >Railway Stations Sensor - Signal System Control PLC Simulator</li>
+                                        <li style="list-style-type: disc;font-size:20px;">Railway Trains Sensor - Power System Control PLC Simulator</li>
+                                    </ul>
+<!--                                    <h2 class="h4 fs-8 mb-5 text-center fw-bold"  >System Orchestrator</h2>-->
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <img class="img-fluid rounded" loading="lazy" src="images/newui/railway03.png" alt="railway03" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- section 5  Why Railway -->
+            <section class="py-5 py-xl-8 cue-section-bg-color ">
+                <div class="container">
+                    <div class="row justify-content-md-center">
+                        <div class="col-12 mb-5 col-md-10 col-lg-8 col-xl-7 col-xxl-6">
+                            <h2 class="mb-4 text-center text-uppercase cue-text-white-title" >Where ?</h2>
+                            <!--                    <hr class="w-50 mx-auto mb-5 mb-xl-9 border-dark-subtle" />-->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container overflow-hidden">
+                    <div class="row gy-5 gy-md-6 gy-lg-0">
+
+                        <div class="col-6 col-lg-3">
+                            <div class="text-center">
+                                <h5 class="display-8 fw-bold m-1 cue-text-white" >Training and Education</h5>
+                                <div class="d-flex align-items-center justify-content-center mb-3 mx-auto ">
+                                    <img class="img-fluid rounded" width="180" height="180" loading="lazy" src="images/newui/cue-icon01.png" alt="cueicon01" />
+                                </div>
+                                <p class=" m-0 cue-text-white-subtitle" >This system serves as an invaluable tool for educating students about
+                                    Rilway Systems, their components, and operational processes.</p>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="text-center">
+                                <h5 class="display-8 fw-bold m-1 cue-text-white"  >Testing and Validation</h5>
+                                <div class="d-flex align-items-center justify-content-center mb-3 mx-auto ">
+                                    <img class="img-fluid rounded" width="180" height="180" loading="lazy" src="images/newui/cue-icon02.png" alt="cueicon2" />
+                                </div>
+
+                                <p class=" m-0 cue-text-white-subtitle" >The system can be employed to rigorously test and validatethe effectiveness
+                                    of products or assess the credibility of logical processes.</p>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="text-center">
+                                <h5 class="display-8 fw-bold m-1 cue-text-white"  >Security Testing</h5>
+                                <div class="d-flex align-items-center justify-content-center  mb-3 mx-auto ">
+                                    <img class="img-fluid rounded"  width="180" height="180"  loading="lazy" src="images/newui/cue-icon03.png" alt="cueicon3" />
+                                </div>
+                                <p class=" m-0 cue-text-white-subtitle" >For those interested in testing their skills at identifying vulnerebilities in railway systems,
+                                    we offer a secure environment where you can engage in ethical hacking exercises.</p>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="text-center">
+                                <h5 class="display-8 fw-bold m-1 cue-text-white">Research and Development</h5>
+                                <div class="d-flex align-items-center justify-content-center mb-3 mx-auto ">
+                                    <img class="img-fluid rounded" width="180" height="180"  loading="lazy" src="images/newui/cue-icon04.png" alt="cueicon4" />
+                                </div>
+                                <p class=" m-0 cue-text-white-subtitle" >NCL also provides a diverse range of GPUs available for rent, enhancing the quality of
+                                    your research and developemnt efforts in the field of Railway Systems.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    <div id="footer"></div>
+</div>
+</body>
+</html>
+

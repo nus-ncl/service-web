@@ -138,7 +138,7 @@ function loadStaticPage(id, page) {
          dataType: "JSON",
          async: true,
          //production
-         //url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+        // url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
 
         //This url is for Test branch used for testing
          url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1311",
@@ -149,21 +149,52 @@ function loadStaticPage(id, page) {
     });
 }
 
+/*==================== Load Static Content GitHUB  ====================*/
 //Rendering static content changes from github
-function loadfooterStaticPage(id, page) {
+function loadStaticPageCallback(id, page, callback) {
     $.ajax({
          dataType: "JSON",
          async: true,
          //production
-         //url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+        // url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
 
         //This url is for Test branch used for testing
-         url: "https://api.github.com/repos/nus-ncl/static-web-content/footer/"+page+"?ref=DEV-1311",
+         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1311",
          type: 'GET',
-         success: function(result) {
-             document.getElementById(id).innerHTML = decodeURIComponent(escape(window.atob(result.content)));
+         success: function (result) {
+            callback(result.content);
          }
     });
+}
+
+function executeJavaScript(content) {
+             // Create a script element and set its content to the fetched JavaScript code
+     var scriptElement = document.createElement('script');
+      scriptElement.type = 'text/javascript';
+      scriptElement.text = decodeURIComponent(escape(window.atob(content)));
+
+      // Append the script element to the document body
+      document.body.appendChild(scriptElement);
+}
+
+
+//Rendering static content changes from github
+function loadStaticPageWithDelay(id, page, delay) {
+    setTimeout(function() {
+        $.ajax({
+            dataType: "JSON",
+            async: true,
+            //production
+            //url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+
+            //This url is for Test branch used for testing
+            url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1311",
+            type: 'GET',
+            success: function(result) {
+                document.getElementById(id).innerHTML = decodeURIComponent(escape(window.atob(result.content)));
+            }
+        });
+    }, delay);
 }
 
 function loadImage(imgName, imgId, imgType) {

@@ -5,8 +5,9 @@
      <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
      <link rel="stylesheet" type="text/css" href="../static/css/newui/loginreg.css" />
 </head>
-<body >
-<div layout:fragment="content" id="login">
+<body onload="loadStaticPage('footer', 'Home/footer.txt');">
+<div layout:fragment="content" >
+    <div id="login">
         <section class="bg-light py-3 py-md-5 min-vh-100 d-flex  justify-content-center align-items-center">
             <div class="container">
                 <div class="row justify-content-center">
@@ -55,12 +56,9 @@
                 </div>
             </div>
         </section>
+    </div>
+    <div id="footer"></div>
 </div>
 </body>
-<!--[if lt IE 9]>
-<script type="text/javascript" src="../static/js/html5shiv.js"></script>
-<script type="text/javascript" src="../static/js/respond.min.js"></script>
-<![endif]-->
-<script type="text/javascript" src="../static/js/jquery.min.js"></script>
-<script type="text/javascript" src="../static/bootstrap/js/bootstrap.min.js"></script>
+
 </html>

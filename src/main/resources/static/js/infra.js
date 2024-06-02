@@ -25,3 +25,7 @@ $(document).on('click', '.accordion-button', function(){
     // Toggle the accordion collapse
     $(this).next('.accordion-collapse').collapse('toggle');
 });
+
+
+/* ****************** ************************************************ */
+

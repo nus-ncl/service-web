@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Recent Events</title>
+</head>
+<body onload="loadStaticPage('footer', 'Home/footer.txt');" >
+<div layout:fragment="content" >
+    <main id="main" class="mb-5">
+        <section class="py-4 py-md-5 py-xl-6"   style="background-color:#012169">
+            <div class="container " style="margin-top:5.5rem;">
+                <div class="row ">
+                    <div class="col-8">
+                        <p  style="color:#fff; font-size:26px;" >
+                            Recent Events </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-3 py-md-4 py-xl-5 bg-light">
+            <div class="container">
+                <div class="row gy-3 gy-md-4">
+                    <div class="col-11 col-lg-5 col-xl-6">
+                        <div class="d-block d-sm-flex align-items-center">
+                            <div class="mb-3 mb-sm-0 ">
+                                <h3 style="font-size:16px; color:#003d7c; margin-right:20px">Filter by</h3>
+                            </div>
+                            <div class ="mr-5">
+                                <select id="yearFilter" class="form-select text-secondary border-light-subtle" width="100px">
+                                    <option value="2023" selected="selected">2023</option>
+                                    <option value="re_event">recent events</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-light event-section" id="2023" style="display: none;">
+            <div class="event-container">
+
+                <div class="row home-event gx-5 event-row-mg">
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                11
+                                <div class="fs-6 ps-2 text-uppercase">DEC</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white ">
+                            <a href="https://ncl-sg.blogspot.com/2023/12/international-junior-cybersecurity.html"  target="new">
+                                International Junior Cybersecurity Olympiad 2023 CTF competition
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                11-14
+                                <div class="fs-6 ps-2 text-uppercase">DEC</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="https://ncl-sg.blogspot.com/2023/12/the-national-cybersecurity-r-laboratory.html" target="new">
+                                NCL participated in Crossed Swords 2023, hosted by CCDCOE
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">02:00 pm<span class="txt-lightgray px-1">•</span>MR2, COM1-04-20</span>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                24
+                                <div class="fs-6 ps-2 text-uppercase">NOV</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="https://ncl-sg.blogspot.com/2023/11/critical-infrastructure-defence.html"  target="new">
+                                Critical Infrastructure Defence Exercise (CIDeX) 2023
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row home-event gx-5 event-row-mg">
+
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                20
+                                <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="#"
+                               onclick="showModal('CZech Delegates visit to NCL',
+                               'On October 20, 2023, the National Cybersecurity R&amp;D Lab (NCL)
+                               had the privilege of hosting a delegation
+                               from the Czech Republic, including Mr. Petr Manoušek, Deputy Ambassador at the Embassy
+                               of the Czech Republic, Mr. Tomáš Martynek
+                               from the CERT Unit at the National Cyber and Information Security Agency,
+                               and Mr. Martin Jírovec, a Technology Transfer Consultant
+                               from the Faculty of IT at Brno University of Technology.','images/newui/czechdelevisit.jpg')"
+                            >
+                                CZech Delegates visit to NCL<br/><br/>
+                            </a>
+                            <span class="mb-5"></span>
+                            <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                17-19
+                                <div class="fs-6 ps-2 text-uppercase">OCT</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="https://ncl-sg.blogspot.com/2023/10/honored-to-have-deputy-prime-minister.html"  target="new">
+                                GovWare 2023 - Conference &amp; Exhibition
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                29
+                                <div class="fs-6 ps-2 text-uppercase">SEP</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="https://ncl-sg.blogspot.com/2023/10/cybersecurity-innovation-day-2023.html"  target="new">
+                                CSA Innovation Day 2023<br/><br/>
+                            </a>
+                            <span class="mb-5"></span>
+                            <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row home-event gx-5 event-row-mg">
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                25
+                                <div class="fs-6 ps-2 text-uppercase">JUL</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="https://ncl-sg.blogspot.com/2023/07/the-youth-cyber-exploration-programme.html"  target="new">
+                                YCEP Central CTF 2023<br/><br/>
+                            </a>
+                            <span class="mb-5"></span>
+                            <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                15-16
+                                <div class="fs-6 ps-2 text-uppercase">JUL</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="https://ncl-sg.blogspot.com/2023/07/greyhats-ctf-2023.html"  target="new">
+                                NCL - GreyHats CTF 2023<br/><br/>
+                            </a>
+                            <span class="mb-5"></span>
+                            <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                06-07
+                                <div class="fs-6 ps-2 text-uppercase">JUN</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="https://ncl-sg.blogspot.com/2023/06/ncl-csa-advanced-youth-cyber.html"  target="new">
+                                NCL - CSA - Advanced Youth Cyber Exploration Programme (AYCEP) 2023
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row home-event gx-5 event-row-mg">
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                17-21
+                                <div class="fs-6 ps-2 text-uppercase">APR</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="https://ncl-sg.blogspot.com/2023/05/national-cybersecurity-r-laboratory-ncl.html"  target="new">
+                                National Cybersecurity R&amp;D Laboratory (NCL) at LockShield 2023
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                24
+                                <div class="fs-6 ps-2 text-uppercase">MAR</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="#"
+                               onclick="showModal('China Unicom (Singapore) Operations Pte Ltd.
+                                Explores Collaboration Opportunities with National Cybersecurity R&amp;D Lab (NCL) at NUS',
+                                'On 24 March 2023, a delegation of visitors, Mr. Bai Jian (Deputy General Manager)
+                                and Mr. Adam Cheung (Senior Product Manager) from China Unicom (Singapore) Operations Pte. Ltd.,
+                                visited the National Cybersecurity R&amp;D Lab (NCL), NUS to explore the potential collaboration opportunities.
+                                &lt;br/&gt;&lt;br/&gt;The visitors were given a briefing on NCL facilities and
+                                Cybersecurity compute Infrastructure.','images/newui/ncl_chinaunicom.jpg')">
+
+                                China Unicom (Singapore) Operations Pte Ltd.
+                                Explores Collaboration Opportunities with National Cybersecurity R&amp;D Lab (NCL) at NUS
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                21
+                                <div class="fs-6 ps-2 text-uppercase">MAR</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="#"
+                               onclick="showModal('Visitors from United Nation Office of Counter-Terrorism/ UN Counter-Terrorism Centre',
+                                'National Cybersecurity R&amp;D Lab (NCL) is pleased to have hosted Professor Abhik Roychoudhury from NUS,
+                                Ms. Akvilė Giniotienė, Head of Cyber and New Technologies Unit,
+                                Programme Management Officer at United Nation Office of Counter-Terrorism/ UN Counter-Terrorism Centre,
+                                and Rayson Ng, Assistant Manager at NUS Enterprise.
+                                &lt;br/&gt;&lt;br/&gt;
+                                They visited NCL on 21st March 2024 to explore NCLs services, facilities,
+                                and discuss potential collaboration opportunities.','images/newui/nclvisitors.jpg')">
+
+                                Visitors from United Nation Office of Counter-Terrorism/ UN Counter-Terrorism Centre
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="row home-event gx-5 event-row-mg">
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                7
+                                <div class="fs-6 ps-2 text-uppercase">MAR</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="#"
+                               onclick="showModal('Dr. Norrathep Rattanavipanon\'s Techincal Visit to NCL',
+                                'On 07th of March 2023, Assistant Professor Norrathep Rattanavipanon from Prince of Songkla Univeristy,
+                                Phuket Campus, Thailand visited National Cybersecurity R&amp;D Laboratory (NCL).
+                                &lt;br/&gt;&lt;br/&gt;
+                               The purpose of the visit was to explore the cutting-edge technologies and projects
+                               being developed in the lab and to gain more knowledge about
+                               Cyber security services offered by NCL.','images/newui/nclthaivisit.jpg')"
+                            >
+                                Dr. Norrathep Rattanavipanon's Techincal Visit to NCL
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+
+                                <div class="fs-6 ps-2 text-uppercase">FEB</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="#"
+                               onclick="showModal('Mr. Sukwoo Lin, a Visiting Researcher to National Cybersecurity R&amp;D Lab (NCL)',
+                                'National Cybersecurity R&amp;D Lab (NCL) is very happy to host
+                                Mr. Sukwoo Lin as a Visiting Researcher, who have been selected for overseas
+                                training program sponsored by Korean Government.
+                                He is a Superintendent of the Korean National Police Agency (KNPA).
+                                &lt;br/&gt;&lt;br/&gt;
+                               His research topics focus on the cybersecurity law of Singapore,
+                               the role of the Cyber Security Agency as well as the cooperative relationship
+                               between the Cyber Security Agency and the Singapore Police Force
+                               in cyber-terrorism investigations.','images/newui/nclkoreavisit.jpg')"
+                            >
+                                Mr. Sukwoo Lin, a Visiting Researcher to National Cybersecurity R&amp;D Lab (NCL)
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">04:00 pm<span class="txt-lightgray px-1">•</span>MR1, COM1-03-19</span>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                01
+                                <div class="fs-6 ps-2 text-uppercase">FEB</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white">
+                            <a href="#"
+                               onclick="showModal('Seminar on \'Zero Trust in Zero Trust?\'',
+                                'Speaker: &lt;span&gt; &lt;a href=&quot;https://events.comp.nus.edu.sg/view/20279&quot; target=new &gt;
+                                Professor Virgil D. Gligor&lt;/a&gt;&lt;/span&gt;,
+                                Carnegie Mellon University;Chaired by: Associate Professor LIANG Zhenkai,
+                                National Cybersecurity R&amp;D Lab, School of Computing, NUS.
+                                &lt;br/&gt;&lt;br/&gt;
+                               Abstract: We review the standard definitions of trust,
+                               zero trust, trusted service, and trust establishment,
+                               and show that zero trust is unachievable in any enterprise network;
+                               i.e., at least one security property is impossible to establish unconditionally
+                               with confidence for some devices and many others are impractical
+                               to establish for other devices.','images/newui/zerotrustcs.jpg')"
+                            >
+                                Seminar on 'Zero Trust in Zero Trust?'
+                            </a>
+                            <!--                        <span class="fs-6 d-block pt-4">10:30 am<span class="txt-lightgray px-1">•</span>MR3, COM2-02-26</span>-->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="bg-light event-section" id="re_event" style="display: none;">
+            <div class="event-container" >
+                <div class="row home-event gx-5 event-row-mg mb-5">
+                    <div class="col-lg-4 col-md-6 event-slideRight">
+                        <div class="home-event-date event-bg-orange d-inline-block p-2 px-2 mt-4">
+                            <div class="d-flex align-items-center justify-content-center fw-bold event-text-white event-fs-4">
+                                16
+                                <div class="fs-6 ps-2 text-uppercase">MAR</div>
+                            </div>
+                        </div>
+                        <div class="home-event-info event-bg-white ">
+                            <a href="https://ncl-sg.blogspot.com/2024/03/hackbash-aycep-2024.html"  target="new">
+                                HackBash (A.YCEP)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row home-event gx-5 event-row-mg mb-5 event-row-height"> <!-- remove event-row-height if you want to add another row-->
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- start Modal -->
+        <div class="modal fade" id="eventDtlModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eventModalLabel" style="color:#003d7c">New message</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div  id="eventModalimage" class="text-center" >
+                            <img src="images/newui/ncl_logo.png"  id="eventimage"  />
+                        </div>
+                        <br/>
+                        <div  id="eventModalContent">
+                            <p>New message</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="close" class="btn md-price-btn-close  btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <div id="footer"></div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const yearFilter = document.getElementById('yearFilter');
+        const sections = document.querySelectorAll('section.event-section');
+
+        function showSelectedSection() {
+            const selectedYear = yearFilter.value;
+            sections.forEach(section => {
+                if (section.id === selectedYear) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        yearFilter.addEventListener('change', showSelectedSection);
+
+        // Initialize by showing the section corresponding to the default selected option
+        showSelectedSection();
+    });
+</script>
+
+    <script>
+    function showModal(title, content, image) {
+         var eventModal = document.getElementById('eventDtlModal');
+         var modalTitle = eventModal.querySelector('.modal-title');
+         var modalBodyInput = eventModal.querySelector('.modal-body p');
+         var modalImage = eventModal.querySelector('.modal-body img')
+
+
+         modalTitle.innerHTML = title;
+         modalBodyInput.innerHTML = content;
+         modalImage.src = image;
+         $('#eventDtlModal').modal('show');
+    }
+</script>
+</div>
+
+</body>
+
+</html>

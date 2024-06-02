@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Locked Shields</title>
+</head>
+<body onload="loadStaticPage('footer', 'Home/footer.txt');" >
+<div layout:fragment="content" >
+    <main id="main" class="mb-5">
+        <section class="py-4 py-md-5 py-xl-6"  style="background-color:#012169">
+            <div class="container " style="margin-top:5.5rem;">
+                <div class="row ">
+                    <div class="col-8">
+                        <p  style="color:#fff; font-size:26px;" >
+                            Locked Shields, Hosted By CCDCOE</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="py-3 py-md-4 py-xl-5 bg-light">
+            <div class="container">
+                <div class="row gy-3 gy-md-4">
+                    <div class="col-11 col-lg-5 col-xl-6">
+                        <div class="d-block d-sm-flex align-items-center">
+                            <div class="mb-3 mb-sm-0 ">
+                                <h3 style="font-size:16px; color:#003d7c; margin-right:20px">Filter by</h3>
+                            </div>
+                            <div class ="mr-5">
+                                <select id="yearFilter" class="form-select text-secondary border-light-subtle" width="100px">
+                                    <option value="2023" selected="selected">2023</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 2023 Cidex -->
+        <section id="2023" class="bg-light event-section mb-5" style="display: none;">
+            <div class="container">
+                <div class="col-12 ">
+                    <h2 class="train-sch-text mb-3">Locked Shields 2023</h2>
+                    <p>
+                        The <b>National Cybersecurity R&amp;D Laboratory (NCL)</b> participated
+                        in <b>Locked Shields 2023</b>, which took place in Estonia from April 18 to 21, 2023.
+                        Locked Shields 2023 is the <b>world's largest live-fire cyber defense exercise</b>
+                        hosted by the <b>NATO Cooperative Cyber Defense Center of Excellence (CCDCOE)</b>.
+                        Over <b><u>3,000 participants from 38 nations</u></b> took part in the exercise,
+                        which involved protecting real computer systems from real-time attacks
+                        and simulating tactical and strategic decisions in critical situations.
+                        Locked Shields is a Red Team vs. Blue Team training exercise,
+                        with Blue Teams composed of NATO CCDCOE member nations and their partner nations.
+                        In addition to defending systems, teams must report incidents,
+                        execute strategic decisions, and solve forensic, legal, and media challenges.
+                        The exercise plan was prepared by <b>400 organizers,</b>
+                        creating more than <b>5,500 virtual systems</b> for its purpose.
+                    </p>
+
+                    <p>
+                        Locked Shield enables cybersecurity experts to enhance their skills in defending
+                        national IT systems and critical infrastructure under real-time attacks.
+                        The focus is on realistic scenarios, cutting-edge technologies,
+                        and simulating the entire complexity of a massive cyber incident,
+                        including strategic decision-making, legal, and communication aspects.
+                    </p>
+                    <div  class=" text-center mb-5 mt-5" >
+                        <img src="images/newui/ls2023.png" class="img-fluid" alt="Responsive image"  />
+                    </div>
+
+                    <p>
+                        <b>Mr. Heng Chee How, the Senior Minister of State for Defence, and Dr. Janil Puthucheary,
+                            the Senior Minister of State for Communications and Information and Health,</b>
+                        attended the Critical Infrastructure Defence Exercise (CIDeX)
+                        2023 on 24th of November 2023.
+                        The event focuses on training and strengthening Whole-Of-Government (WoG)
+                        cyber capabilities to detect and tackle cyber security
+                        threats to Information Technology (IT) and OT networks
+                        that control the operations of critical infrastructure.
+                    </p>
+
+                    <p>
+                        The team, consisting of <b>Ivan, Felix, and Niklaus,</b> is part of the <b>Green Team DFIR (Digital Forensic and Incident Response)</b>.
+                        As part of their responsibilities, NCL is responsible for crafting an attack scenario on an enterprise network,
+                        building up the networks and servers, and generating the digital forensic evidence files
+                        to be used in the exercise. The NCL team is part of the Singapore contingent together
+                        with participants from iTrust SUTD and Ministry of Defence.
+                    </p>
+                    <p>
+                        During the exercise, the team in Tallinn, Estonia, is responsible
+                        for responding to and providing guidance to 24 international
+                        teams on queries related to the evidence generated.
+                        The exercise is designed to test the teams' ability to identify
+                        and respond to cyberattacks, using a simulated enterprise network environment.
+                    </p>
+                    <p class="mb-5">
+                        Locked Shields 2023 is an excellent opportunity for cybersecurity professionals
+                        to showcase their skills and knowledge,
+                        as well as to learn from their peers.
+                        The NCL Green Team DFIR's participation in this event is a valuable
+                        experience that will undoubtedly benefit the team and the organization.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <div id="footer"></div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const yearFilter = document.getElementById('yearFilter');
+        const sections = document.querySelectorAll('section.event-section');
+
+        function showSelectedSection() {
+            const selectedYear = yearFilter.value;
+            sections.forEach(section => {
+                if (section.id === selectedYear) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        yearFilter.addEventListener('change', showSelectedSection);
+
+        // Initialize by showing the section corresponding to the default selected option
+        showSelectedSection();
+    });
+</script>
+</div>
+
+</body>
+</html>

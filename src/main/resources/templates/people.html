@@ -2,23 +2,13 @@
 <html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
 <head>
   <title>Our Team</title>
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
-  <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/newui/global.css" />
-    <link rel="stylesheet" type="text/css" href="../static/css/newui/nav.css" />
-    <link rel="stylesheet" type="text/css" href="../static/css/newui/carousel.css" />
-    <link rel="stylesheet" type="text/css" href="../static/css/newui/aboutus.css" />
-    <link rel="stylesheet" type="text/css" href="../static/css/newui/wwd.css" />
-    <link rel="stylesheet" type="text/css" href="../static/css/newui/team.css" />
 </head>
 
-<body onload="loadStaticPage('people','Home/people.txt')">
-<div layout:fragment="content" id="people"></div>
-<!--[if lt IE 9]>
-<script type="text/javascript" src="../static/js/html5shiv.js"></script>
-<script type="text/javascript" src="../static/js/respond.min.js"></script>
-<![endif]-->
-<script type="text/javascript" src="../static/js/jquery.min.js"></script>
+<body onload="loadStaticPage('people','Home/people.txt');loadStaticPageWithDelay('footer', 'Home/footer.txt',1000);">
+<div layout:fragment="content" >
+  <div  id="people"></div>
+  <div  id="footer"></div>
+</div>
 
 </body>
 </html>
