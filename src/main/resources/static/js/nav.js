@@ -123,10 +123,8 @@ const sr = ScrollReveal({
 });
 
 sr.reveal(`.home__data, .home__img,
-            .about__data, .about__img, .about__start, .about__vd,
-            .services__content, .menu__content,.whatwedo__content,
-            .app__data, .app__img,
-            .contact__data, .contact__button,.wwd-anim,.wwd-section ,
+            .about-section,
+            .wwd-section,.wwd-section-t,.wwd-section-sec,
             .footer__content`,  {
     interval: 200
 });
@@ -150,33 +148,6 @@ function loadStaticPage(id, page) {
 }
 
 /*==================== Load Static Content GitHUB  ====================*/
-//Rendering static content changes from github
-function loadStaticPageCallback(id, page, callback) {
-    $.ajax({
-         dataType: "JSON",
-         async: true,
-         //production
-        // url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
-
-        //This url is for Test branch used for testing
-         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1311",
-         type: 'GET',
-         success: function (result) {
-            callback(result.content);
-         }
-    });
-}
-
-function executeJavaScript(content) {
-             // Create a script element and set its content to the fetched JavaScript code
-     var scriptElement = document.createElement('script');
-      scriptElement.type = 'text/javascript';
-      scriptElement.text = decodeURIComponent(escape(window.atob(content)));
-
-      // Append the script element to the document body
-      document.body.appendChild(scriptElement);
-}
-
 
 //Rendering static content changes from github
 function loadStaticPageWithDelay(id, page, delay) {

@@ -95,7 +95,26 @@ font-weight: bold;
 list-style: disc;
 }
 
+.train-text-white-title{
+color:#fff;
+font-size: 1.5rem  !important;
+}
 
+.train-text-white{
+color:#fff;
+font-size: 1.2rem !important;
+}
 
+.train-p-text{
+color:#012169;
+font-size: 1.05rem !important;
+}
 
+.cidex-p-text{
+font-size: 1.1rem !important;
+}
+
+.ijco-p-text{
+font-size: 1.1rem !important;
+}
 

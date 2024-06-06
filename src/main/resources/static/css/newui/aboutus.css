@@ -1,9 +1,14 @@
-/***  new aboutus css **/
+/***  new aboutus css #012169 **/
 .about-new-title{
   font-weight: bold !important;
   font-size: 1.7rem  !important;
   color: #003d7c !important;
 }
+
+.about-des{
+ color: #012169 !important;
+}
+
 
 /***  new collaborators css **/
 .colla-title{
@@ -15,7 +20,7 @@ font-size: 1.7rem  !important;
 
 .colla-subtitle{
 /*color:#becbd8;*/
-color:#6c757d;
+color:#012169;
 margin-top:10px;
 }
 

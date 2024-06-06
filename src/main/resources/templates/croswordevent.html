@@ -3,61 +3,10 @@
 <head>
     <title>Crossed Swords</title>
 </head>
-<body onload="loadStaticPage('footer', 'Home/footer.txt');" >
+<body onload="loadStaticPage('crossedswords','Event/crossedswords.txt');
+loadStaticPageWithDelay('footer', 'Home/footer.txt',1000);" >
 <div layout:fragment="content" >
-<main class="mb-5">
-    <section class="py-4 py-md-5 py-xl-6"   style="background-color:#012169">
-        <div class="container " style="margin-top:5.5rem;">
-            <div class="row ">
-                <div class="col-8">
-                    <p  style="color:#fff; font-size:26px;" >
-                        Crossed Swords 2023, Hosted By CCDCOE</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="py-3 py-md-4 py-xl-5 bg-light">
-        <div class="container">
-            <div class="col-12 ">
-                <h2 class="train-sch-text mb-2">OVERVIEW</h2>
-                <p>
-                    The National Cybersecurity R&amp;D Laboratory (NCL) participated in Crossed Swords 2023,
-                    which took place in Estonia from December 11 to 14, 2023. Crossed Swords 23 (XS23)
-                    is an exercise designed to train the cyber specialists
-                    conduct successfully full-spectrum offensive cyber operations. More than 20 countries,
-                    including NATO and non-NATO member states, participated in Crossed Swords 2023.
-                </p>
-                    <div  class="text-center mb-5 mt-5" >
-                        <img src="images/newui/lockedshield.jpg"  class="img-fluid" alt="Responsive image" />
-                    </div>
-                <p>
-                    NATO CCDCOE has been organizing the exercise since 2016 and the first red teaming workshop
-                    was conducted in 2014. Starting in 2019,
-                    the exercise included a designated cyber command element in its training.
-                    CCDCOE-led exercises and research provide its member nations with a
-                    testbed for experimentation in cyber operations.
-                    Crossed Swords tests the capabilities and practices skills that participants
-                    would need when planning and executing a full-spectrum cyber operations,
-                    especially with elements from the other domains.
-                    The training audience includes not only cyber operators,
-                    but also digital forensic experts and command level specialists.
-                    Additionally, threat hunters experimental training was provided.
-                    The exercise is co-organized by the NATO CCDCOE and its partners.
-                    The exercise benefits considerably from having academia and industry partners in developing exercise.
-                </p>
-                <p>
-                    NCL supported Cross Sword 2023 with an in house-built Operation Technology system
-                    that simulated a Rail system with multiple sensors and signals.
-                    Trains moved along virtual tracks lines with sensors and respond to the various
-                    signals in the virtual environment. Participant of the events needed to penetrate
-                    the outer protective IT infrastructure on order to read and understand
-                    the underlying signals and sensor information. The participants then need to use
-                    this information to disrupt the train’s normal operation.
-                </p>
-            </div>
-        </div>
-    </section>
-</main>
+<div id="crossedswords"></div>
 <div id="footer"></div>
 </div>
 

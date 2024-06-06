@@ -71,16 +71,16 @@ text-decoration: none;
 
 /*=============== REUSABLE CSS CLASSES ===============*/
 
-/*.container {
+.container {
 max-width: 1120px;
 margin-inline: 1.5rem;
 }
-*/
 
 .bd-container {
 max-width: 1120px;
 /*margin-top: 3.5rem;*/
 }
+
 /*=============== HEADER ===============*/
 .header {
 position: fixed;
@@ -158,6 +158,7 @@ opacity: 0;
 -------------------------------------------------- */
 /* Navigation for mobile devices */
 @media screen and (max-width: 1118px) {
+
 .nav__menu {
 position: absolute;
 left: 0;
@@ -292,41 +293,12 @@ margin-left: auto;
 .dropdown__sublink {
 background-color: var(--black-color-lighten);
 }
-/*=============== BREAKPOINTS ===============*/
-/* For small devices */
-@media screen and (max-width: 340px) {
-.container {
-margin-inline: 1rem;
-}
-
-.nav__link {
-padding-inline: 1rem;
-}
-
-.nav__link a {
-color: var(--white-color);
-}
-
-.dropdown__link a {
-color: var(--white-color);
-}
-
-.nav__data {
-height: 100%;
-width:100%;
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
-
-}
 
 /*=============== BREAKPOINTS ===============*//*=============== BREAKPOINTS ===============*/
 /* media size 1118 Channel
 -------------------------------------------------- */
 /* For large devices */
 @media screen and (min-width: 1118px) {
-
 .container {
 margin-inline: auto;
 }
@@ -487,10 +459,6 @@ html{
   /*padding: 4rem 0 2rem;*/
   padding: 0rem 0 0rem;
 }
-
-
-
-
 /*========== BreakPoint ==========*/
 /* media size max 1117 to min 1000 Channel
 -------------------------------------------------- */
@@ -631,5 +599,31 @@ color: var(--white-color);
 }
 /* end max 600 to min 400 Channel
 -------------------------------------------------- */
+/*=============== BREAKPOINTS ===============*/
+/* For small devices */
+@media screen and (max-width: 340px) {
+.container {
+margin-inline: 1rem;
+}
 
+.nav__link {
+padding-inline: 1rem;
+}
 
+.nav__link a {
+color: var(--white-color);
+}
+
+.dropdown__link a {
+color: var(--white-color);
+}
+
+.nav__data {
+height: 100%;
+width:100%;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+}

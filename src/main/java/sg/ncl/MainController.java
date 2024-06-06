@@ -44,29 +44,14 @@ public class MainController {
     @Autowired
     protected RestTemplate restTemplate;
 
-//    @Inject
-//    protected ObjectMapper objectMapper;
-
     @Inject
     protected ConnectionProperties properties;
-
-//    @Inject
-//    protected WebProperties webProperties;
 
     @Inject
     protected AccountingProperties accountingProperties;
 
-//    @Inject
-//    protected HttpSession httpScopedSession;
-
     @Inject
     protected PtyProperties ptyProperties;
-
-//    @Inject
-//    protected VncProperties vncProperties;
-
-//    @Inject
-//    protected NetworkToolProperties networkToolProperties;
 
     @RequestMapping("/")
     public String index() {
@@ -77,7 +62,6 @@ public class MainController {
     public String servicesTools() {
         return "services_tools";
     }
-    /***** Start Commemt for New UI Design ****/
 
     @RequestMapping("/cue")
     public String clusterUserEmulatorSystem(Model model) throws IOException {
@@ -177,6 +161,16 @@ public class MainController {
     @RequestMapping("/ijco")
     public String ijco() {
         return "ijco";
+    }
+
+    @RequestMapping("/howtoapply")
+    public String howtoapply() {
+        return "howtoapply";
+    }
+
+    @RequestMapping("/scion")
+    public String scion() {
+        return "scion";
     }
 }
 

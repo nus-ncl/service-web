@@ -82,3 +82,31 @@ color:#343333 ;
 color:#003d7c;
 }
 
+.scion-text{
+font-size: 1.05rem !important;
+}
+
+.infra-btn{
+background-color: #003d7c;
+color: #fff;
+font-size:14px;
+}
+
+.infra-btn:hover,
+.infra-btn:focus,
+.infra-btn:active {
+background-color: #0f62b8;
+color: #fff;
+}
+
+.howtoapply-text{
+color:#012169;
+font-size: 1.1rem !important;
+}
+
+.howtoapply-subtitle{
+font-size: 1.2rem !important;
+}
+.howtoapply-title{
+font-size: 1.4rem !important;
+}
