@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Locked Shields</title>
+</head>
+<body onload="loadStaticEventPage('lockedshields', 'Event/lockedshields.txt');loadStaticPageWithDelay('footer', 'Home/footer.txt',1000);" >
+<div layout:fragment="content" >
+    <div id="lockedshields"></div>
+    <div id="footer"></div>
+</div>
+</body>
+</html>
