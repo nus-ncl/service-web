@@ -3,8 +3,6 @@ package sg.ncl;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import sg.ncl.domain.NodeType;
-import sg.ncl.testbed_interface.TeamStatus;
 
 /**
  * @authors: Te Ye, Tran Ly Vu
@@ -48,16 +46,8 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/";
     }
 
-    public String getSioUsersStatusUrl(final String id, final String status) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/status/" + status;
-    }
-
     public String getSioTeamsUrl() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
-    }
-
-    public String getSioTeamsStatusUrl(final String id, final TeamStatus status) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + id + "/status/" + status;
     }
 
     public String getSioAuthUrl() {
@@ -79,11 +69,9 @@ public class ConnectionProperties {
     public String getResendEmailUrl(String Username) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/users/" + Username + "/resend";
     }
-
     public String getRegUidAvailaibleUrl(String Username) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "?name=" + Username;
     }
-
     public String getRegUid(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/users/" + id;
     }
@@ -91,6 +79,7 @@ public class ConnectionProperties {
     public String getSioExpUrl() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
+
 
     //------------------------------------
     // DELETE ACCOUNTS DETAILS
@@ -104,6 +93,17 @@ public class ConnectionProperties {
 
     public String deleteUserAccountByAdmin(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/admin/" + "delete/" + "account/" + id;
+    }
+
+    // Reject account by Admin
+
+    public String rejectUserAccountByAdmin(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/admin/" + "reject/" + "account/" + id;
+    }
+
+    // Approve account by Admin
+    public String approveUsersAccountByAdmin(final String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/admin/" + "approve/" + "account/" + id;
     }
 
     //-------------------------------------
@@ -140,9 +140,6 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + "joinApplications";
     }
 
-    public String getApproveTeam(String teamId, String ownerId, TeamStatus teamStatus) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
-    }
 
     public String getApproveJoinRequest(String teamId, String userId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + teamId + "/members/" + userId;
@@ -373,9 +370,9 @@ public class ConnectionProperties {
         this.telemetryEndpoint = telemetryEndpoint;
     }
 
-    public String getNodes(NodeType nodeType) {
-        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/nodes/counts?type=" + nodeType;
-    }
+//    public String getNodes(NodeType nodeType) {
+//        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/nodes/counts?type=" + nodeType;
+//    }
 
     public String getNodesStatus() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + telemetryEndpoint + "/nodes/status";

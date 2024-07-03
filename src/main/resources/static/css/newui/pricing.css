@@ -1,0 +1,102 @@
+.price-title-text{
+    font-weight: bold !important;
+  font-size: 2rem  !important;
+  color: #003d7c !important;
+}
+.price-subtext{
+ color: #003d7c !important;
+}
+.p-server-title{
+ color: #003d7c !important;
+ font-weight:bold;
+ font-size: 1.5rem;
+}
+
+.tc-text{
+ color: #003d7c !important;
+ margin-left: 5rem;
+ list-style: disc;
+}
+
+.md-tc-text{
+ font-size: .9rem;
+ margin-left: 0rem;
+ list-style: disc;
+}
+
+.th-value{
+text-align: center;
+margin-top:5px;
+}
+
+.tr-td-value{
+text-align: center;
+height:30px;
+}
+
+.price-btn {
+background-color: #d82323;
+color: #fff;
+font-size:14px;
+width:250px;
+}
+
+.price-btn:hover,
+.price-btn:focus,
+.price-btn:active {
+background-color: #eb5959;
+color: #fff;
+}
+
+.reserve-p{
+background-color:#f1c232;
+margin-left:30px;
+border-radius: 10px;
+margin-top:10px;
+}
+
+.reserve-text{
+padding-left:20px;
+padding-right:20px;
+font-size:14px;
+}
+
+.custom-select {
+appearance: none; /* Remove default appearance */
+-webkit-appearance: none; /* Remove default appearance for Safari */
+-moz-appearance: none; /* Remove default appearance for Firefox */
+padding: 8px 30px 8px 12px; /* Adjust padding as needed */
+border: 1px solid #ced4da; /* Add border */
+border-radius: 5px; /* Add border-radius */
+background-color: #fff; /* Add background color */
+background-image: url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000000"><path d="M7 10l5 5 5-5z" /></svg>'); /* Add custom arrow */
+background-repeat: no-repeat;
+background-position: right 10px center;
+}
+
+.custom-select:focus {
+outline: none; /* Remove outline on focus */
+border-color: #80bdff; /* Change border color on focus */
+box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Add box shadow on focus */
+}
+
+.md-price-btn {
+background-color: #d82323;
+color: #fff;
+font-size:14px;
+width:150px;
+border:0;
+}
+
+.md-price-btn:hover,
+.md-price-btn:focus,
+.md-price-btn:active {
+background-color: #eb5959;
+color: #fff;
+}
+
+
+.md-price-btn-close {
+font-size:14px;
+border:0;
+}

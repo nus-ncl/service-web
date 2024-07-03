@@ -1,25 +1,29 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>National Cybersecurity Laboratories - Email Validation Failed</title>
-    <object th:include="fragments/header :: header" th:remove="tag" />
+    <title>Register Submitted</title>
+    <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
+
 </head>
-<body class="mybg loginbackground">
-<div th:replace="fragments/login_navigation :: loginnav"></div>
-<div class="container">
-        <div class="row">
-            <div class="col-md-10">
-                <div class="space">
-                    <h3 th:text="#{email.notVlaidated.header}">We Are Sorry!</h3>
-                    <p><strong th:text="${errorMsg}"></strong></p>
-                    <p>We are sorry for the inconvenience.</p>
-                    <p>If problem persists, please send an email to <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
+<body layout:fragment="content" onload="loadStaticPage('footer', 'Home/footer.txt');" >
+
+<section class="bg-light py-5 py-md-5 py-xl-6 min-vh-80 d-flex justify-content-center align-items-center" style="margin-top:5rem">
+    <div class="container">
+        <div class="row gy-3 gy-md-4 gy-lg-0 align-items-md-center mb-3">
+            <div class="col-12">
+                <div class="text-center">
+                    <i class="bi bi-x-circle-fill text-fail" style="font-size: 70px;color:#ff6666"></i>
+                    <h3>We are sorry for the inconvenience.</h3>
+                    <p>Email Validation failed : <strong th:text="${errorMsg}"></strong></p>
+
+                    <p>If the problem persists please send an email to <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
                 </div>
-            </div> <!-- col -->
-        </div> <!-- row -->
-</div> <!-- container -->
-<div th:replace="fragments/footer :: footer"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="footer"></div>
+
 </body>
 </html>
-

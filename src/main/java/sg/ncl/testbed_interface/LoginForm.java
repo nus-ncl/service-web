@@ -16,16 +16,11 @@ public class LoginForm {
     @Size(min=1, message="Invalid email/password.")
     private String loginEmail;
     // not supposed to be in clear text but for modelling purpose
-
     @Size(min=1, message="Invalid email/password.")
     private String loginPassword;
     private String errorMsg = null;
-
-
-
     // for csrf implementation//
     private String csrfToken=null;
-
     private String key;
     private String type;
     private String errMsg;
