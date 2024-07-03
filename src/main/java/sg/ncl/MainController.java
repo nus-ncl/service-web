@@ -299,7 +299,7 @@ public class MainController {
         con.setRequestMethod("POST");
         con.setDoOutput(true);
 
-        String postParams = "secret=6LdmW_spAAAAAC4y_gzn4LPyZ_4TMIdMI8aAB8C9" + "&response=" + recaptchaResponse;
+        String postParams = "secret="+ RECAPTCHA_SECRET_KEY + "&response=" + recaptchaResponse;
 
         try (OutputStream os = con.getOutputStream()) {
             os.write(postParams.getBytes());
