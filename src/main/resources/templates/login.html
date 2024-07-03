@@ -20,24 +20,53 @@
                                     </a>
                                 </div>
                                 <h2 class="fs-5 fw-bold member-text text-center mb-4">NCL Member Login</h2>
-
-                                <form action="#!">
+                                <form method="post" action="#" th:action="@{/login}" th:object="${loginForm}">
+                                    <input type="hidden" id="hidcsrfToken" th:field="*{csrfToken}"/>
                                     <div class="row gy-2 overflow-hidden">
+
+                                        <div class="form-group account-change-fail"
+                                             th:if="${loginForm != null and loginForm.errorMsg != null}">
+                                            <i class="fa fa-exclamation-circle"></i> <span
+                                                th:text="${loginForm.errorMsg}"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="hidden" class="form-control" th:field="*{key}"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="hidden" class="form-control" th:field="*{uuid}"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="hidden" class="form-control" th:field="*{type}"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="hidden" class="form-control" th:field="*{email}"/>
+                                        </div>
                                         <div class="col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="email"  class="form-control"  id="email" th:value="*{email}" placeholder="name@example.com" th:required="required" ></input>
+                                                <input type="email"  class="form-control"
+                                                       id="email"
+                                                       th:field="*{loginEmail}"
+                                                       placeholder="name@example.com"
+                                                       th:required="required" ></input>
                                                 <label for="email" class="form-label">Email</label>
                                             </div>
                                         </div>
                                         <div class="col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="password"  id="password" class="form-control"   th:value="*{password}" placeholder="Password"  th:required="required" ></input>
+                                                <input type="password"  id="password" class="form-control"
+                                                       th:field="*{loginPassword}"
+                                                       placeholder="Password"
+                                                       th:required="required" ></input>
                                                   <label for="password" class="form-label">Password</label>
                                             </div>
                                         </div>
+
                                         <div class="col-12">
                                             <div class="d-flex gap-2 justify-content-between">
-                                                <a href="../password_reset_email.html" th:href="@{~/password_reset_email}" class="link-primary f-sup-text text-decoration-none">Forgot password?</a>
+                                                <a href="../password_reset_email.html"
+                                                   th:href="@{~/password_reset_email}"
+                                                   class="link-primary f-sup-text text-decoration-none">Forgot password?</a>
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -46,8 +75,10 @@
                                             </div>
                                         </div>
                                         <div class="col-12">
-                                            <p class="m-0 text-secondary  text-center">Don't have an account? <a href="../register.html" th:href="@{~/signup}"  class="link-primary f-sup-text text-decoration-none">Sign Up</a></p>
+                                            <p class="m-0 text-secondary  text-center">Don't have an account? <a href="../register.html" th:href="@{~/register}"  class="link-primary f-sup-text text-decoration-none">Sign Up</a></p>
                                         </div>
+
+
                                     </div>
                                 </form>
                             </div>

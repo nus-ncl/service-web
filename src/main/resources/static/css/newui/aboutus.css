@@ -66,3 +66,16 @@ position:absolute;
 .map-marker-icon{
 color: #ac1010;
 }
+
+.contact-li {
+  list-style: disc;
+}
+
+.contact-ml-30 {
+  margin-left: 30px;
+}
+
+contact-section{
+height: 100vh;
+padding: 20px;
+}

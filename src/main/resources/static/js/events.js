@@ -77,6 +77,7 @@ function executeyearFilter(yearfilter,sections){
 }
 
 function setupEventListeners() {
+
     const links = document.querySelectorAll('.event-modal a');
     links.forEach(link => {
         link.addEventListener('click', function(event) {

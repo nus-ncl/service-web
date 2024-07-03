@@ -104,6 +104,7 @@ dependencies {
 
     implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
     implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 compileJava {

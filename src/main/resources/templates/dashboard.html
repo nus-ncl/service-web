@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: head"/>
+
+<body>
+<div id="nav" th:replace="fragments/admin_nav :: nav"></div>
+<div layout:fragment="content" >
+    <!-- Main -->
+    <main id="main">
+
+        <section class="py-2 py-md-3 mt-2  py-xl-4 bg-light" >
+            <div class="container" style="margin-top:5rem;">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 class="h4">Admin Dashboard</h1>
+                        <strong>Info!</strong> Use your username <strong><span th:text="${userUid}"></span>
+                        </strong> to access the Nodes or Virtual Machines.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-3 pb-md-4 pb-xl-5 bg-light">
+            <div class="container">
+                <div class="row ">
+                    <div class="col-12 ">
+                        <div class="card widget-card border-light shadow-sm">
+                            <div class="card-body ">
+                                <h1 style="font-size:20px;">User Management Lists</h1>
+
+                                <ul class="nav nav-tabs d-flex justify-content-start" id="profileTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab"
+                                                data-bs-target="#overview-tab-pane" type="button"
+                                                role="tab" aria-controls="overview-tab-pane"
+                                                aria-selected="true">Pending Approval</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="profile-tab"
+                                                data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                                                type="button" role="tab" aria-controls="profile-tab-pane"
+                                                aria-selected="false">Approved User</button>
+                                    </li>
+                                </ul>
+
+                                <div th:if="${message}">
+                                    <p><i class="fa fa-exclamation-circle btn-fa-red"></i> <span class="account-change-fail" th:text="${message}"></span></p>
+                                </div>
+                                <div th:if="${messageSuccess}">
+                                    <p><span class="account-change-success"><i class="fa fa-check"></i> <span th:text="${messageSuccess}"></span></span></p>
+                                </div>
+
+                                <div class="tab-content pt-4" id="profileTabContent">
+
+                                    <div class="tab-pane fade show active" id="overview-tab-pane"
+                                         role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+
+
+
+                                        <p th:if="${#lists.isEmpty(pendUserLists)}">There are no new users in the system</p>
+
+                                        <table id="pendingUser" class="table table-responsive" th:if="${not #lists.isEmpty(pendUserLists)}">
+                                            <thead>
+                                                <tr >
+                                                    <th >Name</th>
+
+                                                <th >Email</th>
+                                                <th >Status</th>
+                                                <th >Application Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="pendUser : ${pendUserLists}" >
+
+                                                    <td> <span th:text="${pendUser.firstName + ' ' + pendUser.lastName}"></span></td>
+
+                                                    <td th:text="${pendUser.email}"></td>
+                                                    <td th:text="${pendUser.status}"></td>
+                                                    <td th:attr="data-order=${pendUser.applicationDate}">
+                                                        <span th:text="${ pendUser.applicationDate != null ? #temporals.format(pendUser.applicationDate, 'MMM-dd-yyyy') : '?'}"></span>
+                                                    </td>
+                                                <td>
+                                                    <a type="button" class="btn btn-success" onclick="showApproveMessageModal()">Approve</a>
+<!--                                                    <a type="button" class="btn btn-danger" onclick="showRejectMessageModal(\'' +${pendUser.id}+ '\', \'' +${pendUser.status}+ '\')"> Reject</a>-->
+                                                    <a type="button" class="btn btn-danger"
+                                                       th:attr="data-user-id=${pendUser.id}, data-user-status=${pendUser.status}"
+                                                       onclick="showRejectMessageModal(this)">Reject</a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <nav class="d-flex justify-content-center">
+                                            <ul class="pagination" id="pendingUserPagination"></ul>
+                                        </nav>
+
+
+                                    </div>
+
+
+                                    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel"
+                                         aria-labelledby="profile-tab" tabindex="0">
+
+                                        <p th:if="${#lists.isEmpty(approvedUserLists)}">There are no  users in the system</p>
+
+                                        <table id="approvedUser" class="table table-responsive" th:if="${not #lists.isEmpty(approvedUserLists)}">
+                                            <thead>
+                                            <tr>
+                                                <th >Name</th>
+                                                <th >Email</th>
+                                                <th >Status</th>
+                                                <th >Application Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            <tr th:each="approveUser : ${approvedUserLists}" >
+                                                <td><span th:text="${approveUser.firstName + ' ' + approveUser.lastName}"></span></td>
+                                                <td th:text="${approveUser.email}"></td>
+                                                <td th:text="${approveUser.status}"></td>
+                                                <td th:attr="data-order=${approveUser.applicationDate}">
+                                                    <span th:text="${ approveUser.applicationDate != null ? #temporals.format(approveUser.applicationDate, 'MMM-dd-yyyy') : '?'}"></span>
+                                                </td>
+                                                <td>
+                                                    <a type="button" class="btn btn-danger" onclick="showdeleteMessageModal()">Delete</a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <nav class="d-flex justify-content-center">
+                                            <ul class="pagination" id="approvedUserPagination"></ul>
+                                        </nav>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal HTML -->
+        <div id="rejectModal" class="modal fade">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title w-100" id="reject-title">Reject User</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-start" id="reject-content" th:text="${rejectmodalMessage}">
+                            Are you sure you want to Reject this User?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn contactus-btn btn-lg fs-6" type="button" id="btnReject" >Reject</button>
+                        <button type="button" id="btnRejectClose" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal HTML -->
+        <div id="acceptModal" class="modal fade">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title w-100" id="response-title">Approve User</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-start" id="approve-content" th:text="${approvemodalMessage}">
+                            Are you sure you want to Approve this User?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn contactus-btn btn-lg fs-6" type="button" id="btnApprove" >Approve</button>
+<!--                        <a th:href="@{/admin/users/{userId}/(userId=${pendUser.id}, action = approve)}" th:if="${pendUser.status} == 'PENDING'">Approve</a>-->
+                        <button type="button" id="btnapproveclose" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal HTML -->
+        <div id="deleteModal" class="modal fade">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title w-100" id="delete-title">Delete User</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-start" id="delete-content" th:text="${deletemodalMessage}">
+                            Are you sure you want to Delete this User?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn contactus-btn btn-lg fs-6" type="button" id="btnDelete" >Delete</button>
+                        <!--                        <a th:href="@{/admin/users/{userId}/(userId=${pendUser.id}, action = approve)}" th:if="${pendUser.status} == 'PENDING'">Approve</a>-->
+                        <button type="button" id="btndeleteclose" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal HTML -->
+        <div id="statusMsgModal" class="modal fade">
+            <div class="modal-dialog modal-confirm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title w-100" id="user-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-start" id="response-message" th:text="${statusmodalMessage}"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnstatusclose" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</div>
+<script type="text/javascript" src="static/js/paging.js" th:src="@{~/js/paging.js}"></script>
+<script>
+function showRejectMessageModal(element) {
+        var userId = element.getAttribute('data-user-id');
+        var status = element.getAttribute('data-user-status');
+
+        var rejectModal = document.getElementById('rejectModal');
+        var rejectbtn = document.getElementById('btnReject');
+        var btnClose = document.getElementById('btnRejectClose');
+        var modalMessage =  document.getElementById('reject-content');
+        modalMessage.innerHTML =  'Are you sure you want to Reject this User?';
+        $('#rejectModal').modal('show');
+
+       rejectbtn.addEventListener('click', function(event) {
+
+           $.ajax({
+            url: '/admin/users',
+            data: {
+                'userId': userId,
+                'action': 'reject'
+            },
+            type: "POST",
+            cache: false,
+            success: function(result) {
+                $('#rejectModal').modal('hide');
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+            }
+            });
+        });
+
+       btnClose.addEventListener('click', function(event) {
+            $('#rejectModal').modal('hide');
+       });
+}
+
+function showApproveMessageModal() {
+        var acceptModal = document.getElementById('acceptModal');
+        var btnClose = document.getElementById('btnapproveclose');
+        var modalMessage =  document.getElementById('approve-content');
+        modalMessage.innerHTML = 'Are you sure you want to Approve this User?';
+        $('#acceptModal').modal('show');
+
+       btnClose.addEventListener('click', function(event) {
+            $('#acceptModal').modal('hide');
+       });
+}
+
+function showdeleteMessageModal() {
+        var deleteModal = document.getElementById('deleteModal');
+        var btnClose = document.getElementById('btndeleteclose');
+        var modalMessage =  document.getElementById('delete-content');
+        modalMessage.innerHTML = 'Are you sure you want to Delete this User?';
+        $('#deleteModal').modal('show');
+
+       btnClose.addEventListener('click', function(event) {
+            $('#deleteModal').modal('hide');
+       });
+}
+
+
+
+</script>
+<!--=============== JS ===============-->
+<object th:include="fragments/javascript :: javascript" th:remove="tag"/>
+</body>
+</html>

@@ -7,6 +7,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head th:fragment="header">
+
+    <object th:if="${#httpServletRequest.requestURI} eq '/' or
+                        ${#httpServletRequest.requestURI} eq '/register' "
+            th:include="fragments/google_analytics :: google_analytics" th:remove="tag"/>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--=============== REMIXICONS ===============-->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet" />

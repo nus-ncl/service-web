@@ -77,4 +77,24 @@ height: 200px  !important; /* Set the height as per your requirement */
 }
 
 /**** event ****/
+ .spinner {
+display: none; /* Hidden by default */
+position: fixed; /* Sit on top of the page content */
+z-index: 9999; /* High z-index to ensure it appears on top */
+top: 50%; /* Center vertically */
+left: 50%; /* Center horizontally */
+transform: translate(-50%, -50%); /* Adjust to be centered */
+}
 
+.min-vh-80 {
+  min-height: 80vh;
+}
+
+.pagination {
+    flex-wrap: wrap;
+}
+
+.pagination .page-item .page-link {
+    padding: 5px 10px;
+    margin: 2px;
+}

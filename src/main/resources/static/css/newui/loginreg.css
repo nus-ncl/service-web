@@ -39,4 +39,19 @@ color: #5499c7 !important;;
 color: #236692 !important;;
 }
 
+.contact-dlt-title{
+ color: #003d7c !important;
+ font-size: 1.3rem;
+}
 
+/**** register ****/
+.reg-error{
+color: red !important;
+display: none;
+font-size: 0.9rem;
+}
+
+.reg-hidden{
+display: none;
+font-size: 0.9rem;
+}

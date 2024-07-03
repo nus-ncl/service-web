@@ -118,3 +118,23 @@ font-size: 1.1rem !important;
 font-size: 1.1rem !important;
 }
 
+.rc-text-font{
+font-size: 1rem !important;
+}
+
+
+.recent-img-fluid {
+height: 200px  !important; /* Set the height as per your requirement */
+}
+
+.fixed-height-img {
+    height: 200px; /* Adjust height as needed */
+    width: 100%;
+    object-fit: cover;
+}
+
+.fixedspec-height-img {
+    height: 200px; /* Adjust height as needed */
+    width: 100%;
+    object-fit: cover;
+}

@@ -20,7 +20,7 @@
 <header class="header" th:fragment="nav">
     <nav class="nav container">
         <div class="nav__data">
-            <a href="#" class="nav__logo">
+            <a href="../#home" th:href="@{~/#home}" class="nav__logo">
                 <img class="nav__logo__img" src="/images/newui/ncl_logo.png" alt="Logo" />
                 <span>National<br/>Cybersecurity R&amp;D Lab</span></a>
             <div class="nav__toggle" id="nav-toggle">
@@ -50,8 +50,7 @@
                         <li><div><a href="../services_and_tools.html" th:href="@{~/services_tools}" class="dropdown__link">Environment , Data, Tools &amp; Services</a></div></li>
                         <li><a href="../infrserver.html" th:href="@{~/infraserver}" class="dropdown__link">Infra Servers</a></li>
                         <li><a href="../pricing.html" th:href="@{~/pricing}"  class="dropdown__link">Pricelist</a></li>
-                        <li><a href="../howtoapply.html" th:href="@{~/howtoapply}"  class="dropdown__link">How To Apply</a>
-                        </li>
+
                     </ul>
                 </li>
                 <!--=============== DROPDOWN Events ===============-->
@@ -92,7 +91,9 @@
                     <div class="nav__link">Account <i class="ri-arrow-down-s-line dropdown__arrow"></i></div>
                     <ul class="dropdown__menu">
                         <li><a href="../login.html" th:href="@{~/login}" class="dropdown__link">Login</a></li>
-                        <li><div><a href="../register.html" th:href="@{~/signup}" class="dropdown__link">Sign up</a></div></li>
+                        <li><div><a href="../register.html" th:href="@{~/register}" class="dropdown__link">Sign up</a></div></li>
+                        <li><a href="../howtoapply.html" th:href="@{~/howtoapply}"  class="dropdown__link">How To Apply</a>
+                        </li>
                     </ul>
                 </li>
                 <!--=============== Contact ===============-->

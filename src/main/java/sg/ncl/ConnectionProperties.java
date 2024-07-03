@@ -46,17 +46,9 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/";
     }
 
-//    public String getSioUsersStatusUrl(final String id, final String status) {
-//        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + userEndpoint + "/" + id + "/status/" + status;
-//    }
-
     public String getSioTeamsUrl() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/";
     }
-
-//    public String getSioTeamsStatusUrl(final String id, final TeamStatus status) {
-//        return HTTP_MODE + sioAddress + ":" + sioPort + "/" + teamEndpoint + "/" + id + "/status/" + status;
-//    }
 
     public String getSioAuthUrl() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + authEndpoint;
@@ -83,9 +75,11 @@ public class ConnectionProperties {
     public String getRegUid(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + regEndpoint + "/users/" + id;
     }
+
     public String getSioExpUrl() {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/" + expEndpoint;
     }
+
 
     //------------------------------------
     // DELETE ACCOUNTS DETAILS
@@ -99,6 +93,17 @@ public class ConnectionProperties {
 
     public String deleteUserAccountByAdmin(String id) {
         return HTTP_MODE + sioAddress + ":" + sioPort + "/admin/" + "delete/" + "account/" + id;
+    }
+
+    // Reject account by Admin
+
+    public String rejectUserAccountByAdmin(String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/admin/" + "reject/" + "account/" + id;
+    }
+
+    // Approve account by Admin
+    public String approveUsersAccountByAdmin(final String id) {
+        return HTTP_MODE + sioAddress + ":" + sioPort + "/admin/" + "approve/" + "account/" + id;
     }
 
     //-------------------------------------
@@ -135,9 +140,6 @@ public class ConnectionProperties {
         return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + "joinApplications";
     }
 
-//    public String getApproveTeam(String teamId, String ownerId, TeamStatus teamStatus) {
-//        return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + teamId + "/owner/" + ownerId + "?status=" + teamStatus;
-//    }
 
     public String getApproveJoinRequest(String teamId, String userId) {
         return HTTP_MODE + sioAddress + ":" + sioPort + TEAMS + teamId + "/members/" + userId;
