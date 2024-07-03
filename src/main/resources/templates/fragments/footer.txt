@@ -1,0 +1,71 @@
+<!--
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org" >
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		&lt;!&ndash;=============== REMIXICONS ===============&ndash;&gt;
+		<link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet" />
+		<link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet' />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+		<link rel="shortcut icon" href="images/newui/ncl_favicon.png"/>
+
+		<title >National Cybersecurity R&amp;D Lab</title>
+		&lt;!&ndash;=============== CSS ===============&ndash;&gt;
+		<link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css" th:href="@{~/bootstrap/css/bootstrap.min.css}" media="screen"/>
+		<link rel="stylesheet" type="text/css" href="static/css/newui/global.css" th:href="@{~/css/newui/global.css}"/>
+	</head>
+
+<body>
+
+  <div th:fragment="footer">
+	  	&lt;!&ndash;========== FOOTER ==========&ndash;&gt;
+	  <footer class="footer footer-bg">
+		  <section class="py-4 py-md-5 py-xl-8  " >
+			  <div class="container overflow-hidden">
+				  <div class="row gy-4 gy-lg-0">
+					  <div class="col-12 col-md-6 col-lg-4 justify-content-end">
+						  <div class="widget">
+							  <h4 class="widget-title footer-get-title mb-4">Get in Touch</h4>
+							  <address class="mb-4 footer-get-addresstitle">
+								  <i class="fa fa-map-marker fa-sm fa-lg" ></i>
+								  NUS School of Computing, COM3 <br/>B1-09 || 11 Research link,<br/>Singapore 119391</address>
+							  <p class="mb-1">
+							  </p>
+							  <p class="mb-0 ">
+								  <a class="footer-get-addresstitle link-secondary text-decoration-none"
+									 href="support@ncl.sg">
+									  <i class="fa fa-envelope fa-sm fa-lg" ></i> support@ncl.sg</a>
+							  </p>
+						  </div>
+					  </div>
+					  <div class="col-12 col-lg-4">
+						  <div class="widget">
+							  <div class="col-12">
+								  <div class="d-grid mt-3">
+
+									  <a th:href="@{~/contactus}" class="btn btn-primary">Contact Us</a>
+
+								  </div>
+							  </div>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+		  </section>
+		  <div class="footer-bg py-4 py-md-3 py-xl-8 footer-border-top-custom border-top">
+			  <div class="container overflow-hidden">
+				  <div class="row ">
+					  <div class="col-xs-12 justify-content-center">
+						  <div class="footer-copyright-wrapper text-center ">
+							  <p class="footer-copyright-color"> &#169; 2024 National Cybersecurity R&amp;D Lab. All Rights Reserved.</p>
+						  </div>
+					  </div>
+
+				  </div>
+			  </div>
+		  </div>
+	  </footer>
+		</div>
+  </body>
+</html>
+-->
