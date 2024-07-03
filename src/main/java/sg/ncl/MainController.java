@@ -60,7 +60,7 @@ public class MainController {
     private static final String OS_TOKEN = "OS_Token";
     private static final String SESSION_LOGGED_IN_USER_ID = "loggedInUserId";
 
-    private static final String CONTACT_EMAIL = "support@ncl.sg";
+    private static final String CONTACT_EMAIL = "contact_email";
     private static final String CONTACT_US_FORM = "contactUsForm";
     private static final String RECAPTCHA_SECRET_KEY = "secret_key";
     private static final String BookNode_FORM = "BookNodeForm";
