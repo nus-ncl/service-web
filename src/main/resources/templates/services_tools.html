@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+  <title>Services and Tools</title>
+</head>
+
+<body onload="loadStaticPage('services_tools','Services/services_tools.txt');
+loadStaticPageWithDelay('footer', 'Home/footer.txt',1000);">
+<div layout:fragment="content">
+  <div id="services_tools"></div>
+  <div id="footer"></div>
+</div>
+
+<script type="text/javascript" src="../static/js/html5shiv.js"></script>
+<script type="text/javascript" src="../static/js/nav.js" ></script>
+<script src="https://unpkg.com/scrollreveal" ></script>
+<script>
+    // Show loading spinner until all images are loaded
+    window.onload = function() {
+        document.getElementById("loading-spinner").style.display = "none";
+    };
+</script>
+
+</body>
+</html>

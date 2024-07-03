@@ -2,40 +2,455 @@
 <html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
 <head>
     <title>Pricing</title>
-    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css" media="screen"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/animate.min.css"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/font-awesome/css/font-awesome.min.css"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/lightbox.css"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/main.css"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/responsive.css"/>
-    <link rel="stylesheet" type="text/css" id="static/css-preset" href="../static/css/presets/preset1.css"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/flexslider.css"/>
-
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
-    <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
 </head>
-<body onload="loadStaticPage('Pricing','Pricing/pricing.txt')">
-<div layout:fragment="content" id="Pricing">
+<body layout:fragment="content" onload="loadStaticPage('footer', 'Home/footer.txt');">
 
+<div class="spinner" id="spinner">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
 </div>
 
-<!--[if lt IE 9]>
-<script type="text/javascript" src="../static/js/html5shiv.js"></script>
-<script type="text/javascript" src="../static/js/respond.min.js"></script>
-<![endif]-->
+<section class="py-5 py-md-5 py-xl-8" style="margin-top:5.5rem;">
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col-12 col-md-10 col-lg-8 col-xl-7 col-xxl-6">
+                <h2 class="display-8 mb-2 mb-md-3 text-center price-title-text">Our Price</h2>
+                <hr class="w-30 mx-auto  border-dark-subtle line" />
+                <p class="fs-10 mt-3 mb-5 text-center price-subtext">
+                    We Offer flexible Pricing for everyone.  </p>
+            </div>
+        </div>
+    </div>
 
-<script type="text/javascript" src="../static/js/jquery.min.js"></script>
-<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-<!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>-->
-<script type="text/javascript" src="../static/js/jquery.inview.min.js"></script>
-<script type="text/javascript" src="../static/js/wow.min.js"></script>
-<script type="text/javascript" src="../static/js/mousescroll.js"></script>
-<script type="text/javascript" src="../static/js/jquery.countTo.js"></script>
-<script type="text/javascript" src="../static/js/lightbox.min.js"></script>
-<script type="text/javascript" src="../static/js/main.js"></script>
-<script type="text/javascript" src="../static/js/waypoints.min.js"></script>
-<script type="text/javascript" src="../static/js/minimal.lightbox.js"></script>
-<script type="text/javascript" src="../static/js/jquery.flexslider.js"></script>
+    <div class="container overflow-hidden">
+
+        <div class="row justify-content-md-center">
+
+            <p class="col-10 p-server-title mb-3 ">
+                Compute [Virtual Machine] offer:
+            </p>
+
+            <div class="col-10 table-responsive">
+                <table class="table  table-bordered">
+                    <thead class="bg-light" >
+                    <th> </th>
+                    <th class="th-value">
+                        <p ><strong >vCPU*</strong>
+                        </p>
+                    </th>
+                    <th >
+                        <p class="th-value"><strong>RAM(GB)</strong>
+                        </p>
+                    </th>
+                    <th >
+                        <p class="th-value"><strong>HDD(GB)</strong>
+                        </p>
+                    </th>
+
+                    <th >
+                        <p class="th-value"><strong>Price*(S$/day)</strong>
+                        </p>
+                    </th>
+                    </thead>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >VM(m1.medium)</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >4</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">8</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">80</div>
+                        </td>
+
+                        <td>
+                            <div class="tr-td-value">1.11</div>
+                        </td>
+                    </tr>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >VM(m1.large)</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >8</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">16</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">120</div>
+                        </td>
+
+                        <td>
+                            <div class="tr-td-value">1.95</div>
+                        </td>
+                    </tr>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >VM(m1.xlarge)</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >16</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">64</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">120</div>
+                        </td>
+
+                        <td>
+                            <div class="tr-td-value"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row justify-content-end col-11">
+
+            <div class="col-auto">
+                <button  id="modalComBtn" class="btn price-btn btn-lg active" width = "100px"
+                         role="button" aria-pressed="true"
+                         data-title="com"
+                         data-content="com">Book for Nodes/VMs <i class="bi bi-chevron-double-right"></i>
+                </button>
+            </div>
+        </div>
+        <br/>
+
+        <div class="row justify-content-md-center ">
+            <p class="col-10 p-server-title mb-3 ">
+                GPU offer:
+            </p>
+            <div  class="col-10 table-responsive">
+                <table class="table table-bordered">
+                    <thead class="bg-light">
+                    <th> </th>
+                    <th class="th-value">
+                        <p ><strong >No of cards</strong>
+                        </p>
+                    </th>
+                    <th >
+                        <p class="th-value"><strong>RAM(GB) on each GPU card</strong>
+                        </p>
+                    </th>
+                    <th >
+                        <p class="th-value"><strong>SSD(GB)</strong>
+                        </p>
+                    </th>
+                    <th >
+                        <p class="th-value"><strong>HDD(TB)</strong>
+                        </p>
+                    </th>
+
+                    <th >
+                        <p class="th-value"><strong>Price*(S$/day)</strong>
+                        </p>
+                    </th>
+                    </thead>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >H100</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >4</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">80</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">3840</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">32</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">1180</div>
+                        </td>
+                    </tr>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >A100</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >2</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">80</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">480</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">12</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">200</div>
+                        </td>
+                    </tr>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >A100</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >1</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">80</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">480</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">12</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">100</div>
+                        </td>
+                    </tr>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >A40</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >8</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">48</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">3840</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">16</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">480</div>
+                        </td>
+
+                    </tr>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >A40</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >4</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">48</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">960</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">8</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">260</div>
+                        </td>
+
+                    </tr>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >A5000</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >4</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">24</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">960</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">8</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">250</div>
+                        </td>
+
+                    </tr>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >V100</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >2</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">16</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">480</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">8</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">70</div>
+                        </td>
+
+                    </tr>
+                    <tr >
+                        <th class="th-value bg-light">
+                            <strong >P100</strong>
+                        </th>
+                        <td>
+                            <div class="tr-td-value justify-content-md-center" >2</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">12</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">480</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">8</div>
+                        </td>
+                        <td>
+                            <div class="tr-td-value">45</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row justify-content-end col-11">
+
+            <div class="col-auto">
+                <button  id="modalGpuBtn" class="btn price-btn btn-lg active" width = "100px"
+                         role="button" aria-pressed="true"
+                         data-title="gup"
+                         data-content="gup">Book for Nodes/VMs <i class="bi bi-chevron-double-right"></i>
+                </button>
+            </div>
+
+        </div>
+        <br/>
+        <div class="row justify-content-md-center ">
+            <p class="col-10 p-server-title mb-3 ">
+                <u>Terms and Conditions:</u>
+
+            <ul class="col-10 tc-text" >
+                <li>GST is not included in the listed price.</li>
+                <li>1CPU core = 4 vCPU until further notice.</li>
+                <li>We offers customized specifications (vCPU, RAM, etc.) and dedicated servers. </li>
+                <li>We reserves the right to interpret any ambiguities, if present.</li>
+            </ul>
+
+            </p>
+        </div>
+    </div>
+</section>
+
+<div id="footer"></div>
+
+<div class="modal fade" id="BRModal" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Book for Nodes/VMs</h5>
+                <label  class="col-form-label" id="hideType" style="display:none"></label>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="price-form"  action="#" method="post" role="form"   >
+
+                    <div class="mb-3">
+                            <select id="com-option" class="selectpicker form-control custom-select"
+                                     data-width="auto" style="display:none">
+                                <option value="">Select</option>
+                                <option value="m1_medium">VM (m1.medium)</option>
+                                <option value="m1_large">VM (m1.large)</option>
+                                <option value="m1_xlarge">VM (m1.xlarge)</option>
+                            </select>
+
+                        <select id="gpu-option" class="selectpicker form-control custom-select"
+                                 data-width="auto" style="display:none">
+                            <option value="">Select</option>
+                            <option value="H100-4X">H100 - 4X</option>
+                            <option value="A100-2X">A100 - 2X</option>
+                            <option value="A100-1X">A100 - 1X</option>
+                            <option value="A40-8X">A40 - 8X</option>
+                            <option value="A40-4X">A40 - 4X</option>
+                            <option value="A5000-4X">A5000 - 4X</option>
+                            <option value="V100-2X">V100 - 2X</option>
+                            <option value="P100-2X">P100 - 2X</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="startDate" class="col-form-label">Start Date <span class="text-danger">*</span></label>
+                        <input id="startDate" class="form-control" type="date" required="startDate"  />
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="endDate" class="col-form-label">End Date <span class="text-danger">*</span></label>
+                        <input id="endDate" class="form-control" type="date" required="endDate" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="col-form-label">Name <span class="text-danger">*</span></label>
+                        <input type="text" id="name"
+                               class="form-control"
+                               placeholder="Name"
+                               required="name"
+                               ></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="col-form-label">Email <span class="text-danger">*</span></label>
+                        <input type="text" id="email"
+                               class="form-control"
+                               placeholder="Email"
+                               required="email"
+                              ></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="col-form-label">Message <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="message" rows="3" required="message"
+                                ></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <!-- reCAPTCHA widget -->
+                        <div class="g-recaptcha" data-sitekey="6LdsYfspAAAAAEEez2cAtUMfI0cZHaX_pZ9BEysc" id="g_captcha">
+
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn md-price-btn-close  btn-secondary" data-bs-dismiss="modal" onclick="closeForm()">Close</button>
+                <button class="btn contactus-btn btn-lg fs-6" type="button" id="btnSubmit" >Send Message</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal HTML -->
+<div id="priceMsgModal" class="modal fade">
+    <div class="modal-dialog modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title w-100" id="response-title">Price List</h4>
+            </div>
+            <div class="modal-body">
+                <p class="text-start" id="response-message" th:text="${pricemodalMessage}"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="close" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
+
+
 </html>
 
