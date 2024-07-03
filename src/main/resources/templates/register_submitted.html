@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
+<head>
+    <title>Register Submitted</title>
+    <link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
+
+</head>
+<body layout:fragment="content" onload="loadStaticPage('footer', 'Home/footer.txt');" >
+
+    <section class="bg-light py-5 py-md-5 py-xl-6 min-vh-80 d-flex justify-content-center align-items-center" style="margin-top:5rem">
+        <div class="container">
+            <div class="row gy-3 gy-md-4 gy-lg-0 align-items-md-center mb-3">
+                <div class="col-12">
+                    <div class="text-center">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 70px;"></i>
+                        <h3 >Your application has been received.</h3>
+                        <p> However, as a new user, you are required to verify your email address first. </p>
+                        <p> A verification email has been sent to your registered email account. Please kindly check your mail box.</p>
+<!--                        <p> If you do not receive a verification email please click on-->
+<!--                            <a class="btn bsb-btn-5xl btn-dark rounded-pill px-5 fs-6 m-0" id="resend_email" role="button">-->
+<!--                                Resend Email</a>-->
+<!--                        </p>-->
+                        <p>If the problem persists please send an email to <a th:href="#{support.email.link}" th:text="#{support.email}"></a></p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <div id="footer"></div>
+
+</body>
+</html>
