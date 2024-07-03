@@ -2,52 +2,438 @@
 <html xmlns:layout="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org" layout:decorator="base">
 <head>
 	<title>Contact Us</title>
-	<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css" media="screen"/>
-	<link rel="stylesheet" type="text/css" href="../static/css/animate.min.css" />
-	<link rel="stylesheet"  type="text/css" href="../static/css/font-awesome/css/font-awesome.min.css"/>
-	<link rel="stylesheet" type="text/css" href="../static/css/lightbox.css"/>
-	<link rel="stylesheet" type="text/css" href="../static/css/main.css"/>
-	<link rel="stylesheet" type="text/css" href="../static/css/responsive.css"/>
-	<link rel="stylesheet" type="text/css" id="static/css-preset" href="../static/css/presets/preset1.css"/>
-	<link rel="stylesheet" type="text/css" href="../static/css/flexslider.css"/>
-
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" type="text/css"/>
 	<link rel="shortcut icon" href="../static/images/ncl_favicon1.png"/>
+	<!-- Include the reCAPTCHA script -->
+	<script src="https://www.google.com/recaptcha/enterprise.js"  async="async" defer="defer"></script>
 </head>
-<body onload="loadStaticPage('ContactUs','ContactUs/contactus.txt')">
-<div layout:fragment="content" id="ContactUs">
 
-	<script type="text/javascript">
-    function myFunction(id)
-    {
-        var obj = document.getElementById(id);
-        if(obj.className == 'show')
-        {
-            obj.className = 'hide';
-        }
-        else
-        {
-            obj.className = 'show';
-        }
-    }
-</script>
+<body layout:fragment="content" onload="loadStaticPage('footer', 'Home/footer.txt');">
+<div class="spinner" id="spinner">
+	<div class="spinner-border text-primary" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
 </div>
-<!--[if lt IE 9]>
-<script type="text/javascript" src="../static/js/html5shiv.js"></script>
-<script type="text/javascript" src="../static/js/respond.min.js"></script>
-<![endif]-->
+<section class="pb-3 pb-md-4 pb-xl-5 bg-light" style="margin-top:6rem" id="contactus">
+	<div class="container">
+		<div class="row gy-3 gy-md-4 gy-lg-0 align-items-md-center mb-3">
+			<div class="col-12 col-lg-6">
+				<div class="bg-white border rounded shadow-sm overflow-hidden mt-5">
+					<div>
+						<h3 class="fs-6 fw-bold text-center mt-5">If you have any questions or feedbacks</h3>
+						<h2 class="fs-3 fw-bold member-text text-center ">We'd love to hear from you!</h2>
+					</div>
+					<form  id="contact-form" th:action="@{/sendMessage}" method="post" role="form" th:object="${contactUsForm}">
+						<div class="row gy-3 gy-xl-4 p-3 p-xl-4">
+							<div class="col-12">
+								<label for="fullname" class="form-label">Full Name <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="fullName" name="fullName" value=""  th:required="required"> </input>
+							</div>
+							<div class="col-12">
+								<label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+								<div class="input-group">
+                      <span class="input-group-text">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                          <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
+                        </svg>
+                      </span>
+									<input type="email" class="form-control" id="email" name="email" value=""  th:required="required"></input>
+								</div>
+							</div>
 
-<script type="text/javascript" src="../static/js/jquery.min.js"></script>
-<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-<!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>-->
-<script type="text/javascript" src="../static/js/jquery.inview.min.js"></script>
-<script type="text/javascript" src="../static/js/wow.min.js"></script>
-<script type="text/javascript" src="../static/js/mousescroll.js"></script>
-<script type="text/javascript" src="../static/js/jquery.countTo.js"></script>
-<script type="text/javascript" src="../static/js/lightbox.min.js"></script>
-<script type="text/javascript" src="../static/js/main.js"></script>
-<script type="text/javascript" src="../static/js/waypoints.min.js"></script>
-<script type="text/javascript" src="../static/js/minimal.lightbox.js"></script>
-<script type="text/javascript" src="../static/js/jquery.flexslider.js"></script>
+							<div class="col-12">
+								<label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+								<textarea class="form-control" id="message" name="message" rows="5"  th:required="required"></textarea>
+							</div>
+
+							<div class="col-12">
+								<!-- reCAPTCHA widget -->
+								<div class="g-recaptcha" data-sitekey="6LdsYfspAAAAAEEez2cAtUMfI0cZHaX_pZ9BEysc">
+
+								</div>
+							</div>
+							<div class="col-12 d-flex justify-content-end">
+								<button class="btn contactus-btn btn-lg fs-6" type="submit">Send Message</button>
+							</div>
+
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col-12 col-lg-6">
+					<div class="row justify-content-xl-center">
+						<div class="col-12 col-xl-11">
+							<div>
+								<h2 class="fs-3 fw-bold member-text text-center ">Where are we?</h2>
+								<h3 class="fs-6 fw-bold text-center mt-3"><i class="fa fa-map-marker fa-sm fa-lg map-marker-icon" ></i> COM3-B1-09 Computing 3, 11 Research Link , S119391</h3>
+								<a href="#detailRoute" ><h3 class="fs-6 fw-bold text-center mt-3" style="color:#444444"><u>Direction to NCL Office</u></h3></a>
+							</div>
+
+							<div id="embed-spinner" class="d-flex justify-content-center align-items-center"  >
+							<div id="loading-spinner" class="spinner-border member-text text-center " role="status" style="display: none;">
+								<span class="sr-only">Loading...</span>
+							</div>
+							</div>
+
+							<div id="map-container-placeholder" class="z-depth-1-half map-container-section mb-4 mt-3" style="height: 400px;"></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+</section>
+
+<section class="py-3 py-md-5" id="detailRoute">
+	<div class="container py-md-5 mt-2">
+		<div class="row gy-3 gy-md-4 gy-lg-0 mb-5">
+			<div class="col-12 col-xl-11 mb-3">
+				<div >
+					<h2 class="fw-bold contact-dlt-title">Detailed instructions and direction guide to reach
+						National Cybersecurity R&amp;D Lab (NCL):</h2>
+				</div>
+			</div>
+			<div class="col-12 col-xl-11">
+				<div class="accordion accordion-flush" id="faqAccount">
+					<div class="accordion-item bg-transparent border-top border-bottom py-3">
+						<h2 class="accordion-header" id="faqAccountHeading1">
+							<button class="accordion-button collapsed bg-transparent fw-bold shadow-none link-primary" type="button" data-bs-toggle="collapse" data-bs-target="#faqAccountCollapse1" aria-expanded="false" aria-controls="faqAccountCollapse1">
+								If you are driving to COM3 (Sea Building):
+							</button>
+						</h2>
+						<div id="faqAccountCollapse1" class="accordion-collapse collapse" aria-labelledby="faqAccountHeading1">
+							<div class="accordion-body">
+									<p>
+										Please access the google map
+										<a target="_blank" href="https://maps.app.goo.gl/K15MSmUo4fTqiVWV6"><u>link</u></a>
+									</p>
+									<p class="contact-ml-30">
+										<u>From the city:</u>
+									</p>
+									<div class="contact-ml-30" id="CityOPT1Id" >
+										<ul class="contact-li">
+										<li>Drive along the AYER RAJAH EXPRESSWAY (AYE) towards Jurong</li>
+										<li>Exit AYE (exit 8) and head towards SOUTH BUONA VISTA ROAD</li>
+										<li>After passing the National University Health System building on your right, turn RIGHT into KENT RIDGE ROAD at the traffic junction.</li>
+										<li>Keep LEFT and turn LEFT into PRINCE GEORGE’S PARK road.</li>
+										<li>Continue on PRINCE GEORGE’S PARK road (down slope).</li>
+										<li>The COM3 Building is at the end of slope on your RIGHT (right after the Innovation 4.0 Building)</li>
+										<li>Park in any of the white carpark lots in Carpark 11)</li>
+										<li>Take lift (opposite to COM3 bus stop) at Basement 2 and go to Level Basement 1 for NCL Lab</li>
+									</ul>
+									</div>
+									<p class="contact-ml-30 mt-3">
+										<u>From Pasir Panjang Road:</u>
+									</p>
+									<div class="contact-ml-30"  >
+										<ul class="contact-li">
+											<li>From PASIR PANJANG ROAD, turn into NUS ENTRANCE C and into HENG MUI KENG TERRACE</li>
+											<li>Keep RIGHT at the fork in front of the NUS Business School</li>
+											<li>Immediately take the first LEFT towards PRINCE GEORGE’S PARK/RESEARCH LINK</li>
+											<li>After passing under the NUS Business School Biz 2 Building and its open-air carpark (Carpark
+												11), turn left COM3 building.</li>
+											<li>Park in any of the white carpark lots in Carpark 11</li>
+											<li>Take lift (opposite to COM3 bus stop) at Basement 2 and go to Level Basement 1 for NCL Lab</li>
+										</ul>
+									</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item bg-transparent border-bottom py-3">
+						<h2 class="accordion-header" id="faqAccountHeading2">
+							<button class="accordion-button collapsed bg-transparent fw-bold shadow-none link-primary" type="button" data-bs-toggle="collapse" data-bs-target="#faqAccountCollapse2" aria-expanded="false" aria-controls="faqAccountCollapse2">
+								If you are driving to Innovation4.0 building (COM3 Sea Building and Innovation4.0 building sharing the carpark 11b):
+							</button>
+						</h2>
+						<div id="faqAccountCollapse2" class="accordion-collapse collapse" aria-labelledby="faqAccountHeading2">
+							<div class="accordion-body">
+								<p>
+									Please access the google map
+									<a target="_blank" href="https://maps.app.goo.gl/K15MSmUo4fTqiVWV6"><u>link</u></a>
+								</p>
+								<p class="contact-ml-30">
+									<u>From the city:</u>
+								</p>
+								<div class="contact-ml-30">
+									<ul class="contact-li">
+										<li>Drive along the AYER RAJAH EXPRESSWAY (AYE) towards Jurong</li>
+										<li>Exit AYE (exit 8) and head towards SOUTH BUONA VISTA ROAD</li>
+										<li>After passing the National University Health System building on your right, turn RIGHT into
+											KENT RIDGE ROAD at the traffic junction</li>
+										<li>Keep LEFT and turn LEFT into PRINCE GEORGE’S PARK road</li>
+										<li>Continue on PRINCE GEORGE’S PARK road (down slope)</li>
+										<li>The Innovation 4.0 Building is at the end of slope on your RIGHT (right after the Temesak Life
+											Sciences Lab)</li>
+										<li>Park in any of the white carpark lots on the left of the building (Carpark 11B)</li>
+										<li>Walk through the parking area for a minute and reach NUS Sea Building (COM3) and you can
+											see NCL office</li>
+									</ul>
+								</div>
+								<p class="contact-ml-30">
+									<u>From Pasir Panjang Road:</u>
+								</p>
+								<div class="contact-ml-30">
+									<ul class="contact-li">
+										<li>From PASIR PANJANG ROAD, turn into NUS ENTRANCE C and into HENG MUI KENG TERRACE</li>
+										<li>Keep RIGHT at the fork in front of the NUS Business School</li>
+										<li>Immediately take the first LEFT towards PRINCE GEORGE’S PARK/RESEARCH LINK</li>
+										<li>After passing under the NUS Business School Biz 2 Building and its open-air carpark (Carpark
+											11), turn left into Innovation 4.0 which the first building up the slope</li>
+										<li>Park in any of the white carpark lots on the left of the building (Carpark 11B)</li>
+										<li>Walk through the parking area for a minute and reach NUS Sea Building (COM3) and you can
+											see NCL office</li>
+									</ul>
+									<img src="images/newui/dircar.png" alt="" width="600"  height="400" border="0" align="center" />
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item bg-transparent border-bottom py-3">
+						<h2 class="accordion-header" id="faqAccountHeading3">
+							<button class="accordion-button collapsed bg-transparent fw-bold shadow-none link-primary" type="button" data-bs-toggle="collapse" data-bs-target="#faqAccountCollapse3" aria-expanded="false" aria-controls="faqAccountCollapse3">
+								If you are taking taxi to COM1/COM2:
+							</button>
+						</h2>
+						<div id="faqAccountCollapse3" class="accordion-collapse collapse" aria-labelledby="faqAccountHeading3">
+							<div class="accordion-body">
+								<p>
+									Please access the google map
+									<a target="_blank" href="https://maps.app.goo.gl/K15MSmUo4fTqiVWV6"><u>link</u></a>
+								</p>
+								<p class="contact-ml-30">
+									<u>From the city:</u>
+								</p>
+								<div class="contact-ml-30">
+									<ul class="contact-li">
+										<li>Drive along the Ayer Rajah Expressway (AYE) towards Jurong</li>
+										<li>Exit at Clementi Road (AYE Exit 9)</li>
+										<li>Travel southward along Clementi Road for another 500m</li>
+										<li>Turn left into Kent Ridge Crescent (after passing the School of Design &amp; Environment on your
+											left)</li>
+										<li>After 100m, turn right into Kent Ridge Drive</li>
+										<li>Turn left into Computing Drive and proceed along it to COM2 building entrance (for passengers
+											to alight).</li>
+										<li>From COM2, walk for a minute and reach COM3 building, Level 1.</li>
+										<li>Take the lift down or spiral staircase to Level B1 to find the NCL office located at Basement 1</li></ul>
+								</div>
+								<p class="contact-ml-30">
+									<u>From Jurong:</u>
+								</p>
+								<div class="contact-ml-30">
+									<ul class="contact-li">
+										<li>Drive along Clementi Road towards Pasir Panjang Road.</li>
+										<li>Turn left into Kent Ridge Crescent (after passing the School of Design &amp; Environment on your
+											left)</li>
+										<li>After 100m, turn right into Kent Ridge Drive</li>
+										<li>Turn left into Computing Drive and proceed along it along it to COM2 building entrance (for
+											passengers to alight).</li>
+										<li>From COM2, walk for a minute and reach COM3 building, Level 1.</li>
+										<li>Take the lift down or spiral staircase to Level B1 to find the NCL office located at Basement 1</li>
+									</ul>
+
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item bg-transparent border-bottom py-3">
+						<h2 class="accordion-header" id="faqAccountHeading4">
+							<button class="accordion-button collapsed bg-transparent fw-bold shadow-none link-primary" type="button" data-bs-toggle="collapse" data-bs-target="#faqAccountCollapse4" aria-expanded="false" aria-controls="faqAccountCollapse4">
+								If you are taking the bus:
+							</button>
+						</h2>
+						<div id="faqAccountCollapse4" class="accordion-collapse collapse" aria-labelledby="faqAccountHeading4">
+							<div class="accordion-body">
+								<p class="contact-ml-30">
+									<u>Option 1:</u>
+								</p>
+								<div class="contact-ml-30">
+									<ul class="contact-li">
+										<li>Take bus services 95 or 151 towards the direction of Kent Ridge campus.</li>
+										<li>Alight at the bus stop outside Central Library (Bus stop 16181).</li>
+										<li>Take the internal shuttle bus A1 or B or D1 from the same bus stop.</li>
+										<li>Alight at the third bus stop (COM2) after the one at Central Library, located at Carpark 13.</li>
+										<li>From COM2, walk for a minute and reach COM3 building.</li>
+										<li>Take the lift down to Level B1 to find the NCL office located at Basement 1.</li></ul>
+								</div>
+								<p class="contact-ml-30">
+									<u>Option 2:</u>
+								</p>
+								<div class="contact-ml-30">
+									<ul class="contact-li">
+										<li>Alternatively, take bus service nos. 10, 33, 95, 151, 151e, 200 or 201 to the Kent Ridge Bus Terminal.</li>
+										<li>Walk along the covered linkway from the interchange and cross the road to the bus stop outside LT13</li>
+										<li>Take internal shuttle bus service A1 or B or D1 and alight at the 2nd bus stop (COM2) located at Carpark 13</li>
+										<li>From COM2, walk for a minute and reach COM3 building.</li>
+										<li>Take the lift down to Level B1 to find the NCL office located at Basement 1</li>	</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item bg-transparent border-bottom py-3">
+						<h2 class="accordion-header" id="faqAccountHeading5">
+							<button class="accordion-button collapsed bg-transparent fw-bold shadow-none link-primary" type="button" data-bs-toggle="collapse" data-bs-target="#faqAccountCollapse5" aria-expanded="false" aria-controls="faqAccountCollapse5">
+								If you are taking the MRT:
+							</button>
+						</h2>
+							<div id="faqAccountCollapse5" class="accordion-collapse collapse" aria-labelledby="faqAccountHeading5">
+							<div class="accordion-body">
+								<p class="contact-ml-30">
+									<u>From Bouna Vista MRT Station (EW21/CC22):</u>
+								</p>
+								<div class="contact-ml-30">
+									<ul class="contact-li">
+										<li>Take Exit B from the station and cross North Buona Vista Road.</li>
+										<li>Take bus service 95 from bus stop 11369 (Opposite Bouna Vista Station).</li>
+										<li>Alight at the bus stop outside Central Library (Bus stop 16181).</li>
+										<li>Take the internal shuttle bus D1 and alight at COM3 stop.</li>
+									</ul>
+								</div>
+								<p class="contact-ml-30">
+									<u>From Clementi MRT Station (EW23):</u>
+								</p>
+								<div class="contact-ml-30 mb-2">
+									<ul class="contact-li">
+										<li>Take Exit A from the station and walk to the bus interchange behind Clementi Mall.</li>
+										<li>Take bus service 96.</li>
+										<li>Alight at the bus stop outside Central Library (Bus stop 16181).</li>
+										<li>Take the internal shuttle bus D1 and alight at fourth/last stop (COM3).</li>
+										<li>Take the lift to Level B1 to find the NCL office located at Basement 1</li>
+									</ul>
+									<img style="margin-left:30px" src="images/newui/dirbus.png" alt="" width="300"  height="260" border="0" />
+								</div>
+
+								<p class="contact-ml-30">
+									<u>From Kent Ridge MRT Station (CC24):</u>
+								</p>
+								<div class="contact-ml-30">
+									<ul class="contact-li">
+										<li>Take Exit A from the station and walk to the bus stop opposite Kent Ridge MRT.</li>
+										<li>Take internal shuttle bus service D2 from the bus stop opposite Kent Ridge MRT
+											station.</li>
+										<li>Alight at the COM3 bus stop.</li>
+										<li>Take the lift to Level B1 to find the NCL office located at Basement 1</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-item bg-transparent border-bottom py-3">
+						<h2 class="accordion-header" id="faqAccountHeading6">
+							<button class="accordion-button collapsed bg-transparent fw-bold shadow-none link-primary"
+									type="button" data-bs-toggle="collapse"
+									data-bs-target="#faqAccountCollapse6" aria-expanded="false"
+									aria-controls="faqAccountCollapse6">
+								Directions from COM2 building to NCL:
+							</button>
+						</h2>
+						<div id="faqAccountCollapse6" class="accordion-collapse collapse" aria-labelledby="faqAccountHeading6">
+							<div class="accordion-body">
+								<p class="contact-ml-30">
+									<img align="center" src="images/newui/dircom2.png" alt="" width="450"  height="360" border="0"/>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<div id="footer"></div>
+
+<!-- Modal HTML -->
+<div id="contactModal" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title w-100" id="response-title">Contact Us</h4>
+			</div>
+			<div class="modal-body">
+				<p class="text-start" id="response-message" th:text="${modalMessage}"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="close" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+// Function to load the map
+function loadMap() {
+	// Show loading spinner
+	document.getElementById("loading-spinner").style.display = "block";
+	document.getElementById("embed-spinner").style.display = "block";
+	// Replace the placeholder div with the actual map iframe
+	document.getElementById("map-container-placeholder").innerHTML = `
+	<iframe src="https://maps.google.com/maps?q=11 Research Link, Singapore 117573&amp;z=15&amp;output=embed"
+		frameborder="0"
+		style="border:0"
+		loading="lazy"
+		onload="hideLoadingSpinner()"></iframe>
+	`;
+}
+
+// Function to hide the loading spinner once the map is loaded
+function hideLoadingSpinner() {
+	document.getElementById("loading-spinner").style.display = "none";
+	document.getElementById("embed-spinner").style.display = "none";
+}
+
+// Intersection Observer to watch for the map container
+var observer = new IntersectionObserver(function(entries) {
+	entries.forEach(function(entry) {
+	if (entry.isIntersecting) {
+		loadMap();
+		observer.disconnect(); // Stop observing once the map is loaded
+		}
+	});
+});
+
+// Start observing the placeholder div
+observer.observe(document.getElementById("map-container-placeholder"));
+
+document.querySelector('a[href="#detailRoute"]').addEventListener('click', function(event) {
+    event.preventDefault();
+    document.getElementById('detailRoute').scrollIntoView({
+      behavior: 'smooth'
+    });
+});
+
+
+document.getElementById('contact-form').addEventListener('submit', function(event) {
+
+            event.preventDefault();
+            $('#spinner').show();
+<!--			var response = grecaptcha.getResponse();-->
+<!--  			if(response.length == 0) {-->
+<!--    			showMessageModal('Please complete the reCAPTCHA.');-->
+<!--  			}-->
+<!--			else{-->
+            	var formData = $(this).serialize();
+
+            	$.post('/sendMessage', formData, function(response) {
+            		$('#spinner').hide();
+             		showContactMessageModal(response);
+            	});
+           		this.reset();
+<!--           }-->
+});
+
+function showContactMessageModal(content) {
+        var contactModal = document.getElementById('contactModal');
+        var modalMessage =  document.getElementById('response-message');
+        var btnClose = document.getElementById('close');
+
+       modalMessage.innerHTML = content;
+       $('#contactModal').modal('show');
+
+       btnClose.addEventListener('click', function(event) {
+            $('#contactModal').modal('hide');
+       });
+}
+
+</script>
+
 </body>
 </html>
+

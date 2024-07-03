@@ -1,0 +1,42 @@
+.row-bg{
+background-color:#003062 !important;
+}
+
+.row-mg{
+margin-top:20px;
+margin-bottom:20px;
+}
+
+.container-fluid-mg{
+margin-top:-10px !important;
+}
+
+.wwd-title{
+color:#fff;
+font-weight: bold;
+font-size: 1.7rem  !important;
+}
+
+.wwd-card-img{
+align-item:center !important;
+/*margin-top:10px;*/
+}
+
+.wwd-card-title{
+/*color:#fff;*/
+color:#ef7c00;;
+margin-top:30px;
+}
+
+.wwd-card-des{
+color:#fff !important;
+font-size: 1.1rem !important;
+}
+
+.wwd-card-ch{
+color:#f3f1f1cc !important;
+}
+
+.wwd-card-t-span{
+margin-left:10px;
+}
