@@ -276,7 +276,7 @@ public class MainController {
         response.setHeader("X-Frame-Options", "DENY");
         response.setHeader("X-Content-Type-Options", "nosniff");
         //response.setHeader("Content-Security-Policy", "script-src 'self' google-analytics.com/ cdn.datatables.net/1.10.12/js/ 'unsafe-inline' 'unsafe-eval'");
-        response.setHeader("Strict-Transport-Security", "max-age=16070400; includeSubDomains");
+        response.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
     }
 
     @Autowired
