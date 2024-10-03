@@ -1,0 +1,95 @@
+/***  new environments, services, tools, data css **/
+
+.service-tools-title {
+    color: #003d7c !important;
+    font-size: 1.7rem  !important;
+    font-weight: bold !important;
+}
+
+.st-image-text {
+display: block;
+color: white;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 1;
+font-size: 16px;
+justify-content:center;
+text-align:center;
+}
+
+.read-more,
+.bi-eye {
+    position: relative;
+    z-index: 2;
+}
+
+.read-more-text
+{
+   font-size: .9rem  !important;
+}
+
+/*** ************************* breadcrumb css *********************/
+.breadcrumb-text{
+font-size: 15px !important;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+content: '';
+}
+
+
+/*** ************************* cue css *********************/
+
+.cue-title{
+font-weight: bold !important;
+  font-size: 1.7rem  !important;
+  color: #003d7c !important;
+}
+
+.cue-section-bg-color{
+ background-color:#012169;
+ }
+
+.cue-text-white{
+color:#fff;
+font-size: 1.2rem !important;
+}
+
+.cue-text-white-title{
+color:#fff;
+font-size: 1.5rem  !important;
+}
+
+.cue-text-white-subtitle{
+color:#fff;
+font-size: 1rem  !important;
+}
+.cue-sub-title{
+color:#012169; !important;
+}
+
+.image-container {
+border: 1px solid #ced4da; /* Border color */
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow */
+width: 80 px ;
+height: 70 px;
+justify-content:center;
+}
+
+.cue-p-text{
+color:#012169;
+font-size: 1.1rem !important;
+}
+.cue-bg-blue{
+color: #012169 !important;
+}
+
+/**************************** ctf css *********************/
+
+.ctf-title{
+font-weight: bold !important;
+  font-size: 1.7rem  !important;
+  color: #003d7c !important;
+}
