@@ -30,6 +30,7 @@ ext {
 
 version = "${commit_id}"
 
+
 // build configuration
 configurations {
     [apiElements, runtimeElements].each {
