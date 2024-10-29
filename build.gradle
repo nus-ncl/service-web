@@ -50,6 +50,14 @@ configurations {
     }
 }
 
+configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.codehaus.groovy.modules.http-builder') {
+                details.useTarget(group: details.requested.group, name: details.requested.name, version: '0.7.1')
+            }
+        }
+    }
+
 // publish to Github package repository
 publishing {
     publications {
