@@ -679,6 +679,12 @@ public class MainController {
         return "RailwayMetroSystem";
     }
 
+    @RequestMapping("/PowerGridOTSystem")
+    public String PowerGridOTSystem(Model model) throws IOException {
+        //model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        return "PowerGridOTSystem";
+    }
+
     @RequestMapping("/ClusterUserEmulatorSystem")
     public String ClusterUserEmulatorSystem(Model model) throws IOException {
         //model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
