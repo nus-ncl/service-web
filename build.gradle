@@ -30,6 +30,7 @@ ext {
 
 version = "${commit_id}"
 
+
 // build configuration
 configurations {
     [apiElements, runtimeElements].each {
@@ -104,6 +105,8 @@ dependencies {
 
     implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
     implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+
+    implementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
 }
 
 compileJava {
