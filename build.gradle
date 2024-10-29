@@ -1,12 +1,15 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
     }
 
     dependencies {
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.22.RELEASE'
     }
 }
+
+
 
 plugins {
     id 'java'
@@ -22,6 +25,10 @@ plugins {
 
 }
 
+repositories {
+    mavenCentral()
+}
+
 
 // get commit id for version
 ext {
@@ -29,7 +36,6 @@ ext {
 }
 
 version = "${commit_id}"
-
 
 // build configuration
 configurations {
@@ -106,7 +112,7 @@ dependencies {
     implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
     implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
 
-    implementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+    implementation group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'
 }
 
 compileJava {
