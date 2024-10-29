@@ -18,7 +18,7 @@ plugins {
     id 'jacoco'
     id 'maven-publish'
     id 'io.spring.dependency-management' version '0.6.0.RELEASE'
-    id 'com.github.kt3k.coveralls' version '2.6.3'
+    id 'com.github.kt3k.coveralls' version '2.10.0'
     id 'com.jfrog.bintray' version '1.7.1'
     id 'org.tenne.rest' version '0.4.2'
     id 'org.springframework.boot' version '2.5.2'
@@ -30,13 +30,9 @@ repositories {
 }
 
 
+// get commit id for version
 ext {
-    def gitCommitId = "git rev-parse --short HEAD".execute().text.trim()
-    if (gitCommitId) {
-        commit_id = gitCommitId.substring(0, Math.min(7, gitCommitId.length()))
-    } else {
-        commit_id = "unknown"
-    }
+    commit_id =  "git rev-parse --short HEAD".execute().text.substring(0,7)
 }
 
 version = "${commit_id}"
