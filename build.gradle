@@ -30,12 +30,17 @@ repositories {
 }
 
 
-// get commit id for version
 ext {
-    commit_id =  "git rev-parse --short HEAD".execute().text.substring(0,7)
+    def gitCommitId = "git rev-parse --short HEAD".execute().text.trim()
+    if (gitCommitId) {
+        commit_id = gitCommitId.substring(0, Math.min(7, gitCommitId.length()))
+    } else {
+        commit_id = "unknown"
+    }
 }
 
 version = "${commit_id}"
+
 
 // build configuration
 configurations {
