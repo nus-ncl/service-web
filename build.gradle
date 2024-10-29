@@ -1,12 +1,24 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
     }
 
     dependencies {
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.22.RELEASE'
     }
+
+     configurations.classpath {
+            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == 'org.codehaus.groovy.modules.http-builder' && 
+                    details.requested.name == 'http-builder') {
+                    details.useVersion '0.7.1'
+                }
+            }
+        }
 }
+
+
 
 plugins {
     id 'java'
@@ -15,17 +27,25 @@ plugins {
     id 'jacoco'
     id 'maven-publish'
     id 'io.spring.dependency-management' version '0.6.0.RELEASE'
-    id 'com.github.kt3k.coveralls' version '2.6.3'
+    id 'com.github.kt3k.coveralls' version '2.10.1'
     id 'com.jfrog.bintray' version '1.7.1'
     id 'org.tenne.rest' version '0.4.2'
     id 'org.springframework.boot' version '2.5.2'
 
 }
 
+repositories {
+    mavenCentral()
+}
 
-// get commit id for version
+
 ext {
-    commit_id =  "git rev-parse --short HEAD".execute().text.substring(0,7)
+    def gitCommitId = "git rev-parse --short HEAD".execute().text.trim()
+    if (gitCommitId) {
+        commit_id = gitCommitId.substring(0, Math.min(7, gitCommitId.length()))
+    } else {
+        commit_id = "unknown"
+    }
 }
 
 version = "${commit_id}"
@@ -38,6 +58,14 @@ configurations {
         it.outgoing.artifact(bootJar)
     }
 }
+
+configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.codehaus.groovy.modules.http-builder') {
+                details.useTarget(group: details.requested.group, name: details.requested.name, version: '0.7.1')
+            }
+        }
+    }
 
 // publish to Github package repository
 publishing {
@@ -105,6 +133,8 @@ dependencies {
 
     implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
     implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+
+    implementation group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'
 }
 
 compileJava {
@@ -183,4 +213,3 @@ jar {
 bootJar {
     mainClass = 'sg.ncl.WebApplication'
 }
-
