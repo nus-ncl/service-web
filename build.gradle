@@ -30,7 +30,6 @@ ext {
 
 version = "${commit_id}"
 
-
 // build configuration
 configurations {
     [apiElements, runtimeElements].each {
@@ -183,4 +182,3 @@ jar {
 bootJar {
     mainClass = 'sg.ncl.WebApplication'
 }
-
