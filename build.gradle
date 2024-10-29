@@ -7,6 +7,15 @@ buildscript {
     dependencies {
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.22.RELEASE'
     }
+
+     configurations.classpath {
+            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == 'org.codehaus.groovy.modules.http-builder' && 
+                    details.requested.name == 'http-builder') {
+                    details.useVersion '0.7.1'
+                }
+            }
+        }
 }
 
 
