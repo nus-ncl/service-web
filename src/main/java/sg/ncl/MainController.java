@@ -562,6 +562,11 @@ public class MainController {
         return "scholarship";
     }
 
+    @RequestMapping("/ICO")
+    public String ICO() {
+        return "ICO";
+    }
+
     @RequestMapping("/tutorials")
     public String tutorials() {
         return "tutorials";
