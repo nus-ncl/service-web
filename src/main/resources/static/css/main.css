@@ -459,10 +459,10 @@ h19{
 /*background-color: #1eafbb;*/
 /*}*/
 
-.navbar-header {
+/*.navbar-header {
     margin-top: 20px;
     margin-bottom: 20px;
-}
+}*/
 
 .nav > li.dropdown > a:focus {
     background-color: #B4B4B4;
