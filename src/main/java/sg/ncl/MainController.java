@@ -678,6 +678,12 @@ public class MainController {
         return "dataset";
     }
 
+    @RequestMapping("/AviationRunwaySystem")
+    public String AviationRunwaySystem(Model model) throws IOException {
+        //model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
+        return "AviationRunwaySystem";
+    }
+
     @RequestMapping("/RailwayMetroSystem")
     public String RailwayMetroSystem(Model model) throws IOException {
         //model.addAttribute(USER_DASHBOARD_GLOBAL_IMAGES, getGlobalImages());
