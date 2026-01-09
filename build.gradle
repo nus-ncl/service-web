@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        jcenter()
         mavenCentral()
     }
 
@@ -31,7 +30,6 @@ plugins {
     id 'com.jfrog.bintray' version '1.7.1'
     id 'org.tenne.rest' version '0.4.2'
     id 'org.springframework.boot' version '2.5.2'
-
 }
 
 repositories {
@@ -104,8 +102,12 @@ dependencyManagement {
     }
     dependencies {
         dependency 'org.apache.commons:commons-lang3:3.4'
-        dependency 'commons-io:commons-io:2.5'
+        dependency 'commons-io:commons-io:2.7'
         dependency 'org.projectlombok:lombok:1.16.10'
+        // Security fixes - override transitive dependencies
+        dependency 'ch.qos.logback:logback-classic:1.2.13'
+        dependency 'ch.qos.logback:logback-core:1.2.13'
+        dependency 'org.yaml:snakeyaml:1.33'
     }
 }
 
@@ -143,7 +145,7 @@ compileJava {
 
 tasks.jacocoTestReport {
     reports {
-        xml.enabled true
+        xml.required.set(true)
     }
 }
 
@@ -202,7 +204,7 @@ task printInfo {
 
 // Change gradle version at root/gradle/wrapper
 wrapper{
-    gradleVersion '6.8.3'
+    gradleVersion '7.2'
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
 
@@ -212,4 +214,16 @@ jar {
 
 bootJar {
     mainClass = 'sg.ncl.WebApplication'
+}
+
+// Security scanning tasks
+task grypeScan(type: Exec) {
+    description = 'Run Grype vulnerability scanner'
+    commandLine 'grype', '.', '--output', 'json', '--file', 'grype-results.json'
+    ignoreExitValue = true
+}
+
+task securityScan {
+    description = 'Run security scanner'
+    dependsOn grypeScan
 }
