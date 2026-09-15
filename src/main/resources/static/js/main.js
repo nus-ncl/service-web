@@ -1043,31 +1043,28 @@ function setAutoShutdownCheckbox() {
 }
 
 //Rendering static content changes from github
+//Uses raw.githubusercontent.com instead of the api.github.com Contents API:
+//the API is capped at 60 requests/hour/IP (shared across all visitors) and
+//base64-encodes content (+37% size); raw.githubusercontent.com is a CDN with
+//no such rate limit and returns the file as-is.
 function loadStaticPage(id, page) {
     $.ajax({
-         dataType: "JSON",
+         dataType: "text",
          async: true,
          //production
-         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page,
+         url: "https://raw.githubusercontent.com/nus-ncl/static-web-content/master/"+page,
 
         //This url is for Test branch used for testing
-        // url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/"+page+"?ref=DEV-1310",
+        // url: "https://raw.githubusercontent.com/nus-ncl/static-web-content/DEV-1310/"+page,
          type: 'GET',
          success: function(result) {
-             document.getElementById(id).innerHTML = decodeURIComponent(escape(window.atob(result.content)));
+             document.getElementById(id).innerHTML = result;
          }
     });
 }
 
 function loadImage(imgName, imgId, imgType) {
-    $.ajax({
-         dataType: "JSON",
-         url: "https://api.github.com/repos/nus-ncl/static-web-content/contents/images/"+imgName,
-         type: 'GET',
-         success: function(result) {
-            document.getElementById(imgId).src = "data:image/"+imgType+";base64,"+result.content;
-         }
-    });
+    document.getElementById(imgId).src = "https://raw.githubusercontent.com/nus-ncl/static-web-content/master/images/"+imgName;
 }
 
 //function deleteAccount() {
