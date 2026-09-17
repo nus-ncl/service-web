@@ -13,12 +13,12 @@ Print-resolution originals were being served for thumbnail/slider use:
 | `images/blue_background1.jpg` | 11 MB (6500×4000) | CSS `background-image`, `cover` | 96 KB (1920px wide) | Resized + re-encoded (sips, q78) |
 | `images/research17.jpg` | 8.5 MB (4912×4039) | `<img width="350" height="300">` | 52 KB (700px) | Resized + re-encoded (sips, q78), 2x retina for its box |
 | `images/teaching1.jpg` | 5.7 MB (3648×5472) | `<img width="350" height="300">` | 76 KB (700px) | Resized + re-encoded (sips, q78) |
-| `images/aviation-simulation-animated.gif` | 7.2 MB (900×462, 228 frames, per-frame 256-color tables) | `<img class="img-responsive">` in slider | 3.7 MB | `gifsicle -O3 --lossy=120 --colors=128`, verified frame 0 and a mid-sequence delta frame render identically |
+| `images/aviation-simulation-animated.gif` | 7.2 MB (900×462, 228 frames, per-frame 256-color tables) | `<img class="img-responsive">` in slider | 215 KB, as `.jpg` (single frame, 900×462) | First replaced with `gifsicle -O3 --lossy=120 --colors=128` (3.7 MB), then superseded by extracting frame 0 as a static JPEG since the animation added little value for the byte cost |
 | `images/slider/new1.png` | 204 KB (2842×990) | CSS `background-image`, `cover` | 90 KB, as `.jpg` (1920px wide) | Resizing while keeping PNG made it larger (247 KB, PNG compresses resampled gradients poorly), so resized + converted to JPEG instead |
 
-Combined (first four): 31.6 MB down to ~3.9 MB (~88% reduction). Location: [`src/main/resources/static/images/`](src/main/resources/static/images/), referenced from [`index.html`](src/main/resources/templates/index.html#L112).
+Combined (first four): 31.6 MB down to ~439 KB (~99% reduction). Location: [`src/main/resources/static/images/`](src/main/resources/static/images/), referenced from [`index.html`](src/main/resources/templates/index.html#L112).
 
-`images/slider/new1.png` was removed after conversion. References in `index.html` (3 occurrences) updated to `slider/new1.jpg`. The remaining slider background, `images/NCL_index.jpg` (1366×687, 196 KB), was checked and is already sized correctly for its `cover` use, so it was left as-is.
+`images/aviation-simulation-animated.gif` was removed and replaced by `images/aviation-simulation.jpg`, with the reference in `index.html` updated accordingly. `images/slider/new1.png` was removed after conversion, with references in `index.html` (3 occurrences) updated to `slider/new1.jpg`. The remaining slider background, `images/NCL_index.jpg` (1366×687, 196 KB), was checked and is already sized correctly for its `cover` use, so it was left as-is.
 
 Originals preserved at `original-images-backup/` (repo root, untracked, not shipped in the build).
 
@@ -58,6 +58,7 @@ Fixed in [`main.js`](src/main/resources/static/js/main.js#L1045). `loadStaticPag
 | 2026-09-15 | Resized/re-encoded 5 oversized homepage images |
 | 2026-09-15 | Enabled `server.compression.enabled` for text assets |
 | 2026-09-15 | Switched `loadStaticPage`/`loadImage` from `api.github.com` to `raw.githubusercontent.com` |
+| 2026-09-17 | Replaced the animated GIF with a single-frame static JPEG |
 
 ---
-Last updated: 2026-09-15
+Last updated: 2026-09-17
