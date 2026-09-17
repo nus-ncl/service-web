@@ -102,15 +102,12 @@ public class MainControllerTest {
     //--------------------------------------
     @Test
     public void testIndexPage() throws Exception {
-        // ensure page can load <head>, navigation, <body>, <footer>
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("main.css")))
                 .andExpect(content().string(containsString("main.js")))
                 .andExpect(content().string(containsString("navbar-header")))
-                .andExpect(content().string(containsString("NATIONAL CYBERSECURITY R&amp;D LAB")))
-                .andExpect(content().string(containsString("Features")))
-                .andExpect(content().string(containsString("Focus on your")))
+                .andExpect(content().string(containsString("loadStaticPage(&#39;AboutUs&#39;,&#39;Home/AboutUs.txt&#39;)")))
                 .andExpect(content().string(containsString("footer id=\"footer\"")));
     }
 
